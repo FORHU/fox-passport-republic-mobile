@@ -3,7 +3,6 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
-import 'package:flutter_template/core/services/interceptors/mock_interceptor.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
 
@@ -11,33 +10,46 @@ import 'package:flutter_template/core/utils/logger.dart';
 /// here. Methods return decoded JSON and throw [AppException] subtypes on
 /// failure — repositories translate those into `Failure` values.
 ///
-/// Point it at your backend by setting `BASE_URL` (see `.env.*`). When
-/// `AppConfig.instance.useMock` is true, a [MockInterceptor] serves canned
-/// responses so the app runs with no server — the rest of this class behaves
-/// exactly as it would against a real API.
+/// Point it at your backend by setting `BASE_URL` (see `.env.*`).
 class ApiService {
-  ApiService({required StorageService storage, Dio? dio})
-    : client =
-          dio ??
-          Dio(
-            BaseOptions(
-              baseUrl: AppConfig.instance.baseUrl,
-              connectTimeout: const Duration(seconds: 10),
-              receiveTimeout: const Duration(seconds: 10),
-              sendTimeout: const Duration(seconds: 10),
-              contentType: Headers.jsonContentType,
-            ),
-          ) {
+  ApiService({
+    required StorageService storage,
+    void Function()? onUnauthenticated,
+    Dio? dio,
+  }) : client =
+           dio ??
+           Dio(
+             BaseOptions(
+               baseUrl: AppConfig.instance.baseUrl,
+               connectTimeout: const Duration(seconds: 10),
+               receiveTimeout: const Duration(seconds: 10),
+               sendTimeout: const Duration(seconds: 10),
+               contentType: Headers.jsonContentType,
+             ),
+           ) {
     // 1. Attach the bearer token and transparently refresh it on a 401.
     client.interceptors.add(
-      AuthInterceptor(storage, baseUrl: client.options.baseUrl),
+      AuthInterceptor(
+        storage,
+        baseUrl: client.options.baseUrl,
+        onUnauthenticated: onUnauthenticated,
+      ),
     );
 
-    // 2. Retry transient failures on unstable networks.
+    // 2. Retry transient failures on unstable networks
+    //    (skip 4xx client errors).
     client.interceptors.add(
       RetryInterceptor(
         dio: client,
         logPrint: appLogger.w,
+        retryEvaluator: (error, attempt) {
+          final status = error.response?.statusCode;
+          if (status != null && status >= 400 && status < 500) {
+            return false;
+          }
+          return error.type != DioExceptionType.cancel &&
+              error.type != DioExceptionType.badResponse;
+        },
         retryDelays: const [
           Duration(seconds: 1),
           Duration(seconds: 2),
@@ -51,12 +63,6 @@ class ApiService {
       client.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
       );
-    }
-
-    // 4. Mock backend — must be LAST so it can short-circuit the request
-    //    before it leaves the device.
-    if (AppConfig.instance.useMock) {
-      client.interceptors.add(MockInterceptor());
     }
   }
 
@@ -98,6 +104,7 @@ class ApiService {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
+      case DioExceptionType.transformTimeout:
       case DioExceptionType.connectionError:
         return const NetworkException();
       case DioExceptionType.badResponse:

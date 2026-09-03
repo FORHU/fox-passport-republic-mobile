@@ -133,14 +133,15 @@ try {
 
 ### 6.2 Spacing System
 ```dart
-AppSpacing.gapMd;
+const Gap(AppSpacing.md);
+AppSpacing.md.v; // vertical gap
 AppSpacing.edgeInsetsLg;
 ```
 
 ### 6.3 Allowed Components Only
-- `AppButton`
-- `AppInput`
-- `AppCard`
+- `PrimaryButton` / `GradientButton`
+- `ModernTextField`
+- `GlassCard`
 
 ### 6.4 Forbidden UI Patterns
 - Raw `SizedBox(height: x)`

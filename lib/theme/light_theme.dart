@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'tokens/colors.dart';
-import 'tokens/typography.dart';
-import 'components/button_theme.dart';
-import 'components/input_theme.dart';
-import 'components/card_theme.dart';
+import 'package:flutter_template/theme/components/button_theme.dart';
+import 'package:flutter_template/theme/components/card_theme.dart';
+import 'package:flutter_template/theme/components/input_theme.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/typography.dart';
 
 class LightTheme {
   LightTheme._();
@@ -13,28 +12,32 @@ class LightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      
-      // Explicit Color Scheme
+
+      /// Ink-on-white color scheme (mapanytime-app style).
+      /// Single accent: ink (#0D0D0F), clean surfaces, subtle text hierarchy.
       colorScheme: ColorScheme.light(
-        primary: AppColors.brand.primary,
-        secondary: AppColors.brand.secondary,
+        primary: AppColors.ink.primary,
+        onPrimary: AppColors.text.onInk,
+        secondary: AppColors.ink.primary,
+        onSecondary: AppColors.text.onInk,
         surface: AppColors.ui.surface,
-        error: AppColors.status.error,
-        onPrimary: AppColors.ui.surface,
-        onSecondary: AppColors.ui.surface,
         onSurface: AppColors.text.primary,
-        onError: AppColors.ui.surface,
+        onSurfaceVariant: AppColors.text.secondary,
+        surfaceContainerHighest: AppColors.ui.surfaceMuted,
+        outline: AppColors.ui.borderHairline,
+        error: AppColors.status.error,
+        onError: AppColors.text.onInk,
       ),
 
       scaffoldBackgroundColor: AppColors.ui.background,
-      
-      // Global Typography
+
+      // Global Typography — Inter font with primary text color
       textTheme: AppTypography.textTheme.apply(
         bodyColor: AppColors.text.primary,
         displayColor: AppColors.text.primary,
       ),
 
-      // AppBar
+      // AppBar — light background, ink text
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: AppColors.ui.background,

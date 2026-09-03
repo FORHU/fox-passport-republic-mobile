@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_template/features/auth/data/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Two-tier local storage:
-/// * [SharedPreferences] for non-sensitive values (flags, prefs, cache keys).
+/// * [SharedPreferences] for non-sensitive values (flags, prefs, cached user).
 /// * [FlutterSecureStorage] for secrets (auth tokens) — encrypted at rest.
 class StorageService {
   StorageService(this._prefs, {FlutterSecureStorage? secure})
@@ -14,6 +17,8 @@ class StorageService {
 
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
+  static const String _userModelKey = 'cached_user_model';
+  static const String _onboardingKey = 'onboarding_seen';
 
   // --- Plain key/value ---
   String? getString(String key) => _prefs.getString(key);
@@ -31,10 +36,31 @@ class StorageService {
       _secure.write(key: _refreshTokenKey, value: token);
   Future<String?> readRefreshToken() => _secure.read(key: _refreshTokenKey);
 
-  /// Clears the whole authenticated session (access + refresh tokens).
+  // --- Cached user model (SharedPreferences, for instant cold start) ---
+  Future<void> saveUserModel(UserModel user) =>
+      _prefs.setString(_userModelKey, jsonEncode(user.toJson()));
+
+  UserModel? readUserModel() {
+    final raw = _prefs.getString(_userModelKey);
+    if (raw == null) return null;
+    try {
+      return UserModel.fromJson(
+        (jsonDecode(raw) as Map).cast<String, dynamic>(),
+      );
+    } on Object catch (_) {
+      return null;
+    }
+  }
+
+  // --- Onboarding flag ---
+  bool get onboardingSeen => _prefs.getBool(_onboardingKey) ?? false;
+  Future<void> setOnboardingSeen() => _prefs.setBool(_onboardingKey, true);
+
+  /// Clears the whole authenticated session (tokens + cached user).
   Future<void> clearSession() async {
     await _secure.delete(key: _tokenKey);
     await _secure.delete(key: _refreshTokenKey);
+    await _prefs.remove(_userModelKey);
   }
 }
 

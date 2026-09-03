@@ -3,9 +3,17 @@ import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/data/models/user_model.dart';
 
 /// Talks to the remote API. Knows nothing about storage or UI.
-// ignore: one_member_abstracts
 abstract class AuthRemoteDataSource {
   Future<UserModel> login(String email, String password);
+  Future<void> register(
+    String email,
+    String password, {
+    String? name,
+    String? countryCode,
+    String roleName,
+  });
+  Future<void> logout(String? refreshToken);
+  Future<UserModel> checkAuth(String token);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -19,6 +27,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       'email': email,
       'password': password,
     });
+    return UserModel.fromJson((data as Map).cast<String, dynamic>());
+  }
+
+  @override
+  Future<void> register(
+    String email,
+    String password, {
+    String? name,
+    String? countryCode,
+    String roleName = 'USER',
+  }) async {
+    await _api.post(ApiEndpoints.register, {
+      'email': email,
+      'password': password,
+      'name': ?name,
+      'countryCode': ?countryCode,
+      'roleName': roleName,
+    });
+  }
+
+  @override
+  Future<void> logout(String? refreshToken) async {
+    await _api.post(ApiEndpoints.logout, {
+      'refreshToken': ?refreshToken,
+    });
+  }
+
+  @override
+  Future<UserModel> checkAuth(String token) async {
+    final data = await _api.get(ApiEndpoints.me);
     return UserModel.fromJson((data as Map).cast<String, dynamic>());
   }
 }

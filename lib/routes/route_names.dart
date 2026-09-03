@@ -2,10 +2,12 @@
 class RouteNames {
   RouteNames._();
 
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String onboarding = '/onboarding';
   static const String home = '/';
   static const String recommendations = '/recommendations';
   static const String worldMap = '/worldMap';
   static const String cart = '/cart';
   static const String profile = '/profile';
-  static const String login = '/login';
 }

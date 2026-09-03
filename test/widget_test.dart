@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   testWidgets('shows the login page when unauthenticated', (tester) async {
     // Tests don't run bootstrap(), so set the active config manually.
-    AppConfig.instance = AppConfig.fromEnvironment();
+    AppConfig.instance = const AppConfig.dev();
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
@@ -22,7 +22,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.textContaining('Welcome back'), findsOneWidget);
     expect(find.text('Login'), findsWidgets);
   });
 }

@@ -5,7 +5,7 @@
 ## ⚠️ The Catch: What You Need to Watch Out For
 
 - **The "Nested Widget" Pyramid of Doom:** Because everything in Flutter is a widget, layout files can quickly turn into a massive vertical wall of closing brackets (`}`) if left unstructured.
-  > **This framework resolves this** by enforcing the use of reusable shared components (`AppCard`, `AppButton`, `AppInput`) and requiring UI decomposition into named, focused widgets rather than deeply nested inline trees.
+  > **This framework resolves this** by enforcing the use of reusable shared components (`GlassCard`, `PrimaryButton`, `ModernTextField`) and requiring UI decomposition into named, focused widgets rather than deeply nested inline trees.
 
 - **State Management Paradigm Fatigue:** Flutter does not dictate how data should flow. The ecosystem has a history of changing state management favorites (`setState` → `ScopedModel` → `BLoC` → `Provider` → `Riverpod`). Without architectural discipline, developers frequently build leaky codebases.
   > **This framework resolves this** by mandating **Riverpod exclusively** as the state management engine, enforced by `very_good_analysis` linting rules and CI pipeline gates. There is no ambiguity — Riverpod is the only allowed pattern.
@@ -20,15 +20,13 @@ To contrast it against standard CSS/HTML layout engines, here is how cleanly Flu
 
 ```dart
 Widget build(BuildContext context) {
-  return AppCard( // ✅ Framework component — raw Card() is forbidden
-    child: Padding(
-      padding: AppSpacing.edgeInsetsLg,
-      child: Row(
-        children: [
-          const CircleAvatar(
-            backgroundImage: NetworkImage('https://api.dicebear.com/avatar.png'),
-          ),
-          AppSpacing.gapMd, // ✅ Explicit horizontal gap spacing token
+  return GlassCard( // ✅ Framework component — raw Card() is forbidden
+    child: Row(
+      children: [
+        const CircleAvatar(
+          backgroundImage: NetworkImage('https://api.dicebear.com/avatar.png'),
+        ),
+        const Gap(AppSpacing.md), // ✅ Explicit gap widget using spacing token
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

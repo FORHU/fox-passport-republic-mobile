@@ -12,11 +12,15 @@ import 'package:flutter_template/core/services/storage_service.dart';
 /// The refresh call uses a separate, bare [Dio] so it does not recurse through
 /// this interceptor.
 class AuthInterceptor extends QueuedInterceptor {
-  AuthInterceptor(this._storage, {required String baseUrl})
-    : _refreshClient = Dio(BaseOptions(baseUrl: baseUrl));
+  AuthInterceptor(
+    this._storage, {
+    required String baseUrl,
+    this.onUnauthenticated,
+  }) : _refreshClient = Dio(BaseOptions(baseUrl: baseUrl));
 
   final StorageService _storage;
   final Dio _refreshClient;
+  final void Function()? onUnauthenticated;
 
   /// Marks a request that has already been retried after a refresh, to avoid
   /// infinite 401 loops.
@@ -60,6 +64,7 @@ class AuthInterceptor extends QueuedInterceptor {
     final newToken = await _refreshToken();
     if (newToken == null) {
       await _storage.clearSession();
+      onUnauthenticated?.call();
       handler.next(err);
       return;
     }

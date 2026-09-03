@@ -49,12 +49,56 @@ class MockInterceptor extends Interceptor {
         );
       case ApiEndpoints.logout:
         handler.resolve(_ok(options, {'success': true}));
+      case ApiEndpoints.me:
+        // Shape must satisfy both AuthRemoteDataSource.checkAuth (needs
+        // id/email/name/token) and ProfileRemoteDataSource (needs the extra
+        // bio/joinedAt fields) — each feature parses its own DTO from it.
+        handler.resolve(
+          _ok(options, {
+            'id': '1',
+            'email': 'ada@example.com',
+            'name': 'Ada Lovelace',
+            'token': 'mock-access-token',
+            'refreshToken': 'mock-refresh-token',
+            'bio': 'Building great things with Flutter.',
+            'joinedAt': '2024-01-15T00:00:00.000Z',
+          }),
+        );
       case ApiEndpoints.users:
         handler.resolve(
           _ok(options, {
             'data': [
               {'id': '1', 'name': 'Ada Lovelace'},
               {'id': '2', 'name': 'Alan Turing'},
+              {'id': '3', 'name': 'Grace Hopper'},
+            ],
+          }),
+        );
+      case ApiEndpoints.nearbyStores:
+        handler.resolve(
+          _ok(options, {
+            'data': [
+              {
+                'id': '1',
+                'name': 'Downtown Market',
+                'address': '123 Main St',
+                'distanceKm': 0.8,
+                'rating': 4.5,
+              },
+              {
+                'id': '2',
+                'name': 'Riverside Grocers',
+                'address': '45 River Rd',
+                'distanceKm': 1.6,
+                'rating': 4.2,
+              },
+              {
+                'id': '3',
+                'name': 'Uptown Pantry',
+                'address': '9 Hilltop Ave',
+                'distanceKm': 2.3,
+                'rating': 4.8,
+              },
             ],
           }),
         );

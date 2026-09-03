@@ -27,9 +27,9 @@ class AppSpacing {
 }
 
 extension SpaceX on num {
-  /// Returns a horizontal SizedBox of [this] width.
+  /// Returns a horizontal SizedBox of `this` width.
   Widget get h => SizedBox(width: toDouble());
-  
-  /// Returns a vertical SizedBox of [this] height.
+
+  /// Returns a vertical SizedBox of `this` height.
   Widget get v => SizedBox(height: toDouble());
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// A reusable, standardized AppBar for the application.
-/// It implements [PreferredSizeWidget] so it can be used directly in the `Scaffold.appBar` slot.
+/// It implements [PreferredSizeWidget] so it can be used directly in the
+/// `Scaffold.appBar` slot.
 class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AppAppBar({
-    super.key,
     required this.titleText,
+    super.key,
     this.actions,
     this.leading,
     this.centerTitle = true,
@@ -17,7 +18,8 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Optional list of widgets to display at the right side of the app bar.
   final List<Widget>? actions;
 
-  /// Optional widget to display at the left side of the app bar (e.g., custom back button).
+  /// Optional widget to display at the left side of the app bar (e.g., a
+  /// custom back button).
   final Widget? leading;
 
   /// Whether the title should be centered. Defaults to true.

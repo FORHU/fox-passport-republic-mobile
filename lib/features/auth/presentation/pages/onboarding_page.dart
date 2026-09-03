@@ -1,0 +1,233 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/widgets/buttons.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
+import 'package:flutter_template/theme/tokens/spacing.dart';
+import 'package:go_router/go_router.dart';
+
+/// A one-time onboarding flow shown to new users after registration / first
+/// launch. Mark it seen in [StorageService] and navigate to home.
+///
+/// CUSTOMIZE: Replace the `_slides` content with your own copy and icons.
+class OnboardingPage extends ConsumerStatefulWidget {
+  const OnboardingPage({super.key});
+
+  @override
+  ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends ConsumerState<OnboardingPage> {
+  final _controller = PageController();
+  int _currentPage = 0;
+
+  static const _slides = [
+    _Slide(
+      icon: Icons.rocket_launch_rounded,
+      title: 'Get started fast',
+      body:
+          'This template ships a complete clean architecture skeleton so '
+          'you can jump straight into your features.',
+    ),
+    _Slide(
+      icon: Icons.palette_rounded,
+      title: 'Premium design system',
+      body:
+          'Design tokens, dark-glass aesthetics, and a full component '
+          'library — ready to customize.',
+    ),
+    _Slide(
+      icon: Icons.lock_rounded,
+      title: 'Auth out of the box',
+      body:
+          'Secure token storage, silent refresh, router guards, and '
+          'registration — all wired up.',
+    ),
+  ];
+
+  Future<void> _finish() async {
+    await ref.read(storageServiceProvider).setOnboardingSeen();
+    if (mounted) context.go(RouteNames.home);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLast = _currentPage == _slides.length - 1;
+
+    return Scaffold(
+      backgroundColor: AppColors.ui.backgroundDark,
+      body: Stack(
+        children: [
+          // Subtle ambient glow
+          Positioned(
+            top: -100,
+            left: -80,
+            child: Container(
+              width: 400,
+              height: 400,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.brand.primary.withValues(alpha: 0.20),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip button
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: TextButton(
+                      onPressed: _finish,
+                      child: Text(
+                        'Skip',
+                        style: TextStyle(color: AppColors.text.tertiaryDark),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Page view
+                Expanded(
+                  child: PageView.builder(
+                    controller: _controller,
+                    itemCount: _slides.length,
+                    onPageChanged: (i) => setState(() => _currentPage = i),
+                    itemBuilder: (context, index) =>
+                        _SlidePage(slide: _slides[index]),
+                  ),
+                ),
+
+                // Dots indicator
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _slides.length,
+                    (i) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 280),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: i == _currentPage ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: i == _currentPage
+                            ? AppColors.brand.primary
+                            : AppColors.ui.borderDark,
+                        borderRadius: AppRadius.brPill,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
+                // CTA
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
+                  child: GradientButton(
+                    label: isLast ? "Let's go!" : 'Next',
+                    onPressed: isLast
+                        ? _finish
+                        : () => _controller.nextPage(
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                          ),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SlidePage extends StatelessWidget {
+  const _SlidePage({required this.slide});
+  final _Slide slide;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.brand.primary.withValues(alpha: 0.45),
+                      blurRadius: 32,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: Icon(slide.icon, size: 56, color: Colors.white),
+              )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .scale(begin: const Offset(0.85, 0.85)),
+          const SizedBox(height: AppSpacing.xl),
+          Text(
+                slide.title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: AppColors.text.primaryDark,
+                  fontWeight: FontWeight.w800,
+                ),
+              )
+              .animate()
+              .fadeIn(delay: 80.ms, duration: 400.ms)
+              .slideY(begin: 0.2, end: 0),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            slide.body,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppColors.text.secondaryDark,
+              height: 1.5,
+            ),
+          ).animate().fadeIn(delay: 160.ms, duration: 400.ms),
+        ],
+      ),
+    );
+  }
+}
+
+class _Slide {
+  const _Slide({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+}

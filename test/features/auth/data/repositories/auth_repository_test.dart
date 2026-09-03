@@ -11,7 +11,12 @@ class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 
 class MockStorageService extends Mock implements StorageService {}
 
+class FakeUserModel extends Fake implements UserModel {}
+
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeUserModel());
+  });
   late MockAuthRemoteDataSource mockRemote;
   late MockStorageService mockStorage;
   late AuthRepositoryImpl repository;
@@ -40,6 +45,7 @@ void main() {
       ).thenAnswer((_) async => tUser);
       when(() => mockStorage.saveToken(any())).thenAnswer((_) async {});
       when(() => mockStorage.saveRefreshToken(any())).thenAnswer((_) async {});
+      when(() => mockStorage.saveUserModel(any())).thenAnswer((_) async {});
 
       // Act
       final result = await repository.login(tEmail, tPassword);
@@ -114,6 +120,8 @@ void main() {
   group('AuthRepositoryImpl.logout', () {
     test('clears the session and returns Right(null)', () async {
       // Arrange
+      when(() => mockStorage.readRefreshToken()).thenAnswer((_) async => null);
+      when(() => mockRemote.logout(any())).thenAnswer((_) async {});
       when(() => mockStorage.clearSession()).thenAnswer((_) async {});
 
       // Act
@@ -128,6 +136,10 @@ void main() {
       'returns Left(CacheFailure) when clearing the session throws',
       () async {
         // Arrange
+        when(
+          () => mockStorage.readRefreshToken(),
+        ).thenAnswer((_) async => null);
+        when(() => mockRemote.logout(any())).thenAnswer((_) async {});
         when(
           () => mockStorage.clearSession(),
         ).thenThrow(Exception('disk error'));

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/validators.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/widgets/app_button.dart';
-import 'package:flutter_template/shared/widgets/app_input.dart';
+import 'package:flutter_template/shared/widgets/buttons.dart';
+import 'package:flutter_template/shared/widgets/modern_text_field.dart';
+import 'package:flutter_template/shared/widgets/top_toast.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
@@ -20,6 +23,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -36,7 +40,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         .login(_emailController.text, _passwordController.text);
 
     if (!mounted) return;
-    if (success) context.go(RouteNames.home);
+
+    if (success) {
+      context.go(RouteNames.home);
+    } else {
+      final error = ref.read(authControllerProvider).error;
+      if (error != null) showTopToast(context, error);
+    }
   }
 
   @override
@@ -48,34 +58,79 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppInput(
-            label: context.l10n.email,
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            prefixIcon: Icons.email_outlined,
-            validator: Validators.email,
-          ),
+          ModernTextField(
+                label: context.l10n.email,
+                hint: 'you@example.com',
+                controller: _emailController,
+                prefixIcon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                validator: Validators.email,
+              )
+              .animate()
+              .fadeIn(delay: 100.ms, duration: 350.ms)
+              .slideY(begin: 0.1, end: 0),
+
           AppSpacing.md.v,
-          AppInput(
-            label: context.l10n.password,
-            controller: _passwordController,
-            obscureText: true,
-            prefixIcon: Icons.lock_outline,
-            validator: Validators.password,
-          ),
-          if (state.error != null) ...[
-            AppSpacing.sm.v,
-            Text(
-              state.error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
+
+          ModernTextField(
+                label: context.l10n.password,
+                hint: '••••••••',
+                controller: _passwordController,
+                prefixIcon: Icons.lock_outline_rounded,
+                obscureText: _obscurePassword,
+                validator: Validators.password,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: AppColors.text.tertiaryDark,
+                    size: 20,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
+              )
+              .animate()
+              .fadeIn(delay: 180.ms, duration: 350.ms)
+              .slideY(begin: 0.1, end: 0),
+
+          AppSpacing.xl.v,
+
+          GradientButton(
+                label: context.l10n.login,
+                isLoading: state.isLoading,
+                onPressed: _submit,
+              )
+              .animate()
+              .fadeIn(delay: 260.ms, duration: 350.ms)
+              .slideY(begin: 0.1, end: 0),
+
           AppSpacing.lg.v,
-          AppButton(
-            label: context.l10n.login,
-            isLoading: state.isLoading,
-            onPressed: _submit,
-          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Don't have an account? ",
+                style: TextStyle(
+                  color: AppColors.text.secondaryDark,
+                  fontSize: 14,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => context.go(RouteNames.register),
+                child: Text(
+                  'Sign up',
+                  style: TextStyle(
+                    color: AppColors.brand.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ).animate().fadeIn(delay: 320.ms, duration: 350.ms),
         ],
       ),
     );

@@ -1,33 +1,48 @@
 import 'package:flutter/material.dart';
-import '../tokens/colors.dart';
-import '../tokens/radius.dart';
-import '../tokens/spacing.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
+import 'package:flutter_template/theme/tokens/spacing.dart';
 
 class AppInputTheme {
   AppInputTheme._();
 
   static InputDecorationTheme get inputDecoration => InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(
-            color: AppColors.ui.surfaceDark.withValues(alpha: 0.2),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(
-            color: AppColors.ui.surfaceDark.withValues(alpha: 0.2),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(color: AppColors.brand.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(color: AppColors.status.error, width: 2),
-        ),
-        contentPadding: const EdgeInsets.all(AppSpacing.md),
-        filled: true,
-      );
+    fillColor: AppColors.ui.surfaceMuted,
+    filled: true,
+    contentPadding: const EdgeInsets.all(16),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(
+        color: AppColors.ink.primary,
+        width: 2,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(
+        color: AppColors.status.error,
+        width: 2,
+      ),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(
+        color: AppColors.status.error,
+        width: 2,
+      ),
+    ),
+    hintStyle: TextStyle(
+      color: AppColors.text.tertiary,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
+  );
 }

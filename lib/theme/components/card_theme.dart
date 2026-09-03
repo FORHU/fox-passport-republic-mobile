@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../tokens/radius.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
 
 class AppCardTheme {
   AppCardTheme._();
 
   static CardThemeData get cardTheme => CardThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        elevation: 2,
-        clipBehavior: Clip.antiAlias,
-      );
+    color: AppColors.ui.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.card),
+    ),
+    elevation: 1,
+    clipBehavior: Clip.antiAlias,
+  );
 }

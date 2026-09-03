@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/failure.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/data/repositories/auth_repository.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
@@ -9,14 +10,23 @@ import 'package:mocktail/mocktail.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
+class MockStorageService extends Mock implements StorageService {}
+
 void main() {
   late ProviderContainer container;
   late MockAuthRepository mockRepository;
+  late MockStorageService mockStorage;
 
   setUp(() {
     mockRepository = MockAuthRepository();
+    mockStorage = MockStorageService();
+    when(() => mockStorage.readUserModel()).thenReturn(null);
+
     container = ProviderContainer(
-      overrides: [authRepositoryProvider.overrideWithValue(mockRepository)],
+      overrides: [
+        authRepositoryProvider.overrideWithValue(mockRepository),
+        storageServiceProvider.overrideWithValue(mockStorage),
+      ],
     );
   });
 

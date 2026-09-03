@@ -1,54 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_template/theme/light_theme.dart';
 
-import 'tokens/colors.dart';
-import 'tokens/typography.dart';
-import 'components/button_theme.dart';
-import 'components/input_theme.dart';
-import 'components/card_theme.dart';
-
+/// Dark theme configuration.
+/// Currently mirrors the light theme (mapanytime-app style uses light theme only).
+/// If a separate dark theme is needed in the future, implement it here.
 class DarkTheme {
   DarkTheme._();
 
   static ThemeData build() {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      
-      // Explicit Color Scheme
-      colorScheme: ColorScheme.dark(
-        primary: AppColors.brand.primary,
-        secondary: AppColors.brand.secondary,
-        surface: AppColors.ui.surfaceDark,
-        error: AppColors.status.error,
-        onPrimary: AppColors.ui.surface,
-        onSecondary: AppColors.ui.surface,
-        onSurface: AppColors.text.primaryDark,
-        onError: AppColors.ui.surface,
-      ),
-
-      scaffoldBackgroundColor: AppColors.ui.backgroundDark,
-      
-      // Global Typography
-      textTheme: AppTypography.textTheme.apply(
-        bodyColor: AppColors.text.primaryDark,
-        displayColor: AppColors.text.primaryDark,
-      ),
-
-      // AppBar
-      appBarTheme: AppBarTheme(
-        centerTitle: true,
-        backgroundColor: AppColors.ui.backgroundDark,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.text.primaryDark),
-        titleTextStyle: AppTypography.textTheme.titleLarge?.copyWith(
-          color: AppColors.text.primaryDark,
-        ),
-      ),
-
-      // Components (These will automatically adapt colors based on Context, but we reuse the shapes)
-      elevatedButtonTheme: AppButtonTheme.elevated,
-      inputDecorationTheme: AppInputTheme.inputDecoration,
-      cardTheme: AppCardTheme.cardTheme,
-    );
+    /// For now, use the light theme for dark mode as well.
+    /// This matches mapanytime-app's design system which doesn't have a dark variant.
+    return LightTheme.build();
   }
+}
 }
