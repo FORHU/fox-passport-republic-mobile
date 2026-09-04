@@ -27,9 +27,12 @@ class QuizScoreSummaryDialog extends StatelessWidget {
       backgroundColor: AppColors.ui.surface,
       title: Row(
         children: [
-          Icon(Icons.emoji_events_rounded,
-              color: AppColors.status.warning, size: 28),
-          SizedBox(width: AppSpacing.sm),
+          Icon(
+            Icons.emoji_events_rounded,
+            color: AppColors.status.warning,
+            size: 28,
+          ),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             'Quiz Performance',
             style: TextStyle(
@@ -76,7 +79,7 @@ class QuizScoreSummaryDialog extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _buildMetricRow(
             label: 'Questions Answered',
             value: '${progress.answeredCount} / $totalQuestions',
@@ -100,8 +103,9 @@ class QuizScoreSummaryDialog extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.ink.primary,
             foregroundColor: Colors.white,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           onPressed: () {
             Navigator.of(context).pop();

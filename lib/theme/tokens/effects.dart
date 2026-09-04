@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// Design tokens — elevation, shadows, blur and glow effects.
 class AppEffects {
@@ -38,6 +37,15 @@ class AppEffects {
       color: Colors.black.withValues(alpha: 0.08),
       blurRadius: 4,
       offset: const Offset(0, 1),
+    ),
+  ];
+
+  /// Primary glow shadow for CTA buttons
+  static List<BoxShadow> get primaryGlow => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.15),
+      blurRadius: 16,
+      offset: const Offset(0, 4),
     ),
   ];
 }

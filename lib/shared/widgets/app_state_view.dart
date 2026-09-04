@@ -55,9 +55,9 @@ class AppStateView extends StatelessWidget {
 
   Color get _accent => switch (kind) {
     AppStateKind.error => AppColors.status.error,
-    AppStateKind.empty => AppColors.text.tertiaryDark,
-    AppStateKind.notFound => AppColors.brand.primaryBright,
-    AppStateKind.info => AppColors.brand.primaryBright,
+    AppStateKind.empty => AppColors.text.tertiary,
+    AppStateKind.notFound => AppColors.ink.primary,
+    AppStateKind.info => AppColors.ink.primary,
   };
 
   static IconData _defaultIconFor(AppStateKind kind) => switch (kind) {
@@ -92,7 +92,7 @@ class AppStateView extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.text.primaryDark,
+                color: AppColors.text.primary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -103,7 +103,7 @@ class AppStateView extends StatelessWidget {
                 message!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.text.secondaryDark,
+                  color: AppColors.text.secondary,
                   fontSize: 14,
                   height: 1.4,
                 ),

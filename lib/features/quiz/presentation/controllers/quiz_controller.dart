@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
@@ -6,13 +7,39 @@ import 'package:flutter_template/features/quiz/data/datasources/quiz_remote_data
 import 'package:flutter_template/features/quiz/data/repositories/quiz_repository.dart';
 import 'package:flutter_template/features/quiz/domain/entities/quiz_progress.dart';
 import 'package:flutter_template/features/quiz/domain/entities/quiz_question.dart';
+import 'package:flutter_template/features/quiz/domain/usecases/get_quiz_progress_usecase.dart';
+import 'package:flutter_template/features/quiz/domain/usecases/get_quiz_questions_usecase.dart';
+import 'package:flutter_template/features/quiz/domain/usecases/reset_quiz_progress_usecase.dart';
+import 'package:flutter_template/features/quiz/domain/usecases/save_quiz_progress_usecase.dart';
 
-// --- Dependency wiring ---
+// --- Providers ---
+
+final quizRemoteDataSourceProvider = Provider<QuizRemoteDataSource>((ref) {
+  return QuizRemoteDataSourceImpl(ref.watch(apiServiceProvider));
+});
 
 final quizRepositoryProvider = Provider<QuizRepository>((ref) {
-  final remote = QuizRemoteDataSourceImpl(ref.watch(apiServiceProvider));
-  return QuizRepositoryImpl(remote);
+  return QuizRepositoryImpl(ref.watch(quizRemoteDataSourceProvider));
 });
+
+final getQuizQuestionsUseCaseProvider = Provider<GetQuizQuestionsUseCase>(
+  (ref) => GetQuizQuestionsUseCase(ref.watch(quizRepositoryProvider)),
+);
+
+final getQuizProgressUseCaseProvider = Provider<GetQuizProgressUseCase>(
+  (ref) => GetQuizProgressUseCase(ref.watch(quizRepositoryProvider)),
+);
+
+final saveQuizProgressUseCaseProvider = Provider<SaveQuizProgressUseCase>(
+  (ref) => SaveQuizProgressUseCase(ref.watch(quizRepositoryProvider)),
+);
+
+final resetQuizProgressUseCaseProvider = Provider<ResetQuizProgressUseCase>(
+  (ref) => ResetQuizProgressUseCase(ref.watch(quizRepositoryProvider)),
+);
+
+final quizControllerProvider =
+    NotifierProvider<QuizController, QuizState>(QuizController.new);
 
 // --- State ---
 
@@ -22,7 +49,11 @@ class QuizState extends Equatable {
     this.isSubmitting = false,
     this.questions = const [],
     this.currentIndex = 0,
-    this.progress = const QuizProgress(answers: {}, score: 0, answeredCount: 0),
+    this.progress = const QuizProgress(
+      answers: {},
+      score: 0,
+      answeredCount: 0,
+    ),
     this.selectedCategory = 'ALL',
     this.selectedDifficulty = 'ALL',
     this.searchQuery = '',
@@ -69,6 +100,7 @@ class QuizState extends Equatable {
     String? selectedDifficulty,
     String? searchQuery,
     String? error,
+    bool clearError = false,
   }) {
     return QuizState(
       isLoading: isLoading ?? this.isLoading,
@@ -79,7 +111,7 @@ class QuizState extends Equatable {
       selectedCategory: selectedCategory ?? this.selectedCategory,
       selectedDifficulty: selectedDifficulty ?? this.selectedDifficulty,
       searchQuery: searchQuery ?? this.searchQuery,
-      error: error,
+      error: clearError ? null : (error ?? this.error),
     );
   }
 
@@ -102,19 +134,20 @@ class QuizState extends Equatable {
 class QuizController extends Notifier<QuizState> {
   @override
   QuizState build() {
-    unawaited(Future.microtask(() async {
-      await loadProgress();
-      await loadQuestions();
-    }));
+    unawaited(
+      Future.microtask(() async {
+        await loadProgress();
+        await loadQuestions();
+      }),
+    );
     return const QuizState(isLoading: true);
   }
 
-  QuizRepository get _repo => ref.read(quizRepositoryProvider);
-
   Future<void> loadQuestions() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, clearError: true);
 
-    final result = await _repo.getQuestions(
+    final useCase = ref.read(getQuizQuestionsUseCaseProvider);
+    final result = await useCase(
       category: state.selectedCategory,
       difficulty: state.selectedDifficulty,
       search: state.searchQuery,
@@ -128,12 +161,15 @@ class QuizController extends Notifier<QuizState> {
       (items) => state = state.copyWith(
         isLoading: false,
         questions: items,
+        currentIndex: 0,
+        clearError: true,
       ),
     );
   }
 
   Future<void> loadProgress() async {
-    final result = await _repo.getProgress();
+    final useCase = ref.read(getQuizProgressUseCaseProvider);
+    final result = await useCase();
     result.fold(
       (_) => null,
       (prog) => state = state.copyWith(progress: prog),
@@ -141,30 +177,30 @@ class QuizController extends Notifier<QuizState> {
   }
 
   Future<void> selectOption(int optionIndex) async {
-    final q = state.currentQuestion;
-    if (q == null || state.hasAnsweredCurrent) return;
+    final question = state.currentQuestion;
+    if (question == null || state.hasAnsweredCurrent) return;
 
-    final updatedAnswers = Map<int, int>.from(state.progress.answers)
-      ..[q.id] = optionIndex;
-    final isCorrect = optionIndex == q.correctIndex;
+    final isCorrect = optionIndex == question.correctIndex;
+    final updatedAnswers = Map<int, int>.from(state.progress.answers);
+    updatedAnswers[question.id] = optionIndex;
+
     final newScore = state.progress.score + (isCorrect ? 10 : 0);
-    final newAnsweredCount = updatedAnswers.length;
+    final newAnsweredCount = state.progress.answeredCount + 1;
 
-    final updatedProgress = QuizProgress(
+    final newProgress = state.progress.copyWith(
       answers: updatedAnswers,
       score: newScore,
       answeredCount: newAnsweredCount,
     );
 
-    state = state.copyWith(progress: updatedProgress);
+    state = state.copyWith(progress: newProgress);
 
-    // Persist to backend
-    unawaited(
-      _repo.saveProgress(
-        answers: updatedAnswers,
-        score: newScore,
-        answeredCount: newAnsweredCount,
-      ),
+    // Save to PostgreSQL via UseCase
+    final saveUseCase = ref.read(saveQuizProgressUseCaseProvider);
+    await saveUseCase(
+      answers: updatedAnswers,
+      score: newScore,
+      answeredCount: newAnsweredCount,
     );
   }
 
@@ -186,39 +222,37 @@ class QuizController extends Notifier<QuizState> {
     }
   }
 
-  Future<void> setCategory(String category) async {
+  void setCategory(String category) {
     if (state.selectedCategory == category) return;
     state = state.copyWith(selectedCategory: category);
-    await loadQuestions();
+    unawaited(loadQuestions());
   }
 
-  Future<void> setDifficulty(String difficulty) async {
+  void setDifficulty(String difficulty) {
     if (state.selectedDifficulty == difficulty) return;
     state = state.copyWith(selectedDifficulty: difficulty);
-    await loadQuestions();
+    unawaited(loadQuestions());
   }
 
-  Future<void> setSearch(String query) async {
+  void setSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
-    await loadQuestions();
+    unawaited(loadQuestions());
   }
 
   Future<void> resetProgress() async {
-    state = state.copyWith(isSubmitting: true);
-    final result = await _repo.resetProgress();
+    state = state.copyWith(isLoading: true);
+    final resetUseCase = ref.read(resetQuizProgressUseCaseProvider);
+    final result = await resetUseCase();
     result.fold(
       (failure) => state = state.copyWith(
-        isSubmitting: false,
+        isLoading: false,
         error: failure.message,
       ),
-      (freshProgress) => state = state.copyWith(
-        isSubmitting: false,
-        progress: freshProgress,
-        currentIndex: 0,
+      (resetProg) => state = state.copyWith(
+        isLoading: false,
+        progress: resetProg,
+        clearError: true,
       ),
     );
   }
 }
-
-final quizControllerProvider =
-    NotifierProvider<QuizController, QuizState>(QuizController.new);

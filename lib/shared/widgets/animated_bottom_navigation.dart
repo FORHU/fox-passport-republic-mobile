@@ -51,10 +51,10 @@ class AnimatedBottomNavigation extends StatelessWidget {
           height: 70,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           decoration: BoxDecoration(
-            color: AppColors.ui.surfaceDark.withValues(alpha: 0.92),
+            color: AppColors.ui.surface,
             borderRadius: AppRadius.brPill,
-            border: Border.all(color: AppColors.ui.borderDark),
-            boxShadow: AppEffects.cardShadow,
+            border: Border.all(color: AppColors.ui.borderHairline),
+            boxShadow: AppEffects.surfaceShadow,
           ),
           child: Row(
             children: [
@@ -87,8 +87,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = AppColors.brand.primary;
-    final muted = AppColors.text.tertiaryDark;
+    final primary = AppColors.ink.primary;
+    final muted = AppColors.text.tertiary;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -108,7 +108,7 @@ class _NavItem extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: selected
-                      ? primary.withValues(alpha: 0.16)
+                      ? primary.withValues(alpha: 0.08)
                       : Colors.transparent,
                   borderRadius: AppRadius.brPill,
                 ),
@@ -129,7 +129,7 @@ class _NavItem extends StatelessWidget {
                       color: AppColors.status.error,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.ui.surfaceDark,
+                        color: AppColors.ui.surface,
                         width: 1.5,
                       ),
                     ),

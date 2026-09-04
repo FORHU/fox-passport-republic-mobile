@@ -5,6 +5,8 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/effects.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
 
 /// Profile screen backed by the full data/domain/presentation stack — see
@@ -22,13 +24,16 @@ class ProfilePage extends ConsumerWidget {
     final email = state.profile?.email ?? sessionUser?.email;
 
     return Scaffold(
-      backgroundColor: AppColors.ui.backgroundDark,
+      backgroundColor: AppColors.ui.background,
       appBar: AppBar(
         title: Text(
           context.l10n.profile,
-          style: TextStyle(color: AppColors.text.primaryDark),
+          style: TextStyle(
+            color: AppColors.text.primary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        backgroundColor: AppColors.ui.backgroundDark,
+        backgroundColor: AppColors.ui.background,
         elevation: 0,
       ),
       body: RefreshIndicator(
@@ -39,89 +44,103 @@ class ProfilePage extends ConsumerWidget {
           child: Center(
             child: Padding(
               padding: AppSpacing.edgeInsetsLg,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: AppColors.brand.primary.withValues(
-                      alpha: 0.2,
-                    ),
-                    child: Text(
-                      (name?.isNotEmpty ?? false)
-                          ? name![0].toUpperCase()
-                          : '?',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.brand.primary,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Container(
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  decoration: BoxDecoration(
+                    color: AppColors.ui.surface,
+                    borderRadius: AppRadius.brCard,
+                    border: Border.all(color: AppColors.ui.borderHairline),
+                    boxShadow: AppEffects.surfaceShadow,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 42,
+                        backgroundColor: AppColors.ink.primary,
+                        child: Text(
+                          (name?.isNotEmpty ?? false)
+                              ? name![0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    name ?? 'Unknown',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.text.primaryDark,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    email ?? '-',
-                    style: TextStyle(color: AppColors.text.secondaryDark),
-                  ),
-                  if (state.isLoading && state.profile == null) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ],
-                  if (state.profile?.bio != null) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      state.profile!.bio!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.text.secondaryDark),
-                    ),
-                  ],
-                  if (state.error != null && state.profile == null) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    Icon(
-                      Icons.error_outline_rounded,
-                      color: AppColors.status.error,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'Could not load full profile — showing session data.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.text.secondaryDark),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    PrimaryButton(
-                      label: 'Retry',
-                      expand: false,
-                      onPressed: () => ref
-                          .read(profileControllerProvider.notifier)
-                          .fetchProfile(),
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(
+                        name ?? 'Unknown',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: AppColors.text.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        email ?? '-',
+                        style: TextStyle(
+                          color: AppColors.text.secondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (state.isLoading && state.profile == null) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ],
+                      if (state.profile?.bio != null) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        Text(
+                          state.profile!.bio!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.text.secondary),
+                        ),
+                      ],
+                      if (state.error != null && state.profile == null) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        Icon(
+                          Icons.error_outline_rounded,
+                          color: AppColors.status.error,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          'Could not load full profile — showing session data.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.text.secondary),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        PrimaryButton(
+                          label: 'Retry',
+                          expand: false,
+                          onPressed: () => ref
+                              .read(profileControllerProvider.notifier)
+                              .fetchProfile(),
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.xl),
 
-                  TextButton.icon(
-                    icon: Icon(
-                      Icons.logout_rounded,
-                      color: AppColors.status.error,
-                    ),
-                    label: Text(
-                      'Sign out',
-                      style: TextStyle(color: AppColors.status.error),
-                    ),
-                    onPressed: () =>
-                        ref.read(authControllerProvider.notifier).logout(),
+                      TextButton.icon(
+                        icon: Icon(
+                          Icons.logout_rounded,
+                          color: AppColors.status.error,
+                        ),
+                        label: Text(
+                          'Sign out',
+                          style: TextStyle(color: AppColors.status.error),
+                        ),
+                        onPressed: () =>
+                            ref.read(authControllerProvider.notifier).logout(),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
 
 /// App shell: hosts the routed [child] and the premium glass bottom navigation.
@@ -74,6 +75,7 @@ class MainLayout extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: AppColors.ui.background,
       body: child,
       bottomNavigationBar: AnimatedBottomNavigation(
         items: [for (final d in destinations) d.item],

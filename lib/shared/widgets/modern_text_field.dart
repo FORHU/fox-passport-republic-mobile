@@ -3,7 +3,7 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:gap/gap.dart';
 
-/// A premium dark text field with an optional floating label and icons.
+/// An ink-on-white text field aligned with the mapanytime-app design system.
 class ModernTextField extends StatelessWidget {
   const ModernTextField({
     this.label,
@@ -39,7 +39,7 @@ class ModernTextField extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.text.secondaryDark,
+              color: AppColors.text.secondary,
             ),
           ),
           const Gap(8),
@@ -50,15 +50,15 @@ class ModernTextField extends StatelessWidget {
           keyboardType: keyboardType,
           onChanged: onChanged,
           validator: validator,
-          style: TextStyle(color: AppColors.text.primaryDark, fontSize: 15),
-          cursorColor: AppColors.brand.primary,
+          style: TextStyle(color: AppColors.text.primary, fontSize: 15),
+          cursorColor: AppColors.ink.primary,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: AppColors.text.tertiaryDark),
+            hintStyle: TextStyle(color: AppColors.text.tertiary),
             filled: true,
-            fillColor: AppColors.ui.surfaceElevatedDark,
+            fillColor: AppColors.ui.surfaceMuted,
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.text.secondaryDark)
+                ? Icon(prefixIcon, color: AppColors.text.secondary, size: 20)
                 : null,
             suffixIcon: suffixIcon,
             contentPadding: const EdgeInsets.symmetric(
@@ -66,17 +66,31 @@ class ModernTextField extends StatelessWidget {
               vertical: 16,
             ),
             border: OutlineInputBorder(
-              borderRadius: AppRadius.brMd,
-              borderSide: BorderSide(color: AppColors.ui.borderDark),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              borderSide: BorderSide(color: AppColors.ui.borderHairline),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: AppRadius.brMd,
-              borderSide: BorderSide(color: AppColors.ui.borderDark),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              borderSide: BorderSide(color: AppColors.ui.borderHairline),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: AppRadius.brMd,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
               borderSide: BorderSide(
-                color: AppColors.brand.primary,
+                color: AppColors.ink.primary,
+                width: 1.5,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              borderSide: BorderSide(
+                color: AppColors.status.error,
+                width: 1.5,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              borderSide: BorderSide(
+                color: AppColors.status.error,
                 width: 1.5,
               ),
             ),

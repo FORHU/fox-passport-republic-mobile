@@ -22,13 +22,13 @@ class WorldMapPage extends ConsumerWidget {
     final state = ref.watch(worldMapControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.ui.backgroundDark,
+      backgroundColor: AppColors.ui.background,
       appBar: AppBar(
         title: Text(
           context.l10n.worldMap,
-          style: TextStyle(color: AppColors.text.primaryDark),
+          style: TextStyle(color: AppColors.text.primary),
         ),
-        backgroundColor: AppColors.ui.backgroundDark,
+        backgroundColor: AppColors.ui.background,
         elevation: 0,
       ),
       body: RefreshIndicator(
@@ -66,13 +66,13 @@ class WorldMapPage extends ConsumerWidget {
     return ListView.separated(
       padding: AppSpacing.edgeInsetsMd,
       itemCount: state.stores.length,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
         final store = state.stores[index];
         return AppCard(
           child: Row(
             children: [
-              Icon(Icons.place_outlined, color: AppColors.brand.primary),
+              Icon(Icons.place_outlined, color: AppColors.ink.primary),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -81,13 +81,13 @@ class WorldMapPage extends ConsumerWidget {
                     Text(
                       store.name,
                       style: TextStyle(
-                        color: AppColors.text.primaryDark,
+                        color: AppColors.text.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       store.address,
-                      style: TextStyle(color: AppColors.text.secondaryDark),
+                      style: TextStyle(color: AppColors.text.secondary),
                     ),
                   ],
                 ),
@@ -97,7 +97,7 @@ class WorldMapPage extends ConsumerWidget {
                 children: [
                   Text(
                     '${store.distanceKm.toStringAsFixed(1)} km',
-                    style: TextStyle(color: AppColors.text.secondaryDark),
+                    style: TextStyle(color: AppColors.text.secondary),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -110,7 +110,7 @@ class WorldMapPage extends ConsumerWidget {
                       const SizedBox(width: 2),
                       Text(
                         store.rating.toStringAsFixed(1),
-                        style: TextStyle(color: AppColors.text.secondaryDark),
+                        style: TextStyle(color: AppColors.text.secondary),
                       ),
                     ],
                   ),

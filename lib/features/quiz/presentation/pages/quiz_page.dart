@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/quiz/presentation/controllers/quiz_controller.dart';
@@ -53,8 +55,11 @@ class QuizPage extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.stars_rounded,
-                    color: AppColors.status.warning, size: 16),
+                Icon(
+                  Icons.stars_rounded,
+                  color: AppColors.status.warning,
+                  size: 16,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '${state.progress.score} pts',
@@ -69,20 +74,24 @@ class QuizPage extends ConsumerWidget {
           ),
           IconButton(
             tooltip: 'View Performance',
-            icon: Icon(Icons.emoji_events_outlined,
-                color: AppColors.text.primary),
+            icon: Icon(
+              Icons.emoji_events_outlined,
+              color: AppColors.text.primary,
+            ),
             onPressed: () {
-              showDialog<void>(
-                context: context,
-                builder: (_) => QuizScoreSummaryDialog(
-                  progress: state.progress,
-                  totalQuestions: state.questions.length,
-                  onReset: controller.resetProgress,
+              unawaited(
+                showDialog<void>(
+                  context: context,
+                  builder: (_) => QuizScoreSummaryDialog(
+                    progress: state.progress,
+                    totalQuestions: state.questions.length,
+                    onReset: controller.resetProgress,
+                  ),
                 ),
               );
             },
           ),
-          SizedBox(width: AppSpacing.xs),
+          const SizedBox(width: AppSpacing.xs),
         ],
       ),
       body: SafeArea(
@@ -105,9 +114,9 @@ class QuizPage extends ConsumerWidget {
 
     return Container(
       height: 48,
-      margin: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      margin: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
@@ -147,7 +156,10 @@ class QuizPage extends ConsumerWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: 4,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -176,7 +188,7 @@ class QuizPage extends ConsumerWidget {
           valueColor: AlwaysStoppedAnimation<Color>(AppColors.ink.primary),
           minHeight: 3,
         ),
-        SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.md),
       ],
     );
   }
@@ -188,7 +200,7 @@ class QuizPage extends ConsumerWidget {
 
     if (state.error != null && state.questions.isEmpty) {
       return AppStateView(
-        type: AppStateType.error,
+        kind: AppStateKind.error,
         title: 'Could not load quiz questions',
         message: state.error,
         actionLabel: 'Retry',
@@ -199,7 +211,7 @@ class QuizPage extends ConsumerWidget {
 
     if (state.questions.isEmpty) {
       return AppStateView(
-        type: AppStateType.empty,
+        kind: AppStateKind.empty,
         title: 'No questions found',
         message: 'Try selecting a different category filter.',
         actionLabel: 'Reset filter',
@@ -216,7 +228,9 @@ class QuizPage extends ConsumerWidget {
       question: question,
       selectedOption: state.currentAnswer,
       onOptionSelected: (optIndex) {
-        ref.read(quizControllerProvider.notifier).selectOption(optIndex);
+        unawaited(
+          ref.read(quizControllerProvider.notifier).selectOption(optIndex),
+        );
       },
     );
   }
@@ -227,8 +241,10 @@ class QuizPage extends ConsumerWidget {
     final isLast = state.currentIndex == state.questions.length - 1;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: AppColors.ui.surface,
         border: Border(top: BorderSide(color: AppColors.ui.borderHairline)),
@@ -241,7 +257,8 @@ class QuizPage extends ConsumerWidget {
               foregroundColor: AppColors.text.primary,
               side: BorderSide(color: AppColors.ui.borderHairline),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             onPressed: isFirst ? null : controller.previousQuestion,
@@ -253,7 +270,8 @@ class QuizPage extends ConsumerWidget {
               backgroundColor: AppColors.ink.primary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
             onPressed: isLast ? null : controller.nextQuestion,

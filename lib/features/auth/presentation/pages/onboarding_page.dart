@@ -5,6 +5,7 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/effects.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:go_router/go_router.dart';
@@ -36,7 +37,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       icon: Icons.palette_rounded,
       title: 'Premium design system',
       body:
-          'Design tokens, dark-glass aesthetics, and a full component '
+          'Design tokens, ink-on-white aesthetics, and a full component '
           'library — ready to customize.',
     ),
     _Slide(
@@ -64,100 +65,83 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     final isLast = _currentPage == _slides.length - 1;
 
     return Scaffold(
-      backgroundColor: AppColors.ui.backgroundDark,
-      body: Stack(
-        children: [
-          // Subtle ambient glow
-          Positioned(
-            top: -100,
-            left: -80,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.brand.primary.withValues(alpha: 0.20),
-                    Colors.transparent,
-                  ],
+      backgroundColor: AppColors.ui.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Skip button
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: TextButton(
+                  onPressed: _finish,
+                  child: Text(
+                    'Skip',
+                    style: TextStyle(
+                      color: AppColors.text.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
 
-          SafeArea(
-            child: Column(
-              children: [
-                // Skip button
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: TextButton(
-                      onPressed: _finish,
-                      child: Text(
-                        'Skip',
-                        style: TextStyle(color: AppColors.text.tertiaryDark),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Page view
-                Expanded(
-                  child: PageView.builder(
-                    controller: _controller,
-                    itemCount: _slides.length,
-                    onPageChanged: (i) => setState(() => _currentPage = i),
-                    itemBuilder: (context, index) =>
-                        _SlidePage(slide: _slides[index]),
-                  ),
-                ),
-
-                // Dots indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _slides.length,
-                    (i) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 280),
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: i == _currentPage ? 24 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: i == _currentPage
-                            ? AppColors.brand.primary
-                            : AppColors.ui.borderDark,
-                        borderRadius: AppRadius.brPill,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                // CTA
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                  ),
-                  child: GradientButton(
-                    label: isLast ? "Let's go!" : 'Next',
-                    onPressed: isLast
-                        ? _finish
-                        : () => _controller.nextPage(
-                            duration: const Duration(milliseconds: 350),
-                            curve: Curves.easeOutCubic,
-                          ),
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-              ],
+            // Page view
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: _slides.length,
+                onPageChanged: (i) => setState(() => _currentPage = i),
+                itemBuilder: (context, index) =>
+                    _SlidePage(slide: _slides[index]),
+              ),
             ),
-          ),
-        ],
+
+            // Dots indicator
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _slides.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 280),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: i == _currentPage ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: i == _currentPage
+                        ? AppColors.ink.primary
+                        : AppColors.ui.borderHairline,
+                    borderRadius: AppRadius.brPill,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            // CTA
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: PrimaryButton(
+                  label: isLast ? "Let's go!" : 'Next',
+                  onPressed: isLast
+                      ? _finish
+                      : () => _controller.nextPage(
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOutCubic,
+                        ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+          ],
+        ),
       ),
     );
   }
@@ -175,20 +159,14 @@ class _SlidePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-                width: 120,
-                height: 120,
+                width: 110,
+                height: 110,
                 decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
+                  color: AppColors.ink.primary,
                   borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.brand.primary.withValues(alpha: 0.45),
-                      blurRadius: 32,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
+                  boxShadow: AppEffects.softShadow,
                 ),
-                child: Icon(slide.icon, size: 56, color: Colors.white),
+                child: Icon(slide.icon, size: 52, color: Colors.white),
               )
               .animate()
               .fadeIn(duration: 400.ms)
@@ -198,7 +176,7 @@ class _SlidePage extends StatelessWidget {
                 slide.title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppColors.text.primaryDark,
+                  color: AppColors.text.primary,
                   fontWeight: FontWeight.w800,
                 ),
               )
@@ -210,7 +188,7 @@ class _SlidePage extends StatelessWidget {
             slide.body,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.text.secondaryDark,
+              color: AppColors.text.secondary,
               height: 1.5,
             ),
           ).animate().fadeIn(delay: 160.ms, duration: 400.ms),

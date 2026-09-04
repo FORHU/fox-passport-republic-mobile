@@ -38,20 +38,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? countryCode,
     String roleName = 'USER',
   }) async {
-    await _api.post(ApiEndpoints.register, {
+    final payload = <String, dynamic>{
       'email': email,
       'password': password,
-      'name': ?name,
-      'countryCode': ?countryCode,
       'roleName': roleName,
-    });
+    };
+    if (name != null) payload['name'] = name;
+    if (countryCode != null) payload['countryCode'] = countryCode;
+
+    await _api.post(ApiEndpoints.register, payload);
   }
 
   @override
   Future<void> logout(String? refreshToken) async {
-    await _api.post(ApiEndpoints.logout, {
-      'refreshToken': ?refreshToken,
-    });
+    final payload = <String, dynamic>{};
+    if (refreshToken != null) payload['refreshToken'] = refreshToken;
+
+    await _api.post(ApiEndpoints.logout, payload);
   }
 
   @override

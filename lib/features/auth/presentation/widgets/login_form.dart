@@ -84,7 +84,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     _obscurePassword
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: AppColors.text.tertiaryDark,
+                    color: AppColors.text.tertiary,
                     size: 20,
                   ),
                   onPressed: () =>
@@ -97,7 +97,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
           AppSpacing.xl.v,
 
-          GradientButton(
+          PrimaryButton(
                 label: context.l10n.login,
                 isLoading: state.isLoading,
                 onPressed: _submit,
@@ -108,13 +108,14 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
           AppSpacing.lg.v,
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 "Don't have an account? ",
                 style: TextStyle(
-                  color: AppColors.text.secondaryDark,
+                  color: AppColors.text.secondary,
                   fontSize: 14,
                 ),
               ),
@@ -123,7 +124,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 child: Text(
                   'Sign up',
                   style: TextStyle(
-                    color: AppColors.brand.primary,
+                    color: AppColors.ink.primary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),

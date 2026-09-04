@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/radius.dart';
-import 'package:flutter_template/theme/tokens/spacing.dart';
 
 class AppInputTheme {
   AppInputTheme._();

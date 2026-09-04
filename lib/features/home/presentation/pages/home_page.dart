@@ -8,6 +8,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_card.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/effects.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,20 +23,23 @@ class HomePage extends ConsumerWidget {
     final user = ref.watch(authControllerProvider).user;
 
     return Scaffold(
-      backgroundColor: AppColors.ui.backgroundDark,
+      backgroundColor: AppColors.ui.background,
       appBar: AppBar(
         title: Text(
           context.l10n.home,
-          style: TextStyle(color: AppColors.text.primaryDark),
+          style: TextStyle(
+            color: AppColors.text.primary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        backgroundColor: AppColors.ui.backgroundDark,
+        backgroundColor: AppColors.ui.background,
         elevation: 0,
         actions: [
           IconButton(
             tooltip: context.l10n.logout,
             icon: Icon(
               Icons.logout_rounded,
-              color: AppColors.text.secondaryDark,
+              color: AppColors.text.secondary,
             ),
             onPressed: () => ref.read(authControllerProvider.notifier).logout(),
           ),
@@ -75,28 +79,27 @@ class HomePage extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         InkWell(
           onTap: () => context.go(RouteNames.quiz),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E1B4B), Color(0xFF312E81)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF4338CA)),
+              color: AppColors.ink.primary,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: AppEffects.softShadow,
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4F46E5).withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.quiz_rounded,
-                      color: Colors.white, size: 28),
+                  child: const Icon(
+                    Icons.quiz_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 const Expanded(
@@ -113,9 +116,9 @@ class HomePage extends ConsumerWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Test your Riverpod & Flutter architecture knowledge',
+                        '100 Architecture & State Management questions',
                         style: TextStyle(
-                          color: Color(0xFFC7D2FE),
+                          color: Colors.white70,
                           fontSize: 12,
                         ),
                       ),
@@ -135,19 +138,20 @@ class HomePage extends ConsumerWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: AppColors.brand.primary.withValues(
-                      alpha: 0.2,
-                    ),
+                    backgroundColor: AppColors.ui.surfaceMuted,
                     child: Icon(
                       Icons.person_outline_rounded,
-                      color: AppColors.brand.primary,
+                      color: AppColors.ink.primary,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       item.name,
-                      style: TextStyle(color: AppColors.text.primaryDark),
+                      style: TextStyle(
+                        color: AppColors.text.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],

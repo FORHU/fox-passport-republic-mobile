@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_template/features/auth/presentation/widgets/login_form.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/effects.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,128 +12,109 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.ui.backgroundDark,
-      body: Stack(
-        children: [
-          // — Background glow blobs —
-          Positioned(
-            top: -120,
-            left: -80,
-            child: Container(
-              width: 360,
-              height: 360,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.brand.primary.withValues(alpha: 0.28),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
+      backgroundColor: AppColors.ui.background,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.xl,
             ),
-          ),
-          Positioned(
-            bottom: -80,
-            right: -60,
-            child: Container(
-              width: 280,
-              height: 280,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.brand.secondary.withValues(alpha: 0.22),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // — Content —
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.xl,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Logo / icon
-                    Center(
-                          child: Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.brand.primary.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                  blurRadius: 24,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.flutter_dash,
-                              color: Colors.white,
-                              size: 38,
-                            ),
-                          ),
-                        )
-                        .animate()
-                        .fadeIn(duration: 500.ms)
-                        .scale(begin: const Offset(0.8, 0.8)),
-
-                    AppSpacing.xl.v,
-
-                    Text(
-                          'Welcome back 👋',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(color: AppColors.text.primaryDark),
-                        )
-                        .animate()
-                        .fadeIn(delay: 80.ms, duration: 400.ms)
-                        .slideY(begin: 0.2, end: 0),
-
-                    AppSpacing.sm.v,
-
-                    Text(
-                      'Sign in to continue',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.text.secondaryDark,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Logo / icon
+                  Center(
+                    child: Container(
+                      width: 68,
+                      height: 68,
+                      decoration: BoxDecoration(
+                        color: AppColors.ink.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: AppEffects.softShadow,
                       ),
-                    ).animate().fadeIn(delay: 140.ms, duration: 400.ms),
+                      child: const Icon(
+                        Icons.flutter_dash,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .scale(begin: const Offset(0.85, 0.85)),
 
-                    const SizedBox(height: AppSpacing.xxxl),
+                  AppSpacing.lg.v,
 
-                    const LoginForm(),
+                  Text(
+                    'Welcome back 👋',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: AppColors.text.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  )
+                      .animate()
+                      .fadeIn(delay: 80.ms, duration: 350.ms)
+                      .slideY(begin: 0.15, end: 0),
 
-                    AppSpacing.xl.v,
+                  AppSpacing.xs.v,
 
-                    Text(
-                      'Use email: eve.holt@reqres.in  ·  password: cityslicka',
+                  Text(
+                    'Sign in to your account to continue',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.text.secondary,
+                        ),
+                  ).animate().fadeIn(delay: 140.ms, duration: 350.ms),
+
+                  const SizedBox(height: AppSpacing.xl),
+
+                  // White card container
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    decoration: BoxDecoration(
+                      color: AppColors.ui.surface,
+                      borderRadius: AppRadius.brCard,
+                      border: Border.all(color: AppColors.ui.borderHairline),
+                      boxShadow: AppEffects.surfaceShadow,
+                    ),
+                    child: const LoginForm(),
+                  )
+                      .animate()
+                      .fadeIn(delay: 200.ms, duration: 400.ms)
+                      .slideY(begin: 0.08, end: 0),
+
+                  AppSpacing.lg.v,
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.ui.surfaceMuted,
+                      borderRadius: AppRadius.brMd,
+                      border: Border.all(color: AppColors.ui.borderHairline),
+                    ),
+                    child: Text(
+                      'Demo: admin@example.com  •  Password123!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.text.tertiaryDark,
-                        fontSize: 11,
+                        color: AppColors.text.secondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ).animate().fadeIn(delay: 400.ms),
-                  ],
-                ),
+                    ),
+                  ).animate().fadeIn(delay: 350.ms),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

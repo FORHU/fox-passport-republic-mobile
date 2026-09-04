@@ -31,15 +31,15 @@ class PrimaryButton extends StatelessWidget {
       label: label,
       icon: icon,
       decoration: BoxDecoration(
-        color: AppColors.brand.primary,
-        borderRadius: AppRadius.brLg,
+        color: AppColors.ink.primary,
+        borderRadius: AppRadius.brPill,
         boxShadow: AppEffects.softShadow,
       ),
     );
   }
 }
 
-/// Gradient (blue → purple) CTA button with a soft glow — for hero actions.
+/// Gradient / Primary CTA button with pill shape — for hero actions.
 class GradientButton extends StatelessWidget {
   const GradientButton({
     required this.label,
@@ -65,9 +65,9 @@ class GradientButton extends StatelessWidget {
       label: label,
       icon: icon,
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: AppRadius.brLg,
-        boxShadow: AppEffects.primaryGlow,
+        color: AppColors.ink.primary,
+        borderRadius: AppRadius.brPill,
+        boxShadow: AppEffects.softShadow,
       ),
     );
   }

@@ -11,13 +11,29 @@ class UserModel extends UserEntity {
     this.refreshToken,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    id: json['id'] as String,
-    email: json['email'] as String,
-    name: json['name'] as String,
-    token: json['token'] as String,
-    refreshToken: json['refreshToken'] as String?,
-  );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    final payload = (json['data'] is Map<String, dynamic>)
+        ? json['data'] as Map<String, dynamic>
+        : (json['data'] is Map)
+            ? (json['data'] as Map).cast<String, dynamic>()
+            : json;
+    final user = (payload['user'] is Map<String, dynamic>)
+        ? payload['user'] as Map<String, dynamic>
+        : (payload['user'] is Map)
+            ? (payload['user'] as Map).cast<String, dynamic>()
+            : payload;
+
+    final token = (payload['token'] ?? payload['accessToken'] ?? '').toString();
+    final refreshToken = payload['refreshToken'] as String?;
+
+    return UserModel(
+      id: (user['id'] ?? payload['id'] ?? '').toString(),
+      email: (user['email'] ?? payload['email'] ?? '').toString(),
+      name: (user['name'] ?? user['username'] ?? payload['name'] ?? '').toString(),
+      token: token,
+      refreshToken: refreshToken,
+    );
+  }
 
   /// Short-lived access token (bearer).
   final String token;

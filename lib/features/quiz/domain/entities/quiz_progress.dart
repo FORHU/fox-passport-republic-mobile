@@ -11,6 +11,18 @@ class QuizProgress extends Equatable {
   final int score;
   final int answeredCount;
 
+  QuizProgress copyWith({
+    Map<int, int>? answers,
+    int? score,
+    int? answeredCount,
+  }) {
+    return QuizProgress(
+      answers: answers ?? this.answers,
+      score: score ?? this.score,
+      answeredCount: answeredCount ?? this.answeredCount,
+    );
+  }
+
   @override
   List<Object?> get props => [answers, score, answeredCount];
 }

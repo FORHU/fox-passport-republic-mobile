@@ -10,6 +10,7 @@ class AppColors {
   static const ui = _UI();
   static const text = _Text();
   static const status = _Status();
+  static const brand = _Brand();
 
   /// Gradient for promo scrim (map overlays, etc.)
   static const LinearGradient promoScrim = LinearGradient(
@@ -18,6 +19,21 @@ class AppColors {
     colors: [Color(0x000D0D0F), Color(0xBF0D0D0F)],
     stops: [0.0, 1.0],
   );
+
+  /// Brand primary gradient
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF0D0D0F), Color(0xFF27272A)],
+  );
+}
+
+class _Brand {
+  const _Brand();
+
+  Color get primary => const Color(0xFF0D0D0F);
+  Color get primaryBright => const Color(0xFF27272A);
+  Color get secondary => const Color(0xFF6B7280);
 }
 
 class _Ink {
@@ -44,6 +60,12 @@ class _UI {
 
   /// Hairline border / divider — #ECEDF0.
   Color get borderHairline => const Color(0xFFECEDF0);
+
+  /// Dark / elevated surface tokens
+  Color get surfaceDark => const Color(0xFF18181B);
+  Color get backgroundDark => const Color(0xFF0D0D0F);
+  Color get surfaceElevatedDark => const Color(0xFF27272A);
+  Color get borderDark => const Color(0xFF27272A);
 }
 
 class _Text {
@@ -60,6 +82,11 @@ class _Text {
 
   /// Text on ink surfaces — #FFFFFF (white).
   Color get onInk => const Color(0xFFFFFFFF);
+
+  /// Dark surface text tokens
+  Color get primaryDark => const Color(0xFFF4F4F5);
+  Color get secondaryDark => const Color(0xFFA1A1AA);
+  Color get tertiaryDark => const Color(0xFF71717A);
 }
 
 class _Status {

@@ -10,13 +10,21 @@ class ProfileModel extends ProfileEntity {
     super.joinedAt,
   });
 
-  factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    email: json['email'] as String,
-    bio: json['bio'] as String?,
-    joinedAt: json['joinedAt'] != null
-        ? DateTime.tryParse(json['joinedAt'] as String)
-        : null,
-  );
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    final payload = (json['data'] is Map<String, dynamic>)
+        ? json['data'] as Map<String, dynamic>
+        : (json['data'] is Map)
+            ? (json['data'] as Map).cast<String, dynamic>()
+            : json;
+
+    return ProfileModel(
+      id: (payload['id'] ?? '').toString(),
+      name: (payload['name'] ?? payload['username'] ?? '').toString(),
+      email: (payload['email'] ?? '').toString(),
+      bio: payload['bio'] as String?,
+      joinedAt: payload['joinedAt'] != null
+          ? DateTime.tryParse(payload['joinedAt'].toString())
+          : null,
+    );
+  }
 }

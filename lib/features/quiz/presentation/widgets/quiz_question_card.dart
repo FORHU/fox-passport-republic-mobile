@@ -21,12 +21,12 @@ class QuizQuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildHeaderBadges(),
-          SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           Text(
             question.question,
             style: TextStyle(
@@ -38,20 +38,20 @@ class QuizQuestionCard extends StatelessWidget {
           ),
           if (question.codeSnippet != null &&
               question.codeSnippet!.trim().isNotEmpty) ...[
-            SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.md),
             _buildCodeSnippet(question.codeSnippet!),
           ],
-          SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.lg),
           ...List.generate(question.options.length, (index) {
             return Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.sm),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: _buildOptionTile(index),
             );
           }),
           if (hasAnswered) ...[
-            SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.md),
             _buildExplanation(),
-            SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.xl),
           ],
         ],
       ),
@@ -85,7 +85,7 @@ class QuizQuestionCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: AppSpacing.xs),
+        const SizedBox(width: AppSpacing.xs),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
@@ -120,9 +120,9 @@ class QuizQuestionCard extends StatelessWidget {
         child: Text(
           snippet,
           style: const TextStyle(
-            fontFamily: 'monospace',
+            fontFamily: 'Courier',
             fontSize: 13,
-            color: Color(0xFFE4E4E7),
+            color: Color(0xFFF4F4F5),
             height: 1.45,
           ),
         ),
@@ -134,99 +134,103 @@ class QuizQuestionCard extends StatelessWidget {
     final isSelected = selectedOption == index;
     final isCorrectOption = index == question.correctIndex;
 
-    var bgColor = AppColors.ui.surface;
     var borderColor = AppColors.ui.borderHairline;
+    var bgColor = AppColors.ui.surface;
     var textColor = AppColors.text.primary;
-    Widget? trailingIcon;
 
     if (hasAnswered) {
       if (isCorrectOption) {
-        bgColor = AppColors.status.success.withValues(alpha: 0.12);
         borderColor = AppColors.status.success;
-        textColor = const Color(0xFF065F46);
-        trailingIcon = Icon(
-          Icons.check_circle_rounded,
-          color: AppColors.status.success,
-          size: 20,
-        );
+        bgColor = AppColors.status.success.withValues(alpha: 0.08);
+        textColor = AppColors.status.success;
       } else if (isSelected) {
-        bgColor = AppColors.status.error.withValues(alpha: 0.1);
         borderColor = AppColors.status.error;
-        textColor = const Color(0xFF991B1B);
-        trailingIcon = Icon(
-          Icons.cancel_rounded,
-          color: AppColors.status.error,
-          size: 20,
-        );
-      } else {
-        textColor = AppColors.text.tertiary;
+        bgColor = AppColors.status.error.withValues(alpha: 0.08);
+        textColor = AppColors.status.error;
       }
+    } else if (isSelected) {
+      borderColor = AppColors.ink.primary;
+      bgColor = AppColors.ink.primary.withValues(alpha: 0.04);
     }
 
-    final optionLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-    final label = index < optionLabels.length ? optionLabels[index] : '$index';
+    final label = String.fromCharCode(65 + index); // A, B, C, D
 
-    return InkWell(
-      onTap: hasAnswered ? null : () => onOptionSelected(index),
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: hasAnswered ? null : () => onOptionSelected(index),
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
               color: borderColor,
-              width: isSelected || isCorrectOption && hasAnswered ? 1.5 : 1),
-          boxShadow: [
-            if (!hasAnswered)
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 26,
-              height: 26,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: hasAnswered && isCorrectOption
-                    ? AppColors.status.success
-                    : (hasAnswered && isSelected
-                        ? AppColors.status.error
-                        : AppColors.ui.surfaceMuted),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: hasAnswered && (isCorrectOption || isSelected)
-                      ? Colors.white
-                      : AppColors.text.secondary,
+              width: (isSelected || isCorrectOption) && hasAnswered ? 1.5 : 1,
+            ),
+            boxShadow: [
+              if (!hasAnswered)
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 26,
+                height: 26,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: hasAnswered && isCorrectOption
+                      ? AppColors.status.success
+                      : (hasAnswered && isSelected
+                          ? AppColors.status.error
+                          : AppColors.ui.surfaceMuted),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: hasAnswered && (isCorrectOption || isSelected)
+                        ? Colors.white
+                        : AppColors.text.secondary,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                question.options[index],
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: textColor,
-                  height: 1.35,
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  question.options[index],
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: textColor,
+                    height: 1.35,
+                  ),
                 ),
               ),
-            ),
-            if (trailingIcon != null) trailingIcon,
-          ],
+              if (hasAnswered && isCorrectOption)
+                Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.status.success,
+                  size: 20,
+                )
+              else if (hasAnswered && isSelected)
+                Icon(
+                  Icons.cancel_rounded,
+                  color: AppColors.status.error,
+                  size: 20,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -236,12 +240,16 @@ class QuizQuestionCard extends StatelessWidget {
     final isCorrect = selectedOption == question.correctIndex;
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isCorrect ? const Color(0xFFF0FDF4) : const Color(0xFFFEF2F2),
+        color: isCorrect
+            ? AppColors.status.success.withValues(alpha: 0.08)
+            : AppColors.status.warning.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isCorrect ? const Color(0xFFBBF7D0) : const Color(0xFFFECACA),
+          color: isCorrect
+              ? AppColors.status.success.withValues(alpha: 0.3)
+              : AppColors.status.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -250,21 +258,23 @@ class QuizQuestionCard extends StatelessWidget {
           Row(
             children: [
               Icon(
-                isCorrect ? Icons.verified_rounded : Icons.info_outline_rounded,
-                size: 18,
+                isCorrect
+                    ? Icons.check_circle_rounded
+                    : Icons.info_outline_rounded,
                 color: isCorrect
-                    ? const Color(0xFF15803D)
-                    : const Color(0xFFB91C1C),
+                    ? AppColors.status.success
+                    : AppColors.status.warning,
+                size: 20,
               ),
               const SizedBox(width: 8),
               Text(
-                isCorrect ? 'Correct Answer!' : 'Explanation',
+                isCorrect ? 'Correct!' : 'Explanation',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: isCorrect
-                      ? const Color(0xFF15803D)
-                      : const Color(0xFFB91C1C),
+                      ? AppColors.status.success
+                      : AppColors.status.warning,
                 ),
               ),
             ],
@@ -273,10 +283,9 @@ class QuizQuestionCard extends StatelessWidget {
           Text(
             question.explanation,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 13.5,
               height: 1.45,
-              color:
-                  isCorrect ? const Color(0xFF166534) : const Color(0xFF991B1B),
+              color: AppColors.text.primary,
             ),
           ),
         ],

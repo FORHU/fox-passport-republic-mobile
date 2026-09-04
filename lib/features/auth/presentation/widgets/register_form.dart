@@ -107,7 +107,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                     _obscurePassword
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: AppColors.text.tertiaryDark,
+                    color: AppColors.text.tertiary,
                     size: 20,
                   ),
                   onPressed: () =>
@@ -134,7 +134,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                     _obscureConfirm
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: AppColors.text.tertiaryDark,
+                    color: AppColors.text.tertiary,
                     size: 20,
                   ),
                   onPressed: () =>
@@ -147,7 +147,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
           AppSpacing.xl.v,
 
-          GradientButton(
+          PrimaryButton(
                 label: 'Create Account',
                 isLoading: state.isLoading,
                 onPressed: _submit,
@@ -158,13 +158,14 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
           AppSpacing.lg.v,
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 'Already have an account? ',
                 style: TextStyle(
-                  color: AppColors.text.secondaryDark,
+                  color: AppColors.text.secondary,
                   fontSize: 14,
                 ),
               ),
@@ -173,7 +174,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 child: Text(
                   'Sign in',
                   style: TextStyle(
-                    color: AppColors.brand.primary,
+                    color: AppColors.ink.primary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),

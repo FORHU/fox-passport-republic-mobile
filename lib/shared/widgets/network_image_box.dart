@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 
-/// A cached network image with premium placeholder + error states.
+/// Cached remote image with an ink-style shimmer placeholder and error box.
 class NetworkImageBox extends StatelessWidget {
   const NetworkImageBox({
     required this.url,
-    this.width = double.infinity,
+    this.width,
     this.height,
     this.borderRadius,
     this.fit = BoxFit.cover,
@@ -14,7 +14,7 @@ class NetworkImageBox extends StatelessWidget {
   });
 
   final String url;
-  final double width;
+  final double? width;
   final double? height;
   final BorderRadius? borderRadius;
   final BoxFit fit;
@@ -28,8 +28,10 @@ class NetworkImageBox extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        placeholder: (_, _) => _Placeholder(width: width, height: height),
-        errorWidget: (_, _, _) => _ErrorBox(width: width, height: height),
+        placeholder: (context, url) =>
+            _Placeholder(width: width, height: height),
+        errorWidget: (context, url, error) =>
+            _ErrorBox(width: width, height: height),
       ),
     );
   }
@@ -46,14 +48,14 @@ class _Placeholder extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: AppColors.ui.surfaceElevatedDark,
+      color: AppColors.ui.surfaceMuted,
       child: Center(
         child: SizedBox(
           width: 22,
           height: 22,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            color: AppColors.text.tertiaryDark,
+            color: AppColors.text.tertiary,
           ),
         ),
       ),
@@ -72,10 +74,10 @@ class _ErrorBox extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: AppColors.ui.surfaceElevatedDark,
+      color: AppColors.ui.surfaceMuted,
       child: Icon(
         Icons.image_not_supported_outlined,
-        color: AppColors.text.tertiaryDark,
+        color: AppColors.text.tertiary,
       ),
     );
   }
