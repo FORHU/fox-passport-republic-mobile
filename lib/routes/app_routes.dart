@@ -7,6 +7,7 @@ import 'package:flutter_template/features/auth/presentation/pages/onboarding_pag
 import 'package:flutter_template/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/quiz/presentation/pages/quiz_page.dart';
 import 'package:flutter_template/features/worldMap/presentation/pages/world_map_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
@@ -81,8 +82,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HomePage(),
           ),
           GoRoute(
+            path: RouteNames.quiz,
+            builder: (context, state) => const QuizPage(),
+          ),
+          GoRoute(
             path: RouteNames.recommendations,
-            // Replace with your RecommendationsPage when created.
             builder: (context, state) =>
                 const Scaffold(body: Center(child: Text('Recommendations'))),
           ),

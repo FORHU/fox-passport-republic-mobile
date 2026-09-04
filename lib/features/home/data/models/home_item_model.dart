@@ -5,7 +5,7 @@ class HomeItemModel extends HomeItem {
   const HomeItemModel({required super.id, required super.name});
 
   factory HomeItemModel.fromJson(Map<String, dynamic> json) => HomeItemModel(
-    id: json['id'] as String,
-    name: json['name'] as String,
-  );
+        id: json['id'] as String,
+        name: json['name'] as String,
+      );
 }

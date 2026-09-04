@@ -31,11 +31,11 @@ class MainLayout extends StatelessWidget {
       ),
       const _Destination(
         item: NavBarItem(
-          label: 'Explore',
-          icon: Icons.explore_outlined,
-          activeIcon: Icons.explore_rounded,
+          label: 'Quiz',
+          icon: Icons.quiz_outlined,
+          activeIcon: Icons.quiz_rounded,
         ),
-        route: RouteNames.recommendations,
+        route: RouteNames.quiz,
       ),
       const _Destination(
         item: NavBarItem(

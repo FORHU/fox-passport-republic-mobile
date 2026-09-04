@@ -14,4 +14,9 @@ class ApiEndpoints {
 
   /// Sample protected resource used by the worldMap feature.
   static const String nearbyStores = '/stores/nearby';
+
+  /// Interactive Quiz engine endpoints
+  static const String quiz = '/quiz';
+  static const String quizProgress = '/quiz/progress';
+  static const String quizReset = '/quiz/progress/reset';
 }
