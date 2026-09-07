@@ -269,6 +269,9 @@ The template ships **backend-ready** but runs with **no server** out of the box.
 
 - `ApiService` ([lib/core/services/api_service.dart](lib/core/services/api_service.dart)) is a real Dio client exposing `get` / `post` / `put` / `patch` / `delete`. Transport errors are normalized into typed exceptions (`NetworkException`, `UnauthorizedException`, `ServerException`), which repositories translate into `Failure`s.
 - `AuthInterceptor` attaches the bearer token and **transparently refreshes it once on a 401**, retrying the original request; if refresh fails it clears the session and the router sends the user back to login.
+- **Cookie & Web Credentials**:
+  - **Flutter Web**: `withCredentials = true` is configured so browser HTTP-only cookies (`accessToken` and `refreshToken`) are stored and sent automatically with CORS credentials.
+  - **Mobile & Desktop**: `dio_cookie_manager` with `CookieJar` persists and attaches session cookies across requests while `FlutterSecureStorage` retains encrypted tokens for offline access.
 - A `MockInterceptor` serves canned responses while `useMock` is on — so `flutter run` works immediately.
 
 ### Going live in 3 steps

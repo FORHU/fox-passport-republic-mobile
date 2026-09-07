@@ -1,5 +1,6 @@
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/errors/failure.dart';
+import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
@@ -22,10 +23,15 @@ abstract class AuthRepository {
 /// Coordinates the remote data source and local token storage. Catches the
 /// data layer's typed exceptions and maps them to typed [Failure] values.
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._remote, this._storage);
+  AuthRepositoryImpl(
+    this._remote,
+    this._storage, {
+    CookieService? cookieService,
+  }) : _cookieService = cookieService;
 
   final AuthRemoteDataSource _remote;
   final StorageService _storage;
+  final CookieService? _cookieService;
 
   @override
   Future<Either<Failure, UserEntity>> login(
@@ -101,6 +107,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       await _storage.clearSession();
+      await _cookieService?.clearCookies();
       return const Right(null);
     } on Object catch (e) {
       return Left(CacheFailure('Failed to clear local session: $e'));
@@ -120,6 +127,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } on UnauthorizedException catch (e) {
       await _storage.clearSession(); // Clear stale tokens.
+      await _cookieService?.clearCookies();
       return Left(UnauthorizedFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));

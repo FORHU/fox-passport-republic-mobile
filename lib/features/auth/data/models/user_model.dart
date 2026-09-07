@@ -29,7 +29,11 @@ class UserModel extends UserEntity {
     return UserModel(
       id: (user['id'] ?? payload['id'] ?? '').toString(),
       email: (user['email'] ?? payload['email'] ?? '').toString(),
-      name: (user['name'] ?? user['username'] ?? payload['name'] ?? '').toString(),
+      name: (user['name'] ??
+              user['username'] ??
+              payload['name'] ??
+              '')
+          .toString(),
       token: token,
       refreshToken: refreshToken,
     );

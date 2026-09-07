@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_template/features/auth/data/repositories/auth_repository.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_template/features/auth/domain/usecases/register_usecase.
 final apiServiceProvider = Provider<ApiService>((ref) {
   return ApiService(
     storage: ref.watch(storageServiceProvider),
+    cookieService: ref.watch(cookieServiceProvider),
     onUnauthenticated: () {
       unawaited(ref.read(authControllerProvider.notifier).onUnauthenticated());
     },
@@ -25,7 +27,11 @@ final apiServiceProvider = Provider<ApiService>((ref) {
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final remote = AuthRemoteDataSourceImpl(ref.watch(apiServiceProvider));
-  return AuthRepositoryImpl(remote, ref.watch(storageServiceProvider));
+  return AuthRepositoryImpl(
+    remote,
+    ref.watch(storageServiceProvider),
+    cookieService: ref.watch(cookieServiceProvider),
+  );
 });
 
 final loginUseCaseProvider = Provider<LoginUseCase>(

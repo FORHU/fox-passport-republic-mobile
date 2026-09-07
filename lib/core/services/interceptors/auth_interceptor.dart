@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
+import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 
 /// Attaches the access token to outgoing requests and transparently refreshes
@@ -15,10 +19,26 @@ class AuthInterceptor extends QueuedInterceptor {
   AuthInterceptor(
     this._storage, {
     required String baseUrl,
+    this.cookieService,
     this.onUnauthenticated,
-  }) : _refreshClient = Dio(BaseOptions(baseUrl: baseUrl));
+    Dio? refreshClient,
+  }) : _refreshClient =
+            refreshClient ??
+            Dio(
+              BaseOptions(
+                baseUrl: baseUrl,
+                contentType: Headers.jsonContentType,
+              ),
+            ) {
+    configureWebCredentials(_refreshClient);
+    final jar = cookieService?.jar;
+    if (jar != null && !kIsWeb) {
+      _refreshClient.interceptors.add(CookieManager(jar));
+    }
+  }
 
   final StorageService _storage;
+  final CookieService? cookieService;
   final Dio _refreshClient;
   final void Function()? onUnauthenticated;
 
@@ -64,6 +84,7 @@ class AuthInterceptor extends QueuedInterceptor {
     final newToken = await _refreshToken();
     if (newToken == null) {
       await _storage.clearSession();
+      await cookieService?.clearCookies();
       onUnauthenticated?.call();
       handler.next(err);
       return;
@@ -85,18 +106,23 @@ class AuthInterceptor extends QueuedInterceptor {
   /// access token, or null if refresh isn't possible.
   Future<String?> _refreshToken() async {
     final refreshToken = await _storage.readRefreshToken();
-    if (refreshToken == null || refreshToken.isEmpty) return null;
 
     try {
       final res = await _refreshClient.post<dynamic>(
         ApiEndpoints.refresh,
-        data: {'refreshToken': refreshToken},
+        data: (refreshToken != null && refreshToken.isNotEmpty)
+            ? {'refreshToken': refreshToken}
+            : null,
       );
-      final data = res.data;
-      if (data is! Map) return null;
+      final rawData = res.data;
+      if (rawData is! Map) return null;
 
-      final token = data['token'] as String?;
-      final newRefresh = data['refreshToken'] as String?;
+      final payload = (rawData['data'] is Map)
+          ? (rawData['data'] as Map).cast<String, dynamic>()
+          : rawData.cast<String, dynamic>();
+
+      final token = (payload['token'] ?? payload['accessToken']) as String?;
+      final newRefresh = payload['refreshToken'] as String?;
       if (token == null || token.isEmpty) return null;
 
       await _storage.saveToken(token);

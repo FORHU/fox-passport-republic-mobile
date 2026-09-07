@@ -1,7 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
+import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
+import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
@@ -14,6 +18,7 @@ import 'package:flutter_template/core/utils/logger.dart';
 class ApiService {
   ApiService({
     required StorageService storage,
+    CookieService? cookieService,
     void Function()? onUnauthenticated,
     Dio? dio,
   }) : client =
@@ -27,11 +32,19 @@ class ApiService {
                contentType: Headers.jsonContentType,
              ),
            ) {
+    // 0. Enable Web credentials & native platform cookie jar
+    configureWebCredentials(client);
+    final jar = cookieService?.jar;
+    if (jar != null && !kIsWeb) {
+      client.interceptors.add(CookieManager(jar));
+    }
+
     // 1. Attach the bearer token and transparently refresh it on a 401.
     client.interceptors.add(
       AuthInterceptor(
         storage,
         baseUrl: client.options.baseUrl,
+        cookieService: cookieService,
         onUnauthenticated: onUnauthenticated,
       ),
     );
