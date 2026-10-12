@@ -40,13 +40,13 @@ The application styling follows a minimalist, high-contrast ink-on-white aesthet
 
 ## 📡 2. Backend Integration
 
-The app connects to the Express + PostgreSQL backend (`node-postg-backend-template`) running on port `3002`.
+The app connects to the Express + PostgreSQL backend (`fox-passport-republic-api`) running on port `6002`.
 
 ### Configuration (`.env.dev`)
 ```env
 ENVIRONMENT=dev
-APP_NAME=Flutter Template (Dev)
-BASE_URL=http://localhost:3002/api/v1
+APP_NAME=Fox Passport (Dev)
+BASE_URL=http://localhost:6002/api/v1
 ENABLE_LOGGING=true
 ```
 

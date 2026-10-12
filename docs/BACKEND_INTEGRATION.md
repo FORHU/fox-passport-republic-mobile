@@ -1,23 +1,24 @@
-# Flutter ↔ Node.js Backend Integration Guide
+# Flutter ↔ Fox Passport API Integration Guide
 
-This guide documents how `flutter_template_v1` connects to `node-postg-backend-template` — the production Express + Prisma + PostgreSQL backend.
+This guide documents how the Flutter mobile app connects to `fox-passport-republic-api` — the production Express + Prisma + PostgreSQL + Redis backend.
 
 ---
 
 ## 📡 Connection Overview
 
 ```
-flutter_template_v1             node-postg-backend-template
-  lib/core/config/               src/routes/
-  app_config.dart  ─────────►   /api/v1/auth/*
-  (BASE_URL env)                 /api/v1/users/*
-                                 /api/v1/posts/*
+fox-passport-republic-mobile      fox-passport-republic-api
+  lib/core/config/                 src/routes/
+  app_config.dart  ─────────►     /api/v1/auth/*
+  (BASE_URL env)                   /api/v1/profile
+                                   /api/v1/venues
+                                   /api/v1/event-templates
 ```
 
-The Flutter app reads `BASE_URL` from the environment file (`.env.dev` / `.env.prod`) via `flutter_dotenv`. The default dev value points directly at the backend:
+The Flutter app reads `BASE_URL` from the environment file (`.env.dev` / `.env.prod`) via `flutter_dotenv`. The default dev value points directly at the backend on port 6002:
 
 ```
-BASE_URL=http://localhost:3002/api/v1
+BASE_URL=http://localhost:6002/api/v1
 ```
 
 ---
@@ -27,7 +28,7 @@ BASE_URL=http://localhost:3002/api/v1
 ### 1. Start the backend
 
 ```bash
-cd node-postg-backend-template
+cd fox-passport-republic-api
 
 # Copy and fill in environment variables
 cp .env.example .env
@@ -39,30 +40,30 @@ docker compose up -d
 pnpm install
 pnpm run db:setup
 
-# Start the dev server (port 3002)
+# Start the dev server (port 6002)
 pnpm run dev
 ```
 
 ### 2. Configure Flutter environment
 
-Edit `flutter_template_v1/.env.dev`:
+Edit `fox-passport-republic-mobile/.env.dev`:
 
 ```env
 ENVIRONMENT=dev
-APP_NAME=Flutter Template (Dev)
-BASE_URL=http://localhost:3002/api/v1
+APP_NAME=Fox Passport (Dev)
+BASE_URL=http://localhost:6002/api/v1
 ENABLE_LOGGING=true
 ```
 
 > **Android emulator note**: Replace `localhost` with `10.0.2.2` when running on Android emulator, as `localhost` inside an emulator refers to the emulator's loopback, not your host machine:
 > ```
-> BASE_URL=http://10.0.2.2:3002/api/v1
+> BASE_URL=http://10.0.2.2:6002/api/v1
 > ```
 
 ### 3. Run the Flutter app
 
 ```bash
-cd flutter_template_v1
+cd fox-passport-republic-mobile
 flutter run --target lib/main_dev.dart
 ```
 

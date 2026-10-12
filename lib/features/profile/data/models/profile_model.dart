@@ -22,8 +22,10 @@ class ProfileModel extends ProfileEntity {
       name: (payload['name'] ?? payload['username'] ?? '').toString(),
       email: (payload['email'] ?? '').toString(),
       bio: payload['bio'] as String?,
-      joinedAt: payload['joinedAt'] != null
-          ? DateTime.tryParse(payload['joinedAt'].toString())
+      joinedAt: (payload['createdAt'] ?? payload['joinedAt']) != null
+          ? DateTime.tryParse(
+              (payload['createdAt'] ?? payload['joinedAt']).toString(),
+            )
           : null,
     );
   }

@@ -3,11 +3,17 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String refresh = '/refresh';
-  static const String logout = '/logout';
-  static const String me = '/users/me';
+  static const String login = '/auth/login';
+  static const String register = '/auth/register';
+  static const String refresh = '/auth/refresh-token';
+  static const String logout = '/auth/logout';
+  static const String me = '/profile';
+  static const String profile = '/profile';
+
+  /// Fox Passport ecosystem endpoints
+  static const String venues = '/venues';
+  static const String events = '/event-templates';
+  static const String categories = '/categories';
 
   /// Sample protected resource used to demonstrate a GET with the bearer token.
   static const String users = '/users';

@@ -25,17 +25,18 @@ void main() {
       final service = CookieService(jar: customJar);
 
       await service.jar.saveFromResponse(
-        Uri.parse('http://localhost:3002'),
+        Uri.parse('http://localhost:6002'),
         [Cookie('accessToken', 'test-token')],
       );
 
-      var cookies = await service.jar.loadForRequest(Uri.parse('http://localhost:3002'));
+      var cookies =
+          await service.jar.loadForRequest(Uri.parse('http://localhost:6002'));
       expect(cookies.length, 1);
       expect(cookies.first.name, 'accessToken');
 
       await service.clearCookies();
       cookies = await service.jar.loadForRequest(
-        Uri.parse('http://localhost:3002'),
+        Uri.parse('http://localhost:6002'),
       );
       expect(cookies.isEmpty, true);
     });

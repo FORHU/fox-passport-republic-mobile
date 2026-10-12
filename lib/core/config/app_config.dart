@@ -34,20 +34,19 @@ class AppConfig {
     );
   }
 
-  /// Explicit development config used by `main_dev.dart` — works without any
-  /// `.env` file, with logging on and pointed at the sample backend.
+  /// Explicit development config used by `main_dev.dart` — points at local
+  /// Fox Passport Republic API on port 6002.
   const AppConfig.dev()
     : environment = Environment.dev,
-      appName = 'Flutter Template (Dev)',
-      baseUrl = 'https://reqres.in/api',
+      appName = 'Fox Passport (Dev)',
+      baseUrl = 'http://localhost:6002/api/v1',
       enableLogging = true;
 
-  /// Explicit production config used by `main_prod.dart` — logging off,
-  /// real backend URL.
+  /// Explicit production config used by `main_prod.dart` — logging off.
   const AppConfig.prod()
     : environment = Environment.prod,
-      appName = 'Flutter Template',
-      baseUrl = 'https://api.example.com',
+      appName = 'Fox Passport',
+      baseUrl = 'http://localhost:6002/api/v1',
       enableLogging = false;
 
   final Environment environment;

@@ -36,15 +36,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String password, {
     String? name,
     String? countryCode,
-    String roleName = 'USER',
+    String roleName = 'CITIZEN',
   }) async {
+    final computedName = (name != null && name.trim().isNotEmpty)
+        ? name.trim()
+        : email.split('@').first;
+    final computedUsername = email.split('@').first;
+
     final payload = <String, dynamic>{
-      'email': email,
+      'email': email.trim(),
       'password': password,
-      'roleName': roleName,
+      'name': computedName,
+      'username': computedUsername,
     };
-    if (name != null) payload['name'] = name;
-    if (countryCode != null) payload['countryCode'] = countryCode;
 
     await _api.post(ApiEndpoints.register, payload);
   }
