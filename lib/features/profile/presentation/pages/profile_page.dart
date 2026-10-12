@@ -125,7 +125,6 @@ class ProfilePage extends ConsumerWidget {
                         ),
                       ],
                       const SizedBox(height: AppSpacing.xl),
-
                       TextButton.icon(
                         icon: Icon(
                           Icons.logout_rounded,

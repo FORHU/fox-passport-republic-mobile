@@ -29,22 +29,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     _Slide(
       icon: Icons.rocket_launch_rounded,
       title: 'Get started fast',
-      body:
-          'This template ships a complete clean architecture skeleton so '
+      body: 'This template ships a complete clean architecture skeleton so '
           'you can jump straight into your features.',
     ),
     _Slide(
       icon: Icons.palette_rounded,
       title: 'Premium design system',
-      body:
-          'Design tokens, ink-on-white aesthetics, and a full component '
+      body: 'Design tokens, ink-on-white aesthetics, and a full component '
           'library — ready to customize.',
     ),
     _Slide(
       icon: Icons.lock_rounded,
       title: 'Auth out of the box',
-      body:
-          'Secure token storage, silent refresh, router guards, and '
+      body: 'Secure token storage, silent refresh, router guards, and '
           'registration — all wired up.',
     ),
   ];
@@ -132,9 +129,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   onPressed: isLast
                       ? _finish
                       : () => _controller.nextPage(
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.easeOutCubic,
-                        ),
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                          ),
                 ),
               ),
             ),
@@ -159,27 +156,27 @@ class _SlidePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-                width: 110,
-                height: 110,
-                decoration: BoxDecoration(
-                  color: AppColors.ink.primary,
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: AppEffects.softShadow,
-                ),
-                child: Icon(slide.icon, size: 52, color: Colors.white),
-              )
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              color: AppColors.ink.primary,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: AppEffects.softShadow,
+            ),
+            child: Icon(slide.icon, size: 52, color: Colors.white),
+          )
               .animate()
               .fadeIn(duration: 400.ms)
               .scale(begin: const Offset(0.85, 0.85)),
           const SizedBox(height: AppSpacing.xl),
           Text(
-                slide.title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            slide.title,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColors.text.primary,
                   fontWeight: FontWeight.w800,
                 ),
-              )
+          )
               .animate()
               .fadeIn(delay: 80.ms, duration: 400.ms)
               .slideY(begin: 0.2, end: 0),
@@ -188,9 +185,9 @@ class _SlidePage extends StatelessWidget {
             slide.body,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.text.secondary,
-              height: 1.5,
-            ),
+                  color: AppColors.text.secondary,
+                  height: 1.5,
+                ),
           ).animate().fadeIn(delay: 160.ms, duration: 400.ms),
         ],
       ),

@@ -6,11 +6,11 @@ class AppCardTheme {
   AppCardTheme._();
 
   static CardThemeData get cardTheme => CardThemeData(
-    color: AppColors.ui.surface,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.card),
-    ),
-    elevation: 1,
-    clipBehavior: Clip.antiAlias,
-  );
+        color: AppColors.ui.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.card),
+        ),
+        elevation: 1,
+        clipBehavior: Clip.antiAlias,
+      );
 }

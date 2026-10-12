@@ -29,10 +29,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: (user['id'] ?? payload['id'] ?? '').toString(),
       email: (user['email'] ?? payload['email'] ?? '').toString(),
-      name: (user['name'] ??
-              user['username'] ??
-              payload['name'] ??
-              '')
+      name: (user['name'] ?? user['username'] ?? payload['name'] ?? '')
           .toString(),
       token: token,
       refreshToken: refreshToken,
@@ -47,12 +44,12 @@ class UserModel extends UserEntity {
   final String? refreshToken;
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'email': email,
-    'name': name,
-    'token': token,
-    'refreshToken': refreshToken,
-  };
+        'id': id,
+        'email': email,
+        'name': name,
+        'token': token,
+        'refreshToken': refreshToken,
+      };
 
   @override
   List<Object?> get props => [...super.props, token, refreshToken];

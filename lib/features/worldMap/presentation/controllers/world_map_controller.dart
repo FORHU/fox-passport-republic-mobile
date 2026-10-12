@@ -37,11 +37,12 @@ class WorldMapState extends Equatable {
     bool? isLoading,
     List<StoreEntity>? stores,
     String? error,
-  }) => WorldMapState(
-    isLoading: isLoading ?? this.isLoading,
-    stores: stores ?? this.stores,
-    error: error,
-  );
+  }) =>
+      WorldMapState(
+        isLoading: isLoading ?? this.isLoading,
+        stores: stores ?? this.stores,
+        error: error,
+      );
 
   @override
   List<Object?> get props => [isLoading, stores, error];
@@ -72,5 +73,5 @@ class WorldMapController extends Notifier<WorldMapState> {
 
 final worldMapControllerProvider =
     NotifierProvider<WorldMapController, WorldMapState>(
-      WorldMapController.new,
-    );
+  WorldMapController.new,
+);

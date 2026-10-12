@@ -22,8 +22,7 @@ class AuthInterceptor extends QueuedInterceptor {
     this.cookieService,
     this.onUnauthenticated,
     Dio? refreshClient,
-  }) : _refreshClient =
-            refreshClient ??
+  }) : _refreshClient = refreshClient ??
             Dio(
               BaseOptions(
                 baseUrl: baseUrl,

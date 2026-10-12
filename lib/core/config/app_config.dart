@@ -26,8 +26,7 @@ class AppConfig {
       environment: envString == 'prod' ? Environment.prod : Environment.dev,
       appName: dotenv.env['APP_NAME'] ?? 'flutter_template',
       baseUrl: dotenv.env['BASE_URL'] ?? '',
-      enableLogging:
-          (dotenv.env['ENABLE_LOGGING'] ??
+      enableLogging: (dotenv.env['ENABLE_LOGGING'] ??
                   (envString != 'prod' ? 'true' : 'false'))
               .toLowerCase() ==
           'true',
@@ -37,17 +36,17 @@ class AppConfig {
   /// Explicit development config used by `main_dev.dart` — points at local
   /// Fox Passport Republic API on port 6002.
   const AppConfig.dev()
-    : environment = Environment.dev,
-      appName = 'Fox Passport (Dev)',
-      baseUrl = 'http://localhost:6002/api/v1',
-      enableLogging = true;
+      : environment = Environment.dev,
+        appName = 'Fox Passport (Dev)',
+        baseUrl = 'http://localhost:6002/api/v1',
+        enableLogging = true;
 
   /// Explicit production config used by `main_prod.dart` — logging off.
   const AppConfig.prod()
-    : environment = Environment.prod,
-      appName = 'Fox Passport',
-      baseUrl = 'http://localhost:6002/api/v1',
-      enableLogging = false;
+      : environment = Environment.prod,
+        appName = 'Fox Passport',
+        baseUrl = 'http://localhost:6002/api/v1',
+        enableLogging = false;
 
   final Environment environment;
   final String appName;

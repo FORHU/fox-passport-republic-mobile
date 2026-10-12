@@ -31,15 +31,14 @@ void main() {
         when(
           () => mockRepository.getItems(),
         ).thenAnswer((_) async => const Right(tItems));
-        container =
-            ProviderContainer(
-                overrides: [
-                  homeRepositoryProvider.overrideWithValue(mockRepository),
-                ],
-              )
-              // Reading the provider triggers `build()`, which schedules the
-              // fetch as a microtask.
-              ..read(homeControllerProvider);
+        container = ProviderContainer(
+          overrides: [
+            homeRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        )
+          // Reading the provider triggers `build()`, which schedules the
+          // fetch as a microtask.
+          ..read(homeControllerProvider);
 
         // Act — allow the scheduled microtask fetch to complete.
         await Future<void>.delayed(Duration.zero);

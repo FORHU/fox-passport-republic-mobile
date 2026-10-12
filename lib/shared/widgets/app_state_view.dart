@@ -54,18 +54,18 @@ class AppStateView extends StatelessWidget {
   IconData get _icon => icon ?? _defaultIconFor(kind);
 
   Color get _accent => switch (kind) {
-    AppStateKind.error => AppColors.status.error,
-    AppStateKind.empty => AppColors.text.tertiary,
-    AppStateKind.notFound => AppColors.ink.primary,
-    AppStateKind.info => AppColors.ink.primary,
-  };
+        AppStateKind.error => AppColors.status.error,
+        AppStateKind.empty => AppColors.text.tertiary,
+        AppStateKind.notFound => AppColors.ink.primary,
+        AppStateKind.info => AppColors.ink.primary,
+      };
 
   static IconData _defaultIconFor(AppStateKind kind) => switch (kind) {
-    AppStateKind.error => Icons.error_outline_rounded,
-    AppStateKind.empty => Icons.inbox_outlined,
-    AppStateKind.notFound => Icons.search_off_rounded,
-    AppStateKind.info => Icons.info_outline_rounded,
-  };
+        AppStateKind.error => Icons.error_outline_rounded,
+        AppStateKind.empty => Icons.inbox_outlined,
+        AppStateKind.notFound => Icons.search_off_rounded,
+        AppStateKind.info => Icons.info_outline_rounded,
+      };
 
   @override
   Widget build(BuildContext context) {

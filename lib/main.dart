@@ -7,6 +7,6 @@ import 'package:flutter_template/core/config/app_config.dart';
 /// For explicit, define-free targets use `lib/main_dev.dart` or
 /// `lib/main_prod.dart`.
 Future<void> main() => bootstrap(
-  const AppConfig.dev(), // fallback, overridden after dotenv loads
-  dotEnvFile: '.env.dev',
-);
+      const AppConfig.dev(), // fallback, overridden after dotenv loads
+      dotEnvFile: '.env.dev',
+    );

@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// * [FlutterSecureStorage] for secrets (auth tokens) — encrypted at rest.
 class StorageService {
   StorageService(this._prefs, {FlutterSecureStorage? secure})
-    : _secure = secure ?? const FlutterSecureStorage();
+      : _secure = secure ?? const FlutterSecureStorage();
 
   final SharedPreferences _prefs;
   final FlutterSecureStorage _secure;

@@ -11,10 +11,10 @@ class StoreModel extends StoreEntity {
   });
 
   factory StoreModel.fromJson(Map<String, dynamic> json) => StoreModel(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    address: json['address'] as String,
-    distanceKm: (json['distanceKm'] as num).toDouble(),
-    rating: (json['rating'] as num).toDouble(),
-  );
+        id: json['id'] as String,
+        name: json['name'] as String,
+        address: json['address'] as String,
+        distanceKm: (json['distanceKm'] as num).toDouble(),
+        rating: (json['rating'] as num).toDouble(),
+      );
 }

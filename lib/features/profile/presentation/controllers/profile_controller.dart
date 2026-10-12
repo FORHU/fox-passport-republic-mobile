@@ -33,12 +33,13 @@ class ProfileState extends Equatable {
     bool? isLoading,
     ProfileEntity? profile,
     String? error,
-  }) => ProfileState(
-    isLoading: isLoading ?? this.isLoading,
-    profile: profile ?? this.profile,
-    // Intentionally not `error ?? this.error`: passing null clears it.
-    error: error,
-  );
+  }) =>
+      ProfileState(
+        isLoading: isLoading ?? this.isLoading,
+        profile: profile ?? this.profile,
+        // Intentionally not `error ?? this.error`: passing null clears it.
+        error: error,
+      );
 
   @override
   List<Object?> get props => [isLoading, profile, error];

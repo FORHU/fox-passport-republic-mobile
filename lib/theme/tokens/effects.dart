@@ -15,37 +15,37 @@ class AppEffects {
 
   /// Soft, low-opacity shadow used by floating cards.
   static List<BoxShadow> get cardShadow => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.35),
-      blurRadius: 24,
-      offset: const Offset(0, 12),
-    ),
-  ];
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.35),
+          blurRadius: 24,
+          offset: const Offset(0, 12),
+        ),
+      ];
 
   /// Tighter shadow for smaller raised elements (chips, FABs).
   static List<BoxShadow> get softShadow => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.12),
-      blurRadius: 8,
-      offset: const Offset(0, 2),
-    ),
-  ];
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.12),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ];
 
   /// Subtle shadow for elevated surfaces (light design).
   static List<BoxShadow> get surfaceShadow => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.08),
-      blurRadius: 4,
-      offset: const Offset(0, 1),
-    ),
-  ];
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.08),
+          blurRadius: 4,
+          offset: const Offset(0, 1),
+        ),
+      ];
 
   /// Primary glow shadow for CTA buttons
   static List<BoxShadow> get primaryGlow => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.15),
-      blurRadius: 16,
-      offset: const Offset(0, 4),
-    ),
-  ];
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.15),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+      ];
 }

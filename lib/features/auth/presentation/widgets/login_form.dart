@@ -59,55 +59,49 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ModernTextField(
-                label: context.l10n.email,
-                hint: 'you@example.com',
-                controller: _emailController,
-                prefixIcon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: Validators.email,
-              )
+            label: context.l10n.email,
+            hint: 'you@example.com',
+            controller: _emailController,
+            prefixIcon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
+            validator: Validators.email,
+          )
               .animate()
               .fadeIn(delay: 100.ms, duration: 350.ms)
               .slideY(begin: 0.1, end: 0),
-
           AppSpacing.md.v,
-
           ModernTextField(
-                label: context.l10n.password,
-                hint: '••••••••',
-                controller: _passwordController,
-                prefixIcon: Icons.lock_outline_rounded,
-                obscureText: _obscurePassword,
-                validator: Validators.password,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.text.tertiary,
-                    size: 20,
-                  ),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                ),
-              )
+            label: context.l10n.password,
+            hint: '••••••••',
+            controller: _passwordController,
+            prefixIcon: Icons.lock_outline_rounded,
+            obscureText: _obscurePassword,
+            validator: Validators.password,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: AppColors.text.tertiary,
+                size: 20,
+              ),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          )
               .animate()
               .fadeIn(delay: 180.ms, duration: 350.ms)
               .slideY(begin: 0.1, end: 0),
-
           AppSpacing.xl.v,
-
           PrimaryButton(
-                label: context.l10n.login,
-                isLoading: state.isLoading,
-                onPressed: _submit,
-              )
+            label: context.l10n.login,
+            isLoading: state.isLoading,
+            onPressed: _submit,
+          )
               .animate()
               .fadeIn(delay: 260.ms, duration: 350.ms)
               .slideY(begin: 0.1, end: 0),
-
           AppSpacing.lg.v,
-
           Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,

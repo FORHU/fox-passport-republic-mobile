@@ -14,11 +14,12 @@ class RegisterUseCase {
     String? name,
     String? countryCode,
     String roleName = 'USER',
-  }) => _repository.register(
-    email.trim(),
-    password,
-    name: name,
-    countryCode: countryCode,
-    roleName: roleName,
-  );
+  }) =>
+      _repository.register(
+        email.trim(),
+        password,
+        name: name,
+        countryCode: countryCode,
+        roleName: roleName,
+      );
 }

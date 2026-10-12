@@ -21,17 +21,16 @@ class ApiService {
     CookieService? cookieService,
     void Function()? onUnauthenticated,
     Dio? dio,
-  }) : client =
-           dio ??
-           Dio(
-             BaseOptions(
-               baseUrl: AppConfig.instance.baseUrl,
-               connectTimeout: const Duration(seconds: 10),
-               receiveTimeout: const Duration(seconds: 10),
-               sendTimeout: const Duration(seconds: 10),
-               contentType: Headers.jsonContentType,
-             ),
-           ) {
+  }) : client = dio ??
+            Dio(
+              BaseOptions(
+                baseUrl: AppConfig.instance.baseUrl,
+                connectTimeout: const Duration(seconds: 10),
+                receiveTimeout: const Duration(seconds: 10),
+                sendTimeout: const Duration(seconds: 10),
+                contentType: Headers.jsonContentType,
+              ),
+            ) {
     // 0. Enable Web credentials & native platform cookie jar
     configureWebCredentials(client);
     final jar = cookieService?.jar;
