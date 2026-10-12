@@ -1,5 +1,11 @@
 # Flutter Template — Theming Guide
 
+> **Superseded (2026-10-12).** The app is moving to the web app's dark / lime
+> look. `docs/mobile-design.md` is the source of truth for colours, fonts and
+> component styling. This file describes the old ink-on-white tokens that
+> `lib/theme` still contains until it is migrated; the file structure and
+> token-access examples below remain accurate.
+
 **Status**: ✅ Synchronized with mapanytime-app design system
 
 ---

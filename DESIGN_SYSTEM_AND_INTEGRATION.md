@@ -1,5 +1,9 @@
 # Flutter Design System & Backend Integration
 
+> **Section 1 is superseded (2026-10-12).** The app is moving to the web app's
+> dark / lime look; see `docs/mobile-design.md`. Sections 2 and 3 (backend
+> integration, testing) are unaffected.
+
 This document outlines the **ink-on-white** design system aligned with `mapanytime-app` (v3.44.8) and the backend API integration for `flutter_template_v1`.
 
 ---

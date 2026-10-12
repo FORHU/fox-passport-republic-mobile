@@ -107,16 +107,13 @@ class _TopToastState extends State<_TopToast>
                         horizontal: 14,
                         vertical: 8,
                       ),
+                      // Flat fill and a hairline, no shadow (docs/mobile-design.md).
                       decoration: BoxDecoration(
                         color: bg,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black38,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
+                        border: Border.all(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
                       ),
                       child: Text(
                         widget.message,

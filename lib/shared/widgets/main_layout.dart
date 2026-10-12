@@ -30,29 +30,29 @@ class MainLayout extends StatelessWidget {
         ),
         route: RouteNames.home,
       ),
-      const _Destination(
+      _Destination(
         item: NavBarItem(
-          label: 'Quiz',
-          icon: Icons.quiz_outlined,
-          activeIcon: Icons.quiz_rounded,
+          label: context.l10n.search,
+          icon: Icons.search_rounded,
+          activeIcon: Icons.search_rounded,
         ),
-        route: RouteNames.quiz,
+        route: RouteNames.search,
       ),
-      const _Destination(
+      _Destination(
         item: NavBarItem(
-          label: 'Map',
-          icon: Icons.map_outlined,
-          activeIcon: Icons.map_rounded,
+          label: context.l10n.tickets,
+          icon: Icons.confirmation_number_outlined,
+          activeIcon: Icons.confirmation_number_rounded,
         ),
-        route: RouteNames.worldMap,
+        route: RouteNames.tickets,
       ),
-      const _Destination(
+      _Destination(
         item: NavBarItem(
-          label: 'Cart',
-          icon: Icons.shopping_bag_outlined,
-          activeIcon: Icons.shopping_bag_rounded,
+          label: context.l10n.passport,
+          icon: Icons.badge_outlined,
+          activeIcon: Icons.badge_rounded,
         ),
-        route: RouteNames.cart,
+        route: RouteNames.passport,
       ),
       _Destination(
         item: NavBarItem(

@@ -7,6 +7,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
+import 'package:flutter_template/core/services/interceptors/mock_interceptor.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
 
@@ -36,6 +37,10 @@ class ApiService {
     final jar = cookieService?.jar;
     if (jar != null && !kIsWeb) {
       client.interceptors.add(CookieManager(jar));
+    }
+
+    if (AppConfig.instance.useMock) {
+      client.interceptors.add(MockInterceptor());
     }
 
     // 1. Attach the bearer token and transparently refresh it on a 401.
@@ -109,7 +114,10 @@ class ApiService {
   AppException _mapError(DioException e) {
     final status = e.response?.statusCode;
     if (status == 401 || status == 403) {
-      return UnauthorizedException(_messageFrom(e) ?? 'Unauthorized access');
+      return UnauthorizedException(
+        _messageFrom(e) ?? 'Unauthorized access',
+        statusCode: status,
+      );
     }
 
     switch (e.type) {

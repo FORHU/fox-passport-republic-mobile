@@ -18,7 +18,13 @@ class NetworkException extends AppException {
 
 /// The request was rejected for authentication/authorization reasons (401/403).
 class UnauthorizedException extends AppException {
-  const UnauthorizedException([super.message = 'Unauthorized access']);
+  const UnauthorizedException(
+    super.message, {
+    this.statusCode,
+  });
+
+  /// 401 or 403 — the API uses 403 on login for an unverified email.
+  final int? statusCode;
 }
 
 /// Any other non-success response (4xx/5xx) or an unexpected server error.

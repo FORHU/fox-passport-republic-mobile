@@ -15,8 +15,9 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: AppConfig.instance.appName,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      // Dark only — see docs/mobile-design.md.
+      theme: AppTheme.dark,
+      themeMode: ThemeMode.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,

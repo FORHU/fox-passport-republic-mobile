@@ -1,0 +1,974 @@
+{
+ "loginEmail": [
+  {
+   "input": "ada@example.com",
+   "message": null
+  },
+  {
+   "input": "a@x.com",
+   "message": null
+  },
+  {
+   "input": "a+b@x.co",
+   "message": null
+  },
+  {
+   "input": "a@b",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a..b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": ".a@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a.@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@-x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x-.com",
+   "message": null
+  },
+  {
+   "input": "a@x.c",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "A@B.CO",
+   "message": null
+  },
+  {
+   "input": "a b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.com ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "  a@x.com  ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "o'brien@x.com",
+   "message": null
+  },
+  {
+   "input": "a@sub.x.io",
+   "message": null
+  },
+  {
+   "input": "ñ@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.web1",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "   ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "plain",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x..com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a_b@x.com",
+   "message": null
+  },
+  {
+   "input": "a-b@x.com",
+   "message": null
+  },
+  {
+   "input": "a%b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x_y.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@1.io",
+   "message": null
+  },
+  {
+   "input": "user@localhost",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "x@y.zz",
+   "message": null
+  },
+  {
+   "input": "a@x.com.",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a,b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.c0m",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "-a@x.com",
+   "message": null
+  },
+  {
+   "input": "a@x.co m",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "\ta@x.com",
+   "message": "Please enter a valid email address"
+  }
+ ],
+ "loginPassword": [
+  {
+   "input": "",
+   "message": "Please enter your password"
+  },
+  {
+   "input": "a",
+   "message": null
+  },
+  {
+   "input": " ",
+   "message": null
+  },
+  {
+   "input": "password",
+   "message": null
+  }
+ ],
+ "signupEmail": [
+  {
+   "input": "ada@example.com",
+   "message": null
+  },
+  {
+   "input": "a@x.com",
+   "message": null
+  },
+  {
+   "input": "a+b@x.co",
+   "message": null
+  },
+  {
+   "input": "a@b",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a..b@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": ".a@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a.@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@-x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x-.com",
+   "message": null
+  },
+  {
+   "input": "a@x.c",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "A@B.CO",
+   "message": null
+  },
+  {
+   "input": "a b@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x.com ",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "  a@x.com  ",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "o'brien@x.com",
+   "message": null
+  },
+  {
+   "input": "a@sub.x.io",
+   "message": null
+  },
+  {
+   "input": "ñ@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x.web1",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "   ",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "plain",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x..com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a_b@x.com",
+   "message": null
+  },
+  {
+   "input": "a-b@x.com",
+   "message": null
+  },
+  {
+   "input": "a%b@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x_y.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@1.io",
+   "message": null
+  },
+  {
+   "input": "user@localhost",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "x@y.zz",
+   "message": null
+  },
+  {
+   "input": "a@x.com.",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a,b@x.com",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "a@x.c0m",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "-a@x.com",
+   "message": null
+  },
+  {
+   "input": "a@x.co m",
+   "message": "Invalid email address"
+  },
+  {
+   "input": "\ta@x.com",
+   "message": "Invalid email address"
+  }
+ ],
+ "signupName": [
+  {
+   "input": "Ada Lovelace",
+   "message": null
+  },
+  {
+   "input": "Conan O'Brien",
+   "message": null
+  },
+  {
+   "input": "Jean-Luc Picard",
+   "message": null
+  },
+  {
+   "input": "Ana María",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "Dr. Cruz",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "R2D2",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "",
+   "message": "Name is required"
+  },
+  {
+   "input": "  ",
+   "message": null
+  },
+  {
+   "input": "A",
+   "message": null
+  },
+  {
+   "input": "Al",
+   "message": null
+  },
+  {
+   "input": "Zoë",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "李小龍",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "Ada_99",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "<script>",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "Mary-Jane O'Neil",
+   "message": null
+  },
+  {
+   "input": "  Ada",
+   "message": null
+  },
+  {
+   "input": "Ada  ",
+   "message": null
+  },
+  {
+   "input": "O’Brien",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "Ada\nLovelace",
+   "message": null
+  },
+  {
+   "input": "José",
+   "message": "Name can only contain letters"
+  },
+  {
+   "input": "ABC",
+   "message": null
+  },
+  {
+   "input": "a",
+   "message": null
+  }
+ ],
+ "signupUsername": [
+  {
+   "input": "",
+   "message": "Username must be at least 3 characters"
+  },
+  {
+   "input": "a",
+   "message": "Username must be at least 3 characters"
+  },
+  {
+   "input": "ab",
+   "message": "Username must be at least 3 characters"
+  },
+  {
+   "input": "abc",
+   "message": null
+  },
+  {
+   "input": "fox_mulder",
+   "message": null
+  },
+  {
+   "input": "  ",
+   "message": "Username must be at least 3 characters"
+  },
+  {
+   "input": "ab ",
+   "message": null
+  },
+  {
+   "input": "日本語",
+   "message": null
+  },
+  {
+   "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "message": null
+  }
+ ],
+ "signupPassword": [
+  {
+   "input": "",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "short",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "abcdefghijklmnop",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "ABCDEFGHIJKLMNOP",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Abcdefghijklmnop",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "Abcdefghijklmno1",
+   "message": "Password must contain at least one special character"
+  },
+  {
+   "input": "Abcdefghijklmn1!",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklm1!x",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklmno1#",
+   "message": "Password must contain at least one special character"
+  },
+  {
+   "input": "Abcdefghijklmno1&",
+   "message": null
+  },
+  {
+   "input": "Aa1!Aa1!Aa1!Aa1!",
+   "message": null
+  },
+  {
+   "input": "                ",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "Abcdefghijklmnopq",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "A1!aaaaaaaaaaaaa",
+   "message": null
+  },
+  {
+   "input": "a1!aaaaaaaaaaaaaa",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "A1!AAAAAAAAAAAAAA",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Aa!aaaaaaaaaaaaaa",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "Aa1aaaaaaaaaaaaaa",
+   "message": "Password must contain at least one special character"
+  },
+  {
+   "input": "Passw0rd",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "Passw0rd!",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "passw0rd",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "PASSW0RD",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "Abcdefg1",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "Abcdefgh",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "abcdefg1",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "ABCDEFG1",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "Abcdef1",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "A1b2C3d4",
+   "message": "Password must be at least 16 characters"
+  },
+  {
+   "input": "Éclair123!Éclair!",
+   "message": "Password must contain at least one uppercase letter"
+  }
+ ],
+ "signupConfirm": [
+  {
+   "password": "Abcdefghijklmn1!",
+   "input": "Abcdefghijklmn1!",
+   "message": null
+  },
+  {
+   "password": "Abcdefghijklmn1!",
+   "input": "abcdefghijklmn1!",
+   "message": "Passwords do not match"
+  },
+  {
+   "password": "Abcdefghijklmn1!",
+   "input": "",
+   "message": "Passwords do not match"
+  },
+  {
+   "password": "Abcdefghijklmn1!",
+   "input": " Abcdefghijklmn1!",
+   "message": "Passwords do not match"
+  },
+  {
+   "password": "Abcdefghijklmn1!",
+   "input": "Abcdefghijklmn1! ",
+   "message": "Passwords do not match"
+  }
+ ],
+ "forgotEmail": [
+  {
+   "input": "ada@example.com",
+   "message": null
+  },
+  {
+   "input": "a@x.com",
+   "message": null
+  },
+  {
+   "input": "a+b@x.co",
+   "message": null
+  },
+  {
+   "input": "a@b",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a..b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": ".a@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a.@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@-x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x-.com",
+   "message": null
+  },
+  {
+   "input": "a@x.c",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "A@B.CO",
+   "message": null
+  },
+  {
+   "input": "a b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.com ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "  a@x.com  ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "o'brien@x.com",
+   "message": null
+  },
+  {
+   "input": "a@sub.x.io",
+   "message": null
+  },
+  {
+   "input": "ñ@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.web1",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "   ",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "plain",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x..com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a_b@x.com",
+   "message": null
+  },
+  {
+   "input": "a-b@x.com",
+   "message": null
+  },
+  {
+   "input": "a%b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x_y.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@1.io",
+   "message": null
+  },
+  {
+   "input": "user@localhost",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "x@y.zz",
+   "message": null
+  },
+  {
+   "input": "a@x.com.",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a,b@x.com",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "a@x.c0m",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "-a@x.com",
+   "message": null
+  },
+  {
+   "input": "a@x.co m",
+   "message": "Please enter a valid email address"
+  },
+  {
+   "input": "\ta@x.com",
+   "message": "Please enter a valid email address"
+  }
+ ],
+ "otpCode": [
+  {
+   "input": "",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "1",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "12345",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "123456",
+   "message": null
+  },
+  {
+   "input": "1234567",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "12345a",
+   "message": null
+  },
+  {
+   "input": "abcdef",
+   "message": null
+  },
+  {
+   "input": "      ",
+   "message": null
+  },
+  {
+   "input": "12 456",
+   "message": null
+  },
+  {
+   "input": "１２３４５６",
+   "message": null
+  }
+ ],
+ "resetCode": [
+  {
+   "input": "",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "1",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "12345",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "123456",
+   "message": null
+  },
+  {
+   "input": "1234567",
+   "message": "Code must be 6 digits"
+  },
+  {
+   "input": "12345a",
+   "message": null
+  },
+  {
+   "input": "abcdef",
+   "message": null
+  },
+  {
+   "input": "      ",
+   "message": null
+  },
+  {
+   "input": "12 456",
+   "message": null
+  },
+  {
+   "input": "１２３４５６",
+   "message": null
+  }
+ ],
+ "resetNewPassword": [
+  {
+   "input": "",
+   "message": "Password must be at least 8 characters"
+  },
+  {
+   "input": "short",
+   "message": "Password must be at least 8 characters"
+  },
+  {
+   "input": "abcdefghijklmnop",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "ABCDEFGHIJKLMNOP",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Abcdefghijklmnop",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "Abcdefghijklmno1",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklmn1!",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklm1!x",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklmno1#",
+   "message": null
+  },
+  {
+   "input": "Abcdefghijklmno1&",
+   "message": null
+  },
+  {
+   "input": "Aa1!Aa1!Aa1!Aa1!",
+   "message": null
+  },
+  {
+   "input": "                ",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "Abcdefghijklmnopq",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "A1!aaaaaaaaaaaaa",
+   "message": null
+  },
+  {
+   "input": "a1!aaaaaaaaaaaaaa",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "A1!AAAAAAAAAAAAAA",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Aa!aaaaaaaaaaaaaa",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "Aa1aaaaaaaaaaaaaa",
+   "message": null
+  },
+  {
+   "input": "Passw0rd",
+   "message": null
+  },
+  {
+   "input": "Passw0rd!",
+   "message": null
+  },
+  {
+   "input": "passw0rd",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "PASSW0RD",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Abcdefg1",
+   "message": null
+  },
+  {
+   "input": "Abcdefgh",
+   "message": "Password must contain at least one digit"
+  },
+  {
+   "input": "abcdefg1",
+   "message": "Password must contain at least one uppercase letter"
+  },
+  {
+   "input": "ABCDEFG1",
+   "message": "Password must contain at least one lowercase letter"
+  },
+  {
+   "input": "Abcdef1",
+   "message": "Password must be at least 8 characters"
+  },
+  {
+   "input": "A1b2C3d4",
+   "message": null
+  },
+  {
+   "input": "Éclair123!Éclair!",
+   "message": "Password must contain at least one uppercase letter"
+  }
+ ],
+ "resetConfirm": [
+  {
+   "password": "Abcdefg1",
+   "input": "Abcdefg1",
+   "message": null
+  },
+  {
+   "password": "Abcdefg1",
+   "input": "abcdefg1",
+   "message": "Passwords do not match"
+  },
+  {
+   "password": "Abcdefg1",
+   "input": "",
+   "message": "Passwords do not match"
+  }
+ ]
+}

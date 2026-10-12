@@ -9,6 +9,10 @@ class UserModel extends UserEntity {
     required super.name,
     required this.token,
     this.refreshToken,
+    super.username,
+    super.systemRole,
+    super.roleType,
+    super.isEmailVerified,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,11 @@ class UserModel extends UserEntity {
     final token = (payload['token'] ?? payload['accessToken'] ?? '').toString();
     final refreshToken = payload['refreshToken'] as String?;
 
+    final rawRoles = user['roleType'];
+    final roles = rawRoles is List
+        ? rawRoles.map((r) => r.toString()).toList()
+        : const <String>[];
+
     return UserModel(
       id: (user['id'] ?? payload['id'] ?? '').toString(),
       email: (user['email'] ?? payload['email'] ?? '').toString(),
@@ -33,6 +42,12 @@ class UserModel extends UserEntity {
           .toString(),
       token: token,
       refreshToken: refreshToken,
+      username: (user['username'] ?? '').toString(),
+      systemRole: (user['systemRole'] ?? 'user').toString(),
+      roleType: roles,
+      // The API's login payload omits this flag, but it refuses to sign in an
+      // unverified account — so a user we received at all is verified.
+      isEmailVerified: user['isEmailVerified'] != false,
     );
   }
 
@@ -47,6 +62,10 @@ class UserModel extends UserEntity {
         'id': id,
         'email': email,
         'name': name,
+        'username': username,
+        'systemRole': systemRole,
+        'roleType': roleType,
+        'isEmailVerified': isEmailVerified,
         'token': token,
         'refreshToken': refreshToken,
       };

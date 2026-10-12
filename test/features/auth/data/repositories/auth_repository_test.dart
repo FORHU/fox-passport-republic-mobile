@@ -74,6 +74,17 @@ void main() {
       verifyNever(() => mockStorage.saveToken(any()));
     });
 
+    test('maps a 403 to EmailNotVerifiedFailure', () async {
+      when(() => mockRemote.login(tEmail, tPassword)).thenThrow(
+        const UnauthorizedException('Email not verified', statusCode: 403),
+      );
+
+      final result = await repository.login(tEmail, tPassword);
+
+      expect(result.getLeft().toNullable(), isA<EmailNotVerifiedFailure>());
+      verifyNever(() => mockStorage.saveToken(any()));
+    });
+
     test('maps NetworkException to NetworkFailure', () async {
       // Arrange
       when(

@@ -3,6 +3,8 @@ import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:flutter_template/features/auth/data/datasources/social_credential_source.dart';
+import 'package:flutter_template/features/auth/data/models/user_model.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -13,11 +15,24 @@ abstract class AuthRepository {
     String email,
     String password, {
     String? name,
+    String? username,
     String? countryCode,
     String roleName,
   });
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, UserEntity>> refreshAuth();
+
+  /// True where the platform can run Google/Facebook sign-in at all.
+  bool get isSocialSignInSupported;
+  Future<Either<Failure, UserEntity>> loginWithSocial(SocialProvider provider);
+  Future<Either<Failure, void>> verifyEmail(String email, String otpCode);
+  Future<Either<Failure, void>> resendVerificationOtp(String email);
+  Future<Either<Failure, void>> forgotPassword(String email);
+  Future<Either<Failure, void>> resetPassword(
+    String email,
+    String otpCode,
+    String newPassword,
+  );
 }
 
 /// Coordinates the remote data source and local token storage. Catches the
@@ -27,11 +42,62 @@ class AuthRepositoryImpl implements AuthRepository {
     this._remote,
     this._storage, {
     CookieService? cookieService,
-  }) : _cookieService = cookieService;
+    SocialCredentialSource? social,
+  })  : _cookieService = cookieService,
+        _social = social;
 
   final AuthRemoteDataSource _remote;
   final StorageService _storage;
   final CookieService? _cookieService;
+  final SocialCredentialSource? _social;
+
+  @override
+  bool get isSocialSignInSupported => _social?.isSupported ?? false;
+
+  /// Stores tokens and the cached user — shared by every sign-in path.
+  Future<void> _persistSession(UserModel user) async {
+    await _storage.saveToken(user.token);
+    final refreshToken = user.refreshToken;
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await _storage.saveRefreshToken(refreshToken);
+    }
+    // Save full user model to local cache for instant offline startup.
+    await _storage.saveUserModel(user);
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> loginWithSocial(
+    SocialProvider provider,
+  ) async {
+    final social = _social;
+    if (social == null || !social.isSupported) {
+      return const Left(
+        ServerFailure('Social sign-in is not available on this platform.'),
+      );
+    }
+
+    try {
+      final credential = await social.obtain(provider);
+      final user = switch (credential) {
+        SocialToken(:final value) =>
+          await _remote.loginWithSocialToken(provider, value),
+        SocialExchangeCode(:final code) =>
+          await _remote.exchangeSocialCode(provider, code),
+      };
+      await _persistSession(user);
+      return Right(user);
+    } on SocialSignInCancelled {
+      return const Left(SocialSignInCancelledFailure());
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on Object catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 
   @override
   Future<Either<Failure, UserEntity>> login(
@@ -40,15 +106,11 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     try {
       final user = await _remote.login(email, password);
-      await _storage.saveToken(user.token);
-      final refreshToken = user.refreshToken;
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        await _storage.saveRefreshToken(refreshToken);
-      }
-      // Save full user model to local cache for instant offline startup.
-      await _storage.saveUserModel(user);
+      await _persistSession(user);
       return Right(user);
     } on UnauthorizedException catch (e) {
+      // The API answers 403 for correct credentials on an unverified account.
+      if (e.statusCode == 403) return Left(EmailNotVerifiedFailure(e.message));
       return Left(UnauthorizedFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
@@ -64,6 +126,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String email,
     String password, {
     String? name,
+    String? username,
     String? countryCode,
     String roleName = 'USER',
   }) async {
@@ -72,6 +135,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email,
         password,
         name: name,
+        username: username,
         countryCode: countryCode,
         roleName: roleName,
       );
@@ -111,6 +175,42 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } on Object catch (e) {
       return Left(CacheFailure('Failed to clear local session: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyEmail(String email, String otpCode) =>
+      _guard(() => _remote.verifyEmail(email, otpCode));
+
+  @override
+  Future<Either<Failure, void>> resendVerificationOtp(String email) =>
+      _guard(() => _remote.resendVerificationOtp(email));
+
+  @override
+  Future<Either<Failure, void>> forgotPassword(String email) =>
+      _guard(() => _remote.forgotPassword(email));
+
+  @override
+  Future<Either<Failure, void>> resetPassword(
+    String email,
+    String otpCode,
+    String newPassword,
+  ) =>
+      _guard(() => _remote.resetPassword(email, otpCode, newPassword));
+
+  /// Runs a void remote call and maps the data layer's exceptions to Failures.
+  Future<Either<Failure, void>> _guard(Future<void> Function() call) async {
+    try {
+      await call();
+      return const Right(null);
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on Object catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
   }
 

@@ -3,15 +3,19 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter_template/core/config/app_config.dart';
+import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:flutter_template/features/auth/data/datasources/social_credential_source.dart';
 import 'package:flutter_template/features/auth/data/repositories/auth_repository.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_template/features/auth/domain/usecases/refresh_auth_usecase.dart';
 import 'package:flutter_template/features/auth/domain/usecases/register_usecase.dart';
+import 'package:fpdart/fpdart.dart';
 
 // --- Dependency wiring (Riverpod providers) ---
 
@@ -31,8 +35,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     remote,
     ref.watch(storageServiceProvider),
     cookieService: ref.watch(cookieServiceProvider),
+    social: PlatformSocialCredentialSource(AppConfig.instance),
   );
 });
+
+/// Whether to render the Google / Facebook buttons at all.
+final socialSignInSupportedProvider = Provider<bool>(
+  (ref) => ref.watch(authRepositoryProvider).isSocialSignInSupported,
+);
 
 final loginUseCaseProvider = Provider<LoginUseCase>(
   (ref) => LoginUseCase(ref.watch(authRepositoryProvider)),
@@ -49,24 +59,40 @@ final refreshAuthUseCaseProvider = Provider<RefreshAuthUseCase>(
 // --- State ---
 
 class AuthState extends Equatable {
-  const AuthState({this.isLoading = false, this.user, this.error});
+  const AuthState({
+    this.isLoading = false,
+    this.user,
+    this.error,
+    this.pendingVerificationEmail,
+  });
 
   final bool isLoading;
   final UserEntity? user;
   final String? error;
 
+  /// Set after sign-up, or after a login refused for an unverified email, so
+  /// the OTP screen knows which account to verify.
+  final String? pendingVerificationEmail;
+
   bool get isAuthenticated => user != null;
 
-  AuthState copyWith({bool? isLoading, UserEntity? user, String? error}) =>
+  AuthState copyWith({
+    bool? isLoading,
+    UserEntity? user,
+    String? error,
+    String? pendingVerificationEmail,
+  }) =>
       AuthState(
         isLoading: isLoading ?? this.isLoading,
         user: user ?? this.user,
         // Intentionally not `error ?? this.error`: passing null clears it.
         error: error,
+        pendingVerificationEmail:
+            pendingVerificationEmail ?? this.pendingVerificationEmail,
       );
 
   @override
-  List<Object?> get props => [isLoading, user, error];
+  List<Object?> get props => [isLoading, user, error, pendingVerificationEmail];
 }
 
 // --- Controller ---
@@ -106,7 +132,11 @@ class AuthController extends Notifier<AuthState> {
 
     return result.fold(
       (failure) {
-        state = AuthState(error: failure.message);
+        state = AuthState(
+          error: failure.message,
+          pendingVerificationEmail:
+              failure is EmailNotVerifiedFailure ? email.trim() : null,
+        );
         return false;
       },
       (user) {
@@ -116,13 +146,42 @@ class AuthController extends Notifier<AuthState> {
     );
   }
 
-  Future<bool> register(String email, String password, {String? name}) async {
+  /// Google / Facebook sign-in. A user dismissing the provider's UI returns
+  /// false with no error set, so the form stays quiet.
+  Future<bool> loginWithSocial(SocialProvider provider) async {
+    state = state.copyWith(isLoading: true);
+
+    final result =
+        await ref.read(authRepositoryProvider).loginWithSocial(provider);
+
+    return result.fold(
+      (failure) {
+        state = AuthState(
+          error:
+              failure is SocialSignInCancelledFailure ? null : failure.message,
+        );
+        return false;
+      },
+      (user) {
+        state = AuthState(user: user);
+        return true;
+      },
+    );
+  }
+
+  Future<bool> register(
+    String email,
+    String password, {
+    String? name,
+    String? username,
+  }) async {
     state = state.copyWith(isLoading: true);
 
     final result = await ref.read(registerUseCaseProvider)(
       email,
       password,
       name: name,
+      username: username,
     );
 
     return result.fold(
@@ -131,7 +190,60 @@ class AuthController extends Notifier<AuthState> {
         return false;
       },
       (_) {
-        state = const AuthState();
+        // The account exists but must verify its email before it can sign in.
+        state = AuthState(pendingVerificationEmail: email.trim());
+        return true;
+      },
+    );
+  }
+
+  /// Confirms the 6-digit email code. On success the user can sign in.
+  Future<bool> verifyEmail(String email, String otpCode) => _run(
+        () => ref.read(authRepositoryProvider).verifyEmail(email, otpCode),
+        clearPendingOnSuccess: true,
+      );
+
+  Future<bool> resendVerificationOtp(String email) => _run(
+        () => ref.read(authRepositoryProvider).resendVerificationOtp(email),
+      );
+
+  Future<bool> forgotPassword(String email) => _run(
+        () => ref.read(authRepositoryProvider).forgotPassword(email),
+      );
+
+  Future<bool> resetPassword(
+    String email,
+    String otpCode,
+    String newPassword,
+  ) =>
+      _run(
+        () => ref
+            .read(authRepositoryProvider)
+            .resetPassword(email, otpCode, newPassword),
+      );
+
+  /// Shared loading/error handling for the void OTP and recovery calls.
+  Future<bool> _run(
+    Future<Either<Failure, void>> Function() call, {
+    bool clearPendingOnSuccess = false,
+  }) async {
+    final pending = state.pendingVerificationEmail;
+    state = AuthState(isLoading: true, pendingVerificationEmail: pending);
+
+    final result = await call();
+
+    return result.fold(
+      (failure) {
+        state = AuthState(
+          error: failure.message,
+          pendingVerificationEmail: pending,
+        );
+        return false;
+      },
+      (_) {
+        state = AuthState(
+          pendingVerificationEmail: clearPendingOnSuccess ? null : pending,
+        );
         return true;
       },
     );

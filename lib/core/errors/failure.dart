@@ -30,3 +30,17 @@ class NetworkFailure extends Failure {
 class UnauthorizedFailure extends Failure {
   const UnauthorizedFailure([super.message = 'Unauthorized access']);
 }
+
+/// The user dismissed Google/Facebook sign-in. Not an error: the UI shows
+/// nothing and leaves them on the form.
+class SocialSignInCancelledFailure extends Failure {
+  const SocialSignInCancelledFailure([super.message = 'Sign-in cancelled']);
+}
+
+/// Login was refused because the account's email isn't verified yet. The UI
+/// routes the user to the OTP screen instead of showing a plain error.
+class EmailNotVerifiedFailure extends Failure {
+  const EmailNotVerifiedFailure([
+    super.message = 'Please verify your email before signing in.',
+  ]);
+}

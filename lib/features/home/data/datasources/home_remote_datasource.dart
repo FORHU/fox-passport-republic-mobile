@@ -14,7 +14,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Future<List<HomeItemModel>> getItems() async {
-    final data = await _api.get(ApiEndpoints.users);
+    // Public browse endpoint: `{ success, data: [...], pagination }`.
+    final data = await _api.get(
+      ApiEndpoints.eventsBrowse,
+      query: {'limit': 10},
+    );
     final list = (data as Map)['data'] as List;
     return list
         .map(

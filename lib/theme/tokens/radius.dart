@@ -13,8 +13,8 @@ class AppRadius {
   /// Large radius (larger cards) — 20.
   static const lg = 20.0;
 
-  /// Card radius (default for card components) — 24.
-  static const card = 24.0;
+  /// Card radius (default for card components) — 20 (spec: 16–20).
+  static const card = 20.0;
 
   /// Extra-large radius (hero panels, sheets) — 28.
   static const xl = 28.0;

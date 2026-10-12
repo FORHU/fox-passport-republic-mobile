@@ -2,50 +2,21 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-/// Design tokens — elevation, shadows, blur and glow effects.
+/// Design tokens — elevation and effects.
+///
+/// `docs/mobile-design.md` §2: **no gradients, glows or blurred blobs; flat
+/// fills and hairline borders.** The shadow tokens are therefore empty. They
+/// remain so existing call sites compile; use a 1px `AppColors.border` instead.
 class AppEffects {
   AppEffects._();
 
-  /// Standard blur for glassmorphic surfaces. Keep blur layers limited on
-  /// lists for performance.
   static const double glassBlur = 18;
 
   static ImageFilter get glassFilter =>
       ImageFilter.blur(sigmaX: glassBlur, sigmaY: glassBlur);
 
-  /// Soft, low-opacity shadow used by floating cards.
-  static List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.35),
-          blurRadius: 24,
-          offset: const Offset(0, 12),
-        ),
-      ];
-
-  /// Tighter shadow for smaller raised elements (chips, FABs).
-  static List<BoxShadow> get softShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.12),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ];
-
-  /// Subtle shadow for elevated surfaces (light design).
-  static List<BoxShadow> get surfaceShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 4,
-          offset: const Offset(0, 1),
-        ),
-      ];
-
-  /// Primary glow shadow for CTA buttons
-  static List<BoxShadow> get primaryGlow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.15),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-        ),
-      ];
+  static const List<BoxShadow> cardShadow = [];
+  static const List<BoxShadow> softShadow = [];
+  static const List<BoxShadow> surfaceShadow = [];
+  static const List<BoxShadow> primaryGlow = [];
 }

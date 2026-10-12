@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 
+/// `surface` fill, 1px `border`, radius 16–20, no elevation.
 class AppCardTheme {
   AppCardTheme._();
 
   static CardThemeData get cardTheme => CardThemeData(
-        color: AppColors.ui.surface,
+        color: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.card),
+          borderRadius: AppRadius.brCard,
+          side: const BorderSide(color: AppColors.border),
         ),
-        elevation: 1,
+        elevation: 0,
+        margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
       );
 }

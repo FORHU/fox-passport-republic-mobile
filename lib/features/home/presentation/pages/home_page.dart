@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/home/presentation/controllers/home_controller.dart';
+import 'package:flutter_template/features/home/presentation/widgets/globe_hero.dart';
 import 'package:flutter_template/features/home/presentation/widgets/welcome_card.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_card.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/effects.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,6 +35,14 @@ class HomePage extends ConsumerWidget {
         backgroundColor: AppColors.ui.background,
         elevation: 0,
         actions: [
+          IconButton(
+            tooltip: context.l10n.notifications,
+            icon: Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.text.secondary,
+            ),
+            onPressed: () => context.push(RouteNames.notifications),
+          ),
           IconButton(
             tooltip: context.l10n.logout,
             icon: Icon(
@@ -72,92 +80,48 @@ class HomePage extends ConsumerWidget {
       );
     }
 
+    // The hero runs edge to edge, so the list carries no padding of its own;
+    // everything below it is inset instead.
     return ListView(
-      padding: AppSpacing.edgeInsetsMd,
+      padding: EdgeInsets.zero,
       children: [
-        WelcomeCard(name: userName ?? 'there'),
-        const SizedBox(height: AppSpacing.md),
-        InkWell(
-          onTap: () => context.go(RouteNames.quiz),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.ink.primary,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppEffects.softShadow,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(
-                    Icons.quiz_rounded,
-                    color: Colors.white,
-                    size: 26,
+        GlobeHero(userName: userName),
+        Padding(
+          padding: AppSpacing.edgeInsetsMd,
+          child: Column(
+            children: [
+              WelcomeCard(name: userName ?? 'there'),
+              const SizedBox(height: AppSpacing.lg),
+              for (final item in state.items)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: AppCard(
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: AppColors.ui.surfaceMuted,
+                          child: Icon(
+                            Icons.person_outline_rounded,
+                            color: AppColors.ink.primary,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: TextStyle(
+                              color: AppColors.text.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.md),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Engineering Quiz Challenge',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '100 Architecture & State Management questions',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right_rounded, color: Colors.white70),
-              ],
-            ),
+            ],
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        for (final item in state.items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: AppCard(
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.ui.surfaceMuted,
-                    child: Icon(
-                      Icons.person_outline_rounded,
-                      color: AppColors.ink.primary,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Text(
-                      item.name,
-                      style: TextStyle(
-                        color: AppColors.text.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }

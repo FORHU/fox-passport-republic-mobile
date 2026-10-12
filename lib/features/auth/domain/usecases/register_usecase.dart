@@ -12,6 +12,7 @@ class RegisterUseCase {
     String email,
     String password, {
     String? name,
+    String? username,
     String? countryCode,
     String roleName = 'USER',
   }) =>
@@ -19,6 +20,7 @@ class RegisterUseCase {
         email.trim(),
         password,
         name: name,
+        username: username,
         countryCode: countryCode,
         roleName: roleName,
       );

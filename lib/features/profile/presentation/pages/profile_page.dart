@@ -67,7 +67,7 @@ class ProfilePage extends ConsumerWidget {
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.onAccent,
                           ),
                         ),
                       ),

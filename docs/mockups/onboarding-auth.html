@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxPassport mobile — Welcome carousel and Auth</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&family=Plus+Jakarta+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  :root{--canvas:#02040a;--surface:#0f111a;--raised:#1a1a24;--border:#20232e;--border-strong:#2a2d3a;--accent:#ccff00;--on-accent:#1a2000;--tint-bg:#1a2000;--tint-border:#55660a;--text:#fff;--text-2:#a9adba;--muted:#8b90a0;--faint:#5a5f70}
+  *{box-sizing:border-box}
+  body{margin:0;background:#15171f;color:#c5c8d3;font-family:'Plus Jakarta Sans',sans-serif;padding:32px 16px}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#fff;text-align:center;margin:0 0 4px}
+  .note{text-align:center;font-size:13px;margin:0 0 28px}
+  .wrap{display:flex;flex-wrap:wrap;gap:32px;justify-content:center}
+  .cap{text-align:center;font-size:13px;margin:12px 0 0}
+  .ph{width:340px;min-height:700px;background:var(--canvas);color:var(--text);border-radius:40px;border:1px solid var(--border-strong);padding:24px 20px 20px;display:flex;flex-direction:column;font-size:14px;line-height:1.45}
+  .mono{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+  .hero{font-family:'Archivo',sans-serif;font-weight:900;font-size:34px;line-height:.95;letter-spacing:-.03em;text-transform:uppercase}
+  .btn{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;height:52px;border-radius:16px;width:100%;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  .primary{background:var(--accent);color:var(--on-accent);border:0}
+  .secondary{background:transparent;color:#fff;border:1px solid var(--border-strong);font-size:14px}
+  .secondary i{font-size:20px}
+  .fld{background:var(--surface);border:1px solid var(--border);border-radius:16px;height:52px;padding:0 16px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .link{color:var(--accent);font-weight:700;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}
+  .link.muted{color:var(--muted);font-weight:500}
+  .dots{display:flex;gap:6px;margin-bottom:20px}
+  .dot{width:6px;height:6px;border-radius:999px;background:var(--border-strong)}
+  .dot.on{width:18px;background:var(--accent)}
+  .tile{width:72px;height:72px;border-radius:20px;background:var(--tint-bg);border:1px solid var(--tint-border);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:32px}
+  .chip{border:1px solid;border-radius:999px;padding:4px 10px;font-size:12px}
+</style>
+</head>
+<body>
+<h1>Welcome carousel and Auth</h1>
+<p class="note">Spec: <code>docs/mobile-design.md</code> sections 4 and 5. Both phones are clickable.</p>
+<div class="wrap">
+
+  <div>
+    <div class="ph">
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--muted)">
+        <span class="mono" id="ob-n">1 / 6</span>
+        <button class="link muted" id="ob-skip">Skip</button>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="tile"><i class="ti ti-paw" id="ob-i"></i></div>
+        <div class="mono" style="color:var(--accent);margin-bottom:10px" id="ob-k">FoxPassport</div>
+        <div class="hero" id="ob-t">Welcome to FoxPassport</div>
+        <p style="color:var(--text-2);margin:16px 0 0;font-size:15px" id="ob-b">Plan, book and live unforgettable events — and meet the people who make them happen.</p>
+        <div id="ob-c" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;min-height:28px"></div>
+      </div>
+      <div class="dots" id="ob-d"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <button class="btn primary" id="ob-next"><span id="ob-l">Show me around</span> <i class="ti ti-arrow-right"></i></button>
+      <button class="link muted" id="ob-back" style="margin-top:14px;text-align:center;visibility:hidden">Back</button>
+    </div>
+    <p class="cap">Welcome carousel — 6 slides, shown once before sign-in</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div style="text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px"><i class="ti ti-paw" style="color:var(--accent)"></i> FoxPassport</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end">
+        <div class="mono" style="color:var(--accent);margin-bottom:10px" id="au-k">Welcome back</div>
+        <div class="hero" style="margin-bottom:22px" id="au-t">Log in to your account</div>
+        <div class="fld" id="au-name" style="display:none;margin-bottom:12px">Full name</div>
+        <div class="fld" style="margin-bottom:12px">Email address</div>
+        <div class="fld">Password <i class="ti ti-eye" style="font-size:20px"></i></div>
+        <div style="text-align:right;margin:12px 0 16px;font-size:13px;min-height:20px"><button class="link" id="au-f">Forgot password?</button></div>
+        <button class="btn primary" id="au-go">Log in</button>
+        <div class="mono" style="color:var(--faint);text-align:center;margin:14px 0">or</div>
+        <button class="btn secondary" style="margin-bottom:10px"><i class="ti ti-brand-apple"></i> Continue with Apple</button>
+        <button class="btn secondary" style="margin-bottom:10px"><i class="ti ti-brand-google"></i> Continue with Google</button>
+        <button class="btn secondary"><i class="ti ti-brand-facebook"></i> Continue with Facebook</button>
+        <p style="text-align:center;color:var(--muted);margin:18px 0 0;font-size:13px"><span id="au-q">New here?</span> <button class="link" id="au-sw">Create an account</button></p>
+      </div>
+    </div>
+    <p class="cap">Log in / Register — tap the bottom link to switch</p>
+  </div>
+
+</div>
+<script>
+(function(){
+  var S=[
+    ["paw","FoxPassport","Welcome to FoxPassport","Plan, book and live unforgettable events — and meet the people who make them happen.","Show me around"],
+    ["compass","Explore","Discover experiences","Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more.","Next"],
+    ["heart-handshake","Foxers","Book Foxers in one place","Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely.","Next"],
+    ["award","Passport","Stamp your passport","Every event you attend earns stamps, badges and levels on your digital FoxPassport.","Next"],
+    ["users-group","Republic","Join the Republic","Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans.","Next"],
+    ["rocket","Get started","Ready when you are","Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you're signed up.","Create a free account"]];
+  var R=[["Event","#ccff00"],["Venue","#a78bfa"],["Gear","#f97316"],["Talent","#00d2ff"],["Performer","#f59e0b"]];
+  var n=0,$=function(i){return document.getElementById(i)};
+  function draw(){
+    var s=S[n];
+    $("ob-n").textContent=(n+1)+" / 6";
+    $("ob-i").className="ti ti-"+s[0];
+    $("ob-k").textContent=s[1];$("ob-t").textContent=s[2];$("ob-b").textContent=s[3];$("ob-l").textContent=s[4];
+    $("ob-c").innerHTML=n===2?R.map(function(r){return '<span class="chip" style="color:'+r[1]+';border-color:'+r[1]+'">'+r[0]+'</span>'}).join(""):"";
+    [].forEach.call($("ob-d").children,function(d,i){d.className="dot"+(i===n?" on":"")});
+    $("ob-back").style.visibility=n?"visible":"hidden";
+    $("ob-skip").style.visibility=n===5?"hidden":"visible";
+  }
+  $("ob-next").onclick=function(){n=n===5?0:n+1;draw()};
+  $("ob-back").onclick=function(){if(n)n--;draw()};
+  $("ob-skip").onclick=function(){n=5;draw()};
+  var up=false;
+  $("au-sw").onclick=function(){
+    up=!up;
+    $("au-k").textContent=up?"Free to join":"Welcome back";
+    $("au-t").textContent=up?"Create your account":"Log in to your account";
+    $("au-name").style.display=up?"flex":"none";
+    $("au-f").style.visibility=up?"hidden":"visible";
+    $("au-go").textContent=up?"Create account":"Log in";
+    $("au-q").textContent=up?"Already have an account?":"New here?";
+    $("au-sw").textContent=up?"Log in":"Create an account";
+  };
+})();
+</script>
+</body>
+</html>
