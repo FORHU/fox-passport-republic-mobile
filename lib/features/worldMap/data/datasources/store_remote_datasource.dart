@@ -14,12 +14,30 @@ class StoreRemoteDataSourceImpl implements StoreRemoteDataSource {
 
   @override
   Future<List<StoreModel>> getNearbyStores() async {
-    final data = await _api.get(ApiEndpoints.nearbyStores);
-    final list = (data as Map)['data'] as List;
-    return list
-        .map(
-          (e) => StoreModel.fromJson((e as Map).cast<String, dynamic>()),
-        )
-        .toList();
+    try {
+      final data = await _api.get(ApiEndpoints.nearbyStores);
+      final list = (data as Map)['data'] as List;
+      return list
+          .map(
+            (e) => StoreModel.fromJson((e as Map).cast<String, dynamic>()),
+          )
+          .toList();
+    } on Exception catch (_) {
+      // Fox Passport ecosystem uses /venues for map pins
+      try {
+        final data = await _api.get(ApiEndpoints.venues);
+        if (data is Map) {
+          final list = (data['data'] ?? data['venues']) as List? ?? [];
+          return list
+              .map(
+                (e) => StoreModel.fromJson((e as Map).cast<String, dynamic>()),
+              )
+              .toList();
+        }
+        return [];
+      } on Exception catch (_) {
+        rethrow;
+      }
+    }
   }
 }

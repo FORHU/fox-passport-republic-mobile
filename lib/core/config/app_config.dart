@@ -24,8 +24,8 @@ class AppConfig {
     final envString = dotenv.env['ENVIRONMENT'] ?? 'dev';
     return AppConfig(
       environment: envString == 'prod' ? Environment.prod : Environment.dev,
-      appName: dotenv.env['APP_NAME'] ?? 'flutter_template',
-      baseUrl: dotenv.env['BASE_URL'] ?? '',
+      appName: dotenv.env['APP_NAME'] ?? 'Fox Passport',
+      baseUrl: dotenv.env['BASE_URL'] ?? 'http://localhost:6002/api/v1',
       enableLogging: (dotenv.env['ENABLE_LOGGING'] ??
                   (envString != 'prod' ? 'true' : 'false'))
               .toLowerCase() ==

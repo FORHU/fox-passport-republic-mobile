@@ -1,11 +1,11 @@
 {
-    "name": "flutter_template",
-    "short_name": "flutter_template",
+    "name": "Fox Passport",
+    "short_name": "Fox Passport",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Fox Passport mobile application.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
