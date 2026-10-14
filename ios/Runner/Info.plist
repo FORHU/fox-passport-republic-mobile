@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Fox Passport uses your location to show venues and Foxers near you.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Fox Passport uses your photos so you can share them in chats.</string>
 </dict>
 </plist>
