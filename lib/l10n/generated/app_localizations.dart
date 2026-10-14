@@ -1487,7 +1487,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchClearFilters.
   ///
   /// In en, this message translates to:
-  /// **'Clear'**
+  /// **'Clear filters'**
   String get searchClearFilters;
 
   /// No description provided for @searchApplyFilters.
@@ -3085,6 +3085,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Become one'**
   String get homeEmptyFoxersAction;
+
+  /// No description provided for @searchNothingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get searchNothingHere;
+
+  /// No description provided for @searchTryFewerFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing a filter or a word.'**
+  String get searchTryFewerFilters;
+
+  /// No description provided for @mapEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore events'**
+  String get mapEmptyAction;
+
+  /// No description provided for @passportEmptyStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend an event to earn your first stamp.'**
+  String get passportEmptyStamps;
+
+  /// No description provided for @passportEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Find events'**
+  String get passportEmptyAction;
 }
 
 class _AppLocalizationsDelegate

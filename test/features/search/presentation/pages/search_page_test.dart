@@ -206,4 +206,64 @@ void main() {
 
     expect(find.text('Rooftop Launch Night'), findsOneWidget);
   });
+
+  testWidgets('an empty result with a city offers to clear it', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogProvider.overrideWith((ref, q) async {
+            final items = q.city == null ? _venues : <CatalogItem>[];
+            return CatalogPage(items: items, total: items.length);
+          }),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(initialCity: 'Atlantis'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nothing here yet'), findsOneWidget);
+    expect(find.text('Clear filters'), findsOneWidget);
+
+    await tester.tap(find.text('Clear filters'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
+
+  testWidgets('a failed load says so and can be retried', (tester) async {
+    var calls = 0;
+    await tester.pumpWidget(
+      ProviderScope(
+        // Riverpod retries a failed provider by itself; this test wants the
+        // error state, then a tap.
+        retry: (_, __) => null,
+        overrides: [
+          catalogProvider.overrideWith((ref, q) async {
+            calls++;
+            if (calls == 1) throw Exception('offline');
+            return CatalogPage(items: _venues, total: _venues.length);
+          }),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Try again'), findsOneWidget);
+
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
 }

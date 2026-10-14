@@ -549,5 +549,11 @@
   "homeEmptyVenues": "No venues here yet.",
   "homeEmptyVenuesAction": "Explore",
   "homeEmptyFoxers": "No Foxers here yet. Be the first.",
-  "homeEmptyFoxersAction": "Become one"
+  "homeEmptyFoxersAction": "Become one",
+  "searchNothingHere": "Nothing here yet",
+  "searchTryFewerFilters": "Try removing a filter or a word.",
+  "searchClearFilters": "Clear filters",
+  "mapEmptyAction": "Explore events",
+  "passportEmptyStamps": "Attend an event to earn your first stamp.",
+  "passportEmptyAction": "Find events"
 }

@@ -758,7 +758,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchSortDateLatest => 'Date: latest';
 
   @override
-  String get searchClearFilters => 'Clear';
+  String get searchClearFilters => 'Clear filters';
 
   @override
   String get searchApplyFilters => 'Apply';
@@ -1644,4 +1644,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeEmptyFoxersAction => 'Become one';
+
+  @override
+  String get searchNothingHere => 'Nothing here yet';
+
+  @override
+  String get searchTryFewerFilters => 'Try removing a filter or a word.';
+
+  @override
+  String get mapEmptyAction => 'Explore events';
+
+  @override
+  String get passportEmptyStamps => 'Attend an event to earn your first stamp.';
+
+  @override
+  String get passportEmptyAction => 'Find events';
 }

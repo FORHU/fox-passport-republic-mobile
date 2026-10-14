@@ -14,6 +14,7 @@ import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -96,6 +97,29 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         toDate: _toDate,
         sortBy: _sortBy.isEmpty ? null : _sortBy,
       );
+
+  /// Anything narrowing the list: words, a city, a range or dates.
+  bool get _hasFilters =>
+      _query.isNotEmpty ||
+      _city != null ||
+      _minPrice != null ||
+      _maxPrice != null ||
+      _minCapacity != null ||
+      _fromDate != null ||
+      _toDate != null;
+
+  void _clearFilters() {
+    _controller.clear();
+    setState(() {
+      _query = '';
+      _city = null;
+      _minPrice = null;
+      _maxPrice = null;
+      _minCapacity = null;
+      _fromDate = null;
+      _toDate = null;
+    });
+  }
 
   Future<void> _openFilters() async {
     final filters = await showModalBottomSheet<_SearchFilters>(
@@ -241,22 +265,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     loading: () => const Center(
                       child: CircularProgressIndicator(color: AppColors.accent),
                     ),
-                    error: (_, __) => Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            l10n.apiLoadFailed,
-                            style: AppTypography.body(),
-                          ),
-                          TextButton(
-                            onPressed: () => ref.invalidate(
-                              catalogProvider(_catalogQuery),
-                            ),
-                            child: Text(l10n.retry),
-                          ),
-                        ],
-                      ),
+                    error: (_, __) => AppStateView(
+                      kind: AppStateKind.error,
+                      title: l10n.apiLoadFailed,
+                      actionLabel: l10n.retry,
+                      onAction: () =>
+                          ref.invalidate(catalogProvider(_catalogQuery)),
                     ),
                     data: (page) => _Results(
                       formatter: formatter,
@@ -272,6 +286,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       favoritesLoading:
                           favorites.isLoading && !AppConfig.instance.useMock,
                       onToggleSaved: _toggleFavorite,
+                      onClear: _hasFilters ? _clearFilters : null,
                       onOpen: (item) => switch (item.kind) {
                         CatalogKind.venues =>
                           context.push(RouteNames.venueDetail, extra: item),
@@ -684,8 +699,11 @@ class _Results extends StatelessWidget {
     required this.favoritesLoading,
     required this.onToggleSaved,
     required this.onOpen,
+    this.onClear,
   });
 
+  /// Clears whatever is narrowing the list; null when nothing is.
+  final VoidCallback? onClear;
   final CatalogPage page;
   final String kindLabel;
   final String query;
@@ -701,15 +719,14 @@ class _Results extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     if (page.items.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            l10n.searchNoMatches(query),
-            textAlign: TextAlign.center,
-            style: AppTypography.body(color: AppColors.textMuted),
-          ),
-        ),
+      return AppStateView(
+        kind: AppStateKind.notFound,
+        title: query.isEmpty
+            ? l10n.searchNothingHere
+            : l10n.searchNoMatches(query),
+        message: onClear == null ? null : l10n.searchTryFewerFilters,
+        actionLabel: onClear == null ? null : l10n.searchClearFilters,
+        onAction: onClear,
       );
     }
 

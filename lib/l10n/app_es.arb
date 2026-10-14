@@ -529,5 +529,11 @@
   "homeEmptyVenues": "Aún no hay lugares aquí.",
   "homeEmptyVenuesAction": "Explorar",
   "homeEmptyFoxers": "Aún no hay Foxers aquí. Sé el primero.",
-  "homeEmptyFoxersAction": "Serlo"
+  "homeEmptyFoxersAction": "Serlo",
+  "searchNothingHere": "Aún no hay nada aquí",
+  "searchTryFewerFilters": "Prueba quitando un filtro o una palabra.",
+  "searchClearFilters": "Quitar filtros",
+  "mapEmptyAction": "Explorar eventos",
+  "passportEmptyStamps": "Asiste a un evento para ganar tu primer sello.",
+  "passportEmptyAction": "Buscar eventos"
 }

@@ -105,10 +105,19 @@ class _Body extends StatelessWidget {
         if (stops.isEmpty)
           Padding(
             padding: const EdgeInsets.all(24),
-            child: Text(
-              l10n.mapEmpty,
-              textAlign: TextAlign.center,
-              style: AppTypography.body(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.mapEmpty,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.body(),
+                ),
+                TextButton(
+                  onPressed: () => context.go(RouteNames.searchFor('events')),
+                  child: Text(l10n.mapEmptyAction),
+                ),
+              ],
             ),
           )
         else

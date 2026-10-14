@@ -143,6 +143,23 @@ class _Body extends StatelessWidget {
             );
           },
         ),
+        if (stamps.isEmpty) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.passportEmptyStamps,
+                  style: AppTypography.body(),
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.go(RouteNames.searchFor('events')),
+                child: Text(l10n.passportEmptyAction),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 24),
         _SectionHeader(
           title: l10n.passportBadges,
