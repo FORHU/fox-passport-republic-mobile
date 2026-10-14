@@ -109,7 +109,6 @@ void main() {
         ),
       );
 
-
   _RefreshAnswer refreshFailsWith(int? status, {DioExceptionType? type}) {
     return (o, h) => h.reject(
           DioException(
