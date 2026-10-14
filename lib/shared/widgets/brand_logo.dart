@@ -18,7 +18,6 @@ class FoxLogo extends StatelessWidget {
       height: size,
       fit: BoxFit.contain,
       semanticLabel: 'FoxPassport logo',
-      filterQuality: FilterQuality.medium,
     );
   }
 }

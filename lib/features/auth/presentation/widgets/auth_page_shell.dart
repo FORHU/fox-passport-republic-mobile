@@ -118,11 +118,11 @@ class _Wordmark extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const FoxLogo(size: 28),
+              const FoxLogo(),
               const SizedBox(width: 10),
               Text(
                 context.l10n.authWordmark,
-                style: AppTypography.display(size: 16),
+                style: AppTypography.display(),
               ),
             ],
           ),

@@ -63,6 +63,9 @@ class ApiEndpoints {
   static const String bookingDraft = '/bookings/draft';
   static const String bookingFromTemplate = '/bookings/from-template';
   static const String bookingsUpcoming = '/bookings/upcoming';
+  static const String bookingsAvailability = '/bookings/availability';
+  static const String venuePricePreview = '/bookings/venue-price-preview';
+  static String bookingsOfUser(String userId) => '/bookings/user/$userId';
   static String bookingById(String id) => '/bookings/$id';
   static String bookingAttendees(String id) => '/bookings/$id/attendees';
   static String bookingConfirm(String id) => '/bookings/$id/confirm';
@@ -92,9 +95,29 @@ class ApiEndpoints {
   // ── Favorites ───────────────────────────────────────────────────────────
   static const String favorites = '/favorites';
   static String favoritesByUser(String userId) => '/favorites/user/$userId';
+  static const String favoriteAdd = '/favorites/add';
+  static const String favoriteRemoveByListing = '/favorites/remove/listing';
 
   // ── Notifications ───────────────────────────────────────────────────────
   static const String notifications = '/notifications';
   static const String notificationsReadAll = '/notifications/read-all';
   static String notificationRead(String id) => '/notifications/$id/read';
+
+  // ── Messages ───────────────────────────────────────────────────────────
+  static const String conversations = '/conversations';
+  static String conversationMessages(String id) =>
+      '/conversations/$id/messages';
+  static String conversationRead(String id) => '/conversations/$id/read';
+  static String conversationAccept(String id) => '/conversations/$id/accept';
+  static String conversationDecline(String id) => '/conversations/$id/decline';
+  static const String conversationsInbox = '/conversations/inbox';
+  static const String socketTicket = '/auth/socket-ticket';
+  static const String uploadFile = '/files/upload-direct';
+  static const String fxRates = '/fx/rates';
+  static String conversationMute(String id) => '/conversations/$id/mute';
+  static String conversationPin(String id) => '/conversations/$id/pin';
+  static String conversationMessage(String id, String messageId) =>
+      '/conversations/$id/messages/$messageId';
+  static String conversationReaction(String id, String messageId) =>
+      '/conversations/$id/messages/$messageId/reaction';
 }

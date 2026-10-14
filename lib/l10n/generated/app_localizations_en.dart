@@ -42,10 +42,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tickets => 'Tickets';
 
   @override
+  String get messages => 'Messages';
+
+  @override
   String get passport => 'Passport';
 
   @override
+  String get verified => 'Verified';
+
+  @override
   String get notifications => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'You\'re all caught up.';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
 
   @override
   String get profile => 'Profile';
@@ -360,4 +372,1071 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetButton => 'Update password';
+
+  @override
+  String get onboardingWebNotConfigured =>
+      'This opens on the FoxPassport web app, which is not configured yet.';
+
+  @override
+  String get onboardingFriend => 'Friend';
+
+  @override
+  String get onboardingWelcome => 'Welcome, ';
+
+  @override
+  String get onboardingBackAgain => 'Back again, ';
+
+  @override
+  String get onboardingProfileSubtitleReturning =>
+      'Update your profile or continue to manage your roles.';
+
+  @override
+  String get onboardingProfileSubtitleNew =>
+      'Let\'s set up your profile first.';
+
+  @override
+  String get onboardingDisplayName => 'Display Name';
+
+  @override
+  String get onboardingDisplayNameHint => 'How others will see you';
+
+  @override
+  String get onboardingYourAddress => 'Your address';
+
+  @override
+  String get onboardingAddressHelp =>
+      'Used to show you events, venues and Foxers near you.';
+
+  @override
+  String get onboardingCountry => 'Country';
+
+  @override
+  String get onboardingStateProvince => 'State / Province';
+
+  @override
+  String get onboardingCity => 'City';
+
+  @override
+  String get onboardingLoading => 'Loading…';
+
+  @override
+  String get onboardingSelectCountry => 'Select country…';
+
+  @override
+  String get onboardingSearchCountries => 'Search countries…';
+
+  @override
+  String get onboardingSelectCountryFirst => 'Select a country first';
+
+  @override
+  String get onboardingSelectState => 'Select state…';
+
+  @override
+  String get onboardingNoStates => 'No states here';
+
+  @override
+  String get onboardingSearchStates => 'Search states…';
+
+  @override
+  String get onboardingSelectStateFirst => 'Select a state first';
+
+  @override
+  String get onboardingSelectCity => 'Select city…';
+
+  @override
+  String get onboardingSearchCities => 'Search cities…';
+
+  @override
+  String get onboardingSelectCityFirst => 'Select a city first';
+
+  @override
+  String get onboardingDistrict => 'District';
+
+  @override
+  String get onboardingBarangay => 'Barangay';
+
+  @override
+  String get onboardingOptional => '— optional';
+
+  @override
+  String onboardingYourDistrict(String label) {
+    return 'Your $label';
+  }
+
+  @override
+  String onboardingAddMissing(String fields) {
+    return 'Add your $fields to continue.';
+  }
+
+  @override
+  String get onboardingFieldName => 'display name';
+
+  @override
+  String get onboardingFieldCountry => 'country';
+
+  @override
+  String get onboardingFieldCity => 'city';
+
+  @override
+  String get onboardingSaving => 'Saving…';
+
+  @override
+  String get onboardingContinue => 'Continue';
+
+  @override
+  String get onboardingIntentTitle => 'What brings you here?';
+
+  @override
+  String get onboardingIntentSubtitle =>
+      'Choose how you plan to use FoxPassport.';
+
+  @override
+  String get onboardingIntentBookTitle => 'Book Events';
+
+  @override
+  String get onboardingIntentBookBody =>
+      'Browse foxers, venues, and services to create your perfect event.';
+
+  @override
+  String get onboardingIntentFoxerTitle => 'Become a Foxer';
+
+  @override
+  String get onboardingIntentFoxerBody =>
+      'Offer services, rent gear, list venues, or create events professionally.';
+
+  @override
+  String get onboardingIntentBothTitle => 'Both';
+
+  @override
+  String get onboardingIntentBothBody =>
+      'Book events and apply to become a Foxer in the ecosystem.';
+
+  @override
+  String get onboardingRolesTitleHeld => 'Your roles';
+
+  @override
+  String get onboardingRolesTitlePending => 'Application submitted';
+
+  @override
+  String get onboardingRolesTitleChoose => 'Choose your role';
+
+  @override
+  String get onboardingRolesSubtitleHeld =>
+      'Active roles are shown below. Apply for additional roles anytime.';
+
+  @override
+  String get onboardingRolesSubtitlePending =>
+      'We\'re reviewing your application. You\'ll be notified once approved.';
+
+  @override
+  String get onboardingRolesSubtitleChoose =>
+      'Select how you want to contribute. You can hold multiple roles over time.';
+
+  @override
+  String get onboardingFinishDashboard => 'Go to Dashboard';
+
+  @override
+  String get onboardingFinishHome => 'Back to Home';
+
+  @override
+  String get onboardingFinishSkip => 'Skip for now';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingStepProfile => 'Profile';
+
+  @override
+  String get onboardingStepInterests => 'Interests';
+
+  @override
+  String get onboardingStepRoles => 'Roles';
+
+  @override
+  String onboardingStepSemantic(int number, String label) {
+    return 'Step $number: $label';
+  }
+
+  @override
+  String get onboardingStatusActive => 'ACTIVE';
+
+  @override
+  String get onboardingStatusReview => 'UNDER REVIEW';
+
+  @override
+  String get onboardingStatusRevision => 'NEEDS REVISION';
+
+  @override
+  String get onboardingRevisionCaption =>
+      'One or more documents were flagged — tap to fix and resubmit.';
+
+  @override
+  String get onboardingLearnApply => 'Learn more & apply';
+
+  @override
+  String onboardingUseQuery(String query) {
+    return 'Use \"$query\"';
+  }
+
+  @override
+  String get onboardingNoMatches => 'No matches';
+
+  @override
+  String get onboardingWhatYoullDo => 'What you\'ll do';
+
+  @override
+  String get onboardingWhatYoullNeed => 'What you\'ll need to apply';
+
+  @override
+  String get onboardingReviewNote =>
+      'Our team reviews every application. If a document needs fixing, we\'ll flag just that one so you can resubmit it.';
+
+  @override
+  String get onboardingNotNow => 'Not now';
+
+  @override
+  String get onboardingContinueApplication => 'Continue to application';
+
+  @override
+  String get greetingMorning => 'Good morning';
+
+  @override
+  String get greetingAfternoon => 'Good afternoon';
+
+  @override
+  String get greetingEvening => 'Good evening';
+
+  @override
+  String get sampleTag => 'Sample';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get homeYourNextNight => 'Your next night';
+
+  @override
+  String get homeOpenTicket => 'Open ticket';
+
+  @override
+  String get homeTileVenues => 'Venues';
+
+  @override
+  String get homeTileFoxers => 'Foxers';
+
+  @override
+  String get homeTileGear => 'Gear';
+
+  @override
+  String get homeTileMap => 'Map';
+
+  @override
+  String get homePickedForYou => 'Picked for you';
+
+  @override
+  String get homeLocationChoose => 'Choose location';
+
+  @override
+  String get homeLocationComingSoon => 'Location selection is coming soon.';
+
+  @override
+  String get homeNoResults => 'No listings found yet.';
+
+  @override
+  String get homeSearchPlanning => 'What are you planning?';
+
+  @override
+  String get homeVenuesNear => 'Venues near you';
+
+  @override
+  String get homeFoxersForNight => 'Foxers for your night';
+
+  @override
+  String get ticketToday => 'Today';
+
+  @override
+  String get ticketTomorrow => 'Tomorrow';
+
+  @override
+  String ticketInDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return 'In $_temp0';
+  }
+
+  @override
+  String get priceUnitHour => 'hr';
+
+  @override
+  String get priceUnitNight => 'night';
+
+  @override
+  String get priceUnitWeek => 'week';
+
+  @override
+  String get priceUnitMonth => 'month';
+
+  @override
+  String get priceUnitYear => 'year';
+
+  @override
+  String guestsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count guests',
+      one: '1 guest',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchHint => 'Search FoxPassport';
+
+  @override
+  String get searchEvents => 'Events';
+
+  @override
+  String get searchVenues => 'Venues';
+
+  @override
+  String get searchFoxers => 'Foxers';
+
+  @override
+  String get searchGear => 'Gear';
+
+  @override
+  String get searchServices => 'Services';
+
+  @override
+  String searchNoMatches(String query) {
+    return 'Nothing matches “$query”';
+  }
+
+  @override
+  String get searchMap => 'Map';
+
+  @override
+  String get searchFilters => 'Filters';
+
+  @override
+  String get searchNew => 'New';
+
+  @override
+  String get searchSaveItem => 'Save item';
+
+  @override
+  String get searchRemoveSavedItem => 'Remove saved item';
+
+  @override
+  String get messageFilterAll => 'All';
+
+  @override
+  String get messageFilterBookings => 'Bookings';
+
+  @override
+  String get messageFilterGroups => 'Groups';
+
+  @override
+  String get messageFilterRequests => 'Requests';
+
+  @override
+  String get messagesEmpty => 'Your conversations will show up here.';
+
+  @override
+  String get messagesLoadFailed => 'Couldn\'t load messages.';
+
+  @override
+  String get messageSearchHint => 'Search messages';
+
+  @override
+  String get messageNew => 'New message';
+
+  @override
+  String get messageRequestAccept => 'Accept';
+
+  @override
+  String get messageRequestDecline => 'Decline';
+
+  @override
+  String get messageTypeHint => 'Type a message…';
+
+  @override
+  String get messageViewTicket => 'View ticket';
+
+  @override
+  String get messageBookingAbout => 'About this booking';
+
+  @override
+  String get messageSend => 'Send message';
+
+  @override
+  String get messageRequestAccepted => 'Message request accepted.';
+
+  @override
+  String get messageRequestDeclined => 'Message request declined.';
+
+  @override
+  String get messageActionUnavailable =>
+      'Start a conversation from a Foxer or venue profile.';
+
+  @override
+  String get messageVenueInbox => 'Venue inbox';
+
+  @override
+  String get messageEventInbox => 'Event inbox';
+
+  @override
+  String get messageRequestPending => 'Message request';
+
+  @override
+  String get messageSearchUnavailable =>
+      'Search within conversations is not available yet.';
+
+  @override
+  String get messageOnline => 'Online';
+
+  @override
+  String get messageSeen => 'Seen';
+
+  @override
+  String get messageRoleEventFoxer => 'Event Foxer';
+
+  @override
+  String get messageRoleVenueFoxer => 'Venue Foxer';
+
+  @override
+  String get messageRoleGearFoxer => 'Gear Foxer';
+
+  @override
+  String get messageRoleServiceFoxer => 'Service Foxer';
+
+  @override
+  String get messageRolePerformer => 'Performer';
+
+  @override
+  String get priceUnitDay => 'day';
+
+  @override
+  String get comingSoonFilters => 'Filters are coming soon';
+
+  @override
+  String get comingSoonDetails => 'Details are coming soon';
+
+  @override
+  String get comingSoonMap => 'The map is coming soon';
+
+  @override
+  String get comingSoonWallet => 'Wallet passes are coming soon';
+
+  @override
+  String get comingSoonLeaderboard => 'The leaderboard is coming soon';
+
+  @override
+  String get ticketsTitle => 'Tickets';
+
+  @override
+  String get ticketsUpcoming => 'Upcoming';
+
+  @override
+  String get ticketsPast => 'Past';
+
+  @override
+  String get ticketsEmptyUpcoming => 'No upcoming tickets yet';
+
+  @override
+  String get ticketsEmptyPast => 'No past tickets yet';
+
+  @override
+  String get apiLoadFailed => 'We couldn\'t load this right now.';
+
+  @override
+  String get retry => 'Try again';
+
+  @override
+  String get ticketDate => 'Date';
+
+  @override
+  String get ticketDoors => 'Doors';
+
+  @override
+  String get ticketGuests => 'Guests';
+
+  @override
+  String get ticketAddToWallet => 'Add to wallet';
+
+  @override
+  String get ticketDirections => 'Directions';
+
+  @override
+  String get ticketStatusConfirmed => 'Confirmed';
+
+  @override
+  String get ticketStatusPending => 'Pending';
+
+  @override
+  String get ticketStatusCompleted => 'Completed';
+
+  @override
+  String get ticketStatusCancelled => 'Cancelled';
+
+  @override
+  String get passportTitle => 'Passport';
+
+  @override
+  String get passportRepublic => 'Republic of Foxers';
+
+  @override
+  String passportCitizenLevel(int level) {
+    return 'Citizen · Level $level';
+  }
+
+  @override
+  String passportXp(int xp) {
+    return '$xp XP';
+  }
+
+  @override
+  String passportNextLevel(int level, int xp) {
+    return 'Level $level at $xp';
+  }
+
+  @override
+  String get passportStamps => 'Stamps';
+
+  @override
+  String passportStampsCount(int have, int total) {
+    return '$have of $total';
+  }
+
+  @override
+  String get passportBadges => 'Badges';
+
+  @override
+  String get passportLeaderboard => 'Leaderboard';
+
+  @override
+  String get passportLocked => 'Locked';
+
+  @override
+  String bookStepCounter(int current, int total) {
+    return '$current of $total';
+  }
+
+  @override
+  String get spaceIndoor => 'Indoor';
+
+  @override
+  String get spaceOutdoor => 'Outdoor';
+
+  @override
+  String homeMessageFoxer(String name) {
+    return 'Message $name';
+  }
+
+  @override
+  String get messageSampleFoxer =>
+      'This is a sample Foxer. Real Foxers show up here once there are some.';
+
+  @override
+  String get messageStartFailed => 'We couldn\'t open the chat. Try again.';
+
+  @override
+  String get messageYou => 'You: ';
+
+  @override
+  String get messageNow => 'now';
+
+  @override
+  String get messageEditedSuffix => 'edited';
+
+  @override
+  String get messageReply => 'Reply';
+
+  @override
+  String get messageEdit => 'Edit';
+
+  @override
+  String get messageDelete => 'Delete';
+
+  @override
+  String get messageReplyingTo => 'Replying to';
+
+  @override
+  String get messageEditing => 'Editing message';
+
+  @override
+  String get messageCancel => 'Cancel';
+
+  @override
+  String get messageMute => 'Mute notifications';
+
+  @override
+  String get messageUnmute => 'Unmute notifications';
+
+  @override
+  String get messagePinChat => 'Pin chat';
+
+  @override
+  String get messageUnpinChat => 'Unpin chat';
+
+  @override
+  String get messageMore => 'More';
+
+  @override
+  String get messageAttachSoon => 'Sharing photos is coming soon';
+
+  @override
+  String get messageOwnerSample =>
+      'This is a sample venue, so there is no owner to message.';
+
+  @override
+  String get messageDeletedConfirm => 'Delete this message?';
+
+  @override
+  String get messageTyping => 'typing…';
+
+  @override
+  String get messageUploadFailed => 'We couldn\'t send the photo. Try again.';
+
+  @override
+  String get messageNewChatTitle => 'New message';
+
+  @override
+  String get messageNewChatSearch => 'Search Foxers';
+
+  @override
+  String get messageNewChatEmpty => 'No Foxers found.';
+
+  @override
+  String get homeNearYou => 'Near you';
+
+  @override
+  String get areaTitle => 'Where are you?';
+
+  @override
+  String get areaUseDevice => 'Use my current location';
+
+  @override
+  String get areaUseDeviceHint => 'Only while the app is open.';
+
+  @override
+  String areaUseProfile(String city) {
+    return 'My city: $city';
+  }
+
+  @override
+  String get areaOtherCity => 'Another city';
+
+  @override
+  String get areaOtherCityHint => 'Type a city';
+
+  @override
+  String get areaGo => 'Show';
+
+  @override
+  String get areaLocationDenied =>
+      'Location is off for this app. Turn it on in Settings to use it.';
+
+  @override
+  String get areaLocationOff => 'Turn on location services to use this.';
+
+  @override
+  String get areaLocationFailed =>
+      'We couldn\'t find your location. Try again.';
+
+  @override
+  String get locGateTitle => 'See what is near you';
+
+  @override
+  String get locGateBody =>
+      'Share your location and Fox Passport shows the venues and Foxers around you. We only use it while the app is open, and you can change it any time in Settings.';
+
+  @override
+  String get locGateAllow => 'Use my location';
+
+  @override
+  String get locGateSkip => 'Not now';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsLocation => 'Location';
+
+  @override
+  String get settingsLocationTitle => 'Where you are';
+
+  @override
+  String get settingsLocationDevice => 'Current location';
+
+  @override
+  String get settingsLocationNone => 'Not set';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsSignOut => 'Sign out';
+
+  @override
+  String get settingsCurrency => 'Currency';
+
+  @override
+  String get currencyTitle => 'Show prices in';
+
+  @override
+  String get currencyAuto => 'Automatic';
+
+  @override
+  String get currencyAutoHint => 'Based on where you are';
+
+  @override
+  String get currencyBasedOnLocation => 'Based on your location';
+
+  @override
+  String currencyChargedIn(String amount) {
+    return 'You are charged $amount.';
+  }
+
+  @override
+  String currencyApprox(String amount) {
+    return '≈ $amount';
+  }
+
+  @override
+  String get searchPeople => 'People';
+
+  @override
+  String searchHostedBy(String name) {
+    return 'by $name';
+  }
+
+  @override
+  String get eventBook => 'Choose a date';
+
+  @override
+  String get eventIncluded => 'What\'s included';
+
+  @override
+  String get eventIncludedLabel => 'Included';
+
+  @override
+  String get eventOptionalHint => 'Switch off what you do not need.';
+
+  @override
+  String get eventPackage => 'Package';
+
+  @override
+  String eventHostedBy(String name) {
+    return 'Hosted by $name';
+  }
+
+  @override
+  String eventSpotsLeft(int count) {
+    return '$count spots left';
+  }
+
+  @override
+  String get eventFull => 'This event is full.';
+
+  @override
+  String get eventNotPriced =>
+      'This event has no price yet, so it cannot be booked.';
+
+  @override
+  String get eventLoadFailed => 'We couldn\'t load this event.';
+
+  @override
+  String eventRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items left out',
+      one: '1 item left out',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventSampleNote => 'Sample event';
+
+  @override
+  String get bookPackage => 'Package';
+
+  @override
+  String get ticketCancel => 'Cancel booking';
+
+  @override
+  String get cancelTitle => 'Cancel this booking?';
+
+  @override
+  String get cancelPaid => 'You paid';
+
+  @override
+  String get cancelRefund => 'Refund';
+
+  @override
+  String get cancelNoRefund => 'None';
+
+  @override
+  String get cancelNotEligible => 'This booking can no longer be cancelled.';
+
+  @override
+  String get cancelKeep => 'Keep booking';
+
+  @override
+  String get cancelConfirm => 'Cancel booking';
+
+  @override
+  String get cancelDone => 'Booking cancelled';
+
+  @override
+  String get cancelFailed => 'We couldn\'t cancel the booking. Try again.';
+
+  @override
+  String get rolesTitle => 'Become a Foxer';
+
+  @override
+  String get rolesIntro =>
+      'Hosts, venues, gear and talent keep FoxPassport running. Pick a role to see what it involves and apply.';
+
+  @override
+  String get rolesSettingsHint =>
+      'Host events, list a venue, offer gear or talent';
+
+  @override
+  String get rolesContinueOnWeb => 'Continue on the web';
+
+  @override
+  String get venueBookNow => 'Book now';
+
+  @override
+  String get venueLoadFailed => 'We couldn\'t load this venue.';
+
+  @override
+  String venueUpTo(int count) {
+    return 'Up to $count guests';
+  }
+
+  @override
+  String get venueSampleNote => 'Sample venue';
+
+  @override
+  String get venueIncluded => 'What\'s included';
+
+  @override
+  String get venueAmenities => 'Amenities';
+
+  @override
+  String get venueFacilities => 'Facilities';
+
+  @override
+  String get venueRules => 'House rules';
+
+  @override
+  String get venueGoodToKnow => 'Good to know';
+
+  @override
+  String get venueParking => 'Parking';
+
+  @override
+  String get venueAccessibility => 'Accessibility';
+
+  @override
+  String get venueEntrance => 'Getting in';
+
+  @override
+  String get bookClose => 'Close';
+
+  @override
+  String get bookBack => 'Back';
+
+  @override
+  String get bookWhenTitle => 'When is it?';
+
+  @override
+  String get bookSelected => 'Selected';
+
+  @override
+  String get bookBooked => 'Booked';
+
+  @override
+  String bookDayCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookNext => 'Next';
+
+  @override
+  String get bookPickDate => 'Pick a date';
+
+  @override
+  String get bookGuestsTitle => 'How many guests?';
+
+  @override
+  String bookFitsUpTo(int count) {
+    return 'Fits up to $count';
+  }
+
+  @override
+  String bookOverCapacity(int count) {
+    return '$count over capacity. The owner has to approve before you pay.';
+  }
+
+  @override
+  String get bookNotesTitle => 'Anything the owner should know?';
+
+  @override
+  String get bookNotesHint => 'Optional. Setup time, catering, access needs';
+
+  @override
+  String get bookReviewTitle => 'Review';
+
+  @override
+  String get bookDate => 'Date';
+
+  @override
+  String get bookGuests => 'Guests';
+
+  @override
+  String bookRateLine(String rate, String days) {
+    return '$rate x $days';
+  }
+
+  @override
+  String get bookServiceFee => 'Service fee';
+
+  @override
+  String get bookVoucher => 'Voucher';
+
+  @override
+  String get bookAddCode => 'Add code';
+
+  @override
+  String get bookDiscount => 'Discount';
+
+  @override
+  String get bookTotal => 'Total';
+
+  @override
+  String get bookCancelPolicy => 'Free cancellation for 48 hours.';
+
+  @override
+  String get bookSampleAmounts => 'Sample amounts';
+
+  @override
+  String get bookSampleTag => 'Sample';
+
+  @override
+  String get bookContinuePay => 'Continue to payment';
+
+  @override
+  String get bookRequestToBook => 'Request to book';
+
+  @override
+  String get bookPriceFailed => 'We couldn\'t price this booking.';
+
+  @override
+  String get bookPayTitle => 'Pay';
+
+  @override
+  String get bookOrPayByCard => 'Or pay by card';
+
+  @override
+  String get bookCardNumber => 'Card number';
+
+  @override
+  String get bookExpiry => 'MM / YY';
+
+  @override
+  String get bookCvc => 'CVC';
+
+  @override
+  String get bookStripeNote => 'Payment handled by Stripe.';
+
+  @override
+  String bookPayAmount(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get bookPaymentsSoon => 'Card payments in the app are coming soon.';
+
+  @override
+  String get bookFailed => 'We couldn\'t complete the booking. Try again.';
+
+  @override
+  String get bookBookedTitle => 'You\'re booked';
+
+  @override
+  String get bookBookedSub => 'Your ticket is in the Tickets tab.';
+
+  @override
+  String get bookConfirmed => 'Confirmed';
+
+  @override
+  String get bookReference => 'Reference';
+
+  @override
+  String get bookTotalCharged => 'Total charged';
+
+  @override
+  String get bookAttendHint => 'Attend to earn a passport stamp.';
+
+  @override
+  String get bookViewTicket => 'View ticket';
+
+  @override
+  String get bookMessageOwner => 'Message the owner';
+
+  @override
+  String get bookRequestSentTitle => 'Request sent';
+
+  @override
+  String get bookRequestSentSub => 'Waiting for the owner to confirm.';
+
+  @override
+  String get bookReqDelivered => 'Request delivered';
+
+  @override
+  String bookReqDeliveredBody(int count) {
+    return 'The owner can accept or decline $count guests.';
+  }
+
+  @override
+  String get bookNotified => 'You\'ll be notified';
+
+  @override
+  String get bookNotifiedBody => 'By push notification and email.';
+
+  @override
+  String get bookPayAfter => 'Pay only after approval';
+
+  @override
+  String get bookPayAfterBody => 'If they decline, nothing is charged.';
+
+  @override
+  String get bookAmountIfApproved => 'Amount if approved';
+
+  @override
+  String get bookBackHome => 'Back to home';
+
+  @override
+  String get comingSoonMessages => 'Messages are coming soon';
+
+  @override
+  String get comingSoonVoucher => 'Voucher codes are coming soon';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/onboarding/presentation/theme/onboarding_palette.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// `text-xs font-bold uppercase tracking-wider text-white/60` field label.
 class FieldLabel extends StatelessWidget {
@@ -59,7 +61,6 @@ InputDecoration _decoration({
   return InputDecoration(
     hintText: hint,
     hintStyle: OnboardingPalette.body(
-      size: 15,
       color: OnboardingPalette.white(0.3),
     ),
     filled: true,
@@ -67,7 +68,7 @@ InputDecoration _decoration({
     prefixIcon: icon == null
         ? null
         : Icon(icon, size: 20, color: OnboardingPalette.white(0.4)),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     border: border(OnboardingPalette.white(0.1)),
     enabledBorder: border(OnboardingPalette.white(0.1)),
     disabledBorder: border(OnboardingPalette.white(0.06)),
@@ -99,7 +100,7 @@ class OnboardingTextField extends StatelessWidget {
       enabled: enabled,
       onChanged: onChanged,
       cursorColor: OnboardingPalette.accent,
-      style: OnboardingPalette.body(size: 15, color: Colors.white),
+      style: OnboardingPalette.body(color: AppColors.textPrimary),
       decoration: _decoration(hint: hint, icon: icon, enabled: enabled),
     );
   }
@@ -192,9 +193,8 @@ class SearchableSelectField extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: OnboardingPalette.body(
-              size: 15,
               color: hasValue
-                  ? Colors.white
+                  ? AppColors.textPrimary
                   : OnboardingPalette.white(enabled ? 0.3 : 0.2),
             ),
           ),
@@ -241,7 +241,7 @@ class _OptionSheetState extends State<_OptionSheet> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Column(
             children: [
               const SizedBox(height: 12),
@@ -259,7 +259,7 @@ class _OptionSheetState extends State<_OptionSheet> {
                   autofocus: true,
                   onChanged: (v) => setState(() => _query = v),
                   cursorColor: OnboardingPalette.accent,
-                  style: OnboardingPalette.body(size: 15, color: Colors.white),
+                  style: OnboardingPalette.body(color: AppColors.textPrimary),
                   decoration: _decoration(
                     hint: widget.searchHint,
                     icon: Icons.search_rounded,
@@ -276,9 +276,8 @@ class _OptionSheetState extends State<_OptionSheet> {
                           color: OnboardingPalette.accent,
                         ),
                         title: Text(
-                          'Use "${_query.trim()}"',
+                          context.l10n.onboardingUseQuery(_query.trim()),
                           style: OnboardingPalette.body(
-                            size: 15,
                             weight: FontWeight.w700,
                             color: OnboardingPalette.accent,
                           ),
@@ -290,8 +289,7 @@ class _OptionSheetState extends State<_OptionSheet> {
                         title: Text(
                           option,
                           style: OnboardingPalette.body(
-                            size: 15,
-                            color: Colors.white,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         trailing: option == widget.selected
@@ -307,7 +305,7 @@ class _OptionSheetState extends State<_OptionSheet> {
                         padding: const EdgeInsets.all(32),
                         child: Center(
                           child: Text(
-                            'No matches',
+                            context.l10n.onboardingNoMatches,
                             style: OnboardingPalette.body(
                               color: OnboardingPalette.white(0.4),
                             ),

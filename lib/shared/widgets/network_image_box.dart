@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_template/core/utils/asset_url.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// Cached remote image with an ink-style shimmer placeholder and error box.
@@ -24,7 +25,7 @@ class NetworkImageBox extends StatelessWidget {
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: CachedNetworkImage(
-        imageUrl: url,
+        imageUrl: resolveAssetUrl(url),
         width: width,
         height: height,
         fit: fit,

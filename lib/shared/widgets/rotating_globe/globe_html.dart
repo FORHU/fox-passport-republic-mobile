@@ -96,9 +96,8 @@ String buildGlobeHtml({
 <style>
   html, body, #map { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
   body { background: transparent; }
-  /* Mapbox's logo and attribution must stay visible; keep them clear of the
-     app's own header row. */
-  .mapboxgl-ctrl-top-left { margin-top: 64px; }
+  /* The globe is a backdrop, so it carries no Mapbox wordmark or (i) button. */
+  .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
   .card {
     display: flex; gap: 8px; align-items: center;
     padding: 7px 10px 7px 7px; border-radius: 12px;
@@ -141,10 +140,8 @@ String buildGlobeHtml({
     zoom: fitZoom(),
     interactive: false,      // Flutter owns the gestures (swipe, scroll)
     fadeDuration: 0,
-    logoPosition: 'top-left',
     attributionControl: false
   });
-  map.addControl(new mapboxgl.AttributionControl({ compact: true }), 'top-left');
   map.setPadding({ top: 0, left: 0, right: 0, bottom: cfg.bottom });
 
   // The web hero's dusk sky and tints (JourneyHero.tsx TINTS.dark / DUSK_SKY).

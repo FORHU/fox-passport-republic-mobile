@@ -50,6 +50,52 @@ void main() {
     expect(cities.data!['data'], contains('Quezon City'));
   });
 
+  test('serves notification inbox and read actions in mock mode', () async {
+    final inbox = await dio.get<Map<String, dynamic>>(
+      ApiEndpoints.notifications,
+    );
+    final readAll = await dio.patch<Map<String, dynamic>>(
+      ApiEndpoints.notificationsReadAll,
+    );
+
+    expect(inbox.data!['notifications'], isEmpty);
+    expect(inbox.data!['unreadCount'], 0);
+    expect(readAll.data!['success'], isTrue);
+  });
+
+  test('serves a mock conversation and accepts sent messages', () async {
+    final conversations = await dio.get<Map<String, dynamic>>(
+      ApiEndpoints.conversations,
+    );
+    final conversation = (conversations.data!['data'] as List)
+        .cast<Map<String, dynamic>>()
+        .first;
+    final conversationId = conversation['id'] as String;
+    final messages = await dio.get<Map<String, dynamic>>(
+      ApiEndpoints.conversationMessages(conversationId),
+    );
+    final sent = await dio.post<Map<String, dynamic>>(
+      ApiEndpoints.conversationMessages(conversationId),
+      data: {'content': 'Thanks, see you soon'},
+    );
+    await dio.patch<Map<String, dynamic>>(
+      ApiEndpoints.conversationRead(conversationId),
+    );
+    final refreshed = await dio.get<Map<String, dynamic>>(
+      ApiEndpoints.conversations,
+    );
+
+    expect(messages.data!['data'] as List, isNotEmpty);
+    expect(sent.data!['data'], containsPair('content', 'Thanks, see you soon'));
+    final refreshedConversations =
+        (refreshed.data!['data'] as List).cast<Map<String, dynamic>>();
+    expect(
+      refreshedConversations
+          .singleWhere((item) => item['id'] == conversationId)['unreadCount'],
+      0,
+    );
+  });
+
   test('accepts profile updates from the onboarding form', () async {
     final response = await dio.put<Map<String, dynamic>>(
       ApiEndpoints.profile,
@@ -66,6 +112,7 @@ void main() {
   });
 
   test('ApiService enables onboarding mocks in development', () async {
+    AppConfig.instance = const AppConfig.dev(useMock: true);
     final storage = _MockStorageService();
     when(storage.readToken).thenAnswer((_) async => null);
     when(storage.readRefreshToken).thenAnswer((_) async => null);
@@ -80,5 +127,10 @@ void main() {
 
     expect((login as Map<String, dynamic>)['id'], '1');
     expect((countries as Map<String, dynamic>)['data'], isNotEmpty);
+  });
+
+  test('development config uses the real API unless mocks are opted in', () {
+    expect(const AppConfig.dev().useMock, isFalse);
+    expect(const AppConfig.dev(useMock: true).useMock, isTrue);
   });
 }

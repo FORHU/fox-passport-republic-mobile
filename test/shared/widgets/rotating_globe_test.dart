@@ -34,7 +34,7 @@ void main() {
       // Neither value can close the script tag or the string it sits in.
       expect(html, isNot(contains('</script><script>alert(1)')));
       final escapedLt = '${String.fromCharCode(0x5c)}u003c';
-      expect(html, contains('${escapedLt}/script>'));
+      expect(html, contains('$escapedLt/script>'));
       // Exactly the page's own script tags remain: two <script> openers.
       expect('<script'.allMatches(html).length, 2);
     });
@@ -83,10 +83,12 @@ void main() {
       await pump(tester, size: 150);
 
       final box = tester.getSize(
-        find.descendant(
-          of: find.byType(RotatingGlobe),
-          matching: find.byType(SizedBox),
-        ).first,
+        find
+            .descendant(
+              of: find.byType(RotatingGlobe),
+              matching: find.byType(SizedBox),
+            )
+            .first,
       );
       expect(box, const Size.square(150));
     });
@@ -98,7 +100,6 @@ void hostileAndStopTests() {
     test('embeds the pins and caps the cards', () {
       final html = buildGlobeHtml(
         token: 'pk.test',
-        maxCards: 2,
         stops: const [
           GlobeStop(
             city: 'Manila',

@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// specific logic in the entry points, not here.
 ///
 /// - `main.dart`      → `bootstrap(AppConfig.fromEnvironment())` (loads .env)
-/// - `main_dev.dart`  → `bootstrap(const AppConfig.dev())`  (no .env needed)
+/// - `main_dev.dart`  → dev config with `.env.dev`
 /// - `main_prod.dart` → `bootstrap(const AppConfig.prod())` (no .env needed)
 Future<void> bootstrap(AppConfig config, {String? dotEnvFile}) async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -55,7 +55,6 @@ class ModernTextField extends StatelessWidget {
             style: AppTypography.body(
               size: 13,
               weight: FontWeight.w700,
-              color: AppColors.textSecondary,
             ),
           ),
           const Gap(8),

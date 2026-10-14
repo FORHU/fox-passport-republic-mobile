@@ -46,18 +46,18 @@ class GlobeHero extends ConsumerWidget {
           ),
           // Legibility scrim: the globe fades into the canvas behind the text,
           // as the web's `from-canvas via-canvas/60` overlay does.
-          Positioned(
+          const Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             height: _contentInset + 80,
-            child: const IgnorePointer(
+            child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0x0002040A), AppColors.canvas],
+                    colors: [AppColors.canvasClear, AppColors.canvas],
                     stops: [0, 0.55],
                   ),
                 ),
@@ -101,7 +101,6 @@ class GlobeHero extends ConsumerWidget {
                 Text(
                   l10n.homeHeroBody,
                   style: AppTypography.body(
-                    size: 14,
                     color: AppColors.textPrimary.withValues(alpha: 0.75),
                   ),
                 ),

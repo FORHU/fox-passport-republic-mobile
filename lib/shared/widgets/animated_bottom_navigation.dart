@@ -12,6 +12,7 @@ class NavBarItem {
     required this.icon,
     required this.activeIcon,
     this.showBadge = false,
+    this.badgeLabel,
   });
 
   final String label;
@@ -20,6 +21,7 @@ class NavBarItem {
 
   /// Shows a small notification dot on the icon.
   final bool showBadge;
+  final String? badgeLabel;
 }
 
 /// Premium floating glass bottom navigation with a smooth animated active
@@ -118,21 +120,37 @@ class _NavItem extends StatelessWidget {
                   color: selected ? primary : muted,
                 ),
               ),
-              if (item.showBadge)
+              if (item.showBadge || item.badgeLabel != null)
                 Positioned(
-                  right: 6,
-                  top: 0,
+                  right: item.badgeLabel == null ? 6 : -7,
+                  top: item.badgeLabel == null ? 0 : -5,
                   child: Container(
-                    width: 9,
-                    height: 9,
+                    constraints: BoxConstraints(
+                      minWidth: item.badgeLabel == null ? 9 : 16,
+                      minHeight: item.badgeLabel == null ? 9 : 16,
+                    ),
+                    padding: item.badgeLabel == null
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.symmetric(horizontal: 4),
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: AppColors.status.error,
-                      shape: BoxShape.circle,
+                      color: AppColors.accent,
+                      borderRadius: AppRadius.brPill,
                       border: Border.all(
                         color: AppColors.ui.surface,
                         width: 1.5,
                       ),
                     ),
+                    child: item.badgeLabel == null
+                        ? null
+                        : Text(
+                            item.badgeLabel!,
+                            style: const TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.onAccent,
+                            ),
+                          ),
                   ),
                 ),
             ],
