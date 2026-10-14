@@ -14,6 +14,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/map/presentation/pages/map_page.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -155,6 +156,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.roles,
         builder: (context, state) => const RolesPage(),
       ),
+      // Tickets are not a tab: full screen, opened from Passport, the Home
+      // reminder and after a booking.
+      GoRoute(
+        path: RouteNames.tickets,
+        builder: (context, state) => TicketsPage(
+          initialSegment: state.uri.queryParameters['segment'],
+        ),
+      ),
       GoRoute(
         path: RouteNames.settings,
         builder: (context, state) => const SettingsPage(),
@@ -258,10 +267,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.tickets,
-                builder: (context, state) => TicketsPage(
-                  initialSegment: state.uri.queryParameters['segment'],
-                ),
+                path: RouteNames.map,
+                builder: (context, state) => const MapPage(),
               ),
             ],
           ),

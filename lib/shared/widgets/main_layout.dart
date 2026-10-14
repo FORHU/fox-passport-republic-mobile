@@ -50,11 +50,11 @@ class MainLayout extends ConsumerWidget {
       ),
       _Destination(
         item: NavBarItem(
-          label: context.l10n.tickets,
-          icon: Icons.confirmation_number_outlined,
-          activeIcon: Icons.confirmation_number_rounded,
+          label: context.l10n.map,
+          icon: Icons.public_outlined,
+          activeIcon: Icons.public_rounded,
         ),
-        route: RouteNames.tickets,
+        route: RouteNames.map,
       ),
       _Destination(
         item: NavBarItem(
