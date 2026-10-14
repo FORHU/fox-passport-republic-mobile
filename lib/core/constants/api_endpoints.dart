@@ -30,6 +30,9 @@ class ApiEndpoints {
   static const String changePassword = '/profile/change-password';
   static const String users = '/users';
   static const String foxers = '/users/foxers';
+  static String foxerById(String id) => '/users/foxers/$id';
+  static const String matches = '/matches';
+  static const String matchesMine = '/matches/my';
   static String publicProfile(String idOrUsername) =>
       '/users/profile/$idOrUsername';
 
@@ -45,6 +48,9 @@ class ApiEndpoints {
   static const String categories = '/categories';
   static const String events = '/event-templates';
   static const String eventsBrowse = '/event-templates/browse';
+  static const String publicEventsBrowse = '/events/browse';
+  static String eventPublicVisibility(String id) =>
+      '/events/${Uri.encodeComponent(id)}/public-visibility';
   static const String eventRecommendations = '/event-templates/recommendations';
   static String eventBrowseById(String id) => '/event-templates/browse/$id';
   static String eventById(String id) => '/event-templates/$id';

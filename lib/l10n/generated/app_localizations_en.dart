@@ -725,6 +725,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchFilters => 'Filters';
 
   @override
+  String get searchFilterCity => 'City';
+
+  @override
+  String get searchFilterMinPrice => 'Minimum price';
+
+  @override
+  String get searchFilterMaxPrice => 'Maximum price';
+
+  @override
+  String get searchFilterMinCapacity => 'Minimum guests';
+
+  @override
+  String get searchChooseDates => 'Choose date range';
+
+  @override
+  String get searchSortBy => 'Sort by';
+
+  @override
+  String get searchSortRecommended => 'Recommended';
+
+  @override
+  String get searchSortPriceLow => 'Price: low to high';
+
+  @override
+  String get searchSortPriceHigh => 'Price: high to low';
+
+  @override
+  String get searchSortDateSoonest => 'Date: soonest';
+
+  @override
+  String get searchSortDateLatest => 'Date: latest';
+
+  @override
+  String get searchClearFilters => 'Clear';
+
+  @override
+  String get searchApplyFilters => 'Apply';
+
+  @override
+  String get searchInvalidFilter => 'Check the price and guest filters.';
+
+  @override
+  String get searchEventDetails => 'Event details';
+
+  @override
+  String get searchEventDate => 'Date';
+
+  @override
+  String get searchEventLocation => 'Location';
+
+  @override
+  String get searchEventGuests => 'Guests';
+
+  @override
+  String get searchEventPrice => 'Price';
+
+  @override
   String get searchNew => 'New';
 
   @override
@@ -1252,6 +1309,116 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueEntrance => 'Getting in';
 
   @override
+  String get foxerLoadFailed => 'We couldn\'t load this Foxer.';
+
+  @override
+  String get foxerMatchMe => 'Match me';
+
+  @override
+  String get foxerMessage => 'Message';
+
+  @override
+  String get foxerOffers => 'What they offer';
+
+  @override
+  String get foxerNoOffers =>
+      'Nothing listed yet. Send a request and tell them what you need.';
+
+  @override
+  String get foxerSampleNote => 'Sample Foxer';
+
+  @override
+  String foxerReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+      zero: 'No reviews yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get matchTitle => 'Match me';
+
+  @override
+  String matchIntro(String name) {
+    return 'Tell $name what you have in mind. They will accept or decline, and nothing is charged until they accept.';
+  }
+
+  @override
+  String get matchWhat => 'What would you like?';
+
+  @override
+  String get matchOwnIdea => 'My own idea';
+
+  @override
+  String get matchWhen => 'Which day?';
+
+  @override
+  String get matchGuests => 'How many guests?';
+
+  @override
+  String get matchMessage => 'Anything they should know?';
+
+  @override
+  String get matchMessageHint => 'Optional. The mood, the place, your budget';
+
+  @override
+  String get matchNoCharge => 'You will not be charged to send a request.';
+
+  @override
+  String get matchSend => 'Send request';
+
+  @override
+  String get matchFailed => 'We couldn\'t send your request. Try again.';
+
+  @override
+  String get matchSentTitle => 'Request sent';
+
+  @override
+  String matchSentBody(String name) {
+    return '$name will get back to you. You will be notified when they respond.';
+  }
+
+  @override
+  String get ticketsRequests => 'Requests';
+
+  @override
+  String get ticketsEmptyRequests =>
+      'No requests yet. Ask a Foxer to match you from their profile.';
+
+  @override
+  String get matchViewRequests => 'View my requests';
+
+  @override
+  String get matchStateWaiting => 'Waiting for reply';
+
+  @override
+  String get matchStateAccepted => 'Accepted';
+
+  @override
+  String get matchStateConfirmed => 'Confirmed';
+
+  @override
+  String get matchStateDeclined => 'Declined';
+
+  @override
+  String get matchTheFoxer => 'the Foxer';
+
+  @override
+  String matchWaitingNote(String name) {
+    return '$name has your request and will reply soon.';
+  }
+
+  @override
+  String get matchPayNow => 'Pay now';
+
+  @override
+  String get matchWithdraw => 'Withdraw';
+
+  @override
   String get bookClose => 'Close';
 
   @override
@@ -1439,4 +1606,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoonVoucher => 'Voucher codes are coming soon';
+
+  @override
+  String get map => 'Map';
+
+  @override
+  String get mapTitle => 'Events around the world';
+
+  @override
+  String get mapEmpty => 'No events on the map yet';
+
+  @override
+  String get mapViewEvents => 'View events';
+
+  @override
+  String get passportTicketsHint => 'Upcoming, past and your requests';
+
+  @override
+  String mapEventCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeEmptyVenues => 'No venues here yet.';
+
+  @override
+  String get homeEmptyVenuesAction => 'Explore';
+
+  @override
+  String get homeEmptyFoxers => 'No Foxers here yet. Be the first.';
+
+  @override
+  String get homeEmptyFoxersAction => 'Become one';
 }

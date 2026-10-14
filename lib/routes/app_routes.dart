@@ -9,6 +9,8 @@ import 'package:flutter_template/features/auth/presentation/pages/reset_password
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
@@ -187,6 +189,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: RouteNames.foxer,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            FoxerProfilePage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.match,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            MatchRequestPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
         path: RouteNames.venueDetail,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -234,7 +250,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.tickets,
-                builder: (context, state) => const TicketsPage(),
+                builder: (context, state) => TicketsPage(
+                  initialSegment: state.uri.queryParameters['segment'],
+                ),
               ),
             ],
           ),

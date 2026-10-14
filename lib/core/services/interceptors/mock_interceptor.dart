@@ -285,6 +285,79 @@ class MockInterceptor extends Interceptor {
       return;
     }
 
+    final foxerPath = RegExp(r'^/users/foxers/([^/]+)$').firstMatch(path);
+    if (foxerPath != null && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {
+            'id': foxerPath.group(1),
+            'name': 'Rico Rival',
+            'imgId': null,
+            'city': 'Davao City',
+            'roleType': ['eventFoxer'],
+            'identityVerifiedAt': '2026-01-01T00:00:00.000Z',
+            'avgRating': 4.8,
+            'reviewCount': 12,
+            'services': <Object>[],
+            'assets': <Object>[],
+            'venues': <Object>[],
+            'eventTemplates': <Object>[],
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.matchesMine && options.method == 'GET') {
+      Map<String, dynamic> row(
+        String id,
+        String style,
+        String requestStatus,
+        String status,
+        num total,
+      ) =>
+          {
+            'id': id,
+            'status': status,
+            'guestCount': 40,
+            'totalAmount': total,
+            'startAt': DateTime.now()
+                .add(const Duration(days: 20))
+                .toUtc()
+                .toIso8601String(),
+            'payments': <Object>[],
+            'event': {
+              'id': 'e-$id',
+              'name': 'Match with $style',
+              'requestStatus': requestStatus,
+              'host': {'id': '2', 'name': 'Rico Rival'},
+            },
+          };
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            row('m1', 'Garden Birthday', 'pending', 'pending', 0),
+            row('m2', 'Own idea', 'approved', 'pending', 18000),
+            row('m3', 'Rooftop Launch', 'rejected', 'cancelled', 0),
+          ],
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.matches && options.method == 'POST') {
+      handler.resolve(
+        _ok(options, {
+          'message': 'Match request created',
+          'bookingId': 'mock-booking-match',
+          'clientSecret': null,
+        }),
+      );
+      return;
+    }
+
     if (path == ApiEndpoints.fxRates) {
       handler.resolve(
         _ok(options, {
@@ -545,6 +618,40 @@ class MockInterceptor extends Interceptor {
       // events are `{ data: [...] }`, venues are `{ venues: [...] }`.
       case ApiEndpoints.eventsBrowse:
         handler.resolve(_ok(options, {'data': _mockEvents}));
+      case ApiEndpoints.publicEventsBrowse:
+        final now = DateTime.now().toUtc();
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              {
+                'id': 'mock-public-event-1',
+                'name': 'Manila Night Market',
+                'eventCategory': 'social',
+                'startAt': now.add(const Duration(days: 7)).toIso8601String(),
+                'endAt': now
+                    .add(const Duration(days: 7, hours: 5))
+                    .toIso8601String(),
+                'guestCount': 120,
+                'totalAmount': 18000,
+                'targetCity': 'Manila',
+              },
+              {
+                'id': 'mock-public-event-2',
+                'name': 'Cebu Food Fest',
+                'eventCategory': 'social',
+                'startAt': now.add(const Duration(days: 21)).toIso8601String(),
+                'endAt': now
+                    .add(const Duration(days: 21, hours: 6))
+                    .toIso8601String(),
+                'guestCount': 250,
+                'totalAmount': 32000,
+                'targetCity': 'Cebu City',
+              },
+            ],
+            'pagination': {'page': 1, 'limit': 20, 'total': 2, 'totalPages': 1},
+          }),
+        );
       case ApiEndpoints.venues:
         handler.resolve(_ok(options, {'venues': <Map<String, dynamic>>[]}));
       // Nothing booked and a blank passport: the screens then show their
