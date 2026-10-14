@@ -105,6 +105,41 @@ void main() {
     expect(find.text('Sky Hall'), findsNothing);
   });
 
+  testWidgets('applies city, price, and capacity search filters',
+      (tester) async {
+    CatalogQuery? latestQuery;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogProvider.overrideWith((ref, q) async {
+            latestQuery = q;
+            return CatalogPage(items: _venues, total: _venues.length);
+          }),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Filters'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).at(1), 'Davao City');
+    await tester.enterText(find.byType(TextField).at(2), '10000');
+    await tester.enterText(find.byType(TextField).at(4), '80');
+    await tester.tap(find.text('Apply'));
+    await tester.pumpAndSettle();
+
+    expect(latestQuery?.city, 'Davao City');
+    expect(latestQuery?.minPrice, 10000);
+    expect(latestQuery?.minCapacity, 80);
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
+
   testWidgets('offers three choices, with gear and services under Foxers', (
     tester,
   ) async {

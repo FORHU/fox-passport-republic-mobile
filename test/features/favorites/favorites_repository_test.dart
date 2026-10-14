@@ -64,7 +64,7 @@ void main() {
     verify(
       () => api.delete(
         ApiEndpoints.favoriteRemoveByListing,
-        {'targetId': 'event-1', 'type': 'event'},
+        {'targetId': 'event-1', 'type': 'public_event'},
       ),
     ).called(1);
   });

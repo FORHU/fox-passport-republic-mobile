@@ -9,6 +9,7 @@ import 'package:flutter_template/features/auth/presentation/pages/reset_password
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
+import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
@@ -216,6 +217,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             EventDetailPage(item: state.extra! as CatalogItem),
       ),
+      GoRoute(
+        path: RouteNames.scheduledEventDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ScheduledEventDetailPage(item: state.extra! as CatalogItem),
+      ),
       // One navigator per tab, kept alive side by side: switching tabs keeps
       // each tab's own stack, scroll position and typed text.
       StatefulShellRoute.indexedStack(
@@ -242,6 +250,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   initialKind: CatalogKind.fromParam(
                     state.uri.queryParameters['kind'],
                   ),
+                  initialCity: state.uri.queryParameters['city'],
                 ),
               ),
             ],

@@ -29,6 +29,7 @@ class CatalogItem extends Equatable {
     this.city,
     this.capacity,
     this.price,
+    this.eventStartAt,
     this.currency = kBaseCurrency,
     this.billingRate,
     this.imageUrl,
@@ -50,6 +51,7 @@ class CatalogItem extends Equatable {
   /// Guests a venue holds.
   final int? capacity;
   final num? price;
+  final DateTime? eventStartAt;
 
   /// ISO 4217 code the [price] is in.
   final String currency;
@@ -86,6 +88,7 @@ class CatalogItem extends Equatable {
         city,
         capacity,
         price,
+        eventStartAt,
         currency,
         billingRate,
         imageUrl,

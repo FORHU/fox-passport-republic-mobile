@@ -21,13 +21,21 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 /// Search: one box, one switch for what you are looking for, compact rows.
 class SearchPage extends ConsumerStatefulWidget {
-  const SearchPage({this.initialKind = CatalogKind.venues, super.key});
+  const SearchPage({
+    this.initialKind = CatalogKind.venues,
+    this.initialCity,
+    super.key,
+  });
 
   /// What the switch starts on; Home's tiles deep-link here.
   final CatalogKind initialKind;
+
+  /// Narrow to this city, e.g. from a pin on the Map.
+  final String? initialCity;
 
   @override
   ConsumerState<SearchPage> createState() => _SearchPageState();
@@ -36,7 +44,15 @@ class SearchPage extends ConsumerStatefulWidget {
 class _SearchPageState extends ConsumerState<SearchPage> {
   final _controller = TextEditingController();
   late CatalogKind _kind = widget.initialKind;
+  late String? _city = widget.initialCity;
   String _query = '';
+  num? _minPrice;
+  num? _maxPrice;
+  int? _minCapacity;
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  late String _sortBy =
+      widget.initialKind == CatalogKind.events ? 'date_asc' : '';
   Timer? _debounce;
 
   /// Kept local only for explicit mock-mode demos.
@@ -46,8 +62,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   void didUpdateWidget(SearchPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     // The shell keeps this page alive, so a new deep link arrives as an update.
-    if (oldWidget.initialKind != widget.initialKind) {
-      setState(() => _kind = widget.initialKind);
+    if (oldWidget.initialKind != widget.initialKind ||
+        oldWidget.initialCity != widget.initialCity) {
+      setState(() {
+        _kind = widget.initialKind;
+        _city = widget.initialCity;
+      });
     }
   }
 
@@ -62,6 +82,48 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 350), () {
       if (mounted) setState(() => _query = value.trim());
+    });
+  }
+
+  CatalogQuery get _catalogQuery => CatalogQuery(
+        _kind,
+        query: _query,
+        city: _city,
+        minPrice: _minPrice,
+        maxPrice: _maxPrice,
+        minCapacity: _minCapacity,
+        fromDate: _fromDate,
+        toDate: _toDate,
+        sortBy: _sortBy.isEmpty ? null : _sortBy,
+      );
+
+  Future<void> _openFilters() async {
+    final filters = await showModalBottomSheet<_SearchFilters>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => _FilterSheet(
+        kind: _kind,
+        initial: _SearchFilters(
+          city: _city,
+          minPrice: _minPrice,
+          maxPrice: _maxPrice,
+          minCapacity: _minCapacity,
+          fromDate: _fromDate,
+          toDate: _toDate,
+          sortBy: _sortBy,
+        ),
+      ),
+    );
+    if (filters == null || !mounted) return;
+    setState(() {
+      _city = filters.city;
+      _minPrice = filters.minPrice;
+      _maxPrice = filters.maxPrice;
+      _minCapacity = filters.minCapacity;
+      _fromDate = filters.fromDate;
+      _toDate = filters.toDate;
+      _sortBy = filters.sortBy;
     });
   }
 
@@ -102,9 +164,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final l10n = context.l10n;
     final favorites = ref.watch(favoriteIdsProvider);
     final formatter = ref.watch(moneyFormatterProvider);
-    final results = ref.watch(
-      catalogProvider(CatalogQuery(_kind, query: _query)),
-    );
+    final results = ref.watch(catalogProvider(_catalogQuery));
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -120,9 +180,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     controller: _controller,
                     hint: l10n.searchHint,
                     onChanged: _onQuery,
-                    onFilters: () =>
-                        showTopToast(context, l10n.comingSoonFilters),
+                    onFilters: _openFilters,
                     filtersLabel: l10n.searchFilters,
+                    showFilters: _kind == CatalogKind.events ||
+                        _kind == CatalogKind.venues,
                   ),
                 ),
                 Padding(
@@ -135,6 +196,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       _kind = k == CatalogKind.foxers && _isPeopleGroup(_kind)
                           ? _kind
                           : k;
+                      _sortBy = _kind == CatalogKind.events ? 'date_asc' : '';
                     }),
                     options: [
                       for (final k in _topKinds)
@@ -142,6 +204,22 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     ],
                   ),
                 ),
+                if (_city != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: InputChip(
+                        avatar: const Icon(
+                          Icons.place_outlined,
+                          size: 16,
+                          color: AppColors.accent,
+                        ),
+                        label: Text(_city!),
+                        onDeleted: () => setState(() => _city = null),
+                      ),
+                    ),
+                  ),
                 if (_isPeopleGroup(_kind))
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
@@ -173,9 +251,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           ),
                           TextButton(
                             onPressed: () => ref.invalidate(
-                              catalogProvider(
-                                CatalogQuery(_kind, query: _query),
-                              ),
+                              catalogProvider(_catalogQuery),
                             ),
                             child: Text(l10n.retry),
                           ),
@@ -187,6 +263,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       page: page,
                       kindLabel: _kindLabel(l10n, _kind),
                       query: _query,
+                      locale: Localizations.localeOf(context).toString(),
                       saved: AppConfig.instance.useMock
                           ? _saved
                           : favorites.asData?.value ?? const {},
@@ -198,8 +275,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       onOpen: (item) => switch (item.kind) {
                         CatalogKind.venues =>
                           context.push(RouteNames.venueDetail, extra: item),
-                        CatalogKind.events =>
-                          context.push(RouteNames.eventDetail, extra: item),
+                        CatalogKind.events => context.push(
+                            RouteNames.scheduledEventDetail,
+                            extra: item,
+                          ),
+                        CatalogKind.foxers =>
+                          context.push(RouteNames.foxer, extra: item),
                         _ => showTopToast(context, l10n.comingSoonDetails),
                       },
                     ),
@@ -254,6 +335,271 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 }
 
+class _SearchFilters {
+  const _SearchFilters({
+    required this.sortBy,
+    this.city,
+    this.minPrice,
+    this.maxPrice,
+    this.minCapacity,
+    this.fromDate,
+    this.toDate,
+  });
+
+  final String? city;
+  final num? minPrice;
+  final num? maxPrice;
+  final int? minCapacity;
+  final DateTime? fromDate;
+  final DateTime? toDate;
+  final String sortBy;
+}
+
+class _FilterSheet extends StatefulWidget {
+  const _FilterSheet({required this.kind, required this.initial});
+
+  final CatalogKind kind;
+  final _SearchFilters initial;
+
+  @override
+  State<_FilterSheet> createState() => _FilterSheetState();
+}
+
+class _FilterSheetState extends State<_FilterSheet> {
+  late final _city = TextEditingController(text: widget.initial.city ?? '');
+  late final _minPrice =
+      TextEditingController(text: widget.initial.minPrice?.toString() ?? '');
+  late final _maxPrice =
+      TextEditingController(text: widget.initial.maxPrice?.toString() ?? '');
+  late final _minCapacity = TextEditingController(
+    text: widget.initial.minCapacity?.toString() ?? '',
+  );
+  late DateTime? _fromDate = widget.initial.fromDate;
+  late DateTime? _toDate = widget.initial.toDate;
+  late String _sortBy = widget.initial.sortBy;
+  String? _error;
+
+  @override
+  void dispose() {
+    _city.dispose();
+    _minPrice.dispose();
+    _maxPrice.dispose();
+    _minCapacity.dispose();
+    super.dispose();
+  }
+
+  Future<void> _chooseDates() async {
+    final now = DateTime.now();
+    final initialRange = _fromDate != null && _toDate != null
+        ? DateTimeRange(
+            start: _fromDate!,
+            end: _toDate!.subtract(const Duration(days: 1)),
+          )
+        : null;
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: DateTime(now.year + 3, now.month, now.day),
+      initialDateRange: initialRange,
+    );
+    if (range == null) return;
+    setState(() {
+      _fromDate = DateTime(
+        range.start.year,
+        range.start.month,
+        range.start.day,
+      );
+      _toDate = DateTime(
+        range.end.year,
+        range.end.month,
+        range.end.day + 1,
+      );
+    });
+  }
+
+  void _apply() {
+    final l10n = context.l10n;
+    final minPrice = _minPrice.text.trim().isEmpty
+        ? null
+        : num.tryParse(_minPrice.text.trim());
+    final maxPrice = _maxPrice.text.trim().isEmpty
+        ? null
+        : num.tryParse(_maxPrice.text.trim());
+    final minCapacity = _minCapacity.text.trim().isEmpty
+        ? null
+        : int.tryParse(_minCapacity.text.trim());
+    if ((_minPrice.text.trim().isNotEmpty && minPrice == null) ||
+        (_maxPrice.text.trim().isNotEmpty && maxPrice == null) ||
+        (_minCapacity.text.trim().isNotEmpty && minCapacity == null) ||
+        (minPrice != null && minPrice < 0) ||
+        (maxPrice != null && maxPrice < 0) ||
+        (minCapacity != null && minCapacity < 1) ||
+        (minPrice != null && maxPrice != null && minPrice > maxPrice)) {
+      setState(() => _error = l10n.searchInvalidFilter);
+      return;
+    }
+
+    Navigator.of(context).pop(
+      _SearchFilters(
+        city: _city.text.trim().isEmpty ? null : _city.text.trim(),
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        minCapacity: minCapacity,
+        fromDate: _fromDate,
+        toDate: _toDate,
+        sortBy: _sortBy,
+      ),
+    );
+  }
+
+  void _clear() {
+    Navigator.of(context).pop(
+      _SearchFilters(
+        sortBy: widget.kind == CatalogKind.events ? 'date_asc' : '',
+      ),
+    );
+  }
+
+  String _sortLabel(AppLocalizations l10n, String value) => switch (value) {
+        'price_asc' => l10n.searchSortPriceLow,
+        'price_desc' => l10n.searchSortPriceHigh,
+        'date_desc' => l10n.searchSortDateLatest,
+        'date_asc' => l10n.searchSortDateSoonest,
+        _ => l10n.searchSortRecommended,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final isEvent = widget.kind == CatalogKind.events;
+    final sortOptions = isEvent
+        ? const ['date_asc', 'date_desc', 'price_asc', 'price_desc']
+        : const ['', 'price_asc', 'price_desc'];
+    final dateFormat = DateFormat.yMMMd();
+    final dateLabel = _fromDate != null && _toDate != null
+        ? '${dateFormat.format(_fromDate!)} – '
+            '${dateFormat.format(_toDate!.subtract(const Duration(days: 1)))}'
+        : l10n.searchChooseDates;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20,
+        top: 12,
+        right: 20,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: AppRadius.brPill,
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(l10n.searchFilters, style: AppTypography.display(size: 22)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _city,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(labelText: l10n.searchFilterCity),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _minPrice,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      labelText: l10n.searchFilterMinPrice,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _maxPrice,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      labelText: l10n.searchFilterMaxPrice,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _minCapacity,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: l10n.searchFilterMinCapacity,
+              ),
+            ),
+            if (isEvent) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _chooseDates,
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: Text(dateLabel),
+              ),
+            ],
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              initialValue: _sortBy,
+              decoration: InputDecoration(labelText: l10n.searchSortBy),
+              items: [
+                for (final option in sortOptions)
+                  DropdownMenuItem(
+                    value: option,
+                    child: Text(_sortLabel(l10n, option)),
+                  ),
+              ],
+              onChanged: (value) {
+                if (value != null) setState(() => _sortBy = value);
+              },
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                style: AppTypography.body(color: AppColors.error),
+              ),
+            ],
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: _clear,
+                    child: Text(l10n.searchClearFilters),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: _apply,
+                    child: Text(l10n.searchApplyFilters),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _SearchField extends StatelessWidget {
   const _SearchField({
     required this.controller,
@@ -261,6 +607,7 @@ class _SearchField extends StatelessWidget {
     required this.onChanged,
     required this.onFilters,
     required this.filtersLabel,
+    required this.showFilters,
   });
 
   final TextEditingController controller;
@@ -268,6 +615,7 @@ class _SearchField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onFilters;
   final String filtersLabel;
+  final bool showFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -308,15 +656,16 @@ class _SearchField extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            tooltip: filtersLabel,
-            onPressed: onFilters,
-            icon: const Icon(
-              Icons.tune_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
+          if (showFilters)
+            IconButton(
+              tooltip: filtersLabel,
+              onPressed: onFilters,
+              icon: const Icon(
+                Icons.tune_rounded,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -329,6 +678,7 @@ class _Results extends StatelessWidget {
     required this.page,
     required this.kindLabel,
     required this.query,
+    required this.locale,
     required this.saved,
     required this.favoritesFailed,
     required this.favoritesLoading,
@@ -339,6 +689,7 @@ class _Results extends StatelessWidget {
   final CatalogPage page;
   final String kindLabel;
   final String query;
+  final String locale;
   final Set<String> saved;
   final bool favoritesFailed;
   final bool favoritesLoading;
@@ -390,7 +741,7 @@ class _Results extends StatelessWidget {
         return _CatalogCard(
           item: item,
           kindLabel: kindLabel,
-          subtitle: catalogSubtitle(l10n, item),
+          subtitle: catalogSubtitle(l10n, item, locale: locale),
           price: catalogPriceLabel(
             l10n,
             item,
@@ -624,13 +975,18 @@ class _MapPill extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.map_outlined,
-                  size: 18, color: AppColors.onLightSurface,),
+              const Icon(
+                Icons.map_outlined,
+                size: 18,
+                color: AppColors.onLightSurface,
+              ),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: AppTypography.display(
-                    size: 15, color: AppColors.onLightSurface,),
+                  size: 15,
+                  color: AppColors.onLightSurface,
+                ),
               ),
             ],
           ),
