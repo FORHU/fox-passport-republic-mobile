@@ -9,9 +9,17 @@ import 'package:flutter_template/core/services/storage_service.dart';
 /// Attaches the access token to outgoing requests and transparently refreshes
 /// it once when the server returns 401, then retries the original request.
 ///
-/// If refresh fails (or there is no refresh token), the local session is
-/// cleared so the router falls back to the login flow. Extends
-/// [QueuedInterceptor] so concurrent 401s don't trigger parallel refreshes.
+/// Guards against the two ways a refresh used to sign people out for no
+/// reason:
+///
+/// * **Only a refusal ends the session.** The server saying the refresh token
+///   is invalid or expired (401/403) clears the session. A timeout, no
+///   network or a 5xx does not: the original error is returned and the user
+///   stays signed in, to try again.
+/// * **One refresh per burst.** Extends [QueuedInterceptor], so concurrent 401s
+///   run one at a time; a request that failed with a token which has since
+///   been replaced is simply retried with the new one instead of refreshing
+///   (and, with rotation, burning the refresh token) again.
 ///
 /// The refresh call uses a separate, bare [Dio] so it does not recurse through
 /// this interceptor.
@@ -80,13 +88,35 @@ class AuthInterceptor extends QueuedInterceptor {
       return;
     }
 
-    final newToken = await _refreshToken();
+    // A burst of 401s is handled one by one. If an earlier one in the queue
+    // already swapped the token, this request just needs the new one.
+    final sent = options.headers['Authorization']?.toString();
+    final current = await _storage.readToken();
+    var newToken = current != null &&
+            current.isNotEmpty &&
+            sent != null &&
+            sent != 'Bearer $current'
+        ? current
+        : null;
+
     if (newToken == null) {
-      await _storage.clearSession();
-      await cookieService?.clearCookies();
-      onUnauthenticated?.call();
-      handler.next(err);
-      return;
+      final outcome = await _refreshToken();
+      switch (outcome) {
+        case _Refreshed(:final token):
+          newToken = token;
+        case _Rejected():
+          // The server refused the refresh token: the session is over.
+          await _storage.clearSession();
+          await cookieService?.clearCookies();
+          onUnauthenticated?.call();
+          handler.next(err);
+          return;
+        case _Unavailable():
+          // Could not reach the server (or it failed). Keep the session and
+          // let the original request fail; the next one tries again.
+          handler.next(err);
+          return;
+      }
     }
 
     // Replay the original request with the fresh token.
@@ -101,9 +131,8 @@ class AuthInterceptor extends QueuedInterceptor {
     }
   }
 
-  /// Exchanges the stored refresh token for a new access token. Returns the new
-  /// access token, or null if refresh isn't possible.
-  Future<String?> _refreshToken() async {
+  /// Exchanges the stored refresh token for a new access token.
+  Future<_RefreshOutcome> _refreshToken() async {
     final refreshToken = await _storage.readRefreshToken();
 
     try {
@@ -114,7 +143,7 @@ class AuthInterceptor extends QueuedInterceptor {
             : null,
       );
       final rawData = res.data;
-      if (rawData is! Map) return null;
+      if (rawData is! Map) return const _Unavailable();
 
       final payload = (rawData['data'] is Map)
           ? (rawData['data'] as Map).cast<String, dynamic>()
@@ -122,15 +151,43 @@ class AuthInterceptor extends QueuedInterceptor {
 
       final token = (payload['token'] ?? payload['accessToken']) as String?;
       final newRefresh = payload['refreshToken'] as String?;
-      if (token == null || token.isEmpty) return null;
+      // A success without a token is the server misbehaving, not a refusal.
+      if (token == null || token.isEmpty) return const _Unavailable();
 
       await _storage.saveToken(token);
       if (newRefresh != null && newRefresh.isNotEmpty) {
         await _storage.saveRefreshToken(newRefresh);
       }
-      return token;
-    } on DioException {
-      return null;
+      return _Refreshed(token);
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      // 400/401/403: the refresh token itself was refused. Everything else
+      // (timeouts, offline, 5xx, 429) is the network or server, not the user.
+      if (status == 400 || status == 401 || status == 403) {
+        return const _Rejected();
+      }
+      return const _Unavailable();
     }
   }
+}
+
+/// How a refresh attempt ended.
+sealed class _RefreshOutcome {
+  const _RefreshOutcome();
+}
+
+class _Refreshed extends _RefreshOutcome {
+  const _Refreshed(this.token);
+
+  final String token;
+}
+
+/// The server refused the refresh token.
+class _Rejected extends _RefreshOutcome {
+  const _Rejected();
+}
+
+/// No answer worth acting on: offline, timed out, or a server error.
+class _Unavailable extends _RefreshOutcome {
+  const _Unavailable();
 }
