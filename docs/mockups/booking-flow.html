@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxPassport mobile — Venue booking flow</title>
+<link rel="stylesheet" href="mockup.css">
+</head>
+<body>
+<h1>Venue booking flow</h1>
+<p class="note">Spec: <code>docs/mobile-design.md</code> section 8. Web source: <code>VenueBookingClient</code>, <code>VenueCheckoutClient</code>, <code>VenueBookingSuccessClient</code>, <code>VenueRequestPendingClient</code>. All amounts are samples; the service fee comes from the API.</p>
+<div class="wrap">
+
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-x" style="font-size:20px"></i><span class="g">Sky Hall</span><span class="m">1 of 3</span></div>
+      <div class="bar"><span class="on"></span><span></span><span></span></div>
+      <div class="g" style="font-size:20px;margin-bottom:12px">When is it?</div>
+      <div class="row" style="margin-bottom:8px"><i class="ti ti-chevron-left"></i><span class="g">October 2026</span><i class="ti ti-chevron-right"></i></div>
+      <div class="cal m" style="margin-bottom:2px"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="cal" id="cal"></div>
+      <div class="row s" style="justify-content:flex-start;gap:14px;margin-top:10px"><span><i class="ti ti-circle" style="color:#ccff00"></i> Selected</span><span style="text-decoration:line-through">Booked</span></div>
+      <div class="cta"><div><div class="g" style="font-size:15px">Sat 17 Oct</div><div class="s">1 day</div></div><span class="btn">Next</span></div>
+    </div>
+    <p class="cap">1. Dates — booked days are struck out and cannot be tapped.</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">Sky Hall</span><span class="m">2 of 3</span></div>
+      <div class="bar"><span class="on"></span><span class="on"></span><span></span></div>
+      <div class="g" style="font-size:20px;margin-bottom:12px">How many guests?</div>
+      <div class="card pad row" style="margin-bottom:10px"><span class="rnd"><i class="ti ti-minus"></i></span><div style="text-align:center"><div class="g" style="font-size:28px;line-height:1">220</div><div class="s">Fits up to 200</div></div><span class="rnd"><i class="ti ti-plus"></i></span></div>
+      <div class="warn" style="margin-bottom:16px"><i class="ti ti-alert-triangle"></i> 20 over capacity. The owner has to approve before you pay.</div>
+      <div class="g" style="font-size:15px;margin-bottom:8px">Anything the owner should know?</div>
+      <div class="card pad s" style="min-height:84px">Optional. Setup time, catering, access needs</div>
+      <div class="cta"><div><div class="g" style="font-size:15px">Sat 17 Oct</div><div class="s">220 guests</div></div><span class="btn">Next</span></div>
+    </div>
+    <p class="cap">2. Guests — going over capacity is allowed; the amber note appears only then.</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">Review</span><span class="m">3 of 3</span></div>
+      <div class="bar"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+      <div class="card pad row" style="justify-content:flex-start;gap:12px;margin-bottom:10px"><div class="img" style="width:56px;height:56px;border-radius:12px"><i class="ti ti-photo"></i></div><div><div class="g" style="font-size:15px">Sky Hall</div><div class="s">Davao City</div></div></div>
+      <div class="card pad" style="margin-bottom:10px"><div class="ln"><span class="s">Date</span><span>Sat 17 Oct 2026 <i class="ti ti-pencil" style="color:#8b90a0"></i></span></div><div class="ln"><span class="s">Guests</span><span>200 <i class="ti ti-pencil" style="color:#8b90a0"></i></span></div></div>
+      <div class="card pad" style="margin-bottom:10px"><div class="ln"><span class="s">₱25,000 × 1 day</span><span>₱25,000</span></div><div class="ln"><span class="s">Service fee</span><span>₱1,250</span></div><div class="ln" style="color:#4ade80"><span>Voucher</span><span>Add code</span></div><div class="ln g" style="border-top:1px solid #20232e;margin-top:6px;padding-top:10px;font-size:15px"><span>Total</span><span>₱26,250</span></div></div>
+      <div class="s"><i class="ti ti-shield-check"></i> Free cancellation for 48 hours.</div>
+      <div class="cta"><span class="btn" style="flex:1">Continue to payment</span></div>
+    </div>
+    <p class="cap">3. Review — full price before any card details. When over capacity the button reads "Request to book".</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">Pay</span><span style="width:20px"></span></div>
+      <div style="text-align:center;margin:18px 0"><div class="m">Total</div><div class="g" style="font-size:32px">₱26,250</div><div class="s">Sky Hall · Sat 17 Oct</div></div>
+      <div class="ghost" style="background:#fff;color:#02040a;border-color:#fff;margin-bottom:8px"><i class="ti ti-brand-apple"></i> Pay</div>
+      <div class="ghost" style="margin-bottom:14px"><i class="ti ti-brand-google"></i> Pay</div>
+      <div class="m" style="text-align:center;margin-bottom:14px">or pay by card</div>
+      <div class="card pad s" style="margin-bottom:8px"><i class="ti ti-credit-card"></i> Card number</div>
+      <div class="row" style="margin-bottom:8px"><div class="card pad s" style="flex:1">MM / YY</div><div class="card pad s" style="flex:1">CVC</div></div>
+      <div class="s"><i class="ti ti-lock"></i> Payment handled by Stripe.</div>
+      <div class="cta"><span class="btn" style="flex:1">Pay ₱26,250</span></div>
+    </div>
+    <p class="cap">4. Pay — Stripe's payment sheet. Stubbed until Stripe is taken up (port plan, decision 2).</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:#ccff00;color:#1a2000;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="ti ti-check" style="font-size:28px"></i></div>
+        <div class="g" style="font-size:22px">You're booked</div>
+        <div class="s" style="margin:4px 0 18px">Your ticket is in the Tickets tab.</div>
+        <div class="card pad" style="text-align:left"><div class="m" style="color:#ccff00">Confirmed</div><div class="g" style="font-size:17px;margin:4px 0">Sky Hall</div><div class="s">Sat 17 Oct · 200 guests</div><div class="ln" style="border-top:1px dashed #2a2d3a;margin-top:10px;padding-top:10px"><span class="s">Reference</span><span class="m" style="color:#fff">#0000SAMPLE</span></div><div class="ln"><span class="s">Total charged</span><span>₱26,250</span></div></div>
+        <div class="s" style="margin-top:12px"><i class="ti ti-rubber-stamp" style="color:#ccff00"></i> Attend to earn a passport stamp.</div>
+      </div>
+      <div class="btn" style="margin-bottom:8px">View ticket</div>
+      <div class="ghost"><i class="ti ti-message-circle"></i> Message the owner</div>
+    </div>
+    <p class="cap">5a. Confirmed — shown after payment succeeds.</p>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div style="text-align:center;margin:10px 0 16px">
+        <div style="width:64px;height:64px;border-radius:50%;background:#2a1f05;border:1px solid #7a5a0c;color:#fbbf24;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="ti ti-hourglass" style="font-size:28px"></i></div>
+        <div class="g" style="font-size:22px">Request sent</div>
+        <div class="s">Waiting for the owner to confirm.</div>
+      </div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:12px"><span class="ic"><i class="ti ti-mail" style="color:#ccff00"></i></span><div><div class="g">Request delivered</div><div class="s">The owner can accept or decline 220 guests.</div></div></div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:12px"><span class="ic"><i class="ti ti-bell" style="color:#fbbf24"></i></span><div><div class="g">You'll be notified</div><div class="s">By push notification and email.</div></div></div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:14px"><span class="ic"><i class="ti ti-credit-card" style="color:#4ade80"></i></span><div><div class="g">Pay only after approval</div><div class="s">If they decline, nothing is charged.</div></div></div>
+      <div class="card pad"><div class="ln"><span class="s">Reference</span><span class="m" style="color:#fff">#0000SAMPLE</span></div><div class="ln"><span class="s">Amount if approved</span><span>₱26,250</span></div></div>
+      <div class="cta" style="flex-direction:column;align-items:stretch"><div class="btn">Message the owner</div><div class="ghost">Back to home</div></div>
+    </div>
+    <p class="cap">5b. Request sent — shown instead of Pay when guests exceed capacity. No payment is taken.</p>
+  </div>
+
+</div>
+<script>
+(function(){
+  var c=document.getElementById('cal'),h='',booked={6:1,7:1,13:1,24:1,25:1};
+  for(var i=0;i<3;i++)h+='<span></span>';
+  for(var d=1;d<=31;d++)h+='<span class="'+(d===17?'sel':booked[d]?'x':'')+'">'+d+'</span>';
+  c.innerHTML=h;
+})();
+</script>
+</body>
+</html>
