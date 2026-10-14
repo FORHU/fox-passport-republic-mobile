@@ -8,6 +8,7 @@ import 'package:flutter_template/features/auth/presentation/pages/register_page.
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
+import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
@@ -163,6 +164,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => TicketsPage(
           initialSegment: state.uri.queryParameters['segment'],
         ),
+      ),
+      GoRoute(
+        path: RouteNames.calendar,
+        builder: (context, state) => const CalendarPage(),
       ),
       GoRoute(
         path: RouteNames.settings,

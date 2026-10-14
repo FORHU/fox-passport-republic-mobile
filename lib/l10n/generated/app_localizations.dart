@@ -3115,6 +3115,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find events'**
   String get passportEmptyAction;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you book, host or supply'**
+  String get calendarHint;
+
+  /// No description provided for @calendarToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarToday;
+
+  /// No description provided for @calendarNothingToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on this day.'**
+  String get calendarNothingToday;
+
+  /// No description provided for @calendarPreviousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get calendarPreviousMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get calendarNextMonth;
+
+  /// No description provided for @calendarRoleGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'My bookings'**
+  String get calendarRoleGuest;
+
+  /// No description provided for @calendarRoleHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Events I host'**
+  String get calendarRoleHost;
+
+  /// No description provided for @calendarRoleOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizing'**
+  String get calendarRoleOrganizer;
+
+  /// No description provided for @calendarRoleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'At my venues'**
+  String get calendarRoleVenue;
+
+  /// No description provided for @calendarRoleSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplying'**
+  String get calendarRoleSupplier;
+
+  /// No description provided for @calendarOpenTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Open tickets'**
+  String get calendarOpenTickets;
+
+  /// No description provided for @calendarManageOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage this on the web.'**
+  String get calendarManageOnWeb;
 }
 
 class _AppLocalizationsDelegate

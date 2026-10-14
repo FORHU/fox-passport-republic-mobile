@@ -535,5 +535,18 @@
   "searchClearFilters": "Quitar filtros",
   "mapEmptyAction": "Explorar eventos",
   "passportEmptyStamps": "Asiste a un evento para ganar tu primer sello.",
-  "passportEmptyAction": "Buscar eventos"
+  "passportEmptyAction": "Buscar eventos",
+  "calendarTitle": "Calendario",
+  "calendarHint": "Todo lo que reservas, organizas o ofreces",
+  "calendarToday": "Hoy",
+  "calendarNothingToday": "Nada este día.",
+  "calendarPreviousMonth": "Mes anterior",
+  "calendarNextMonth": "Mes siguiente",
+  "calendarRoleGuest": "Mis reservas",
+  "calendarRoleHost": "Eventos que organizo",
+  "calendarRoleOrganizer": "Gestionando",
+  "calendarRoleVenue": "En mis lugares",
+  "calendarRoleSupplier": "Ofreciendo",
+  "calendarOpenTickets": "Abrir boletos",
+  "calendarManageOnWeb": "Gestiona esto en la web."
 }

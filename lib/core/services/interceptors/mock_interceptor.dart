@@ -616,6 +616,35 @@ class MockInterceptor extends Interceptor {
       // Public browse data, so the Home hero's globe has pins and cards (and
       // the Home feed has items) with no backend. Same shapes as the real API:
       // events are `{ data: [...] }`, venues are `{ venues: [...] }`.
+      case ApiEndpoints.calendar:
+        final today = DateTime.now();
+        DateTime at(int days, int hour) =>
+            DateTime(today.year, today.month, today.day + days, hour);
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              {
+                'id': 'booking:mock-1',
+                'kind': 'event',
+                'role': 'guest',
+                'title': 'Rooftop Launch Night',
+                'start': at(2, 19).toUtc().toIso8601String(),
+                'end': at(2, 23).toUtc().toIso8601String(),
+                'status': 'confirmed',
+              },
+              {
+                'id': 'event:mock-2',
+                'kind': 'event',
+                'role': 'host',
+                'title': 'Garden Birthday',
+                'start': at(5, 14).toUtc().toIso8601String(),
+                'end': at(5, 20).toUtc().toIso8601String(),
+                'status': 'approved',
+              },
+            ],
+          }),
+        );
       case ApiEndpoints.eventsBrowse:
         handler.resolve(_ok(options, {'data': _mockEvents}));
       case ApiEndpoints.publicEventsBrowse:

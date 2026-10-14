@@ -1659,4 +1659,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportEmptyAction => 'Find events';
+
+  @override
+  String get calendarTitle => 'Calendar';
+
+  @override
+  String get calendarHint => 'Everything you book, host or supply';
+
+  @override
+  String get calendarToday => 'Today';
+
+  @override
+  String get calendarNothingToday => 'Nothing on this day.';
+
+  @override
+  String get calendarPreviousMonth => 'Previous month';
+
+  @override
+  String get calendarNextMonth => 'Next month';
+
+  @override
+  String get calendarRoleGuest => 'My bookings';
+
+  @override
+  String get calendarRoleHost => 'Events I host';
+
+  @override
+  String get calendarRoleOrganizer => 'Organizing';
+
+  @override
+  String get calendarRoleVenue => 'At my venues';
+
+  @override
+  String get calendarRoleSupplier => 'Supplying';
+
+  @override
+  String get calendarOpenTickets => 'Open tickets';
+
+  @override
+  String get calendarManageOnWeb => 'Manage this on the web.';
 }

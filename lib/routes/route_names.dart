@@ -30,6 +30,9 @@ class RouteNames {
       ).toString();
   static const String tickets = '/tickets';
 
+  /// Everything booked, hosted, organized or supplied, by day.
+  static const String calendar = '/calendar';
+
   /// Map tab: every place with events, on a globe.
   static const String map = '/map';
 

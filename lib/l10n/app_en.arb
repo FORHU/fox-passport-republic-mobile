@@ -555,5 +555,18 @@
   "searchClearFilters": "Clear filters",
   "mapEmptyAction": "Explore events",
   "passportEmptyStamps": "Attend an event to earn your first stamp.",
-  "passportEmptyAction": "Find events"
+  "passportEmptyAction": "Find events",
+  "calendarTitle": "Calendar",
+  "calendarHint": "Everything you book, host or supply",
+  "calendarToday": "Today",
+  "calendarNothingToday": "Nothing on this day.",
+  "calendarPreviousMonth": "Previous month",
+  "calendarNextMonth": "Next month",
+  "calendarRoleGuest": "My bookings",
+  "calendarRoleHost": "Events I host",
+  "calendarRoleOrganizer": "Organizing",
+  "calendarRoleVenue": "At my venues",
+  "calendarRoleSupplier": "Supplying",
+  "calendarOpenTickets": "Open tickets",
+  "calendarManageOnWeb": "Manage this on the web."
 }

@@ -32,6 +32,7 @@ class ApiEndpoints {
   static const String foxers = '/users/foxers';
   static String foxerById(String id) => '/users/foxers/$id';
   static const String matches = '/matches';
+  static const String calendar = '/calendar';
   static const String matchesMine = '/matches/my';
   static String publicProfile(String idOrUsername) =>
       '/users/profile/$idOrUsername';

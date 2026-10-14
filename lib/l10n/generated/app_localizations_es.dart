@@ -1673,4 +1673,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get passportEmptyAction => 'Buscar eventos';
+
+  @override
+  String get calendarTitle => 'Calendario';
+
+  @override
+  String get calendarHint => 'Todo lo que reservas, organizas o ofreces';
+
+  @override
+  String get calendarToday => 'Hoy';
+
+  @override
+  String get calendarNothingToday => 'Nada este día.';
+
+  @override
+  String get calendarPreviousMonth => 'Mes anterior';
+
+  @override
+  String get calendarNextMonth => 'Mes siguiente';
+
+  @override
+  String get calendarRoleGuest => 'Mis reservas';
+
+  @override
+  String get calendarRoleHost => 'Eventos que organizo';
+
+  @override
+  String get calendarRoleOrganizer => 'Gestionando';
+
+  @override
+  String get calendarRoleVenue => 'En mis lugares';
+
+  @override
+  String get calendarRoleSupplier => 'Ofreciendo';
+
+  @override
+  String get calendarOpenTickets => 'Abrir boletos';
+
+  @override
+  String get calendarManageOnWeb => 'Gestiona esto en la web.';
 }
