@@ -15,14 +15,13 @@ import 'package:flutter_test/flutter_test.dart';
 /// Regenerate it when the web schema changes (the generator is described in
 /// `test/fixtures/README.md`).
 void main() {
-  final vectors =
-      jsonDecode(
-            File('test/fixtures/web_validation_vectors.json').readAsStringSync(),
-          )
-          as Map<String, dynamic>;
+  final vectors = jsonDecode(
+    File('test/fixtures/web_validation_vectors.json').readAsStringSync(),
+  ) as Map<String, dynamic>;
 
   List<Map<String, dynamic>> rule(String name) => [
-        for (final v in vectors[name] as List) (v as Map).cast<String, dynamic>(),
+        for (final v in vectors[name] as List)
+          (v as Map).cast<String, dynamic>(),
       ];
 
   /// A browser strips surrounding whitespace from `<input type="email">`

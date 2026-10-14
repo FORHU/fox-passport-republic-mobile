@@ -83,10 +83,12 @@ void main() {
       await pump(tester, size: 150);
 
       final box = tester.getSize(
-        find.descendant(
-          of: find.byType(RotatingGlobe),
-          matching: find.byType(SizedBox),
-        ).first,
+        find
+            .descendant(
+              of: find.byType(RotatingGlobe),
+              matching: find.byType(SizedBox),
+            )
+            .first,
       );
       expect(box, const Size.square(150));
     });
