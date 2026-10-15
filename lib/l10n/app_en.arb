@@ -631,5 +631,21 @@
   "allCategoriesPeople": "People",
   "allCategoriesGear": "Gear",
   "allCategoriesVenues": "Venues",
-  "allCategoriesNone": "None yet"
+  "allCategoriesNone": "None yet",
+  "itemBookDays": "How many days?",
+  "itemBookQuantity": "How many?",
+  "itemBookPickup": "Pick up",
+  "itemBookDelivery": "Delivery",
+  "itemBookAddress": "Delivery address",
+  "itemBookLocation": "Where is the event?",
+  "itemBookStarts": "Starts",
+  "itemBookNeedAddress": "Add a delivery address.",
+  "itemBookNeedLocation": "Add where the event is.",
+  "itemBookNeedDate": "Pick a date.",
+  "itemBookBook": "Book",
+  "itemBookedSub": "The owner has been told. Follow it in Messages.",
+  "itemBookDone": "Done",
+  "itemBookSignIn": "Sign in to book.",
+  "itemBookAbout": "About this",
+  "itemBookPriceFrom": "From"
 }

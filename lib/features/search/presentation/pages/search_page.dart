@@ -341,8 +341,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 ),
                               CatalogKind.foxers =>
                                 context.push(RouteNames.foxer, extra: item),
-                              _ =>
-                                showTopToast(context, l10n.comingSoonDetails),
+                              CatalogKind.gear ||
+                              CatalogKind.services =>
+                                context.push(
+                                  RouteNames.itemBooking,
+                                  extra: item,
+                                ),
                             },
                           ),
                         ),

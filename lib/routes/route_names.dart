@@ -74,6 +74,10 @@ class RouteNames {
   /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
   static const String match = '/match';
 
+  /// One piece of gear or one service, with its booking. Takes the row as
+  /// `extra`.
+  static const String itemBooking = '/book/item';
+
   /// One venue in full, with Book now. Takes the venue row as `extra`.
   static const String venueDetail = '/venue';
 

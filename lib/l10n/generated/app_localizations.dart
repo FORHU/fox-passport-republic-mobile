@@ -3529,6 +3529,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None yet'**
   String get allCategoriesNone;
+
+  /// No description provided for @itemBookDays.
+  ///
+  /// In en, this message translates to:
+  /// **'How many days?'**
+  String get itemBookDays;
+
+  /// No description provided for @itemBookQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'How many?'**
+  String get itemBookQuantity;
+
+  /// No description provided for @itemBookPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up'**
+  String get itemBookPickup;
+
+  /// No description provided for @itemBookDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get itemBookDelivery;
+
+  /// No description provided for @itemBookAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get itemBookAddress;
+
+  /// No description provided for @itemBookLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is the event?'**
+  String get itemBookLocation;
+
+  /// No description provided for @itemBookStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get itemBookStarts;
+
+  /// No description provided for @itemBookNeedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a delivery address.'**
+  String get itemBookNeedAddress;
+
+  /// No description provided for @itemBookNeedLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Add where the event is.'**
+  String get itemBookNeedLocation;
+
+  /// No description provided for @itemBookNeedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date.'**
+  String get itemBookNeedDate;
+
+  /// No description provided for @itemBookBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get itemBookBook;
+
+  /// No description provided for @itemBookedSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The owner has been told. Follow it in Messages.'**
+  String get itemBookedSub;
+
+  /// No description provided for @itemBookDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get itemBookDone;
+
+  /// No description provided for @itemBookSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to book.'**
+  String get itemBookSignIn;
+
+  /// No description provided for @itemBookAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About this'**
+  String get itemBookAbout;
+
+  /// No description provided for @itemBookPriceFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get itemBookPriceFrom;
 }
 
 class _AppLocalizationsDelegate

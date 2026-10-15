@@ -611,5 +611,21 @@
   "allCategoriesPeople": "Personas",
   "allCategoriesGear": "Equipo",
   "allCategoriesVenues": "Lugares",
-  "allCategoriesNone": "Aún no"
+  "allCategoriesNone": "Aún no",
+  "itemBookDays": "¿Cuántos días?",
+  "itemBookQuantity": "¿Cuántos?",
+  "itemBookPickup": "Recoger",
+  "itemBookDelivery": "Entrega",
+  "itemBookAddress": "Dirección de entrega",
+  "itemBookLocation": "¿Dónde es el evento?",
+  "itemBookStarts": "Empieza",
+  "itemBookNeedAddress": "Añade una dirección de entrega.",
+  "itemBookNeedLocation": "Añade dónde es el evento.",
+  "itemBookNeedDate": "Elige una fecha.",
+  "itemBookBook": "Reservar",
+  "itemBookedSub": "Se avisó al propietario. Sigue la reserva en Mensajes.",
+  "itemBookDone": "Listo",
+  "itemBookSignIn": "Inicia sesión para reservar.",
+  "itemBookAbout": "Sobre esto",
+  "itemBookPriceFrom": "Desde"
 }

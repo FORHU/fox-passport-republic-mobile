@@ -1887,4 +1887,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allCategoriesNone => 'None yet';
+
+  @override
+  String get itemBookDays => 'How many days?';
+
+  @override
+  String get itemBookQuantity => 'How many?';
+
+  @override
+  String get itemBookPickup => 'Pick up';
+
+  @override
+  String get itemBookDelivery => 'Delivery';
+
+  @override
+  String get itemBookAddress => 'Delivery address';
+
+  @override
+  String get itemBookLocation => 'Where is the event?';
+
+  @override
+  String get itemBookStarts => 'Starts';
+
+  @override
+  String get itemBookNeedAddress => 'Add a delivery address.';
+
+  @override
+  String get itemBookNeedLocation => 'Add where the event is.';
+
+  @override
+  String get itemBookNeedDate => 'Pick a date.';
+
+  @override
+  String get itemBookBook => 'Book';
+
+  @override
+  String get itemBookedSub => 'The owner has been told. Follow it in Messages.';
+
+  @override
+  String get itemBookDone => 'Done';
+
+  @override
+  String get itemBookSignIn => 'Sign in to book.';
+
+  @override
+  String get itemBookAbout => 'About this';
+
+  @override
+  String get itemBookPriceFrom => 'From';
 }
