@@ -3211,6 +3211,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'List'**
   String get searchList;
+
+  /// No description provided for @homePlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you planning?'**
+  String get homePlanning;
+
+  /// No description provided for @homePlanNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan something new'**
+  String get homePlanNew;
+
+  /// No description provided for @homeBookOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Or book just one thing'**
+  String get homeBookOne;
+
+  /// No description provided for @homeHappeningSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Happening soon near you'**
+  String get homeHappeningSoon;
+
+  /// No description provided for @homeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue: {occasion}'**
+  String homeContinue(String occasion);
+
+  /// No description provided for @homeIdeas.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 idea} other{{count} ideas}}'**
+  String homeIdeas(int count);
+
+  /// No description provided for @homeMoreCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more'**
+  String homeMoreCount(int count);
+
+  /// No description provided for @occasionBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get occasionBirthday;
+
+  /// No description provided for @occasionWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get occasionWedding;
+
+  /// No description provided for @occasionCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get occasionCorporate;
+
+  /// No description provided for @occasionSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get occasionSocial;
+
+  /// No description provided for @occasionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get occasionOther;
+
+  /// No description provided for @occasionAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get occasionAll;
+
+  /// No description provided for @categoryVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get categoryVenues;
+
+  /// No description provided for @categoryPhotography.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get categoryPhotography;
+
+  /// No description provided for @categoryVideography.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get categoryVideography;
+
+  /// No description provided for @categoryDj.
+  ///
+  /// In en, this message translates to:
+  /// **'DJ'**
+  String get categoryDj;
+
+  /// No description provided for @categoryLiveBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Live band'**
+  String get categoryLiveBand;
+
+  /// No description provided for @categoryMc.
+  ///
+  /// In en, this message translates to:
+  /// **'MC'**
+  String get categoryMc;
+
+  /// No description provided for @categoryCatering.
+  ///
+  /// In en, this message translates to:
+  /// **'Catering'**
+  String get categoryCatering;
+
+  /// No description provided for @categoryDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get categoryDesign;
+
+  /// No description provided for @categoryStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get categoryStaff;
+
+  /// No description provided for @categoryEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get categoryEntertainment;
+
+  /// No description provided for @categorySound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get categorySound;
+
+  /// No description provided for @categoryDecor.
+  ///
+  /// In en, this message translates to:
+  /// **'Decor'**
+  String get categoryDecor;
+
+  /// No description provided for @categoryFurniture.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get categoryFurniture;
+
+  /// No description provided for @categoryEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get categoryEquipment;
 }
 
 class _AppLocalizationsDelegate

@@ -33,6 +33,7 @@ class ApiEndpoints {
   static String foxerById(String id) => '/users/foxers/$id';
   static const String matches = '/matches';
   static const String calendar = '/calendar';
+  static const String categories = '/categories';
   static const String matchesMine = '/matches/my';
   static String publicProfile(String idOrUsername) =>
       '/users/profile/$idOrUsername';
@@ -46,7 +47,6 @@ class ApiEndpoints {
       '/locations/countries/$countryCode/cities';
 
   // ── Browse ──────────────────────────────────────────────────────────────
-  static const String categories = '/categories';
   static const String events = '/event-templates';
   static const String eventsBrowse = '/event-templates/browse';
   static const String publicEventsBrowse = '/events/browse';

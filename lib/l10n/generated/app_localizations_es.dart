@@ -1721,4 +1721,97 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchList => 'Lista';
+
+  @override
+  String get homePlanning => '¿Qué estás planeando?';
+
+  @override
+  String get homePlanNew => 'Planea algo nuevo';
+
+  @override
+  String get homeBookOne => 'O reserva solo una cosa';
+
+  @override
+  String get homeHappeningSoon => 'Pronto cerca de ti';
+
+  @override
+  String homeContinue(String occasion) {
+    return 'Continuar: $occasion';
+  }
+
+  @override
+  String homeIdeas(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ideas',
+      one: '1 idea',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeMoreCount(int count) {
+    return '$count más';
+  }
+
+  @override
+  String get occasionBirthday => 'Cumpleaños';
+
+  @override
+  String get occasionWedding => 'Boda';
+
+  @override
+  String get occasionCorporate => 'Corporativo';
+
+  @override
+  String get occasionSocial => 'Social';
+
+  @override
+  String get occasionOther => 'Otro';
+
+  @override
+  String get occasionAll => 'Todo';
+
+  @override
+  String get categoryVenues => 'Lugares';
+
+  @override
+  String get categoryPhotography => 'Fotos';
+
+  @override
+  String get categoryVideography => 'Video';
+
+  @override
+  String get categoryDj => 'DJ';
+
+  @override
+  String get categoryLiveBand => 'Banda en vivo';
+
+  @override
+  String get categoryMc => 'Maestro de ceremonias';
+
+  @override
+  String get categoryCatering => 'Catering';
+
+  @override
+  String get categoryDesign => 'Diseño';
+
+  @override
+  String get categoryStaff => 'Personal';
+
+  @override
+  String get categoryEntertainment => 'Entretenimiento';
+
+  @override
+  String get categorySound => 'Sonido';
+
+  @override
+  String get categoryDecor => 'Decoración';
+
+  @override
+  String get categoryFurniture => 'Muebles';
+
+  @override
+  String get categoryEquipment => 'Equipo';
 }

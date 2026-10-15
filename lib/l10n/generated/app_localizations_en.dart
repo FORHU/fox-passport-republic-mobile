@@ -1707,4 +1707,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchList => 'List';
+
+  @override
+  String get homePlanning => 'What are you planning?';
+
+  @override
+  String get homePlanNew => 'Plan something new';
+
+  @override
+  String get homeBookOne => 'Or book just one thing';
+
+  @override
+  String get homeHappeningSoon => 'Happening soon near you';
+
+  @override
+  String homeContinue(String occasion) {
+    return 'Continue: $occasion';
+  }
+
+  @override
+  String homeIdeas(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ideas',
+      one: '1 idea',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeMoreCount(int count) {
+    return '$count more';
+  }
+
+  @override
+  String get occasionBirthday => 'Birthday';
+
+  @override
+  String get occasionWedding => 'Wedding';
+
+  @override
+  String get occasionCorporate => 'Corporate';
+
+  @override
+  String get occasionSocial => 'Social';
+
+  @override
+  String get occasionOther => 'Other';
+
+  @override
+  String get occasionAll => 'All';
+
+  @override
+  String get categoryVenues => 'Venues';
+
+  @override
+  String get categoryPhotography => 'Photos';
+
+  @override
+  String get categoryVideography => 'Video';
+
+  @override
+  String get categoryDj => 'DJ';
+
+  @override
+  String get categoryLiveBand => 'Live band';
+
+  @override
+  String get categoryMc => 'MC';
+
+  @override
+  String get categoryCatering => 'Catering';
+
+  @override
+  String get categoryDesign => 'Design';
+
+  @override
+  String get categoryStaff => 'Staff';
+
+  @override
+  String get categoryEntertainment => 'Entertainment';
+
+  @override
+  String get categorySound => 'Sound';
+
+  @override
+  String get categoryDecor => 'Decor';
+
+  @override
+  String get categoryFurniture => 'Furniture';
+
+  @override
+  String get categoryEquipment => 'Equipment';
 }

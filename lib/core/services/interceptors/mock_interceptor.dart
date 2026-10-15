@@ -616,6 +616,44 @@ class MockInterceptor extends Interceptor {
       // Public browse data, so the Home hero's globe has pins and cards (and
       // the Home feed has items) with no backend. Same shapes as the real API:
       // events are `{ data: [...] }`, venues are `{ venues: [...] }`.
+      case ApiEndpoints.categories:
+        Map<String, dynamic> category(
+          String name,
+          int count, {
+          bool event = false,
+          int venues = 0,
+          int services = 0,
+          int assets = 0,
+        }) =>
+            {
+              'name': name,
+              'count': count,
+              'isEventCategory': event,
+              'sources': {
+                'venues': venues,
+                'services': services,
+                'assets': assets,
+                'events': event ? count : 0,
+              },
+            };
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              category('birthday', 34, event: true),
+              category('wedding', 28, event: true),
+              category('corporate', 19, event: true),
+              category('social', 12, event: true),
+              category('other', 7, event: true),
+              category('photography', 15, services: 15),
+              category('dj', 9, services: 9),
+              category('catering', 6, services: 6),
+              category('sound_system', 11, assets: 11),
+              category('garden', 5, venues: 5),
+              category('indoor', 8, venues: 8),
+            ],
+          }),
+        );
       case ApiEndpoints.calendar:
         final today = DateTime.now();
         DateTime at(int days, int hour) =>
