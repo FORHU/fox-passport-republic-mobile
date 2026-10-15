@@ -96,11 +96,13 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                         onPressed: _onPrimary,
                       ),
                       const SizedBox(height: 8),
-                      // Fixed height so the button does not jump between slides.
+                      // Fixed height so the button does not jump
+                      // between slides.
                       SizedBox(
                         height: 48,
-                        // Links are Flexible so a long translation shrinks (with an
-                        // ellipsis) instead of overflowing a narrow phone.
+                        // Links are Flexible so a long translation shrinks
+                        // (with an ellipsis) instead of overflowing a narrow
+                        // phone.
                         child: Row(
                           mainAxisAlignment: (!_isFirst && _isLast)
                               ? MainAxisAlignment.spaceBetween
@@ -427,17 +429,17 @@ class _GlobeBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return const Stack(
       fit: StackFit.expand,
       children: [
-        const RotatingGlobe(bottomInset: _textInset),
+        RotatingGlobe(bottomInset: _textInset),
         // The same legibility scrim the Home hero uses.
         Positioned(
           left: 0,
           right: 0,
           bottom: 0,
           height: _textInset + 60,
-          child: const IgnorePointer(
+          child: IgnorePointer(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

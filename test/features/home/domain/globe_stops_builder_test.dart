@@ -31,7 +31,7 @@ void main() {
     test('places an event by its own coordinates first', () {
       final stops = buildGlobeStops(
         events: [
-          event('1', 'Debut', city: 'Manila', lat: 14.6, lng: 121.0),
+          event('1', 'Debut', city: 'Manila', lat: 14.6, lng: 121),
         ],
         venues: const [],
       );
@@ -92,7 +92,7 @@ void main() {
     test('pools one city and counts each event once', () {
       final stops = buildGlobeStops(
         events: [
-          event('1', 'A', city: 'Manila', lat: 14.6, lng: 121.0),
+          event('1', 'A', city: 'Manila', lat: 14.6, lng: 121),
           event('2', 'B', city: 'Manila', lat: 14.61, lng: 121.01),
           // The same event listed at two venue coordinates.
           event(
@@ -100,7 +100,7 @@ void main() {
             'A',
             city: 'Manila',
             lat: 14.6,
-            lng: 121.0,
+            lng: 121,
           ),
         ],
         venues: const [],

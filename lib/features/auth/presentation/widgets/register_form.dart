@@ -213,7 +213,7 @@ class _TermsCheckboxState extends State<_TermsCheckbox> {
 
   @override
   Widget build(BuildContext context) {
-    final base = AppTypography.body(size: 13, color: AppColors.textSecondary);
+    final base = AppTypography.body(size: 13);
     final link = base.copyWith(
       color: AppColors.textPrimary,
       fontWeight: FontWeight.w700,

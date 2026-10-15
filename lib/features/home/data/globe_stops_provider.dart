@@ -10,7 +10,7 @@ import 'package:flutter_template/shared/widgets/rotating_globe/globe_html.dart';
 ///
 /// Failures resolve to an empty list rather than an error: a globe without pins
 /// is still a good hero, and the rest of Home must not depend on it.
-final globeStopsProvider =
+final FutureProvider<List<GlobeStop>> globeStopsProvider =
     FutureProvider.autoDispose<List<GlobeStop>>((ref) async {
   final api = ref.watch(apiServiceProvider);
 

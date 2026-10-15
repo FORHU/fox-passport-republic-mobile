@@ -53,11 +53,17 @@ void main() {
   }
 
   group('web parity (generated from the real zod schemas)', () {
-    checkEach('loginEmail', (i, _) => Validators.loginEmail(i),
-        expected: expectedEmail);
+    checkEach(
+      'loginEmail',
+      (i, _) => Validators.loginEmail(i),
+      expected: expectedEmail,
+    );
     checkEach('loginPassword', (i, _) => Validators.loginPassword(i));
-    checkEach('signupEmail', (i, _) => Validators.signupEmail(i),
-        expected: expectedEmail);
+    checkEach(
+      'signupEmail',
+      (i, _) => Validators.signupEmail(i),
+      expected: expectedEmail,
+    );
     checkEach('signupName', (i, _) => Validators.signupName(i));
     checkEach('signupUsername', (i, _) => Validators.signupUsername(i));
     checkEach('signupPassword', (i, _) => Validators.signupPassword(i));
@@ -65,8 +71,11 @@ void main() {
       'signupConfirm',
       (i, v) => Validators.signupConfirmPassword(i, v['password'] as String),
     );
-    checkEach('forgotEmail', (i, _) => Validators.forgotEmail(i),
-        expected: expectedEmail);
+    checkEach(
+      'forgotEmail',
+      (i, _) => Validators.forgotEmail(i),
+      expected: expectedEmail,
+    );
     checkEach('otpCode', (i, _) => Validators.otpCode(i));
     checkEach('resetCode', (i, _) => Validators.otpCode(i));
     checkEach('resetNewPassword', (i, _) => Validators.resetNewPassword(i));
@@ -121,8 +130,10 @@ void main() {
     });
 
     test('usernames need at least 3 characters', () {
-      expect(Validators.signupUsername('ab'),
-          'Username must be at least 3 characters');
+      expect(
+        Validators.signupUsername('ab'),
+        'Username must be at least 3 characters',
+      );
       expect(Validators.signupUsername('abc'), isNull);
     });
 

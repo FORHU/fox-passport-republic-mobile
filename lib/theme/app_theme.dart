@@ -28,7 +28,6 @@ class AppTheme {
         secondary: AppColors.accent,
         onSecondary: AppColors.onAccent,
         surface: AppColors.surface,
-        onSurface: AppColors.textPrimary,
         onSurfaceVariant: AppColors.textSecondary,
         surfaceContainerHighest: AppColors.surfaceRaised,
         outline: AppColors.borderStrong,
