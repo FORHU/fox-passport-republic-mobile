@@ -1,4 +1,6 @@
 // Android / iOS host: a transparent `WebView` loading the globe page.
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -27,10 +29,10 @@ class _MobileGlobeState extends State<_MobileGlobe> {
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..loadHtmlString(widget.html);
+    _controller = WebViewController();
+    unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
+    unawaited(_controller.loadHtmlString(widget.html));
   }
 
   @override

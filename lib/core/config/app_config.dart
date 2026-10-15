@@ -113,9 +113,9 @@ class AppConfig {
   final String webAppUrl;
 
   /// Mapbox *public* access token (`pk.…`) for the globe. Public by design —
-  /// it ships in the app like the web app's `NEXT_PUBLIC_MAPBOX_TOKEN`; restrict
-  /// it by URL / bundle in the Mapbox account. Never put a secret `sk.…` token
-  /// here. Empty shows a static placeholder instead of the globe.
+  /// it ships in the app like the web app's `NEXT_PUBLIC_MAPBOX_TOKEN`;
+  /// restrict it by URL / bundle in the Mapbox account. Never put a secret
+  /// `sk.…` token here. Empty shows a static placeholder instead of the globe.
   final String mapboxToken;
 
   /// The scheme part of [socialRedirectOrigin], e.g. `foxpassport`.

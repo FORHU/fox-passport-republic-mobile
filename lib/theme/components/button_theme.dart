@@ -43,7 +43,6 @@ class AppButtonTheme {
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accent,
           textStyle: AppTypography.body(
-            size: 14,
             weight: FontWeight.w700,
           ),
         ),

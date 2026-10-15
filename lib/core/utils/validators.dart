@@ -8,9 +8,11 @@
 /// | Web schema | Mirrored by |
 /// |---|---|
 /// | `loginSchema` | [loginEmail], [loginPassword] |
-/// | `signupSchema` | [signupName], [signupEmail], [signupUsername], [signupPassword], [signupConfirmPassword] |
+/// | `signupSchema` | [signupName], [signupEmail], [signupUsername],
+///   [signupPassword], [signupConfirmPassword] |
 /// | `forgotPasswordSchema` | [forgotEmail] |
-/// | `resetPasswordSchema` | [otpCode], [resetNewPassword], [resetConfirmPassword] |
+/// | `resetPasswordSchema` | [otpCode], [resetNewPassword],
+///   [resetConfirmPassword] |
 /// | `verifyEmailSchema` | [otpCode] |
 class Validators {
   Validators._();

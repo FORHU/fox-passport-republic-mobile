@@ -105,7 +105,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
               obscureText: _obscure,
               autofillHints: const [AutofillHints.newPassword],
               helperText:
-                  'At least 8 characters with upper and lower case letters and a number.',
+                  'At least 8 characters with upper and lower case letters '
+                  'and a number.',
               validator: Validators.resetNewPassword,
               suffixIcon: IconButton(
                 tooltip: _obscure ? 'Show password' : 'Hide password',

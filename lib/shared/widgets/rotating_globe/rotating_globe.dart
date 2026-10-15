@@ -63,7 +63,7 @@ class RotatingGlobe extends StatelessWidget {
     final token = AppConfig.instance.mapboxToken;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    final Widget child = (token.isEmpty || !globePlatformSupported)
+    final child = (token.isEmpty || !globePlatformSupported)
         ? _GlobePlaceholder(background: background, bottomInset: bottomInset)
         : buildGlobeView(
             buildGlobeHtml(

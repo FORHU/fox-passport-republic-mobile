@@ -126,7 +126,6 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                       ? l10n.verifyResendIn(_secondsLeft)
                       : l10n.verifyResend,
                   style: AppTypography.body(
-                    size: 14,
                     weight: FontWeight.w700,
                     color: canResend ? AppColors.accent : AppColors.textFaint,
                   ),
