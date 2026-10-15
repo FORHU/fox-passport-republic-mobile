@@ -96,25 +96,6 @@ class _Body extends StatelessWidget {
           name: name,
           onTap: () => context.go(RouteNames.profile),
         ),
-        const SizedBox(height: 12),
-        Material(
-          color: AppColors.surface,
-          borderRadius: AppRadius.brMd,
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.brMd,
-              side: const BorderSide(color: AppColors.border),
-            ),
-            leading: const Icon(
-              Icons.calendar_month_outlined,
-              color: AppColors.accent,
-            ),
-            title: Text(l10n.calendarTitle),
-            subtitle: Text(l10n.calendarHint),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push(RouteNames.calendar),
-          ),
-        ),
         const SizedBox(height: 24),
         _SectionHeader(
           title: l10n.passportStamps,

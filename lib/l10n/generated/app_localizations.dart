@@ -3199,6 +3199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bookings'**
   String get bookings;
+
+  /// No description provided for @bookingsNeedsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs you'**
+  String get bookingsNeedsYou;
 }
 
 class _AppLocalizationsDelegate

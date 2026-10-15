@@ -549,5 +549,6 @@
   "calendarRoleSupplier": "Ofreciendo",
   "calendarOpenTickets": "Abrir boletos",
   "calendarManageOnWeb": "Gestiona esto en la web.",
-  "bookings": "Reservas"
+  "bookings": "Reservas",
+  "bookingsNeedsYou": "Te necesita"
 }
