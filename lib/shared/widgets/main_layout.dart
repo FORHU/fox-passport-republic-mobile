@@ -76,6 +76,9 @@ class MainLayout extends ConsumerWidget {
           avatarInitial: _initial(
             ref.watch(authControllerProvider.select((s) => s.user?.name)),
           ),
+          avatarImageUrl: ref.watch(
+            authControllerProvider.select((s) => s.user?.imageUrl),
+          ),
         ),
         route: RouteNames.passport,
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/effects.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -14,6 +15,7 @@ class NavBarItem {
     this.showBadge = false,
     this.badgeLabel,
     this.avatarInitial,
+    this.avatarImageUrl,
   });
 
   final String label;
@@ -27,6 +29,9 @@ class NavBarItem {
   /// When set, the destination is drawn as a small avatar chip with this
   /// letter instead of an icon (the Passport tab: the person's initial).
   final String? avatarInitial;
+
+  /// With [avatarInitial], the person's photo; the initial is the fallback.
+  final String? avatarImageUrl;
 }
 
 /// The floating bottom bar: a rounded dark bar, the active destination in the
@@ -125,7 +130,11 @@ class _NavItem extends StatelessWidget {
                             size: 24,
                             color: color,
                           )
-                        : _AvatarChip(initial: initial, selected: selected),
+                        : _AvatarChip(
+                            initial: initial,
+                            imageUrl: item.avatarImageUrl,
+                            selected: selected,
+                          ),
                   ),
                 ),
                 if (item.showBadge || item.badgeLabel != null)
@@ -186,9 +195,14 @@ class _NavItem extends StatelessWidget {
 
 /// A pill holding a filled circle with the person's initial.
 class _AvatarChip extends StatelessWidget {
-  const _AvatarChip({required this.initial, required this.selected});
+  const _AvatarChip({
+    required this.initial,
+    required this.selected,
+    this.imageUrl,
+  });
 
   final String initial;
+  final String? imageUrl;
   final bool selected;
 
   @override
@@ -205,14 +219,33 @@ class _AvatarChip extends StatelessWidget {
           width: selected ? 1.5 : 1,
         ),
       ),
-      child: Container(
-        width: 22,
-        height: 22,
-        alignment: Alignment.center,
-        decoration: const BoxDecoration(
-          color: AppColors.lightSurface,
-          shape: BoxShape.circle,
+      child: ClipOval(
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: imageUrl == null || imageUrl!.isEmpty
+              ? _Initial(initial: initial)
+              : NetworkImageBox(
+                  url: imageUrl!,
+                  width: 22,
+                  height: 22,
+                ),
         ),
+      ),
+    );
+  }
+}
+
+class _Initial extends StatelessWidget {
+  const _Initial({required this.initial});
+
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.lightSurface,
+      child: Center(
         child: Text(
           initial,
           style: const TextStyle(
