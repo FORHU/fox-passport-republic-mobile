@@ -30,6 +30,8 @@ class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({
     this.initialKind = CatalogKind.venues,
     this.initialCity,
+    this.initialMinCapacity,
+    this.initialDate,
     super.key,
   });
 
@@ -38,6 +40,10 @@ class SearchPage extends ConsumerStatefulWidget {
 
   /// Narrow to this city, e.g. from a pin on the Map.
   final String? initialCity;
+
+  /// Guests the place must hold, and the day, from the occasion page.
+  final int? initialMinCapacity;
+  final DateTime? initialDate;
 
   @override
   ConsumerState<SearchPage> createState() => _SearchPageState();
@@ -51,9 +57,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   _View _view = _View.list;
   num? _minPrice;
   num? _maxPrice;
-  int? _minCapacity;
-  DateTime? _fromDate;
-  DateTime? _toDate;
+  late int? _minCapacity = widget.initialMinCapacity;
+  late DateTime? _fromDate = widget.initialDate;
+  late DateTime? _toDate = widget.initialDate?.add(const Duration(days: 1));
   late String _sortBy =
       widget.initialKind == CatalogKind.events ? 'date_asc' : '';
   Timer? _debounce;
@@ -66,10 +72,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     super.didUpdateWidget(oldWidget);
     // The shell keeps this page alive, so a new deep link arrives as an update.
     if (oldWidget.initialKind != widget.initialKind ||
-        oldWidget.initialCity != widget.initialCity) {
+        oldWidget.initialCity != widget.initialCity ||
+        oldWidget.initialMinCapacity != widget.initialMinCapacity ||
+        oldWidget.initialDate != widget.initialDate) {
       setState(() {
         _kind = widget.initialKind;
         _city = widget.initialCity;
+        _minCapacity = widget.initialMinCapacity;
+        _fromDate = widget.initialDate;
+        _toDate = widget.initialDate?.add(const Duration(days: 1));
       });
     }
   }

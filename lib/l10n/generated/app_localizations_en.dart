@@ -1800,4 +1800,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryEquipment => 'Equipment';
+
+  @override
+  String occasionTitle(String occasion) {
+    return '$occasion ideas';
+  }
+
+  @override
+  String occasionTitleIn(String occasion, String city) {
+    return '$occasion ideas in $city';
+  }
+
+  @override
+  String get occasionPackages => 'Ready-made packages';
+
+  @override
+  String get occasionAskPrice => 'Ask for a price';
+
+  @override
+  String occasionNoPackages(String occasion) {
+    return 'No ready-made $occasion packages yet.';
+  }
+
+  @override
+  String occasionNoPackagesIn(String occasion, String city) {
+    return 'No ready-made $occasion packages in $city yet.';
+  }
+
+  @override
+  String get occasionPlanner => 'Have a Foxer plan it';
+
+  @override
+  String get occasionPlannerBody =>
+      'Tell a planner what you want and they handle the rest.';
+
+  @override
+  String get occasionFindPlanner => 'Find a planner';
+
+  @override
+  String get occasionYourself => 'Plan it yourself';
+
+  @override
+  String get occasionNoneHere => 'None here yet';
+
+  @override
+  String get planAddDate => 'Add date';
+
+  @override
+  String get planGuests => 'Guests';
+
+  @override
+  String get planWhen => 'When';
+
+  @override
+  String get planApply => 'Done';
+
+  @override
+  String get guestsUpTo20 => 'Up to 20';
+
+  @override
+  String get guests20to50 => '20–50';
+
+  @override
+  String get guests50to100 => '50–100';
+
+  @override
+  String get guests100plus => '100+';
+
+  @override
+  String get allCategoriesTitle => 'Everything you can book';
+
+  @override
+  String get allCategoriesFind => 'Find a category';
+
+  @override
+  String get allCategoriesOccasions => 'Occasions';
+
+  @override
+  String get allCategoriesPeople => 'People';
+
+  @override
+  String get allCategoriesGear => 'Gear';
+
+  @override
+  String get allCategoriesVenues => 'Venues';
+
+  @override
+  String get allCategoriesNone => 'None yet';
 }

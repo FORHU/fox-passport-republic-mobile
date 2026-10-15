@@ -1814,4 +1814,91 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get categoryEquipment => 'Equipo';
+
+  @override
+  String occasionTitle(String occasion) {
+    return 'Ideas de $occasion';
+  }
+
+  @override
+  String occasionTitleIn(String occasion, String city) {
+    return 'Ideas de $occasion en $city';
+  }
+
+  @override
+  String get occasionPackages => 'Paquetes listos';
+
+  @override
+  String get occasionAskPrice => 'Pide un precio';
+
+  @override
+  String occasionNoPackages(String occasion) {
+    return 'Aún no hay paquetes de $occasion.';
+  }
+
+  @override
+  String occasionNoPackagesIn(String occasion, String city) {
+    return 'Aún no hay paquetes de $occasion en $city.';
+  }
+
+  @override
+  String get occasionPlanner => 'Que un Foxer lo planee';
+
+  @override
+  String get occasionPlannerBody =>
+      'Cuéntale a un planificador lo que quieres y él se encarga.';
+
+  @override
+  String get occasionFindPlanner => 'Buscar planificador';
+
+  @override
+  String get occasionYourself => 'Planéalo tú';
+
+  @override
+  String get occasionNoneHere => 'Aún no hay';
+
+  @override
+  String get planAddDate => 'Añadir fecha';
+
+  @override
+  String get planGuests => 'Invitados';
+
+  @override
+  String get planWhen => 'Cuándo';
+
+  @override
+  String get planApply => 'Listo';
+
+  @override
+  String get guestsUpTo20 => 'Hasta 20';
+
+  @override
+  String get guests20to50 => '20–50';
+
+  @override
+  String get guests50to100 => '50–100';
+
+  @override
+  String get guests100plus => '100+';
+
+  @override
+  String get allCategoriesTitle => 'Todo lo que puedes reservar';
+
+  @override
+  String get allCategoriesFind => 'Buscar una categoría';
+
+  @override
+  String get allCategoriesOccasions => 'Ocasiones';
+
+  @override
+  String get allCategoriesPeople => 'Personas';
+
+  @override
+  String get allCategoriesGear => 'Equipo';
+
+  @override
+  String get allCategoriesVenues => 'Lugares';
+
+  @override
+  String get allCategoriesNone => 'Aún no';
 }

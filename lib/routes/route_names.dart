@@ -24,10 +24,28 @@ class RouteNames {
   static const String search = '/search';
 
   /// `/search?kind=venues` — opens Search on one of its switches.
-  static String searchFor(String kind, {String? city}) => Uri(
+  static String searchFor(
+    String kind, {
+    String? city,
+    int? minCapacity,
+    DateTime? date,
+  }) =>
+      Uri(
         path: search,
-        queryParameters: {'kind': kind, if (city != null) 'city': city},
+        queryParameters: {
+          'kind': kind,
+          if (city != null) 'city': city,
+          if (minCapacity != null) 'capacity': '$minCapacity',
+          if (date != null) 'date': date.toIso8601String().split('T').first,
+        },
       ).toString();
+
+  /// Planning by occasion: `/occasion/wedding`.
+  static String occasion(String name) =>
+      '/occasion/${Uri.encodeComponent(name)}';
+
+  /// Every category, grouped: "Everything you can book".
+  static const String allCategories = '/categories';
   static const String tickets = '/tickets';
 
   /// Everything booked, hosted, organized or supplied, by day.
