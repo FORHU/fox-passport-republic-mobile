@@ -32,7 +32,7 @@ void main() {
     await tester.pumpWidget(_app(upcoming: [Ticket.sample()]));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tickets'), findsOneWidget);
+    expect(find.text('Bookings'), findsOneWidget);
     expect(find.text('CONFIRMED'), findsOneWidget);
     expect(find.text('Sky Hall'), findsOneWidget);
     expect(find.text('DATE'), findsOneWidget);

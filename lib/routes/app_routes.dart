@@ -157,13 +157,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.roles,
         builder: (context, state) => const RolesPage(),
       ),
-      // Tickets are not a tab: full screen, opened from Passport, the Home
-      // reminder and after a booking.
+      // The Map is a full-screen page, opened from Home and from Search.
       GoRoute(
-        path: RouteNames.tickets,
-        builder: (context, state) => TicketsPage(
-          initialSegment: state.uri.queryParameters['segment'],
-        ),
+        path: RouteNames.map,
+        builder: (context, state) => const MapPage(),
       ),
       GoRoute(
         path: RouteNames.calendar,
@@ -272,8 +269,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.map,
-                builder: (context, state) => const MapPage(),
+                path: RouteNames.tickets,
+                builder: (context, state) => TicketsPage(
+                  initialSegment: state.uri.queryParameters['segment'],
+                ),
               ),
             ],
           ),

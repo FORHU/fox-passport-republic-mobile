@@ -548,5 +548,6 @@
   "calendarRoleVenue": "En mis lugares",
   "calendarRoleSupplier": "Ofreciendo",
   "calendarOpenTickets": "Abrir boletos",
-  "calendarManageOnWeb": "Gestiona esto en la web."
+  "calendarManageOnWeb": "Gestiona esto en la web.",
+  "bookings": "Reservas"
 }

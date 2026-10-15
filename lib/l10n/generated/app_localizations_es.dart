@@ -1712,4 +1712,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get calendarManageOnWeb => 'Gestiona esto en la web.';
+
+  @override
+  String get bookings => 'Reservas';
 }

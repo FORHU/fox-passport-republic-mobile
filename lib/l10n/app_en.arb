@@ -568,5 +568,6 @@
   "calendarRoleVenue": "At my venues",
   "calendarRoleSupplier": "Supplying",
   "calendarOpenTickets": "Open tickets",
-  "calendarManageOnWeb": "Manage this on the web."
+  "calendarManageOnWeb": "Manage this on the web.",
+  "bookings": "Bookings"
 }

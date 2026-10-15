@@ -101,7 +101,7 @@ class _MatchRequestPageState extends ConsumerState<MatchRequestPage> {
         data: (profile) => _sent
             ? _Sent(
                 name: profile.name,
-                onViewRequests: () => context.push(RouteNames.ticketsRequests),
+                onViewRequests: () => context.go(RouteNames.ticketsRequests),
                 onDone: () => context.go(RouteNames.home),
               )
             : _Form(

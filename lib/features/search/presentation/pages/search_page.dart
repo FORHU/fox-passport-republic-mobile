@@ -310,7 +310,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
               child: Center(
                 child: _MapPill(
                   label: l10n.searchMap,
-                  onTap: () => showTopToast(context, l10n.comingSoonMap),
+                  onTap: () => context.push(RouteNames.map),
                 ),
               ),
             ),
