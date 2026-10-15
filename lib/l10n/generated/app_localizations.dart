@@ -3625,6 +3625,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From'**
   String get itemBookPriceFrom;
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewsCount(int count);
+
+  /// No description provided for @reviewsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet.'**
+  String get reviewsNone;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String reviewsSeeAll(int count);
+
+  /// No description provided for @reviewsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load the reviews.'**
+  String get reviewsLoadFailed;
+
+  /// No description provided for @reviewWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a review'**
+  String get reviewWrite;
+
+  /// No description provided for @reviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was it?'**
+  String get reviewTitle;
+
+  /// No description provided for @reviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell others what it was like (optional)'**
+  String get reviewHint;
+
+  /// No description provided for @reviewSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Post review'**
+  String get reviewSubmit;
+
+  /// No description provided for @reviewThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks, your review is posted.'**
+  String get reviewThanks;
+
+  /// No description provided for @reviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post your review. Try again.'**
+  String get reviewFailed;
+
+  /// No description provided for @reviewPickStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a star rating.'**
+  String get reviewPickStars;
 }
 
 class _AppLocalizationsDelegate

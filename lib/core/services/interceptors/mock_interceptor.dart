@@ -238,6 +238,57 @@ class MockInterceptor extends Interceptor {
       return;
     }
 
+    if (path.startsWith('/reviews/listing/')) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {
+            'reviews': [
+              {
+                'id': 'r1',
+                'rating': 5,
+                'comment': 'Beautiful space and a very helpful host.',
+                'createdAt': '2026-09-12T10:00:00.000Z',
+                'user': {'id': 'u1', 'name': 'Maria S.'},
+                'replies': [
+                  {
+                    'text': 'Thank you, Maria! Come again.',
+                    'user': {'name': 'Host'},
+                  },
+                ],
+              },
+              {
+                'id': 'r2',
+                'rating': 4,
+                'comment': 'Great for our team event.',
+                'createdAt': '2026-08-02T10:00:00.000Z',
+                'user': {'id': 'u2', 'name': 'Jon D.'},
+                'replies': <Object>[],
+              },
+            ],
+            'ratingDistribution': {
+              '5': '50%',
+              '4': '50%',
+              '3': '0%',
+              '2': '0%',
+              '1': '0%',
+            },
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.reviewsCreate) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'id': 'r-new'},
+        }),
+      );
+      return;
+    }
+
     if (path == ApiEndpoints.notifications) {
       handler.resolve(
         _ok(options, {

@@ -1950,4 +1950,51 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get itemBookPriceFrom => 'Desde';
+
+  @override
+  String get reviewsTitle => 'Reseñas';
+
+  @override
+  String reviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reseñas',
+      one: '1 reseña',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsNone => 'Aún no hay reseñas.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'Ver las $count';
+  }
+
+  @override
+  String get reviewsLoadFailed => 'No pudimos cargar las reseñas.';
+
+  @override
+  String get reviewWrite => 'Dejar una reseña';
+
+  @override
+  String get reviewTitle => '¿Cómo fue?';
+
+  @override
+  String get reviewHint => 'Cuéntales a otros cómo fue (opcional)';
+
+  @override
+  String get reviewSubmit => 'Publicar reseña';
+
+  @override
+  String get reviewThanks => 'Gracias, tu reseña está publicada.';
+
+  @override
+  String get reviewFailed =>
+      'No pudimos publicar tu reseña. Inténtalo de nuevo.';
+
+  @override
+  String get reviewPickStars => 'Elige una calificación.';
 }

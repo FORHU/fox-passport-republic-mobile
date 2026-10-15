@@ -647,5 +647,19 @@
   "itemBookDone": "Done",
   "itemBookSignIn": "Sign in to book.",
   "itemBookAbout": "About this",
-  "itemBookPriceFrom": "From"
+  "itemBookPriceFrom": "From",
+  "reviewsTitle": "Reviews",
+  "reviewsCount": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@reviewsCount": {"placeholders":{"count":{"type":"int"}}},
+  "reviewsNone": "No reviews yet.",
+  "reviewsSeeAll": "See all {count}",
+  "@reviewsSeeAll": {"placeholders":{"count":{"type":"int"}}},
+  "reviewsLoadFailed": "We couldn't load the reviews.",
+  "reviewWrite": "Leave a review",
+  "reviewTitle": "How was it?",
+  "reviewHint": "Tell others what it was like (optional)",
+  "reviewSubmit": "Post review",
+  "reviewThanks": "Thanks, your review is posted.",
+  "reviewFailed": "We couldn't post your review. Try again.",
+  "reviewPickStars": "Choose a star rating."
 }
