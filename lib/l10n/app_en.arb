@@ -570,5 +570,6 @@
   "calendarOpenTickets": "Open tickets",
   "calendarManageOnWeb": "Manage this on the web.",
   "bookings": "Bookings",
-  "bookingsNeedsYou": "Needs you"
+  "bookingsNeedsYou": "Needs you",
+  "searchList": "List"
 }

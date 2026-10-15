@@ -173,12 +173,6 @@ class _Header extends StatelessWidget {
           ),
         ),
         _RoundButton(
-          icon: Icons.public_rounded,
-          tooltip: l10n.map,
-          onTap: () => context.push(RouteNames.map),
-        ),
-        const SizedBox(width: 8),
-        _RoundButton(
           icon: Icons.notifications_none_rounded,
           tooltip: l10n.notifications,
           badge: unread,

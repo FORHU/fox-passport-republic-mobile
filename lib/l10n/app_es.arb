@@ -550,5 +550,6 @@
   "calendarOpenTickets": "Abrir boletos",
   "calendarManageOnWeb": "Gestiona esto en la web.",
   "bookings": "Reservas",
-  "bookingsNeedsYou": "Te necesita"
+  "bookingsNeedsYou": "Te necesita",
+  "searchList": "Lista"
 }

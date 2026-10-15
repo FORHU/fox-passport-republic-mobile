@@ -15,7 +15,6 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
-import 'package:flutter_template/features/map/presentation/pages/map_page.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -156,11 +155,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.roles,
         builder: (context, state) => const RolesPage(),
-      ),
-      // The Map is a full-screen page, opened from Home and from Search.
-      GoRoute(
-        path: RouteNames.map,
-        builder: (context, state) => const MapPage(),
       ),
       GoRoute(
         path: RouteNames.calendar,
