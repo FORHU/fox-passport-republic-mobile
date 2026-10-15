@@ -74,6 +74,9 @@ class RouteNames {
   /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
   static const String match = '/match';
 
+  /// The Republic: the community feed.
+  static const String republic = '/republic';
+
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.
   static const String itemBooking = '/book/item';

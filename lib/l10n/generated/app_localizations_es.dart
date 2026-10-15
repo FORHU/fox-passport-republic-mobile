@@ -1997,4 +1997,76 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get reviewPickStars => 'Elige una calificación.';
+
+  @override
+  String get republicTitle => 'República';
+
+  @override
+  String get republicRowBody => 'Lo que publica la comunidad';
+
+  @override
+  String get republicTabAll => 'Todo';
+
+  @override
+  String get republicTabCommunity => 'Comunidad';
+
+  @override
+  String get republicTabMarketplace => 'Mercado';
+
+  @override
+  String get republicEmpty => 'Aún no hay publicaciones. Sé el primero.';
+
+  @override
+  String get republicPost => 'Publicar';
+
+  @override
+  String get republicCompose => 'Nueva publicación';
+
+  @override
+  String get republicComposeHint => 'Comparte algo con la República';
+
+  @override
+  String get republicPosted => 'Publicado.';
+
+  @override
+  String get republicPostFailed => 'No pudimos publicarlo. Inténtalo de nuevo.';
+
+  @override
+  String get republicLikeFailed => 'No pudimos guardar tu me gusta.';
+
+  @override
+  String get republicComments => 'Comentarios';
+
+  @override
+  String get republicNoComments => 'Aún no hay comentarios.';
+
+  @override
+  String get republicCommentHint => 'Añade un comentario';
+
+  @override
+  String get republicSend => 'Enviar';
+
+  @override
+  String get republicCommentFailed => 'No pudimos publicar tu comentario.';
+
+  @override
+  String get republicEdited => 'editado';
+
+  @override
+  String get republicJustNow => 'ahora';
+
+  @override
+  String republicMinutesAgo(int count) {
+    return '$count min';
+  }
+
+  @override
+  String republicHoursAgo(int count) {
+    return '$count h';
+  }
+
+  @override
+  String republicDaysAgo(int count) {
+    return '$count d';
+  }
 }

@@ -90,6 +90,11 @@ class ApiEndpoints {
   static String serviceBookingConfirm(String id) =>
       '/service/bookings/$id/confirm';
 
+  // ── Republic feed ───────────────────────────────────────────────────────
+  static const String feed = '/feed';
+  static String feedReaction(String id) => '/feed/$id/reaction';
+  static String feedComments(String id) => '/feed/$id/comments';
+
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';
   static const String reviewsCreate = '/reviews/create';

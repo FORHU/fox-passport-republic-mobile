@@ -1981,4 +1981,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewPickStars => 'Choose a star rating.';
+
+  @override
+  String get republicTitle => 'Republic';
+
+  @override
+  String get republicRowBody => 'What the community is posting';
+
+  @override
+  String get republicTabAll => 'All';
+
+  @override
+  String get republicTabCommunity => 'Community';
+
+  @override
+  String get republicTabMarketplace => 'Marketplace';
+
+  @override
+  String get republicEmpty => 'Nothing posted here yet. Be the first.';
+
+  @override
+  String get republicPost => 'Post';
+
+  @override
+  String get republicCompose => 'New post';
+
+  @override
+  String get republicComposeHint => 'Share something with the Republic';
+
+  @override
+  String get republicPosted => 'Posted.';
+
+  @override
+  String get republicPostFailed => 'We couldn\'t post that. Try again.';
+
+  @override
+  String get republicLikeFailed => 'We couldn\'t save your like.';
+
+  @override
+  String get republicComments => 'Comments';
+
+  @override
+  String get republicNoComments => 'No comments yet.';
+
+  @override
+  String get republicCommentHint => 'Add a comment';
+
+  @override
+  String get republicSend => 'Send';
+
+  @override
+  String get republicCommentFailed => 'We couldn\'t post your comment.';
+
+  @override
+  String get republicEdited => 'edited';
+
+  @override
+  String get republicJustNow => 'now';
+
+  @override
+  String republicMinutesAgo(int count) {
+    return '${count}m';
+  }
+
+  @override
+  String republicHoursAgo(int count) {
+    return '${count}h';
+  }
+
+  @override
+  String republicDaysAgo(int count) {
+    return '${count}d';
+  }
 }

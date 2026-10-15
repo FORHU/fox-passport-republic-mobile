@@ -25,6 +25,7 @@ import 'package:flutter_template/features/occasion/presentation/pages/occasion_p
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
@@ -208,6 +209,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }
           return BookingFlowPage(venue: extra! as CatalogItem);
         },
+      ),
+      GoRoute(
+        path: RouteNames.republic,
+        builder: (context, state) => const RepublicPage(),
       ),
       GoRoute(
         path: RouteNames.itemBooking,

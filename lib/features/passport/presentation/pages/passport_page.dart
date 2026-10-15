@@ -159,6 +159,19 @@ class _Body extends StatelessWidget {
               ),
           ],
         ),
+        const SizedBox(height: 24),
+        Material(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brCard,
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: AppRadius.brCard),
+            leading: const Icon(Icons.forum_outlined),
+            title: Text(l10n.republicTitle),
+            subtitle: Text(l10n.republicRowBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(RouteNames.republic),
+          ),
+        ),
       ],
     );
   }
