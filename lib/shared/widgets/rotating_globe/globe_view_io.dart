@@ -12,12 +12,18 @@ bool get globePlatformSupported =>
     defaultTargetPlatform == TargetPlatform.iOS;
 
 /// Builds the web view that draws [html].
-Widget buildGlobeView(String html) => _MobileGlobe(html: html);
+Widget buildGlobeView(
+  String html, {
+  bool interactive = false,
+  void Function(String city)? onPinTap,
+}) =>
+    _MobileGlobe(html: html, onPinTap: onPinTap);
 
 class _MobileGlobe extends StatefulWidget {
-  const _MobileGlobe({required this.html});
+  const _MobileGlobe({required this.html, this.onPinTap});
 
   final String html;
+  final void Function(String city)? onPinTap;
 
   @override
   State<_MobileGlobe> createState() => _MobileGlobeState();

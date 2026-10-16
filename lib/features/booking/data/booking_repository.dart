@@ -1,41 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/booking/domain/booking_models.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/payments/payments_repository.dart';
 
-/// Takes a card payment for a booking.
-///
-/// The real implementation is Stripe's payment sheet, which is not in the app
-/// yet. Swap this provider when it is.
-abstract class PaymentGateway {
-  /// Returns the payment intent id once the payment has gone through.
-  Future<String> pay({
-    required String? clientSecret,
-    required num amount,
-    required String currency,
-  });
-}
-
-/// Succeeds only when the app runs against the mock backend, so nothing is
-/// ever reported as paid that was not.
-class StubPaymentGateway implements PaymentGateway {
-  @override
-  Future<String> pay({
-    required String? clientSecret,
-    required num amount,
-    required String currency,
-  }) async {
-    if (AppConfig.instance.useMock) return 'pi_mock';
-    throw const PaymentsUnavailable();
-  }
-}
-
-final paymentGatewayProvider =
-    Provider<PaymentGateway>((ref) => StubPaymentGateway());
+// Tests and the booking page reach the gateway through here.
+export 'package:flutter_template/shared/payments/payments_repository.dart'
+    show PaymentGateway, PaymentsUnavailable, StubPaymentGateway;
 
 /// Venue booking: availability, price, the booking itself and its payment.
 class BookingRepository {

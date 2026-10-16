@@ -8,9 +8,14 @@ import 'package:flutter_template/features/auth/presentation/pages/register_page.
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
+import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
+import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/map/presentation/pages/map_page.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -152,6 +157,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.roles,
         builder: (context, state) => const RolesPage(),
       ),
+      // Tickets are not a tab: full screen, opened from Passport, the Home
+      // reminder and after a booking.
+      GoRoute(
+        path: RouteNames.tickets,
+        builder: (context, state) => TicketsPage(
+          initialSegment: state.uri.queryParameters['segment'],
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.calendar,
+        builder: (context, state) => const CalendarPage(),
+      ),
       GoRoute(
         path: RouteNames.settings,
         builder: (context, state) => const SettingsPage(),
@@ -187,6 +204,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: RouteNames.foxer,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            FoxerProfilePage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.match,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            MatchRequestPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
         path: RouteNames.venueDetail,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -199,6 +230,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             state.extra is CatalogItem ? null : RouteNames.search,
         builder: (context, state) =>
             EventDetailPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.scheduledEventDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ScheduledEventDetailPage(item: state.extra! as CatalogItem),
       ),
       // One navigator per tab, kept alive side by side: switching tabs keeps
       // each tab's own stack, scroll position and typed text.
@@ -226,6 +264,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   initialKind: CatalogKind.fromParam(
                     state.uri.queryParameters['kind'],
                   ),
+                  initialCity: state.uri.queryParameters['city'],
                 ),
               ),
             ],
@@ -233,8 +272,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.tickets,
-                builder: (context, state) => const TicketsPage(),
+                path: RouteNames.map,
+                builder: (context, state) => const MapPage(),
               ),
             ],
           ),

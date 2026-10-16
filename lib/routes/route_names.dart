@@ -24,9 +24,20 @@ class RouteNames {
   static const String search = '/search';
 
   /// `/search?kind=venues` — opens Search on one of its switches.
-  static String searchFor(String kind) =>
-      Uri(path: search, queryParameters: {'kind': kind}).toString();
+  static String searchFor(String kind, {String? city}) => Uri(
+        path: search,
+        queryParameters: {'kind': kind, if (city != null) 'city': city},
+      ).toString();
   static const String tickets = '/tickets';
+
+  /// Everything booked, hosted, organized or supplied, by day.
+  static const String calendar = '/calendar';
+
+  /// Map tab: every place with events, on a globe.
+  static const String map = '/map';
+
+  /// Tickets, opened on the Requests switch.
+  static const String ticketsRequests = '/tickets?segment=requests';
   static const String messages = '/messages';
   static String chat(String conversationId) =>
       '$messages/${Uri.encodeComponent(conversationId)}';
@@ -42,11 +53,20 @@ class RouteNames {
   /// Settings: location, account, sign out. Pushed from Passport.
   static const String settings = '/settings';
 
+  /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.
+  static const String foxer = '/foxer';
+
+  /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
+  static const String match = '/match';
+
   /// One venue in full, with Book now. Takes the venue row as `extra`.
   static const String venueDetail = '/venue';
 
   /// One event package: what is in it, customised and booked.
   static const String eventDetail = '/event';
+
+  /// An event that its owner chose to publish.
+  static const String scheduledEventDetail = '/scheduled-event';
 
   /// Venue booking flow, full screen. Takes the venue as `extra`.
   static const String book = '/book';

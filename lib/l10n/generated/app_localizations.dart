@@ -1418,6 +1418,120 @@ abstract class AppLocalizations {
   /// **'Filters'**
   String get searchFilters;
 
+  /// No description provided for @searchFilterCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get searchFilterCity;
+
+  /// No description provided for @searchFilterMinPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum price'**
+  String get searchFilterMinPrice;
+
+  /// No description provided for @searchFilterMaxPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum price'**
+  String get searchFilterMaxPrice;
+
+  /// No description provided for @searchFilterMinCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum guests'**
+  String get searchFilterMinCapacity;
+
+  /// No description provided for @searchChooseDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date range'**
+  String get searchChooseDates;
+
+  /// No description provided for @searchSortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get searchSortBy;
+
+  /// No description provided for @searchSortRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get searchSortRecommended;
+
+  /// No description provided for @searchSortPriceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: low to high'**
+  String get searchSortPriceLow;
+
+  /// No description provided for @searchSortPriceHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: high to low'**
+  String get searchSortPriceHigh;
+
+  /// No description provided for @searchSortDateSoonest.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: soonest'**
+  String get searchSortDateSoonest;
+
+  /// No description provided for @searchSortDateLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: latest'**
+  String get searchSortDateLatest;
+
+  /// No description provided for @searchClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get searchClearFilters;
+
+  /// No description provided for @searchApplyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get searchApplyFilters;
+
+  /// No description provided for @searchInvalidFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the price and guest filters.'**
+  String get searchInvalidFilter;
+
+  /// No description provided for @searchEventDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Event details'**
+  String get searchEventDetails;
+
+  /// No description provided for @searchEventDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get searchEventDate;
+
+  /// No description provided for @searchEventLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get searchEventLocation;
+
+  /// No description provided for @searchEventGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests'**
+  String get searchEventGuests;
+
+  /// No description provided for @searchEventPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get searchEventPrice;
+
   /// No description provided for @searchNew.
   ///
   /// In en, this message translates to:
@@ -2384,6 +2498,192 @@ abstract class AppLocalizations {
   /// **'Getting in'**
   String get venueEntrance;
 
+  /// No description provided for @foxerLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load this Foxer.'**
+  String get foxerLoadFailed;
+
+  /// No description provided for @foxerMatchMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Match me'**
+  String get foxerMatchMe;
+
+  /// No description provided for @foxerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get foxerMessage;
+
+  /// No description provided for @foxerOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'What they offer'**
+  String get foxerOffers;
+
+  /// No description provided for @foxerNoOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing listed yet. Send a request and tell them what you need.'**
+  String get foxerNoOffers;
+
+  /// No description provided for @foxerSampleNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Foxer'**
+  String get foxerSampleNote;
+
+  /// No description provided for @foxerReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No reviews yet} =1{1 review} other{{count} reviews}}'**
+  String foxerReviews(int count);
+
+  /// No description provided for @matchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match me'**
+  String get matchTitle;
+
+  /// No description provided for @matchIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell {name} what you have in mind. They will accept or decline, and nothing is charged until they accept.'**
+  String matchIntro(String name);
+
+  /// No description provided for @matchWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like?'**
+  String get matchWhat;
+
+  /// No description provided for @matchOwnIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'My own idea'**
+  String get matchOwnIdea;
+
+  /// No description provided for @matchWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Which day?'**
+  String get matchWhen;
+
+  /// No description provided for @matchGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'How many guests?'**
+  String get matchGuests;
+
+  /// No description provided for @matchMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything they should know?'**
+  String get matchMessage;
+
+  /// No description provided for @matchMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. The mood, the place, your budget'**
+  String get matchMessageHint;
+
+  /// No description provided for @matchNoCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'You will not be charged to send a request.'**
+  String get matchNoCharge;
+
+  /// No description provided for @matchSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get matchSend;
+
+  /// No description provided for @matchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send your request. Try again.'**
+  String get matchFailed;
+
+  /// No description provided for @matchSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get matchSentTitle;
+
+  /// No description provided for @matchSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will get back to you. You will be notified when they respond.'**
+  String matchSentBody(String name);
+
+  /// No description provided for @ticketsRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get ticketsRequests;
+
+  /// No description provided for @ticketsEmptyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. Ask a Foxer to match you from their profile.'**
+  String get ticketsEmptyRequests;
+
+  /// No description provided for @matchViewRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'View my requests'**
+  String get matchViewRequests;
+
+  /// No description provided for @matchStateWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for reply'**
+  String get matchStateWaiting;
+
+  /// No description provided for @matchStateAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get matchStateAccepted;
+
+  /// No description provided for @matchStateConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get matchStateConfirmed;
+
+  /// No description provided for @matchStateDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get matchStateDeclined;
+
+  /// No description provided for @matchTheFoxer.
+  ///
+  /// In en, this message translates to:
+  /// **'the Foxer'**
+  String get matchTheFoxer;
+
+  /// No description provided for @matchWaitingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has your request and will reply soon.'**
+  String matchWaitingNote(String name);
+
+  /// No description provided for @matchPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get matchPayNow;
+
+  /// No description provided for @matchWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get matchWithdraw;
+
   /// No description provided for @bookClose.
   ///
   /// In en, this message translates to:
@@ -2725,6 +3025,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Voucher codes are coming soon'**
   String get comingSoonVoucher;
+
+  /// No description provided for @map.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get map;
+
+  /// No description provided for @mapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events around the world'**
+  String get mapTitle;
+
+  /// No description provided for @mapEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No events on the map yet'**
+  String get mapEmpty;
+
+  /// No description provided for @mapViewEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'View events'**
+  String get mapViewEvents;
+
+  /// No description provided for @passportTicketsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming, past and your requests'**
+  String get passportTicketsHint;
+
+  /// No description provided for @mapEventCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event} other{{count} events}}'**
+  String mapEventCount(int count);
+
+  /// No description provided for @homeEmptyVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'No venues here yet.'**
+  String get homeEmptyVenues;
+
+  /// No description provided for @homeEmptyVenuesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get homeEmptyVenuesAction;
+
+  /// No description provided for @homeEmptyFoxers.
+  ///
+  /// In en, this message translates to:
+  /// **'No Foxers here yet. Be the first.'**
+  String get homeEmptyFoxers;
+
+  /// No description provided for @homeEmptyFoxersAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Become one'**
+  String get homeEmptyFoxersAction;
+
+  /// No description provided for @searchNothingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get searchNothingHere;
+
+  /// No description provided for @searchTryFewerFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing a filter or a word.'**
+  String get searchTryFewerFilters;
+
+  /// No description provided for @mapEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore events'**
+  String get mapEmptyAction;
+
+  /// No description provided for @passportEmptyStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend an event to earn your first stamp.'**
+  String get passportEmptyStamps;
+
+  /// No description provided for @passportEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Find events'**
+  String get passportEmptyAction;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you book, host or supply'**
+  String get calendarHint;
+
+  /// No description provided for @calendarToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get calendarToday;
+
+  /// No description provided for @calendarNothingToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on this day.'**
+  String get calendarNothingToday;
+
+  /// No description provided for @calendarPreviousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get calendarPreviousMonth;
+
+  /// No description provided for @calendarNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get calendarNextMonth;
+
+  /// No description provided for @calendarRoleGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'My bookings'**
+  String get calendarRoleGuest;
+
+  /// No description provided for @calendarRoleHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Events I host'**
+  String get calendarRoleHost;
+
+  /// No description provided for @calendarRoleOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizing'**
+  String get calendarRoleOrganizer;
+
+  /// No description provided for @calendarRoleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'At my venues'**
+  String get calendarRoleVenue;
+
+  /// No description provided for @calendarRoleSupplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplying'**
+  String get calendarRoleSupplier;
+
+  /// No description provided for @calendarOpenTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Open tickets'**
+  String get calendarOpenTickets;
+
+  /// No description provided for @calendarManageOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage this on the web.'**
+  String get calendarManageOnWeb;
 }
 
 class _AppLocalizationsDelegate

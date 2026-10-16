@@ -2,6 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 
+export 'package:flutter_template/shared/payments/payments_repository.dart'
+    show PaymentsUnavailable;
+
 /// What the user has chosen so far in the venue booking flow.
 class BookingSelection extends Equatable {
   const BookingSelection({
@@ -163,9 +166,4 @@ class BookingReceipt extends Equatable {
   @override
   List<Object?> get props =>
       [id, reference, totalAmount, currency, needsApproval, isSample];
-}
-
-/// Card payments are not available in this build.
-class PaymentsUnavailable implements Exception {
-  const PaymentsUnavailable();
 }

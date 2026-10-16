@@ -96,6 +96,44 @@ class _Body extends StatelessWidget {
           name: name,
           onTap: () => context.go(RouteNames.profile),
         ),
+        const SizedBox(height: 12),
+        Material(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brMd,
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: AppRadius.brMd,
+              side: const BorderSide(color: AppColors.border),
+            ),
+            leading: const Icon(
+              Icons.confirmation_number_outlined,
+              color: AppColors.accent,
+            ),
+            title: Text(l10n.ticketsTitle),
+            subtitle: Text(l10n.passportTicketsHint),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(RouteNames.tickets),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Material(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brMd,
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: AppRadius.brMd,
+              side: const BorderSide(color: AppColors.border),
+            ),
+            leading: const Icon(
+              Icons.calendar_month_outlined,
+              color: AppColors.accent,
+            ),
+            title: Text(l10n.calendarTitle),
+            subtitle: Text(l10n.calendarHint),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(RouteNames.calendar),
+          ),
+        ),
         const SizedBox(height: 24),
         _SectionHeader(
           title: l10n.passportStamps,
@@ -124,6 +162,23 @@ class _Body extends StatelessWidget {
             );
           },
         ),
+        if (stamps.isEmpty) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.passportEmptyStamps,
+                  style: AppTypography.body(),
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.go(RouteNames.searchFor('events')),
+                child: Text(l10n.passportEmptyAction),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 24),
         _SectionHeader(
           title: l10n.passportBadges,

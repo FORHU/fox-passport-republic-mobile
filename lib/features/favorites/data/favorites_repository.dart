@@ -40,7 +40,7 @@ class FavoritesRepository {
 
   static String _type(CatalogKind kind) => switch (kind) {
         CatalogKind.venues => 'venue',
-        CatalogKind.events => 'event',
+        CatalogKind.events => 'public_event',
         CatalogKind.foxers ||
         CatalogKind.gear ||
         CatalogKind.services =>

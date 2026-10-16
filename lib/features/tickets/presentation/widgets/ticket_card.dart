@@ -204,8 +204,11 @@ class _Qr extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ticket.isSample || ticket.ticketCode == null
-          ? const Icon(Icons.qr_code_2_rounded,
-              size: 72, color: AppColors.onLightSurface,)
+          ? const Icon(
+              Icons.qr_code_2_rounded,
+              size: 72,
+              color: AppColors.onLightSurface,
+            )
           : QrImageView(
               data: ticket.ticketCode!,
               padding: EdgeInsets.zero,

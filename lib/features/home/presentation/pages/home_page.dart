@@ -272,7 +272,7 @@ class _NextNight extends StatelessWidget {
         borderRadius: AppRadius.brMd,
         child: InkWell(
           borderRadius: AppRadius.brMd,
-          onTap: () => context.go(RouteNames.tickets),
+          onTap: () => context.push(RouteNames.tickets),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
@@ -492,9 +492,11 @@ class _Picks extends StatelessWidget {
     String locale,
   ) {
     if (items.isEmpty) {
-      return Text(
-        l10n.homeNoResults,
-        style: AppTypography.body(size: 12, color: AppColors.textMuted),
+      return _EmptyRow(
+        icon: Icons.storefront_outlined,
+        message: l10n.homeEmptyVenues,
+        actionLabel: l10n.homeEmptyVenuesAction,
+        onAction: () => context.go(RouteNames.searchFor('venues')),
       );
     }
     return SizedBox(
@@ -555,6 +557,47 @@ class _Picks extends StatelessWidget {
   }
 }
 
+/// An empty list that still says what to do next.
+class _EmptyRow extends StatelessWidget {
+  const _EmptyRow({
+    required this.icon,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  final IconData icon;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brMd,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: AppColors.textMuted),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: AppTypography.body(),
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(onPressed: onAction, child: Text(actionLabel)),
+        ],
+      ),
+    );
+  }
+}
+
 /// "Foxers for your night": one row per Foxer, with a button to message them.
 class _Foxers extends StatelessWidget {
   const _Foxers({required this.state, required this.onRetry});
@@ -579,9 +622,11 @@ class _Foxers extends StatelessWidget {
       ),
       data: (page) {
         if (page.items.isEmpty) {
-          return Text(
-            l10n.homeNoResults,
-            style: AppTypography.body(size: 12, color: AppColors.textMuted),
+          return _EmptyRow(
+            icon: Icons.groups_outlined,
+            message: l10n.homeEmptyFoxers,
+            actionLabel: l10n.homeEmptyFoxersAction,
+            onAction: () => context.push(RouteNames.roles),
           );
         }
         return Column(
@@ -630,97 +675,101 @@ class _FoxerRow extends ConsumerWidget {
     final rating = item.rating;
     final initial = item.title.isEmpty ? '?' : item.title[0].toUpperCase();
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brMd,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: AppColors.surfaceRaised,
-                backgroundImage: item.imageUrl == null
-                    ? null
-                    : NetworkImage(resolveAssetUrl(item.imageUrl!)),
-                child: item.imageUrl == null
-                    ? Text(initial, style: AppTypography.display())
-                    : null,
-              ),
-              if (item.online)
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    width: 11,
-                    height: 11,
-                    decoration: BoxDecoration(
-                      color: AppColors.success,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.surface, width: 2),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: () => context.push(RouteNames.foxer, extra: item),
+      borderRadius: AppRadius.brMd,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brMd,
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
               children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        item.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.display(size: 15),
-                      ),
-                    ),
-                    if (item.verified) ...[
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.verified_rounded,
-                        size: 15,
-                        color: AppColors.accent,
-                      ),
-                    ],
-                  ],
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: AppColors.surfaceRaised,
+                  backgroundImage: item.imageUrl == null
+                      ? null
+                      : NetworkImage(resolveAssetUrl(item.imageUrl!)),
+                  child: item.imageUrl == null
+                      ? Text(initial, style: AppTypography.display())
+                      : null,
                 ),
-                if (role != null || rating != null)
-                  Text(
-                    [
-                      if (role != null) role,
-                      if (rating != null) rating.toStringAsFixed(1),
-                    ].join(' · '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.body(
-                      size: 12,
-                      color: AppColors.roleLabel,
-                      weight: FontWeight.w600,
+                if (item.online)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 11,
+                      height: 11,
+                      decoration: BoxDecoration(
+                        color: AppColors.success,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.surface, width: 2),
+                      ),
                     ),
                   ),
               ],
             ),
-          ),
-          IconButton(
-            tooltip: l10n.homeMessageFoxer(item.title),
-            onPressed: () => _message(context, ref),
-            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            icon: const Icon(
-              Icons.chat_bubble_outline_rounded,
-              size: 22,
-              color: AppColors.textPrimary,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          item.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.display(size: 15),
+                        ),
+                      ),
+                      if (item.verified) ...[
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.verified_rounded,
+                          size: 15,
+                          color: AppColors.accent,
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (role != null || rating != null)
+                    Text(
+                      [
+                        if (role != null) role,
+                        if (rating != null) rating.toStringAsFixed(1),
+                      ].join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.roleLabel,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+            IconButton(
+              tooltip: l10n.homeMessageFoxer(item.title),
+              onPressed: () => _message(context, ref),
+              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+              icon: const Icon(
+                Icons.chat_bubble_outline_rounded,
+                size: 22,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
