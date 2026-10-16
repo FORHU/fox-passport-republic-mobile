@@ -686,5 +686,14 @@
   "republicHoursAgo": "{count}h",
   "@republicHoursAgo": {"placeholders":{"count":{"type":"int"}}},
   "republicDaysAgo": "{count}d",
-  "@republicDaysAgo": {"placeholders":{"count":{"type":"int"}}}
+  "@republicDaysAgo": {"placeholders":{"count":{"type":"int"}}},
+  "passportTabProgress": "Progress",
+  "passportTabStamps": "Stamps",
+  "passportTabMatches": "Matches",
+  "passportTabSaved": "Saved",
+  "passportTabEarn": "Earn",
+  "passportSavedEmpty": "No saved posts yet.",
+  "passportSavedAction": "Browse Republic",
+  "passportEarnIntro": "Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.",
+  "passportEarnApply": "Apply on web"
 }

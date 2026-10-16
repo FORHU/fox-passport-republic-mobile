@@ -3829,6 +3829,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count}d'**
   String republicDaysAgo(int count);
+
+  /// No description provided for @passportTabProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get passportTabProgress;
+
+  /// No description provided for @passportTabStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get passportTabStamps;
+
+  /// No description provided for @passportTabMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches'**
+  String get passportTabMatches;
+
+  /// No description provided for @passportTabSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get passportTabSaved;
+
+  /// No description provided for @passportTabEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn'**
+  String get passportTabEarn;
+
+  /// No description provided for @passportSavedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved posts yet.'**
+  String get passportSavedEmpty;
+
+  /// No description provided for @passportSavedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Republic'**
+  String get passportSavedAction;
+
+  /// No description provided for @passportEarnIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.'**
+  String get passportEarnIntro;
+
+  /// No description provided for @passportEarnApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply on web'**
+  String get passportEarnApply;
 }
 
 class _AppLocalizationsDelegate

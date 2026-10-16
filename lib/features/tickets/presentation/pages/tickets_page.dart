@@ -13,6 +13,7 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 enum _Segment { upcoming, requests, past }
 
@@ -152,15 +153,21 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                       }
                     }),
                   ],
-                  data: (list) => list.isEmpty
-                      ? [
-                          _empty(
-                            _segment == _Segment.upcoming
-                                ? l10n.ticketsEmptyUpcoming
-                                : l10n.ticketsEmptyPast,
-                          ),
-                        ]
-                      : [for (final t in list) _item(t)],
+                  data: (list) {
+                    if (list.isEmpty) {
+                      return [
+                        _empty(
+                          _segment == _Segment.upcoming
+                              ? l10n.ticketsEmptyUpcoming
+                              : l10n.ticketsEmptyPast,
+                        ),
+                      ];
+                    }
+                    if (_segment == _Segment.past) {
+                      return _groupedByMonth(list);
+                    }
+                    return [for (final t in list) _item(t)];
+                  },
                 ),
             ],
           ),
@@ -206,6 +213,32 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
         padding: const EdgeInsets.only(bottom: 16),
         child: TicketCard(ticket: ticket),
       );
+
+  /// Groups past tickets under month headers, newest month first.
+  List<Widget> _groupedByMonth(List<Ticket> tickets) {
+    final locale = Localizations.localeOf(context).toString();
+    final grouped = <String, List<Ticket>>{};
+    for (final t in tickets) {
+      final key = DateFormat.MMMM(locale).format(t.startAt);
+      grouped.putIfAbsent(key, () => []).add(t);
+    }
+    final widgets = <Widget>[];
+    for (final entry in grouped.entries) {
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            entry.key.toUpperCase(),
+            style: AppTypography.label(color: AppColors.textMuted),
+          ),
+        ),
+      );
+      for (final t in entry.value) {
+        widgets.add(_item(t));
+      }
+    }
+    return widgets;
+  }
 
   Widget _empty(String message) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 48),

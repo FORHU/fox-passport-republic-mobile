@@ -2069,4 +2069,32 @@ class AppLocalizationsEs extends AppLocalizations {
   String republicDaysAgo(int count) {
     return '$count d';
   }
+
+  @override
+  String get passportTabProgress => 'Progreso';
+
+  @override
+  String get passportTabStamps => 'Sellos';
+
+  @override
+  String get passportTabMatches => 'Coincidencias';
+
+  @override
+  String get passportTabSaved => 'Guardado';
+
+  @override
+  String get passportTabEarn => 'Ganar';
+
+  @override
+  String get passportSavedEmpty => 'No hay publicaciones guardadas aún.';
+
+  @override
+  String get passportSavedAction => 'Explorar República';
+
+  @override
+  String get passportEarnIntro =>
+      'Solicita convertirte en Foxer — los anfitriones, lugares, equipo y talento hacen funcionar FoxPassport.';
+
+  @override
+  String get passportEarnApply => 'Solicitar en la web';
 }

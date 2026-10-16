@@ -2053,4 +2053,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String republicDaysAgo(int count) {
     return '${count}d';
   }
+
+  @override
+  String get passportTabProgress => 'Progress';
+
+  @override
+  String get passportTabStamps => 'Stamps';
+
+  @override
+  String get passportTabMatches => 'Matches';
+
+  @override
+  String get passportTabSaved => 'Saved';
+
+  @override
+  String get passportTabEarn => 'Earn';
+
+  @override
+  String get passportSavedEmpty => 'No saved posts yet.';
+
+  @override
+  String get passportSavedAction => 'Browse Republic';
+
+  @override
+  String get passportEarnIntro =>
+      'Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.';
+
+  @override
+  String get passportEarnApply => 'Apply on web';
 }
