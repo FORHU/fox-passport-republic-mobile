@@ -7,6 +7,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/favorites/data/favorites_repository.dart';
+import 'package:flutter_template/features/map/presentation/widgets/places_globe.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -29,6 +30,8 @@ class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({
     this.initialKind = CatalogKind.venues,
     this.initialCity,
+    this.initialMinCapacity,
+    this.initialDate,
     super.key,
   });
 
@@ -37,6 +40,10 @@ class SearchPage extends ConsumerStatefulWidget {
 
   /// Narrow to this city, e.g. from a pin on the Map.
   final String? initialCity;
+
+  /// Guests the place must hold, and the day, from the occasion page.
+  final int? initialMinCapacity;
+  final DateTime? initialDate;
 
   @override
   ConsumerState<SearchPage> createState() => _SearchPageState();
@@ -47,11 +54,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   late CatalogKind _kind = widget.initialKind;
   late String? _city = widget.initialCity;
   String _query = '';
+  _View _view = _View.list;
   num? _minPrice;
   num? _maxPrice;
-  int? _minCapacity;
-  DateTime? _fromDate;
-  DateTime? _toDate;
+  late int? _minCapacity = widget.initialMinCapacity;
+  late DateTime? _fromDate = widget.initialDate;
+  late DateTime? _toDate = widget.initialDate?.add(const Duration(days: 1));
   late String _sortBy =
       widget.initialKind == CatalogKind.events ? 'date_asc' : '';
   Timer? _debounce;
@@ -64,10 +72,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     super.didUpdateWidget(oldWidget);
     // The shell keeps this page alive, so a new deep link arrives as an update.
     if (oldWidget.initialKind != widget.initialKind ||
-        oldWidget.initialCity != widget.initialCity) {
+        oldWidget.initialCity != widget.initialCity ||
+        oldWidget.initialMinCapacity != widget.initialMinCapacity ||
+        oldWidget.initialDate != widget.initialDate) {
       setState(() {
         _kind = widget.initialKind;
         _city = widget.initialCity;
+        _minCapacity = widget.initialMinCapacity;
+        _fromDate = widget.initialDate;
+        _toDate = widget.initialDate?.add(const Duration(days: 1));
       });
     }
   }
@@ -260,59 +273,85 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       ],
                     ),
                   ),
-                Expanded(
-                  child: results.when(
-                    loading: () => const Center(
-                      child: CircularProgressIndicator(color: AppColors.accent),
-                    ),
-                    error: (_, __) => AppStateView(
-                      kind: AppStateKind.error,
-                      title: l10n.apiLoadFailed,
-                      actionLabel: l10n.retry,
-                      onAction: () =>
-                          ref.invalidate(catalogProvider(_catalogQuery)),
-                    ),
-                    data: (page) => _Results(
-                      formatter: formatter,
-                      page: page,
-                      kindLabel: _kindLabel(l10n, _kind),
-                      query: _query,
-                      locale: Localizations.localeOf(context).toString(),
-                      saved: AppConfig.instance.useMock
-                          ? _saved
-                          : favorites.asData?.value ?? const {},
-                      favoritesFailed:
-                          favorites.hasError && !AppConfig.instance.useMock,
-                      favoritesLoading:
-                          favorites.isLoading && !AppConfig.instance.useMock,
-                      onToggleSaved: _toggleFavorite,
-                      onClear: _hasFilters ? _clearFilters : null,
-                      onOpen: (item) => switch (item.kind) {
-                        CatalogKind.venues =>
-                          context.push(RouteNames.venueDetail, extra: item),
-                        CatalogKind.events => context.push(
-                            RouteNames.scheduledEventDetail,
-                            extra: item,
-                          ),
-                        CatalogKind.foxers =>
-                          context.push(RouteNames.foxer, extra: item),
-                        _ => showTopToast(context, l10n.comingSoonDetails),
-                      },
-                    ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          results.asData == null
+                              ? ''
+                              : '${results.asData!.value.total} '
+                                  '${_kindLabel(l10n, _kind).toUpperCase()}',
+                          style: AppTypography.label(),
+                        ),
+                      ),
+                      _ViewSwitch(
+                        value: _view,
+                        listLabel: l10n.searchList,
+                        mapLabel: l10n.searchMap,
+                        onChanged: (v) => setState(() => _view = v),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 16,
-              child: Center(
-                child: _MapPill(
-                  label: l10n.searchMap,
-                  onTap: () => showTopToast(context, l10n.comingSoonMap),
+                Expanded(
+                  child: _view == _View.map
+                      ? PlacesGlobe(
+                          onViewCity: (city) => setState(() {
+                            _kind = CatalogKind.events;
+                            _city = city;
+                            _view = _View.list;
+                          }),
+                        )
+                      : results.when(
+                          loading: () => const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.accent,
+                            ),
+                          ),
+                          error: (_, __) => AppStateView(
+                            kind: AppStateKind.error,
+                            title: l10n.apiLoadFailed,
+                            actionLabel: l10n.retry,
+                            onAction: () =>
+                                ref.invalidate(catalogProvider(_catalogQuery)),
+                          ),
+                          data: (page) => _Results(
+                            formatter: formatter,
+                            page: page,
+                            kindLabel: _kindLabel(l10n, _kind),
+                            query: _query,
+                            locale: Localizations.localeOf(context).toString(),
+                            saved: AppConfig.instance.useMock
+                                ? _saved
+                                : favorites.asData?.value ?? const {},
+                            favoritesFailed: favorites.hasError &&
+                                !AppConfig.instance.useMock,
+                            favoritesLoading: favorites.isLoading &&
+                                !AppConfig.instance.useMock,
+                            onToggleSaved: _toggleFavorite,
+                            onClear: _hasFilters ? _clearFilters : null,
+                            onOpen: (item) => switch (item.kind) {
+                              CatalogKind.venues => context
+                                  .push(RouteNames.venueDetail, extra: item),
+                              CatalogKind.events => context.push(
+                                  RouteNames.scheduledEventDetail,
+                                  extra: item,
+                                ),
+                              CatalogKind.foxers =>
+                                context.push(RouteNames.foxer, extra: item),
+                              CatalogKind.gear ||
+                              CatalogKind.services =>
+                                context.push(
+                                  RouteNames.itemBooking,
+                                  extra: item,
+                                ),
+                            },
+                          ),
+                        ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -666,7 +705,10 @@ class _SearchField extends StatelessWidget {
                   color: AppColors.textMuted,
                   size: 15,
                 ),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 isDense: true,
               ),
             ),
@@ -735,15 +777,10 @@ class _Results extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
       itemCount: page.items.length + 1 + (favoritesFailed ? 1 : 0),
       separatorBuilder: (_, i) => i == 0
-          ? const SizedBox(height: 4)
+          ? const SizedBox.shrink()
           : const Divider(color: AppColors.border, height: 24),
       itemBuilder: (context, index) {
-        if (index == 0) {
-          return Text(
-            '${page.total} ${kindLabel.toUpperCase()}',
-            style: AppTypography.label(),
-          );
-        }
+        if (index == 0) return const SizedBox.shrink();
         if (favoritesFailed && index == 1) {
           return Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -971,43 +1008,78 @@ class _ScopeChip extends StatelessWidget {
   }
 }
 
-class _MapPill extends StatelessWidget {
-  const _MapPill({required this.label, required this.onTap});
+enum _View { list, map }
 
-  final String label;
-  final VoidCallback onTap;
+/// "List | Map": two small segments, beside the result count.
+class _ViewSwitch extends StatelessWidget {
+  const _ViewSwitch({
+    required this.value,
+    required this.listLabel,
+    required this.mapLabel,
+    required this.onChanged,
+  });
+
+  final _View value;
+  final String listLabel;
+  final String mapLabel;
+  final ValueChanged<_View> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.lightSurface,
-      borderRadius: AppRadius.brPill,
-      elevation: 6,
-      shadowColor: AppColors.shadow,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.brPill,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.map_outlined,
-                size: 18,
-                color: AppColors.onLightSurface,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: AppTypography.display(
-                  size: 15,
-                  color: AppColors.onLightSurface,
+    Widget segment(_View view, String label, IconData icon) {
+      final selected = value == view;
+      return Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        child: InkWell(
+          onTap: () => onChanged(view),
+          borderRadius: AppRadius.brPill,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: selected ? AppColors.surfaceRaised : Colors.transparent,
+              borderRadius: AppRadius.brPill,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 16,
+                  color: selected ? AppColors.textPrimary : AppColors.textMuted,
                 ),
-              ),
-            ],
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: AppTypography.body(
+                    size: 13,
+                    weight: FontWeight.w600,
+                    color:
+                        selected ? AppColors.textPrimary : AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brPill,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          segment(_View.list, listLabel, Icons.view_agenda_outlined),
+          segment(_View.map, mapLabel, Icons.map_outlined),
+        ],
       ),
     );
   }

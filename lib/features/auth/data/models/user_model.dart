@@ -13,6 +13,7 @@ class UserModel extends UserEntity {
     super.systemRole,
     super.roleType,
     super.isEmailVerified,
+    super.imageUrl,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -48,7 +49,17 @@ class UserModel extends UserEntity {
       // The API's login payload omits this flag, but it refuses to sign in an
       // unverified account — so a user we received at all is verified.
       isEmailVerified: user['isEmailVerified'] != false,
+      imageUrl: _photo(user),
     );
+  }
+
+  /// The profile photo, from whichever field the response carries it in.
+  static String? _photo(Map<String, dynamic> user) {
+    for (final key in const ['imgId', 'image', 'profileImage']) {
+      final value = user[key];
+      if (value is String && value.trim().isNotEmpty) return value.trim();
+    }
+    return null;
   }
 
   /// Short-lived access token (bearer).
@@ -66,6 +77,7 @@ class UserModel extends UserEntity {
         'systemRole': systemRole,
         'roleType': roleType,
         'isEmailVerified': isEmailVerified,
+        'imgId': imageUrl,
         'token': token,
         'refreshToken': refreshToken,
       };

@@ -32,6 +32,8 @@ class ApiEndpoints {
   static const String foxers = '/users/foxers';
   static String foxerById(String id) => '/users/foxers/$id';
   static const String matches = '/matches';
+  static const String calendar = '/calendar';
+  static const String categories = '/categories';
   static const String matchesMine = '/matches/my';
   static String publicProfile(String idOrUsername) =>
       '/users/profile/$idOrUsername';
@@ -45,7 +47,6 @@ class ApiEndpoints {
       '/locations/countries/$countryCode/cities';
 
   // ── Browse ──────────────────────────────────────────────────────────────
-  static const String categories = '/categories';
   static const String events = '/event-templates';
   static const String eventsBrowse = '/event-templates/browse';
   static const String publicEventsBrowse = '/events/browse';
@@ -88,6 +89,15 @@ class ApiEndpoints {
   static String serviceBookingById(String id) => '/service/bookings/$id';
   static String serviceBookingConfirm(String id) =>
       '/service/bookings/$id/confirm';
+
+  // ── Republic feed ───────────────────────────────────────────────────────
+  static const String feed = '/feed';
+  static String feedReaction(String id) => '/feed/$id/reaction';
+  static String feedComments(String id) => '/feed/$id/comments';
+
+  // ── Reviews ─────────────────────────────────────────────────────────────
+  static String reviewsOfListing(String id) => '/reviews/listing/$id';
+  static const String reviewsCreate = '/reviews/create';
 
   // ── Payments ────────────────────────────────────────────────────────────
   static const String createPaymentIntent = '/payments/create-intent';

@@ -6,8 +6,12 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
+import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
+import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
+import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -15,15 +19,25 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+enum _Tab { progress, stamps, matches, saved, earn }
+
 /// Passport: the ID card, XP progress, stamps from events attended, badges.
-class PassportPage extends ConsumerWidget {
+class PassportPage extends ConsumerStatefulWidget {
   const PassportPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PassportPage> createState() => _PassportPageState();
+}
+
+class _PassportPageState extends ConsumerState<PassportPage> {
+  _Tab _tab = _Tab.progress;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
     final passport = ref.watch(passportProvider);
     final name = ref.watch(authControllerProvider).user?.name ?? '';
+    final requests = ref.watch(myMatchRequestsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -33,39 +47,48 @@ class PassportPage extends ConsumerWidget {
           color: AppColors.accent,
           backgroundColor: AppColors.surface,
           onRefresh: () async => ref.invalidate(passportProvider),
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l10n.passportTitle,
-                      style: AppTypography.display(size: 28),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.passportTitle,
+                        style: AppTypography.display(size: 28),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: l10n.settingsTitle,
-                    onPressed: () => context.push(RouteNames.settings),
-                    icon: const Icon(Icons.settings_outlined),
-                  ),
-                ],
+                    IconButton(
+                      tooltip: l10n.settingsTitle,
+                      onPressed: () => context.push(RouteNames.settings),
+                      icon: const Icon(Icons.settings_outlined),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SegmentedPills<_Tab>(
+                  options: [
+                    SegmentOption(_Tab.progress, l10n.passportTabProgress),
+                    SegmentOption(_Tab.stamps, l10n.passportTabStamps),
+                    SegmentOption(_Tab.matches, l10n.passportTabMatches),
+                    SegmentOption(_Tab.saved, l10n.passportTabSaved),
+                    SegmentOption(_Tab.earn, l10n.passportTabEarn),
+                  ],
+                  value: _tab,
+                  onChanged: (v) => setState(() => _tab = v),
+                ),
               ),
               const SizedBox(height: 16),
-              passport.when(
-                loading: () => const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 64),
-                  child: Center(
-                    child: CircularProgressIndicator(color: AppColors.accent),
-                  ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: _tabContent(context, l10n, passport, name, requests),
                 ),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(passportProvider),
-                ),
-                data: (summary) => _Body(summary: summary, name: name),
               ),
             ],
           ),
@@ -73,13 +96,112 @@ class PassportPage extends ConsumerWidget {
       ),
     );
   }
+
+  Widget _tabContent(
+    BuildContext context,
+    AppLocalizations l10n,
+    AsyncValue<PassportSummary> passport,
+    String name,
+    AsyncValue<List<MatchRequestItem>> requests,
+  ) {
+    switch (_tab) {
+      case _Tab.progress:
+        return passport.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 64),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            ),
+          ),
+          error: (_, __) => AppStateView(
+            kind: AppStateKind.error,
+            title: l10n.apiLoadFailed,
+            actionLabel: l10n.retry,
+            onAction: () => ref.invalidate(passportProvider),
+          ),
+          data: (summary) => _Body(summary: summary, name: name),
+        );
+      case _Tab.stamps:
+        return passport.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 64),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            ),
+          ),
+          error: (_, __) => AppStateView(
+            kind: AppStateKind.error,
+            title: l10n.apiLoadFailed,
+            actionLabel: l10n.retry,
+            onAction: () => ref.invalidate(passportProvider),
+          ),
+          data: (summary) => _StampsOnly(
+            summary: summary,
+            locale: Localizations.localeOf(context).toString(),
+          ),
+        );
+      case _Tab.matches:
+        return requests.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 64),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            ),
+          ),
+          error: (_, __) => AppStateView(
+            kind: AppStateKind.error,
+            title: l10n.apiLoadFailed,
+            actionLabel: l10n.retry,
+            onAction: () => ref.invalidate(myMatchRequestsProvider),
+          ),
+          data: (list) {
+            final items = list.every((r) => r.needsPayment)
+                ? <Widget>[_empty(l10n.ticketsEmptyRequests)]
+                : [
+                    for (final r in list.where((r) => !r.needsPayment))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: MatchRequestCard(item: r),
+                      ),
+                  ];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: items,
+            );
+          },
+        );
+      case _Tab.saved:
+        return _SavedTab(l10n: l10n);
+      case _Tab.earn:
+        return _EarnTab(l10n: l10n);
+    }
+  }
+
+  Widget _empty(String message) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Center(
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: AppTypography.body(color: AppColors.textMuted),
+          ),
+        ),
+      );
 }
 
+/// Full passport body: ID card, XP, stamps, badges, Republic link.
 class _Body extends StatelessWidget {
   const _Body({required this.summary, required this.name});
 
   final PassportSummary summary;
   final String name;
+
+  static const List<Color> _stampColors = [
+    AppColors.accent,
+    AppColors.roleVenue,
+    AppColors.roleGear,
+    AppColors.roleTalent,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -95,25 +217,6 @@ class _Body extends StatelessWidget {
           summary: summary,
           name: name,
           onTap: () => context.go(RouteNames.profile),
-        ),
-        const SizedBox(height: 12),
-        Material(
-          color: AppColors.surface,
-          borderRadius: AppRadius.brMd,
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.brMd,
-              side: const BorderSide(color: AppColors.border),
-            ),
-            leading: const Icon(
-              Icons.confirmation_number_outlined,
-              color: AppColors.accent,
-            ),
-            title: Text(l10n.ticketsTitle),
-            subtitle: Text(l10n.passportTicketsHint),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push(RouteNames.tickets),
-          ),
         ),
         const SizedBox(height: 24),
         _SectionHeader(
@@ -178,16 +281,157 @@ class _Body extends StatelessWidget {
               ),
           ],
         ),
+        const SizedBox(height: 24),
+        Material(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brCard,
+          child: ListTile(
+            shape: RoundedRectangleBorder(borderRadius: AppRadius.brCard),
+            leading: const Icon(Icons.forum_outlined),
+            title: Text(l10n.republicTitle),
+            subtitle: Text(l10n.republicRowBody),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(RouteNames.republic),
+          ),
+        ),
       ],
     );
   }
+}
 
-  static const List<Color> _stampColors = [
-    AppColors.accent,
-    AppColors.roleVenue,
-    AppColors.roleGear,
-    AppColors.roleTalent,
-  ];
+/// Stamps-only view: the stamp grid under a header.
+class _StampsOnly extends StatelessWidget {
+  const _StampsOnly({required this.summary, required this.locale});
+
+  final PassportSummary summary;
+  final String locale;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final stamps = summary.stamps.take(PassportSummary.stampSlots).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(
+          title: l10n.passportStamps,
+          trailing: l10n.passportStampsCount(
+            summary.stamps.length.clamp(0, PassportSummary.stampSlots),
+            PassportSummary.stampSlots,
+          ),
+        ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            const gap = 12.0;
+            final size = (constraints.maxWidth - gap * 3) / 4;
+            return Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (var i = 0; i < PassportSummary.stampSlots; i++)
+                  _Stamp(
+                    size: size,
+                    color: _Body._stampColors[i % _Body._stampColors.length],
+                    stamp: i < stamps.length ? stamps[i] : null,
+                    locale: locale,
+                  ),
+              ],
+            );
+          },
+        ),
+        if (stamps.isEmpty) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.passportEmptyStamps,
+                  style: AppTypography.body(),
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.go(RouteNames.searchFor('events')),
+                child: Text(l10n.passportEmptyAction),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Saved posts tab: bookmarked Republic posts.
+class _SavedTab extends StatelessWidget {
+  const _SavedTab({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          l10n.passportTabSaved,
+          style: AppTypography.display(size: 20),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.passportSavedEmpty,
+                  style: AppTypography.body(color: AppColors.textMuted),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => context.push(RouteNames.republic),
+                  child: Text(l10n.passportSavedAction),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Earn tab: Foxer roles the citizen can apply for.
+class _EarnTab extends StatelessWidget {
+  const _EarnTab({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          l10n.passportTabEarn,
+          style: AppTypography.display(size: 20),
+        ),
+        const SizedBox(height: 8),
+        Text(l10n.passportEarnIntro, style: AppTypography.body()),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => context.push(RouteNames.roles),
+            child: Text(l10n.passportEarnApply),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _IdCard extends StatelessWidget {

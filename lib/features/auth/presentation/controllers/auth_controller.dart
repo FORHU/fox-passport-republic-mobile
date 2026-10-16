@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_template/core/config/app_config.dart';
+import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
@@ -115,9 +116,28 @@ class AuthController extends Notifier<AuthState> {
     state = const AuthState();
   }
 
+  /// The profile step is answered once per account, not once per device: a
+  /// profile with a city was set up already (here or on another device or
+  /// browser), so the router must not send that user back to it.
+  Future<void> _markProfileSetUp() async {
+    final storage = ref.read(storageServiceProvider);
+    if (storage.onboardingSeen) return;
+    try {
+      final body = await ref.read(apiServiceProvider).get(ApiEndpoints.profile);
+      final data = body is Map ? (body['data'] ?? body) : null;
+      final city = data is Map ? data['city'] : null;
+      if (city is String && city.trim().isNotEmpty) {
+        await storage.setOnboardingSeen();
+      }
+    } on Object {
+      // Offline or refused: the local flag decides, as before.
+    }
+  }
+
   /// Silent background re-validation of the stored token.
   Future<void> refreshAuth() async {
     final result = await ref.read(refreshAuthUseCaseProvider).execute();
+    if (result.isRight()) await _markProfileSetUp();
     result.fold(
       // If failed (e.g. token expired), sign out silently.
       (failure) => state = const AuthState(),
@@ -129,6 +149,9 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true);
 
     final result = await ref.read(loginUseCaseProvider)(email, password);
+    // Before the signed-in state reaches the router, so it can skip the
+    // profile step for an account that has one.
+    if (result.isRight()) await _markProfileSetUp();
 
     return result.fold(
       (failure) {
@@ -153,6 +176,7 @@ class AuthController extends Notifier<AuthState> {
 
     final result =
         await ref.read(authRepositoryProvider).loginWithSocial(provider);
+    if (result.isRight()) await _markProfileSetUp();
 
     return result.fold(
       (failure) {
