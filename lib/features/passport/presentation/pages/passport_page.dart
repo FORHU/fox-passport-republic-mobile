@@ -136,9 +136,9 @@ class _PassportPageState extends ConsumerState<PassportPage> {
             onAction: () => ref.invalidate(passportProvider),
           ),
           data: (summary) => _StampsOnly(
-                summary: summary,
-                locale: Localizations.localeOf(context).toString(),
-              ),
+            summary: summary,
+            locale: Localizations.localeOf(context).toString(),
+          ),
         );
       case _Tab.matches:
         return requests.when(
