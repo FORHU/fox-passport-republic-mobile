@@ -666,5 +666,14 @@
   "republicHoursAgo": "{count} h",
   "@republicHoursAgo": {"placeholders":{"count":{"type":"int"}}},
   "republicDaysAgo": "{count} d",
-  "@republicDaysAgo": {"placeholders":{"count":{"type":"int"}}}
+  "@republicDaysAgo": {"placeholders":{"count":{"type":"int"}}},
+  "passportTabProgress": "Progreso",
+  "passportTabStamps": "Sellos",
+  "passportTabMatches": "Coincidencias",
+  "passportTabSaved": "Guardado",
+  "passportTabEarn": "Ganar",
+  "passportSavedEmpty": "No hay publicaciones guardadas aún.",
+  "passportSavedAction": "Explorar República",
+  "passportEarnIntro": "Solicita convertirte en Foxer — los anfitriones, lugares, equipo y talento hacen funcionar FoxPassport.",
+  "passportEarnApply": "Solicitar en la web"
 }

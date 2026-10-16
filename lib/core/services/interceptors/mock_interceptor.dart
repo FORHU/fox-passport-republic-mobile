@@ -311,6 +311,33 @@ class MockInterceptor extends Interceptor {
       return;
     }
 
+    // One venue, so the detail page has something to show in mock mode.
+    final venueMatch = RegExp(r'^/venues/([^/]+)$').firstMatch(path);
+    if (venueMatch != null && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'venue': {
+            'id': venueMatch.group(1),
+            'name': 'Sky Hall',
+            'description': 'A bright hall with a garden terrace, a stage '
+                'and a full sound system.',
+            'category': 'indoor',
+            'address': '12 Roxas Avenue',
+            'city': 'Davao City',
+            'country': 'Philippines',
+            'capacity': 120,
+            'price': '15000',
+            'billingRate': 'daily',
+            'images': <Object>[],
+            'spaceType': ['indoor'],
+            'amenities': ['Air conditioning', 'Parking'],
+            'policies': ['No smoking indoors', 'Music off by 11 pm'],
+          },
+        }),
+      );
+      return;
+    }
+
     if (path.startsWith('/reviews/listing/')) {
       handler.resolve(
         _ok(options, {

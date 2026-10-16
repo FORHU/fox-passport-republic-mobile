@@ -228,6 +228,7 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
                               .backButtonTooltip,
                           style: IconButton.styleFrom(
                             backgroundColor: AppColors.canvas.withAlpha(180),
+                            foregroundColor: AppColors.textPrimary,
                           ),
                           onPressed: () => context.pop(),
                           icon: const Icon(Icons.arrow_back_rounded),
