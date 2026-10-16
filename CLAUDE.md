@@ -8,9 +8,9 @@ version of the web app `fox-passport-republic-app` and talks to
 
 - **`docs/mobile-design.md` is the source of truth for how the app looks**:
   dark canvas, lime accent, same as the web app. Read it first.
-- **`docs/mockups/*.html`** are the layout and copy reference for the screens
-  designed so far (welcome carousel, auth, home, search, venue detail, tickets,
-  passport, messages, venue booking flow). Match them.
+- **`docs/mockups/full-app.html`** is the layout and copy reference for every
+  screen designed so far, in app order; `docs/mockups/onboarding-auth.html`
+  has the clickable welcome carousel and auth. Match them.
 - The app shares the web's brand but not its page layouts. Screens behind
   sign-in follow the rules in section 6 of the design spec.
 - `THEMING.md` and section 1 of `DESIGN_SYSTEM_AND_INTEGRATION.md` describe the
@@ -24,8 +24,8 @@ version of the web app `fox-passport-republic-app` and talks to
 ## Scope and plan
 
 - `docs/CITIZEN_CORE_PORT_PLAN.md` — screen list, API mapping, milestones and
-  progress. Bottom bar is to become Home · Search · Tickets · Messages ·
-  Passport (the code still has Profile as the fifth tab).
+  progress. Bottom bar is to become Home · Search · Bookings · Messages ·
+  Passport (milestone 11; the code still has Map as a tab).
 - `docs/BACKEND_INTEGRATION.md` and `SYSTEM_ARCHITECTURE.md` — API and
   architecture.
 
