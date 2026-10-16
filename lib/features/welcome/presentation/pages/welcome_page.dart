@@ -96,8 +96,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                         onPressed: _onPrimary,
                       ),
                       const SizedBox(height: 8),
-                      // Fixed height so the button does not jump between
-                      // slides.
+                      // Fixed height so the button does not jump
+                      // between slides.
                       SizedBox(
                         height: 48,
                         // Links are Flexible so a long translation shrinks
