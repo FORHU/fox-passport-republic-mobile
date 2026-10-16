@@ -74,19 +74,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     final state = ref.watch(onboardingControllerProvider);
     final controller = ref.read(onboardingControllerProvider.notifier);
 
-    // Surface save errors as a toast, then they clear on the next change.
-    ref.listen(onboardingControllerProvider.select((s) => s.error), (_, e) {
-      if (e != null) showTopToast(context, e);
-    });
-    // The loaded profile may have newer values than the cached session user.
-    ref.listen(onboardingControllerProvider.select((s) => s.isLoading),
-        (was, loading) {
-      if (was == true && !loading) {
-        final s = ref.read(onboardingControllerProvider);
-        if (_name.text != s.name) _name.text = s.name;
-        if (_district.text != s.district) _district.text = s.district;
-      }
-    });
+    ref
+      ..listen(onboardingControllerProvider.select((s) => s.error), (_, e) {
+        if (e != null) showTopToast(context, e);
+      })
+      // The loaded profile may have newer values than the cached session user.
+      ..listen(onboardingControllerProvider.select((s) => s.isLoading),
+          (was, loading) {
+        if (was == true && !loading) {
+          final s = ref.read(onboardingControllerProvider);
+          if (_name.text != s.name) _name.text = s.name;
+          if (_district.text != s.district) _district.text = s.district;
+        }
+      });
 
     return Scaffold(
       backgroundColor: OnboardingPalette.canvas,

@@ -38,6 +38,7 @@ class _MobileGlobeState extends State<_MobileGlobe> {
     super.initState();
     _controller = WebViewController();
     unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+<<<<<<< HEAD
     unawaited(
       _controller.addJavaScriptChannel(
         'FoxPin',
@@ -57,6 +58,10 @@ class _MobileGlobeState extends State<_MobileGlobe> {
     if (oldWidget.html != widget.html) {
       unawaited(_controller.loadHtmlString(widget.html));
     }
+=======
+    unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
+    unawaited(_controller.loadHtmlString(widget.html));
+>>>>>>> 8685e43a59ba05d13b4e6e8d7f8aae2d44061c70
   }
 
   @override

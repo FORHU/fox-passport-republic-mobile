@@ -122,12 +122,17 @@ class _Point {
 List<_Place> _pool(List<_Point> points) {
   final byCoord = <String, _Place>{};
   for (final p in points) {
+<<<<<<< HEAD
     final key = [
       _norm(p.city),
       _norm(p.country ?? ''),
       p.lat.toStringAsFixed(3),
       p.lng.toStringAsFixed(3),
     ].join('|');
+=======
+    final key = '${_norm(p.city)}|${_norm(p.country ?? '')}|'
+        '${p.lat.toStringAsFixed(3)}|${p.lng.toStringAsFixed(3)}';
+>>>>>>> 8685e43a59ba05d13b4e6e8d7f8aae2d44061c70
     final place = byCoord.putIfAbsent(
       key,
       () => _Place(p.city, p.country, p.lat, p.lng, []),
@@ -242,9 +247,15 @@ String _norm(String value) =>
   return (lat: la, lng: lo);
 }
 
+<<<<<<< HEAD
 /// Where a city is when neither the event nor any venue says. Mirrors the web
 /// app's `DESTINATIONS`, plus the Philippine destinations its seeded events
 /// use.
+=======
+/// Where a city is when neither the event nor any venue says. Mirrors the
+/// web app's `DESTINATIONS`, plus the Philippine destinations its seeded
+/// events use.
+>>>>>>> 8685e43a59ba05d13b4e6e8d7f8aae2d44061c70
 const Map<String, ({double lat, double lng})> _knownCities = {
   'manila': (lat: 14.5995, lng: 120.9842),
   'cebu city': (lat: 10.3157, lng: 123.8854),

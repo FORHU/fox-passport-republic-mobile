@@ -57,6 +57,12 @@ class _TopToastState extends State<_TopToast>
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
+=======
+    // TickerFuture is fire-and-forget and annotated with @awaitNotRequired in
+    // modern Flutter versions.
+    // ignore: discarded_futures
+>>>>>>> 8685e43a59ba05d13b4e6e8d7f8aae2d44061c70
     _controller.forward();
     _timer = Timer(widget.duration, _dismiss);
   }
