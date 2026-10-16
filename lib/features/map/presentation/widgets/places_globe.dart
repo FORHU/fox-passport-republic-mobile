@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/home/data/globe_stops_provider.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/shared/widgets/rotating_globe/rotating_globe.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 
-/// Map: every place with events, pinned on a globe you can turn and pinch.
-/// Under it, the same places as a row of cards; picking one centres the globe
-/// on it.
-class MapPage extends ConsumerStatefulWidget {
-  const MapPage({super.key});
+/// The map view of Search: every place with events on a globe you can turn and
+/// pinch, and under it the same places as a row of cards. Choosing a place
+/// centres the globe; tapping a pin or "View events" calls [onViewCity].
+class PlacesGlobe extends ConsumerStatefulWidget {
+  const PlacesGlobe({required this.onViewCity, super.key});
+
+  /// Show the events in this city (the list view, filtered).
+  final ValueChanged<String> onViewCity;
 
   @override
-  ConsumerState<MapPage> createState() => _MapPageState();
+  ConsumerState<PlacesGlobe> createState() => _PlacesGlobeState();
 }
 
-class _MapPageState extends ConsumerState<MapPage> {
+class _PlacesGlobeState extends ConsumerState<PlacesGlobe> {
   GlobeStop? _selected;
 
   @override
@@ -29,113 +30,60 @@ class _MapPageState extends ConsumerState<MapPage> {
     final l10n = context.l10n;
     final stops = ref.watch(globeStopsProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  l10n.mapTitle,
-                  style: AppTypography.display(size: 28),
-                ),
-              ),
-            ),
-            Expanded(
-              child: stops.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.accent),
-                ),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(globeStopsProvider),
-                ),
-                data: (list) => _Body(
-                  stops: list,
-                  selected: _selected,
-                  onSelect: (s) => setState(() => _selected = s),
-                ),
-              ),
-            ),
-          ],
-        ),
+    return stops.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: AppColors.accent),
       ),
-    );
-  }
-}
-
-class _Body extends StatelessWidget {
-  const _Body({
-    required this.stops,
-    required this.selected,
-    required this.onSelect,
-  });
-
-  final List<GlobeStop> stops;
-  final GlobeStop? selected;
-  final ValueChanged<GlobeStop> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final pick = selected;
-
-    return Column(
-      children: [
-        Expanded(
-          child: RotatingGlobe(
-            interactive: true,
-            stops: stops,
-            maxCards: 0,
-            nightLights: false,
-            startLat: pick?.lat ?? 14,
-            startLng: pick?.lng ?? 121,
-            zoom: pick == null ? null : 3.2,
-            onStopTap: (city) => context.go(
-              RouteNames.searchFor('events', city: city),
+      error: (_, __) => AppStateView(
+        kind: AppStateKind.error,
+        title: l10n.apiLoadFailed,
+        actionLabel: l10n.retry,
+        onAction: () => ref.invalidate(globeStopsProvider),
+      ),
+      data: (list) {
+        final pick = _selected;
+        return Column(
+          children: [
+            Expanded(
+              child: RotatingGlobe(
+                interactive: true,
+                stops: list,
+                maxCards: 0,
+                nightLights: false,
+                startLat: pick?.lat ?? 14,
+                startLng: pick?.lng ?? 121,
+                zoom: pick == null ? null : 3.2,
+                onStopTap: widget.onViewCity,
+              ),
             ),
-          ),
-        ),
-        if (stops.isEmpty)
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
+            if (list.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
                   l10n.mapEmpty,
                   textAlign: TextAlign.center,
                   style: AppTypography.body(),
                 ),
-                TextButton(
-                  onPressed: () => context.go(RouteNames.searchFor('events')),
-                  child: Text(l10n.mapEmptyAction),
+              )
+            else
+              SizedBox(
+                height: 132,
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) => _PlaceCard(
+                    stop: list[i],
+                    selected: identical(list[i], pick),
+                    onTap: () => setState(() => _selected = list[i]),
+                    onView: () => widget.onViewCity(list[i].city),
+                  ),
                 ),
-              ],
-            ),
-          )
-        else
-          SizedBox(
-            height: 132,
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              scrollDirection: Axis.horizontal,
-              itemCount: stops.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, i) => _PlaceCard(
-                stop: stops[i],
-                selected: identical(stops[i], pick),
-                onTap: () => onSelect(stops[i]),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -145,11 +93,13 @@ class _PlaceCard extends StatelessWidget {
     required this.stop,
     required this.selected,
     required this.onTap,
+    required this.onView,
   });
 
   final GlobeStop stop;
   final bool selected;
   final VoidCallback onTap;
+  final VoidCallback onView;
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +166,7 @@ class _PlaceCard extends StatelessWidget {
                     ),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () => context.go(
-                        RouteNames.searchFor('events', city: stop.city),
-                      ),
+                      onTap: onView,
                       child: Text(
                         l10n.mapViewEvents,
                         style: AppTypography.body(

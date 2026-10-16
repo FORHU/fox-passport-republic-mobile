@@ -8,6 +8,7 @@ import 'package:flutter_template/features/auth/presentation/pages/register_page.
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
+import 'package:flutter_template/features/booking/presentation/pages/item_booking_page.dart';
 import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
@@ -15,14 +16,16 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
-import 'package:flutter_template/features/map/presentation/pages/map_page.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
 import 'package:flutter_template/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
@@ -31,6 +34,7 @@ import 'package:flutter_template/features/venue/presentation/pages/venue_detail_
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
@@ -157,13 +161,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.roles,
         builder: (context, state) => const RolesPage(),
       ),
-      // Tickets are not a tab: full screen, opened from Passport, the Home
-      // reminder and after a booking.
       GoRoute(
-        path: RouteNames.tickets,
-        builder: (context, state) => TicketsPage(
-          initialSegment: state.uri.queryParameters['segment'],
+        path: '/occasion/:name',
+        builder: (context, state) => OccasionPage(
+          occasion:
+              Occasion.fromName(state.pathParameters['name']) ?? Occasion.other,
         ),
+      ),
+      GoRoute(
+        path: RouteNames.allCategories,
+        builder: (context, state) => const AllCategoriesPage(),
       ),
       GoRoute(
         path: RouteNames.calendar,
@@ -202,6 +209,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }
           return BookingFlowPage(venue: extra! as CatalogItem);
         },
+      ),
+      GoRoute(
+        path: RouteNames.republic,
+        builder: (context, state) => const RepublicPage(),
+      ),
+      GoRoute(
+        path: RouteNames.itemBooking,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ItemBookingPage(item: state.extra! as CatalogItem),
       ),
       GoRoute(
         path: RouteNames.foxer,
@@ -265,6 +283,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     state.uri.queryParameters['kind'],
                   ),
                   initialCity: state.uri.queryParameters['city'],
+                  initialMinCapacity: int.tryParse(
+                    state.uri.queryParameters['capacity'] ?? '',
+                  ),
+                  initialDate: DateTime.tryParse(
+                    state.uri.queryParameters['date'] ?? '',
+                  ),
                 ),
               ),
             ],
@@ -272,8 +296,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.map,
-                builder: (context, state) => const MapPage(),
+                path: RouteNames.tickets,
+                builder: (context, state) => TicketsPage(
+                  initialSegment: state.uri.queryParameters['segment'],
+                ),
               ),
             ],
           ),

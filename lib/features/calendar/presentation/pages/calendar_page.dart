@@ -519,7 +519,7 @@ class _EntryTile extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(sheet);
-                      unawaited(context.push(RouteNames.tickets));
+                      context.go(RouteNames.tickets);
                     },
                     child: Text(l10n.calendarOpenTickets),
                   )

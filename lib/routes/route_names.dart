@@ -24,17 +24,32 @@ class RouteNames {
   static const String search = '/search';
 
   /// `/search?kind=venues` — opens Search on one of its switches.
-  static String searchFor(String kind, {String? city}) => Uri(
+  static String searchFor(
+    String kind, {
+    String? city,
+    int? minCapacity,
+    DateTime? date,
+  }) =>
+      Uri(
         path: search,
-        queryParameters: {'kind': kind, if (city != null) 'city': city},
+        queryParameters: {
+          'kind': kind,
+          if (city != null) 'city': city,
+          if (minCapacity != null) 'capacity': '$minCapacity',
+          if (date != null) 'date': date.toIso8601String().split('T').first,
+        },
       ).toString();
+
+  /// Planning by occasion: `/occasion/wedding`.
+  static String occasion(String name) =>
+      '/occasion/${Uri.encodeComponent(name)}';
+
+  /// Every category, grouped: "Everything you can book".
+  static const String allCategories = '/categories';
   static const String tickets = '/tickets';
 
   /// Everything booked, hosted, organized or supplied, by day.
   static const String calendar = '/calendar';
-
-  /// Map tab: every place with events, on a globe.
-  static const String map = '/map';
 
   /// Tickets, opened on the Requests switch.
   static const String ticketsRequests = '/tickets?segment=requests';
@@ -58,6 +73,13 @@ class RouteNames {
 
   /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
   static const String match = '/match';
+
+  /// The Republic: the community feed.
+  static const String republic = '/republic';
+
+  /// One piece of gear or one service, with its booking. Takes the row as
+  /// `extra`.
+  static const String itemBooking = '/book/item';
 
   /// One venue in full, with Book now. Takes the venue row as `extra`.
   static const String venueDetail = '/venue';

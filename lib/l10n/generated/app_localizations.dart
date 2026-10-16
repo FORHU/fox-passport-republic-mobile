@@ -3193,6 +3193,696 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage this on the web.'**
   String get calendarManageOnWeb;
+
+  /// No description provided for @bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get bookings;
+
+  /// No description provided for @bookingsNeedsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs you'**
+  String get bookingsNeedsYou;
+
+  /// No description provided for @searchList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get searchList;
+
+  /// No description provided for @homePlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you planning?'**
+  String get homePlanning;
+
+  /// No description provided for @homePlanNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan something new'**
+  String get homePlanNew;
+
+  /// No description provided for @homeBookOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Or book just one thing'**
+  String get homeBookOne;
+
+  /// No description provided for @homeHappeningSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Happening soon near you'**
+  String get homeHappeningSoon;
+
+  /// No description provided for @homeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue: {occasion}'**
+  String homeContinue(String occasion);
+
+  /// No description provided for @homeIdeas.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 idea} other{{count} ideas}}'**
+  String homeIdeas(int count);
+
+  /// No description provided for @homeMoreCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more'**
+  String homeMoreCount(int count);
+
+  /// No description provided for @occasionBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get occasionBirthday;
+
+  /// No description provided for @occasionWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get occasionWedding;
+
+  /// No description provided for @occasionCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get occasionCorporate;
+
+  /// No description provided for @occasionSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get occasionSocial;
+
+  /// No description provided for @occasionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get occasionOther;
+
+  /// No description provided for @occasionAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get occasionAll;
+
+  /// No description provided for @categoryVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get categoryVenues;
+
+  /// No description provided for @categoryPhotography.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get categoryPhotography;
+
+  /// No description provided for @categoryVideography.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get categoryVideography;
+
+  /// No description provided for @categoryDj.
+  ///
+  /// In en, this message translates to:
+  /// **'DJ'**
+  String get categoryDj;
+
+  /// No description provided for @categoryLiveBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Live band'**
+  String get categoryLiveBand;
+
+  /// No description provided for @categoryMc.
+  ///
+  /// In en, this message translates to:
+  /// **'MC'**
+  String get categoryMc;
+
+  /// No description provided for @categoryCatering.
+  ///
+  /// In en, this message translates to:
+  /// **'Catering'**
+  String get categoryCatering;
+
+  /// No description provided for @categoryDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get categoryDesign;
+
+  /// No description provided for @categoryStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get categoryStaff;
+
+  /// No description provided for @categoryEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get categoryEntertainment;
+
+  /// No description provided for @categorySound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get categorySound;
+
+  /// No description provided for @categoryDecor.
+  ///
+  /// In en, this message translates to:
+  /// **'Decor'**
+  String get categoryDecor;
+
+  /// No description provided for @categoryFurniture.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get categoryFurniture;
+
+  /// No description provided for @categoryEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get categoryEquipment;
+
+  /// No description provided for @occasionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{occasion} ideas'**
+  String occasionTitle(String occasion);
+
+  /// No description provided for @occasionTitleIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{occasion} ideas in {city}'**
+  String occasionTitleIn(String occasion, String city);
+
+  /// No description provided for @occasionPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready-made packages'**
+  String get occasionPackages;
+
+  /// No description provided for @occasionAskPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a price'**
+  String get occasionAskPrice;
+
+  /// No description provided for @occasionNoPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No ready-made {occasion} packages yet.'**
+  String occasionNoPackages(String occasion);
+
+  /// No description provided for @occasionNoPackagesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'No ready-made {occasion} packages in {city} yet.'**
+  String occasionNoPackagesIn(String occasion, String city);
+
+  /// No description provided for @occasionPlanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a Foxer plan it'**
+  String get occasionPlanner;
+
+  /// No description provided for @occasionPlannerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell a planner what you want and they handle the rest.'**
+  String get occasionPlannerBody;
+
+  /// No description provided for @occasionFindPlanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a planner'**
+  String get occasionFindPlanner;
+
+  /// No description provided for @occasionYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan it yourself'**
+  String get occasionYourself;
+
+  /// No description provided for @occasionNoneHere.
+  ///
+  /// In en, this message translates to:
+  /// **'None here yet'**
+  String get occasionNoneHere;
+
+  /// No description provided for @planAddDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add date'**
+  String get planAddDate;
+
+  /// No description provided for @planGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests'**
+  String get planGuests;
+
+  /// No description provided for @planWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get planWhen;
+
+  /// No description provided for @planApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get planApply;
+
+  /// No description provided for @guestsUpTo20.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 20'**
+  String get guestsUpTo20;
+
+  /// No description provided for @guests20to50.
+  ///
+  /// In en, this message translates to:
+  /// **'20–50'**
+  String get guests20to50;
+
+  /// No description provided for @guests50to100.
+  ///
+  /// In en, this message translates to:
+  /// **'50–100'**
+  String get guests50to100;
+
+  /// No description provided for @guests100plus.
+  ///
+  /// In en, this message translates to:
+  /// **'100+'**
+  String get guests100plus;
+
+  /// No description provided for @allCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you can book'**
+  String get allCategoriesTitle;
+
+  /// No description provided for @allCategoriesFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a category'**
+  String get allCategoriesFind;
+
+  /// No description provided for @allCategoriesOccasions.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasions'**
+  String get allCategoriesOccasions;
+
+  /// No description provided for @allCategoriesPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get allCategoriesPeople;
+
+  /// No description provided for @allCategoriesGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get allCategoriesGear;
+
+  /// No description provided for @allCategoriesVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get allCategoriesVenues;
+
+  /// No description provided for @allCategoriesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None yet'**
+  String get allCategoriesNone;
+
+  /// No description provided for @itemBookDays.
+  ///
+  /// In en, this message translates to:
+  /// **'How many days?'**
+  String get itemBookDays;
+
+  /// No description provided for @itemBookQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'How many?'**
+  String get itemBookQuantity;
+
+  /// No description provided for @itemBookPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up'**
+  String get itemBookPickup;
+
+  /// No description provided for @itemBookDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get itemBookDelivery;
+
+  /// No description provided for @itemBookAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get itemBookAddress;
+
+  /// No description provided for @itemBookLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is the event?'**
+  String get itemBookLocation;
+
+  /// No description provided for @itemBookStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get itemBookStarts;
+
+  /// No description provided for @itemBookNeedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a delivery address.'**
+  String get itemBookNeedAddress;
+
+  /// No description provided for @itemBookNeedLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Add where the event is.'**
+  String get itemBookNeedLocation;
+
+  /// No description provided for @itemBookNeedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date.'**
+  String get itemBookNeedDate;
+
+  /// No description provided for @itemBookBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get itemBookBook;
+
+  /// No description provided for @itemBookedSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The owner has been told. Follow it in Messages.'**
+  String get itemBookedSub;
+
+  /// No description provided for @itemBookDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get itemBookDone;
+
+  /// No description provided for @itemBookSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to book.'**
+  String get itemBookSignIn;
+
+  /// No description provided for @itemBookAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About this'**
+  String get itemBookAbout;
+
+  /// No description provided for @itemBookPriceFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get itemBookPriceFrom;
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewsCount(int count);
+
+  /// No description provided for @reviewsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet.'**
+  String get reviewsNone;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String reviewsSeeAll(int count);
+
+  /// No description provided for @reviewsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load the reviews.'**
+  String get reviewsLoadFailed;
+
+  /// No description provided for @reviewWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a review'**
+  String get reviewWrite;
+
+  /// No description provided for @reviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was it?'**
+  String get reviewTitle;
+
+  /// No description provided for @reviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell others what it was like (optional)'**
+  String get reviewHint;
+
+  /// No description provided for @reviewSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Post review'**
+  String get reviewSubmit;
+
+  /// No description provided for @reviewThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks, your review is posted.'**
+  String get reviewThanks;
+
+  /// No description provided for @reviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post your review. Try again.'**
+  String get reviewFailed;
+
+  /// No description provided for @reviewPickStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a star rating.'**
+  String get reviewPickStars;
+
+  /// No description provided for @republicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic'**
+  String get republicTitle;
+
+  /// No description provided for @republicRowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What the community is posting'**
+  String get republicRowBody;
+
+  /// No description provided for @republicTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get republicTabAll;
+
+  /// No description provided for @republicTabCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get republicTabCommunity;
+
+  /// No description provided for @republicTabMarketplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketplace'**
+  String get republicTabMarketplace;
+
+  /// No description provided for @republicEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing posted here yet. Be the first.'**
+  String get republicEmpty;
+
+  /// No description provided for @republicPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get republicPost;
+
+  /// No description provided for @republicCompose.
+  ///
+  /// In en, this message translates to:
+  /// **'New post'**
+  String get republicCompose;
+
+  /// No description provided for @republicComposeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share something with the Republic'**
+  String get republicComposeHint;
+
+  /// No description provided for @republicPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted.'**
+  String get republicPosted;
+
+  /// No description provided for @republicPostFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post that. Try again.'**
+  String get republicPostFailed;
+
+  /// No description provided for @republicLikeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your like.'**
+  String get republicLikeFailed;
+
+  /// No description provided for @republicComments.
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get republicComments;
+
+  /// No description provided for @republicNoComments.
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet.'**
+  String get republicNoComments;
+
+  /// No description provided for @republicCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment'**
+  String get republicCommentHint;
+
+  /// No description provided for @republicSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get republicSend;
+
+  /// No description provided for @republicCommentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post your comment.'**
+  String get republicCommentFailed;
+
+  /// No description provided for @republicEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get republicEdited;
+
+  /// No description provided for @republicJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get republicJustNow;
+
+  /// No description provided for @republicMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m'**
+  String republicMinutesAgo(int count);
+
+  /// No description provided for @republicHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h'**
+  String republicHoursAgo(int count);
+
+  /// No description provided for @republicDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d'**
+  String republicDaysAgo(int count);
+
+  /// No description provided for @passportTabProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get passportTabProgress;
+
+  /// No description provided for @passportTabStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get passportTabStamps;
+
+  /// No description provided for @passportTabMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches'**
+  String get passportTabMatches;
+
+  /// No description provided for @passportTabSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get passportTabSaved;
+
+  /// No description provided for @passportTabEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn'**
+  String get passportTabEarn;
+
+  /// No description provided for @passportSavedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved posts yet.'**
+  String get passportSavedEmpty;
+
+  /// No description provided for @passportSavedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Republic'**
+  String get passportSavedAction;
+
+  /// No description provided for @passportEarnIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.'**
+  String get passportEarnIntro;
+
+  /// No description provided for @passportEarnApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply on web'**
+  String get passportEarnApply;
 }
 
 class _AppLocalizationsDelegate
