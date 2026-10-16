@@ -296,7 +296,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       : results.when(
                           loading: () => const Center(
                             child: CircularProgressIndicator(
-                                color: AppColors.accent,),
+                              color: AppColors.accent,
+                            ),
                           ),
                           error: (_, __) => AppStateView(
                             kind: AppStateKind.error,
