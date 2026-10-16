@@ -17,6 +17,8 @@ linter:
     # one method today, and the abstraction is still worth keeping for
     # testability (mocking) and future extension.
     one_member_abstracts: false
+    # Allows version-conditional diagnostic ignores across varying Flutter/Dart SDKs
+    unnecessary_ignore: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
