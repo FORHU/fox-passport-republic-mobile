@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /// `webview_flutter` has no desktop implementation, so on Windows, macOS and
