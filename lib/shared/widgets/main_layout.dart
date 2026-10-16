@@ -6,7 +6,7 @@ import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/notifications/data/notifications_realtime.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/tickets/tickets_repository.dart';
+import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -55,9 +55,7 @@ class MainLayout extends ConsumerWidget {
           label: context.l10n.bookings,
           icon: Icons.event_available_outlined,
           activeIcon: Icons.event_available_rounded,
-          badgeLabel: _countLabel(
-            ref.watch(upcomingTicketsProvider).asData?.value.length ?? 0,
-          ),
+          badgeLabel: _countLabel(ref.watch(needsYouCountProvider)),
         ),
         route: RouteNames.tickets,
       ),

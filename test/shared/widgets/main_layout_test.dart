@@ -5,9 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
-import 'package:flutter_template/shared/tickets/ticket.dart';
-import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -85,13 +84,16 @@ void main() {
     prefs = await SharedPreferences.getInstance();
   });
 
-  Widget app(GoRouter router, {List<Ticket> upcoming = const []}) =>
+  Widget app(
+    GoRouter router, {
+    List<MatchRequestItem> requests = const [],
+  }) =>
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           realtimeServiceProvider.overrideWithValue(null),
           conversationsProvider.overrideWith((ref) async => const []),
-          upcomingTicketsProvider.overrideWith((ref) async => upcoming),
+          myMatchRequestsProvider.overrideWith((ref) async => requests),
         ],
         child: MaterialApp.router(
           routerConfig: router,
@@ -177,12 +179,40 @@ void main() {
     expect(find.text('Map'), findsNothing);
   });
 
-  testWidgets('Bookings shows how many are coming up', (tester) async {
+  MatchRequestItem request({required bool accepted, num total = 0}) =>
+      MatchRequestItem.tryParse({
+        'id': 'b-${accepted ? 'a' : 'w'}',
+        'status': 'pending',
+        'totalAmount': total,
+        'startAt': '2099-12-20T10:00:00.000Z',
+        'payments': const <Object>[],
+        'event': {
+          'id': 'e',
+          'name': 'Match with Garden Birthday',
+          'requestStatus': accepted ? 'approved' : 'pending',
+        },
+      })!;
+
+  testWidgets('Bookings badge counts what needs the person', (tester) async {
     await tester.pumpWidget(
-      app(_router(), upcoming: [Ticket.sample(), Ticket.sample()]),
+      app(
+        _router(),
+        requests: [
+          request(accepted: true, total: 18000),
+          request(accepted: false),
+        ],
+      ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('2'), findsOneWidget);
+    // One accepted request waiting for payment; the open one does not count.
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  testWidgets('no badge when nothing needs the person', (tester) async {
+    await tester.pumpWidget(app(_router()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1'), findsNothing);
   });
 }

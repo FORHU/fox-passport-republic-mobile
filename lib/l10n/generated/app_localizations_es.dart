@@ -1715,4 +1715,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bookings => 'Reservas';
+
+  @override
+  String get bookingsNeedsYou => 'Te necesita';
 }

@@ -569,5 +569,6 @@
   "calendarRoleSupplier": "Supplying",
   "calendarOpenTickets": "Open tickets",
   "calendarManageOnWeb": "Manage this on the web.",
-  "bookings": "Bookings"
+  "bookings": "Bookings",
+  "bookingsNeedsYou": "Needs you"
 }
