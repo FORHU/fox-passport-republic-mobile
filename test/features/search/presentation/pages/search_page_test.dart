@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/features/favorites/data/favorites_repository.dart';
+import 'package:flutter_template/features/home/data/globe_stops_provider.dart';
+import 'package:flutter_template/features/map/presentation/widgets/places_globe.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -262,6 +264,41 @@ void main() {
     expect(find.text('Try again'), findsOneWidget);
 
     await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
+
+  testWidgets('List and Map switch the same results page', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogProvider.overrideWith(
+            (ref, q) async =>
+                CatalogPage(items: _venues, total: _venues.length),
+          ),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+          globeStopsProvider.overrideWith((ref) async => const []),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('2 VENUES'), findsOneWidget);
+    expect(find.byType(PlacesGlobe), findsNothing);
+
+    await tester.tap(find.text('Map'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlacesGlobe), findsOneWidget);
+    expect(find.text('Sky Hall'), findsNothing);
+
+    await tester.tap(find.text('List'));
     await tester.pumpAndSettle();
 
     expect(find.text('Sky Hall'), findsOneWidget);

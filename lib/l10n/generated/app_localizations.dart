@@ -3205,6 +3205,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Needs you'**
   String get bookingsNeedsYou;
+
+  /// No description provided for @searchList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get searchList;
 }
 
 class _AppLocalizationsDelegate
