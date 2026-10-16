@@ -1,0 +1,8 @@
+{
+  // Hot reload whenever a Dart file is saved (including auto-save), but only
+  // when something actually changed. Needs the app started from VS Code
+  // (F5 / "Flutter: Dev"), not from a separate terminal.
+  "dart.hotReloadOnSave": "allIfDirty",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 800
+}

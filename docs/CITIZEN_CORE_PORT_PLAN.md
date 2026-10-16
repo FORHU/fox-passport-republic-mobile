@@ -84,10 +84,11 @@ lib/features/
   profile/         (extend)
 ```
 
-Shell navigation (bottom bar): **Home · Search · Tickets · Messages ·
-Passport** (changed 2026-10-13; was Home · Search · Tickets · Passport ·
-Profile, which is what the code still has). Profile and settings open from
-Passport. Notifications via app-bar bell. Replace template routes (`quiz`,
+Shell navigation (bottom bar): **Home · Search · Bookings · Messages ·
+Passport** (decided 2026-10-15; built today as Home · Search · Map · Messages
+· Passport). Map becomes a List / Map switch inside Search; Bookings holds
+tickets, requests and the calendar; profile and settings open from Passport.
+Details in `docs/mobile-design.md` section 6. Notifications via app-bar bell. Replace template routes (`quiz`,
 `recommendations`, `cart`, `worldMap`) as each real feature lands.
 
 ---
@@ -144,6 +145,13 @@ Passport. Notifications via app-bar bell. Replace template routes (`quiz`,
     filters are local. Socket presence/live updates, shared-inbox author
     details, attachments, message actions, and new-conversation creation
     remain.
+11. **Navigation and Home** (added 2026-10-15) — tab bar to Home · Search ·
+    Bookings · Messages · Passport (Map into Search as a List / Map switch;
+    Tickets, My requests and the calendar into the Bookings tab; Passport
+    icon is the profile photo); Home rebuilt from `GET /categories` with
+    occasion tiles, "book just one thing", "happening soon" and the
+    returning-user layout; the occasion results page. Design:
+    `docs/mobile-design.md` section 6, mockup `docs/mockups/full-app.html`.
 
 Each milestone ends with `flutter analyze` clean and tests passing.
 
@@ -210,3 +218,4 @@ Each milestone ends with `flutter analyze` clean and tests passing.
 - [ ] M8 Map (Mapbox)
 - [ ] M9 Polish
 - [ ] M10 Messages (partial: inbox, text chat, requests, and tab connected; realtime and advanced chat actions remain)
+- [ ] M11 Navigation and Home (Bookings tab, Map into Search, data-driven Home, occasion results)

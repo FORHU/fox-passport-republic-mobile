@@ -728,6 +728,63 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchFilters => 'Filtros';
 
   @override
+  String get searchFilterCity => 'Ciudad';
+
+  @override
+  String get searchFilterMinPrice => 'Precio mínimo';
+
+  @override
+  String get searchFilterMaxPrice => 'Precio máximo';
+
+  @override
+  String get searchFilterMinCapacity => 'Invitados mínimos';
+
+  @override
+  String get searchChooseDates => 'Elegir fechas';
+
+  @override
+  String get searchSortBy => 'Ordenar por';
+
+  @override
+  String get searchSortRecommended => 'Recomendados';
+
+  @override
+  String get searchSortPriceLow => 'Precio: menor a mayor';
+
+  @override
+  String get searchSortPriceHigh => 'Precio: mayor a menor';
+
+  @override
+  String get searchSortDateSoonest => 'Fecha: más próxima';
+
+  @override
+  String get searchSortDateLatest => 'Fecha: más lejana';
+
+  @override
+  String get searchClearFilters => 'Quitar filtros';
+
+  @override
+  String get searchApplyFilters => 'Aplicar';
+
+  @override
+  String get searchInvalidFilter => 'Revisa los filtros de precio e invitados.';
+
+  @override
+  String get searchEventDetails => 'Detalles del evento';
+
+  @override
+  String get searchEventDate => 'Fecha';
+
+  @override
+  String get searchEventLocation => 'Ubicación';
+
+  @override
+  String get searchEventGuests => 'Invitados';
+
+  @override
+  String get searchEventPrice => 'Precio';
+
+  @override
   String get searchNew => 'Nuevo';
 
   @override
@@ -1259,6 +1316,118 @@ class AppLocalizationsEs extends AppLocalizations {
   String get venueEntrance => 'Cómo entrar';
 
   @override
+  String get foxerLoadFailed => 'No pudimos cargar este Foxer.';
+
+  @override
+  String get foxerMatchMe => 'Haz match';
+
+  @override
+  String get foxerMessage => 'Mensaje';
+
+  @override
+  String get foxerOffers => 'Qué ofrece';
+
+  @override
+  String get foxerNoOffers =>
+      'Aún no hay nada publicado. Envía una solicitud y cuéntale lo que necesitas.';
+
+  @override
+  String get foxerSampleNote => 'Foxer de ejemplo';
+
+  @override
+  String foxerReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reseñas',
+      one: '1 reseña',
+      zero: 'Sin reseñas',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get matchTitle => 'Haz match';
+
+  @override
+  String matchIntro(String name) {
+    return 'Cuéntale a $name lo que tienes en mente. Aceptará o rechazará, y no se cobra nada hasta que acepte.';
+  }
+
+  @override
+  String get matchWhat => '¿Qué te gustaría?';
+
+  @override
+  String get matchOwnIdea => 'Mi propia idea';
+
+  @override
+  String get matchWhen => '¿Qué día?';
+
+  @override
+  String get matchGuests => '¿Cuántos invitados?';
+
+  @override
+  String get matchMessage => '¿Algo que deba saber?';
+
+  @override
+  String get matchMessageHint =>
+      'Opcional. El ambiente, el lugar, tu presupuesto';
+
+  @override
+  String get matchNoCharge => 'No se te cobra por enviar una solicitud.';
+
+  @override
+  String get matchSend => 'Enviar solicitud';
+
+  @override
+  String get matchFailed =>
+      'No pudimos enviar tu solicitud. Inténtalo de nuevo.';
+
+  @override
+  String get matchSentTitle => 'Solicitud enviada';
+
+  @override
+  String matchSentBody(String name) {
+    return '$name te responderá. Te avisaremos cuando lo haga.';
+  }
+
+  @override
+  String get ticketsRequests => 'Solicitudes';
+
+  @override
+  String get ticketsEmptyRequests =>
+      'Aún no hay solicitudes. Pídele a un Foxer que haga match desde su perfil.';
+
+  @override
+  String get matchViewRequests => 'Ver mis solicitudes';
+
+  @override
+  String get matchStateWaiting => 'Esperando respuesta';
+
+  @override
+  String get matchStateAccepted => 'Aceptada';
+
+  @override
+  String get matchStateConfirmed => 'Confirmada';
+
+  @override
+  String get matchStateDeclined => 'Rechazada';
+
+  @override
+  String get matchTheFoxer => 'el Foxer';
+
+  @override
+  String matchWaitingNote(String name) {
+    return '$name tiene tu solicitud y responderá pronto.';
+  }
+
+  @override
+  String get matchPayNow => 'Pagar ahora';
+
+  @override
+  String get matchWithdraw => 'Retirar';
+
+  @override
   String get bookClose => 'Cerrar';
 
   @override
@@ -1449,4 +1618,483 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get comingSoonVoucher => 'Los códigos de cupón llegarán pronto';
+
+  @override
+  String get map => 'Mapa';
+
+  @override
+  String get mapTitle => 'Eventos en el mundo';
+
+  @override
+  String get mapEmpty => 'Aún no hay eventos en el mapa';
+
+  @override
+  String get mapViewEvents => 'Ver eventos';
+
+  @override
+  String get passportTicketsHint => 'Próximos, pasados y tus solicitudes';
+
+  @override
+  String mapEventCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count eventos',
+      one: '1 evento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeEmptyVenues => 'Aún no hay lugares aquí.';
+
+  @override
+  String get homeEmptyVenuesAction => 'Explorar';
+
+  @override
+  String get homeEmptyFoxers => 'Aún no hay Foxers aquí. Sé el primero.';
+
+  @override
+  String get homeEmptyFoxersAction => 'Serlo';
+
+  @override
+  String get searchNothingHere => 'Aún no hay nada aquí';
+
+  @override
+  String get searchTryFewerFilters =>
+      'Prueba quitando un filtro o una palabra.';
+
+  @override
+  String get mapEmptyAction => 'Explorar eventos';
+
+  @override
+  String get passportEmptyStamps =>
+      'Asiste a un evento para ganar tu primer sello.';
+
+  @override
+  String get passportEmptyAction => 'Buscar eventos';
+
+  @override
+  String get calendarTitle => 'Calendario';
+
+  @override
+  String get calendarHint => 'Todo lo que reservas, organizas o ofreces';
+
+  @override
+  String get calendarToday => 'Hoy';
+
+  @override
+  String get calendarNothingToday => 'Nada este día.';
+
+  @override
+  String get calendarPreviousMonth => 'Mes anterior';
+
+  @override
+  String get calendarNextMonth => 'Mes siguiente';
+
+  @override
+  String get calendarRoleGuest => 'Mis reservas';
+
+  @override
+  String get calendarRoleHost => 'Eventos que organizo';
+
+  @override
+  String get calendarRoleOrganizer => 'Gestionando';
+
+  @override
+  String get calendarRoleVenue => 'En mis lugares';
+
+  @override
+  String get calendarRoleSupplier => 'Ofreciendo';
+
+  @override
+  String get calendarOpenTickets => 'Abrir boletos';
+
+  @override
+  String get calendarManageOnWeb => 'Gestiona esto en la web.';
+
+  @override
+  String get bookings => 'Reservas';
+
+  @override
+  String get bookingsNeedsYou => 'Te necesita';
+
+  @override
+  String get searchList => 'Lista';
+
+  @override
+  String get homePlanning => '¿Qué estás planeando?';
+
+  @override
+  String get homePlanNew => 'Planea algo nuevo';
+
+  @override
+  String get homeBookOne => 'O reserva solo una cosa';
+
+  @override
+  String get homeHappeningSoon => 'Pronto cerca de ti';
+
+  @override
+  String homeContinue(String occasion) {
+    return 'Continuar: $occasion';
+  }
+
+  @override
+  String homeIdeas(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ideas',
+      one: '1 idea',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeMoreCount(int count) {
+    return '$count más';
+  }
+
+  @override
+  String get occasionBirthday => 'Cumpleaños';
+
+  @override
+  String get occasionWedding => 'Boda';
+
+  @override
+  String get occasionCorporate => 'Corporativo';
+
+  @override
+  String get occasionSocial => 'Social';
+
+  @override
+  String get occasionOther => 'Otro';
+
+  @override
+  String get occasionAll => 'Todo';
+
+  @override
+  String get categoryVenues => 'Lugares';
+
+  @override
+  String get categoryPhotography => 'Fotos';
+
+  @override
+  String get categoryVideography => 'Video';
+
+  @override
+  String get categoryDj => 'DJ';
+
+  @override
+  String get categoryLiveBand => 'Banda en vivo';
+
+  @override
+  String get categoryMc => 'Maestro de ceremonias';
+
+  @override
+  String get categoryCatering => 'Catering';
+
+  @override
+  String get categoryDesign => 'Diseño';
+
+  @override
+  String get categoryStaff => 'Personal';
+
+  @override
+  String get categoryEntertainment => 'Entretenimiento';
+
+  @override
+  String get categorySound => 'Sonido';
+
+  @override
+  String get categoryDecor => 'Decoración';
+
+  @override
+  String get categoryFurniture => 'Muebles';
+
+  @override
+  String get categoryEquipment => 'Equipo';
+
+  @override
+  String occasionTitle(String occasion) {
+    return 'Ideas de $occasion';
+  }
+
+  @override
+  String occasionTitleIn(String occasion, String city) {
+    return 'Ideas de $occasion en $city';
+  }
+
+  @override
+  String get occasionPackages => 'Paquetes listos';
+
+  @override
+  String get occasionAskPrice => 'Pide un precio';
+
+  @override
+  String occasionNoPackages(String occasion) {
+    return 'Aún no hay paquetes de $occasion.';
+  }
+
+  @override
+  String occasionNoPackagesIn(String occasion, String city) {
+    return 'Aún no hay paquetes de $occasion en $city.';
+  }
+
+  @override
+  String get occasionPlanner => 'Que un Foxer lo planee';
+
+  @override
+  String get occasionPlannerBody =>
+      'Cuéntale a un planificador lo que quieres y él se encarga.';
+
+  @override
+  String get occasionFindPlanner => 'Buscar planificador';
+
+  @override
+  String get occasionYourself => 'Planéalo tú';
+
+  @override
+  String get occasionNoneHere => 'Aún no hay';
+
+  @override
+  String get planAddDate => 'Añadir fecha';
+
+  @override
+  String get planGuests => 'Invitados';
+
+  @override
+  String get planWhen => 'Cuándo';
+
+  @override
+  String get planApply => 'Listo';
+
+  @override
+  String get guestsUpTo20 => 'Hasta 20';
+
+  @override
+  String get guests20to50 => '20–50';
+
+  @override
+  String get guests50to100 => '50–100';
+
+  @override
+  String get guests100plus => '100+';
+
+  @override
+  String get allCategoriesTitle => 'Todo lo que puedes reservar';
+
+  @override
+  String get allCategoriesFind => 'Buscar una categoría';
+
+  @override
+  String get allCategoriesOccasions => 'Ocasiones';
+
+  @override
+  String get allCategoriesPeople => 'Personas';
+
+  @override
+  String get allCategoriesGear => 'Equipo';
+
+  @override
+  String get allCategoriesVenues => 'Lugares';
+
+  @override
+  String get allCategoriesNone => 'Aún no';
+
+  @override
+  String get itemBookDays => '¿Cuántos días?';
+
+  @override
+  String get itemBookQuantity => '¿Cuántos?';
+
+  @override
+  String get itemBookPickup => 'Recoger';
+
+  @override
+  String get itemBookDelivery => 'Entrega';
+
+  @override
+  String get itemBookAddress => 'Dirección de entrega';
+
+  @override
+  String get itemBookLocation => '¿Dónde es el evento?';
+
+  @override
+  String get itemBookStarts => 'Empieza';
+
+  @override
+  String get itemBookNeedAddress => 'Añade una dirección de entrega.';
+
+  @override
+  String get itemBookNeedLocation => 'Añade dónde es el evento.';
+
+  @override
+  String get itemBookNeedDate => 'Elige una fecha.';
+
+  @override
+  String get itemBookBook => 'Reservar';
+
+  @override
+  String get itemBookedSub =>
+      'Se avisó al propietario. Sigue la reserva en Mensajes.';
+
+  @override
+  String get itemBookDone => 'Listo';
+
+  @override
+  String get itemBookSignIn => 'Inicia sesión para reservar.';
+
+  @override
+  String get itemBookAbout => 'Sobre esto';
+
+  @override
+  String get itemBookPriceFrom => 'Desde';
+
+  @override
+  String get reviewsTitle => 'Reseñas';
+
+  @override
+  String reviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reseñas',
+      one: '1 reseña',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewsNone => 'Aún no hay reseñas.';
+
+  @override
+  String reviewsSeeAll(int count) {
+    return 'Ver las $count';
+  }
+
+  @override
+  String get reviewsLoadFailed => 'No pudimos cargar las reseñas.';
+
+  @override
+  String get reviewWrite => 'Dejar una reseña';
+
+  @override
+  String get reviewTitle => '¿Cómo fue?';
+
+  @override
+  String get reviewHint => 'Cuéntales a otros cómo fue (opcional)';
+
+  @override
+  String get reviewSubmit => 'Publicar reseña';
+
+  @override
+  String get reviewThanks => 'Gracias, tu reseña está publicada.';
+
+  @override
+  String get reviewFailed =>
+      'No pudimos publicar tu reseña. Inténtalo de nuevo.';
+
+  @override
+  String get reviewPickStars => 'Elige una calificación.';
+
+  @override
+  String get republicTitle => 'República';
+
+  @override
+  String get republicRowBody => 'Lo que publica la comunidad';
+
+  @override
+  String get republicTabAll => 'Todo';
+
+  @override
+  String get republicTabCommunity => 'Comunidad';
+
+  @override
+  String get republicTabMarketplace => 'Mercado';
+
+  @override
+  String get republicEmpty => 'Aún no hay publicaciones. Sé el primero.';
+
+  @override
+  String get republicPost => 'Publicar';
+
+  @override
+  String get republicCompose => 'Nueva publicación';
+
+  @override
+  String get republicComposeHint => 'Comparte algo con la República';
+
+  @override
+  String get republicPosted => 'Publicado.';
+
+  @override
+  String get republicPostFailed => 'No pudimos publicarlo. Inténtalo de nuevo.';
+
+  @override
+  String get republicLikeFailed => 'No pudimos guardar tu me gusta.';
+
+  @override
+  String get republicComments => 'Comentarios';
+
+  @override
+  String get republicNoComments => 'Aún no hay comentarios.';
+
+  @override
+  String get republicCommentHint => 'Añade un comentario';
+
+  @override
+  String get republicSend => 'Enviar';
+
+  @override
+  String get republicCommentFailed => 'No pudimos publicar tu comentario.';
+
+  @override
+  String get republicEdited => 'editado';
+
+  @override
+  String get republicJustNow => 'ahora';
+
+  @override
+  String republicMinutesAgo(int count) {
+    return '$count min';
+  }
+
+  @override
+  String republicHoursAgo(int count) {
+    return '$count h';
+  }
+
+  @override
+  String republicDaysAgo(int count) {
+    return '$count d';
+  }
+
+  @override
+  String get passportTabProgress => 'Progreso';
+
+  @override
+  String get passportTabStamps => 'Sellos';
+
+  @override
+  String get passportTabMatches => 'Coincidencias';
+
+  @override
+  String get passportTabSaved => 'Guardado';
+
+  @override
+  String get passportTabEarn => 'Ganar';
+
+  @override
+  String get passportSavedEmpty => 'No hay publicaciones guardadas aún.';
+
+  @override
+  String get passportSavedAction => 'Explorar República';
+
+  @override
+  String get passportEarnIntro =>
+      'Solicita convertirte en Foxer — los anfitriones, lugares, equipo y talento hacen funcionar FoxPassport.';
+
+  @override
+  String get passportEarnApply => 'Solicitar en la web';
 }

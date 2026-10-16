@@ -16,12 +16,13 @@ are designed for the phone and are not ports of web pages. See section 6.
 
 Mockups (open in a browser, they are the layout and copy reference):
 
-- `docs/mockups/onboarding-auth.html` — Welcome carousel, Log in / Create account
-- `docs/mockups/app-screens.html` — Home, Search, Venue detail, Tickets, Passport
-- `docs/mockups/messages.html` — Inbox, Chat
-- `docs/mockups/booking-flow.html` — Venue booking, from dates to ticket
+- `docs/mockups/full-app.html` — **every screen**, in the order a guest meets
+  them: welcome and sign-in, Home, planning by occasion, Search and map, venue
+  and booking, Bookings, Messages, Passport
+- `docs/mockups/onboarding-auth.html` — the welcome carousel (all six slides)
+  and Log in / Create account, clickable
 
-The last three share `docs/mockups/mockup.css`.
+`full-app.html` uses `docs/mockups/mockup.css`.
 
 ---
 
@@ -33,7 +34,7 @@ The last three share `docs/mockups/mockup.css`.
 | `lib/features/onboarding/presentation/theme/onboarding_palette.dart` | Already holds the web's dark / lime values, local to onboarding | Promote these values into `AppColors`; onboarding then reads the shared tokens and this file can go |
 | `lib/features/auth/presentation/**` (`AuthPageShell`, forms, social buttons) | White card on light grey, ink badge icon | Restyle per section 5 |
 | `lib/shared/widgets/*` (buttons, inputs, cards, bottom nav) | Ink-on-white | Restyle per section 3 |
-| Bottom bar | Home · Search · Tickets · Passport · Profile | Change to **Home · Search · Tickets · Messages · Passport** (decided 2026-10-13). Profile and settings move inside Passport. Do not add the web's centre "Republic" button |
+| Bottom bar | Home · Search · Map · Messages · Passport | Change to **Home · Search · Bookings · Messages · Passport** (decided 2026-10-15, section 6). Do not add the web's centre "Republic" button |
 
 Do the token change first, then shared widgets, then screens. Do not leave a
 screen half light and half dark.
@@ -204,7 +205,9 @@ Keep all existing auth logic, validation and controllers. This is a restyle.
 
 ## 6. Signed-in screens
 
-Mockup: `docs/mockups/app-screens.html`.
+Mockup: `docs/mockups/full-app.html` (sections 2 to 8). It is the layout and
+copy reference for every signed-in screen; the numbers in brackets below point
+to its sections.
 
 ### Rules for everything behind sign-in
 
@@ -226,49 +229,162 @@ These come from problems seen on the web app. Do not carry them over.
 
 ### Bottom bar
 
-Home · Search · Tickets · Messages · Passport. Messages shows the unread count
-as a lime badge. Notifications stay behind the bell on Home.
+**Home · Search · Bookings · Messages · Passport** (decided 2026-10-15,
+replacing Home · Search · Map · Messages · Passport).
 
-### Screens
+- **Map** stops being a tab. It becomes a List / Map switch inside Search
+  (the existing globe can be the map view).
+- **Bookings** is a new tab holding tickets, requests and the calendar (see
+  below). It shows a lime badge with the number of bookings that need the user
+  (for example an approved request waiting for payment).
+- **Messages** shows the unread count as a lime badge.
+- **Passport** uses the user's profile photo as its icon (first initial on a
+  `surfaceRaised` circle when there is no photo): grey ring when inactive, lime
+  ring and lime label when selected. The label stays "Passport".
+- Notifications stay behind the bell on Home.
+- Labels 11px minimum (the current bar uses 10px labels and 9px badge
+  numbers); badges at least 16px tall.
+- Tapping the tab you are on returns to its first screen (already built).
 
-- **Home**: location selector and bell; pill search bar ("What are you
-  planning?"); event-type chips; then, only when the user has an upcoming
-  booking, a slim lime strip (countdown, venue and date, "Ticket" button);
-  then horizontally scrolling sections ("Venues near you", events) and a
-  Foxers section. No headline, no marketing copy.
-- **Search**: search bar with filter icon (filters open a bottom sheet); one
-  row of chips to switch between Events, Venues, Foxers and Gear; result count
-  in label style; results as large photo cards (photo, favourite button, type
-  chip, name, rating or "New", city and capacity, price). Infinite scroll, no
-  numbered pages. A floating white "Map" pill switches to the map (milestone
-  8), which is full-bleed with a draggable list sheet. Only the venue card is
-  drawn so far; event, Foxer and gear cards still need designing.
-- **Venue detail**: full-width photo header with round back, share and
-  favourite buttons; label ("Venue · City"); name; chips for capacity, type and
-  rating or "No reviews yet"; an owner row with a message icon; a short
-  description; rows that open sheets (Amenities, Rules and cancellation); and
-  the sticky action bar with price per day and the only "Book now".
-- **Tickets**: Upcoming / Past switch. Each ticket is a stub: status label,
-  name, date / doors / guests, a dashed tear line with side notches, then the
-  QR on a white tile and the booking reference in mono. Below: Message and
-  Directions.
-- **Passport** (also the profile): an ID card with photo, name, level and an XP
-  bar; tapping it opens the profile, the gear icon opens settings. Then stamps
-  as a grid of circles (earned: tilted solid ring in a role colour with a city
-  code and month; empty: grey dashed ring), badges, a link to the leaderboard,
-  and a row to Saved items.
+### Home [2]
 
-Not designed yet: event detail and the event booking flow (venue plus gear and
-crew), Foxer profile and "Match Me", asset and service booking, reviews,
-notifications list, map, cancellation and refund, settings, and the whole
-Foxer / provider side. Where Republic (the web's social feed) lives in the app
-is undecided (section 9).
+The page is built from data, not a fixed set of tiles. `GET /categories`
+returns every category with live counts across event templates, venues,
+services and assets. Event occasions are the `EventCategory` enum (`wedding`,
+`birthday`, `corporate`, `social`, `other`); service categories are the
+`ServiceCategory` enum.
+
+Top to bottom, first visit:
+
+1. Location selector (city, chevron) and the bell in a round outlined button
+   with the unread count as a lime badge.
+2. Only when there is an upcoming booking: the slim lime strip (countdown in
+   label style, venue and date, "Ticket" button that opens the ticket).
+3. "What are you planning?" in Space Grotesk 20.
+4. A 3 × 2 grid: the five occasions, **sorted by count**, each with its count
+   ("34 ideas"), plus an **All** tile (dashed border, "{n} more") that opens
+   the all-categories screen. Tapping an occasion opens the occasion results
+   (below). Tile colours (background / border / icon): Wedding `#1A1428` /
+   `#3B2D5C` / `#A78BFA`; Birthday `#24140A` / `#5C3214` / `#F97316`;
+   Corporate `#081C24` / `#0E4A5C` / `#00D2FF`; Social `#1A2000` / `#55660A`
+   / `#CCFF00`; Other `#0F111A` / `#2A2D3A` / `#A9ADBA`. An occasion the app
+   does not know yet gets the Other style and a generic icon.
+5. "Or book just one thing": a horizontal row of round icons for single
+   bookings (Venues, then the service and gear categories with the most
+   listings: Photos, DJ, Catering, Sound and so on). Each opens Search on that
+   category.
+6. "Happening soon near you": public events with a date badge (month in
+   label style, day in Space Grotesk), name, city and how many are going.
+
+Returning user: the strip, then a "Continue: {occasion}" card (saved count,
+date, guests, from what they last browsed and saved), then "Plan something
+new" with the same grid ordered by their history, then "Because you saved
+{venue}" suggestions.
+
+All-categories screen: title "Everything you can book", a search field, then
+every category grouped under Occasions, People, Gear and Venues, each row with
+icon and count. Categories with no listings show "None yet" here; on Home they
+are hidden.
+
+States on Home:
+
+- The five occasion tiles are built into the app, so they render immediately
+  and work offline. Counts fill in when `/categories` answers; if it fails,
+  the tiles show without counts.
+- Upcoming tickets fail or are empty: no strip, no error. Pull-to-refresh
+  retries.
+- Any other section with no results, or that fails, is **hidden**, heading
+  included. No "No Foxers here yet" box and no "Become one" on Home (the Foxer
+  pitch is "Earn as a Foxer" in Passport).
+- Loading: skeletons in each section's shape, not spinners.
+
+Known API gaps: `/categories` counts are nationwide, not per city (add a city
+filter or label the counts as nationwide); "Continue" needs the app to store
+the last occasion, date and guests on the device.
+
+### Planning by occasion [3]
+
+Opened by an occasion tile. No question sheet.
+
+- Header "{Occasion}s in {city}" with back and search.
+- Chips: **Add date** and **Guests** (dashed lime until set) and the city.
+  Tapping Add date or Guests opens one sheet with a month calendar and guest
+  ranges (Up to 20, 20–50, 50–100, 100+); its button shows the live result
+  count ("Show 9 options"). No budget question.
+- One page, three paths in this order:
+  1. **Ready-made packages**: horizontal cards from event templates of that
+     category (photo, name, icons for what is included, total or "Ask for a
+     price").
+  2. **Have a Foxer plan it**: one card with a Foxer pink border (`#5C1A46`),
+     planner avatars and "Find a planner".
+  3. **Plan it yourself**: category rows (Venues, Sound and lights,
+     Performers and so on) with counts, each opening Search on that category.
+     A category with nothing shows "None here yet".
+- With no packages in the city: one line ("No ready-made {occasion} packages
+  in {city} yet") and the other two paths move up. No empty tab.
+- **Customize** (from a package): each part with keep, swap, upgrade or
+  remove; every row shows its price change; the part the package depends on
+  (usually the venue) is locked; a summary shows package price, "Your
+  changes" and the new total, with "Book this". Only parts available on the
+  chosen date are offered.
+- There is **no shared basket** across different owners until the API
+  supports booking them together. "Plan it yourself" books each item on its
+  own.
+
+### Search [4]
+
+- Search bar with filter icon (filters open a bottom sheet); one row of chips
+  to switch between Events, Venues, Foxers and Gear; result count in label
+  style and a **List / Map** segmented switch on the same row.
+- List: large photo cards (photo, favourite button, type chip, name, rating or
+  "New", city and capacity, price per day). Infinite scroll.
+- Map: full-bleed, price pins (selected pin lime, clusters show a number), a
+  locate button, and a sheet with the selected place's card that drags up into
+  the full list.
+- Only venue cards are drawn; event, Foxer and gear cards still need designing.
+
+### Venue detail [5]
+
+Full-width photo header with round back, share and favourite buttons; label
+("Venue · City"); name; chips for capacity, type and rating or "No reviews
+yet"; an owner row with a message icon; a short description; rows that open
+sheets (Amenities, Rules and cancellation); and the sticky action bar with
+price per day and the only "Book now". The booking flow is section 8.
+
+### Bookings [6]
+
+- Title "Bookings" with a calendar icon (opens the existing month calendar).
+- Upcoming · Requests · Past switch.
+- On top, anything that needs the user, in a card with a lime border: for
+  example "Approved · pay to confirm" with a "Pay ₱…" button. These are what
+  the tab badge counts.
+- Then bookings grouped by month: date block (month in label style, day in
+  Space Grotesk), name, type, guests and status, and a QR icon.
+- **Ticket** (full screen): a stub with status label, name, date / doors /
+  guests, a dashed tear line with side notches, the QR on a white tile, the
+  reference in mono and "Works offline". Below: Message and Directions, and a
+  quiet "Cancel booking" link.
+- The current Tickets page, "My requests" and the calendar move here; Passport
+  no longer needs rows for them.
+
+### Passport [8]
+
+Also the profile. An ID card with photo, "Republic of Foxers", name, level and
+an XP bar; tapping it opens the profile, the gear icon opens settings. Then
+stamps as a grid of circles (earned: tilted solid ring in a role colour with a
+city code and month; empty: grey dashed ring), badges with a link to the
+leaderboard, then rows for **Saved** and **Earn as a Foxer**.
+
+Not designed yet: event detail and the event booking flow, Foxer profile and
+"Match Me", asset and service booking, reviews, notifications list,
+cancellation and refund, settings, and the whole Foxer / provider side. Where
+Republic (the web's social feed) lives in the app is undecided (section 9).
 
 ---
 
 ## 7. Messages
 
-Mockup: `docs/mockups/messages.html`. Web source: `src/features/messages` in
+Mockup: `docs/mockups/full-app.html`, section 7. Web source: `src/features/messages` in
 the web repo (types in `types.ts`, calls in `api/messages.ts`).
 
 **Inbox**
@@ -309,7 +425,7 @@ the web repo (types in `types.ts`, calls in `api/messages.ts`).
 
 ## 8. Venue booking flow
 
-Mockup: `docs/mockups/booking-flow.html`. Web source: `VenueBookingClient`,
+Mockup: `docs/mockups/full-app.html`, section 5. Web source: `VenueBookingClient`,
 `VenueCheckoutClient`, `VenueBookingSuccessClient`,
 `VenueRequestPendingClient`. Same rules as the web, split into steps.
 

@@ -89,14 +89,20 @@ void main() {
   });
 
   group('narrowing to the user area', () {
-    test('venues in a city use the list search, which matches the city',
+    test('venues send city, price, capacity, and sort filters to the API',
         () async {
       when(
         () => api.get(ApiEndpoints.venues, query: any(named: 'query')),
       ).thenAnswer(
         (_) async => {
           'venues': [
-            {'id': 'v1', 'name': 'Sky Hall', 'city': 'Davao City'},
+            {
+              'id': 'v1',
+              'name': 'Sky Hall',
+              'city': 'Davao City',
+              'price': 25000,
+              'capacity': 200,
+            },
           ],
         },
       );
@@ -104,13 +110,21 @@ void main() {
       final result = await repository.fetch(
         CatalogKind.venues,
         city: 'Davao City',
+        minPrice: 10000,
+        maxPrice: 30000,
+        minCapacity: 100,
+        sortBy: 'price_asc',
       );
 
       expect(result.items.single.id, 'v1');
       final query = verify(
         () => api.get(ApiEndpoints.venues, query: captureAny(named: 'query')),
       ).captured.single as Map<String, dynamic>;
-      expect(query['search'], 'Davao City');
+      expect(query['city'], 'Davao City');
+      expect(query['minPrice'], 10000);
+      expect(query['maxPrice'], 30000);
+      expect(query['minCapacity'], 100);
+      expect(query['sortBy'], 'price_asc');
     });
 
     test('Foxers in a city use the API city filter', () async {
@@ -197,5 +211,52 @@ void main() {
 
       expect(result.items, isEmpty);
     });
+  });
+
+  test('sends event filters to public scheduled-event browse', () async {
+    when(
+      () =>
+          api.get(ApiEndpoints.publicEventsBrowse, query: any(named: 'query')),
+    ).thenAnswer(
+      (_) async => {
+        'data': [
+          {
+            'id': 'e1',
+            'name': 'Garden Party',
+            'targetCity': 'Baguio City',
+            'startAt': '2026-11-01T10:00:00.000Z',
+            'guestCount': 40,
+            'totalAmount': 5000,
+          },
+        ],
+        'pagination': {'total': 1},
+      },
+    );
+
+    final result = await repository.fetch(
+      CatalogKind.events,
+      city: 'Baguio',
+      minPrice: 3000,
+      maxPrice: 6000,
+      minCapacity: 20,
+      fromDate: DateTime(2026, 10, 31),
+      toDate: DateTime(2026, 11, 2),
+      sortBy: 'date_asc',
+    );
+
+    expect(result.items.map((e) => e.id), ['e1']);
+    final query = verify(
+      () => api.get(
+        ApiEndpoints.publicEventsBrowse,
+        query: captureAny(named: 'query'),
+      ),
+    ).captured.single as Map<String, dynamic>;
+    expect(query['city'], 'Baguio');
+    expect(query['minPrice'], 3000);
+    expect(query['maxPrice'], 6000);
+    expect(query['minCapacity'], 20);
+    expect(query['sortBy'], 'date_asc');
+    expect(query['fromDate'], isA<String>());
+    expect(query['toDate'], isA<String>());
   });
 }
