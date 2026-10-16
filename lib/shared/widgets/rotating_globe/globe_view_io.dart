@@ -38,30 +38,8 @@ class _MobileGlobeState extends State<_MobileGlobe> {
     super.initState();
     _controller = WebViewController();
     unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-<<<<<<< HEAD
-    unawaited(
-      _controller.addJavaScriptChannel(
-        'FoxPin',
-        onMessageReceived: (message) => widget.onPinTap?.call(message.message),
-      ),
-    );
-    unawaited(_controller.setBackgroundColor(AppColors.clear));
-    unawaited(_controller.loadHtmlString(widget.html));
-  }
-
-  @override
-  void didUpdateWidget(_MobileGlobe oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // The page was only loaded in initState, so a new html string (a hot
-    // reload of the globe code, or a changed colour / spin / stops) was
-    // ignored until the app was restarted.
-    if (oldWidget.html != widget.html) {
-      unawaited(_controller.loadHtmlString(widget.html));
-    }
-=======
     unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
     unawaited(_controller.loadHtmlString(widget.html));
->>>>>>> 8685e43a59ba05d13b4e6e8d7f8aae2d44061c70
   }
 
   @override
