@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart'
     show ImageRenderMethodForWeb;
@@ -94,7 +92,7 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (widget.pulse) unawaited(_controller.repeat(reverse: true));
+    if (widget.pulse) _controller.repeat(reverse: true).ignore();
   }
 
   @override
