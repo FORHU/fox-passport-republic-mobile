@@ -15,11 +15,14 @@ fox-passport-republic-mobile      fox-passport-republic-api
                                    /api/v1/event-templates
 ```
 
-The Flutter app reads `BASE_URL` from the environment file (`.env.dev` / `.env.prod`) via `flutter_dotenv`. The default dev value points directly at the backend on port 6002:
+The Flutter app reads `BASE_URL` from the environment file (`.env.dev` / `.env.prod`) via `flutter_dotenv`. It calls the Express API directly; it does not use the Next.js web app's `/api/proxy` route. The default dev value points directly at the backend on port 6002:
 
 ```
 BASE_URL=http://localhost:6002/api/v1
+USE_MOCK=false
 ```
+
+Mocks are opt-in (`USE_MOCK=true`) for local UI demos. Development uses the real API unless explicitly overridden.
 
 ---
 
@@ -53,12 +56,14 @@ ENVIRONMENT=dev
 APP_NAME=Fox Passport (Dev)
 BASE_URL=http://localhost:6002/api/v1
 ENABLE_LOGGING=true
+USE_MOCK=false
 ```
 
 > **Android emulator note**: Replace `localhost` with `10.0.2.2` when running on Android emulator, as `localhost` inside an emulator refers to the emulator's loopback, not your host machine:
 > ```
 > BASE_URL=http://10.0.2.2:6002/api/v1
 > ```
+> For a physical phone, use the computer's reachable LAN IP address. Keep `localhost` for Flutter web or a simulator on the same computer.
 
 ### 3. Run the Flutter app
 
@@ -75,13 +80,16 @@ The Flutter app implements the same **JWT token protocol** defined in the ecosys
 
 | Step | Flutter (Client) | Node Backend |
 | :--- | :--- | :--- |
-| **Register** | `POST /api/v1/auth/register` | Hashes password with bcrypt, creates `User` + `Session` in DB |
-| **Login** | `POST /api/v1/auth/login` | Returns `{ accessToken, refreshToken, user }` |
+| **Register** | `POST /api/v1/auth/register` | Creates the user and refresh-token record; sends an email verification OTP |
+| **Login** | `POST /api/v1/auth/login` | Returns `{ accessToken, refreshToken, user }` and session cookies |
 | **Store tokens** | `flutter_secure_storage` (keychain/keystore) | — |
 | **Attach token** | Dio interceptor adds `Authorization: Bearer <accessToken>` | — |
-| **Token refresh** | `POST /api/v1/auth/refresh-token` with `refreshToken` | Rotates token pair, invalidates old session |
-| **Logout** | `POST /api/v1/auth/logout` | Deletes session from DB + Redis |
+| **Token refresh** | `POST /api/v1/auth/refresh-token` with `refreshToken` | Rotates and returns the token pair; the app must store both |
+| **Logout** | `POST /api/v1/auth/logout` with `refreshToken` | Revokes the refresh-token session |
 | **Get profile** | `GET /api/v1/users/me` | Returns user identity from Bearer token |
+
+**Profile endpoint:** the mobile app loads the signed-in user from
+`GET /api/v1/profile`, not the legacy `/api/v1/users/me` path shown above.
 
 ### Token Storage
 
@@ -96,52 +104,40 @@ This is **more secure** than the web templates' `sessionStorage`.
 
 ## 🔄 API Response Contract
 
-All responses from the backend follow this standard envelope:
+Response shapes vary by API module; do not assume every endpoint uses one
+envelope. For example, auth returns token fields at the top level, Passport
+returns `{ success, data }`, and notifications returns
+`{ success, notifications, unreadCount }`. Data sources parse the shape owned
+by their endpoint.
 
 ```json
 {
-  "status": "success",
-  "statusCode": 200,
-  "data": { ... },
-  "message": "Operation successful"
+  "success": true,
+  "data": { ... }
 }
 ```
 
-Error responses:
+Many API errors use a message body, for example:
 
 ```json
 {
-  "status": "error",
-  "statusCode": 401,
-  "message": "Unauthorized: invalid token"
+  "success": false,
+  "message": "Unauthorized"
 }
 ```
-
-These are mapped in `lib/core/errors/` using `fpdart`'s `Either<Failure, T>` pattern.
 
 ---
 
 ## 🌐 CORS Configuration
 
-The backend's `CORS_ORIGIN` environment variable must include the Flutter web origin (if running as Flutter Web):
+In development, the API allows loopback origins on any port. For Flutter Web against a non-loopback host/origin, add that exact origin to the API's `CORS_ORIGINS`. Native iOS/Android requests are not subject to browser CORS:
 
 ```env
-# node-postg-backend-template/.env
-CORS_ORIGIN=http://localhost:4200,http://localhost:3000,http://localhost:5173,http://localhost:4000
+# fox-passport-republic-api/.env
+CORS_ORIGINS=http://localhost:55061,https://app.example.com
 ```
 
-For native mobile apps (iOS/Android), CORS is not enforced — native HTTP clients are not browser-bound.
-
----
-
-## 🔧 Tenant Header
-
-The backend uses `x-tenant-id` to support multi-tenancy. The Flutter app should attach:
-
-```dart
-// Add to Dio base options or interceptor
-options.headers['x-tenant-id'] = 'flutter-v1';
-```
+Native HTTP requests do not use browser CORS. The Flutter client does not add a tenant header; current API routes do not require one.
 
 ---
 

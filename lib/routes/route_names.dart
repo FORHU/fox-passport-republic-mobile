@@ -22,9 +22,34 @@ class RouteNames {
   /// Bottom-nav tabs.
   static const String home = '/';
   static const String search = '/search';
+
+  /// `/search?kind=venues` — opens Search on one of its switches.
+  static String searchFor(String kind) =>
+      Uri(path: search, queryParameters: {'kind': kind}).toString();
   static const String tickets = '/tickets';
+  static const String messages = '/messages';
+  static String chat(String conversationId) =>
+      '$messages/${Uri.encodeComponent(conversationId)}';
   static const String passport = '/passport';
   static const String profile = '/profile';
+
+  /// Asked once after sign-in, before Home: use the device location?
+  static const String location = '/location';
+
+  /// Become a Foxer: the roles to apply for and where each stands.
+  static const String roles = '/roles';
+
+  /// Settings: location, account, sign out. Pushed from Passport.
+  static const String settings = '/settings';
+
+  /// One venue in full, with Book now. Takes the venue row as `extra`.
+  static const String venueDetail = '/venue';
+
+  /// One event package: what is in it, customised and booked.
+  static const String eventDetail = '/event';
+
+  /// Venue booking flow, full screen. Takes the venue as `extra`.
+  static const String book = '/book';
 
   /// Pushed from the app-bar bell.
   static const String notifications = '/notifications';

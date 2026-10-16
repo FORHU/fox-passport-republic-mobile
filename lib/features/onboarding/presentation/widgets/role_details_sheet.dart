@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/features/onboarding/domain/entities/role_catalog.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/onboarding/presentation/theme/onboarding_palette.dart';
+import 'package:flutter_template/shared/roles/role_catalog.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// Shown when a citizen picks a role to apply for: what the role involves and
 /// what the application asks for, before they commit to the form. Resolves to
@@ -14,7 +16,7 @@ Future<bool> showRoleDetailsSheet(
     isScrollControlled: true,
     backgroundColor: OnboardingPalette.surface,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (_) => _RoleDetailsSheet(role: role),
   );
@@ -31,10 +33,10 @@ class _RoleDetailsSheet extends StatelessWidget {
     return SafeArea(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -49,18 +51,18 @@ class _RoleDetailsSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
               Container(
-                width: 48,
-                height: 48,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: role.color.withValues(alpha: 0.13),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(role.icon, color: role.color, size: 24),
+                child: Icon(role.icon, color: role.color, size: 20),
               ),
-              const SizedBox(height: 16),
-              Text(role.title, style: OnboardingPalette.display(size: 24)),
+              const SizedBox(height: 12),
+              Text(role.title, style: OnboardingPalette.display(size: 20)),
               const SizedBox(height: 4),
               Text(
                 role.desc,
@@ -68,8 +70,8 @@ class _RoleDetailsSheet extends StatelessWidget {
                   color: OnboardingPalette.white(0.5),
                 ),
               ),
-              const SizedBox(height: 24),
-              const _Heading("What you'll do"),
+              const SizedBox(height: 12),
+              _Heading(context.l10n.onboardingWhatYoullDo),
               for (final item in role.responsibilities)
                 _Bullet(
                   icon: Icons.check_circle_rounded,
@@ -77,8 +79,8 @@ class _RoleDetailsSheet extends StatelessWidget {
                   text: item,
                   textColor: OnboardingPalette.white(0.7),
                 ),
-              const SizedBox(height: 20),
-              const _Heading("What you'll need to apply"),
+              const SizedBox(height: 14),
+              _Heading(context.l10n.onboardingWhatYoullNeed),
               for (final item in role.requirements)
                 _Bullet(
                   icon: Icons.description_outlined,
@@ -86,30 +88,29 @@ class _RoleDetailsSheet extends StatelessWidget {
                   text: item,
                   textColor: OnboardingPalette.white(0.6),
                 ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Text(
-                'Our team reviews every application. If a document needs '
-                "fixing, we'll flag just that one so you can resubmit it.",
+                context.l10n.onboardingReviewNote,
                 style: OnboardingPalette.body(
                   size: 12,
                   color: OnboardingPalette.white(0.35),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(false),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         side: BorderSide(color: OnboardingPalette.white(0.1)),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: Text(
-                        'Not now',
+                        context.l10n.onboardingNotNow,
                         style: OnboardingPalette.body(
                           color: OnboardingPalette.white(0.6),
                         ),
@@ -123,17 +124,17 @@ class _RoleDetailsSheet extends StatelessWidget {
                       onPressed: () => Navigator.of(context).pop(true),
                       style: FilledButton.styleFrom(
                         backgroundColor: role.color,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        foregroundColor: AppColors.onAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: Text(
-                        'Continue to application',
+                        context.l10n.onboardingContinueApplication,
                         style: OnboardingPalette.body(
                           weight: FontWeight.w800,
-                          color: Colors.black,
+                          color: AppColors.onAccent,
                         ),
                       ),
                     ),

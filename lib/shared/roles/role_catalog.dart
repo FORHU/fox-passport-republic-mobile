@@ -2,6 +2,7 @@
 // long catalogue copy ported verbatim from the web app.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// A role a Citizen can apply for from onboarding. Port of the web app's
 /// `features/onboarding/roleCatalog.ts` — keep the copy in step with it.
@@ -46,7 +47,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'service',
     roleType: 'serviceFoxer',
     href: '/foxer/apply?type=service',
-    color: Color(0xFF00D2FF),
+    color: AppColors.roleTalent,
     icon: Icons.design_services_rounded,
     title: 'Talent Foxer',
     desc: 'Offer catering, design, staffing, and professional services.',
@@ -68,7 +69,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'performer',
     roleType: 'performerFoxer',
     href: '/foxer/apply?type=performer',
-    color: Color(0xFFF59E0B),
+    color: AppColors.rolePerformer,
     icon: Icons.theater_comedy_rounded,
     title: 'Performer Foxer',
     desc: 'Offer photography, DJ, live music, hosting, and more.',
@@ -91,7 +92,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'asset',
     roleType: 'gearFoxer',
     href: '/foxer/apply?type=asset',
-    color: Color(0xFFA78BFA),
+    color: AppColors.roleVenue,
     icon: Icons.inventory_2_rounded,
     title: 'Gear Foxer',
     desc: 'Rent out sound systems, lighting, furniture, and event equipment.',
@@ -113,7 +114,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'venue',
     roleType: 'venueFoxer',
     href: '/venue-foxer/apply',
-    color: Color(0xFFCCFF00),
+    color: AppColors.roleEvent,
     icon: Icons.apartment_rounded,
     title: 'Venue Foxer',
     desc: 'List and manage your venues for others to host memorable events.',
@@ -134,7 +135,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'event',
     roleType: 'eventFoxer',
     href: '/creator-dashboard/apply',
-    color: Color(0xFFFF00AA),
+    color: AppColors.roleLabel,
     icon: Icons.travel_explore_rounded,
     title: 'Event Foxer',
     desc: 'Create and organize events, coordinating every detail end-to-end.',
@@ -157,7 +158,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'organizer',
     roleType: 'organizer',
     href: '/foxer/apply?type=organizer',
-    color: Color(0xFFE879F9),
+    color: AppColors.roleOrganizer,
     icon: Icons.assignment_ind_rounded,
     title: 'Organizer',
     desc: 'Help Mayors and Event Owners run their venues and events, once '
@@ -180,7 +181,7 @@ const roleCatalog = <RoleCatalogEntry>[
     type: 'investor',
     roleType: 'investor',
     href: '/foxer/apply-investor',
-    color: Color(0xFF10B981),
+    color: AppColors.roleInvestor,
     icon: Icons.diamond_rounded,
     title: 'Partner Foxer',
     desc: 'Deploy equipment inventory or capital, and earn a revenue share.',

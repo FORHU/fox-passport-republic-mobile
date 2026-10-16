@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/features/onboarding/domain/entities/role_catalog.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/onboarding/presentation/controllers/onboarding_controller.dart';
 import 'package:flutter_template/features/onboarding/presentation/theme/onboarding_palette.dart';
+import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/roles/role_catalog.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// The card every step sits in: raised surface, hairline border, a soft blurred
 /// glow in the top-right corner (the web's `STEP_CARD`).
@@ -23,17 +26,18 @@ class StepCard extends StatelessWidget {
             ? 48.0
             : constraints.maxWidth >= 640
                 ? 40.0
-                : 24.0;
+                : 16.0;
+        final radius = constraints.maxWidth >= 640 ? 32.0 : 24.0;
         return ClipRRect(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(radius),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: OnboardingPalette.surfaceRaised,
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(radius),
               border: Border.all(color: OnboardingPalette.white(0.05)),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x66000000),
+                  color: AppColors.scrim,
                   blurRadius: 40,
                   offset: Offset(0, 20),
                 ),
@@ -96,22 +100,22 @@ class StepHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleSize = MediaQuery.sizeOf(context).width >= 768 ? 36.0 : 30.0;
+    final titleSize = MediaQuery.sizeOf(context).width >= 768 ? 36.0 : 26.0;
     final base = OnboardingPalette.display(size: titleSize);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 28),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         children: [
           Container(
-            width: 64,
-            height: 64,
+            width: 52,
+            height: 52,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 32),
+            child: Icon(icon, color: color, size: 26),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
           Text.rich(
             TextSpan(
               style: base,
@@ -190,7 +194,7 @@ class AccentButton extends StatelessWidget {
                     height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.black,
+                      color: AppColors.onAccent,
                     ),
                   )
                 else ...[
@@ -199,12 +203,12 @@ class AccentButton extends StatelessWidget {
                     style: OnboardingPalette.body(
                       size: 15,
                       weight: FontWeight.w800,
-                      color: Colors.black,
+                      color: AppColors.onAccent,
                     ),
                   ),
                   if (trailing != null) ...[
                     const SizedBox(width: 8),
-                    Icon(trailing, size: 18, color: Colors.black),
+                    Icon(trailing, size: 18, color: AppColors.onAccent),
                   ],
                 ],
               ],
@@ -249,10 +253,12 @@ class OutlineActionButton extends StatelessWidget {
 
 /// `← Back` text action.
 class BackAction extends StatelessWidget {
-  const BackAction({required this.onPressed, this.label = 'Back', super.key});
+  const BackAction({required this.onPressed, this.label, super.key});
 
   final VoidCallback onPressed;
-  final String label;
+
+  /// Defaults to the localised "Back".
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +270,7 @@ class BackAction extends StatelessWidget {
         color: OnboardingPalette.white(0.4),
       ),
       label: Text(
-        label,
+        label ?? context.l10n.onboardingBack,
         style: OnboardingPalette.body(
           weight: FontWeight.w800,
           color: OnboardingPalette.white(0.4),
@@ -285,10 +291,10 @@ class OnboardingStepper extends StatelessWidget {
   final List<OnboardingStep> journey;
   final OnboardingStep current;
 
-  static String _label(OnboardingStep s) => switch (s) {
-        OnboardingStep.profile => 'Profile',
-        OnboardingStep.intent => 'Interests',
-        OnboardingStep.roles => 'Roles',
+  static String _label(AppLocalizations l10n, OnboardingStep s) => switch (s) {
+        OnboardingStep.profile => l10n.onboardingStepProfile,
+        OnboardingStep.intent => l10n.onboardingStepInterests,
+        OnboardingStep.roles => l10n.onboardingStepRoles,
       };
 
   @override
@@ -308,7 +314,7 @@ class OnboardingStepper extends StatelessWidget {
             ),
           _Pill(
             index: i,
-            label: _label(journey[i]),
+            label: _label(context.l10n, journey[i]),
             active: i == currentIndex,
             done: i < currentIndex,
           ),
@@ -339,14 +345,14 @@ class _Pill extends StatelessWidget {
             ? OnboardingPalette.accent.withValues(alpha: 0.15)
             : OnboardingPalette.white(0.05);
     final fg = active
-        ? Colors.black
+        ? AppColors.onAccent
         : done
             ? OnboardingPalette.accent
             : OnboardingPalette.white(0.4);
 
     return Semantics(
       selected: active,
-      label: 'Step ${index + 1}: $label',
+      label: context.l10n.onboardingStepSemantic(index + 1, label),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -392,22 +398,25 @@ class _Pill extends StatelessWidget {
 enum RoleStatus { available, active, pending, revision }
 
 /// Colours for a [RoleStatus] badge.
-({Color color, IconData icon, String label}) roleBadge(RoleStatus s) =>
+({Color color, IconData icon, String label}) roleBadge(
+  RoleStatus s,
+  AppLocalizations l10n,
+) =>
     switch (s) {
       RoleStatus.active => (
           color: OnboardingPalette.success,
           icon: Icons.check_circle_rounded,
-          label: 'ACTIVE',
+          label: l10n.onboardingStatusActive,
         ),
       RoleStatus.pending => (
           color: OnboardingPalette.warning,
           icon: Icons.schedule_rounded,
-          label: 'UNDER REVIEW',
+          label: l10n.onboardingStatusReview,
         ),
       RoleStatus.revision => (
           color: OnboardingPalette.orange,
           icon: Icons.flag_rounded,
-          label: 'NEEDS REVISION',
+          label: l10n.onboardingStatusRevision,
         ),
       RoleStatus.available => (
           color: Colors.transparent,
@@ -433,7 +442,7 @@ class RoleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final badge = roleBadge(status);
+    final badge = roleBadge(status, context.l10n);
     final bordered = status != RoleStatus.available;
     final borderColor = bordered
         ? badge.color.withValues(alpha: 0.25)
@@ -441,21 +450,20 @@ class RoleCard extends StatelessWidget {
     final dim = status == RoleStatus.pending;
 
     final caption = switch (status) {
-      RoleStatus.revision => 'One or more documents were flagged — tap to fix '
-          'and resubmit.',
+      RoleStatus.revision => context.l10n.onboardingRevisionCaption,
       _ => role.desc,
     };
 
     return Material(
       color: OnboardingPalette.white(0.03),
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: borderColor),
           ),
           child: Column(
@@ -467,13 +475,13 @@ class RoleCard extends StatelessWidget {
                   Opacity(
                     opacity: dim ? 0.6 : 1,
                     child: Container(
-                      width: 48,
-                      height: 48,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
                         color: role.color.withValues(alpha: 0.13),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(role.icon, color: role.color, size: 24),
+                      child: Icon(role.icon, color: role.color, size: 20),
                     ),
                   ),
                   const Spacer(),
@@ -509,15 +517,15 @@ class RoleCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Text(role.title, style: OnboardingPalette.display()),
+              const SizedBox(height: 10),
+              Text(role.title, style: OnboardingPalette.display(size: 16)),
               const SizedBox(height: 4),
               Text(
                 caption,
                 style: OnboardingPalette.body(
                   size: 12,
                   color: status == RoleStatus.revision
-                      ? const Color(0xFFFDBA74).withValues(alpha: 0.8)
+                      ? AppColors.peach.withValues(alpha: 0.8)
                       : OnboardingPalette.white(dim ? 0.25 : 0.4),
                 ),
               ),
@@ -526,7 +534,7 @@ class RoleCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Learn more & apply',
+                      context.l10n.onboardingLearnApply,
                       style: OnboardingPalette.body(
                         size: 11,
                         weight: FontWeight.w800,

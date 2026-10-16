@@ -12,6 +12,153 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 class MockInterceptor extends Interceptor {
   static const Duration _latency = Duration(milliseconds: 600);
 
+  final _mockConversations = <Map<String, dynamic>>[
+    {
+      'id': 'mock-conversation-1',
+      'isGroup': false,
+      'isInbox': false,
+      'otherUser': {
+        'id': '2',
+        'name': 'Rico Rival',
+        'imgId': null,
+        'roleType': ['eventFoxer'],
+        'identityVerifiedAt': '2026-01-01T00:00:00.000Z',
+        'isOnline': true,
+      },
+      'contextType': 'booking',
+      'contextLabel': 'Sky Hall · Sat 17 Oct',
+      'lastMessageAt': '2026-10-13T06:02:00.000Z',
+      'createdAt': '2026-10-12T06:00:00.000Z',
+      'unreadCount': 2,
+      'status': 'accepted',
+      'isIncomingRequest': false,
+      'lastMessage': {
+        'content': 'Perfect, thank you',
+        'isMine': true,
+      },
+      'isMuted': false,
+      'isPinned': false,
+      'pinnedAt': null,
+    },
+    {
+      'id': 'mock-conversation-2',
+      'isGroup': false,
+      'isInbox': true,
+      'inbox': {
+        'type': 'venue',
+        'id': 'mock-venue-1',
+        'name': 'Sky Hall',
+      },
+      'otherUser': null,
+      'contextType': null,
+      'contextLabel': 'Venue inbox',
+      'lastMessageAt': '2026-10-13T05:00:00.000Z',
+      'createdAt': '2026-10-12T05:00:00.000Z',
+      'unreadCount': 0,
+      'status': 'accepted',
+      'isIncomingRequest': false,
+      'lastMessage': {'content': 'Is parking included?', 'isMine': true},
+      'isMuted': false,
+      'isPinned': false,
+      'pinnedAt': null,
+    },
+    {
+      'id': 'mock-conversation-3',
+      'isGroup': true,
+      'name': 'Sample group',
+      'otherUser': null,
+      'contextType': null,
+      'contextLabel': null,
+      'lastMessageAt': '2026-10-11T08:00:00.000Z',
+      'createdAt': '2026-10-10T08:00:00.000Z',
+      'unreadCount': 0,
+      'status': 'accepted',
+      'isIncomingRequest': false,
+      'lastMessage': {
+        'content': 'Sample: final headcount is 40',
+        'isMine': false,
+      },
+      'isMuted': false,
+      'isPinned': true,
+      'pinnedAt': '2026-10-12T08:00:00.000Z',
+    },
+    {
+      'id': 'mock-conversation-4',
+      'isGroup': false,
+      'isInbox': false,
+      'otherUser': {
+        'id': '3',
+        'name': 'Sample Foxer',
+        'imgId': null,
+        'roleType': ['eventFoxer'],
+        'identityVerifiedAt': null,
+      },
+      'contextType': null,
+      'contextLabel': null,
+      'lastMessageAt': '2026-10-12T04:00:00.000Z',
+      'createdAt': '2026-10-12T04:00:00.000Z',
+      'unreadCount': 0,
+      'status': 'pending',
+      'isIncomingRequest': true,
+      'lastMessage': {'content': 'Sent a photo', 'isMine': false},
+      'isMuted': true,
+      'isPinned': false,
+      'pinnedAt': null,
+    },
+  ];
+
+  final _mockMessages = <Map<String, dynamic>>[
+    {
+      'id': 'mock-message-1',
+      'conversationId': 'mock-conversation-1',
+      'senderId': '2',
+      'content': "Hi, I'm coordinating your night at Sky Hall.",
+      'readAt': null,
+      'createdAt': '2026-10-13T05:50:00.000Z',
+      'attachmentUrls': <String>[],
+    },
+    {
+      'id': 'mock-message-2',
+      'conversationId': 'mock-conversation-1',
+      'senderId': '1',
+      'content': 'Great. Can we add a photographer?',
+      'readAt': null,
+      'createdAt': '2026-10-13T05:52:00.000Z',
+      'attachmentUrls': <String>[],
+    },
+    {
+      'id': 'mock-message-3',
+      'conversationId': 'mock-conversation-1',
+      'senderId': '2',
+      'content': "Yes, I'll send two options tonight.",
+      'readAt': null,
+      'createdAt': '2026-10-13T05:54:00.000Z',
+      'attachmentUrls': <String>[],
+      'replyTo': {'content': 'Can we add a photographer?'},
+      'reactions': [
+        {'emoji': '👍', 'count': 1},
+      ],
+    },
+    {
+      'id': 'mock-message-4',
+      'conversationId': 'mock-conversation-1',
+      'senderId': '2',
+      'content': 'Sound check is at 5, see you there',
+      'readAt': null,
+      'createdAt': '2026-10-13T06:00:00.000Z',
+      'attachmentUrls': <String>[],
+    },
+    {
+      'id': 'mock-message-5',
+      'conversationId': 'mock-conversation-1',
+      'senderId': '1',
+      'content': 'Perfect, thank you',
+      'readAt': '2026-10-13T06:03:00.000Z',
+      'createdAt': '2026-10-13T06:02:00.000Z',
+      'attachmentUrls': <String>[],
+    },
+  ];
+
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -78,6 +225,254 @@ class MockInterceptor extends Interceptor {
             ('GB', null) => ['London', 'Manchester', 'Birmingham'],
             _ => <String>[],
           },
+        }),
+      );
+      return;
+    }
+
+    // Lists the new screens ask for that the mock has no rows for. Answering
+    // them with an empty list keeps the screens on their sample content
+    // without a rejected request (which debuggers pause on).
+    if (path.startsWith('/bookings/user/')) {
+      handler.resolve(_ok(options, {'data': <Map<String, dynamic>>[]}));
+      return;
+    }
+
+    if (path == ApiEndpoints.notifications) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'notifications': <Map<String, dynamic>>[],
+          'unreadCount': 0,
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.notificationsReadAll ||
+        RegExp(r'^/notifications/[^/]+/read$').hasMatch(path)) {
+      handler.resolve(_ok(options, {'success': true}));
+      return;
+    }
+
+    if (path == ApiEndpoints.conversations && options.method == 'GET') {
+      handler
+          .resolve(_ok(options, {'success': true, 'data': _mockConversations}));
+      return;
+    }
+
+    final cancelPath =
+        RegExp(r'^/bookings/([^/]+)/cancel(/check)?$').firstMatch(path);
+    if (cancelPath != null && options.method == 'POST') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': cancelPath.group(2) != null
+              ? {
+                  'eligible': true,
+                  'refundPercent': 100,
+                  'totalPaid': 26250,
+                  'estimatedRefund': 26250,
+                  'message': 'Free cancellation for 48 hours.',
+                  'hoursUntilStart': 120,
+                }
+              : {
+                  'booking': {'id': cancelPath.group(1)},
+                  'refunds': <Object>[],
+                },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.fxRates) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {
+            'base': 'PHP',
+            'rates': {
+              'PHP': 1,
+              'USD': 0.0176,
+              'EUR': 0.0162,
+              'GBP': 0.0139,
+              'JPY': 2.63,
+            },
+            'currencies': ['PHP', 'USD', 'EUR', 'GBP', 'JPY'],
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.uploadFile && options.method == 'POST') {
+      handler.resolve(
+        _ok(options, {
+          'file': {'url': 'https://placehold.co/600x400/png'},
+        }),
+      );
+      return;
+    }
+
+    // Start a chat with a user or a venue inbox: reuse the mock one if there
+    // is one for that target, otherwise open an empty one.
+    if ((path == ApiEndpoints.conversations ||
+            path == ApiEndpoints.conversationsInbox) &&
+        options.method == 'POST') {
+      final isInbox = path == ApiEndpoints.conversationsInbox;
+      final target =
+          (isInbox ? body['venueId'] : body['otherUserId'])?.toString();
+      final existing = _mockConversations.where((c) {
+        final other = isInbox ? c['inbox'] : c['otherUser'];
+        return other is Map && other['id'].toString() == target;
+      });
+      var id = existing.isEmpty ? null : existing.first['id'];
+      if (id == null) {
+        id = 'mock-conversation-${_mockConversations.length + 1}';
+        _mockConversations.add({
+          'id': id,
+          'isGroup': false,
+          'isInbox': isInbox,
+          if (isInbox)
+            'inbox': {'type': 'venue', 'id': target, 'name': 'Venue'}
+          else
+            'otherUser': {
+              'id': target,
+              'name': 'Foxer',
+              'roleType': <String>[],
+            },
+          'createdAt': DateTime.now().toUtc().toIso8601String(),
+          'unreadCount': 0,
+          'status': 'accepted',
+          'isIncomingRequest': false,
+          'isMuted': false,
+          'isPinned': false,
+        });
+      }
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'id': id},
+        }),
+      );
+      return;
+    }
+
+    final messagePath = RegExp(
+      r'^/conversations/([^/]+)/messages/([^/]+)(/reaction)?$',
+    ).firstMatch(path);
+    if (messagePath != null) {
+      final index =
+          _mockMessages.indexWhere((m) => m['id'] == messagePath.group(2));
+      if (index != -1) {
+        final message = _mockMessages[index];
+        if (messagePath.group(3) != null) {
+          final emoji = body['emoji'] as String?;
+          message['reactions'] = emoji == null
+              ? <Map<String, dynamic>>[]
+              : [
+                  {'emoji': emoji, 'count': 1},
+                ];
+        } else if (options.method == 'PATCH') {
+          message['content'] = body['content'];
+          message['editedAt'] = DateTime.now().toUtc().toIso8601String();
+        } else if (options.method == 'DELETE') {
+          _mockMessages.removeAt(index);
+        }
+      }
+      handler.resolve(_ok(options, {'success': true}));
+      return;
+    }
+
+    final flagPath =
+        RegExp(r'^/conversations/([^/]+)/(mute|pin)$').firstMatch(path);
+    if (flagPath != null && options.method == 'PATCH') {
+      for (final c in _mockConversations) {
+        if (c['id'] == flagPath.group(1)) {
+          if (flagPath.group(2) == 'mute') c['isMuted'] = body['muted'] == true;
+          if (flagPath.group(2) == 'pin') {
+            c['isPinned'] = body['pinned'] == true;
+          }
+        }
+      }
+      handler.resolve(_ok(options, {'success': true}));
+      return;
+    }
+
+    final messagesPath =
+        RegExp(r'^/conversations/([^/]+)/messages$').firstMatch(path);
+    if (messagesPath != null) {
+      if (options.method == 'GET') {
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': _mockMessages
+                .where(
+                  (message) =>
+                      message['conversationId'] == messagesPath.group(1),
+                )
+                .toList(growable: false),
+          }),
+        );
+        return;
+      }
+      if (options.method == 'POST') {
+        final content = body['content'] as String? ?? '';
+        final now = DateTime.now().toUtc().toIso8601String();
+        final message = <String, dynamic>{
+          'id': 'mock-message-${_mockMessages.length + 1}',
+          'conversationId': messagesPath.group(1),
+          'senderId': '1',
+          'content': content,
+          'readAt': null,
+          'createdAt': now,
+          'attachmentUrls': body['attachmentUrls'] ?? <String>[],
+          if (body['replyToId'] != null) 'replyToId': body['replyToId'],
+        };
+        _mockMessages.add(message);
+        for (final conversation in _mockConversations) {
+          if (conversation['id'] == messagesPath.group(1)) {
+            conversation['lastMessageAt'] = now;
+            conversation['lastMessage'] = {'content': content, 'isMine': true};
+          }
+        }
+        handler.resolve(_ok(options, {'success': true, 'data': message}));
+        return;
+      }
+    }
+
+    final readPath = RegExp(r'^/conversations/([^/]+)/read$').firstMatch(path);
+    if (readPath != null && options.method == 'PATCH') {
+      for (final conversation in _mockConversations) {
+        if (conversation['id'] == readPath.group(1)) {
+          conversation['unreadCount'] = 0;
+        }
+      }
+      handler.resolve(_ok(options, {'success': true}));
+      return;
+    }
+
+    final requestPath =
+        RegExp(r'^/conversations/([^/]+)/(accept|decline)$').firstMatch(path);
+    if (requestPath != null && options.method == 'POST') {
+      final conversationId = requestPath.group(1);
+      final action = requestPath.group(2);
+      if (action == 'decline') {
+        _mockConversations.removeWhere(
+          (conversation) => conversation['id'] == conversationId,
+        );
+      } else {
+        for (final conversation in _mockConversations) {
+          if (conversation['id'] == conversationId) {
+            conversation['status'] = 'accepted';
+            conversation['isIncomingRequest'] = false;
+          }
+        }
+      }
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'status': action == 'accept' ? 'accepted' : 'declined'},
         }),
       );
       return;
@@ -152,6 +547,26 @@ class MockInterceptor extends Interceptor {
         handler.resolve(_ok(options, {'data': _mockEvents}));
       case ApiEndpoints.venues:
         handler.resolve(_ok(options, {'venues': <Map<String, dynamic>>[]}));
+      // Nothing booked and a blank passport: the screens then show their
+      // sample content, so a demo run has something to look at.
+      case ApiEndpoints.foxers:
+      case ApiEndpoints.assetsBrowse:
+      case ApiEndpoints.servicesBrowse:
+        handler.resolve(_ok(options, {'data': <Map<String, dynamic>>[]}));
+      case ApiEndpoints.bookingsUpcoming:
+        handler.resolve(_ok(options, {'data': <Map<String, dynamic>>[]}));
+      case ApiEndpoints.passportMe:
+        handler.resolve(
+          _ok(options, {
+            'data': {
+              'paths': <Object>[],
+              'stamps': <Object>[],
+              'userBadges': <Object>[],
+            },
+          }),
+        );
+      case ApiEndpoints.passportBadges:
+        handler.resolve(_ok(options, {'data': <Map<String, dynamic>>[]}));
       default:
         handler.reject(_error(options, 404, 'Unknown endpoint: $path'));
     }

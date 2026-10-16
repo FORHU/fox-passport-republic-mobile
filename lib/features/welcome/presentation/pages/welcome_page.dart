@@ -445,7 +445,7 @@ class _GlobeBackdrop extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0x0002040A), AppColors.canvas],
+                  colors: [AppColors.canvasClear, AppColors.canvas],
                   stops: [0, 0.6],
                 ),
               ),

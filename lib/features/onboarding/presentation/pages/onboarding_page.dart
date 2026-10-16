@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:flutter_template/features/onboarding/domain/entities/role_catalog.dart';
 import 'package:flutter_template/features/onboarding/presentation/controllers/onboarding_controller.dart';
 import 'package:flutter_template/features/onboarding/presentation/theme/onboarding_palette.dart';
 import 'package:flutter_template/features/onboarding/presentation/widgets/onboarding_chrome.dart';
 import 'package:flutter_template/features/onboarding/presentation/widgets/onboarding_fields.dart';
 import 'package:flutter_template/features/onboarding/presentation/widgets/role_details_sheet.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
 
 /// FoxPassport onboarding — the web app's `/onboarding` flow on a phone:
@@ -62,7 +64,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     if (!opened && mounted) {
       showTopToast(
         context,
-        'This opens on the FoxPassport web app, which is not configured yet.',
+        context.l10n.onboardingWebNotConfigured,
       );
     }
   }
@@ -103,7 +105,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                       current: state.step,
                       onHome: _exit,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 250),
                       child: switch (state.step) {
@@ -168,7 +170,7 @@ class _Backdrop extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: glow(
                   const Alignment(-0.7, 0),
-                  const Color(0xFF7C3AED),
+                  AppColors.violet,
                   0.15,
                 ),
               ),
@@ -178,7 +180,7 @@ class _Backdrop extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: glow(
                   const Alignment(0.7, -0.4),
-                  const Color(0xFFDB2777),
+                  AppColors.rose,
                   0.10,
                 ),
               ),
@@ -231,7 +233,7 @@ class _TopBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Home',
+                  context.l10n.home,
                   style: OnboardingPalette.body(
                     weight: FontWeight.w800,
                     color: OnboardingPalette.white(0.4),
@@ -266,9 +268,10 @@ class _ProfileStep extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.read(onboardingControllerProvider.notifier);
+    final l10n = context.l10n;
     final firstName =
         ref.watch(authControllerProvider).user?.name.split(' ').first ?? '';
-    final greetName = firstName.isEmpty ? 'Friend' : firstName;
+    final greetName = firstName.isEmpty ? l10n.onboardingFriend : firstName;
     final districtEnabled = state.city.trim().isNotEmpty;
     final locationBusy = state.isLoading;
 
@@ -280,26 +283,30 @@ class _ProfileStep extends ConsumerWidget {
             icon: Icons.waving_hand_rounded,
             title: '',
             titleSpans: [
-              TextSpan(text: state.hasHeldRoles ? 'Back again, ' : 'Welcome, '),
+              TextSpan(
+                text: state.hasHeldRoles
+                    ? l10n.onboardingBackAgain
+                    : l10n.onboardingWelcome,
+              ),
               TextSpan(
                 text: '$greetName!',
                 style: const TextStyle(color: OnboardingPalette.accent),
               ),
             ],
             subtitle: state.hasHeldRoles
-                ? 'Update your profile or continue to manage your roles.'
-                : "Let's set up your profile first.",
+                ? l10n.onboardingProfileSubtitleReturning
+                : l10n.onboardingProfileSubtitleNew,
           ),
-          const FieldLabel('Display Name', required: true),
+          FieldLabel(l10n.onboardingDisplayName, required: true),
           OnboardingTextField(
             controller: nameController,
-            hint: 'How others will see you',
+            hint: l10n.onboardingDisplayNameHint,
             icon: Icons.person_outline_rounded,
             onChanged: c.setName,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: OnboardingPalette.white(0.02),
               borderRadius: BorderRadius.circular(16),
@@ -318,7 +325,7 @@ class _ProfileStep extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Text.rich(
                       TextSpan(
-                        text: 'YOUR ADDRESS',
+                        text: l10n.onboardingYourAddress.toUpperCase(),
                         style: OnboardingPalette.body(
                           size: 13,
                           weight: FontWeight.w800,
@@ -337,40 +344,42 @@ class _ProfileStep extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Used to show you events, venues and Foxers near you.',
+                  l10n.onboardingAddressHelp,
                   style: OnboardingPalette.body(
                     size: 12,
                     color: OnboardingPalette.white(0.4),
                   ),
                 ),
-                const SizedBox(height: 20),
-                const FieldLabel('Country'),
+                const SizedBox(height: 14),
+                FieldLabel(l10n.onboardingCountry),
                 SearchableSelectField(
                   value: state.country,
-                  placeholder: locationBusy ? 'Loading…' : 'Select country…',
-                  searchHint: 'Search countries…',
+                  placeholder: locationBusy
+                      ? l10n.onboardingLoading
+                      : l10n.onboardingSelectCountry,
+                  searchHint: l10n.onboardingSearchCountries,
                   options: [for (final x in state.countries) x.name],
                   enabled: state.countries.isNotEmpty,
                   loading: locationBusy,
                   onSelected: c.selectCountry,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final stateField = Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const FieldLabel('State / Province'),
+                        FieldLabel(l10n.onboardingStateProvince),
                         SearchableSelectField(
                           value: state.state,
                           placeholder: state.countryCode == null
-                              ? 'Select a country first'
+                              ? l10n.onboardingSelectCountryFirst
                               : !state.statesFetched
-                                  ? 'Loading…'
+                                  ? l10n.onboardingLoading
                                   : state.hasStates
-                                      ? 'Select state…'
-                                      : 'No states here',
-                          searchHint: 'Search states…',
+                                      ? l10n.onboardingSelectState
+                                      : l10n.onboardingNoStates,
+                          searchHint: l10n.onboardingSearchStates,
                           options: [for (final x in state.states) x.name],
                           enabled: state.countryCode != null && state.hasStates,
                           allowCustom: state.hasStates,
@@ -383,15 +392,15 @@ class _ProfileStep extends ConsumerWidget {
                     final cityField = Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const FieldLabel('City'),
+                        FieldLabel(l10n.onboardingCity),
                         SearchableSelectField(
                           value: state.city,
                           placeholder: state.countryCode == null
-                              ? 'Select a country first'
+                              ? l10n.onboardingSelectCountryFirst
                               : state.hasStates && state.state.trim().isEmpty
-                                  ? 'Select a state first'
-                                  : 'Select city…',
-                          searchHint: 'Search cities…',
+                                  ? l10n.onboardingSelectStateFirst
+                                  : l10n.onboardingSelectCity,
+                          searchHint: l10n.onboardingSearchCities,
                           options: state.cities,
                           enabled: state.cityReady,
                           allowCustom: true,
@@ -405,7 +414,7 @@ class _ProfileStep extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           stateField,
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           cityField,
                         ],
                       );
@@ -420,13 +429,23 @@ class _ProfileStep extends ConsumerWidget {
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-                FieldLabel(state.districtLabel, hint: '— optional'),
+                const SizedBox(height: 12),
+                FieldLabel(
+                  state.isPhilippines
+                      ? l10n.onboardingBarangay
+                      : l10n.onboardingDistrict,
+                  hint: l10n.onboardingOptional,
+                ),
                 OnboardingTextField(
                   controller: districtController,
                   hint: districtEnabled
-                      ? 'Your ${state.districtLabel.toLowerCase()}'
-                      : 'Select a city first',
+                      ? l10n.onboardingYourDistrict(
+                          (state.isPhilippines
+                                  ? l10n.onboardingBarangay
+                                  : l10n.onboardingDistrict)
+                              .toLowerCase(),
+                        )
+                      : l10n.onboardingSelectCityFirst,
                   icon: Icons.home_work_outlined,
                   enabled: districtEnabled,
                   onChanged: c.setDistrict,
@@ -438,7 +457,14 @@ class _ProfileStep extends ConsumerWidget {
             children: [
               if (!state.profileComplete) ...[
                 Text(
-                  'Add your ${state.missing.join(', ')} to continue.',
+                  l10n.onboardingAddMissing(
+                    [
+                      if (state.name.trim().isEmpty) l10n.onboardingFieldName,
+                      if (state.country.trim().isEmpty)
+                        l10n.onboardingFieldCountry,
+                      if (state.city.trim().isEmpty) l10n.onboardingFieldCity,
+                    ].join(', '),
+                  ),
                   textAlign: TextAlign.center,
                   style: OnboardingPalette.body(
                     size: 12,
@@ -448,7 +474,9 @@ class _ProfileStep extends ConsumerWidget {
                 const SizedBox(height: 12),
               ],
               AccentButton(
-                label: state.isSaving ? 'Saving…' : 'Continue',
+                label: state.isSaving
+                    ? l10n.onboardingSaving
+                    : l10n.onboardingContinue,
                 trailing: Icons.arrow_forward_rounded,
                 loading: state.isSaving,
                 onPressed: state.profileComplete ? onContinue : null,
@@ -477,41 +505,40 @@ class _IntentStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return StepCard(
       glow: OnboardingPalette.intent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const StepHeader(
+          StepHeader(
             icon: Icons.explore_rounded,
             color: OnboardingPalette.intent,
-            title: 'What brings you here?',
-            subtitle: 'Choose how you plan to use FoxPassport.',
+            title: l10n.onboardingIntentTitle,
+            subtitle: l10n.onboardingIntentSubtitle,
           ),
           _IntentOption(
             icon: Icons.local_activity_rounded,
             color: OnboardingPalette.accent,
-            title: 'Book Events',
-            body: 'Browse foxers, venues, and services to create your perfect '
-                'event.',
+            title: l10n.onboardingIntentBookTitle,
+            body: l10n.onboardingIntentBookBody,
             onTap: onBook,
           ),
           const SizedBox(height: 12),
           _IntentOption(
             icon: Icons.badge_rounded,
             color: OnboardingPalette.foxer,
-            title: 'Become a Foxer',
-            body: 'Offer services, rent gear, list venues, or create events '
-                'professionally.',
+            title: l10n.onboardingIntentFoxerTitle,
+            body: l10n.onboardingIntentFoxerBody,
             onTap: onFoxer,
           ),
           const SizedBox(height: 12),
           _IntentOption(
             icon: Icons.people_alt_rounded,
-            color: Colors.white,
+            color: AppColors.textPrimary,
             muted: true,
-            title: 'Both',
-            body: 'Book events and apply to become a Foxer in the ecosystem.',
+            title: l10n.onboardingIntentBothTitle,
+            body: l10n.onboardingIntentBothBody,
             onTap: onFoxer,
           ),
           StepFooter(
@@ -549,39 +576,39 @@ class _IntentOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: OnboardingPalette.white(0.03),
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: OnboardingPalette.white(0.05)),
           ),
           child: Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: muted
                       ? OnboardingPalette.white(0.05)
                       : color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
-                  size: 24,
+                  size: 20,
                   color: muted ? OnboardingPalette.white(0.5) : color,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: OnboardingPalette.display()),
+                    Text(title, style: OnboardingPalette.display(size: 16)),
                     const SizedBox(height: 2),
                     Text(
                       body,
@@ -627,23 +654,22 @@ class _RolesStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final title = state.hasHeldRoles
-        ? 'Your roles'
+        ? l10n.onboardingRolesTitleHeld
         : state.pendingRoles.isNotEmpty
-            ? 'Application submitted'
-            : 'Choose your role';
+            ? l10n.onboardingRolesTitlePending
+            : l10n.onboardingRolesTitleChoose;
     final subtitle = state.hasHeldRoles
-        ? 'Active roles are shown below. Apply for additional roles anytime.'
+        ? l10n.onboardingRolesSubtitleHeld
         : state.pendingRoles.isNotEmpty
-            ? "We're reviewing your application. You'll be notified once "
-                'approved.'
-            : 'Select how you want to contribute. You can hold multiple roles '
-                'over time.';
+            ? l10n.onboardingRolesSubtitlePending
+            : l10n.onboardingRolesSubtitleChoose;
     final finishLabel = state.hasHeldRoles
-        ? 'Go to Dashboard'
+        ? l10n.onboardingFinishDashboard
         : state.pendingRoles.isNotEmpty
-            ? 'Back to Home'
-            : 'Skip for now';
+            ? l10n.onboardingFinishHome
+            : l10n.onboardingFinishSkip;
 
     return StepCard(
       glow: OnboardingPalette.roles,
@@ -661,11 +687,11 @@ class _RolesStep extends StatelessWidget {
               final columns = constraints.maxWidth >= 520 ? 2 : 1;
               final cardWidth = columns == 1
                   ? constraints.maxWidth
-                  : (constraints.maxWidth - 16) / 2;
+                  : (constraints.maxWidth - 10) / 2;
               return Wrap(
                 alignment: WrapAlignment.center,
-                spacing: 16,
-                runSpacing: 16,
+                spacing: 10,
+                runSpacing: 10,
                 children: [
                   for (final role in roleCatalog)
                     SizedBox(

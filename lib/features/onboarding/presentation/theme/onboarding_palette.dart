@@ -14,22 +14,23 @@ class OnboardingPalette {
   static const Color surfaceRaised = AppColors.surfaceRaised;
   static const Color accent = AppColors.accent;
   static const Color accentHover = AppColors.accentPressed;
-  static const Color intent = Color(0xFFA78BFA);
-  static const Color roles = Color(0xFFEC4899);
+  static const Color intent = AppColors.roleVenue;
+  static const Color roles = AppColors.pink;
   static const Color foxer = AppColors.roleLabel;
 
   static const Color success = AppColors.success;
   static const Color warning = AppColors.warning;
-  static const Color orange = Color(0xFFFB923C);
+  static const Color orange = AppColors.orange;
 
   /// Tailwind's `text-white/40` etc.
-  static Color white(double opacity) => Colors.white.withValues(alpha: opacity);
+  static Color white(double opacity) =>
+      AppColors.textPrimary.withValues(alpha: opacity);
 
   /// `font-display` (Space Grotesk).
   static TextStyle display({
     double size = 18,
     FontWeight weight = FontWeight.w700,
-    Color color = Colors.white,
+    Color color = AppColors.textPrimary,
   }) =>
       GoogleFonts.spaceGrotesk(
         fontSize: size,

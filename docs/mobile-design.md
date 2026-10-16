@@ -9,10 +9,19 @@ The mobile app uses the **same dark / lime look as the web app**
 and build order stay in `docs/CITIZEN_CORE_PORT_PLAN.md`; this file only says
 how things look and behave.
 
+**Same brand, not the same screens** (decided 2026-10-13). The web sells
+FoxPassport to a stranger; the signed-in app serves someone who already joined.
+Colours, fonts and components are shared with the web. Layouts inside the app
+are designed for the phone and are not ports of web pages. See section 6.
+
 Mockups (open in a browser, they are the layout and copy reference):
 
-- `docs/mockups/app-screens.html` — Home, Venue detail, Passport
 - `docs/mockups/onboarding-auth.html` — Welcome carousel, Log in / Create account
+- `docs/mockups/app-screens.html` — Home, Search, Venue detail, Tickets, Passport
+- `docs/mockups/messages.html` — Inbox, Chat
+- `docs/mockups/booking-flow.html` — Venue booking, from dates to ticket
+
+The last three share `docs/mockups/mockup.css`.
 
 ---
 
@@ -24,7 +33,7 @@ Mockups (open in a browser, they are the layout and copy reference):
 | `lib/features/onboarding/presentation/theme/onboarding_palette.dart` | Already holds the web's dark / lime values, local to onboarding | Promote these values into `AppColors`; onboarding then reads the shared tokens and this file can go |
 | `lib/features/auth/presentation/**` (`AuthPageShell`, forms, social buttons) | White card on light grey, ink badge icon | Restyle per section 5 |
 | `lib/shared/widgets/*` (buttons, inputs, cards, bottom nav) | Ink-on-white | Restyle per section 3 |
-| Bottom bar | Home · Search · Tickets · Passport · Profile | **Keep these five tabs.** Do not add the web's centre "Republic" button |
+| Bottom bar | Home · Search · Tickets · Passport · Profile | Change to **Home · Search · Tickets · Messages · Passport** (decided 2026-10-13). Profile and settings move inside Passport. Do not add the web's centre "Republic" button |
 
 Do the token change first, then shared widgets, then screens. Do not leave a
 screen half light and half dark.
@@ -70,7 +79,7 @@ Rules:
 | Display / titles / buttons | Space Grotesk 700 | Screen titles, card titles, button labels |
 | Body | Plus Jakarta Sans 500 | Already used by `OnboardingPalette.body` |
 | Label | Space Mono 400, 11px, uppercase, letter-spacing 0.12em | Eyebrows ("WELCOME BACK"), counters ("1 / 6"), meta |
-| Hero | Archivo 900, uppercase, letter-spacing −0.03em, line-height 0.95 | **At most one per screen**: onboarding and auth headlines, Home headline |
+| Hero | Archivo 900, uppercase, letter-spacing −0.03em, line-height 0.95 | **Welcome carousel and auth screens only**, at most one per screen. Not used behind sign-in |
 
 Scale: hero 30–34 · title 20–24 · card title 16 · body 14 · caption 12 ·
 label 11. Nothing below 11.
@@ -95,8 +104,8 @@ label 11. Nothing below 11.
 - **Input**: `surface` fill, 1px `border`, radius 16, height 52, placeholder in
   `textMuted`, focused border lime 1.5px, error border `error`.
 - **Card**: `surface`, 1px `border`, radius 16–20, padding 12–16, no elevation.
-- **Chip**: pill, 1px `borderStrong`, 11–12px text. Selected: lime fill with
-  `onAccent` text. Status chips (Indoor / Outdoor) use a tinted border and text.
+- **Chip**: pill, 1px `borderStrong`, 11–12px text. Selected: white fill with
+  `canvas` text (lime stays reserved for the primary action). Status chips (Indoor / Outdoor) use a tinted border and text.
 - **Bottom bar**: floating pill, `surface` with 1px `border`. Active item lime,
   inactive `textMuted`.
 - **Bottom sheet**: `surfaceRaised` or `surface`, top radius 28, drag handle.
@@ -193,33 +202,164 @@ Keep all existing auth logic, validation and controllers. This is a restyle.
 
 ---
 
-## 6. Main screens
+## 6. Signed-in screens
 
 Mockup: `docs/mockups/app-screens.html`.
 
-- **Home**: no marketing hero. Location selector and bell on top, one hero
-  headline, a pill search bar ("What, where, when") with a filter icon,
-  category chips, then horizontally scrolling sections of event and venue
-  cards.
-- **Search**: results as single-column cards; filters in a bottom sheet;
-  infinite scroll, not numbered pages. Map (milestone 8) is full-bleed with a
-  draggable list sheet over it.
-- **Detail (event / venue / asset / service)**: full-width photo header with
-  round back and favourite buttons, label + hero-style name, meta chips
-  (capacity, type, rating), tappable rows that open sheets ("Pick a date",
-  "Add gear and crew"), and the sticky action bar with price and "Book now".
-- **Tickets**: ticket cards; the QR sits on a white tile so scanners can read
-  it on a dark screen.
-- **Passport**: next-event ticket card with a lime-tinted border and QR on top,
-  then stamps as a grid of circles (earned: lime dashed ring with a check;
-  empty: grey dashed ring), level and XP in label style.
+### Rules for everything behind sign-in
+
+These come from problems seen on the web app. Do not carry them over.
+
+- **No hero headlines inside.** The uppercase Archivo headline is for the
+  welcome carousel and auth only. Inside, screen titles are Space Grotesk 20.
+- **One primary action per screen.** One lime button. Never repeat the same
+  action two or three times on a page.
+- **Plain words for guests.** Say "owner", "venue", "photographer". Foxer role
+  names appear only as a role label on a person (for example "Event Foxer").
+  Do not show provider features (partnerships, builders) to a guest.
+- **Empty states say one thing once.** "No reviews yet" or "New", never a 0
+  rating, 0% bars or an empty quote.
+- **One price unit.** Venues are priced "per day" everywhere (see section 9).
+- **Signed-out access to a private screen shows a sign-in prompt**, not a
+  silent redirect.
+- Every screen needs loading, empty and error states, not only the filled one.
+
+### Bottom bar
+
+Home · Search · Tickets · Messages · Passport. Messages shows the unread count
+as a lime badge. Notifications stay behind the bell on Home.
+
+### Screens
+
+- **Home**: location selector and bell; pill search bar ("What are you
+  planning?"); event-type chips; then, only when the user has an upcoming
+  booking, a slim lime strip (countdown, venue and date, "Ticket" button);
+  then horizontally scrolling sections ("Venues near you", events) and a
+  Foxers section. No headline, no marketing copy.
+- **Search**: search bar with filter icon (filters open a bottom sheet); one
+  row of chips to switch between Events, Venues, Foxers and Gear; result count
+  in label style; results as large photo cards (photo, favourite button, type
+  chip, name, rating or "New", city and capacity, price). Infinite scroll, no
+  numbered pages. A floating white "Map" pill switches to the map (milestone
+  8), which is full-bleed with a draggable list sheet. Only the venue card is
+  drawn so far; event, Foxer and gear cards still need designing.
+- **Venue detail**: full-width photo header with round back, share and
+  favourite buttons; label ("Venue · City"); name; chips for capacity, type and
+  rating or "No reviews yet"; an owner row with a message icon; a short
+  description; rows that open sheets (Amenities, Rules and cancellation); and
+  the sticky action bar with price per day and the only "Book now".
+- **Tickets**: Upcoming / Past switch. Each ticket is a stub: status label,
+  name, date / doors / guests, a dashed tear line with side notches, then the
+  QR on a white tile and the booking reference in mono. Below: Message and
+  Directions.
+- **Passport** (also the profile): an ID card with photo, name, level and an XP
+  bar; tapping it opens the profile, the gear icon opens settings. Then stamps
+  as a grid of circles (earned: tilted solid ring in a role colour with a city
+  code and month; empty: grey dashed ring), badges, a link to the leaderboard,
+  and a row to Saved items.
+
+Not designed yet: event detail and the event booking flow (venue plus gear and
+crew), Foxer profile and "Match Me", asset and service booking, reviews,
+notifications list, map, cancellation and refund, settings, and the whole
+Foxer / provider side. Where Republic (the web's social feed) lives in the app
+is undecided (section 9).
 
 ---
 
-## 7. Copy
+## 7. Messages
+
+Mockup: `docs/mockups/messages.html`. Web source: `src/features/messages` in
+the web repo (types in `types.ts`, calls in `api/messages.ts`).
+
+**Inbox**
+
+- Title, search icon, new-message icon.
+- Filter chips: All · Bookings · Groups · Requests (with a count of incoming
+  requests). "Bookings" means conversations that have a context
+  (`contextType` / `contextLabel`) or are a shared inbox.
+- Row: avatar with a green online dot, name with a verified tick when the
+  person is identity-verified, time, last message on one line, unread count as
+  a lime badge. Under the name, a small grey label with the booking or venue
+  the chat is about (`contextLabel`).
+- A venue's or event's shared inbox (`isInbox`) uses a **square** avatar and
+  the venue or event name, labelled "Venue inbox" / "Event inbox".
+- Groups use a group icon. Pinned chats show a pin and sort first; muted chats
+  show a bell-off icon.
+- Requests: an incoming request opens with Accept and Decline in place of the
+  composer.
+- Swipe a row for pin, mute and delete.
+
+**Chat**
+
+- Header: back, avatar, name, role label and presence; overflow menu (search
+  in conversation, mute, group members, leave group).
+- When the chat has a booking context, a card is pinned under the header:
+  "About this booking", name and date, and a "View ticket" link.
+- Incoming bubbles: `surface` with a hairline border. Outgoing bubbles:
+  `accentTintBg` with `accentTintBorder`. Not solid lime; the send button is
+  the only lime element.
+- Supported, as on web: quoted reply, emoji reactions, image attachments,
+  forwarded and edited marks, one pinned message per conversation, "Seen" read
+  receipt, centred system notices for group changes. In a shared inbox, show
+  the real author's name on each team reply.
+- Long-press a message: reply, react, edit (own), forward, pin, delete (own).
+- Composer: image button, text field ("Type a message…"), lime send button.
+
+---
+
+## 8. Venue booking flow
+
+Mockup: `docs/mockups/booking-flow.html`. Web source: `VenueBookingClient`,
+`VenueCheckoutClient`, `VenueBookingSuccessClient`,
+`VenueRequestPendingClient`. Same rules as the web, split into steps.
+
+Starts from "Book now" on venue detail. Full-screen flow with a three-segment
+progress bar and "1 of 3" in label style. The current selection and the Next
+button are pinned at the bottom of each step.
+
+1. **Dates** — "When is it?" Month calendar; unavailable dates
+   (`/venues/:id/unavailable-dates`) are struck out and disabled; the selection
+   is a lime circle.
+2. **Guests** — "How many guests?" Stepper with the venue's capacity under the
+   number. Going over capacity is allowed and shows an amber note: the owner
+   has to approve before payment. Below: an optional free-text field for the
+   owner (the web's "Special requests").
+3. **Review** — venue, date and guests (each editable), then the price lines:
+   rate × days, service fee (from the API, never computed in the app), voucher
+   (opens a code sheet), total. Cancellation policy in one line. Button:
+   "Continue to payment", or "Request to book" when over capacity.
+4. **Pay** — total, then Stripe's payment sheet: Apple Pay / Google Pay first,
+   card as fallback. Stubbed until Stripe is taken up (port plan, decision 2).
+5. Ending, one of:
+   - **Confirmed** ("You're booked") — after payment. Summary card with
+     reference and total charged, "View ticket" (primary), "Message the owner".
+   - **Request sent** — when guests exceed capacity. No payment is taken. Three
+     steps (request delivered, you'll be notified, pay only after approval),
+     reference and "amount if approved", "Message the owner" (primary), "Back
+     to home". Amber, not lime, is the status colour here.
+
+Not drawn yet: multi-day selection, the voucher sheet, a declined request, a
+failed payment.
+
+---
+
+## 9. Open decisions
+
+- **Price unit.** The web shows the same venue as "/night" and "/ day". The
+  mockups use "per day". Confirm, then use it everywhere.
+- **Republic.** The web's social feed has no place in the app yet.
+- **Foxer side.** Listings, calendar, earnings and door check-in are not
+  designed; the first release is assumed to be guests only.
+- **Sign in with Apple.** In the auth mockup, not built (section 5).
+- **Stamps and levels.** What a stamp or a level gives the user should be
+  stated on the Passport screen once the rules are settled.
+
+---
+
+## 10. Copy
 
 Sentence case for buttons and body. Uppercase only for the mono labels and the
 hero headline. Verb-first buttons ("Book now", "Create account"). No
-exclamation marks. Currency as on web: `₱25,000` with a muted `/night`.
+exclamation marks. Currency: `₱25,000` with a muted `/day`.
 
 All user-facing strings go through `lib/l10n` like the rest of the app.

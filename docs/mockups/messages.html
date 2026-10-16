@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxPassport mobile — Messages</title>
+<link rel="stylesheet" href="mockup.css">
+</head>
+<body>
+<h1>Messages</h1>
+<p class="note">Spec: <code>docs/mobile-design.md</code> section 7. Web source: <code>src/features/messages</code>. People, messages and times are sample data.</p>
+<div class="wrap">
+
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:12px"><span class="g" style="font-size:20px">Messages</span><span class="row"><i class="ti ti-search" style="font-size:20px"></i><i class="ti ti-edit" style="font-size:20px"></i></span></div>
+      <div class="chips" style="margin-bottom:6px"><span class="chip on">All</span><span class="chip">Bookings</span><span class="chip">Groups</span><span class="chip">Requests <b style="color:#ccff00">1</b></span></div>
+      <div class="conv"><span class="av">R<span class="on-dot"></span></span><div style="flex:1;min-width:0"><div class="row"><span class="g">Rico Rival <i class="ti ti-rosette-discount-check" style="color:#ccff00"></i></span><span class="s">2m</span></div><span class="ctx">Sky Hall · 17 Oct</span><div class="row"><span class="cut">Sound check is at 5, see you there</span><b class="cnt">2</b></div></div></div>
+      <div class="conv"><span class="av" style="border-radius:12px"><i class="ti ti-building"></i></span><div style="flex:1;min-width:0"><div class="row"><span class="g">Sky Hall</span><span class="s">1h</span></div><span class="ctx">Venue inbox</span><div class="s cut">You: Is parking included?</div></div></div>
+      <div class="conv"><span class="av"><i class="ti ti-users"></i></span><div style="flex:1;min-width:0"><div class="row"><span class="g"><i class="ti ti-pin" style="color:#8b90a0"></i> Sample group</span><span class="s">Tue</span></div><div class="s cut">Sample: final headcount is 40</div></div></div>
+      <div class="conv" style="border:0"><span class="av">S</span><div style="flex:1;min-width:0"><div class="row"><span class="g">Sample Foxer</span><span class="s"><i class="ti ti-bell-off"></i> Mon</span></div><div class="s cut">Sent a photo</div></div></div>
+      <div class="tab"><span><i class="ti ti-home"></i>Home</span><span><i class="ti ti-search"></i>Search</span><span><i class="ti ti-ticket"></i>Tickets</span><span class="on"><i class="ti ti-message-circle"></i>Messages</span><span><i class="ti ti-id-badge-2"></i>Passport</span></div>
+    </div>
+    <p class="cap">Inbox — the grey label under a name is the booking or venue the chat is about. Square avatar = a venue's or event's shared inbox.</p>
+  </div>
+
+  <div>
+    <div class="ph" style="padding-bottom:14px">
+      <div class="row" style="margin-bottom:10px"><div class="row" style="justify-content:flex-start"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="av" style="width:36px;height:36px">R<span class="on-dot"></span></span><div><div class="g">Rico Rival <i class="ti ti-rosette-discount-check" style="color:#ccff00"></i></div><div style="color:#ff00aa;font-size:11px">Event Foxer · Online</div></div></div><i class="ti ti-dots-vertical" style="font-size:20px"></i></div>
+      <div class="card row" style="padding:8px 12px;border-radius:14px;margin-bottom:12px"><div><div class="m">About this booking</div><div class="g">Sky Hall · Sat 17 Oct</div></div><span style="color:#ccff00;font-weight:700;font-size:12px">View ticket</span></div>
+      <div style="display:flex;flex-direction:column;flex:1">
+        <div class="m" style="text-align:center;margin-bottom:8px">Today</div>
+        <div class="b in">Hi, I'm coordinating your night at Sky Hall.</div>
+        <div class="b out">Great. Can we add a photographer?</div>
+        <div class="b in"><div class="s" style="border-left:2px solid #ccff00;padding-left:8px;margin-bottom:4px">Can we add a photographer?</div>Yes, I'll send two options tonight.<div style="margin-top:4px"><span class="ctx"><i class="ti ti-thumb-up"></i> 1</span></div></div>
+        <div class="b in"><div class="img" style="width:150px;height:90px;border-radius:10px"><i class="ti ti-photo" style="font-size:22px"></i></div></div>
+        <div class="b in">Sound check is at 5, see you there</div>
+        <div class="b out">Perfect, thank you</div>
+        <div class="s" style="align-self:flex-end;font-size:11px">Seen</div>
+      </div>
+      <div class="row" style="margin-top:10px"><span class="card" style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center"><i class="ti ti-photo-plus" style="font-size:18px"></i></span><span class="card" style="flex:1;border-radius:999px;padding:11px 14px;color:#8b90a0">Type a message…</span><span style="width:42px;height:42px;border-radius:50%;background:#ccff00;color:#1a2000;display:flex;align-items:center;justify-content:center"><i class="ti ti-send-2" style="font-size:18px"></i></span></div>
+    </div>
+    <p class="cap">Chat — booking pinned on top. Shown: quoted reply, reaction, photo, "Seen". Long-press a message for reply, react, edit, forward, pin, delete.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 
+// Onboarding and the "become a Foxer" page share this type.
+export 'package:flutter_template/shared/roles/role_request.dart'
+    show RoleRequestSummary;
+
 class GeoCountry extends Equatable {
   const GeoCountry({required this.code, required this.name});
 
@@ -28,34 +32,6 @@ class GeoState extends Equatable {
 
   @override
   List<Object?> get props => [code, name];
-}
-
-/// One of the user's role applications (`GET /role-requests/my`).
-class RoleRequestSummary extends Equatable {
-  const RoleRequestSummary({
-    required this.id,
-    required this.roleType,
-    required this.status,
-  });
-
-  factory RoleRequestSummary.fromJson(Map<String, dynamic> json) =>
-      RoleRequestSummary(
-        id: (json['id'] ?? '').toString(),
-        roleType: (json['roleType'] ?? '').toString(),
-        status: (json['status'] ?? '').toString(),
-      );
-
-  final String id;
-  final String roleType;
-
-  /// `pending`, `revision_requested`, `approved`, `rejected`, …
-  final String status;
-
-  bool get isPending => status == 'pending';
-  bool get needsRevision => status == 'revision_requested';
-
-  @override
-  List<Object?> get props => [id, roleType, status];
 }
 
 /// What the profile step is pre-filled with, from `GET /profile`.
