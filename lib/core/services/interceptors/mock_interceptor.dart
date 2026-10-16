@@ -238,6 +238,79 @@ class MockInterceptor extends Interceptor {
       return;
     }
 
+    if (path == ApiEndpoints.feed && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            {
+              'id': 'p1',
+              'content': 'Just wrapped our team offsite at a garden venue in '
+                  'Davao. The staff made it effortless.',
+              'tab': 'community',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(hours: 3))
+                  .toUtc()
+                  .toIso8601String(),
+              'likesCount': 12,
+              'commentsCount': 2,
+              'isLikedByMe': false,
+              'author': {'id': 'u1', 'name': 'Maria S.'},
+            },
+            {
+              'id': 'p2',
+              'content': 'Looking for a sound system for a 100-guest '
+                  'birthday this month. Any recommendations?',
+              'tab': 'community',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(days: 1))
+                  .toUtc()
+                  .toIso8601String(),
+              'likesCount': 4,
+              'commentsCount': 0,
+              'isLikedByMe': true,
+              'author': {'id': 'u2', 'name': 'Jon D.'},
+            },
+          ],
+          'nextCursor': null,
+        }),
+      );
+      return;
+    }
+
+    if (RegExp(r'^/feed/[^/]+/comments$').hasMatch(path) &&
+        options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            {
+              'id': 'c1',
+              'content': 'Congrats! Which venue was it?',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(hours: 2))
+                  .toUtc()
+                  .toIso8601String(),
+              'author': {'id': 'u2', 'name': 'Jon D.'},
+              'replies': <Object>[],
+            },
+          ],
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.feed ||
+        RegExp(r'^/feed/[^/]+/(reaction|comments)$').hasMatch(path)) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'id': 'new'},
+        }),
+      );
+      return;
+    }
+
     if (path.startsWith('/reviews/listing/')) {
       handler.resolve(
         _ok(options, {

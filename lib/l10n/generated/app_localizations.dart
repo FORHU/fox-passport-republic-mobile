@@ -3697,6 +3697,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose a star rating.'**
   String get reviewPickStars;
+
+  /// No description provided for @republicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic'**
+  String get republicTitle;
+
+  /// No description provided for @republicRowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What the community is posting'**
+  String get republicRowBody;
+
+  /// No description provided for @republicTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get republicTabAll;
+
+  /// No description provided for @republicTabCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get republicTabCommunity;
+
+  /// No description provided for @republicTabMarketplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketplace'**
+  String get republicTabMarketplace;
+
+  /// No description provided for @republicEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing posted here yet. Be the first.'**
+  String get republicEmpty;
+
+  /// No description provided for @republicPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get republicPost;
+
+  /// No description provided for @republicCompose.
+  ///
+  /// In en, this message translates to:
+  /// **'New post'**
+  String get republicCompose;
+
+  /// No description provided for @republicComposeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share something with the Republic'**
+  String get republicComposeHint;
+
+  /// No description provided for @republicPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted.'**
+  String get republicPosted;
+
+  /// No description provided for @republicPostFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post that. Try again.'**
+  String get republicPostFailed;
+
+  /// No description provided for @republicLikeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save your like.'**
+  String get republicLikeFailed;
+
+  /// No description provided for @republicComments.
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get republicComments;
+
+  /// No description provided for @republicNoComments.
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet.'**
+  String get republicNoComments;
+
+  /// No description provided for @republicCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment'**
+  String get republicCommentHint;
+
+  /// No description provided for @republicSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get republicSend;
+
+  /// No description provided for @republicCommentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t post your comment.'**
+  String get republicCommentFailed;
+
+  /// No description provided for @republicEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get republicEdited;
+
+  /// No description provided for @republicJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get republicJustNow;
+
+  /// No description provided for @republicMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m'**
+  String republicMinutesAgo(int count);
+
+  /// No description provided for @republicHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h'**
+  String republicHoursAgo(int count);
+
+  /// No description provided for @republicDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d'**
+  String republicDaysAgo(int count);
 }
 
 class _AppLocalizationsDelegate
