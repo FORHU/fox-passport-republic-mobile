@@ -627,5 +627,19 @@
   "itemBookDone": "Listo",
   "itemBookSignIn": "Inicia sesión para reservar.",
   "itemBookAbout": "Sobre esto",
-  "itemBookPriceFrom": "Desde"
+  "itemBookPriceFrom": "Desde",
+  "reviewsTitle": "Reseñas",
+  "reviewsCount": "{count, plural, =1{1 reseña} other{{count} reseñas}}",
+  "@reviewsCount": {"placeholders":{"count":{"type":"int"}}},
+  "reviewsNone": "Aún no hay reseñas.",
+  "reviewsSeeAll": "Ver las {count}",
+  "@reviewsSeeAll": {"placeholders":{"count":{"type":"int"}}},
+  "reviewsLoadFailed": "No pudimos cargar las reseñas.",
+  "reviewWrite": "Dejar una reseña",
+  "reviewTitle": "¿Cómo fue?",
+  "reviewHint": "Cuéntales a otros cómo fue (opcional)",
+  "reviewSubmit": "Publicar reseña",
+  "reviewThanks": "Gracias, tu reseña está publicada.",
+  "reviewFailed": "No pudimos publicar tu reseña. Inténtalo de nuevo.",
+  "reviewPickStars": "Elige una calificación."
 }

@@ -90,6 +90,10 @@ class ApiEndpoints {
   static String serviceBookingConfirm(String id) =>
       '/service/bookings/$id/confirm';
 
+  // ── Reviews ─────────────────────────────────────────────────────────────
+  static String reviewsOfListing(String id) => '/reviews/listing/$id';
+  static const String reviewsCreate = '/reviews/create';
+
   // ── Payments ────────────────────────────────────────────────────────────
   static const String createPaymentIntent = '/payments/create-intent';
 
