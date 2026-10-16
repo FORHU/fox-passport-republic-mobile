@@ -73,7 +73,7 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                       icon: const Icon(Icons.arrow_back_rounded),
                     ),
                   Text(
-                    l10n.ticketsTitle,
+                    l10n.bookings,
                     style: AppTypography.display(size: 28),
                   ),
                 ],

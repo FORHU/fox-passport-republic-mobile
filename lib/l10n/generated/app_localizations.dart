@@ -3193,6 +3193,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage this on the web.'**
   String get calendarManageOnWeb;
+
+  /// No description provided for @bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get bookings;
 }
 
 class _AppLocalizationsDelegate

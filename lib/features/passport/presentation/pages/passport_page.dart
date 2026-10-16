@@ -106,25 +106,6 @@ class _Body extends StatelessWidget {
               side: const BorderSide(color: AppColors.border),
             ),
             leading: const Icon(
-              Icons.confirmation_number_outlined,
-              color: AppColors.accent,
-            ),
-            title: Text(l10n.ticketsTitle),
-            subtitle: Text(l10n.passportTicketsHint),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push(RouteNames.tickets),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Material(
-          color: AppColors.surface,
-          borderRadius: AppRadius.brMd,
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius: AppRadius.brMd,
-              side: const BorderSide(color: AppColors.border),
-            ),
-            leading: const Icon(
               Icons.calendar_month_outlined,
               color: AppColors.accent,
             ),

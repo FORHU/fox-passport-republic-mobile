@@ -37,12 +37,22 @@ class _MapPageState extends ConsumerState<MapPage> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  l10n.mapTitle,
-                  style: AppTypography.display(size: 28),
-                ),
+              child: Row(
+                children: [
+                  if (Navigator.canPop(context))
+                    IconButton(
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
+                  Expanded(
+                    child: Text(
+                      l10n.mapTitle,
+                      style: AppTypography.display(size: 28),
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
