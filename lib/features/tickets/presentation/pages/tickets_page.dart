@@ -229,7 +229,7 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
             entry.key.toUpperCase(),
-            style: AppTypography.label(color: AppColors.textMuted),
+            style: AppTypography.label(),
           ),
         ),
       );
