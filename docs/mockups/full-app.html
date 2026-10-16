@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxPassport app — full mockup</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@900&display=swap">
+<link rel="stylesheet" href="mockup.css">
+</head>
+<body>
+<h1>FoxPassport app — full mockup</h1>
+<p class="note">Every screen designed so far, in the order a guest meets them. All names, dates, prices and counts are sample data; grey boxes stand in for photos.</p>
+<p class="note">Spec: <code>docs/mobile-design.md</code> (sections 4 to 8). Tab bar decided 2026-10-15: Home · Search · Bookings · Messages · Passport, with Map as a switch inside Search. The built app still has Map as a tab until milestone 11.</p>
+<nav class="toc">
+  <a href="#start">1. Welcome and sign-in</a>
+  <a href="#home">2. Home</a>
+  <a href="#occasion">3. Planning by occasion</a>
+  <a href="#search">4. Search and map</a>
+  <a href="#booking">5. Venue and booking</a>
+  <a href="#bookings">6. Bookings</a>
+  <a href="#messages">7. Messages</a>
+  <a href="#passport">8. Passport</a>
+</nav>
+
+<!-- 1 -->
+<section class="sec" id="start">
+<h2>1. Welcome and sign-in</h2>
+<p class="sub">Shown once on first launch. The poster headline is used here and nowhere else.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row"><span class="m">1 / 6</span><span class="s">Skip</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div style="width:64px;height:64px;border-radius:18px;background:#1a2000;border:1px solid #55660a;color:#ccff00;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px"><i class="ti ti-paw"></i></div>
+        <div class="m" style="color:#ccff00;margin-bottom:8px">FoxPassport</div>
+        <div class="hero">Welcome to FoxPassport</div>
+        <p style="color:#a9adba;margin:14px 0 0">Plan, book and live unforgettable events — and meet the people who make them happen.</p>
+      </div>
+      <div class="dots" style="margin-bottom:16px"><span class="on"></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="btn">Show me around <i class="ti ti-arrow-right"></i></div>
+    </div>
+    <p class="cap">Welcome carousel, slide 1 of 6. Copy is the web's WelcomeGuide.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="g" style="text-align:center;font-size:15px"><i class="ti ti-paw" style="color:#ccff00"></i> FoxPassport</div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="m" style="color:#ccff00;margin-bottom:8px">Welcome back</div>
+        <div class="hero" style="margin-bottom:18px">Log in to your account</div>
+        <div class="fld" style="margin-bottom:10px">Email address</div>
+        <div class="fld">Password <i class="ti ti-eye"></i></div>
+        <div style="text-align:right;margin:10px 0 14px;font-size:12px;color:#ccff00;font-weight:700">Forgot password?</div>
+        <div class="btn">Log in</div>
+        <div class="m" style="text-align:center;margin:12px 0;color:#5a5f70">or</div>
+        <div class="ghost" style="margin-bottom:8px;opacity:.5"><i class="ti ti-brand-google"></i> Continue with Google</div>
+        <p class="s" style="text-align:center;margin:14px 0 0">New here? <b style="color:#ccff00">Create an account</b></p>
+      </div>
+    </div>
+    <p class="cap">Log in. Social buttons show but stay disabled until social sign-in launches.</p>
+  </div>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="home">
+<h2>2. Home</h2>
+<p class="sub">Built from <code>GET /categories</code>: occasion tiles sorted by how much is bookable, with live counts. Home never shows an error box or an empty box.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:10px"><span class="g"><i class="ti ti-map-pin" style="color:#ccff00"></i> Baguio <i class="ti ti-chevron-down"></i></span><span class="bell"><i class="ti ti-bell"></i><b class="cnt bell-cnt">2</b></span></div>
+      <div class="g" style="font-size:20px;line-height:1.15;margin-bottom:10px">What are you planning?</div>
+      <div class="grid3">
+        <div class="t birthday"><i class="ti ti-cake"></i><div><div class="g">Birthday</div><div class="n">34 ideas</div></div></div>
+        <div class="t wedding"><i class="ti ti-heart"></i><div><div class="g">Wedding</div><div class="n">28 ideas</div></div></div>
+        <div class="t corporate"><i class="ti ti-briefcase"></i><div><div class="g">Corporate</div><div class="n">19 ideas</div></div></div>
+        <div class="t social"><i class="ti ti-confetti"></i><div><div class="g">Social</div><div class="n">12 ideas</div></div></div>
+        <div class="t other"><i class="ti ti-sparkles"></i><div><div class="g">Other</div><div class="n">7 ideas</div></div></div>
+        <div class="t all"><i class="ti ti-layout-grid"></i><div><div class="g">All</div><div class="n">18 more</div></div></div>
+      </div>
+      <div class="g" style="font-size:14px;margin-bottom:7px">Or book just one thing</div>
+      <div class="hs" style="margin-bottom:14px">
+        <div class="pill"><span class="c" style="color:#a78bfa"><i class="ti ti-building"></i></span>Venues</div>
+        <div class="pill"><span class="c" style="color:#00d2ff"><i class="ti ti-camera"></i></span>Photos</div>
+        <div class="pill"><span class="c" style="color:#f59e0b"><i class="ti ti-vinyl"></i></span>DJ</div>
+        <div class="pill"><span class="c" style="color:#00d2ff"><i class="ti ti-tools-kitchen-2"></i></span>Catering</div>
+        <div class="pill"><span class="c" style="color:#f97316"><i class="ti ti-speakerphone"></i></span>Sound</div>
+      </div>
+      <div class="row" style="margin-bottom:7px"><span class="g" style="font-size:14px">Happening soon near you</span><span class="s">See all</span></div>
+      <div class="hs">
+        <div style="width:150px;flex-shrink:0"><div class="img rel" style="height:78px"><i class="ti ti-photo"></i><span class="date"><span class="m" style="color:#ccff00">Oct</span><br><b class="g" style="font-size:13px">24</b></span></div><div class="g" style="margin-top:4px">Sample night market</div><div class="s">Baguio · 40 going</div></div>
+        <div style="width:150px;flex-shrink:0"><div class="img rel" style="height:78px"><i class="ti ti-photo"></i><span class="date"><span class="m" style="color:#ccff00">Nov</span><br><b class="g" style="font-size:13px">02</b></span></div><div class="g" style="margin-top:4px">Sample</div><div class="s">La Trinidad</div></div>
+      </div>
+      <div class="tab" data-on="home"></div>
+    </div>
+    <p class="cap">First visit. Tiles first, then single bookings, then public events with a date.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:10px"><span class="g"><i class="ti ti-map-pin" style="color:#ccff00"></i> Baguio <i class="ti ti-chevron-down"></i></span><span class="bell"><i class="ti ti-bell"></i></span></div>
+      <div class="row" style="background:#ccff00;color:#1a2000;border-radius:14px;padding:9px 11px;margin-bottom:10px"><div><div class="m" style="color:#3d4d00">In 3 days</div><div class="g">averie · Sat 17 Oct</div></div><span class="g" style="background:#1a2000;color:#ccff00;border-radius:999px;padding:5px 10px;font-size:11px">Ticket</span></div>
+      <div class="card row" style="padding:9px 10px;margin-bottom:12px"><div class="row" style="justify-content:flex-start;gap:9px"><span class="ic2" style="background:#24140a;color:#f97316"><i class="ti ti-cake"></i></span><div><div class="g">Continue: birthday</div><div class="s">3 saved · Sat 7 Nov · 30 guests</div></div></div><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+      <div class="g" style="font-size:17px;margin-bottom:8px">Plan something new</div>
+      <div class="grid3">
+        <div class="t birthday"><i class="ti ti-cake"></i><div><div class="g">Birthday</div><div class="n">34</div></div></div>
+        <div class="t corporate"><i class="ti ti-briefcase"></i><div><div class="g">Corporate</div><div class="n">19</div></div></div>
+        <div class="t wedding"><i class="ti ti-heart"></i><div><div class="g">Wedding</div><div class="n">28</div></div></div>
+        <div class="t social"><i class="ti ti-confetti"></i><div><div class="g">Social</div><div class="n">12</div></div></div>
+        <div class="t other"><i class="ti ti-sparkles"></i><div><div class="g">Other</div><div class="n">7</div></div></div>
+        <div class="t all"><i class="ti ti-layout-grid"></i><div><div class="g">All</div><div class="n">18 more</div></div></div>
+      </div>
+      <div class="row" style="margin-bottom:7px"><span class="g" style="font-size:14px">Because you saved averie</span><span class="s">See all</span></div>
+      <div class="hs">
+        <div style="width:150px;flex-shrink:0"><div class="img" style="height:66px"><i class="ti ti-photo"></i></div><div class="g" style="margin-top:4px">Sample garden venue</div><div class="s">Outdoor · 120 guests</div></div>
+        <div style="width:150px;flex-shrink:0"><div class="img" style="height:66px"><i class="ti ti-photo"></i></div><div class="g" style="margin-top:4px">Sample</div><div class="s">Outdoor</div></div>
+      </div>
+      <div class="tab" data-on="home"></div>
+    </div>
+    <p class="cap">Returning user. What they're in the middle of comes first; tiles reorder by their history.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:10px"><i class="ti ti-arrow-left" style="font-size:18px"></i><span class="g" style="font-size:15px">Everything you can book</span><span style="width:18px"></span></div>
+      <div class="card row search" style="margin-bottom:8px"><span><i class="ti ti-search"></i> Find a category</span></div>
+      <div class="m" style="margin:6px 0 0">Occasions</div>
+      <div class="li"><span class="ic2" style="color:#f97316"><i class="ti ti-cake"></i></span><span style="flex:1">Birthday</span><span class="s">34</span></div>
+      <div class="li" style="border:0"><span class="ic2" style="color:#a78bfa"><i class="ti ti-heart"></i></span><span style="flex:1">Wedding</span><span class="s">28</span></div>
+      <div class="m" style="margin:8px 0 0">People</div>
+      <div class="li"><span class="ic2" style="color:#00d2ff"><i class="ti ti-camera"></i></span><span style="flex:1">Photography</span><span class="s">15</span></div>
+      <div class="li"><span class="ic2" style="color:#f59e0b"><i class="ti ti-vinyl"></i></span><span style="flex:1">DJ</span><span class="s">9</span></div>
+      <div class="li" style="border:0"><span class="ic2" style="color:#00d2ff"><i class="ti ti-tools-kitchen-2"></i></span><span style="flex:1">Catering</span><span class="s">6</span></div>
+      <div class="m" style="margin:8px 0 0">Gear</div>
+      <div class="li" style="border:0"><span class="ic2" style="color:#f97316"><i class="ti ti-speakerphone"></i></span><span style="flex:1">Sound and lights</span><span class="s">11</span></div>
+      <div class="m" style="margin:8px 0 0">Venues</div>
+      <div class="li"><span class="ic2" style="color:#a78bfa"><i class="ti ti-trees"></i></span><span style="flex:1">Garden</span><span class="s">5</span></div>
+      <div class="li" style="border:0;color:#5a5f70"><span class="ic2"><i class="ti ti-beach"></i></span><span style="flex:1">Beach resort</span><span class="s">None yet</span></div>
+    </div>
+    <p class="cap">"All" tile. Every category, grouped, with search. Empty ones say "None yet" here and are hidden on Home.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:10px"><span class="g"><i class="ti ti-map-pin" style="color:#ccff00"></i> Baguio <i class="ti ti-chevron-down"></i></span><span class="bell"><i class="ti ti-bell"></i></span></div>
+      <div class="g" style="font-size:20px;line-height:1.15;margin-bottom:10px">What are you planning?</div>
+      <div class="grid3">
+        <div class="t birthday"><i class="ti ti-cake"></i><div class="g">Birthday</div></div>
+        <div class="t wedding"><i class="ti ti-heart"></i><div class="g">Wedding</div></div>
+        <div class="t corporate"><i class="ti ti-briefcase"></i><div class="g">Corporate</div></div>
+        <div class="t social"><i class="ti ti-confetti"></i><div class="g">Social</div></div>
+        <div class="t other"><i class="ti ti-sparkles"></i><div class="g">Other</div></div>
+        <div class="t all"><i class="ti ti-layout-grid"></i><div class="g">All</div></div>
+      </div>
+      <div class="hs" style="margin-bottom:14px"><div class="sk" style="width:46px;height:46px;border-radius:50%"></div><div class="sk" style="width:46px;height:46px;border-radius:50%"></div><div class="sk" style="width:46px;height:46px;border-radius:50%"></div><div class="sk" style="width:46px;height:46px;border-radius:50%"></div></div>
+      <div class="sk" style="height:14px;width:55%;margin-bottom:8px"></div>
+      <div class="hs"><div class="sk" style="height:100px;width:150px;flex-shrink:0"></div><div class="sk" style="height:100px;width:90px;flex-shrink:0"></div></div>
+      <div class="tab" data-on="home"></div>
+    </div>
+    <p class="cap">Loading or offline. The five occasions are built into the app and work at once; the rest waits as skeletons.</p>
+  </div>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="occasion">
+<h2>3. Planning by occasion</h2>
+<p class="sub">After tapping a tile. No question sheet: results first, three paths on one page, questions only when a chip is tapped.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:10px"><i class="ti ti-arrow-left" style="font-size:18px"></i><span class="g" style="font-size:15px">Birthdays in Baguio</span><i class="ti ti-search" style="font-size:18px"></i></div>
+      <div class="row" style="justify-content:flex-start;gap:6px;margin-bottom:12px"><span class="chip add"><i class="ti ti-calendar-plus"></i> Add date</span><span class="chip add"><i class="ti ti-users"></i> Guests</span><span class="chip">Baguio <i class="ti ti-chevron-down"></i></span></div>
+      <div class="row" style="margin-bottom:6px"><span class="g" style="font-size:14px">Ready-made packages</span><span class="s">See all 4</span></div>
+      <div class="hs" style="margin-bottom:12px">
+        <div class="card" style="padding:7px;width:150px;flex-shrink:0"><div class="img" style="height:68px"><i class="ti ti-photo"></i></div><div class="g" style="margin-top:5px">Sample garden party</div><div class="inc" style="margin:4px 0"><span class="ic2"><i class="ti ti-building"></i></span><span class="ic2"><i class="ti ti-speakerphone"></i></span><span class="ic2"><i class="ti ti-tools-kitchen-2"></i></span><span class="ic2"><i class="ti ti-microphone-2"></i></span></div><div><b>₱38,000</b> <span class="s">total</span></div></div>
+        <div class="card" style="padding:7px;width:150px;flex-shrink:0"><div class="img" style="height:68px"><i class="ti ti-photo"></i></div><div class="g" style="margin-top:5px">Sample rooftop</div><div class="inc" style="margin:4px 0"><span class="ic2"><i class="ti ti-building"></i></span><span class="ic2"><i class="ti ti-speakerphone"></i></span></div><div class="s">Ask for a price</div></div>
+      </div>
+      <div class="card" style="padding:10px;margin-bottom:12px;border-color:#5c1a46">
+        <div class="g" style="font-size:13px">Have a Foxer plan it</div><div class="s">Tell them the idea. They book and run the day.</div>
+        <div class="row" style="margin-top:8px"><span class="avs"><b>R</b><b>J</b><b>+3</b></span><span class="g" style="color:#ff00aa">Find a planner <i class="ti ti-arrow-right"></i></span></div>
+      </div>
+      <div class="g" style="font-size:14px">Plan it yourself</div>
+      <div class="li"><span class="ic2" style="color:#a78bfa"><i class="ti ti-building"></i></span><span style="flex:1">Venues</span><span class="s">12 <i class="ti ti-chevron-right"></i></span></div>
+      <div class="li"><span class="ic2" style="color:#f97316"><i class="ti ti-speakerphone"></i></span><span style="flex:1">Sound and lights</span><span class="s">5 <i class="ti ti-chevron-right"></i></span></div>
+      <div class="li" style="border:0"><span class="ic2" style="color:#f59e0b"><i class="ti ti-microphone-2"></i></span><span style="flex:1">Performers</span><span class="s">3 <i class="ti ti-chevron-right"></i></span></div>
+    </div>
+    <p class="cap">Occasion results. Packages, a planner, or piece by piece. With no packages in the city, the other two move up.</p>
+  </div>
+  <div>
+    <div class="ph rel" style="overflow:hidden">
+      <div class="dim"><div class="row" style="margin-bottom:10px"><i class="ti ti-arrow-left"></i><span class="g">Birthdays in Baguio</span><i class="ti ti-search"></i></div><div class="card" style="height:150px"></div></div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="g" style="font-size:15px;margin-bottom:8px">When is it?</div>
+        <div class="row" style="margin-bottom:6px"><i class="ti ti-chevron-left"></i><span class="g">October 2026</span><i class="ti ti-chevron-right"></i></div>
+        <div class="cal m"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="cal" data-cal="17"></div>
+        <div class="g" style="margin:10px 0 6px">Guests</div>
+        <div class="row" style="justify-content:flex-start;gap:5px;flex-wrap:wrap;margin-bottom:12px"><span class="chip">Up to 20</span><span class="chip on">20–50</span><span class="chip">50–100</span><span class="chip">100+</span></div>
+        <div class="row"><span class="s">Clear</span><span class="btn">Show 9 options</span></div>
+      </div>
+    </div>
+    <p class="cap">Tapping "Add date". The count on the button updates as they choose.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:8px"><i class="ti ti-arrow-left" style="font-size:18px"></i><span class="g" style="font-size:15px">Customize</span><span style="width:18px"></span></div>
+      <div class="g" style="font-size:14px">Sample garden party</div>
+      <div class="s" style="margin-bottom:8px">Sat 17 Oct · 30 guests · everything below is free that day</div>
+      <div class="li"><span class="ic2" style="color:#a78bfa"><i class="ti ti-building"></i></span><div style="flex:1"><div>averie</div><div class="s">Venue · part of this package</div></div><i class="ti ti-lock" style="color:#5a5f70"></i></div>
+      <div class="li"><span class="ic2" style="color:#f97316"><i class="ti ti-speakerphone"></i></span><div style="flex:1"><div>Full sound and lights</div><div class="s">Upgraded from basic</div></div><span style="font-size:11px">+₱3,000</span></div>
+      <div class="li"><span class="ic2" style="color:#00d2ff"><i class="ti ti-tools-kitchen-2"></i></span><div style="flex:1;color:#5a5f70;text-decoration:line-through"><div>Buffet for 40</div><div class="s">Catering</div></div><span style="font-size:11px;color:#4ade80">−₱12,000</span></div>
+      <div class="li"><span class="ic2" style="color:#f59e0b"><i class="ti ti-microphone-2"></i></span><div style="flex:1"><div>Acoustic duo</div><div class="s">Performer</div></div><span class="s">Swap</span></div>
+      <div class="li" style="border:0;color:#8b90a0"><span class="ic2"><i class="ti ti-plus"></i></span>Add photos, decor</div>
+      <div class="card" style="padding:9px;margin-top:auto"><div class="row s"><span>Package</span><span>₱38,000</span></div><div class="row s"><span>Your changes</span><span style="color:#4ade80">−₱9,000</span></div><div class="row" style="margin-top:6px"><span class="g" style="font-size:16px">₱29,000</span><span class="btn">Book this</span></div></div>
+    </div>
+    <p class="cap">Customize a package. Price change on every row; the part the package depends on is locked.</p>
+  </div>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="search">
+<h2>4. Search and map</h2>
+<p class="sub">Map is a List / Map switch inside Search, not its own tab.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="card row search" style="margin-bottom:10px"><span><i class="ti ti-search"></i> Search FoxPassport</span><i class="ti ti-adjustments-horizontal"></i></div>
+      <div class="chips" style="margin-bottom:10px"><span class="chip">Events</span><span class="chip on">Venues</span><span class="chip">Foxers</span><span class="chip">Gear</span></div>
+      <div class="row" style="margin-bottom:8px"><span class="m">12 venues in Baguio</span><span class="seg" style="width:116px"><span class="on">List</span><span>Map</span></span></div>
+      <div class="rel" style="margin-bottom:12px"><div class="img" style="height:140px;border-radius:18px"><i class="ti ti-photo" style="font-size:24px"></i></div><span class="round" style="position:absolute;top:10px;right:10px"><i class="ti ti-heart"></i></span><span class="chip" style="position:absolute;top:10px;left:10px;background:#02040a;color:#4ade80;border-color:#166534">Outdoor</span>
+        <div class="row" style="margin-top:8px"><span class="g" style="font-size:15px">averie</span><span class="s">New</span></div><div class="row"><span class="s">Baguio · 150 guests</span><span><b>₱15,000</b><span class="s">/day</span></span></div></div>
+      <div class="rel"><div class="img" style="height:140px;border-radius:18px"><i class="ti ti-photo" style="font-size:24px"></i></div><span class="round" style="position:absolute;top:10px;right:10px"><i class="ti ti-heart"></i></span><span class="chip" style="position:absolute;top:10px;left:10px;background:#02040a;color:#ccff00;border-color:#55660a">Indoor</span>
+        <div class="row" style="margin-top:8px"><span class="g" style="font-size:15px">Sample hall</span><span><i class="ti ti-star" style="color:#fbbf24"></i> 4.8</span></div><div class="row"><span class="s">Baguio · 300 guests</span><span><b>₱—</b><span class="s">/day</span></span></div></div>
+      <div class="tab" data-on="search"></div>
+    </div>
+    <p class="cap">Search, list. One row of chips switches what you're looking for; infinite scroll.</p>
+  </div>
+  <div>
+    <div class="ph" style="padding:0 0 10px;overflow:hidden">
+      <div class="rel" style="height:360px;background:#0b1220;border-radius:30px 30px 0 0;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,#111a2c 38px 39px),repeating-linear-gradient(90deg,transparent 0 38px,#111a2c 38px 39px)"></div>
+        <div style="position:absolute;top:12px;left:12px;right:12px" class="card row search"><span><i class="ti ti-search"></i> Baguio</span><span class="seg" style="width:110px;font-size:11px"><span>List</span><span class="on">Map</span></span></div>
+        <span class="g" style="position:absolute;top:120px;left:70px;background:#ccff00;color:#1a2000;border-radius:999px;padding:3px 8px;font-size:11px">₱15k</span>
+        <span class="g" style="position:absolute;top:190px;left:160px;background:#02040a;border:1px solid #2a2d3a;border-radius:999px;padding:3px 8px;font-size:11px">₱22k</span>
+        <span class="g" style="position:absolute;top:240px;left:50px;background:#02040a;border:1px solid #2a2d3a;border-radius:999px;padding:3px 8px;font-size:11px">3</span>
+        <span class="round" style="position:absolute;bottom:14px;right:12px;background:#0f111a;border:1px solid #2a2d3a"><i class="ti ti-current-location"></i></span>
+      </div>
+      <div style="background:#0f111a;border-top:1px solid #2a2d3a;border-radius:22px 22px 0 0;margin-top:-20px;position:relative;padding:8px 12px 0">
+        <div class="grab"></div>
+        <div class="card row" style="padding:8px;justify-content:flex-start;gap:10px;margin-bottom:8px;border-color:#55660a"><div class="img" style="width:52px;height:52px"><i class="ti ti-photo"></i></div><div style="flex:1"><div class="g">averie</div><div class="s">Outdoor · 150 guests</div><div style="font-size:12px"><b>₱15,000</b><span class="s">/day</span></div></div><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+        <div class="m" style="text-align:center">Drag up for all 12</div>
+      </div>
+      <div class="tab" data-on="search" style="margin:auto 10px 0"></div>
+    </div>
+    <p class="cap">Search, map. Price pins; the selected pin's card sits in a sheet you drag up for the full list.</p>
+  </div>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="booking">
+<h2>5. Venue and booking</h2>
+<p class="sub">One "Book now" per page. Three short steps, then pay, or a request when guests exceed capacity.</p>
+<div class="wrap">
+  <div>
+    <div class="ph" style="padding:8px 8px 14px">
+      <div class="img" style="height:190px;border-radius:26px 26px 16px 16px;align-items:flex-start;justify-content:space-between;padding:12px;color:#fff"><span class="round"><i class="ti ti-arrow-left"></i></span><span class="row"><span class="round"><i class="ti ti-share-2"></i></span><span class="round"><i class="ti ti-heart"></i></span></span></div>
+      <div style="padding:0 6px;display:flex;flex-direction:column;flex:1">
+        <div class="m" style="margin-top:12px">Venue · Baguio</div>
+        <div class="g" style="font-size:22px;margin:2px 0 8px">averie</div>
+        <div class="chips" style="margin-bottom:12px"><span class="chip"><i class="ti ti-users"></i> 150</span><span class="chip" style="color:#4ade80;border-color:#166534">Outdoor</span><span class="chip">No reviews yet</span></div>
+        <div class="card row" style="padding:10px 12px;margin-bottom:8px"><div class="row" style="justify-content:flex-start"><span class="av" style="width:36px;height:36px">M</span><div><div class="g">Sample owner <i class="ti ti-rosette-discount-check" style="color:#ccff00"></i></div><div class="s">Venue owner</div></div></div><i class="ti ti-message-circle" style="font-size:20px"></i></div>
+        <div class="s" style="margin-bottom:8px">Sample description of the venue, its space and what's included.</div>
+        <div class="row" style="padding:10px 2px;border-top:1px solid #20232e"><span>Amenities</span><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+        <div class="row" style="padding:10px 2px;border-top:1px solid #20232e"><span>Rules and cancellation</span><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+        <div class="card row" style="margin-top:auto;padding:10px 12px;border-radius:20px"><span><b class="g" style="font-size:16px">₱15,000</b><br><span class="s">per day</span></span><span class="btn">Book now</span></div>
+      </div>
+    </div>
+    <p class="cap">Venue detail.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-x" style="font-size:20px"></i><span class="g">averie</span><span class="m">1 of 3</span></div>
+      <div class="bar"><span class="on"></span><span></span><span></span></div>
+      <div class="g" style="font-size:20px;margin-bottom:12px">When is it?</div>
+      <div class="row" style="margin-bottom:8px"><i class="ti ti-chevron-left"></i><span class="g">October 2026</span><i class="ti ti-chevron-right"></i></div>
+      <div class="cal m" style="margin-bottom:2px"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="cal" data-cal="17" data-booked="6,7,13,24,25"></div>
+      <div class="row s" style="justify-content:flex-start;gap:14px;margin-top:10px"><span><i class="ti ti-circle" style="color:#ccff00"></i> Selected</span><span style="text-decoration:line-through">Booked</span></div>
+      <div class="cta"><div><div class="g" style="font-size:15px">Sat 17 Oct</div><div class="s">1 day</div></div><span class="btn">Next</span></div>
+    </div>
+    <p class="cap">Step 1, dates. Booked days are struck out.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">averie</span><span class="m">2 of 3</span></div>
+      <div class="bar"><span class="on"></span><span class="on"></span><span></span></div>
+      <div class="g" style="font-size:20px;margin-bottom:12px">How many guests?</div>
+      <div class="card pad row" style="margin-bottom:10px"><span class="rnd"><i class="ti ti-minus"></i></span><div style="text-align:center"><div class="g" style="font-size:28px;line-height:1">170</div><div class="s">Fits up to 150</div></div><span class="rnd"><i class="ti ti-plus"></i></span></div>
+      <div class="warn" style="margin-bottom:16px"><i class="ti ti-alert-triangle"></i> 20 over capacity. The owner has to approve before you pay.</div>
+      <div class="g" style="font-size:15px;margin-bottom:8px">Anything the owner should know?</div>
+      <div class="card pad s" style="min-height:80px">Optional. Setup time, catering, access needs</div>
+      <div class="cta"><div><div class="g" style="font-size:15px">Sat 17 Oct</div><div class="s">170 guests</div></div><span class="btn">Next</span></div>
+    </div>
+    <p class="cap">Step 2, guests, shown over capacity (that path ends at "Request sent"). The next screens follow a 120-guest booking within capacity.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">Review</span><span class="m">3 of 3</span></div>
+      <div class="bar"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+      <div class="card pad" style="margin-bottom:10px"><div class="ln"><span class="s">Date</span><span>Sat 17 Oct 2026 <i class="ti ti-pencil" style="color:#8b90a0"></i></span></div><div class="ln"><span class="s">Guests</span><span>120 <i class="ti ti-pencil" style="color:#8b90a0"></i></span></div></div>
+      <div class="card pad" style="margin-bottom:10px"><div class="ln"><span class="s">₱15,000 × 1 day</span><span>₱15,000</span></div><div class="ln"><span class="s">Service fee</span><span>₱750</span></div><div class="ln" style="color:#4ade80"><span>Voucher</span><span>Add code</span></div><div class="ln g" style="border-top:1px solid #20232e;margin-top:6px;padding-top:10px;font-size:15px"><span>Total</span><span>₱15,750</span></div></div>
+      <div class="s"><i class="ti ti-shield-check"></i> Free cancellation for 48 hours.</div>
+      <div class="cta"><span class="btn" style="flex:1">Continue to payment</span></div>
+    </div>
+    <p class="cap">Step 3, review. Full price before any card details. Over capacity, the button reads "Request to book".</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g">Pay</span><span style="width:20px"></span></div>
+      <div style="text-align:center;margin:18px 0"><div class="m">Total</div><div class="g" style="font-size:32px">₱15,750</div><div class="s">averie · Sat 17 Oct</div></div>
+      <div class="ghost" style="background:#fff;color:#02040a;border-color:#fff;margin-bottom:8px"><i class="ti ti-brand-apple"></i> Pay</div>
+      <div class="ghost" style="margin-bottom:14px"><i class="ti ti-brand-google"></i> Pay</div>
+      <div class="m" style="text-align:center;margin-bottom:14px">or pay by card</div>
+      <div class="card pad s" style="margin-bottom:8px"><i class="ti ti-credit-card"></i> Card number</div>
+      <div class="row" style="margin-bottom:8px"><div class="card pad s" style="flex:1">MM / YY</div><div class="card pad s" style="flex:1">CVC</div></div>
+      <div class="s"><i class="ti ti-lock"></i> Payment handled by Stripe.</div>
+      <div class="cta"><span class="btn" style="flex:1">Pay ₱15,750</span></div>
+    </div>
+    <p class="cap">Pay. Stripe's sheet, wallets first.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:#ccff00;color:#1a2000;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="ti ti-check" style="font-size:28px"></i></div>
+        <div class="g" style="font-size:22px">You're booked</div>
+        <div class="s" style="margin:4px 0 18px">Your ticket is in Bookings.</div>
+        <div class="card pad" style="text-align:left"><div class="m" style="color:#ccff00">Confirmed</div><div class="g" style="font-size:17px;margin:4px 0">averie</div><div class="s">Sat 17 Oct · 120 guests</div><div class="ln" style="border-top:1px dashed #2a2d3a;margin-top:10px;padding-top:10px"><span class="s">Reference</span><span class="m" style="color:#fff">#0000SAMPLE</span></div><div class="ln"><span class="s">Total charged</span><span>₱15,750</span></div></div>
+      </div>
+      <div class="btn" style="margin-bottom:8px">View ticket</div>
+      <div class="ghost"><i class="ti ti-message-circle"></i> Message the owner</div>
+    </div>
+    <p class="cap">Confirmed.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div style="text-align:center;margin:10px 0 16px">
+        <div style="width:64px;height:64px;border-radius:50%;background:#2a1f05;border:1px solid #7a5a0c;color:#fbbf24;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i class="ti ti-hourglass" style="font-size:28px"></i></div>
+        <div class="g" style="font-size:22px">Request sent</div>
+        <div class="s">Waiting for the owner to confirm.</div>
+      </div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:12px"><span class="ic"><i class="ti ti-mail" style="color:#ccff00"></i></span><div><div class="g">Request delivered</div><div class="s">The owner can accept or decline 170 guests.</div></div></div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:12px"><span class="ic"><i class="ti ti-bell" style="color:#fbbf24"></i></span><div><div class="g">You'll be notified</div><div class="s">By push notification and email.</div></div></div>
+      <div class="row" style="justify-content:flex-start;gap:10px;align-items:flex-start;margin-bottom:14px"><span class="ic"><i class="ti ti-credit-card" style="color:#4ade80"></i></span><div><div class="g">Pay only after approval</div><div class="s">If they decline, nothing is charged.</div></div></div>
+      <div class="card pad"><div class="ln"><span class="s">Reference</span><span class="m" style="color:#fff">#0000SAMPLE</span></div><div class="ln"><span class="s">Amount if approved</span><span>₱15,750</span></div></div>
+      <div class="cta" style="flex-direction:column;align-items:stretch"><div class="btn">Message the owner</div><div class="ghost">Back to home</div></div>
+    </div>
+    <p class="cap">Request sent, when guests exceed capacity. No payment taken.</p>
+  </div>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="bookings">
+<h2>6. Bookings</h2>
+<p class="sub">Proposed tab. Tickets, requests and the calendar in one place; the tab badge means something needs you.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:12px"><span class="g" style="font-size:20px">Bookings</span><i class="ti ti-calendar" style="font-size:20px"></i></div>
+      <div class="seg" style="margin-bottom:12px"><span class="on">Upcoming</span><span>Requests</span><span>Past</span></div>
+      <div class="card" style="padding:10px 12px;margin-bottom:10px;border-color:#55660a">
+        <div class="row"><span class="m" style="color:#ccff00">Approved · pay to confirm</span><b class="cnt">1</b></div>
+        <div class="g" style="font-size:15px;margin:4px 0 2px">Sample hall</div><div class="s">Sat 7 Nov · 170 guests</div>
+        <div class="btn" style="margin-top:8px;padding:8px">Pay ₱24,150</div>
+      </div>
+      <div class="m" style="margin-bottom:6px">This month</div>
+      <div class="card row" style="padding:10px 12px;margin-bottom:8px"><div class="row" style="justify-content:flex-start;gap:10px"><div style="text-align:center;width:36px"><div class="m" style="color:#ccff00">Oct</div><div class="g" style="font-size:18px;line-height:1">17</div></div><div><div class="g">averie</div><div class="s">Venue · 120 guests · Confirmed</div></div></div><i class="ti ti-qrcode" style="font-size:20px"></i></div>
+      <div class="card row" style="padding:10px 12px"><div class="row" style="justify-content:flex-start;gap:10px"><div style="text-align:center;width:36px"><div class="m" style="color:#ccff00">Oct</div><div class="g" style="font-size:18px;line-height:1">17</div></div><div><div class="g">Sample sound set</div><div class="s">Gear · Confirmed</div></div></div><i class="ti ti-qrcode" style="font-size:20px"></i></div>
+      <div class="tab" data-on="bookings"></div>
+    </div>
+    <p class="cap">Bookings list. Anything that needs action sits on top in lime; the calendar icon opens the month view.</p>
+  </div>
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:12px"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="g" style="font-size:18px">Ticket</span><i class="ti ti-share-2" style="font-size:20px"></i></div>
+      <div class="tk card">
+        <div style="padding:14px 16px 12px"><div class="m" style="color:#ccff00">Confirmed</div>
+          <div class="g" style="font-size:20px;margin:6px 0 10px">averie</div>
+          <div class="row" style="align-items:flex-start"><div><div class="m">Date</div><div>Sat 17 Oct</div></div><div><div class="m">Doors</div><div>7:00 PM</div></div><div><div class="m">Guests</div><div>120</div></div></div></div>
+        <div class="perf"><span class="notch" style="left:-25px"></span><span class="notch" style="right:-25px"></span></div>
+        <div style="padding:14px 16px;text-align:center"><div class="img" style="background:#fff;color:#02040a;height:130px;width:130px;margin:0 auto;font-size:90px"><i class="ti ti-qrcode"></i></div><div class="m" style="margin-top:8px;color:#fff">#0000SAMPLE</div><div class="s" style="margin-top:2px">Works offline</div></div>
+      </div>
+      <div class="row" style="margin-top:12px"><span class="card g" style="flex:1;text-align:center;padding:10px;border-radius:14px"><i class="ti ti-message-circle"></i> Message</span><span class="card g" style="flex:1;text-align:center;padding:10px;border-radius:14px"><i class="ti ti-map-pin"></i> Directions</span></div>
+      <div class="s" style="text-align:center;margin-top:10px">Cancel booking</div>
+    </div>
+    <p class="cap">Ticket. A stub with a tear line; the QR sits on white for door scanners.</p>
+  </div>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="messages">
+<h2>7. Messages</h2>
+<p class="sub">Every chat shows the booking or venue it's about.</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:12px"><span class="g" style="font-size:20px">Messages</span><span class="row"><i class="ti ti-search" style="font-size:20px"></i><i class="ti ti-edit" style="font-size:20px"></i></span></div>
+      <div class="chips" style="margin-bottom:6px"><span class="chip on">All</span><span class="chip">Bookings</span><span class="chip">Groups</span><span class="chip">Requests <b style="color:#ccff00">1</b></span></div>
+      <div class="conv"><span class="av">R<span class="on-dot"></span></span><div style="flex:1;min-width:0"><div class="row"><span class="g">Rico Rival <i class="ti ti-rosette-discount-check" style="color:#ccff00"></i></span><span class="s">2m</span></div><span class="ctx">averie · 17 Oct</span><div class="row"><span class="cut">Sound check is at 5, see you there</span><b class="cnt">2</b></div></div></div>
+      <div class="conv"><span class="av" style="border-radius:12px"><i class="ti ti-building"></i></span><div style="flex:1;min-width:0"><div class="row"><span class="g">averie</span><span class="s">1h</span></div><span class="ctx">Venue inbox</span><div class="s cut">You: Is parking included?</div></div></div>
+      <div class="conv"><span class="av"><i class="ti ti-users"></i></span><div style="flex:1;min-width:0"><div class="row"><span class="g"><i class="ti ti-pin" style="color:#8b90a0"></i> Sample group</span><span class="s">Tue</span></div><div class="s cut">Sample: final headcount is 40</div></div></div>
+      <div class="conv" style="border:0"><span class="av">S</span><div style="flex:1;min-width:0"><div class="row"><span class="g">Sample Foxer</span><span class="s"><i class="ti ti-bell-off"></i> Mon</span></div><div class="s cut">Sent a photo</div></div></div>
+      <div class="tab" data-on="messages"></div>
+    </div>
+    <p class="cap">Inbox. Square avatar = a venue's shared inbox.</p>
+  </div>
+  <div>
+    <div class="ph" style="padding-bottom:14px">
+      <div class="row" style="margin-bottom:10px"><div class="row" style="justify-content:flex-start"><i class="ti ti-arrow-left" style="font-size:20px"></i><span class="av" style="width:36px;height:36px">R<span class="on-dot"></span></span><div><div class="g">Rico Rival <i class="ti ti-rosette-discount-check" style="color:#ccff00"></i></div><div style="color:#ff00aa;font-size:11px">Event Foxer · Online</div></div></div><i class="ti ti-dots-vertical" style="font-size:20px"></i></div>
+      <div class="card row" style="padding:8px 12px;border-radius:14px;margin-bottom:12px"><div><div class="m">About this booking</div><div class="g">averie · Sat 17 Oct</div></div><span style="color:#ccff00;font-weight:700;font-size:12px">View ticket</span></div>
+      <div style="display:flex;flex-direction:column;flex:1">
+        <div class="m" style="text-align:center;margin-bottom:8px">Today</div>
+        <div class="b in">Hi, I'm coordinating your night at averie.</div>
+        <div class="b out">Great. Can we add a photographer?</div>
+        <div class="b in"><div class="s" style="border-left:2px solid #ccff00;padding-left:8px;margin-bottom:4px">Can we add a photographer?</div>Yes, I'll send two options tonight.<div style="margin-top:4px"><span class="ctx"><i class="ti ti-thumb-up"></i> 1</span></div></div>
+        <div class="b in">Sound check is at 5, see you there</div>
+        <div class="b out">Perfect, thank you</div>
+        <div class="s" style="align-self:flex-end;font-size:11px">Seen</div>
+      </div>
+      <div class="row" style="margin-top:10px"><span class="card" style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center"><i class="ti ti-photo-plus" style="font-size:18px"></i></span><span class="card" style="flex:1;border-radius:999px;padding:11px 14px;color:#8b90a0">Type a message…</span><span style="width:42px;height:42px;border-radius:50%;background:#ccff00;color:#1a2000;display:flex;align-items:center;justify-content:center"><i class="ti ti-send-2" style="font-size:18px"></i></span></div>
+    </div>
+    <p class="cap">Chat. Booking pinned on top; long-press a message for reply, react, edit, forward, pin, delete.</p>
+  </div>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="passport">
+<h2>8. Passport</h2>
+<p class="sub">Also the profile. The tab shows your photo so it reads as "me".</p>
+<div class="wrap">
+  <div>
+    <div class="ph">
+      <div class="row" style="margin-bottom:12px"><span class="g" style="font-size:20px">Passport</span><i class="ti ti-settings" style="font-size:20px"></i></div>
+      <div class="card pad" style="margin-bottom:14px">
+        <div class="row" style="justify-content:flex-start;gap:12px"><div class="img" style="width:60px;height:72px"><i class="ti ti-user" style="font-size:24px"></i></div><div style="flex:1"><div class="m">Republic of Foxers</div><div class="g" style="font-size:17px">Your name</div><div style="color:#ccff00;font-size:12px">Citizen · Level 1</div></div><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+        <div style="height:6px;background:#1a1a24;border-radius:999px;margin:12px 0 4px"><div style="width:30%;height:6px;background:#ccff00;border-radius:999px"></div></div>
+        <div class="row"><span class="m">15 XP</span><span class="m">Level 2 at 50</span></div>
+      </div>
+      <div class="row" style="margin-bottom:10px"><span class="g" style="font-size:15px">Stamps</span><span class="m">2 earned</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div class="st" style="border:2px solid #ccff00;color:#ccff00;transform:rotate(-8deg)"><b>BAG</b>OCT</div>
+        <div class="st" style="border:2px solid #a78bfa;color:#a78bfa;transform:rotate(6deg)"><b>DVO</b>SEP</div>
+        <div class="st" style="border:1px dashed #2a2d3a"></div>
+        <div class="st" style="border:1px dashed #2a2d3a"></div>
+      </div>
+      <div class="row" style="margin-bottom:8px"><span class="g" style="font-size:15px">Badges</span><span class="s">Leaderboard</span></div>
+      <div class="row" style="justify-content:flex-start;margin-bottom:10px"><span class="card" style="padding:8px 12px;border-radius:14px"><i class="ti ti-award" style="color:#f59e0b"></i> First night</span><span class="card" style="padding:8px 12px;border-radius:14px;color:#5a5f70"><i class="ti ti-lock"></i> Locked</span></div>
+      <div class="row" style="padding:10px 2px;border-top:1px solid #20232e"><span><i class="ti ti-heart"></i> Saved</span><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+      <div class="row" style="padding:10px 2px;border-top:1px solid #20232e"><span><i class="ti ti-briefcase"></i> Earn as a Foxer</span><i class="ti ti-chevron-right" style="color:#8b90a0"></i></div>
+      <div class="tab" data-on="passport"></div>
+    </div>
+    <p class="cap">Passport. ID card opens the profile, the gear opens settings. "Earn as a Foxer" lives here, not on Home.</p>
+  </div>
+</div>
+</section>
+
+<script>
+(function(){
+  var tabs=[['home','ti-home','Home'],['search','ti-search','Search'],['bookings','ti-calendar-event','Bookings',1],['messages','ti-message-circle','Messages',2],['passport',null,'Passport']];
+  document.querySelectorAll('.tab[data-on]').forEach(function(bar){
+    var on=bar.getAttribute('data-on');
+    bar.innerHTML=tabs.map(function(t){
+      var icon=t[1]?'<i class="ti '+t[1]+'"></i>':'<span class="me"><i class="ti ti-user" style="font-size:12px"></i></span>';
+      var badge=(t[3]&&t[0]!==on)?'<b class="cnt">'+t[3]+'</b>':'';
+      return '<span class="'+(t[0]===on?'on':'')+'">'+icon+t[2]+badge+'</span>';
+    }).join('');
+  });
+  document.querySelectorAll('.cal[data-cal]').forEach(function(c){
+    var sel=+c.getAttribute('data-cal'),booked={},h='';
+    (c.getAttribute('data-booked')||'').split(',').forEach(function(d){if(d)booked[+d]=1});
+    for(var i=0;i<3;i++)h+='<span></span>';
+    for(var d=1;d<=31;d++)h+='<span class="'+(d===sel?'sel':booked[d]?'x':'')+'">'+d+'</span>';
+    c.innerHTML=h;
+  });
+})();
+</script>
+</body>
+</html>
