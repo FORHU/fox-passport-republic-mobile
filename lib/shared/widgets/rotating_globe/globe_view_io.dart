@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -37,7 +38,7 @@ class _MobileGlobeState extends State<_MobileGlobe> {
     super.initState();
     _controller = WebViewController();
     unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(_controller.setBackgroundColor(const Color(0x00000000)));
+    unawaited(_controller.setBackgroundColor(Colors.transparent));
     unawaited(_controller.loadHtmlString(widget.html));
   }
 
