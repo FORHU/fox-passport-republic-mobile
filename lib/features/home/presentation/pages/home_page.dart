@@ -2,31 +2,29 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/errors/exceptions.dart';
-import 'package:flutter_template/core/utils/asset_url.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/features/messages/data/messages_repository.dart';
+import 'package:flutter_template/features/home/data/last_occasion.dart';
+import 'package:flutter_template/features/home/domain/home_categories.dart';
+import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
-import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
-import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
-import 'package:flutter_template/shared/currency/currency.dart';
-import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
-import 'package:flutter_template/shared/widgets/photo_box.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-/// Home: your next night first, then where to look, then picks.
+/// Home: where you are, your next booking if you have one, then what you are
+/// planning, built from `GET /categories`. Sections with nothing to show are
+/// left out, heading included; Home never draws an error or an empty box.
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -36,22 +34,30 @@ class HomePage extends ConsumerWidget {
     final upcomingTickets = ref.watch(upcomingTicketsProvider);
     final ticket = upcomingTickets.value?.firstOrNull;
     final area = ref.watch(areaFilterProvider);
-    final picksQuery = CatalogQuery(
-      CatalogKind.venues,
-      limit: 8,
-      city: area.city,
-      lat: area.lat,
-      lng: area.lng,
-    );
-    final foxersQuery = CatalogQuery(
-      CatalogKind.foxers,
-      limit: 8,
-      city: area.city,
-    );
-    final picks = ref.watch(catalogProvider(picksQuery));
-    final foxers = ref.watch(catalogProvider(foxersQuery));
+    final categories = ref.watch(categoriesProvider).asData?.value;
+    final last = ref.watch(lastOccasionProvider);
     final areaSource = ref.watch(areaProvider.select((a) => a.source));
     final unread = ref.watch(notificationInboxProvider).value?.unreadCount ?? 0;
+
+    // The start of today, not "now": the query is a provider key, and a key
+    // that changes every build would make Home rebuild without end.
+    final now = DateTime.now();
+    final soonQuery = CatalogQuery(
+      CatalogKind.events,
+      limit: 6,
+      city: area.city,
+      fromDate: DateTime(now.year, now.month, now.day),
+      sortBy: 'date_asc',
+    );
+    final soon = ref.watch(catalogProvider(soonQuery));
+
+    final tiles = occasionTiles(categories, preferred: last);
+    final oneThing = singleBookings(categories);
+
+    void openOccasion(Occasion occasion) {
+      unawaited(ref.read(lastOccasionProvider.notifier).remember(occasion));
+      context.go(RouteNames.searchFor('events'));
+    }
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -63,8 +69,8 @@ class HomePage extends ConsumerWidget {
           onRefresh: () async {
             ref
               ..invalidate(upcomingTicketsProvider)
-              ..invalidate(catalogProvider(picksQuery))
-              ..invalidate(catalogProvider(foxersQuery));
+              ..invalidate(categoriesProvider)
+              ..invalidate(catalogProvider(soonQuery));
           },
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -77,45 +83,61 @@ class HomePage extends ConsumerWidget {
                     : area.label ?? ticket?.city,
                 unread: unread,
               ),
-              const SizedBox(height: 14),
-              _HomeSearchBar(
-                label: l10n.homeSearchPlanning,
-                onTap: () => context.go(RouteNames.search),
-              ),
-              const SizedBox(height: 12),
-              _EventTypeChips(),
-              if (upcomingTickets.hasError)
-                _InlineLoadError(
-                  message: l10n.apiLoadFailed,
-                  retryLabel: l10n.retry,
-                  onRetry: () => ref.invalidate(upcomingTicketsProvider),
-                )
-              else if (ticket != null)
-                _NextNight(ticket: ticket),
+              // An upcoming booking, if there is one. Failing or empty means
+              // no strip and no error.
+              if (ticket != null) _NextNight(ticket: ticket),
+              if (last != null) ...[
+                const SizedBox(height: 16),
+                _ContinueCard(
+                  occasion: last,
+                  count: categories
+                      ?.where((c) => Occasion.fromName(c.name) == last)
+                      .firstOrNull
+                      ?.count,
+                  onTap: () => openOccasion(last),
+                ),
+              ],
               const SizedBox(height: 22),
-              _SectionTitle(
-                title: l10n.homeVenuesNear,
-                action: l10n.seeAll,
-                onAction: () =>
-                    context.go(RouteNames.searchFor(CatalogKind.venues.name)),
+              Text(
+                last == null ? l10n.homePlanning : l10n.homePlanNew,
+                style: AppTypography.display(size: 20),
               ),
               const SizedBox(height: 12),
-              _Picks(
-                formatter: ref.watch(moneyFormatterProvider),
-                state: picks,
-                onRetry: () => ref.invalidate(catalogProvider(picksQuery)),
+              _OccasionGrid(
+                tiles: tiles,
+                more: moreCategories(categories),
+                onOccasion: openOccasion,
+                onAll: () => context.go(RouteNames.searchFor('events')),
               ),
-              const SizedBox(height: 22),
-              _SectionTitle(
-                title: l10n.homeFoxersForNight,
-                action: l10n.seeAll,
-                onAction: () =>
-                    context.go(RouteNames.searchFor(CatalogKind.foxers.name)),
-              ),
-              const SizedBox(height: 12),
-              _Foxers(
-                state: foxers,
-                onRetry: () => ref.invalidate(catalogProvider(foxersQuery)),
+              if (oneThing.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                Text(l10n.homeBookOne, style: AppTypography.display(size: 20)),
+                const SizedBox(height: 12),
+                _OneThingRow(
+                  items: oneThing,
+                  onTap: (item) =>
+                      context.go(RouteNames.searchFor(item.kind.name)),
+                ),
+              ],
+              ...soon.when(
+                loading: () => [
+                  const SizedBox(height: 24),
+                  const _SoonSkeleton(),
+                ],
+                error: (_, __) => const <Widget>[],
+                data: (page) => page.items.isEmpty
+                    ? const <Widget>[]
+                    : [
+                        const SizedBox(height: 24),
+                        _SectionTitle(
+                          title: l10n.homeHappeningSoon,
+                          action: l10n.seeAll,
+                          onAction: () =>
+                              context.go(RouteNames.searchFor('events')),
+                        ),
+                        const SizedBox(height: 12),
+                        _SoonRow(items: page.items),
+                      ],
               ),
             ],
           ),
@@ -325,88 +347,275 @@ class _NextNight extends StatelessWidget {
   }
 }
 
-class _HomeSearchBar extends StatelessWidget {
-  const _HomeSearchBar({required this.label, required this.onTap});
+/// "Continue: birthday": what they last opened, one tap back to it.
+class _ContinueCard extends StatelessWidget {
+  const _ContinueCard({
+    required this.occasion,
+    required this.count,
+    required this.onTap,
+  });
 
-  final String label;
+  final Occasion occasion;
+  final int? count;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brPill,
-        child: InkWell(
-          borderRadius: AppRadius.brPill,
-          onTap: onTap,
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.brPill,
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.search_rounded,
-                  size: 19,
-                  color: AppColors.textMuted,
-                ),
-                const SizedBox(width: 9),
-                Expanded(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.body(
-                      color: AppColors.textMuted,
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final style = occasion.style;
+    return Material(
+      color: style.background,
+      borderRadius: AppRadius.brMd,
+      child: InkWell(
+        borderRadius: AppRadius.brMd,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.brMd,
+            border: Border.all(color: style.border),
+          ),
+          child: Row(
+            children: [
+              Icon(occasion.icon, color: style.icon),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.homeContinue(
+                        occasionLabel(l10n, occasion).toLowerCase(),
+                      ),
+                      style: AppTypography.display(size: 15),
                     ),
-                  ),
+                    if (count != null)
+                      Text(
+                        l10n.homeIdeas(count!),
+                        style: AppTypography.body(
+                          size: 12,
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textSecondary,
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
-class _EventTypeChips extends StatelessWidget {
+/// The 3 x 2 grid: the occasions, then the dashed "All" tile.
+class _OccasionGrid extends StatelessWidget {
+  const _OccasionGrid({
+    required this.tiles,
+    required this.more,
+    required this.onOccasion,
+    required this.onAll,
+  });
+
+  final List<OccasionTileData> tiles;
+  final int more;
+  final ValueChanged<Occasion> onOccasion;
+  final VoidCallback onAll;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final options = [
-      (l10n.homeEventWedding, CatalogKind.events),
-      (l10n.homeEventBirthday, CatalogKind.events),
-      (l10n.homeEventCorporate, CatalogKind.events),
-      (l10n.homeEventSocial, CatalogKind.events),
+    final cells = <Widget>[
+      for (final t in tiles)
+        _OccasionTile(
+          label: occasionLabel(l10n, t.occasion),
+          sub: t.count == null ? null : l10n.homeIdeas(t.count!),
+          style: t.occasion.style,
+          icon: t.occasion.icon,
+          onTap: () => onOccasion(t.occasion),
+        ),
+      _OccasionTile(
+        label: l10n.occasionAll,
+        sub: more > 0 ? l10n.homeMoreCount(more) : null,
+        style: OccasionColors.other,
+        icon: Icons.grid_view_rounded,
+        dashed: true,
+        onTap: onAll,
+      ),
     ];
-    return SizedBox(
-      height: 34,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: options.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) => InkWell(
-          borderRadius: AppRadius.brPill,
-          onTap: () => context.go(
-            RouteNames.searchFor(options[index].$2.name),
-          ),
-          child: Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.brPill,
-              border: Border.all(color: AppColors.borderStrong),
-            ),
-            child: Text(
-              options[index].$1,
-              style: AppTypography.body(
-                size: 12,
-                color: AppColors.textPrimary,
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 0.98,
+      children: cells,
+    );
+  }
+}
+
+class _OccasionTile extends StatelessWidget {
+  const _OccasionTile({
+    required this.label,
+    required this.style,
+    required this.icon,
+    required this.onTap,
+    this.sub,
+    this.dashed = false,
+  });
+
+  final String label;
+  final String? sub;
+  final OccasionStyle style;
+  final IconData icon;
+  final bool dashed;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: sub == null ? label : '$label, $sub',
+      child: Material(
+        color: dashed ? Colors.transparent : style.background,
+        borderRadius: AppRadius.brMd,
+        child: InkWell(
+          borderRadius: AppRadius.brMd,
+          onTap: onTap,
+          child: CustomPaint(
+            painter: dashed ? _DashedBorder(style.border) : null,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: dashed
+                  ? null
+                  : BoxDecoration(
+                      borderRadius: AppRadius.brMd,
+                      border: Border.all(color: style.border),
+                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(icon, color: style.icon, size: 26),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.display(size: 15),
+                      ),
+                      if (sub != null)
+                        Text(
+                          sub!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.body(
+                            size: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DashedBorder extends CustomPainter {
+  const _DashedBorder(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Offset.zero & size,
+          const Radius.circular(12),
+        ),
+      );
+    for (final metric in path.computeMetrics()) {
+      var distance = 0.0;
+      while (distance < metric.length) {
+        canvas.drawPath(metric.extractPath(distance, distance + 6), paint);
+        distance += 10;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorder old) => old.color != color;
+}
+
+class _OneThingRow extends StatelessWidget {
+  const _OneThingRow({required this.items, required this.onTap});
+
+  final List<SingleBooking> items;
+  final ValueChanged<SingleBooking> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return SizedBox(
+      height: 92,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        itemBuilder: (context, i) {
+          final item = items[i];
+          final label = categoryLabel(l10n, item.category);
+          return Semantics(
+            button: true,
+            label: label,
+            child: InkWell(
+              borderRadius: AppRadius.brMd,
+              onTap: () => onTap(item),
+              child: SizedBox(
+                width: 68,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.borderStrong),
+                      ),
+                      child: Icon(
+                        categoryIcon(item.category),
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(size: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -429,23 +638,14 @@ class _SectionTitle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Text(
-            title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.display(size: 20),
-          ),
+          child: Text(title, style: AppTypography.display(size: 20)),
         ),
-        const SizedBox(width: 12),
         GestureDetector(
           onTap: onAction,
           behavior: HitTestBehavior.opaque,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              action,
-              style: AppTypography.body(),
-            ),
+            child: Text(action, style: AppTypography.body()),
           ),
         ),
       ],
@@ -453,85 +653,77 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _Picks extends StatelessWidget {
-  const _Picks({
-    required this.state,
-    required this.onRetry,
-    required this.formatter,
-  });
+/// Public events with a date badge.
+class _SoonRow extends StatelessWidget {
+  const _SoonRow({required this.items});
 
-  final MoneyFormatter formatter;
-
-  final AsyncValue<CatalogPage> state;
-  final VoidCallback onRetry;
+  final List<CatalogItem> items;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    return state.when(
-      loading: () => const SizedBox(
-        height: 190,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
-      ),
-      error: (_, __) => _InlineLoadError(
-        message: l10n.apiLoadFailed,
-        retryLabel: l10n.retry,
-        onRetry: onRetry,
-      ),
-      data: (page) => _buildItems(context, page.items, l10n, locale),
-    );
-  }
-
-  Widget _buildItems(
-    BuildContext context,
-    List<CatalogItem> items,
-    AppLocalizations l10n,
-    String locale,
-  ) {
-    if (items.isEmpty) {
-      return _EmptyRow(
-        icon: Icons.storefront_outlined,
-        message: l10n.homeEmptyVenues,
-        actionLabel: l10n.homeEmptyVenuesAction,
-        onAction: () => context.go(RouteNames.searchFor('venues')),
-      );
-    }
     return SizedBox(
-      height: 190,
+      height: 168,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final item = items[index];
-          final price = catalogPriceLabel(
-            l10n,
-            item,
-            locale: locale,
-            formatter: formatter,
-          );
+        itemBuilder: (context, i) {
+          final item = items[i];
+          final start = item.eventStartAt;
           return InkWell(
+            borderRadius: AppRadius.brMd,
             onTap: () => context.push(
-              item.kind == CatalogKind.events
-                  ? RouteNames.eventDetail
-                  : RouteNames.venueDetail,
+              RouteNames.scheduledEventDetail,
               extra: item,
             ),
-            borderRadius: AppRadius.brMd,
             child: SizedBox(
-              width: 168,
+              width: 176,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // A Column that aligns to the start gives its children loose
-                  // width, so without this the photo shrinks to its icon.
-                  SizedBox(
+                  Container(
+                    height: 96,
                     width: double.infinity,
-                    child:
-                        PhotoBox(url: item.imageUrl, height: 120, radius: 20),
+                    alignment: Alignment.topLeft,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: AppRadius.brMd,
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: start == null
+                        ? const Icon(
+                            Icons.event_outlined,
+                            color: AppColors.textFaint,
+                          )
+                        : Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.canvas,
+                              borderRadius: AppRadius.brSm,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  DateFormat.MMM(locale)
+                                      .format(start)
+                                      .toUpperCase(),
+                                  style: AppTypography.label(
+                                    color: AppColors.accent,
+                                  ),
+                                ),
+                                Text(
+                                  '${start.day}',
+                                  style: AppTypography.display(size: 20),
+                                ),
+                              ],
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -540,12 +732,14 @@ class _Picks extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.display(size: 15),
                   ),
-                  if (price != null)
+                  if (item.city != null && item.city!.isNotEmpty)
                     Text(
-                      price,
+                      item.city!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.body(),
+                      style: AppTypography.body(
+                        size: 12,
+                      ),
                     ),
                 ],
               ),
@@ -557,251 +751,34 @@ class _Picks extends StatelessWidget {
   }
 }
 
-/// An empty list that still says what to do next.
-class _EmptyRow extends StatelessWidget {
-  const _EmptyRow({
-    required this.icon,
-    required this.message,
-    required this.actionLabel,
-    required this.onAction,
-  });
-
-  final IconData icon;
-  final String message;
-  final String actionLabel;
-  final VoidCallback onAction;
+/// Grey boxes in the shape of the "happening soon" row while it loads.
+class _SoonSkeleton extends StatelessWidget {
+  const _SoonSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brMd,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.textMuted),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: AppTypography.body(),
-            ),
+    Widget box(double? w, double h) => Container(
+          width: w,
+          height: h,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: AppRadius.brMd,
           ),
-          const SizedBox(width: 8),
-          TextButton(onPressed: onAction, child: Text(actionLabel)),
-        ],
-      ),
-    );
-  }
-}
-
-/// "Foxers for your night": one row per Foxer, with a button to message them.
-class _Foxers extends StatelessWidget {
-  const _Foxers({required this.state, required this.onRetry});
-
-  final AsyncValue<CatalogPage> state;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return state.when(
-      loading: () => const SizedBox(
-        height: 72,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
-      ),
-      error: (_, __) => _InlineLoadError(
-        message: l10n.apiLoadFailed,
-        retryLabel: l10n.retry,
-        onRetry: onRetry,
-      ),
-      data: (page) {
-        if (page.items.isEmpty) {
-          return _EmptyRow(
-            icon: Icons.groups_outlined,
-            message: l10n.homeEmptyFoxers,
-            actionLabel: l10n.homeEmptyFoxersAction,
-            onAction: () => context.push(RouteNames.roles),
-          );
-        }
-        return Column(
-          children: [
-            for (final item in page.items.take(3)) ...[
-              _FoxerRow(item: item),
-              const SizedBox(height: 10),
-            ],
-          ],
         );
-      },
-    );
-  }
-}
-
-class _FoxerRow extends ConsumerWidget {
-  const _FoxerRow({required this.item});
-
-  final CatalogItem item;
-
-  Future<void> _message(BuildContext context, WidgetRef ref) async {
-    final l10n = context.l10n;
-    if (item.isSample) {
-      showTopToast(context, l10n.messageSampleFoxer);
-      return;
-    }
-    try {
-      final id =
-          await ref.read(messagesRepositoryProvider).startWithUser(item.id);
-      ref.invalidate(conversationsProvider);
-      if (context.mounted) unawaited(context.push(RouteNames.chat(id)));
-    } on Object catch (e) {
-      if (context.mounted) {
-        showTopToast(
-          context,
-          e is AppException ? e.message : l10n.messageStartFailed,
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final role = foxerRoleLabel(l10n, item.roles);
-    final rating = item.rating;
-    final initial = item.title.isEmpty ? '?' : item.title[0].toUpperCase();
-
-    return InkWell(
-      onTap: () => context.push(RouteNames.foxer, extra: item),
-      borderRadius: AppRadius.brMd,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: AppRadius.brMd,
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        box(180, 22),
+        const SizedBox(height: 14),
+        // Two cards that share the width, so a narrow phone does not overflow.
+        Row(
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.surfaceRaised,
-                  backgroundImage: item.imageUrl == null
-                      ? null
-                      : NetworkImage(resolveAssetUrl(item.imageUrl!)),
-                  child: item.imageUrl == null
-                      ? Text(initial, style: AppTypography.display())
-                      : null,
-                ),
-                if (item.online)
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 11,
-                      height: 11,
-                      decoration: BoxDecoration(
-                        color: AppColors.success,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.surface, width: 2),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            Expanded(child: box(null, 96)),
             const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          item.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.display(size: 15),
-                        ),
-                      ),
-                      if (item.verified) ...[
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.verified_rounded,
-                          size: 15,
-                          color: AppColors.accent,
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (role != null || rating != null)
-                    Text(
-                      [
-                        if (role != null) role,
-                        if (rating != null) rating.toStringAsFixed(1),
-                      ].join(' · '),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.body(
-                        size: 12,
-                        color: AppColors.roleLabel,
-                        weight: FontWeight.w600,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            IconButton(
-              tooltip: l10n.homeMessageFoxer(item.title),
-              onPressed: () => _message(context, ref),
-              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-              icon: const Icon(
-                Icons.chat_bubble_outline_rounded,
-                size: 22,
-                color: AppColors.textPrimary,
-              ),
-            ),
+            Expanded(child: box(null, 96)),
           ],
         ),
-      ),
+      ],
     );
   }
-}
-
-class _InlineLoadError extends StatelessWidget {
-  const _InlineLoadError({
-    required this.message,
-    required this.retryLabel,
-    required this.onRetry,
-  });
-
-  final String message;
-  final String retryLabel;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                message,
-                style: AppTypography.body(
-                  size: 12,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ),
-            TextButton(onPressed: onRetry, child: Text(retryLabel)),
-          ],
-        ),
-      );
 }
