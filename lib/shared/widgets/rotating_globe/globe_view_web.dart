@@ -1,4 +1,5 @@
 // Flutter web host: an `<iframe srcdoc>` inside an `HtmlElementView`.
+import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
@@ -10,10 +11,40 @@ const bool globePlatformSupported = true;
 
 final Set<String> _registered = <String>{};
 
+bool _listening = false;
+void Function(String city)? _onPin;
+
+/// One window listener for every globe; the latest build's callback wins.
+void _listen() {
+  if (_listening) return;
+  _listening = true;
+  web.window.addEventListener(
+    'message',
+    ((web.MessageEvent event) {
+      final raw = event.data.dartify();
+      if (raw is! String) return;
+      try {
+        final message = jsonDecode(raw);
+        if (message is Map && message['fox'] == 'pin') {
+          _onPin?.call('${message['city']}');
+        }
+      } on FormatException {
+        // Some other page's message.
+      }
+    }).toJS,
+  );
+}
+
 /// Builds the iframe that draws [html].
-Widget buildGlobeView(String html) {
+Widget buildGlobeView(
+  String html, {
+  bool interactive = false,
+  void Function(String city)? onPinTap,
+}) {
+  _onPin = onPinTap;
+  _listen();
   // One registered view type per distinct page (token, colour, spin).
-  final viewType = 'fox-globe-${html.hashCode}';
+  final viewType = 'fox-globe-${interactive ? 'i' : 'p'}-${html.hashCode}';
 
   if (_registered.add(viewType)) {
     ui_web.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
@@ -27,7 +58,7 @@ Widget buildGlobeView(String html) {
         ..background = 'transparent'
         // Let Flutter receive the pointer events, so swiping the carousel or
         // scrolling the page works when a finger lands on the globe.
-        ..pointerEvents = 'none';
+        ..pointerEvents = interactive ? 'auto' : 'none';
       return iframe;
     });
   }

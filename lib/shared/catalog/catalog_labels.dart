@@ -2,6 +2,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/formatting/money.dart';
+import 'package:intl/intl.dart';
 
 /// "₱25,000/night": the price and the unit it is charged per, or null when
 /// the item has no price.
@@ -32,9 +33,15 @@ String? catalogPriceLabel(
 }
 
 /// "Davao City · 200 guests", leaving out whatever the item doesn't have.
-String catalogSubtitle(AppLocalizations l10n, CatalogItem item) {
+String catalogSubtitle(
+  AppLocalizations l10n,
+  CatalogItem item, {
+  String? locale,
+}) {
   final parts = <String>[
     if (item.city != null && item.city!.isNotEmpty) item.city!,
+    if (item.eventStartAt != null)
+      DateFormat('EEE d MMM', locale).format(item.eventStartAt!),
     if (item.capacity != null) l10n.guestsCount(item.capacity!),
     if (item.kind == CatalogKind.events &&
         item.host != null &&

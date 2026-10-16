@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/reviews/presentation/widgets/reviews_section.dart';
 import 'package:flutter_template/features/venue/data/venue_repository.dart';
 import 'package:flutter_template/features/venue/domain/venue_detail.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -223,6 +224,7 @@ class _Loaded extends ConsumerWidget {
                       if (venue.entrance != null)
                         _Fact(l10n.venueEntrance, venue.entrance!),
                     ],
+                    if (!venue.isSample) ReviewsSection(listingId: venue.id),
                   ],
                 ),
               ),

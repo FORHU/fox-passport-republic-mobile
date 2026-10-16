@@ -8,7 +8,10 @@ import 'package:flutter_template/features/auth/presentation/pages/register_page.
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
+import 'package:flutter_template/features/booking/presentation/pages/item_booking_page.dart';
+import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
+import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
@@ -17,9 +20,12 @@ import 'package:flutter_template/features/messages/domain/entities/conversation.
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
 import 'package:flutter_template/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
@@ -28,6 +34,7 @@ import 'package:flutter_template/features/venue/presentation/pages/venue_detail_
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
@@ -155,6 +162,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RolesPage(),
       ),
       GoRoute(
+        path: '/occasion/:name',
+        builder: (context, state) => OccasionPage(
+          occasion:
+              Occasion.fromName(state.pathParameters['name']) ?? Occasion.other,
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.allCategories,
+        builder: (context, state) => const AllCategoriesPage(),
+      ),
+      GoRoute(
+        path: RouteNames.calendar,
+        builder: (context, state) => const CalendarPage(),
+      ),
+      GoRoute(
         path: RouteNames.settings,
         builder: (context, state) => const SettingsPage(),
       ),
@@ -189,6 +211,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: RouteNames.republic,
+        builder: (context, state) => const RepublicPage(),
+      ),
+      GoRoute(
+        path: RouteNames.itemBooking,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ItemBookingPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
         path: RouteNames.foxer,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -216,6 +249,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             EventDetailPage(item: state.extra! as CatalogItem),
       ),
+      GoRoute(
+        path: RouteNames.scheduledEventDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ScheduledEventDetailPage(item: state.extra! as CatalogItem),
+      ),
       // One navigator per tab, kept alive side by side: switching tabs keeps
       // each tab's own stack, scroll position and typed text.
       StatefulShellRoute.indexedStack(
@@ -241,6 +281,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => SearchPage(
                   initialKind: CatalogKind.fromParam(
                     state.uri.queryParameters['kind'],
+                  ),
+                  initialCity: state.uri.queryParameters['city'],
+                  initialMinCapacity: int.tryParse(
+                    state.uri.queryParameters['capacity'] ?? '',
+                  ),
+                  initialDate: DateTime.tryParse(
+                    state.uri.queryParameters['date'] ?? '',
                   ),
                 ),
               ),

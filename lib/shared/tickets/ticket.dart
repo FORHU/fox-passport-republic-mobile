@@ -11,6 +11,7 @@ class Ticket extends Equatable {
     this.city,
     this.guestCount = 1,
     this.ticketCode,
+    this.hasReview = false,
     this.isSample = false,
   });
 
@@ -29,6 +30,7 @@ class Ticket extends Equatable {
       city: (eventMap?['targetCity'] ?? eventMap?['city'])?.toString(),
       guestCount: (json['guestCount'] as num?)?.toInt() ?? 1,
       ticketCode: json['ticketCode']?.toString(),
+      hasReview: json['hasReview'] == true,
     );
   }
 
@@ -59,6 +61,9 @@ class Ticket extends Equatable {
   final String? city;
   final int guestCount;
   final String? ticketCode;
+
+  /// The person already reviewed this booking.
+  final bool hasReview;
   final bool isSample;
 
   /// Whole calendar days from [now] to the start; 0 is today.
@@ -79,6 +84,7 @@ class Ticket extends Equatable {
         city,
         guestCount,
         ticketCode,
+        hasReview,
         isSample,
       ];
 }
