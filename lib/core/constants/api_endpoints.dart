@@ -5,11 +5,11 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  // ── Auth ────────────────────────────────────────────────────────────────
-  static const String login = '/auth/login';
-  static const String register = '/auth/register';
+  // ── Auth (Better Auth) ─────────────────────────────────────────────────
+  static const String login = '/auth/sign-in/email';
+  static const String register = '/auth/sign-up/email';
   static const String refresh = '/auth/refresh-token';
-  static const String logout = '/auth/logout';
+  static const String logout = '/auth/sign-out';
   static const String verifyEmail = '/auth/verify-email';
   static const String resendVerificationOtp = '/auth/resend-verification-otp';
   static const String forgotPassword = '/auth/forgot-password';
