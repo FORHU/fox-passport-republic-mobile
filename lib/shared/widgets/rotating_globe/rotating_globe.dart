@@ -30,6 +30,11 @@ class RotatingGlobe extends StatelessWidget {
     this.bottomInset = 0,
     this.nightLights = true,
     this.maxCards = 2,
+    this.interactive = false,
+    this.startLat = 14,
+    this.startLng = 121,
+    this.zoom,
+    this.onStopTap,
     super.key,
   });
 
@@ -51,6 +56,17 @@ class RotatingGlobe extends StatelessWidget {
 
   /// How many of [stops] also get a callout card.
   final int maxCards;
+
+  /// Lets a finger turn and pinch the globe. Off, touches pass through.
+  final bool interactive;
+
+  /// Where the globe is centred, and an optional fixed zoom.
+  final double startLat;
+  final double startLng;
+  final double? zoom;
+
+  /// Called with the city of a pin the person tapped (interactive only).
+  final ValueChanged<String>? onStopTap;
 
   /// `#RRGGBB` for the page's CSS.
   static String _hex(Color c) {
@@ -74,7 +90,13 @@ class RotatingGlobe extends StatelessWidget {
               nightLights: nightLights,
               stops: stops,
               maxCards: maxCards,
+              interactive: interactive,
+              startLat: startLat,
+              startLng: startLng,
+              zoom: zoom,
             ),
+            interactive: interactive,
+            onPinTap: onStopTap,
           );
 
     final framed = ColoredBox(color: background, child: child);
@@ -85,6 +107,7 @@ class RotatingGlobe extends StatelessWidget {
       child: ExcludeSemantics(
         child: RepaintBoundary(
           child: IgnorePointer(
+            ignoring: !interactive,
             child: size == null
                 ? framed
                 : SizedBox.square(dimension: size, child: framed),

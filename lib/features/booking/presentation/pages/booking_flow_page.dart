@@ -239,7 +239,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
                     : BookingConfirmedView(
                         selection: _selection,
                         receipt: _receipt!,
-                        onViewTicket: () => context.push(RouteNames.tickets),
+                        onViewTicket: () => context.go(RouteNames.tickets),
                         onMessageOwner: _messageOwner,
                       ),
             _ => Column(

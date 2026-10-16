@@ -238,6 +238,157 @@ class MockInterceptor extends Interceptor {
       return;
     }
 
+    if (path == ApiEndpoints.feed && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            {
+              'id': 'p1',
+              'content': 'Just wrapped our team offsite at a garden venue in '
+                  'Davao. The staff made it effortless.',
+              'tab': 'community',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(hours: 3))
+                  .toUtc()
+                  .toIso8601String(),
+              'likesCount': 12,
+              'commentsCount': 2,
+              'isLikedByMe': false,
+              'author': {'id': 'u1', 'name': 'Maria S.'},
+            },
+            {
+              'id': 'p2',
+              'content': 'Looking for a sound system for a 100-guest '
+                  'birthday this month. Any recommendations?',
+              'tab': 'community',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(days: 1))
+                  .toUtc()
+                  .toIso8601String(),
+              'likesCount': 4,
+              'commentsCount': 0,
+              'isLikedByMe': true,
+              'author': {'id': 'u2', 'name': 'Jon D.'},
+            },
+          ],
+          'nextCursor': null,
+        }),
+      );
+      return;
+    }
+
+    if (RegExp(r'^/feed/[^/]+/comments$').hasMatch(path) &&
+        options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            {
+              'id': 'c1',
+              'content': 'Congrats! Which venue was it?',
+              'createdAt': DateTime.now()
+                  .subtract(const Duration(hours: 2))
+                  .toUtc()
+                  .toIso8601String(),
+              'author': {'id': 'u2', 'name': 'Jon D.'},
+              'replies': <Object>[],
+            },
+          ],
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.feed ||
+        RegExp(r'^/feed/[^/]+/(reaction|comments)$').hasMatch(path)) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'id': 'new'},
+        }),
+      );
+      return;
+    }
+
+    // One venue, so the detail page has something to show in mock mode.
+    final venueMatch = RegExp(r'^/venues/([^/]+)$').firstMatch(path);
+    if (venueMatch != null && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'venue': {
+            'id': venueMatch.group(1),
+            'name': 'Sky Hall',
+            'description': 'A bright hall with a garden terrace, a stage '
+                'and a full sound system.',
+            'category': 'indoor',
+            'address': '12 Roxas Avenue',
+            'city': 'Davao City',
+            'country': 'Philippines',
+            'capacity': 120,
+            'price': '15000',
+            'billingRate': 'daily',
+            'images': <Object>[],
+            'spaceType': ['indoor'],
+            'amenities': ['Air conditioning', 'Parking'],
+            'policies': ['No smoking indoors', 'Music off by 11 pm'],
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path.startsWith('/reviews/listing/')) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {
+            'reviews': [
+              {
+                'id': 'r1',
+                'rating': 5,
+                'comment': 'Beautiful space and a very helpful host.',
+                'createdAt': '2026-09-12T10:00:00.000Z',
+                'user': {'id': 'u1', 'name': 'Maria S.'},
+                'replies': [
+                  {
+                    'text': 'Thank you, Maria! Come again.',
+                    'user': {'name': 'Host'},
+                  },
+                ],
+              },
+              {
+                'id': 'r2',
+                'rating': 4,
+                'comment': 'Great for our team event.',
+                'createdAt': '2026-08-02T10:00:00.000Z',
+                'user': {'id': 'u2', 'name': 'Jon D.'},
+                'replies': <Object>[],
+              },
+            ],
+            'ratingDistribution': {
+              '5': '50%',
+              '4': '50%',
+              '3': '0%',
+              '2': '0%',
+              '1': '0%',
+            },
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.reviewsCreate) {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {'id': 'r-new'},
+        }),
+      );
+      return;
+    }
+
     if (path == ApiEndpoints.notifications) {
       handler.resolve(
         _ok(options, {
@@ -280,6 +431,79 @@ class MockInterceptor extends Interceptor {
                   'booking': {'id': cancelPath.group(1)},
                   'refunds': <Object>[],
                 },
+        }),
+      );
+      return;
+    }
+
+    final foxerPath = RegExp(r'^/users/foxers/([^/]+)$').firstMatch(path);
+    if (foxerPath != null && options.method == 'GET') {
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': {
+            'id': foxerPath.group(1),
+            'name': 'Rico Rival',
+            'imgId': null,
+            'city': 'Davao City',
+            'roleType': ['eventFoxer'],
+            'identityVerifiedAt': '2026-01-01T00:00:00.000Z',
+            'avgRating': 4.8,
+            'reviewCount': 12,
+            'services': <Object>[],
+            'assets': <Object>[],
+            'venues': <Object>[],
+            'eventTemplates': <Object>[],
+          },
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.matchesMine && options.method == 'GET') {
+      Map<String, dynamic> row(
+        String id,
+        String style,
+        String requestStatus,
+        String status,
+        num total,
+      ) =>
+          {
+            'id': id,
+            'status': status,
+            'guestCount': 40,
+            'totalAmount': total,
+            'startAt': DateTime.now()
+                .add(const Duration(days: 20))
+                .toUtc()
+                .toIso8601String(),
+            'payments': <Object>[],
+            'event': {
+              'id': 'e-$id',
+              'name': 'Match with $style',
+              'requestStatus': requestStatus,
+              'host': {'id': '2', 'name': 'Rico Rival'},
+            },
+          };
+      handler.resolve(
+        _ok(options, {
+          'success': true,
+          'data': [
+            row('m1', 'Garden Birthday', 'pending', 'pending', 0),
+            row('m2', 'Own idea', 'approved', 'pending', 18000),
+            row('m3', 'Rooftop Launch', 'rejected', 'cancelled', 0),
+          ],
+        }),
+      );
+      return;
+    }
+
+    if (path == ApiEndpoints.matches && options.method == 'POST') {
+      handler.resolve(
+        _ok(options, {
+          'message': 'Match request created',
+          'bookingId': 'mock-booking-match',
+          'clientSecret': null,
         }),
       );
       return;
@@ -543,8 +767,109 @@ class MockInterceptor extends Interceptor {
       // Public browse data, so the Home hero's globe has pins and cards (and
       // the Home feed has items) with no backend. Same shapes as the real API:
       // events are `{ data: [...] }`, venues are `{ venues: [...] }`.
+      case ApiEndpoints.categories:
+        Map<String, dynamic> category(
+          String name,
+          int count, {
+          bool event = false,
+          int venues = 0,
+          int services = 0,
+          int assets = 0,
+        }) =>
+            {
+              'name': name,
+              'count': count,
+              'isEventCategory': event,
+              'sources': {
+                'venues': venues,
+                'services': services,
+                'assets': assets,
+                'events': event ? count : 0,
+              },
+            };
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              category('birthday', 34, event: true),
+              category('wedding', 28, event: true),
+              category('corporate', 19, event: true),
+              category('social', 12, event: true),
+              category('other', 7, event: true),
+              category('photography', 15, services: 15),
+              category('dj', 9, services: 9),
+              category('catering', 6, services: 6),
+              category('sound_system', 11, assets: 11),
+              category('garden', 5, venues: 5),
+              category('indoor', 8, venues: 8),
+            ],
+          }),
+        );
+      case ApiEndpoints.calendar:
+        final today = DateTime.now();
+        DateTime at(int days, int hour) =>
+            DateTime(today.year, today.month, today.day + days, hour);
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              {
+                'id': 'booking:mock-1',
+                'kind': 'event',
+                'role': 'guest',
+                'title': 'Rooftop Launch Night',
+                'start': at(2, 19).toUtc().toIso8601String(),
+                'end': at(2, 23).toUtc().toIso8601String(),
+                'status': 'confirmed',
+              },
+              {
+                'id': 'event:mock-2',
+                'kind': 'event',
+                'role': 'host',
+                'title': 'Garden Birthday',
+                'start': at(5, 14).toUtc().toIso8601String(),
+                'end': at(5, 20).toUtc().toIso8601String(),
+                'status': 'approved',
+              },
+            ],
+          }),
+        );
       case ApiEndpoints.eventsBrowse:
         handler.resolve(_ok(options, {'data': _mockEvents}));
+      case ApiEndpoints.publicEventsBrowse:
+        final now = DateTime.now().toUtc();
+        handler.resolve(
+          _ok(options, {
+            'success': true,
+            'data': [
+              {
+                'id': 'mock-public-event-1',
+                'name': 'Manila Night Market',
+                'eventCategory': 'social',
+                'startAt': now.add(const Duration(days: 7)).toIso8601String(),
+                'endAt': now
+                    .add(const Duration(days: 7, hours: 5))
+                    .toIso8601String(),
+                'guestCount': 120,
+                'totalAmount': 18000,
+                'targetCity': 'Manila',
+              },
+              {
+                'id': 'mock-public-event-2',
+                'name': 'Cebu Food Fest',
+                'eventCategory': 'social',
+                'startAt': now.add(const Duration(days: 21)).toIso8601String(),
+                'endAt': now
+                    .add(const Duration(days: 21, hours: 6))
+                    .toIso8601String(),
+                'guestCount': 250,
+                'totalAmount': 32000,
+                'targetCity': 'Cebu City',
+              },
+            ],
+            'pagination': {'page': 1, 'limit': 20, 'total': 2, 'totalPages': 1},
+          }),
+        );
       case ApiEndpoints.venues:
         handler.resolve(_ok(options, {'venues': <Map<String, dynamic>>[]}));
       // Nothing booked and a blank passport: the screens then show their

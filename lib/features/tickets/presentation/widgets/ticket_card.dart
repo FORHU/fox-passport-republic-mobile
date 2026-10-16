@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/reviews/presentation/widgets/write_review_sheet.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/cancel_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
+import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/ticket_panel.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -25,6 +29,22 @@ class TicketCard extends ConsumerWidget {
       !ticket.isSample &&
       (ticket.status == 'pending' || ticket.status == 'confirmed') &&
       ticket.startAt.isAfter(DateTime.now());
+
+  /// A booking that took place and has not been reviewed yet.
+  bool get _canReview =>
+      !ticket.isSample &&
+      !ticket.hasReview &&
+      (ticket.status == 'confirmed' || ticket.status == 'completed') &&
+      ticket.endAt.isBefore(DateTime.now());
+
+  Future<void> _review(BuildContext context, WidgetRef ref) async {
+    final posted = await showWriteReviewSheet(
+      context,
+      bookingId: ticket.id,
+      title: ticket.eventName,
+    );
+    if (posted) ref.invalidate(pastTicketsProvider);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -116,6 +136,13 @@ class TicketCard extends ConsumerWidget {
             ),
           ],
         ),
+        if (_canReview)
+          TextButton.icon(
+            onPressed: () => unawaited(_review(context, ref)),
+            style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
+            icon: const Icon(Icons.star_outline_rounded),
+            label: Text(l10n.reviewWrite),
+          ),
         if (_canCancel)
           TextButton(
             onPressed: () => showCancelSheet(context, ticket),
@@ -204,8 +231,11 @@ class _Qr extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ticket.isSample || ticket.ticketCode == null
-          ? const Icon(Icons.qr_code_2_rounded,
-              size: 72, color: AppColors.onLightSurface,)
+          ? const Icon(
+              Icons.qr_code_2_rounded,
+              size: 72,
+              color: AppColors.onLightSurface,
+            )
           : QrImageView(
               data: ticket.ticketCode!,
               padding: EdgeInsets.zero,
