@@ -56,7 +56,7 @@ class HomePage extends ConsumerWidget {
 
     void openOccasion(Occasion occasion) {
       unawaited(ref.read(lastOccasionProvider.notifier).remember(occasion));
-      context.go(RouteNames.searchFor('events'));
+      unawaited(context.push(RouteNames.occasion(occasion.name)));
     }
 
     return Scaffold(
@@ -107,7 +107,7 @@ class HomePage extends ConsumerWidget {
                 tiles: tiles,
                 more: moreCategories(categories),
                 onOccasion: openOccasion,
-                onAll: () => context.go(RouteNames.searchFor('events')),
+                onAll: () => unawaited(context.push(RouteNames.allCategories)),
               ),
               if (oneThing.isNotEmpty) ...[
                 const SizedBox(height: 24),

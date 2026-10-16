@@ -3373,6 +3373,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Equipment'**
   String get categoryEquipment;
+
+  /// No description provided for @occasionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{occasion} ideas'**
+  String occasionTitle(String occasion);
+
+  /// No description provided for @occasionTitleIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{occasion} ideas in {city}'**
+  String occasionTitleIn(String occasion, String city);
+
+  /// No description provided for @occasionPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready-made packages'**
+  String get occasionPackages;
+
+  /// No description provided for @occasionAskPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a price'**
+  String get occasionAskPrice;
+
+  /// No description provided for @occasionNoPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No ready-made {occasion} packages yet.'**
+  String occasionNoPackages(String occasion);
+
+  /// No description provided for @occasionNoPackagesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'No ready-made {occasion} packages in {city} yet.'**
+  String occasionNoPackagesIn(String occasion, String city);
+
+  /// No description provided for @occasionPlanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a Foxer plan it'**
+  String get occasionPlanner;
+
+  /// No description provided for @occasionPlannerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell a planner what you want and they handle the rest.'**
+  String get occasionPlannerBody;
+
+  /// No description provided for @occasionFindPlanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a planner'**
+  String get occasionFindPlanner;
+
+  /// No description provided for @occasionYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan it yourself'**
+  String get occasionYourself;
+
+  /// No description provided for @occasionNoneHere.
+  ///
+  /// In en, this message translates to:
+  /// **'None here yet'**
+  String get occasionNoneHere;
+
+  /// No description provided for @planAddDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add date'**
+  String get planAddDate;
+
+  /// No description provided for @planGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests'**
+  String get planGuests;
+
+  /// No description provided for @planWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get planWhen;
+
+  /// No description provided for @planApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get planApply;
+
+  /// No description provided for @guestsUpTo20.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 20'**
+  String get guestsUpTo20;
+
+  /// No description provided for @guests20to50.
+  ///
+  /// In en, this message translates to:
+  /// **'20–50'**
+  String get guests20to50;
+
+  /// No description provided for @guests50to100.
+  ///
+  /// In en, this message translates to:
+  /// **'50–100'**
+  String get guests50to100;
+
+  /// No description provided for @guests100plus.
+  ///
+  /// In en, this message translates to:
+  /// **'100+'**
+  String get guests100plus;
+
+  /// No description provided for @allCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you can book'**
+  String get allCategoriesTitle;
+
+  /// No description provided for @allCategoriesFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a category'**
+  String get allCategoriesFind;
+
+  /// No description provided for @allCategoriesOccasions.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasions'**
+  String get allCategoriesOccasions;
+
+  /// No description provided for @allCategoriesPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get allCategoriesPeople;
+
+  /// No description provided for @allCategoriesGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get allCategoriesGear;
+
+  /// No description provided for @allCategoriesVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get allCategoriesVenues;
+
+  /// No description provided for @allCategoriesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None yet'**
+  String get allCategoriesNone;
 }
 
 class _AppLocalizationsDelegate

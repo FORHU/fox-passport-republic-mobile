@@ -19,6 +19,9 @@ class OccasionStyle {
 class OccasionColors {
   OccasionColors._();
 
+  /// The Foxer pink on the "Have a Foxer plan it" card.
+  static const plannerBorder = Color(0xFF5C1A46);
+
   static const wedding = OccasionStyle(
     background: Color(0xFF1A1428),
     border: Color(0xFF3B2D5C),

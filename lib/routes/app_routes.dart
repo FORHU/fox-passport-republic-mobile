@@ -19,6 +19,8 @@ import 'package:flutter_template/features/messages/domain/entities/conversation.
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
 import 'package:flutter_template/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
@@ -30,6 +32,7 @@ import 'package:flutter_template/features/venue/presentation/pages/venue_detail_
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
@@ -157,6 +160,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RolesPage(),
       ),
       GoRoute(
+        path: '/occasion/:name',
+        builder: (context, state) => OccasionPage(
+          occasion:
+              Occasion.fromName(state.pathParameters['name']) ?? Occasion.other,
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.allCategories,
+        builder: (context, state) => const AllCategoriesPage(),
+      ),
+      GoRoute(
         path: RouteNames.calendar,
         builder: (context, state) => const CalendarPage(),
       ),
@@ -256,6 +270,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     state.uri.queryParameters['kind'],
                   ),
                   initialCity: state.uri.queryParameters['city'],
+                  initialMinCapacity: int.tryParse(
+                    state.uri.queryParameters['capacity'] ?? '',
+                  ),
+                  initialDate: DateTime.tryParse(
+                    state.uri.queryParameters['date'] ?? '',
+                  ),
                 ),
               ),
             ],
