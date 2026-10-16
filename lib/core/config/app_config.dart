@@ -23,6 +23,7 @@ class AppConfig {
     this.socialRedirectOrigin = 'foxpassport://app',
     this.webAppUrl = '',
     this.mapboxToken = '',
+    this.assetHostOverride = '',
   });
 
   /// Builds config from `flutter_dotenv` values loaded at runtime.
@@ -37,10 +38,7 @@ class AppConfig {
                   (envString != 'prod' ? 'true' : 'false'))
               .toLowerCase() ==
           'true',
-      useMock:
-          (dotenv.env['USE_MOCK'] ?? (envString != 'prod' ? 'true' : 'false'))
-                  .toLowerCase() ==
-              'true',
+      useMock: (dotenv.env['USE_MOCK'] ?? 'false').toLowerCase() == 'true',
       googleServerClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'] ?? '',
       googleClientId: dotenv.env['GOOGLE_CLIENT_ID'] ?? '',
       facebookNativeEnabled:
@@ -49,23 +47,24 @@ class AppConfig {
           dotenv.env['SOCIAL_REDIRECT_ORIGIN'] ?? 'foxpassport://app',
       webAppUrl: (dotenv.env['WEB_APP_URL'] ?? '').trim(),
       mapboxToken: (dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? '').trim(),
+      assetHostOverride: (dotenv.env['ASSET_HOST_OVERRIDE'] ?? '').trim(),
     );
   }
 
   /// Explicit development config used by `main_dev.dart` — points at local
   /// Fox Passport Republic API on port 6002.
-  const AppConfig.dev()
+  const AppConfig.dev({this.useMock = false})
       : environment = Environment.dev,
         appName = 'Fox Passport (Dev)',
         baseUrl = 'http://localhost:6002/api/v1',
         enableLogging = true,
-        useMock = true,
         googleServerClientId = '',
         googleClientId = '',
         facebookNativeEnabled = false,
         socialRedirectOrigin = 'foxpassport://app',
         webAppUrl = '',
-        mapboxToken = '';
+        mapboxToken = '',
+        assetHostOverride = '';
 
   /// Explicit production config used by `main_prod.dart` — logging off.
   const AppConfig.prod()
@@ -79,7 +78,8 @@ class AppConfig {
         facebookNativeEnabled = false,
         socialRedirectOrigin = 'foxpassport://app',
         webAppUrl = '',
-        mapboxToken = '';
+        mapboxToken = '',
+        assetHostOverride = '';
 
   final Environment environment;
   final String appName;
@@ -88,6 +88,12 @@ class AppConfig {
 
   /// Whether API requests should be served by the mock interceptor.
   final bool useMock;
+
+  /// Dev only. Photos uploaded to a local MinIO are stored with a
+  /// `localhost` address, which on an Android emulator is the emulator
+  /// itself. Set this to `10.0.2.2` (the emulator's name for your computer)
+  /// and such addresses are read through it. Empty leaves URLs alone.
+  final String assetHostOverride;
 
   /// Google OAuth *web* client ID. Passed to the native SDK as the server
   /// client ID so the ID token it returns is addressed to this backend (the

@@ -1,0 +1,125 @@
+/* Shared styles for the mockup pages in this folder. Values mirror the tokens in docs/mobile-design.md section 2. */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css');
+
+*{box-sizing:border-box}
+body{margin:0;background:#15171f;color:#c5c8d3;font-family:'Plus Jakarta Sans',sans-serif;padding:32px 16px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:20px;color:#fff;text-align:center;margin:0 0 4px}
+.note{text-align:center;font-size:13px;margin:0 auto 28px;max-width:720px}
+.wrap{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+.cap{font-size:13px;text-align:center;margin:10px 0 0;max-width:340px}
+
+/* Phone frame. Drawn at 284px and zoomed so the inline sizes below read as roughly 1.2x on screen. */
+.ph{zoom:1.2;width:284px;min-height:580px;background:#02040a;color:#fff;border-radius:32px;border:1px solid #2a2d3a;padding:16px 14px 12px;display:flex;flex-direction:column;font-size:13px;line-height:1.4}
+.ph .g{font-family:'Space Grotesk',sans-serif;font-weight:700}
+.ph .m{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8b90a0}
+.ph .s{color:#8b90a0;font-size:12px}
+.ph .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ph .card{background:#0f111a;border:1px solid #20232e;border-radius:18px}
+.ph .pad{padding:12px 14px}
+.ph .img{background:#1a1a24;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#4a4f60;flex-shrink:0}
+.ph .chip{border:1px solid #2a2d3a;border-radius:999px;padding:4px 10px;font-size:12px;color:#c5c8d3;white-space:nowrap}
+.ph .chip.on{background:#fff;color:#02040a;border-color:#fff;font-weight:700}
+.ph .chips{display:flex;gap:6px;overflow:hidden}
+.ph .search{border-radius:999px;padding:11px 14px;color:#8b90a0}
+.ph .round{background:#02040a;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+
+/* Buttons */
+.ph .btn{background:#ccff00;color:#1a2000;font-family:'Space Grotesk',sans-serif;font-weight:700;border-radius:16px;padding:13px 18px;text-align:center}
+.ph .ghost{border:1px solid #2a2d3a;border-radius:16px;padding:12px;text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.ph .cta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:12px}
+
+/* Bottom bar */
+.ph .tab{margin-top:auto;display:flex;justify-content:space-around;background:#0f111a;border:1px solid #20232e;border-radius:999px;padding:7px 4px;color:#6b7080;font-size:11px}
+.ph .tab span{display:flex;flex-direction:column;align-items:center;min-width:44px;position:relative}
+.ph .tab i{font-size:18px}
+.ph .tab .on{color:#ccff00}
+.ph .cnt{background:#ccff00;color:#1a2000;border-radius:999px;min-width:18px;padding:0 5px;text-align:center;font-size:11px;font-weight:700}
+.ph .tab .cnt{position:absolute;top:-4px;right:2px}
+
+/* Ticket stub */
+.ph .tk{position:relative;border-radius:20px;overflow:hidden}
+.ph .perf{border-top:2px dashed #2a2d3a;position:relative;margin:0 14px}
+.ph .notch{position:absolute;width:18px;height:18px;border-radius:50%;background:#02040a;border:1px solid #20232e;top:-10px}
+.ph .seg{display:flex;background:#0f111a;border:1px solid #20232e;border-radius:999px;padding:3px;font-size:12px}
+.ph .seg span{flex:1;text-align:center;padding:6px 0;border-radius:999px;color:#8b90a0}
+.ph .seg .on{background:#1a1a24;color:#fff;font-weight:700}
+
+/* Passport stamps */
+.ph .st{aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;line-height:1.1}
+
+/* Messages */
+.ph .av{width:42px;height:42px;border-radius:50%;background:#1a1a24;display:flex;align-items:center;justify-content:center;color:#8b90a0;flex-shrink:0;position:relative;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.ph .on-dot{position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#4ade80;border:2px solid #02040a}
+.ph .ctx{display:inline-block;background:#1a1a24;border-radius:6px;padding:1px 6px;font-size:11px;color:#a9adba}
+.ph .conv{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #161922}
+.ph .cut{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .b{max-width:78%;padding:8px 12px;border-radius:16px;margin-bottom:6px}
+.ph .in{background:#0f111a;border:1px solid #20232e;border-bottom-left-radius:4px;align-self:flex-start}
+.ph .out{background:#1a2000;border:1px solid #55660a;border-bottom-right-radius:4px;align-self:flex-end}
+
+/* Booking flow */
+.ph .bar{display:flex;gap:4px;margin:10px 0 16px}
+.ph .bar span{flex:1;height:3px;border-radius:9px;background:#20232e}
+.ph .bar .on{background:#ccff00}
+.ph .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.ph .cal span{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:12px}
+.ph .cal .x{color:#3a3e4d;text-decoration:line-through}
+.ph .cal .sel{background:#ccff00;color:#1a2000;font-weight:700}
+.ph .rnd{width:36px;height:36px;border-radius:50%;border:1px solid #2a2d3a;display:flex;align-items:center;justify-content:center}
+.ph .ln{display:flex;justify-content:space-between;padding:5px 0}
+.ph .ic{width:34px;height:34px;border-radius:50%;background:#0f111a;border:1px solid #20232e;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ph .warn{background:#2a1f05;border:1px solid #7a5a0c;border-radius:14px;padding:10px 12px;color:#fbbf24}
+
+/* Home, direction A: occasion tiles and bell */
+.ph .bell{position:relative;width:34px;height:34px;border-radius:50%;border:1px solid #20232e;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ph .bell-cnt{position:absolute;top:-3px;right:-3px}
+.ph .occ{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.ph .tile{border:1px solid;border-radius:16px;padding:12px;min-height:82px;display:flex;flex-direction:column;justify-content:space-between}
+.ph .tile i{font-size:22px}
+.ph .tile.wedding{background:#1a1428;border-color:#3b2d5c}.ph .tile.wedding i{color:#a78bfa}
+.ph .tile.birthday{background:#24140a;border-color:#5c3214}.ph .tile.birthday i{color:#f97316}
+.ph .tile.corporate{background:#081c24;border-color:#0e4a5c}.ph .tile.corporate i{color:#00d2ff}
+.ph .tile.social{background:#1a2000;border-color:#55660a}.ph .tile.social i{color:#ccff00}
+
+/* Full app page (full-app.html) */
+.sec{max-width:1500px;margin:0 auto 44px}
+.sec h2{font-family:'Space Grotesk',sans-serif;color:#fff;font-size:18px;margin:0 0 4px;padding-left:8px;border-left:3px solid #ccff00}
+.sec .sub{font-size:13px;margin:0 0 18px 11px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 32px;max-width:900px}
+.toc a{color:#c5c8d3;border:1px solid #2a2d3a;border-radius:999px;padding:5px 12px;font-size:13px;text-decoration:none}
+.toc a:hover{border-color:#ccff00;color:#ccff00}
+.flag{max-width:760px;margin:0 auto 28px;background:#2a1f05;border:1px solid #7a5a0c;color:#fbbf24;border-radius:12px;padding:10px 14px;font-size:13px}
+.ph .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.ph .t{border:1px solid;border-radius:14px;padding:8px;min-height:68px;display:flex;flex-direction:column;justify-content:space-between}
+.ph .t i{font-size:18px}
+.ph .t .n{font-size:11px;color:#a9adba}
+.ph .t.wedding{background:#1a1428;border-color:#3b2d5c}.ph .t.wedding i{color:#a78bfa}
+.ph .t.birthday{background:#24140a;border-color:#5c3214}.ph .t.birthday i{color:#f97316}
+.ph .t.corporate{background:#081c24;border-color:#0e4a5c}.ph .t.corporate i{color:#00d2ff}
+.ph .t.social{background:#1a2000;border-color:#55660a}.ph .t.social i{color:#ccff00}
+.ph .t.other{background:#0f111a;border-color:#2a2d3a}.ph .t.other i{color:#a9adba}
+.ph .t.all{border-color:#2a2d3a;border-style:dashed}.ph .t.all i{color:#8b90a0}
+.ph .pill{display:flex;flex-direction:column;align-items:center;gap:4px;width:54px;flex-shrink:0;font-size:11px;color:#c5c8d3;text-align:center}
+.ph .pill .c{width:46px;height:46px;border-radius:50%;background:#0f111a;border:1px solid #20232e;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ph .hs{display:flex;gap:8px;overflow:hidden}
+.ph .date{position:absolute;top:6px;left:6px;background:#02040a;border-radius:8px;padding:2px 6px;text-align:center;line-height:1.1}
+.ph .chip.add{border-style:dashed;color:#ccff00;border-color:#55660a}
+.ph .sheet{position:absolute;left:0;right:0;bottom:0;background:#0f111a;border-top:1px solid #2a2d3a;border-radius:24px 24px 0 0;padding:10px 12px 12px}
+.ph .grab{width:36px;height:4px;border-radius:9px;background:#2a2d3a;margin:0 auto 10px}
+.ph .dim{opacity:.35}
+.ph .li{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #161922}
+.ph .ic2{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;background:#1a1a24}
+.ph .inc{display:flex;gap:4px;color:#a9adba}
+.ph .inc .ic2{width:22px;height:22px;font-size:12px;border-radius:6px}
+.ph .avs{display:inline-flex;padding-left:6px}
+.ph .avs b{width:24px;height:24px;border-radius:50%;background:#1a1a24;border:2px solid #0f111a;margin-left:-6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#8b90a0}
+.ph .sk{background:#12141d;border-radius:12px}
+.ph .me{width:22px;height:22px;border-radius:50%;background:#3a3226;border:1.5px solid #6b7080;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.ph .tab .on .me{border:2px solid #ccff00}
+.ph .rel{position:relative}
+.ph .hero{font-family:'Archivo','Helvetica Neue',Arial,sans-serif;font-weight:900;font-size:30px;line-height:.95;letter-spacing:-.03em;text-transform:uppercase}
+.ph .fld{background:#0f111a;border:1px solid #20232e;border-radius:16px;height:46px;padding:0 14px;color:#8b90a0;display:flex;justify-content:space-between;align-items:center}
+.ph .dots{display:flex;gap:5px}
+.ph .dots span{width:6px;height:6px;border-radius:9px;background:#2a2d3a}
+.ph .dots .on{width:18px;background:#ccff00}

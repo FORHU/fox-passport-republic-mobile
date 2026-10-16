@@ -22,9 +22,76 @@ class RouteNames {
   /// Bottom-nav tabs.
   static const String home = '/';
   static const String search = '/search';
+
+  /// `/search?kind=venues` — opens Search on one of its switches.
+  static String searchFor(
+    String kind, {
+    String? city,
+    int? minCapacity,
+    DateTime? date,
+  }) =>
+      Uri(
+        path: search,
+        queryParameters: {
+          'kind': kind,
+          if (city != null) 'city': city,
+          if (minCapacity != null) 'capacity': '$minCapacity',
+          if (date != null) 'date': date.toIso8601String().split('T').first,
+        },
+      ).toString();
+
+  /// Planning by occasion: `/occasion/wedding`.
+  static String occasion(String name) =>
+      '/occasion/${Uri.encodeComponent(name)}';
+
+  /// Every category, grouped: "Everything you can book".
+  static const String allCategories = '/categories';
   static const String tickets = '/tickets';
+
+  /// Everything booked, hosted, organized or supplied, by day.
+  static const String calendar = '/calendar';
+
+  /// Tickets, opened on the Requests switch.
+  static const String ticketsRequests = '/tickets?segment=requests';
+  static const String messages = '/messages';
+  static String chat(String conversationId) =>
+      '$messages/${Uri.encodeComponent(conversationId)}';
   static const String passport = '/passport';
   static const String profile = '/profile';
+
+  /// Asked once after sign-in, before Home: use the device location?
+  static const String location = '/location';
+
+  /// Become a Foxer: the roles to apply for and where each stands.
+  static const String roles = '/roles';
+
+  /// Settings: location, account, sign out. Pushed from Passport.
+  static const String settings = '/settings';
+
+  /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.
+  static const String foxer = '/foxer';
+
+  /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
+  static const String match = '/match';
+
+  /// The Republic: the community feed.
+  static const String republic = '/republic';
+
+  /// One piece of gear or one service, with its booking. Takes the row as
+  /// `extra`.
+  static const String itemBooking = '/book/item';
+
+  /// One venue in full, with Book now. Takes the venue row as `extra`.
+  static const String venueDetail = '/venue';
+
+  /// One event package: what is in it, customised and booked.
+  static const String eventDetail = '/event';
+
+  /// An event that its owner chose to publish.
+  static const String scheduledEventDetail = '/scheduled-event';
+
+  /// Venue booking flow, full screen. Takes the venue as `extra`.
+  static const String book = '/book';
 
   /// Pushed from the app-bar bell.
   static const String notifications = '/notifications';

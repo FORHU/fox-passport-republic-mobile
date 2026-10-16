@@ -28,10 +28,11 @@ instead of tables, single-column flows, thumb-reach actions).
 | 9 | Passport (stamps, badges, leaderboard) | `/user/passport`, `features/gamification` | Badge grid + progress ring |
 | 10 | Saved / Favorites | `/republic/saved` | List with swipe-to-remove |
 | 11 | Notifications | `/notifications` | List, mark read / read-all |
-| 12 | Profile & settings | `/user/settings`, `/user/[id]` | Extend existing profile page |
+| 12 | Profile & settings | `/user/settings`, `/user/[id]` | Extend existing profile page; opened from Passport, no longer a tab |
 | 13 | Map (venues near me) | `features/venue` (Mapbox/Cesium) | Native map with venue pins + bottom sheet list; **no Cesium globe** |
+| 14 | Messages (inbox, chat) | `/messages`, `features/messages` | **Added 2026-10-13.** Own tab; design in `docs/mobile-design.md` section 7 |
 
-Out of this slice: messages, calendar, reviews, scanner/check-in (Foxer side),
+Out of this slice: calendar, reviews, scanner/check-in (Foxer side),
 KYC, investments.
 
 ---
@@ -53,6 +54,7 @@ All paths relative to `BASE_URL` (`/api/v1`). Response envelope:
 | Passport | `GET /passport/me`, `/passport/badges`, `/passport/:userId`, `/passport/leaderboard` |
 | Favorites | `GET /favorites/user/:userId` (+ add/remove — confirm in `shared/api/favorites.ts`) |
 | Notifications | `GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all` |
+| Messages | `GET /conversations`, `GET/POST /conversations/:id/messages`, `PATCH /conversations/:id/read`, `POST /conversations/:id/accept`, `/decline` |
 
 Existing `ApiEndpoints` in `lib/core/constants/api_endpoints.dart` needs
 extending; the current `/stores/nearby` and `/quiz/*` entries are template
@@ -82,8 +84,11 @@ lib/features/
   profile/         (extend)
 ```
 
-Shell navigation (bottom bar): **Home · Search · Tickets · Passport · Profile**.
-Notifications via app-bar bell. Replace template routes (`quiz`,
+Shell navigation (bottom bar): **Home · Search · Bookings · Messages ·
+Passport** (decided 2026-10-15; built today as Home · Search · Map · Messages
+· Passport). Map becomes a List / Map switch inside Search; Bookings holds
+tickets, requests and the calendar; profile and settings open from Passport.
+Details in `docs/mobile-design.md` section 6. Notifications via app-bar bell. Replace template routes (`quiz`,
 `recommendations`, `cart`, `worldMap`) as each real feature lands.
 
 ---
@@ -134,6 +139,19 @@ Notifications via app-bar bell. Replace template routes (`quiz`,
 7. **Passport, Favorites, Notifications.**
 8. **Map** — venue map with bottom sheet.
 9. **Polish** — empty/error states, skeletons, a11y, l10n strings.
+10. **Messages** — inbox, chat, requests, shared inbox, socket updates. The
+    first mobile slice now has an API-backed inbox and text chat, request
+    accept/decline, read receipts, and the new Messages tab. Search and basic
+    filters are local. Socket presence/live updates, shared-inbox author
+    details, attachments, message actions, and new-conversation creation
+    remain.
+11. **Navigation and Home** (added 2026-10-15) — tab bar to Home · Search ·
+    Bookings · Messages · Passport (Map into Search as a List / Map switch;
+    Tickets, My requests and the calendar into the Bookings tab; Passport
+    icon is the profile photo); Home rebuilt from `GET /categories` with
+    occasion tiles, "book just one thing", "happening soon" and the
+    returning-user layout; the occasion results page. Design:
+    `docs/mobile-design.md` section 6, mockup `docs/mockups/full-app.html`.
 
 Each milestone ends with `flutter analyze` clean and tests passing.
 
@@ -199,3 +217,5 @@ Each milestone ends with `flutter analyze` clean and tests passing.
 - [ ] M7 Passport, Favorites, Notifications
 - [ ] M8 Map (Mapbox)
 - [ ] M9 Polish
+- [ ] M10 Messages (partial: inbox, text chat, requests, and tab connected; realtime and advanced chat actions remain)
+- [ ] M11 Navigation and Home (Bookings tab, Map into Search, data-driven Home, occasion results)

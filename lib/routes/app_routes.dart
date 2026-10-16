@@ -7,15 +7,35 @@ import 'package:flutter_template/features/auth/presentation/pages/login_page.dar
 import 'package:flutter_template/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
+import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
+import 'package:flutter_template/features/booking/presentation/pages/item_booking_page.dart';
+import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
+import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
+import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
+import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
+import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
+import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
 import 'package:flutter_template/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
+import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
+import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
+import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
+import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/categories/category_summary.dart';
+import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
 
@@ -89,6 +109,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return goingToOnboarding ? null : RouteNames.onboarding;
       }
 
+      // Location is asked once, before the app is used.
+      final askedLocation = ref.read(storageServiceProvider).locationPromptSeen;
+      if (!askedLocation) {
+        return at == RouteNames.location ? null : RouteNames.location;
+      }
+      if (at == RouteNames.location) return RouteNames.home;
+
       // The carousel is a signed-out screen.
       if (goingToLogin || goingToRegister || at == RouteNames.welcome) {
         return RouteNames.home;
@@ -126,32 +153,175 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.onboarding,
         builder: (context, state) => const OnboardingPage(),
       ),
-      ShellRoute(
-        builder: (context, state, child) => MainLayout(child: child),
-        routes: [
-          GoRoute(
-            path: RouteNames.home,
-            builder: (context, state) => const HomePage(),
+      GoRoute(
+        path: RouteNames.location,
+        builder: (context, state) => const LocationGatePage(),
+      ),
+      GoRoute(
+        path: RouteNames.roles,
+        builder: (context, state) => const RolesPage(),
+      ),
+      GoRoute(
+        path: '/occasion/:name',
+        builder: (context, state) => OccasionPage(
+          occasion:
+              Occasion.fromName(state.pathParameters['name']) ?? Occasion.other,
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.allCategories,
+        builder: (context, state) => const AllCategoriesPage(),
+      ),
+      GoRoute(
+        path: RouteNames.calendar,
+        builder: (context, state) => const CalendarPage(),
+      ),
+      GoRoute(
+        path: RouteNames.settings,
+        builder: (context, state) => const SettingsPage(),
+      ),
+      // A chat is full screen, outside the shell, so the bottom navigation is
+      // not drawn over the composer.
+      GoRoute(
+        path: '${RouteNames.messages}/:conversationId',
+        builder: (context, state) => MessagesChatPage(
+          conversationId: state.pathParameters['conversationId']!,
+          conversation:
+              state.extra is Conversation ? state.extra! as Conversation : null,
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.book,
+        // The venue travels as `extra`; without it (a stale deep link) go back
+        // to Search rather than show an empty flow.
+        redirect: (context, state) =>
+            state.extra is CatalogItem || state.extra is EventBookingArgs
+                ? null
+                : RouteNames.search,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is EventBookingArgs) {
+            return BookingFlowPage(
+              venue: extra.item,
+              package: extra.package,
+              excluded: extra.excluded,
+            );
+          }
+          return BookingFlowPage(venue: extra! as CatalogItem);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.republic,
+        builder: (context, state) => const RepublicPage(),
+      ),
+      GoRoute(
+        path: RouteNames.itemBooking,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ItemBookingPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.foxer,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            FoxerProfilePage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.match,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            MatchRequestPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.venueDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            VenueDetailPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.eventDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            EventDetailPage(item: state.extra! as CatalogItem),
+      ),
+      GoRoute(
+        path: RouteNames.scheduledEventDetail,
+        redirect: (context, state) =>
+            state.extra is CatalogItem ? null : RouteNames.search,
+        builder: (context, state) =>
+            ScheduledEventDetailPage(item: state.extra! as CatalogItem),
+      ),
+      // One navigator per tab, kept alive side by side: switching tabs keeps
+      // each tab's own stack, scroll position and typed text.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainLayout(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.home,
+                builder: (context, state) => const HomePage(),
+              ),
+              GoRoute(
+                path: RouteNames.notifications,
+                builder: (context, state) => const NotificationsPage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: RouteNames.search,
-            builder: (context, state) => const SearchPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.search,
+                builder: (context, state) => SearchPage(
+                  initialKind: CatalogKind.fromParam(
+                    state.uri.queryParameters['kind'],
+                  ),
+                  initialCity: state.uri.queryParameters['city'],
+                  initialMinCapacity: int.tryParse(
+                    state.uri.queryParameters['capacity'] ?? '',
+                  ),
+                  initialDate: DateTime.tryParse(
+                    state.uri.queryParameters['date'] ?? '',
+                  ),
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: RouteNames.tickets,
-            builder: (context, state) => const TicketsPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.tickets,
+                builder: (context, state) => TicketsPage(
+                  initialSegment: state.uri.queryParameters['segment'],
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: RouteNames.passport,
-            builder: (context, state) => const PassportPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.messages,
+                builder: (context, state) => const MessagesPage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: RouteNames.profile,
-            builder: (context, state) => const ProfilePage(),
-          ),
-          GoRoute(
-            path: RouteNames.notifications,
-            builder: (context, state) => const NotificationsPage(),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.passport,
+                builder: (context, state) => const PassportPage(),
+              ),
+              GoRoute(
+                path: RouteNames.profile,
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
           ),
         ],
       ),

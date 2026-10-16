@@ -20,6 +20,7 @@ class StorageService {
   static const String _userModelKey = 'cached_user_model';
   static const String _onboardingKey = 'onboarding_seen';
   static const String _welcomeKey = 'welcome_seen';
+  static const String _locationPromptKey = 'location_prompt_seen';
 
   // --- Plain key/value ---
   String? getString(String key) => _prefs.getString(key);
@@ -60,6 +61,11 @@ class StorageService {
   // --- Welcome carousel flag (shown once, before sign-in) ---
   bool get welcomeSeen => _prefs.getBool(_welcomeKey) ?? false;
   Future<void> setWelcomeSeen() => _prefs.setBool(_welcomeKey, true);
+
+  // --- Location prompt (asked once, before the app is used) ---
+  bool get locationPromptSeen => _prefs.getBool(_locationPromptKey) ?? false;
+  Future<void> setLocationPromptSeen() =>
+      _prefs.setBool(_locationPromptKey, true);
 
   /// Clears the whole authenticated session (tokens + cached user).
   Future<void> clearSession() async {

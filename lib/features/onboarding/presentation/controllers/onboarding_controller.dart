@@ -6,7 +6,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/onboarding/data/datasources/onboarding_remote_datasource.dart';
 import 'package:flutter_template/features/onboarding/data/repositories/onboarding_repository.dart';
 import 'package:flutter_template/features/onboarding/domain/entities/onboarding_models.dart';
-import 'package:flutter_template/features/onboarding/domain/entities/role_catalog.dart';
+import 'package:flutter_template/shared/roles/role_catalog.dart';
 
 // --- Providers ---
 
@@ -84,10 +84,10 @@ class OnboardingState extends Equatable {
   bool get profileComplete => missing.isEmpty;
 
   /// Barangay in the Philippines, district elsewhere.
-  String get districtLabel =>
-      RegExp(r'^philippines$', caseSensitive: false).hasMatch(country.trim())
-          ? 'Barangay'
-          : 'District';
+  bool get isPhilippines =>
+      RegExp(r'^philippines$', caseSensitive: false).hasMatch(country.trim());
+
+  String get districtLabel => isPhilippines ? 'Barangay' : 'District';
 
   String? get countryCode {
     final c = country.trim().toLowerCase();

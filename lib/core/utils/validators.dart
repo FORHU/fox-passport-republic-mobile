@@ -1,3 +1,6 @@
+// The doc tables below list schema members and are wider than a line.
+// ignore_for_file: lines_longer_than_80_chars
+
 /// Form-field validators — a **line-for-line mirror of the web app's zod
 /// schemas** (`fox-passport-republic-app/src/shared/lib/schema.ts`), so the same
 /// input is accepted or refused, with the same message, on web and on mobile.

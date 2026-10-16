@@ -70,6 +70,41 @@ class AppColors {
   /// The "Foxer" label on Foxer cards.
   static const roleLabel = Color(0xFFFF00AA);
 
+  /// Organizer and Investor role labels.
+  static const roleOrganizer = Color(0xFFE879F9);
+  static const roleInvestor = Color(0xFF10B981);
+
+  // ── Light surfaces ──────────────────────────────────────────────────────
+  // The few places that are white on the dark app: the Apple Pay button, a QR
+  // code (scanners need contrast), and the selected filter pill.
+
+  /// A white tile or button on the dark canvas.
+  static const lightSurface = Color(0xFFFFFFFF);
+
+  /// Text and icons on [lightSurface].
+  static const onLightSurface = Color(0xFF000000);
+
+  // ── Effects ─────────────────────────────────────────────────────────────
+
+  /// Fully transparent, for surfaces that must show what is behind them.
+  static const clear = Color(0x00000000);
+
+  /// The canvas, fully clear: the start of a fade into [canvas].
+  static const canvasClear = Color(0x0002040A);
+
+  /// Behind a sheet or over a photo.
+  static const scrim = Color(0x66000000);
+
+  /// A floating control's shadow.
+  static const shadow = Color(0x8A000000);
+
+  // ── Accent palette (onboarding intents) ─────────────────────────────────
+  static const violet = Color(0xFF7C3AED);
+  static const pink = Color(0xFFEC4899);
+  static const rose = Color(0xFFDB2777);
+  static const orange = Color(0xFFFB923C);
+  static const peach = Color(0xFFFDBA74);
+
   // ── Legacy groups (same values, older names) ────────────────────────────
 
   static const ink = _Ink();
