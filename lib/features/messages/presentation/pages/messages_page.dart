@@ -65,7 +65,10 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
                               hintStyle: AppTypography.body(
                                 color: AppColors.textMuted,
                               ),
+                              filled: false,
                               border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                             ),
                           )
                         : Text(

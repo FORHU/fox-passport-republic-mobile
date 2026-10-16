@@ -42,7 +42,8 @@ void main() {
     expect(find.text('Citizen · Level 1'), findsOneWidget);
     expect(find.text('15 XP'), findsOneWidget);
     expect(find.text('LEVEL 2 AT 50'), findsOneWidget);
-    expect(find.text('Stamps'), findsOneWidget);
+    // The Stamps tab pill and the Stamps section heading.
+    expect(find.text('Stamps'), findsNWidgets(2));
     expect(find.text('2 OF 8'), findsOneWidget);
     expect(find.text('DVO'), findsOneWidget);
     expect(find.text('Badges'), findsOneWidget);

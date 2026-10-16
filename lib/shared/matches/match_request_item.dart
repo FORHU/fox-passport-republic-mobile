@@ -120,6 +120,14 @@ class MatchRequestItem extends Equatable {
       ];
 }
 
+/// How many bookings need the person right now (a Foxer said yes and the
+/// request waits for payment). This is the Bookings tab's badge.
+// ignore: specify_nonobvious_property_types
+final needsYouCountProvider = Provider.autoDispose<int>((ref) {
+  final items = ref.watch(myMatchRequestsProvider).asData?.value;
+  return items?.where((i) => i.needsPayment).length ?? 0;
+});
+
 /// The citizen's Match requests, newest first.
 final FutureProvider<List<MatchRequestItem>> myMatchRequestsProvider =
     FutureProvider.autoDispose<List<MatchRequestItem>>((ref) async {

@@ -92,7 +92,7 @@ class _TileState extends State<_Tile> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (widget.pulse) _controller.repeat(reverse: true);
+    if (widget.pulse) _controller.repeat(reverse: true).ignore();
   }
 
   @override

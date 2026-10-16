@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/features/favorites/data/favorites_repository.dart';
+import 'package:flutter_template/features/home/data/globe_stops_provider.dart';
+import 'package:flutter_template/features/map/presentation/widgets/places_globe.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -205,5 +207,100 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Rooftop Launch Night'), findsOneWidget);
+  });
+
+  testWidgets('an empty result with a city offers to clear it', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogProvider.overrideWith((ref, q) async {
+            final items = q.city == null ? _venues : <CatalogItem>[];
+            return CatalogPage(items: items, total: items.length);
+          }),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(initialCity: 'Atlantis'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nothing here yet'), findsOneWidget);
+    expect(find.text('Clear filters'), findsOneWidget);
+
+    await tester.tap(find.text('Clear filters'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
+
+  testWidgets('a failed load says so and can be retried', (tester) async {
+    var calls = 0;
+    await tester.pumpWidget(
+      ProviderScope(
+        // Riverpod retries a failed provider by itself; this test wants the
+        // error state, then a tap.
+        retry: (_, __) => null,
+        overrides: [
+          catalogProvider.overrideWith((ref, q) async {
+            calls++;
+            if (calls == 1) throw Exception('offline');
+            return CatalogPage(items: _venues, total: _venues.length);
+          }),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Try again'), findsOneWidget);
+
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
+  });
+
+  testWidgets('List and Map switch the same results page', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          catalogProvider.overrideWith(
+            (ref, q) async =>
+                CatalogPage(items: _venues, total: _venues.length),
+          ),
+          favoriteIdsProvider.overrideWith((ref) async => {}),
+          globeStopsProvider.overrideWith((ref) async => const []),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SearchPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('2 VENUES'), findsOneWidget);
+    expect(find.byType(PlacesGlobe), findsNothing);
+
+    await tester.tap(find.text('Map'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlacesGlobe), findsOneWidget);
+    expect(find.text('Sky Hall'), findsNothing);
+
+    await tester.tap(find.text('List'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sky Hall'), findsOneWidget);
   });
 }

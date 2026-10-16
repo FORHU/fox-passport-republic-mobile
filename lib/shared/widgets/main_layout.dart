@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/notifications/data/notifications_realtime.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -50,11 +52,12 @@ class MainLayout extends ConsumerWidget {
       ),
       _Destination(
         item: NavBarItem(
-          label: context.l10n.map,
-          icon: Icons.public_outlined,
-          activeIcon: Icons.public_rounded,
+          label: context.l10n.bookings,
+          icon: Icons.event_available_outlined,
+          activeIcon: Icons.event_available_rounded,
+          badgeLabel: _countLabel(ref.watch(needsYouCountProvider)),
         ),
-        route: RouteNames.map,
+        route: RouteNames.tickets,
       ),
       _Destination(
         item: NavBarItem(
@@ -70,6 +73,12 @@ class MainLayout extends ConsumerWidget {
           label: context.l10n.passport,
           icon: Icons.badge_outlined,
           activeIcon: Icons.badge_rounded,
+          avatarInitial: _initial(
+            ref.watch(authControllerProvider.select((s) => s.user?.name)),
+          ),
+          avatarImageUrl: ref.watch(
+            authControllerProvider.select((s) => s.user?.imageUrl),
+          ),
         ),
         route: RouteNames.passport,
       ),
@@ -90,6 +99,17 @@ class MainLayout extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// The first letter of the person's name, for the Passport tab.
+  static String? _initial(String? name) {
+    final trimmed = name?.trim() ?? '';
+    return trimmed.isEmpty ? null : trimmed.substring(0, 1).toUpperCase();
+  }
+
+  static String? _countLabel(int count) {
+    if (count == 0) return null;
+    return count > 99 ? '99+' : '$count';
   }
 
   static String? _unreadLabel(WidgetRef ref) {
