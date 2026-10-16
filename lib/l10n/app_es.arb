@@ -536,6 +536,7 @@
   "mapEmptyAction": "Explorar eventos",
   "passportEmptyStamps": "Asiste a un evento para ganar tu primer sello.",
   "passportEmptyAction": "Buscar eventos",
+  "calendar": "Calendario",
   "calendarTitle": "Calendario",
   "calendarHint": "Todo lo que reservas, organizas o ofreces",
   "calendarToday": "Hoy",
