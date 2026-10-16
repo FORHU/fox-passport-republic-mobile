@@ -16,7 +16,14 @@ void main() {
       expect(html, contains('"token":"pk.test"'));
       expect(html, contains('"spin":true'));
       expect(html, contains('"speed":5.0'));
-      expect(html, contains('interactive: false'));
+      expect(html, contains('"interactive":false'));
+    });
+
+    test('lets a finger turn the globe when interactive', () {
+      final html = buildGlobeHtml(token: 'pk.test', interactive: true);
+
+      expect(html, contains('"interactive":true'));
+      expect(html, contains('interactive: cfg.interactive'));
     });
 
     test('is still when spin is off (reduced motion)', () {

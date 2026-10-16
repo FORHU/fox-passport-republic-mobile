@@ -68,6 +68,8 @@ String buildGlobeHtml({
   bool nightLights = true,
   List<GlobeStop> stops = const [],
   int maxCards = 2,
+  bool interactive = false,
+  double? zoom,
 }) {
   // JSON-encode every interpolated value so nothing can break out of the
   // script, whatever the token, colour or event names contain.
@@ -81,6 +83,8 @@ String buildGlobeHtml({
     'bottom': bottomInset,
     'night': nightLights,
     'maxCards': maxCards,
+    'interactive': interactive,
+    'zoom': zoom,
     'stops': [for (final s in stops) s.toJson()],
   }).replaceAll('<', _jsLessThan);
 
@@ -137,8 +141,8 @@ String buildGlobeHtml({
     style: 'mapbox://styles/mapbox/dark-v11',
     projection: 'globe',
     center: [cfg.lng, cfg.lat],
-    zoom: fitZoom(),
-    interactive: false,      // Flutter owns the gestures (swipe, scroll)
+    zoom: cfg.zoom == null ? fitZoom() : cfg.zoom,
+    interactive: cfg.interactive,   // otherwise Flutter owns the gestures
     fadeDuration: 0,
     attributionControl: false
   });
@@ -202,6 +206,25 @@ String buildGlobeHtml({
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2.6, 5, 5],
       'circle-color': '#CCFF00', 'circle-stroke-color': '#fff',
       'circle-stroke-width': 1.2 } });
+
+    // A tap near a pin reports its city to the host: the WebView's FoxPin
+    // channel on a phone, postMessage to the parent page on Flutter web.
+    if (cfg.interactive) {
+      map.on('click', function (e) {
+        var r = 18;
+        var hit = map.queryRenderedFeatures(
+          [[e.point.x - r, e.point.y - r], [e.point.x + r, e.point.y + r]],
+          { layers: ['stop-dot'] });
+        if (!hit.length) return;
+        var city = hit[0].properties.name;
+        if (window.FoxPin && window.FoxPin.postMessage) {
+          window.FoxPin.postMessage(city);
+        } else {
+          window.parent.postMessage(
+            JSON.stringify({ fox: 'pin', city: city }), '*');
+        }
+      });
+    }
   });
 
   // Callout cards, attached to the globe so they turn with it. Built with
@@ -265,18 +288,26 @@ String buildGlobeHtml({
   function refit() {
     map.resize();
     map.setPadding({ top: 0, left: 0, right: 0, bottom: cfg.bottom });
-    map.setZoom(fitZoom());
+    if (cfg.zoom == null && !touched) map.setZoom(fitZoom());
   }
   if (window.ResizeObserver) new ResizeObserver(refit).observe(el);
   window.addEventListener('resize', refit);
   map.on('load', refit);
+
+  // A person turning the globe by hand stops the spin.
+  var touched = false;
+  if (cfg.interactive) {
+    ['mousedown', 'touchstart', 'wheel'].forEach(function (t) {
+      el.addEventListener(t, function () { touched = true; }, { passive: true });
+    });
+  }
 
   var last = performance.now();
   function tick(now) {
     var dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     if (document.visibilityState === 'visible') {
-      if (cfg.spin) {
+      if (cfg.spin && !touched) {
         var c = map.getCenter();
         // Eastward spin, like the web: the view's longitude decreases.
         c.lng -= dt * cfg.speed;

@@ -3,14 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
+import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-enum _Segment { upcoming, past, requests }
+enum _Segment { upcoming, requests, past }
 
 /// Tickets: the bookings the user holds, upcoming and past.
 class TicketsPage extends ConsumerStatefulWidget {
@@ -72,20 +77,28 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.arrow_back_rounded),
                     ),
-                  Text(
-                    l10n.ticketsTitle,
-                    style: AppTypography.display(size: 28),
+                  Expanded(
+                    child: Text(
+                      l10n.bookings,
+                      style: AppTypography.display(size: 28),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.calendarTitle,
+                    onPressed: () => context.push(RouteNames.calendar),
+                    icon: const Icon(Icons.calendar_month_outlined),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
+              ..._needsYou(requests.asData?.value ?? const [], l10n),
               SegmentedPills<_Segment>(
                 value: _segment,
                 onChanged: (v) => setState(() => _segment = v),
                 options: [
                   SegmentOption(_Segment.upcoming, l10n.ticketsUpcoming),
-                  SegmentOption(_Segment.past, l10n.ticketsPast),
                   SegmentOption(_Segment.requests, l10n.ticketsRequests),
+                  SegmentOption(_Segment.past, l10n.ticketsPast),
                 ],
               ),
               const SizedBox(height: 16),
@@ -108,10 +121,11 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                       () => ref.invalidate(myMatchRequestsProvider),
                     ),
                   ],
-                  data: (list) => list.isEmpty
+                  data: (list) => list.every((r) => r.needsPayment)
                       ? [_empty(l10n.ticketsEmptyRequests)]
                       : [
-                          for (final r in list)
+                          // What needs the person is shown above, once.
+                          for (final r in list.where((r) => !r.needsPayment))
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: MatchRequestCard(item: r),
@@ -139,15 +153,21 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                       }
                     }),
                   ],
-                  data: (list) => list.isEmpty
-                      ? [
-                          _empty(
-                            _segment == _Segment.upcoming
-                                ? l10n.ticketsEmptyUpcoming
-                                : l10n.ticketsEmptyPast,
-                          ),
-                        ]
-                      : [for (final t in list) _item(t)],
+                  data: (list) {
+                    if (list.isEmpty) {
+                      return [
+                        _empty(
+                          _segment == _Segment.upcoming
+                              ? l10n.ticketsEmptyUpcoming
+                              : l10n.ticketsEmptyPast,
+                        ),
+                      ];
+                    }
+                    if (_segment == _Segment.past) {
+                      return _groupedByMonth(list);
+                    }
+                    return [for (final t in list) _item(t)];
+                  },
                 ),
             ],
           ),
@@ -156,10 +176,69 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
     );
   }
 
+  /// Anything waiting on the person, in a lime-bordered block on top.
+  List<Widget> _needsYou(List<MatchRequestItem> all, AppLocalizations l10n) {
+    final waiting = [
+      for (final r in all)
+        if (r.needsPayment) r,
+    ];
+    if (waiting.isEmpty) return const [];
+    return [
+      Container(
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          borderRadius: AppRadius.brLg,
+          border: Border.all(color: AppColors.accent),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.bookingsNeedsYou.toUpperCase(),
+              style: AppTypography.label(color: AppColors.accent),
+            ),
+            const SizedBox(height: 10),
+            for (final r in waiting) ...[
+              MatchRequestCard(item: r),
+              if (r != waiting.last) const SizedBox(height: 12),
+            ],
+          ],
+        ),
+      ),
+    ];
+  }
+
   Widget _item(Ticket ticket) => Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: TicketCard(ticket: ticket),
       );
+
+  /// Groups past tickets under month headers, newest month first.
+  List<Widget> _groupedByMonth(List<Ticket> tickets) {
+    final locale = Localizations.localeOf(context).toString();
+    final grouped = <String, List<Ticket>>{};
+    for (final t in tickets) {
+      final key = DateFormat.MMMM(locale).format(t.startAt);
+      grouped.putIfAbsent(key, () => []).add(t);
+    }
+    final widgets = <Widget>[];
+    for (final entry in grouped.entries) {
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            entry.key.toUpperCase(),
+            style: AppTypography.label(),
+          ),
+        ),
+      );
+      for (final t in entry.value) {
+        widgets.add(_item(t));
+      }
+    }
+    return widgets;
+  }
 
   Widget _empty(String message) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 48),

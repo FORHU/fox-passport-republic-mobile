@@ -11,6 +11,7 @@ class UserEntity extends Equatable {
     this.systemRole = 'user',
     this.roleType = const [],
     this.isEmailVerified = false,
+    this.imageUrl,
   });
 
   final String id;
@@ -27,6 +28,9 @@ class UserEntity extends Equatable {
   final List<String> roleType;
   final bool isEmailVerified;
 
+  /// Profile photo (the API's `imgId`), or null when they have none.
+  final String? imageUrl;
+
   /// A Citizen holds no RoleType.
   bool get isCitizen => roleType.isEmpty;
   bool get isAdmin => systemRole == 'admin' || systemRole == 'admin_secretary';
@@ -41,5 +45,6 @@ class UserEntity extends Equatable {
         systemRole,
         roleType,
         isEmailVerified,
+        imageUrl,
       ];
 }

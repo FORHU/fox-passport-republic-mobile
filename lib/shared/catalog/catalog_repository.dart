@@ -237,6 +237,10 @@ class CatalogRepository {
     ];
   }
 
+  /// A catalog row from any endpoint, or null when it has no id or name.
+  static CatalogItem? parse(CatalogKind kind, Map<String, dynamic> row) =>
+      _item(kind, row);
+
   static CatalogItem? _item(CatalogKind kind, Map<String, dynamic> row) {
     final id = row['id']?.toString();
     final title = (row['name'] ?? row['title'])?.toString();
