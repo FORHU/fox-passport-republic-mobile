@@ -22,6 +22,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: 📝 Prepare environment files for CI
+        run: |
+          cp .env.example .env.dev
+          cp .env.example .env.prod
+
       - name: 📦 Install dependencies
         run: flutter pub get
 
