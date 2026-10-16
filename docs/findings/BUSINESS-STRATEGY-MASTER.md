@@ -89,8 +89,8 @@ These remain target state. Listed here so they aren't read as shipped.
 4. **Social platform distribution** (§20): only Facebook and Google login exist. No TikTok, Instagram, or YouTube distribution, and sharing is minimal.
 5. **Recommendations** (§18): only follow suggestions exist. There is no experience recommender.
 6. **Analytics and premium business tools** (§15 Stage 3, §21 Phase 7): only one public event-stats endpoint exists.
-7. **Formal dispute handling** (§26): refunds and content reports exist, but there is no dispute workflow.
-8. **Mobile parity**: the mobile app covers auth, onboarding, home, search, tickets, passport, profile, and notifications only. Booking checkout, creator dashboards, messaging, and QR check-in are web-only.
+7. **Formal dispute handling** (§26): direct Asset and Service booking disputes (where disputed status blocks provider payout and admin resolution unblocks/triggers payout upon completion) and refund disputes are live; attendee dispute workflows for public events remain target state awaiting public self-service registration.
+8. **Mobile parity** (updated 16 Oct 2026): the citizen side is now largely on mobile, including booking checkout with Stripe, messages with realtime updates, the Republic feed, reviews, and Foxer profiles with Match requests (see [`foxpassport-feature-audit.md`](./foxpassport-feature-audit.md) §2a). The creator side is still web-only: creator dashboards, completing Foxer applications (identity documents), waitlists, and QR check-in.
 
 ---
 
@@ -800,7 +800,7 @@ Focus on:
 * participation;
 * successful experiences.
 
-At this stage, liquidity is more important than maximizing fees. **Note (§1a item 4):** the platform fee (default 5%, `EventTemplate.platformFeePct`) and Host Markup are already computed on every live transaction — there is no current fee-free mode. Read this stage as proving liquidity at current default rates, not as operating fee-free.
+At this stage, liquidity is more important than maximizing fees. **Note (§1a item 4):** the platform fee (`PlatformFeeConfig` dynamic rules with `PLATFORM_FEE_PERCENT` fallback, default 5%) and Host Markup are already computed across live transactions, along with Passport Level-3 lower-fee perks — there is no current fee-free mode. Read this stage as proving liquidity at current default rates, not as operating fee-free.
 
 ### Stage 2 — Monetize Transactions
 
@@ -1273,7 +1273,7 @@ Custom experiences require an even stronger trust model because customers may de
 
 The level of trust infrastructure should therefore grow with marketplace activity.
 
-**Current State (§1b):** live today: identity verification (document upload with admin review), reviews and replies that require a completed booking, Claimed/Earned specializations, cancellation policies, payment protection with confirmation deadlines, refunds, content reporting, audit logs, and rate-limited authentication. There is no formal dispute workflow yet.
+**Current State (§1b):** live today: identity verification (document upload with admin review), reviews and replies that require completed or attended bookings (future confirmed bookings are blocked), Claimed/Earned specializations, cancellation policies, payment protection with confirmation deadlines, refunds, direct booking dispute workflow (blocking payouts until admin resolution with automatic payout triggering on completed), content reporting, audit logs, and rate-limited authentication.
 
 ---
 
