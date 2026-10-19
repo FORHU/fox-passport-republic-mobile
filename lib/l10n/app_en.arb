@@ -566,6 +566,7 @@
   "mapEmptyAction": "Explore events",
   "passportEmptyStamps": "Attend an event to earn your first stamp.",
   "passportEmptyAction": "Find events",
+  "calendar": "Calendar",
   "calendarTitle": "Calendar",
   "calendarHint": "Everything you book, host or supply",
   "calendarToday": "Today",

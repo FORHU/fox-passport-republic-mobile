@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -61,6 +62,14 @@ class MainLayout extends ConsumerWidget {
       ),
       _Destination(
         item: NavBarItem(
+          label: context.l10n.calendar,
+          icon: Icons.calendar_month_outlined,
+          activeIcon: Icons.calendar_month_rounded,
+        ),
+        route: RouteNames.calendar,
+      ),
+      _Destination(
+        item: NavBarItem(
           label: context.l10n.messages,
           icon: Icons.chat_bubble_outline_rounded,
           activeIcon: Icons.chat_bubble_rounded,
@@ -83,6 +92,14 @@ class MainLayout extends ConsumerWidget {
         route: RouteNames.passport,
       ),
     ];
+
+    assert(
+      listEquals(
+        [for (final d in destinations) d.route],
+        RouteNames.shellTabs,
+      ),
+      'Tab bar order must match RouteNames.shellTabs (the shell branch order).',
+    );
 
     final currentIndex = navigationShell.currentIndex;
 

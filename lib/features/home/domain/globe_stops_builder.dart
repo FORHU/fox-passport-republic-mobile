@@ -238,9 +238,9 @@ String _norm(String value) =>
   return (lat: la, lng: lo);
 }
 
-/// Where a city is when neither the event nor any venue says. Mirrors the
-/// web app's `DESTINATIONS`, plus the Philippine destinations its seeded
-/// events use.
+/// Where a city is when neither the event nor any venue says. Mirrors the web
+/// app's `DESTINATIONS`, plus the Philippine destinations its seeded events
+/// use.
 const Map<String, ({double lat, double lng})> _knownCities = {
   'manila': (lat: 14.5995, lng: 120.9842),
   'cebu city': (lat: 10.3157, lng: 123.8854),

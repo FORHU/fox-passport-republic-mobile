@@ -1694,6 +1694,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportEmptyAction => 'Find events';
 
   @override
+  String get calendar => 'Calendar';
+
+  @override
   String get calendarTitle => 'Calendar';
 
   @override

@@ -3172,6 +3172,12 @@ abstract class AppLocalizations {
   /// **'Find events'**
   String get passportEmptyAction;
 
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
   /// No description provided for @calendarTitle.
   ///
   /// In en, this message translates to:
