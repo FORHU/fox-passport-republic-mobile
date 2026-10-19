@@ -706,5 +706,22 @@
   "passportSavedEmpty": "No saved posts yet.",
   "passportSavedAction": "Browse Republic",
   "passportEarnIntro": "Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.",
-  "passportEarnApply": "Apply on web"
+  "passportEarnApply": "Apply on web",
+  "signOutConfirmTitle": "Sign out?",
+  "signOutConfirmBody": "You will need to log in again to use FoxPassport.",
+  "signOutStay": "Stay signed in",
+  "signOutFailed": "We couldn't sign you out. Try again.",
+  "profileEditName": "Edit name",
+  "profileNameLabel": "Name",
+  "profileSave": "Save",
+  "profileNameUpdated": "Your name was updated.",
+  "profileNameUpdateFailed": "We couldn't update your name. Try again.",
+  "profileLoadFailed": "We couldn't load your full profile, so this shows what we have.",
+  "profileEmailLabel": "Email",
+  "profileMemberSince": "Member since {date}",
+  "@profileMemberSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  }
 }

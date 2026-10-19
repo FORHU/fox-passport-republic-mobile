@@ -2117,4 +2117,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportEarnApply => 'Apply on web';
+
+  @override
+  String get signOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get signOutConfirmBody =>
+      'You will need to log in again to use FoxPassport.';
+
+  @override
+  String get signOutStay => 'Stay signed in';
+
+  @override
+  String get signOutFailed => 'We couldn\'t sign you out. Try again.';
+
+  @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileNameUpdated => 'Your name was updated.';
+
+  @override
+  String get profileNameUpdateFailed =>
+      'We couldn\'t update your name. Try again.';
+
+  @override
+  String get profileLoadFailed =>
+      'We couldn\'t load your full profile, so this shows what we have.';
+
+  @override
+  String get profileEmailLabel => 'Email';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'Member since $date';
+  }
 }
