@@ -785,6 +785,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchEventPrice => 'Precio';
 
   @override
+  String get searchEventPlanLikeThis => 'Planea algo parecido';
+
+  @override
+  String get searchEventPlanHint =>
+      'Este evento ya está reservado. Empieza el tuyo y mira qué puedes reservar.';
+
+  @override
   String get searchNew => 'Nuevo';
 
   @override
