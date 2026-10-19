@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
-import 'package:flutter_template/shared/formatting/money.dart';
+import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/tickets/cancel_quote.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
@@ -81,11 +81,25 @@ class _CancelSheetState extends ConsumerState<_CancelSheet> {
                   child: CircularProgressIndicator(color: AppColors.accent),
                 ),
               ),
-              error: (e, _) => Text(
-                e is AppException ? e.message : l10n.cancelFailed,
-                style: AppTypography.body(color: AppColors.error),
+              error: (e, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    e is AppException ? e.message : l10n.cancelFailed,
+                    style: AppTypography.body(color: AppColors.error),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        ref.invalidate(cancelQuoteProvider(widget.ticket.id)),
+                    child: Text(l10n.retry),
+                  ),
+                ],
               ),
-              data: (q) => _Quote(quote: q, locale: locale),
+              data: (q) => _Quote(
+                quote: q,
+                locale: locale,
+                formatter: ref.watch(moneyFormatterProvider),
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -148,16 +162,22 @@ class _CancelSheetState extends ConsumerState<_CancelSheet> {
 }
 
 class _Quote extends StatelessWidget {
-  const _Quote({required this.quote, required this.locale});
+  const _Quote({
+    required this.quote,
+    required this.locale,
+    required this.formatter,
+  });
 
   final CancelQuote quote;
   final String locale;
+  final MoneyFormatter formatter;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    // What was paid is in the platform currency; the API gives no other.
-    String money(num v) => formatMoney(v, kBaseCurrency, locale: locale);
+    // The check gives no currency: what was paid is in the platform currency.
+    // Show it in the user's own, like every other amount in the app.
+    String money(num v) => formatter.format(v, kBaseCurrency, locale: locale);
 
     if (!quote.eligible) {
       return Text(
