@@ -2010,6 +2010,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewWrite => 'Leave a review';
 
   @override
+  String get ticketBookAgain => 'Book again';
+
+  @override
   String get reviewTitle => 'How was it?';
 
   @override
