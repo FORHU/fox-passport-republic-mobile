@@ -68,10 +68,16 @@ class StorageService {
       _prefs.setBool(_locationPromptKey, true);
 
   /// Clears the whole authenticated session (tokens + cached user).
+  ///
+  /// The onboarding flag goes too: the profile step is answered per account,
+  /// so the next account on this device must not inherit it. Signing back in
+  /// as someone with a saved city restores it (see `_markProfileSetUp`). The
+  /// welcome and location flags stay: they describe the device.
   Future<void> clearSession() async {
     await _secure.delete(key: _tokenKey);
     await _secure.delete(key: _refreshTokenKey);
     await _prefs.remove(_userModelKey);
+    await _prefs.remove(_onboardingKey);
   }
 }
 

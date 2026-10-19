@@ -197,6 +197,8 @@ class OnboardingController extends Notifier<OnboardingState> {
 
   @override
   OnboardingState build() {
+    // Start over for a different account, not with the previous one's answers.
+    ref.watch(currentUserIdProvider);
     final user = ref.read(authControllerProvider).user;
     final held = [
       for (final r in user?.roleType ?? const <String>[])
