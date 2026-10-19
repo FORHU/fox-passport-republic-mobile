@@ -266,6 +266,8 @@
   "searchEventLocation": "Location",
   "searchEventGuests": "Guests",
   "searchEventPrice": "Price",
+  "searchEventPlanLikeThis": "Plan something like this",
+  "searchEventPlanHint": "This event is already booked. Start your own and see what you can book.",
   "searchNew": "New",
   "searchSaveItem": "Save item",
   "searchRemoveSavedItem": "Remove saved item",

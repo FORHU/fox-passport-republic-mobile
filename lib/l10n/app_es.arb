@@ -267,6 +267,8 @@
   "searchEventLocation": "Ubicación",
   "searchEventGuests": "Invitados",
   "searchEventPrice": "Precio",
+  "searchEventPlanLikeThis": "Planea algo parecido",
+  "searchEventPlanHint": "Este evento ya está reservado. Empieza el tuyo y mira qué puedes reservar.",
   "searchNew": "Nuevo",
   "searchSaveItem": "Guardar",
   "searchRemoveSavedItem": "Quitar de guardados",

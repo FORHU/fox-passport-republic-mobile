@@ -1532,6 +1532,18 @@ abstract class AppLocalizations {
   /// **'Price'**
   String get searchEventPrice;
 
+  /// No description provided for @searchEventPlanLikeThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan something like this'**
+  String get searchEventPlanLikeThis;
+
+  /// No description provided for @searchEventPlanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This event is already booked. Start your own and see what you can book.'**
+  String get searchEventPlanHint;
+
   /// No description provided for @searchNew.
   ///
   /// In en, this message translates to:
