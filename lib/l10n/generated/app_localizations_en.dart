@@ -844,6 +844,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageSend => 'Send message';
 
   @override
+  String get messageAttachPhoto => 'Attach a photo';
+
+  @override
+  String get messageCancelReply => 'Cancel reply';
+
+  @override
   String get messageRequestAccepted => 'Message request accepted.';
 
   @override
@@ -925,6 +931,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Try again';
+
+  @override
+  String get loadingLabel => 'Loading';
 
   @override
   String get authResetCodeSent => 'If that email exists, a code has been sent.';
@@ -2001,6 +2010,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewWrite => 'Leave a review';
 
   @override
+  String get ticketBookAgain => 'Book again';
+
+  @override
   String get reviewTitle => 'How was it?';
 
   @override
@@ -2157,5 +2169,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String profileMemberSince(String date) {
     return 'Member since $date';
+  }
+
+  @override
+  String a11yDecrease(String thing) {
+    return 'Decrease $thing';
+  }
+
+  @override
+  String a11yIncrease(String thing) {
+    return 'Increase $thing';
   }
 }

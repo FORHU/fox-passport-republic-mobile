@@ -15,6 +15,7 @@ import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
+import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -67,104 +68,124 @@ class _OccasionPageState extends ConsumerState<OccasionPage> {
       backgroundColor: AppColors.canvas,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  onPressed: () => Navigator.maybePop(context),
-                  icon: const Icon(Icons.arrow_back_rounded),
-                ),
-                Expanded(
-                  child: Text(
-                    city == null || city.isEmpty
-                        ? l10n.occasionTitle(label)
-                        : l10n.occasionTitleIn(label, city),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.display(size: 20),
-                  ),
-                ),
-                IconButton(
-                  tooltip: l10n.search,
-                  onPressed: () => context.go(RouteNames.searchFor('events')),
-                  icon: const Icon(Icons.search_rounded),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Chips: dashed lime until set.
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+        child: RefreshIndicator(
+          color: AppColors.accent,
+          backgroundColor: AppColors.surface,
+          onRefresh: () => _refresh(occasion.name, city),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            children: [
+              Row(
                 children: [
-                  _PlanChip(
-                    label: _plan.date == null
-                        ? l10n.planAddDate
-                        : DateFormat.MMMd(locale).format(_plan.date!),
-                    set: _plan.date != null,
-                    icon: Icons.event_outlined,
-                    onTap: _openPlan,
+                  IconButton(
+                    tooltip:
+                        MaterialLocalizations.of(context).backButtonTooltip,
+                    onPressed: () => Navigator.maybePop(context),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
-                  const SizedBox(width: 8),
-                  _PlanChip(
-                    label: _plan.guests == null
-                        ? l10n.planGuests
-                        : switch (_plan.guests!) {
-                            GuestRange.upTo20 => l10n.guestsUpTo20,
-                            GuestRange.to50 => l10n.guests20to50,
-                            GuestRange.to100 => l10n.guests50to100,
-                            GuestRange.over100 => l10n.guests100plus,
-                          },
-                    set: _plan.guests != null,
-                    icon: Icons.groups_outlined,
-                    onTap: _openPlan,
+                  Expanded(
+                    child: Text(
+                      city == null || city.isEmpty
+                          ? l10n.occasionTitle(label)
+                          : l10n.occasionTitleIn(label, city),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.display(size: 20),
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  _PlanChip(
-                    label: city == null || city.isEmpty
-                        ? l10n.homeLocationChoose
-                        : city,
-                    set: true,
-                    plain: true,
-                    icon: Icons.location_on_outlined,
-                    onTap: () => showAreaSheet(context),
+                  IconButton(
+                    tooltip: l10n.search,
+                    onPressed: () => context.go(RouteNames.searchFor('events')),
+                    icon: const Icon(Icons.search_rounded),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
-            ...packages.when(
-              loading: () => const [_PackagesSkeleton()],
-              error: (_, __) => [_NoPackages(label: label, city: city)],
-              data: (items) => items.isEmpty
-                  ? [_NoPackages(label: label, city: city)]
-                  : [
-                      Text(
-                        l10n.occasionPackages,
-                        style: AppTypography.display(size: 18),
-                      ),
-                      const SizedBox(height: 12),
-                      _PackagesRow(items: items),
-                    ],
-            ),
-            const SizedBox(height: 24),
-            _PlannerCard(
-              onTap: () => context.go(_search('foxers', city: city)),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              l10n.occasionYourself,
-              style: AppTypography.display(size: 18),
-            ),
-            const SizedBox(height: 12),
-            ..._yourself(l10n, categories, city),
-          ],
+              const SizedBox(height: 8),
+              // Chips: dashed lime until set.
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _PlanChip(
+                      label: _plan.date == null
+                          ? l10n.planAddDate
+                          : DateFormat.MMMd(locale).format(_plan.date!),
+                      set: _plan.date != null,
+                      icon: Icons.event_outlined,
+                      onTap: _openPlan,
+                    ),
+                    const SizedBox(width: 8),
+                    _PlanChip(
+                      label: _plan.guests == null
+                          ? l10n.planGuests
+                          : switch (_plan.guests!) {
+                              GuestRange.upTo20 => l10n.guestsUpTo20,
+                              GuestRange.to50 => l10n.guests20to50,
+                              GuestRange.to100 => l10n.guests50to100,
+                              GuestRange.over100 => l10n.guests100plus,
+                            },
+                      set: _plan.guests != null,
+                      icon: Icons.groups_outlined,
+                      onTap: _openPlan,
+                    ),
+                    const SizedBox(width: 8),
+                    _PlanChip(
+                      label: city == null || city.isEmpty
+                          ? l10n.homeLocationChoose
+                          : city,
+                      set: true,
+                      plain: true,
+                      icon: Icons.location_on_outlined,
+                      onTap: () => showAreaSheet(context),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              ...packages.when(
+                loading: () => const [_PackagesSkeleton()],
+                error: (_, __) => [_NoPackages(label: label, city: city)],
+                data: (items) => items.isEmpty
+                    ? [_NoPackages(label: label, city: city)]
+                    : [
+                        Text(
+                          l10n.occasionPackages,
+                          style: AppTypography.display(size: 18),
+                        ),
+                        const SizedBox(height: 12),
+                        _PackagesRow(items: items),
+                      ],
+              ),
+              const SizedBox(height: 24),
+              _PlannerCard(
+                onTap: () => context.go(_search('foxers', city: city)),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                l10n.occasionYourself,
+                style: AppTypography.display(size: 18),
+              ),
+              const SizedBox(height: 12),
+              ..._yourself(l10n, categories, city),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// Pull to refresh holds the spinner until the new packages have arrived.
+  Future<void> _refresh(String category, String? city) async {
+    final key = (category: category, city: city);
+    ref
+      ..invalidate(packagesProvider(key))
+      ..invalidate(categoriesProvider);
+    try {
+      await ref.read(packagesProvider(key).future);
+    } on Object {
+      // The packages area shows its own empty state.
+    }
   }
 
   /// Category rows: venues, then services and gear, each with its count.
@@ -341,17 +362,14 @@ class _PackagesSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget box() => Expanded(
-          child: Container(
-            height: 128,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: AppRadius.brMd,
-            ),
-          ),
-        );
-    return Row(
-      children: [box(), const SizedBox(width: 12), box()],
+    return const SkeletonPulse(
+      child: Row(
+        children: [
+          Expanded(child: SkeletonBox(height: 128)),
+          SizedBox(width: 12),
+          Expanded(child: SkeletonBox(height: 128)),
+        ],
+      ),
     );
   }
 }

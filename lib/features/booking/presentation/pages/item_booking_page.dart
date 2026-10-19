@@ -435,6 +435,7 @@ class _Stepper extends StatelessWidget {
       children: [
         Expanded(child: Text(label, style: AppTypography.body())),
         IconButton.outlined(
+          tooltip: context.l10n.a11yDecrease(label),
           onPressed: onMinus,
           icon: const Icon(Icons.remove_rounded),
         ),
@@ -447,6 +448,7 @@ class _Stepper extends StatelessWidget {
           ),
         ),
         IconButton.outlined(
+          tooltip: context.l10n.a11yIncrease(label),
           onPressed: onPlus,
           icon: const Icon(Icons.add_rounded),
         ),

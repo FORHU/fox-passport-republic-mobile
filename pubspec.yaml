@@ -57,6 +57,7 @@ dependencies:
   intl: ^0.20.2
   logger: ^2.7.0
   qr_flutter: ^4.1.0
+  screen_brightness: ^2.1.11
   shared_preferences: ^2.3.2
   socket_io_client: ^3.1.6
   url_launcher: ^6.3.3

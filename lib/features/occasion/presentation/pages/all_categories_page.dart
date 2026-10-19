@@ -25,6 +25,16 @@ class AllCategoriesPage extends ConsumerStatefulWidget {
 class _AllCategoriesPageState extends ConsumerState<AllCategoriesPage> {
   String _query = '';
 
+  /// Pull to refresh holds the spinner until the new categories have arrived.
+  Future<void> _refresh() async {
+    ref.invalidate(categoriesProvider);
+    try {
+      await ref.read(categoriesProvider.future);
+    } on Object {
+      // The page shows its own error state with a retry.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -66,20 +76,25 @@ class _AllCategoriesPageState extends ConsumerState<AllCategoriesPage> {
               ),
             ),
             Expanded(
-              child: categories.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.accent),
-                ),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(categoriesProvider),
-                ),
-                data: (list) => _Groups(
-                  categories: list,
-                  query: _query,
-                  l10n: l10n,
+              child: RefreshIndicator(
+                color: AppColors.accent,
+                backgroundColor: AppColors.surface,
+                onRefresh: _refresh,
+                child: categories.when(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(color: AppColors.accent),
+                  ),
+                  error: (_, __) => AppStateView(
+                    kind: AppStateKind.error,
+                    title: l10n.apiLoadFailed,
+                    actionLabel: l10n.retry,
+                    onAction: () => ref.invalidate(categoriesProvider),
+                  ),
+                  data: (list) => _Groups(
+                    categories: list,
+                    query: _query,
+                    l10n: l10n,
+                  ),
                 ),
               ),
             ),
@@ -178,6 +193,7 @@ class _Groups extends StatelessWidget {
     }
 
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       children: [
         for (final s in visible) ...[

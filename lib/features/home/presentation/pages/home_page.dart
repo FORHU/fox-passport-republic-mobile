@@ -15,6 +15,7 @@ import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
+import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -751,34 +752,28 @@ class _SoonRow extends StatelessWidget {
   }
 }
 
-/// Grey boxes in the shape of the "happening soon" row while it loads.
+/// Pulsing boxes in the shape of the "happening soon" row while it loads.
 class _SoonSkeleton extends StatelessWidget {
   const _SoonSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    Widget box(double? w, double h) => Container(
-          width: w,
-          height: h,
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: AppRadius.brMd,
+    return const SkeletonPulse(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SkeletonBox(width: 180, height: 22),
+          SizedBox(height: 14),
+          // Two cards share the width, so a narrow phone cannot overflow.
+          Row(
+            children: [
+              Expanded(child: SkeletonBox(height: 96)),
+              SizedBox(width: 12),
+              Expanded(child: SkeletonBox(height: 96)),
+            ],
           ),
-        );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        box(180, 22),
-        const SizedBox(height: 14),
-        // Two cards that share the width, so a narrow phone does not overflow.
-        Row(
-          children: [
-            Expanded(child: box(null, 96)),
-            const SizedBox(width: 12),
-            Expanded(child: box(null, 96)),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

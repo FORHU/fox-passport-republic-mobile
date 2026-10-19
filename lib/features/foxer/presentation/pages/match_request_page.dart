@@ -208,6 +208,7 @@ class _Form extends StatelessWidget {
                 children: [
                   _Step(
                     icon: Icons.remove_rounded,
+                    label: l10n.a11yDecrease(l10n.matchGuests),
                     onTap: guests > 1 ? () => onGuests(guests - 1) : null,
                   ),
                   Expanded(
@@ -220,6 +221,7 @@ class _Form extends StatelessWidget {
                   ),
                   _Step(
                     icon: Icons.add_rounded,
+                    label: l10n.a11yIncrease(l10n.matchGuests),
                     onTap: () => onGuests(guests + 1),
                   ),
                 ],
@@ -455,26 +457,33 @@ class _Choice extends StatelessWidget {
 }
 
 class _Step extends StatelessWidget {
-  const _Step({required this.icon, required this.onTap});
+  const _Step({required this.icon, required this.label, required this.onTap});
 
   final IconData icon;
+
+  /// What a screen reader says, and the tooltip: "Decrease Guests".
+  final String label;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      shape:
-          const CircleBorder(side: BorderSide(color: AppColors.borderStrong)),
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: SizedBox(
-          width: 48,
-          height: 48,
-          child: Icon(
-            icon,
-            color: onTap == null ? AppColors.textFaint : AppColors.textPrimary,
+    return Tooltip(
+      message: label,
+      child: Material(
+        color: AppColors.surface,
+        shape:
+            const CircleBorder(side: BorderSide(color: AppColors.borderStrong)),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(
+              icon,
+              color:
+                  onTap == null ? AppColors.textFaint : AppColors.textPrimary,
+            ),
           ),
         ),
       ),

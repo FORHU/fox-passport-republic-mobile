@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
+import 'package:flutter_template/features/tickets/presentation/widgets/tickets_skeleton.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
@@ -134,16 +135,7 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
               const SizedBox(height: 16),
               if (_segment == _Segment.requests)
                 ...requests.when(
-                  loading: () => const [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 48),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                        ),
-                      ),
-                    ),
-                  ],
+                  loading: () => const [RequestsSkeleton()],
                   error: (_, __) => [
                     _loadError(
                       l10n.apiLoadFailed,
@@ -164,16 +156,7 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                 )
               else
                 ...tickets.when(
-                  loading: () => const [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 48),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                        ),
-                      ),
-                    ),
-                  ],
+                  loading: () => const [TicketsSkeleton()],
                   error: (_, __) => [
                     _loadError(l10n.apiLoadFailed, l10n.retry, () {
                       if (_segment == _Segment.upcoming) {
