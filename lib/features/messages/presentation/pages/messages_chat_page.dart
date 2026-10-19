@@ -108,6 +108,7 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
         backgroundColor: AppColors.canvas,
         foregroundColor: AppColors.textPrimary,
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -947,8 +948,9 @@ class _ComposerBanner extends StatelessWidget {
             ),
           ),
           IconButton(
+            tooltip: context.l10n.messageCancelReply,
             onPressed: onCancel,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
             icon: const Icon(Icons.close_rounded, size: 18),
           ),
         ],
@@ -979,20 +981,23 @@ class _Composer extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
       child: Row(
         children: [
-          Material(
-            color: AppColors.surface,
-            shape: const CircleBorder(
-              side: BorderSide(color: AppColors.border),
-            ),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onAttach,
-              child: const SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(
-                  Icons.add_photo_alternate_outlined,
-                  color: AppColors.textMuted,
+          Tooltip(
+            message: l10n.messageAttachPhoto,
+            child: Material(
+              color: AppColors.surface,
+              shape: const CircleBorder(
+                side: BorderSide(color: AppColors.border),
+              ),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onAttach,
+                child: const SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Icon(
+                    Icons.add_photo_alternate_outlined,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ),
             ),
@@ -1033,19 +1038,22 @@ class _Composer extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Material(
-            color: AppColors.accent,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: sending ? null : onSend,
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(
-                  sending ? Icons.hourglass_top_rounded : Icons.send_rounded,
-                  color: AppColors.onAccent,
-                  size: 20,
+          Tooltip(
+            message: l10n.messageSend,
+            child: Material(
+              color: AppColors.accent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: sending ? null : onSend,
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Icon(
+                    sending ? Icons.hourglass_top_rounded : Icons.send_rounded,
+                    color: AppColors.onAccent,
+                    size: 20,
+                  ),
                 ),
               ),
             ),

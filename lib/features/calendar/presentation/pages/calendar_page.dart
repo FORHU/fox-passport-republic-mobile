@@ -4,26 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 /// Calendar: everything the person booked, hosts, organizes or supplies, in
 /// one month grid with a list for the chosen day. One calendar for every role;
 /// what is on it is scoped by the API.
-class CalendarPage extends ConsumerStatefulWidget {
-  const CalendarPage({super.key});
+///
+/// It is the Calendar switch of the Bookings screen, so it draws no title or
+/// back button of its own: just the month and what is on it.
+class CalendarView extends ConsumerStatefulWidget {
+  const CalendarView({required this.onOpenTickets, super.key});
+
+  /// "Open tickets" on a booking the person holds: show the Bookings list.
+  final VoidCallback onOpenTickets;
 
   @override
-  ConsumerState<CalendarPage> createState() => _CalendarPageState();
+  ConsumerState<CalendarView> createState() => _CalendarViewState();
 }
 
-class _CalendarPageState extends ConsumerState<CalendarPage> {
+class _CalendarViewState extends ConsumerState<CalendarView> {
   late DateTime _month = _firstOfMonth(DateTime.now());
   late DateTime _selected = _dayOf(DateTime.now());
   final Set<CalendarRole> _hidden = {};
@@ -61,75 +65,58 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     final range = (from: start, to: start.add(const Duration(days: 42)));
     final entries = ref.watch(calendarEntriesProvider(range));
 
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
-              child: Row(
-                children: [
-                  if (Navigator.canPop(context))
-                    IconButton(
-                      tooltip: material.backButtonTooltip,
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    )
-                  else
-                    const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      l10n.calendarTitle,
-                      style: AppTypography.display(size: 28),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _today,
-                    child: Text(l10n.calendarToday),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: entries.when(
-                loading: () => _Body(
-                  month: _month,
-                  gridStart: start,
-                  selected: _selected,
-                  entries: const [],
-                  hidden: _hidden,
-                  loading: true,
-                  locale: locale,
-                  onMonth: _go,
-                  onSelect: (d) => setState(() => _selected = d),
-                  onToggleRole: _toggleRole,
-                ),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(calendarEntriesProvider),
-                ),
-                data: (list) => _Body(
-                  month: _month,
-                  gridStart: start,
-                  selected: _selected,
-                  entries: list,
-                  hidden: _hidden,
-                  loading: false,
-                  locale: locale,
-                  onMonth: _go,
-                  onSelect: (d) => setState(() => _selected = d),
-                  onToggleRole: _toggleRole,
-                ),
-              ),
-            ),
-          ],
+    // Pull to refresh (from #116) now wraps the embedded calendar.
+    return RefreshIndicator(
+      color: AppColors.accent,
+      backgroundColor: AppColors.surface,
+      onRefresh: () => _refresh(range),
+      child: entries.when(
+        loading: () => _Body(
+          month: _month,
+          gridStart: start,
+          selected: _selected,
+          entries: const [],
+          hidden: _hidden,
+          loading: true,
+          locale: locale,
+          onMonth: _go,
+          onToday: _today,
+          onSelect: (d) => setState(() => _selected = d),
+          onToggleRole: _toggleRole,
+          onOpenTickets: widget.onOpenTickets,
+        ),
+        error: (_, __) => AppStateView(
+          kind: AppStateKind.error,
+          title: l10n.apiLoadFailed,
+          actionLabel: l10n.retry,
+          onAction: () => ref.invalidate(calendarEntriesProvider),
+        ),
+        data: (list) => _Body(
+          month: _month,
+          gridStart: start,
+          selected: _selected,
+          entries: list,
+          hidden: _hidden,
+          loading: false,
+          locale: locale,
+          onMonth: _go,
+          onToday: _today,
+          onSelect: (d) => setState(() => _selected = d),
+          onToggleRole: _toggleRole,
+          onOpenTickets: widget.onOpenTickets,
         ),
       ),
     );
+  }
+
+  /// Pull to refresh holds the spinner until the new entries have arrived.
+  Future<void> _refresh(({DateTime from, DateTime to}) range) async {
+    ref.invalidate(calendarEntriesProvider(range));
+    try {
+      await ref.read(calendarEntriesProvider(range).future);
+    } on Object {
+      // The page shows its own error state with a retry.
+    }
   }
 
   void _toggleRole(CalendarRole role) => setState(() {
@@ -166,6 +153,8 @@ class _Body extends StatelessWidget {
     required this.onMonth,
     required this.onSelect,
     required this.onToggleRole,
+    required this.onToday,
+    required this.onOpenTickets,
   });
 
   final DateTime month;
@@ -178,6 +167,8 @@ class _Body extends StatelessWidget {
   final ValueChanged<int> onMonth;
   final ValueChanged<DateTime> onSelect;
   final ValueChanged<CalendarRole> onToggleRole;
+  final VoidCallback onToday;
+  final VoidCallback onOpenTickets;
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +191,7 @@ class _Body extends StatelessWidget {
     ];
 
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         Row(
@@ -220,6 +212,11 @@ class _Body extends StatelessWidget {
               tooltip: l10n.calendarNextMonth,
               onPressed: () => onMonth(1),
               icon: const Icon(Icons.chevron_right_rounded),
+            ),
+            TextButton(
+              onPressed: onToday,
+              style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
+              child: Text(l10n.calendarToday),
             ),
           ],
         ),
@@ -308,7 +305,11 @@ class _Body extends StatelessWidget {
           )
         else
           for (final entry in dayEntries) ...[
-            _EntryTile(entry: entry, locale: locale),
+            _EntryTile(
+              entry: entry,
+              locale: locale,
+              onOpenTickets: onOpenTickets,
+            ),
             const SizedBox(height: 8),
           ],
       ],
@@ -405,10 +406,15 @@ class _DayCell extends StatelessWidget {
 }
 
 class _EntryTile extends StatelessWidget {
-  const _EntryTile({required this.entry, required this.locale});
+  const _EntryTile({
+    required this.entry,
+    required this.locale,
+    required this.onOpenTickets,
+  });
 
   final CalendarEntry entry;
   final String locale;
+  final VoidCallback onOpenTickets;
 
   String _when() {
     final time = DateFormat.jm(locale);
@@ -519,7 +525,7 @@ class _EntryTile extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(sheet);
-                      context.go(RouteNames.tickets);
+                      onOpenTickets();
                     },
                     child: Text(l10n.calendarOpenTickets),
                   )

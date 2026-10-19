@@ -6,6 +6,9 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/reviews/presentation/widgets/write_review_sheet.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/cancel_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/screen/screen_brightness_boost.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/ticket_panel.dart';
@@ -13,6 +16,7 @@ import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +39,27 @@ class TicketCard extends ConsumerWidget {
   bool get _showQr =>
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
+
+  /// A finished or cancelled booking that came from an event package can be
+  /// booked again; a live one cannot (it is already booked).
+  bool get _canRebook =>
+      !ticket.isSample &&
+      ticket.templateId != null &&
+      !(ticket.endAt.isAfter(DateTime.now()) &&
+          (ticket.status == 'pending' || ticket.status == 'confirmed'));
+
+  /// Opens the same event package, where a new date and guests are chosen.
+  void _rebook(BuildContext context) => unawaited(
+        context.push(
+          RouteNames.eventDetail,
+          extra: CatalogItem(
+            id: ticket.templateId!,
+            kind: CatalogKind.events,
+            title: ticket.eventName,
+            city: ticket.city,
+          ),
+        ),
+      );
 
   /// A booking that took place and has not been reviewed yet.
   bool get _canReview =>
@@ -152,6 +177,13 @@ class TicketCard extends ConsumerWidget {
             icon: const Icon(Icons.star_outline_rounded),
             label: Text(l10n.reviewWrite),
           ),
+        if (_canRebook)
+          TextButton.icon(
+            onPressed: () => _rebook(context),
+            style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
+            icon: const Icon(Icons.replay_rounded),
+            label: Text(l10n.ticketBookAgain),
+          ),
         if (_canCancel)
           TextButton(
             onPressed: () => showCancelSheet(context, ticket),
@@ -245,10 +277,13 @@ class _Qr extends StatelessWidget {
               size: 72,
               color: AppColors.onLightSurface,
             )
-          : QrImageView(
-              data: ticket.ticketCode!,
-              padding: EdgeInsets.zero,
-              backgroundColor: AppColors.lightSurface,
+          // A dim screen is hard to scan at the door.
+          : BrightWhileVisible(
+              child: QrImageView(
+                data: ticket.ticketCode!,
+                padding: EdgeInsets.zero,
+                backgroundColor: AppColors.lightSurface,
+              ),
             ),
     );
   }

@@ -11,6 +11,7 @@ class Ticket extends Equatable {
     this.city,
     this.guestCount = 1,
     this.ticketCode,
+    this.templateId,
     this.hasReview = false,
     this.isSample = false,
   });
@@ -30,6 +31,7 @@ class Ticket extends Equatable {
       city: (eventMap?['targetCity'] ?? eventMap?['city'])?.toString(),
       guestCount: (json['guestCount'] as num?)?.toInt() ?? 1,
       ticketCode: json['ticketCode']?.toString(),
+      templateId: eventMap?['templateId']?.toString(),
       hasReview: json['hasReview'] == true,
     );
   }
@@ -62,6 +64,10 @@ class Ticket extends Equatable {
   final int guestCount;
   final String? ticketCode;
 
+  /// The event package this booking was made from, so it can be booked again.
+  /// Null for a booking made straight on a venue, gear or a service.
+  final String? templateId;
+
   /// The person already reviewed this booking.
   final bool hasReview;
   final bool isSample;
@@ -84,6 +90,7 @@ class Ticket extends Equatable {
         city,
         guestCount,
         ticketCode,
+        templateId,
         hasReview,
         isSample,
       ];

@@ -52,6 +52,7 @@ class BookingCalendar extends StatelessWidget {
           children: [
             _MonthArrow(
               icon: Icons.chevron_left_rounded,
+              tooltip: context.l10n.calendarPreviousMonth,
               enabled: canGoBack,
               onTap: () =>
                   onMonthChanged(DateTime(first.year, first.month - 1)),
@@ -62,6 +63,7 @@ class BookingCalendar extends StatelessWidget {
             ),
             _MonthArrow(
               icon: Icons.chevron_right_rounded,
+              tooltip: context.l10n.calendarNextMonth,
               enabled: canGoForward,
               onTap: () =>
                   onMonthChanged(DateTime(first.year, first.month + 1)),
@@ -179,17 +181,20 @@ class BookingCalendar extends StatelessWidget {
 class _MonthArrow extends StatelessWidget {
   const _MonthArrow({
     required this.icon,
+    required this.tooltip,
     required this.enabled,
     required this.onTap,
   });
 
   final IconData icon;
+  final String tooltip;
   final bool enabled;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      tooltip: tooltip,
       onPressed: enabled ? onTap : null,
       constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
       icon: Icon(
