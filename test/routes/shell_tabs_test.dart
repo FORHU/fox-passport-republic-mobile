@@ -21,9 +21,8 @@ void main() {
     addTearDown(container.dispose);
 
     final router = container.read(goRouterProvider);
-    final shell = router.configuration.routes
-        .whereType<StatefulShellRoute>()
-        .single;
+    final shell =
+        router.configuration.routes.whereType<StatefulShellRoute>().single;
     final roots = [
       for (final branch in shell.branches)
         (branch.routes.first as GoRoute).path,
