@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/failure.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
@@ -35,6 +36,7 @@ void main() {
       ).thenAnswer((_) async => const Right(tProfile));
       container = ProviderContainer(
         overrides: [
+          currentUserIdProvider.overrideWithValue(null),
           profileRepositoryProvider.overrideWithValue(mockRepository),
         ],
       )..read(profileControllerProvider);
@@ -57,6 +59,7 @@ void main() {
       ).thenAnswer((_) async => const Left(tFailure));
       container = ProviderContainer(
         overrides: [
+          currentUserIdProvider.overrideWithValue(null),
           profileRepositoryProvider.overrideWithValue(mockRepository),
         ],
       )..read(profileControllerProvider);

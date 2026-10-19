@@ -30,6 +30,12 @@ class TicketCard extends ConsumerWidget {
       (ticket.status == 'pending' || ticket.status == 'confirmed') &&
       ticket.startAt.isAfter(DateTime.now());
 
+  /// The door scans a confirmed booking that has not finished. A pending one
+  /// is not valid yet, and a cancelled or past one must not look like it is.
+  bool get _showQr =>
+      ticket.isSample ||
+      (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
+
   /// A booking that took place and has not been reviewed yet.
   bool get _canReview =>
       !ticket.isSample &&
@@ -104,9 +110,12 @@ class TicketCard extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
             child: Column(
               children: [
-                _Qr(ticket: ticket),
-                if (ticket.ticketCode != null) ...[
-                  const SizedBox(height: 10),
+                if (_showQr) _Qr(ticket: ticket),
+                // Without a QR the code stays as a reference, except on a
+                // cancelled booking, where it is no longer good for anything.
+                if (ticket.ticketCode != null &&
+                    (_showQr || ticket.status != 'cancelled')) ...[
+                  if (_showQr) const SizedBox(height: 10),
                   Text(
                     ticket.ticketCode!,
                     style: AppTypography.label(color: AppColors.textSecondary),
