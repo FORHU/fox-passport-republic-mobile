@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/payments/payments_repository.dart';
 
 /// What the citizen chose for a piece of gear or a service.
-class ItemBookingRequest {
+class ItemBookingRequest extends Equatable {
   const ItemBookingRequest({
     required this.item,
     required this.start,
@@ -46,6 +47,19 @@ class ItemBookingRequest {
   /// The end of the last day, so a one-day booking covers the whole day.
   DateTime get endAt =>
       DateTime(start.year, start.month, start.day + days - 1, 23, 59, 59);
+
+  @override
+  List<Object?> get props => [
+        item,
+        start,
+        days,
+        quantity,
+        delivery,
+        address,
+        location,
+        notes,
+        voucherCode,
+      ];
 }
 
 /// Booking one piece of gear or one service: which days are free, the price,

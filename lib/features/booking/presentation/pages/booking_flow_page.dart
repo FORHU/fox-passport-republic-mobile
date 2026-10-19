@@ -71,6 +71,11 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
   bool _priceLoading = false;
 
   BookingReceipt? _receipt;
+
+  /// The choices [_receipt] was created for. A receipt is only reused while
+  /// they are unchanged; after any edit the old booking holds the old date,
+  /// guests and amount.
+  BookingSelection? _receiptFor;
   bool _paying = false;
 
   @override
@@ -152,6 +157,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
       if (!mounted) return;
       setState(() {
         _receipt = receipt;
+        _receiptFor = _selection;
         _step = _Step.done;
       });
     } on Object catch (e) {
@@ -197,9 +203,15 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
     final repo = ref.read(bookingRepositoryProvider);
     setState(() => _paying = true);
     try {
-      // Create the booking once; a retry after a failed payment reuses it.
-      final receipt = _receipt ?? await repo.create(_selection, price);
+      // Create the booking once; a retry after a failed payment reuses it, but
+      // only while nothing was changed since.
+      final selection = _selection;
+      final existing = _receipt;
+      final receipt = existing != null && _receiptFor == selection
+          ? existing
+          : await repo.create(selection, price);
       _receipt = receipt;
+      _receiptFor = selection;
       await repo.pay(receipt);
       if (mounted) setState(() => _step = _Step.done);
     } on PaymentsUnavailable {
