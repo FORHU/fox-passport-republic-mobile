@@ -54,6 +54,10 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
   int _priceToken = 0;
 
   BookingReceipt? _receipt;
+
+  /// What [_receipt] was created for. It is reused only while the choices are
+  /// unchanged; after any edit the old booking holds the old dates and amount.
+  ItemBookingRequest? _receiptFor;
   bool _busy = false;
 
   bool get _isGear => widget.item.kind == CatalogKind.gear;
@@ -167,10 +171,16 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
     final repo = ref.read(itemBookingRepositoryProvider);
     setState(() => _busy = true);
     try {
-      // Create once; a retry after a failed payment reuses the booking.
-      final receipt = _receipt ?? await repo.create(_request, price);
+      // Create once; a retry after a failed payment reuses the booking, but
+      // only while nothing was changed since.
+      final request = _request;
+      final existing = _receipt;
+      final receipt = existing != null && _receiptFor == request
+          ? existing
+          : await repo.create(request, price);
       _receipt = receipt;
-      await repo.pay(_request, receipt);
+      _receiptFor = request;
+      await repo.pay(request, receipt);
       if (mounted) setState(() => _paid = true);
     } on PaymentsUnavailable {
       if (mounted) showTopToast(context, l10n.bookPaymentsSoon);

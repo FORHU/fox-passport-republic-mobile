@@ -44,6 +44,8 @@ void _bigScreen(WidgetTester tester) {
 }
 
 void main() {
+  stalePaymentTests();
+
   group('BookingSelection', () {
     test('knows how many guests are over capacity', () {
       const s = BookingSelection(venue: _venue, guests: 220);
@@ -153,5 +155,110 @@ void main() {
     expect(find.text('Message the owner'), findsOneWidget);
     expect(find.text('Back to home'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+}
+
+/// Records every booking it creates and never completes a payment.
+class _FailingPayRepository extends BookingRepository {
+  _FailingPayRepository() : super(_MockApi(), StubPaymentGateway());
+
+  final created = <BookingSelection>[];
+
+  @override
+  Future<Set<DateTime>> unavailableDates(
+    CatalogItem venue, {
+    required DateTime from,
+    String? templateId,
+  }) async =>
+      {};
+
+  @override
+  Future<VenuePricing> price(BookingSelection s) async => const VenuePricing(
+        itemsTotal: 25000,
+        platformFeeAmount: 1250,
+        totalAmount: 26250,
+      );
+
+  @override
+  Future<BookingReceipt> create(BookingSelection s, VenuePricing p) async {
+    created.add(s);
+    return BookingReceipt(
+      id: 'b${created.length}',
+      reference: 'T${created.length}',
+      totalAmount: p.totalAmount,
+      currency: 'PHP',
+      needsApproval: false,
+    );
+  }
+
+  @override
+  Future<void> pay(BookingReceipt booking) async =>
+      throw const PaymentsUnavailable();
+}
+
+void stalePaymentTests() {
+  Future<_FailingPayRepository> reachPayStep(WidgetTester tester) async {
+    _bigScreen(tester);
+    final repo = _FailingPayRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [bookingRepositoryProvider.overrideWithValue(repo)],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: BookingFlowPage(venue: _venue),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('20').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue to payment'));
+    await tester.pumpAndSettle();
+    return repo;
+  }
+
+  testWidgets('retrying a failed payment reuses the same booking', (
+    tester,
+  ) async {
+    final repo = await reachPayStep(tester);
+
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+
+    expect(repo.created, hasLength(1));
+  });
+
+  testWidgets('changing the guests after a failed payment books afresh', (
+    tester,
+  ) async {
+    final repo = await reachPayStep(tester);
+
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+    expect(repo.created.single.guests, 200);
+
+    // Back to the guests step, take one off, and pay again.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.remove_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue to payment'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+
+    expect(repo.created, hasLength(2));
+    expect(repo.created.last.guests, 199);
   });
 }
