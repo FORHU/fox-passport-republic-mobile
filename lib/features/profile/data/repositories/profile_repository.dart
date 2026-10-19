@@ -7,6 +7,8 @@ import 'package:fpdart/fpdart.dart';
 /// Repository contract (the abstraction the domain layer depends on).
 abstract class ProfileRepository {
   Future<Either<Failure, ProfileEntity>> getProfile();
+
+  Future<Either<Failure, Unit>> updateName(String name);
 }
 
 /// Coordinates the remote data source. Catches the data layer's typed
@@ -17,10 +19,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource _remote;
 
   @override
-  Future<Either<Failure, ProfileEntity>> getProfile() async {
+  Future<Either<Failure, ProfileEntity>> getProfile() =>
+      _guard(_remote.getProfile);
+
+  @override
+  Future<Either<Failure, Unit>> updateName(String name) => _guard(() async {
+        await _remote.updateName(name);
+        return unit;
+      });
+
+  Future<Either<Failure, T>> _guard<T>(Future<T> Function() call) async {
     try {
-      final profile = await _remote.getProfile();
-      return Right(profile);
+      return Right(await call());
     } on UnauthorizedException catch (e) {
       return Left(UnauthorizedFailure(e.message));
     } on NetworkException catch (e) {

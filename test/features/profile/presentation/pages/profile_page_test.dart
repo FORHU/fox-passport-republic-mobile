@@ -83,7 +83,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Retry'), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
