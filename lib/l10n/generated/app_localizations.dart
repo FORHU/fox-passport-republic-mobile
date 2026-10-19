@@ -196,6 +196,12 @@ abstract class AppLocalizations {
   /// **'Mark all as read'**
   String get notificationsMarkAllRead;
 
+  /// No description provided for @notificationsUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your notifications. Try again.'**
+  String get notificationsUpdateFailed;
+
   /// No description provided for @profile.
   ///
   /// In en, this message translates to:
@@ -1791,6 +1797,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get retry;
+
+  /// No description provided for @authResetCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If that email exists, a code has been sent.'**
+  String get authResetCodeSent;
+
+  /// No description provided for @authPasswordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated. Please log in.'**
+  String get authPasswordUpdated;
+
+  /// No description provided for @authAccountCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! Check your email for a code.'**
+  String get authAccountCreated;
+
+  /// No description provided for @authEmailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email verified. You can now log in.'**
+  String get authEmailVerified;
+
+  /// No description provided for @authNewCodeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new code is on its way.'**
+  String get authNewCodeSent;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get authHidePassword;
 
   /// No description provided for @ticketDate.
   ///
@@ -3879,6 +3927,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply on web'**
   String get passportEarnApply;
+
+  /// No description provided for @signOutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get signOutConfirmTitle;
+
+  /// No description provided for @signOutConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to log in again to use FoxPassport.'**
+  String get signOutConfirmBody;
+
+  /// No description provided for @signOutStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay signed in'**
+  String get signOutStay;
+
+  /// No description provided for @signOutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t sign you out. Try again.'**
+  String get signOutFailed;
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get profileEditName;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileNameUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name was updated.'**
+  String get profileNameUpdated;
+
+  /// No description provided for @profileNameUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your name. Try again.'**
+  String get profileNameUpdateFailed;
+
+  /// No description provided for @profileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your full profile, so this shows what we have.'**
+  String get profileLoadFailed;
+
+  /// No description provided for @profileEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmailLabel;
+
+  /// No description provided for @profileMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {date}'**
+  String profileMemberSince(String date);
 }
 
 class _AppLocalizationsDelegate

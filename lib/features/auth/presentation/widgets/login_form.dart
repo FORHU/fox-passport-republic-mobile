@@ -85,7 +85,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             textInputAction: TextInputAction.done,
             validator: Validators.loginPassword,
             suffixIcon: IconButton(
-              tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+              tooltip: _obscurePassword
+                  ? context.l10n.authShowPassword
+                  : context.l10n.authHidePassword,
               icon: Icon(
                 _obscurePassword
                     ? Icons.visibility_outlined

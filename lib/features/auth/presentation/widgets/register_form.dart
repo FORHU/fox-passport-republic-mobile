@@ -60,7 +60,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     if (!mounted) return;
 
     if (success) {
-      showTopToast(context, 'Account created! Check your email for a code.');
+      showTopToast(context, context.l10n.authAccountCreated);
       context.go(RouteNames.verifyEmailFor(_emailController.text.trim()));
     } else {
       final error = ref.read(authControllerProvider).error;
@@ -81,7 +81,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     final state = ref.watch(authControllerProvider);
 
     final eye = IconButton(
-      tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+      tooltip: _obscurePassword
+          ? context.l10n.authShowPassword
+          : context.l10n.authHidePassword,
       icon: Icon(
         _obscurePassword
             ? Icons.visibility_outlined

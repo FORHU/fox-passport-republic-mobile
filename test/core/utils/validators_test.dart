@@ -64,7 +64,22 @@ void main() {
       (i, _) => Validators.signupEmail(i),
       expected: expectedEmail,
     );
-    checkEach('signupName', (i, _) => Validators.signupName(i));
+    // The one deliberate difference: the web refuses accented and non-Latin
+    // letters; mobile accepts them (the API takes any name).
+    const namesMobileAccepts = {
+      'Ana María',
+      'Zoë',
+      '李小龍',
+      'O’Brien',
+      'José',
+    };
+    checkEach(
+      'signupName',
+      (i, _) => Validators.signupName(i),
+      expected: (all, input) => namesMobileAccepts.contains(input)
+          ? null
+          : all.firstWhere((v) => v['input'] == input)['message'] as String?,
+    );
     checkEach('signupUsername', (i, _) => Validators.signupUsername(i));
     checkEach('signupPassword', (i, _) => Validators.signupPassword(i));
     checkEach(
@@ -123,9 +138,15 @@ void main() {
       expect(Validators.loginPassword(''), 'Please enter your password');
     });
 
-    test('names are ASCII letters, spaces, apostrophes and hyphens', () {
+    test('names are letters of any alphabet, spaces, apostrophes, hyphens', () {
       expect(Validators.signupName("Mary-Jane O'Neil"), isNull);
-      expect(Validators.signupName('Zoë'), 'Name can only contain letters');
+      expect(Validators.signupName('Zoë'), isNull);
+      expect(Validators.signupName('José Peña'), isNull);
+      expect(
+        Validators.signupName('Dr. Cruz'),
+        'Name can only contain letters',
+      );
+      expect(Validators.signupName('R2D2'), 'Name can only contain letters');
       expect(Validators.signupName(''), 'Name is required');
     });
 

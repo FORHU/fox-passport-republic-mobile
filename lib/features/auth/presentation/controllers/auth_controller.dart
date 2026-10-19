@@ -273,6 +273,13 @@ class AuthController extends Notifier<AuthState> {
     );
   }
 
+  /// Shows a new display name everywhere the session user is read, once the
+  /// server has accepted it.
+  void setSessionName(String name) {
+    final user = state.user;
+    if (user != null) state = state.copyWith(user: user.withName(name));
+  }
+
   Future<bool> logout() async {
     final result = await ref.read(authRepositoryProvider).logout();
     return result.fold(
