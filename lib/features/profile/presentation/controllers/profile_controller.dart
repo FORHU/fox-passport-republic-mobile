@@ -50,6 +50,8 @@ class ProfileState extends Equatable {
 class ProfileController extends Notifier<ProfileState> {
   @override
   ProfileState build() {
+    // A different account gets its own profile, not the previous one's.
+    ref.watch(currentUserIdProvider);
     unawaited(Future.microtask(fetchProfile));
     return const ProfileState(isLoading: true);
   }

@@ -72,6 +72,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentUserIdProvider.overrideWithValue(null),
           conversationsProvider.overrideWith(
             (ref) async => [_conversation()],
           ),
@@ -93,6 +94,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentUserIdProvider.overrideWithValue(null),
           conversationsProvider.overrideWith(
             (ref) async => [_conversation(), _conversation(group: true)],
           ),
