@@ -298,6 +298,9 @@ void main() {
       ElevatedButton send() =>
           tester.widget<ElevatedButton>(find.byType(ElevatedButton));
       expect(send().onPressed, isNull, reason: 'no day chosen yet');
+      // The guests stepper's icon-only buttons say what they do.
+      expect(find.byTooltip('Decrease How many guests?'), findsOneWidget);
+      expect(find.byTooltip('Increase How many guests?'), findsOneWidget);
       expect(find.text('Garden Birthday'), findsOneWidget);
       expect(find.text('My own idea'), findsOneWidget);
 

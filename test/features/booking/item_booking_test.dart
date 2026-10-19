@@ -170,6 +170,36 @@ void main() {
     expect(a, isNot(longer));
   });
 
+  testWidgets('the steppers and month arrows say what they do', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(800, 2400)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [itemBookingRepositoryProvider.overrideWithValue(repo)],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ItemBookingPage(item: _sample),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Back'), findsOneWidget);
+    expect(find.byTooltip('Previous month'), findsOneWidget);
+    expect(find.byTooltip('Next month'), findsOneWidget);
+    // Gear has both a days and a quantity stepper.
+    expect(find.byTooltip('Decrease How many days?'), findsOneWidget);
+    expect(find.byTooltip('Increase How many days?'), findsOneWidget);
+    expect(find.byTooltip('Decrease How many?'), findsOneWidget);
+    expect(find.byTooltip('Increase How many?'), findsOneWidget);
+  });
+
   testWidgets('a sample item shows its price once a day is picked', (
     tester,
   ) async {
