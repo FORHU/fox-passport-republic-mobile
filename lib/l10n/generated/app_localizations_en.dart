@@ -927,6 +927,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Try again';
 
   @override
+  String get loadingLabel => 'Loading';
+
+  @override
   String get authResetCodeSent => 'If that email exists, a code has been sent.';
 
   @override

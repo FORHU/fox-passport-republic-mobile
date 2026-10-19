@@ -313,6 +313,7 @@
   "ticketsEmptyPast": "No past tickets yet",
   "apiLoadFailed": "We couldn't load this right now.",
   "retry": "Try again",
+  "loadingLabel": "Loading",
   "authResetCodeSent": "If that email exists, a code has been sent.",
   "authPasswordUpdated": "Password updated. Please log in.",
   "authAccountCreated": "Account created! Check your email for a code.",

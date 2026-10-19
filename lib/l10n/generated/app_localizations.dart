@@ -1810,6 +1810,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get retry;
 
+  /// No description provided for @loadingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loadingLabel;
+
   /// No description provided for @authResetCodeSent.
   ///
   /// In en, this message translates to:
