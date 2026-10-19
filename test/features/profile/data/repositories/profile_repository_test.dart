@@ -92,4 +92,38 @@ void main() {
       expect(result.getLeft().toNullable(), isA<ServerFailure>());
     });
   });
+
+  group('ProfileRepositoryImpl.updateName', () {
+    test('sends the name and returns Right on success', () async {
+      when(() => mockRemote.updateName('Ada')).thenAnswer((_) async {});
+
+      final result = await repository.updateName('Ada');
+
+      expect(result.isRight(), isTrue);
+      verify(() => mockRemote.updateName('Ada')).called(1);
+    });
+
+    test('maps a refusal from the API to ServerFailure with its message',
+        () async {
+      when(
+        () => mockRemote.updateName(any()),
+      ).thenThrow(const ServerException('Name is taken'));
+
+      final result = await repository.updateName('Ada');
+
+      final failure = result.getLeft().toNullable();
+      expect(failure, isA<ServerFailure>());
+      expect(failure?.message, 'Name is taken');
+    });
+
+    test('maps a lost connection to NetworkFailure', () async {
+      when(
+        () => mockRemote.updateName(any()),
+      ).thenThrow(const NetworkException('offline'));
+
+      final result = await repository.updateName('Ada');
+
+      expect(result.getLeft().toNullable(), isA<NetworkFailure>());
+    });
+  });
 }

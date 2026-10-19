@@ -3879,6 +3879,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply on web'**
   String get passportEarnApply;
+
+  /// No description provided for @signOutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out?'**
+  String get signOutConfirmTitle;
+
+  /// No description provided for @signOutConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to log in again to use FoxPassport.'**
+  String get signOutConfirmBody;
+
+  /// No description provided for @signOutStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay signed in'**
+  String get signOutStay;
+
+  /// No description provided for @signOutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t sign you out. Try again.'**
+  String get signOutFailed;
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get profileEditName;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileNameUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name was updated.'**
+  String get profileNameUpdated;
+
+  /// No description provided for @profileNameUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your name. Try again.'**
+  String get profileNameUpdateFailed;
+
+  /// No description provided for @profileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your full profile, so this shows what we have.'**
+  String get profileLoadFailed;
+
+  /// No description provided for @profileEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmailLabel;
+
+  /// No description provided for @profileMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {date}'**
+  String profileMemberSince(String date);
 }
 
 class _AppLocalizationsDelegate
