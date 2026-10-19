@@ -3724,6 +3724,12 @@ abstract class AppLocalizations {
   /// **'Leave a review'**
   String get reviewWrite;
 
+  /// No description provided for @ticketBookAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Book again'**
+  String get ticketBookAgain;
+
   /// No description provided for @reviewTitle.
   ///
   /// In en, this message translates to:
