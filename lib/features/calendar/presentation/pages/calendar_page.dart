@@ -93,36 +93,41 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
               ),
             ),
             Expanded(
-              child: entries.when(
-                loading: () => _Body(
-                  month: _month,
-                  gridStart: start,
-                  selected: _selected,
-                  entries: const [],
-                  hidden: _hidden,
-                  loading: true,
-                  locale: locale,
-                  onMonth: _go,
-                  onSelect: (d) => setState(() => _selected = d),
-                  onToggleRole: _toggleRole,
-                ),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(calendarEntriesProvider),
-                ),
-                data: (list) => _Body(
-                  month: _month,
-                  gridStart: start,
-                  selected: _selected,
-                  entries: list,
-                  hidden: _hidden,
-                  loading: false,
-                  locale: locale,
-                  onMonth: _go,
-                  onSelect: (d) => setState(() => _selected = d),
-                  onToggleRole: _toggleRole,
+              child: RefreshIndicator(
+                color: AppColors.accent,
+                backgroundColor: AppColors.surface,
+                onRefresh: () => _refresh(range),
+                child: entries.when(
+                  loading: () => _Body(
+                    month: _month,
+                    gridStart: start,
+                    selected: _selected,
+                    entries: const [],
+                    hidden: _hidden,
+                    loading: true,
+                    locale: locale,
+                    onMonth: _go,
+                    onSelect: (d) => setState(() => _selected = d),
+                    onToggleRole: _toggleRole,
+                  ),
+                  error: (_, __) => AppStateView(
+                    kind: AppStateKind.error,
+                    title: l10n.apiLoadFailed,
+                    actionLabel: l10n.retry,
+                    onAction: () => ref.invalidate(calendarEntriesProvider),
+                  ),
+                  data: (list) => _Body(
+                    month: _month,
+                    gridStart: start,
+                    selected: _selected,
+                    entries: list,
+                    hidden: _hidden,
+                    loading: false,
+                    locale: locale,
+                    onMonth: _go,
+                    onSelect: (d) => setState(() => _selected = d),
+                    onToggleRole: _toggleRole,
+                  ),
                 ),
               ),
             ),
@@ -130,6 +135,16 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         ),
       ),
     );
+  }
+
+  /// Pull to refresh holds the spinner until the new entries have arrived.
+  Future<void> _refresh(({DateTime from, DateTime to}) range) async {
+    ref.invalidate(calendarEntriesProvider(range));
+    try {
+      await ref.read(calendarEntriesProvider(range).future);
+    } on Object {
+      // The page shows its own error state with a retry.
+    }
   }
 
   void _toggleRole(CalendarRole role) => setState(() {
@@ -200,6 +215,7 @@ class _Body extends StatelessWidget {
     ];
 
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
         Row(

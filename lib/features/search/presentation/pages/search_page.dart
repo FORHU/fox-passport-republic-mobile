@@ -304,50 +304,56 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             _view = _View.list;
                           }),
                         )
-                      : results.when(
-                          loading: () => const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.accent,
+                      : RefreshIndicator(
+                          color: AppColors.accent,
+                          backgroundColor: AppColors.surface,
+                          onRefresh: _refresh,
+                          child: results.when(
+                            loading: () => const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.accent,
+                              ),
                             ),
-                          ),
-                          error: (_, __) => AppStateView(
-                            kind: AppStateKind.error,
-                            title: l10n.apiLoadFailed,
-                            actionLabel: l10n.retry,
-                            onAction: () =>
-                                ref.invalidate(catalogProvider(_catalogQuery)),
-                          ),
-                          data: (page) => _Results(
-                            formatter: formatter,
-                            page: page,
-                            kindLabel: _kindLabel(l10n, _kind),
-                            query: _query,
-                            locale: Localizations.localeOf(context).toString(),
-                            saved: AppConfig.instance.useMock
-                                ? _saved
-                                : favorites.asData?.value ?? const {},
-                            favoritesFailed: favorites.hasError &&
-                                !AppConfig.instance.useMock,
-                            favoritesLoading: favorites.isLoading &&
-                                !AppConfig.instance.useMock,
-                            onToggleSaved: _toggleFavorite,
-                            onClear: _hasFilters ? _clearFilters : null,
-                            onOpen: (item) => switch (item.kind) {
-                              CatalogKind.venues => context
-                                  .push(RouteNames.venueDetail, extra: item),
-                              CatalogKind.events => context.push(
-                                  RouteNames.scheduledEventDetail,
-                                  extra: item,
-                                ),
-                              CatalogKind.foxers =>
-                                context.push(RouteNames.foxer, extra: item),
-                              CatalogKind.gear ||
-                              CatalogKind.services =>
-                                context.push(
-                                  RouteNames.itemBooking,
-                                  extra: item,
-                                ),
-                            },
+                            error: (_, __) => AppStateView(
+                              kind: AppStateKind.error,
+                              title: l10n.apiLoadFailed,
+                              actionLabel: l10n.retry,
+                              onAction: () => ref
+                                  .invalidate(catalogProvider(_catalogQuery)),
+                            ),
+                            data: (page) => _Results(
+                              formatter: formatter,
+                              page: page,
+                              kindLabel: _kindLabel(l10n, _kind),
+                              query: _query,
+                              locale:
+                                  Localizations.localeOf(context).toString(),
+                              saved: AppConfig.instance.useMock
+                                  ? _saved
+                                  : favorites.asData?.value ?? const {},
+                              favoritesFailed: favorites.hasError &&
+                                  !AppConfig.instance.useMock,
+                              favoritesLoading: favorites.isLoading &&
+                                  !AppConfig.instance.useMock,
+                              onToggleSaved: _toggleFavorite,
+                              onClear: _hasFilters ? _clearFilters : null,
+                              onOpen: (item) => switch (item.kind) {
+                                CatalogKind.venues => context
+                                    .push(RouteNames.venueDetail, extra: item),
+                                CatalogKind.events => context.push(
+                                    RouteNames.scheduledEventDetail,
+                                    extra: item,
+                                  ),
+                                CatalogKind.foxers =>
+                                  context.push(RouteNames.foxer, extra: item),
+                                CatalogKind.gear ||
+                                CatalogKind.services =>
+                                  context.push(
+                                    RouteNames.itemBooking,
+                                    extra: item,
+                                  ),
+                              },
+                            ),
                           ),
                         ),
                 ),
@@ -357,6 +363,19 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         ),
       ),
     );
+  }
+
+  /// Pull to refresh holds the spinner until the new results have arrived.
+  Future<void> _refresh() async {
+    final query = _catalogQuery;
+    ref
+      ..invalidate(catalogProvider(query))
+      ..invalidate(favoriteIdsProvider);
+    try {
+      await ref.read(catalogProvider(query).future);
+    } on Object {
+      // The results area shows its own error state with a retry.
+    }
   }
 
   Future<void> _toggleFavorite(CatalogItem item) async {
@@ -774,6 +793,7 @@ class _Results extends StatelessWidget {
 
     final locale = Localizations.localeOf(context).toString();
     return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
       itemCount: page.items.length + 1 + (favoritesFailed ? 1 : 0),
       separatorBuilder: (_, i) => i == 0
