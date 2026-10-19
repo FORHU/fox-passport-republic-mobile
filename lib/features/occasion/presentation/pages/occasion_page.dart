@@ -15,6 +15,7 @@ import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
+import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -361,17 +362,14 @@ class _PackagesSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget box() => Expanded(
-          child: Container(
-            height: 128,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: AppRadius.brMd,
-            ),
-          ),
-        );
-    return Row(
-      children: [box(), const SizedBox(width: 12), box()],
+    return const SkeletonPulse(
+      child: Row(
+        children: [
+          Expanded(child: SkeletonBox(height: 128)),
+          SizedBox(width: 12),
+          Expanded(child: SkeletonBox(height: 128)),
+        ],
+      ),
     );
   }
 }
