@@ -844,6 +844,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageSend => 'Send message';
 
   @override
+  String get messageAttachPhoto => 'Attach a photo';
+
+  @override
+  String get messageCancelReply => 'Cancel reply';
+
+  @override
   String get messageRequestAccepted => 'Message request accepted.';
 
   @override
@@ -2160,5 +2166,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String profileMemberSince(String date) {
     return 'Member since $date';
+  }
+
+  @override
+  String a11yDecrease(String thing) {
+    return 'Decrease $thing';
+  }
+
+  @override
+  String a11yIncrease(String thing) {
+    return 'Increase $thing';
   }
 }

@@ -286,6 +286,8 @@
   "messageViewTicket": "View ticket",
   "messageBookingAbout": "About this booking",
   "messageSend": "Send message",
+  "messageAttachPhoto": "Attach a photo",
+  "messageCancelReply": "Cancel reply",
   "messageRequestAccepted": "Message request accepted.",
   "messageRequestDeclined": "Message request declined.",
   "messageActionUnavailable": "Start a conversation from a Foxer or venue profile.",
@@ -723,6 +725,18 @@
   "@profileMemberSince": {
     "placeholders": {
       "date": {"type": "String"}
+    }
+  },
+  "a11yDecrease": "Decrease {thing}",
+  "@a11yDecrease": {
+    "placeholders": {
+      "thing": {"type": "String"}
+    }
+  },
+  "a11yIncrease": "Increase {thing}",
+  "@a11yIncrease": {
+    "placeholders": {
+      "thing": {"type": "String"}
     }
   }
 }

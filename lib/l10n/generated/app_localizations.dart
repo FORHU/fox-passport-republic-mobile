@@ -1648,6 +1648,18 @@ abstract class AppLocalizations {
   /// **'Send message'**
   String get messageSend;
 
+  /// No description provided for @messageAttachPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach a photo'**
+  String get messageAttachPhoto;
+
+  /// No description provided for @messageCancelReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel reply'**
+  String get messageCancelReply;
+
   /// No description provided for @messageRequestAccepted.
   ///
   /// In en, this message translates to:
@@ -4023,6 +4035,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Member since {date}'**
   String profileMemberSince(String date);
+
+  /// No description provided for @a11yDecrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease {thing}'**
+  String a11yDecrease(String thing);
+
+  /// No description provided for @a11yIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase {thing}'**
+  String a11yIncrease(String thing);
 }
 
 class _AppLocalizationsDelegate

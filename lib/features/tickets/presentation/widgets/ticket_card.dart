@@ -8,6 +8,7 @@ import 'package:flutter_template/features/tickets/presentation/widgets/cancel_sh
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/screen/screen_brightness_boost.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/ticket_panel.dart';
@@ -276,10 +277,13 @@ class _Qr extends StatelessWidget {
               size: 72,
               color: AppColors.onLightSurface,
             )
-          : QrImageView(
-              data: ticket.ticketCode!,
-              padding: EdgeInsets.zero,
-              backgroundColor: AppColors.lightSurface,
+          // A dim screen is hard to scan at the door.
+          : BrightWhileVisible(
+              child: QrImageView(
+                data: ticket.ticketCode!,
+                padding: EdgeInsets.zero,
+                backgroundColor: AppColors.lightSurface,
+              ),
             ),
     );
   }

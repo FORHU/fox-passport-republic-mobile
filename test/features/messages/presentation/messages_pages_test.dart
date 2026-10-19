@@ -184,6 +184,10 @@ void main() {
     expect(find.text('Can we add a photographer?'), findsOneWidget);
     expect(find.text('👍 1'), findsOneWidget);
     expect(find.text('Seen'), findsOneWidget);
+    // Icon-only buttons say what they do.
+    expect(find.byTooltip('Back'), findsOneWidget);
+    expect(find.byTooltip('Attach a photo'), findsOneWidget);
+    expect(find.byTooltip('Send message'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'Perfect, thanks');
     await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pumpAndSettle();
