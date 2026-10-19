@@ -30,7 +30,8 @@ class SegmentedPills<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      // 4 all round; 2 above and below sit inside each pill's tap area.
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppRadius.brPill,
@@ -47,25 +48,29 @@ class SegmentedPills<T> extends StatelessWidget {
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => onChanged(option.value),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 160),
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: option.value == value
-                          ? AppColors.surfaceRaised
-                          : Colors.transparent,
-                      borderRadius: AppRadius.brPill,
-                    ),
-                    child: Text(
-                      option.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.display(
-                        size: 14,
+                  // The pill is 40 tall; the area that answers a tap is 44.
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 160),
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
                         color: option.value == value
-                            ? AppColors.textPrimary
-                            : AppColors.textMuted,
+                            ? AppColors.surfaceRaised
+                            : Colors.transparent,
+                        borderRadius: AppRadius.brPill,
+                      ),
+                      child: Text(
+                        option.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.display(
+                          size: 14,
+                          color: option.value == value
+                              ? AppColors.textPrimary
+                              : AppColors.textMuted,
+                        ),
                       ),
                     ),
                   ),

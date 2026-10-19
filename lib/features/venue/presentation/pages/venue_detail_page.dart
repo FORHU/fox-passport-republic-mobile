@@ -39,6 +39,7 @@ class VenueDetailPage extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
+                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                   onPressed: () => context.pop(),
                   icon: const Icon(Icons.arrow_back_rounded),
                 ),
