@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
 
@@ -13,6 +14,8 @@ class TypingNotifier extends Notifier<Set<String>> {
 
   @override
   Set<String> build() {
+    // Typing signals belong to one account's chats.
+    ref.watch(currentUserIdProvider);
     ref.onDispose(() {
       for (final timer in _timers.values) {
         timer.cancel();

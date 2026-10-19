@@ -11,16 +11,26 @@ final messagesRepositoryProvider = Provider<MessagesRepository>(
   (ref) => MessagesRepository(ref.watch(apiServiceProvider)),
 );
 
-final conversationsProvider = FutureProvider<List<Conversation>>(
-  (ref) => ref.watch(messagesRepositoryProvider).getConversations(),
-);
+// Both lists belong to one account: they watch the user id, so signing in as
+// someone else loads that person's conversations, not the previous ones.
+final FutureProvider<List<Conversation>> conversationsProvider =
+    FutureProvider.autoDispose<List<Conversation>>((
+  ref,
+) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(messagesRepositoryProvider).getConversations();
+});
 
 // The family type is long and adds nothing here, so it is left inferred.
 // ignore: specify_nonobvious_property_types
-final chatMessagesProvider = FutureProvider.family<List<ChatMessage>, String>(
-  (ref, conversationId) =>
-      ref.watch(messagesRepositoryProvider).getMessages(conversationId),
-);
+final chatMessagesProvider =
+    FutureProvider.autoDispose.family<List<ChatMessage>, String>((
+  ref,
+  conversationId,
+) {
+  ref.watch(currentUserIdProvider);
+  return ref.watch(messagesRepositoryProvider).getMessages(conversationId);
+});
 
 class MessagesRepository {
   const MessagesRepository(this._api);
