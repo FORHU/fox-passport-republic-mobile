@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -34,7 +36,7 @@ class _SkeletonPulseState extends State<SkeletonPulse>
         ..stop()
         ..value = 1;
     } else if (!_controller.isAnimating) {
-      _controller.repeat(reverse: true);
+      unawaited(_controller.repeat(reverse: true));
     }
   }
 
