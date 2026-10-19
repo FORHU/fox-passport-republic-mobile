@@ -17,6 +17,7 @@
   "notifications": "Notifications",
   "notificationsEmpty": "You're all caught up.",
   "notificationsMarkAllRead": "Mark all as read",
+  "notificationsUpdateFailed": "We couldn't update your notifications. Try again.",
   "profile": "Profile",
 
   "authWordmark": "FoxPassport",
