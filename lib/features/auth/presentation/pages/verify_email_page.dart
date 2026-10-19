@@ -54,7 +54,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
         .verifyEmail(_email, _codeController.text);
     if (!mounted) return;
     if (ok) {
-      showTopToast(context, 'Email verified. You can now log in.');
+      showTopToast(context, context.l10n.authEmailVerified);
       context.go(RouteNames.login);
     } else {
       final error = ref.read(authControllerProvider).error;
@@ -68,7 +68,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
         .resendVerificationOtp(_email);
     if (!mounted) return;
     if (ok) {
-      showTopToast(context, 'A new code is on its way.');
+      showTopToast(context, context.l10n.authNewCodeSent);
       setState(() => _secondsLeft = _resendCooldown);
       _timer?.cancel();
       _timer = Timer.periodic(const Duration(seconds: 1), (t) {
