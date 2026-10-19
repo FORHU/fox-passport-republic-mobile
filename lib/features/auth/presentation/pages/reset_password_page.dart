@@ -55,7 +55,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         );
     if (!mounted) return;
     if (ok) {
-      showTopToast(context, 'Password updated. Please log in.');
+      showTopToast(context, context.l10n.authPasswordUpdated);
       context.go(RouteNames.login);
     } else {
       final error = ref.read(authControllerProvider).error;
@@ -109,7 +109,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                   'and a number.',
               validator: Validators.resetNewPassword,
               suffixIcon: IconButton(
-                tooltip: _obscure ? 'Show password' : 'Hide password',
+                tooltip: _obscure
+                    ? context.l10n.authShowPassword
+                    : context.l10n.authHidePassword,
                 icon: Icon(
                   _obscure
                       ? Icons.visibility_outlined

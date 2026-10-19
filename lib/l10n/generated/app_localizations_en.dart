@@ -923,6 +923,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Try again';
 
   @override
+  String get authResetCodeSent => 'If that email exists, a code has been sent.';
+
+  @override
+  String get authPasswordUpdated => 'Password updated. Please log in.';
+
+  @override
+  String get authAccountCreated =>
+      'Account created! Check your email for a code.';
+
+  @override
+  String get authEmailVerified => 'Email verified. You can now log in.';
+
+  @override
+  String get authNewCodeSent => 'A new code is on its way.';
+
+  @override
+  String get authShowPassword => 'Show password';
+
+  @override
+  String get authHidePassword => 'Hide password';
+
+  @override
   String get ticketDate => 'Date';
 
   @override
