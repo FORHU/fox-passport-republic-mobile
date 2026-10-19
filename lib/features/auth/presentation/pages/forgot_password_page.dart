@@ -36,7 +36,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         await ref.read(authControllerProvider.notifier).forgotPassword(email);
     if (!mounted) return;
     if (ok) {
-      showTopToast(context, 'If that email exists, a code has been sent.');
+      showTopToast(context, context.l10n.authResetCodeSent);
       context.go(RouteNames.resetPasswordFor(email));
     } else {
       final error = ref.read(authControllerProvider).error;

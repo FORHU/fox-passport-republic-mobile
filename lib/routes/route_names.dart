@@ -51,6 +51,18 @@ class RouteNames {
   /// Everything booked, hosted, organized or supplied, by day.
   static const String calendar = '/calendar';
 
+  /// Root route of each bottom-nav tab, left to right. The shell branches in
+  /// `app_routes.dart` and the tab bar in `main_layout.dart` both follow this
+  /// order, because the tab index is the branch index.
+  static const List<String> shellTabs = [
+    home,
+    search,
+    tickets,
+    calendar,
+    messages,
+    passport,
+  ];
+
   /// Tickets, opened on the Requests switch.
   static const String ticketsRequests = '/tickets?segment=requests';
   static const String messages = '/messages';

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
@@ -131,7 +132,10 @@ void main() {
     test('typing shows for a few seconds, then clears', () async {
       service.start();
       final container = ProviderContainer(
-        overrides: [realtimeServiceProvider.overrideWithValue(service)],
+        overrides: [
+          currentUserIdProvider.overrideWithValue(null),
+          realtimeServiceProvider.overrideWithValue(service),
+        ],
       );
       addTearDown(container.dispose);
       container.listen(messagesRealtimeProvider, (_, __) {});

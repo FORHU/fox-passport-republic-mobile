@@ -60,6 +60,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkAllRead => 'Mark all as read';
 
   @override
+  String get notificationsUpdateFailed =>
+      'We couldn\'t update your notifications. Try again.';
+
+  @override
   String get profile => 'Profile';
 
   @override
@@ -782,6 +786,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchEventPrice => 'Price';
 
   @override
+  String get searchEventPlanLikeThis => 'Plan something like this';
+
+  @override
+  String get searchEventPlanHint =>
+      'This event is already booked. Start your own and see what you can book.';
+
+  @override
   String get searchNew => 'New';
 
   @override
@@ -914,6 +925,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Try again';
+
+  @override
+  String get authResetCodeSent => 'If that email exists, a code has been sent.';
+
+  @override
+  String get authPasswordUpdated => 'Password updated. Please log in.';
+
+  @override
+  String get authAccountCreated =>
+      'Account created! Check your email for a code.';
+
+  @override
+  String get authEmailVerified => 'Email verified. You can now log in.';
+
+  @override
+  String get authNewCodeSent => 'A new code is on its way.';
+
+  @override
+  String get authShowPassword => 'Show password';
+
+  @override
+  String get authHidePassword => 'Hide password';
 
   @override
   String get ticketDate => 'Date';
@@ -1661,6 +1694,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportEmptyAction => 'Find events';
 
   @override
+  String get calendar => 'Calendar';
+
+  @override
   String get calendarTitle => 'Calendar';
 
   @override
@@ -2081,4 +2117,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportEarnApply => 'Apply on web';
+
+  @override
+  String get signOutConfirmTitle => 'Sign out?';
+
+  @override
+  String get signOutConfirmBody =>
+      'You will need to log in again to use FoxPassport.';
+
+  @override
+  String get signOutStay => 'Stay signed in';
+
+  @override
+  String get signOutFailed => 'We couldn\'t sign you out. Try again.';
+
+  @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileNameUpdated => 'Your name was updated.';
+
+  @override
+  String get profileNameUpdateFailed =>
+      'We couldn\'t update your name. Try again.';
+
+  @override
+  String get profileLoadFailed =>
+      'We couldn\'t load your full profile, so this shows what we have.';
+
+  @override
+  String get profileEmailLabel => 'Email';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'Member since $date';
+  }
 }

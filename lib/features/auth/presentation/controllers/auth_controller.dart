@@ -273,6 +273,13 @@ class AuthController extends Notifier<AuthState> {
     );
   }
 
+  /// Shows a new display name everywhere the session user is read, once the
+  /// server has accepted it.
+  void setSessionName(String name) {
+    final user = state.user;
+    if (user != null) state = state.copyWith(user: user.withName(name));
+  }
+
   Future<bool> logout() async {
     final result = await ref.read(authRepositoryProvider).logout();
     return result.fold(
@@ -291,4 +298,10 @@ class AuthController extends Notifier<AuthState> {
 
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   AuthController.new,
+);
+
+/// The signed-in user's id, or null. Providers that hold one person's data
+/// watch this, so a different account never sees the previous one's.
+final currentUserIdProvider = Provider<String?>(
+  (ref) => ref.watch(authControllerProvider.select((s) => s.user?.id)),
 );

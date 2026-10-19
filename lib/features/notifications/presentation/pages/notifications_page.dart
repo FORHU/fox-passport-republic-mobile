@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/notifications/domain/entities/user_notification.dart';
+import 'package:flutter_template/features/notifications/domain/notification_route.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class NotificationsPage extends ConsumerWidget {
@@ -43,18 +48,27 @@ class NotificationsPage extends ConsumerWidget {
           retryLabel: l10n.retry,
           onRetry: () => ref.invalidate(notificationInboxProvider),
         ),
-        data: (value) => value.notifications.isEmpty
-            ? Center(
-                child: Text(
-                  l10n.notificationsEmpty,
-                  style: AppTypography.body(color: AppColors.textMuted),
-                ),
-              )
-            : RefreshIndicator(
-                color: AppColors.accent,
-                onRefresh: () async =>
-                    ref.invalidate(notificationInboxProvider),
-                child: ListView.separated(
+        data: (value) => RefreshIndicator(
+          color: AppColors.accent,
+          onRefresh: () => _refresh(ref),
+          child: value.notifications.isEmpty
+              // Scrollable even when empty, so it can still be pulled down.
+              ? ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.5,
+                      child: Center(
+                        child: Text(
+                          l10n.notificationsEmpty,
+                          style: AppTypography.body(color: AppColors.textMuted),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(16),
                   itemCount: value.notifications.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
@@ -62,38 +76,75 @@ class NotificationsPage extends ConsumerWidget {
                     final notification = value.notifications[index];
                     return _NotificationTile(
                       notification: notification,
-                      onTap: notification.isRead
-                          ? null
-                          : () => _markRead(context, ref, notification),
+                      onTap: () => _open(context, ref, notification),
                     );
                   },
                 ),
-              ),
+        ),
       ),
     );
   }
 
-  Future<void> _markRead(
+  /// Pull to refresh holds the spinner until the new list has arrived.
+  Future<void> _refresh(WidgetRef ref) async {
+    try {
+      ref.invalidate(notificationInboxProvider);
+      await ref.read(notificationInboxProvider.future);
+    } on Object {
+      // The page shows its own error state; nothing more to do here.
+    }
+  }
+
+  /// Marks the notification read, then opens what it is about when this app
+  /// has a screen for it.
+  Future<void> _open(
     BuildContext context,
     WidgetRef ref,
     UserNotification notification,
   ) async {
-    try {
-      await ref
-          .read(notificationsRepositoryProvider)
-          .markAsRead(notification.id);
+    final route = notificationRoute(notification.link);
+    if (!notification.isRead) {
+      final done = await _guard(
+        context,
+        () => ref
+            .read(notificationsRepositoryProvider)
+            .markAsRead(notification.id),
+      );
       ref.invalidate(notificationInboxProvider);
-    } on AppException catch (error) {
-      if (context.mounted) showTopToast(context, error.message);
+      // A failed mark-as-read must not trap the user on this page.
+      if (!done) return;
+    }
+    if (route == null || !context.mounted) return;
+    // A chat is pushed over the tabs; any other target is a tab to switch to.
+    if (route.startsWith('${RouteNames.messages}/')) {
+      unawaited(context.push(route));
+    } else {
+      context.go(route);
     }
   }
 
   Future<void> _markAllRead(BuildContext context, WidgetRef ref) async {
+    await _guard(
+      context,
+      () => ref.read(notificationsRepositoryProvider).markAllAsRead(),
+    );
+    ref.invalidate(notificationInboxProvider);
+  }
+
+  /// Runs [action]; a failure of any kind is shown, never thrown.
+  Future<bool> _guard(
+    BuildContext context,
+    Future<void> Function() action,
+  ) async {
+    final failed = context.l10n.notificationsUpdateFailed;
     try {
-      await ref.read(notificationsRepositoryProvider).markAllAsRead();
-      ref.invalidate(notificationInboxProvider);
-    } on AppException catch (error) {
-      if (context.mounted) showTopToast(context, error.message);
+      await action();
+      return true;
+    } on Object catch (error) {
+      if (context.mounted) {
+        showTopToast(context, error is AppException ? error.message : failed);
+      }
+      return false;
     }
   }
 }

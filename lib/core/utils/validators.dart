@@ -6,7 +6,8 @@
 /// input is accepted or refused, with the same message, on web and on mobile.
 ///
 /// Each returns `null` when valid, else the message to show under the field.
-/// When the web schema changes, change this file with it.
+/// When the web schema changes, change this file with it. The one exception is
+/// [signupName], which accepts accented letters the web refuses.
 ///
 /// | Web schema | Mirrored by |
 /// |---|---|
@@ -25,8 +26,14 @@ class Validators {
     r"^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$",
   );
 
-  /// `signupSchema.name`: `/^[A-Za-z\s'-]+$/`.
-  static final RegExp _nameLetters = RegExp(r"^[A-Za-z\s'-]+$");
+  /// Letters of any alphabet (with their accents), spaces, apostrophes and
+  /// hyphens. This is the one rule that departs from the web schema
+  /// (`/^[A-Za-z\s'-]+$/`, ASCII only), which refuses real names such as
+  /// José, Zoë or Peña. The API accepts any name, so mobile does not copy it.
+  static final RegExp _nameLetters = RegExp(
+    r"^[\p{L}\p{M}\s'’-]+$",
+    unicode: true,
+  );
 
   /// A browser strips leading and trailing whitespace from an
   /// `<input type="email">` before the form sees it; do the same.

@@ -17,6 +17,7 @@
   "notifications": "Notifications",
   "notificationsEmpty": "You're all caught up.",
   "notificationsMarkAllRead": "Mark all as read",
+  "notificationsUpdateFailed": "We couldn't update your notifications. Try again.",
   "profile": "Profile",
 
   "authWordmark": "FoxPassport",
@@ -266,6 +267,8 @@
   "searchEventLocation": "Location",
   "searchEventGuests": "Guests",
   "searchEventPrice": "Price",
+  "searchEventPlanLikeThis": "Plan something like this",
+  "searchEventPlanHint": "This event is already booked. Start your own and see what you can book.",
   "searchNew": "New",
   "searchSaveItem": "Save item",
   "searchRemoveSavedItem": "Remove saved item",
@@ -310,6 +313,13 @@
   "ticketsEmptyPast": "No past tickets yet",
   "apiLoadFailed": "We couldn't load this right now.",
   "retry": "Try again",
+  "authResetCodeSent": "If that email exists, a code has been sent.",
+  "authPasswordUpdated": "Password updated. Please log in.",
+  "authAccountCreated": "Account created! Check your email for a code.",
+  "authEmailVerified": "Email verified. You can now log in.",
+  "authNewCodeSent": "A new code is on its way.",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
   "ticketDate": "Date",
   "ticketDoors": "Doors",
   "ticketGuests": "Guests",
@@ -556,6 +566,7 @@
   "mapEmptyAction": "Explore events",
   "passportEmptyStamps": "Attend an event to earn your first stamp.",
   "passportEmptyAction": "Find events",
+  "calendar": "Calendar",
   "calendarTitle": "Calendar",
   "calendarHint": "Everything you book, host or supply",
   "calendarToday": "Today",
@@ -695,5 +706,22 @@
   "passportSavedEmpty": "No saved posts yet.",
   "passportSavedAction": "Browse Republic",
   "passportEarnIntro": "Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.",
-  "passportEarnApply": "Apply on web"
+  "passportEarnApply": "Apply on web",
+  "signOutConfirmTitle": "Sign out?",
+  "signOutConfirmBody": "You will need to log in again to use FoxPassport.",
+  "signOutStay": "Stay signed in",
+  "signOutFailed": "We couldn't sign you out. Try again.",
+  "profileEditName": "Edit name",
+  "profileNameLabel": "Name",
+  "profileSave": "Save",
+  "profileNameUpdated": "Your name was updated.",
+  "profileNameUpdateFailed": "We couldn't update your name. Try again.",
+  "profileLoadFailed": "We couldn't load your full profile, so this shows what we have.",
+  "profileEmailLabel": "Email",
+  "profileMemberSince": "Member since {date}",
+  "@profileMemberSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/auth/presentation/widgets/sign_out.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/currency/currency_sheet.dart';
@@ -78,7 +79,7 @@ class SettingsPage extends ConsumerWidget {
             icon: Icons.logout_rounded,
             title: l10n.settingsSignOut,
             danger: true,
-            onTap: () => ref.read(authControllerProvider.notifier).logout(),
+            onTap: () => confirmSignOut(context, ref),
           ),
         ],
       ),

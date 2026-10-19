@@ -8,6 +8,7 @@ import 'package:flutter_template/features/profile/data/datasources/profile_remot
 import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
 import 'package:flutter_template/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:flutter_template/features/profile/domain/usecases/update_profile_name_usecase.dart';
 
 // --- Dependency wiring (Riverpod providers) ---
 
@@ -18,6 +19,10 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 
 final getProfileUseCaseProvider = Provider<GetProfileUseCase>(
   (ref) => GetProfileUseCase(ref.watch(profileRepositoryProvider)),
+);
+
+final updateProfileNameUseCaseProvider = Provider<UpdateProfileNameUseCase>(
+  (ref) => UpdateProfileNameUseCase(ref.watch(profileRepositoryProvider)),
 );
 
 // --- State ---
@@ -50,8 +55,22 @@ class ProfileState extends Equatable {
 class ProfileController extends Notifier<ProfileState> {
   @override
   ProfileState build() {
+    // A different account gets its own profile, not the previous one's.
+    ref.watch(currentUserIdProvider);
     unawaited(Future.microtask(fetchProfile));
     return const ProfileState(isLoading: true);
+  }
+
+  /// Saves a new display name. Returns null on success, else the message to
+  /// show. On success the session user is renamed too, so Settings and the
+  /// Passport show the new name at once.
+  Future<String?> updateName(String name) async {
+    final result = await ref.read(updateProfileNameUseCaseProvider)(name);
+    return result.fold((failure) => failure.message, (_) {
+      ref.read(authControllerProvider.notifier).setSessionName(name.trim());
+      unawaited(fetchProfile());
+      return null;
+    });
   }
 
   Future<void> fetchProfile() async {

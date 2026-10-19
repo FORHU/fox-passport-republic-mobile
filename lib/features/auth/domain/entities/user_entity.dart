@@ -31,6 +31,18 @@ class UserEntity extends Equatable {
   /// Profile photo (the API's `imgId`), or null when they have none.
   final String? imageUrl;
 
+  /// The same user with another [name], as after they edit their profile.
+  UserEntity withName(String name) => UserEntity(
+        id: id,
+        email: email,
+        name: name,
+        username: username,
+        systemRole: systemRole,
+        roleType: roleType,
+        isEmailVerified: isEmailVerified,
+        imageUrl: imageUrl,
+      );
+
   /// A Citizen holds no RoleType.
   bool get isCitizen => roleType.isEmpty;
   bool get isAdmin => systemRole == 'admin' || systemRole == 'admin_secretary';

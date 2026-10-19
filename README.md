@@ -318,7 +318,7 @@ Before tagging a release or deploying, run through this strict checklist:
 2. **Run Linting**: Run `flutter analyze` to guarantee compliance with the strict `very_good_analysis` enterprise rules.
 3. **Run Tests**: Run `flutter test` to ensure no State or Controller logic was broken.
 4. **Verify Config**: Open `.env.prod` and guarantee `ENABLE_LOGGING` is `false` and your production API keys are correct.
-5. **Generate Localizations**: Run `flutter gen-l10n` to ensure all English/Spanish ARB strings are compiled.
+5. **Generate Localizations**: Run `flutter gen-l10n` to ensure all ARB strings are compiled.
 6. **Build Artifacts**: Execute the specific `flutter build` command from above.
 7. **App Signing**: (iOS) Open Xcode and select your Distribution profile. (Android) Add your `key.properties` file for the keystore.
 
