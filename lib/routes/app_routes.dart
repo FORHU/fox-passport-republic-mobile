@@ -302,6 +302,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
+                path: RouteNames.calendar,
+                builder: (context, state) => const CalendarPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
                 path: RouteNames.messages,
                 builder: (context, state) => const MessagesPage(),
               ),
@@ -316,14 +324,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.profile,
                 builder: (context, state) => const ProfilePage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: RouteNames.calendar,
-                builder: (context, state) => const CalendarPage(),
               ),
             ],
           ),
