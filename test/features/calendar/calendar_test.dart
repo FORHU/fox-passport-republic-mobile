@@ -23,7 +23,10 @@ CalendarEntry _entry(
   );
 }
 
-Widget _app(Future<List<CalendarEntry>> Function() load) {
+Widget _app(
+  Future<List<CalendarEntry>> Function() load, {
+  VoidCallback? onOpenTickets,
+}) {
   return ProviderScope(
     // Riverpod retries a failed provider by itself; the error test wants the
     // error state, then a tap.
@@ -31,10 +34,13 @@ Widget _app(Future<List<CalendarEntry>> Function() load) {
     overrides: [
       calendarEntriesProvider.overrideWith((ref, range) => load()),
     ],
-    child: const MaterialApp(
+    child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: CalendarPage(),
+      // The calendar is the Calendar switch of Bookings: no screen of its own.
+      home: Scaffold(
+        body: CalendarView(onOpenTickets: onOpenTickets ?? () {}),
+      ),
     ),
   );
 }
@@ -81,7 +87,7 @@ void main() {
     });
   });
 
-  group('CalendarPage', () {
+  group('CalendarView', () {
     testWidgets('lists what is on the chosen day and filters by role', (
       tester,
     ) async {
@@ -108,6 +114,43 @@ void main() {
 
       expect(find.text('Garden Birthday'), findsNothing);
       expect(find.text('Rooftop Launch Night'), findsOneWidget);
+    });
+
+    testWidgets('has a Today button and no title or back arrow of its own', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_app(() async => <CalendarEntry>[]));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Today'), findsOneWidget);
+      // The Bookings screen draws the title; this is only the month.
+      expect(find.byIcon(Icons.arrow_back_rounded), findsNothing);
+      expect(find.text('Calendar'), findsNothing);
+    });
+
+    testWidgets('Open tickets on a booking asks to show the Bookings list', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var opened = 0;
+
+      await tester.pumpWidget(
+        _app(
+          () async => [_entry('a', CalendarRole.guest, 'Rooftop Launch Night')],
+          onOpenTickets: () => opened++,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Rooftop Launch Night'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open tickets'));
+      await tester.pumpAndSettle();
+
+      expect(opened, 1);
     });
 
     testWidgets('says so when the day is empty', (tester) async {

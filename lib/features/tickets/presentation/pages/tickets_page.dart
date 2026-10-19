@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
@@ -12,16 +12,16 @@ import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-enum _Segment { upcoming, requests, past }
+enum _Segment { upcoming, requests, past, calendar }
 
 /// Tickets: the bookings the user holds, upcoming and past.
 class TicketsPage extends ConsumerStatefulWidget {
   const TicketsPage({this.initialSegment, super.key});
 
-  /// `requests` opens on the Match requests switch.
+  /// `requests` opens on the Match requests switch, `calendar` on the
+  /// Calendar switch.
   final String? initialSegment;
 
   @override
@@ -31,8 +31,11 @@ class TicketsPage extends ConsumerStatefulWidget {
 class _TicketsPageState extends ConsumerState<TicketsPage> {
   late _Segment _segment = _fromParam(widget.initialSegment);
 
-  static _Segment _fromParam(String? value) =>
-      value == 'requests' ? _Segment.requests : _Segment.upcoming;
+  static _Segment _fromParam(String? value) => switch (value) {
+        'requests' => _Segment.requests,
+        'calendar' => _Segment.calendar,
+        _ => _Segment.upcoming,
+      };
 
   @override
   void didUpdateWidget(TicketsPage oldWidget) {
@@ -52,6 +55,62 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
         : ref.watch(pastTicketsProvider);
     final requests = ref.watch(myMatchRequestsProvider);
 
+    final header = Row(
+      children: [
+        if (Navigator.canPop(context))
+          IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+        Expanded(
+          child: Text(
+            l10n.bookings,
+            style: AppTypography.display(size: 28),
+          ),
+        ),
+      ],
+    );
+    final pills = SegmentedPills<_Segment>(
+      value: _segment,
+      onChanged: (v) => setState(() => _segment = v),
+      options: [
+        SegmentOption(_Segment.upcoming, l10n.ticketsUpcoming),
+        SegmentOption(_Segment.requests, l10n.ticketsRequests),
+        SegmentOption(_Segment.past, l10n.ticketsPast),
+        SegmentOption(_Segment.calendar, l10n.calendarTitle),
+      ],
+    );
+
+    // The calendar draws its own scrolling month, so it sits below a fixed
+    // header and switch instead of inside the list the other three share.
+    if (_segment == _Segment.calendar) {
+      return Scaffold(
+        backgroundColor: AppColors.canvas,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: header,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: pills,
+              ),
+              Expanded(
+                child: CalendarView(
+                  onOpenTickets: () =>
+                      setState(() => _segment = _Segment.upcoming),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.canvas,
       body: SafeArea(
@@ -68,39 +127,10 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             children: [
-              Row(
-                children: [
-                  if (Navigator.canPop(context))
-                    IconButton(
-                      tooltip:
-                          MaterialLocalizations.of(context).backButtonTooltip,
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
-                  Expanded(
-                    child: Text(
-                      l10n.bookings,
-                      style: AppTypography.display(size: 28),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: l10n.calendarTitle,
-                    onPressed: () => context.push(RouteNames.calendar),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                  ),
-                ],
-              ),
+              header,
               const SizedBox(height: 16),
               ..._needsYou(requests.asData?.value ?? const [], l10n),
-              SegmentedPills<_Segment>(
-                value: _segment,
-                onChanged: (v) => setState(() => _segment = v),
-                options: [
-                  SegmentOption(_Segment.upcoming, l10n.ticketsUpcoming),
-                  SegmentOption(_Segment.requests, l10n.ticketsRequests),
-                  SegmentOption(_Segment.past, l10n.ticketsPast),
-                ],
-              ),
+              pills,
               const SizedBox(height: 16),
               if (_segment == _Segment.requests)
                 ...requests.when(
