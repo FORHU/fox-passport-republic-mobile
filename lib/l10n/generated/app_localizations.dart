@@ -196,6 +196,12 @@ abstract class AppLocalizations {
   /// **'Mark all as read'**
   String get notificationsMarkAllRead;
 
+  /// No description provided for @notificationsUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your notifications. Try again.'**
+  String get notificationsUpdateFailed;
+
   /// No description provided for @profile.
   ///
   /// In en, this message translates to:

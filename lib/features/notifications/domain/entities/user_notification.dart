@@ -8,6 +8,7 @@ class UserNotification extends Equatable {
     required this.message,
     required this.createdAt,
     required this.isRead,
+    this.link,
   });
 
   factory UserNotification.fromJson(Map<String, dynamic> json) {
@@ -23,6 +24,7 @@ class UserNotification extends Equatable {
       message: (json['message'] ?? '').toString(),
       createdAt: createdAt.toLocal(),
       isRead: json['isRead'] == true,
+      link: _linkOf(json['metadata']),
     );
   }
 
@@ -33,6 +35,16 @@ class UserNotification extends Equatable {
   final DateTime createdAt;
   final bool isRead;
 
+  /// Where the web app sends this notification (`metadata.link`), e.g.
+  /// `/booking/<id>` or `/messages?conversationId=<id>`; null when it has none.
+  final String? link;
+
+  static String? _linkOf(Object? metadata) {
+    final link = metadata is Map ? metadata['link'] : null;
+    return link is String && link.isNotEmpty ? link : null;
+  }
+
   @override
-  List<Object?> get props => [id, type, title, message, createdAt, isRead];
+  List<Object?> get props =>
+      [id, type, title, message, createdAt, isRead, link];
 }

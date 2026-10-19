@@ -60,6 +60,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkAllRead => 'Mark all as read';
 
   @override
+  String get notificationsUpdateFailed =>
+      'We couldn\'t update your notifications. Try again.';
+
+  @override
   String get profile => 'Profile';
 
   @override
