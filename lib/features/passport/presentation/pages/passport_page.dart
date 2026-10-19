@@ -85,9 +85,14 @@ class _PassportPageState extends ConsumerState<PassportPage> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  child: _tabContent(context, l10n, passport, name, requests),
+                // Scrolls, so a tall tab never overflows the screen, and so
+                // pull-to-refresh has something to pull even on a short one.
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    child: _tabContent(context, l10n, passport, name, requests),
+                  ),
                 ),
               ),
             ],
@@ -380,22 +385,20 @@ class _SavedTab extends StatelessWidget {
           style: AppTypography.display(size: 20),
         ),
         const SizedBox(height: 16),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.passportSavedEmpty,
-                  style: AppTypography.body(color: AppColors.textMuted),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => context.push(RouteNames.republic),
-                  child: Text(l10n.passportSavedAction),
-                ),
-              ],
-            ),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.passportSavedEmpty,
+                style: AppTypography.body(color: AppColors.textMuted),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => context.push(RouteNames.republic),
+                child: Text(l10n.passportSavedAction),
+              ),
+            ],
           ),
         ),
       ],
