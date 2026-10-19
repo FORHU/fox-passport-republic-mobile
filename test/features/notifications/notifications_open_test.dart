@@ -103,7 +103,7 @@ void main() {
 
     test('the passport and the calendar open their tabs', () {
       expect(notificationRoute('/user/passport'), '/passport');
-      expect(notificationRoute('/calendar'), '/calendar');
+      expect(notificationRoute('/calendar'), '/tickets?segment=calendar');
     });
 
     test('links with no screen in the app map to nothing', () {

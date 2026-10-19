@@ -79,7 +79,8 @@ void main() {
     _phone(tester);
     var loads = 0;
     await tester.pumpWidget(
-      _app(const CalendarPage(), [
+      // Calendar is a Bookings switch now (CalendarView, no page of its own).
+      _app(Scaffold(body: CalendarView(onOpenTickets: () {})), [
         calendarEntriesProvider.overrideWith((ref, range) async {
           loads++;
           return <CalendarEntry>[];

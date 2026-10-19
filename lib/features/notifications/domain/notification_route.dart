@@ -11,7 +11,7 @@ import 'package:flutter_template/routes/route_names.dart';
 /// | `/messages?conversationId=<id>` | that chat |
 /// | `/messages`, `/messages?userId=<id>` | Messages |
 /// | `/user/passport` | Passport |
-/// | `/calendar` | Calendar |
+/// | `/calendar` | Bookings, on the Calendar switch |
 String? notificationRoute(String? link) {
   if (link == null || link.isEmpty) return null;
   final uri = Uri.tryParse(link);
@@ -32,7 +32,7 @@ String? notificationRoute(String? link) {
           ? RouteNames.passport
           : null;
     case 'calendar':
-      return RouteNames.calendar;
+      return RouteNames.ticketsCalendar;
     default:
       return null;
   }
