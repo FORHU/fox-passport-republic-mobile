@@ -159,6 +159,17 @@ void main() {
     expect(body.containsKey('endDate'), isFalse);
   });
 
+  test('a request equals another with the same choices, not a changed one', () {
+    final a =
+        ItemBookingRequest(item: _gear, start: DateTime(2030, 3, 5), days: 2);
+    final same =
+        ItemBookingRequest(item: _gear, start: DateTime(2030, 3, 5), days: 2);
+    final longer =
+        ItemBookingRequest(item: _gear, start: DateTime(2030, 3, 5), days: 3);
+    expect(a, same);
+    expect(a, isNot(longer));
+  });
+
   testWidgets('a sample item shows its price once a day is picked', (
     tester,
   ) async {
