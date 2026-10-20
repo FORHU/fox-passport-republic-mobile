@@ -10,6 +10,7 @@ class BookingSelection extends Equatable {
   const BookingSelection({
     required this.venue,
     this.date,
+    this.endDate,
     this.guests = 1,
     this.notes = '',
     this.voucherCode = '',
@@ -26,8 +27,11 @@ class BookingSelection extends Equatable {
   /// Optional items of [package] the citizen left out.
   final Set<String> excluded;
 
-  /// The day booked, as a calendar date with no time of day.
+  /// The first day booked, as a calendar date with no time of day.
   final DateTime? date;
+
+  /// The last day of a venue booked for several days; null for a single day.
+  final DateTime? endDate;
   final int guests;
   final String notes;
   final String voucherCode;
@@ -43,16 +47,38 @@ class BookingSelection extends Equatable {
 
   bool get isOverCapacity => overCapacity > 0;
 
-  /// The whole day, in the user's local time, as the web app sends it.
+  /// The last day booked: [endDate], or [date] for a single day.
+  DateTime? get lastDate => endDate ?? date;
+
+  /// How many days are booked, at least one.
+  int get days {
+    final first = date;
+    final last = lastDate;
+    if (first == null || last == null) return 1;
+    // Through UTC, so a daylight-saving change cannot skew the count.
+    final span = DateTime.utc(last.year, last.month, last.day)
+        .difference(DateTime.utc(first.year, first.month, first.day))
+        .inDays;
+    return span + 1;
+  }
+
+  /// The start of the first day, in the user's local time, as the web app
+  /// sends it.
   DateTime? get startAt =>
       date == null ? null : DateTime(date!.year, date!.month, date!.day);
 
-  DateTime? get endAt => date == null
-      ? null
-      : DateTime(date!.year, date!.month, date!.day, 23, 59, 59);
+  /// The end of the last day.
+  DateTime? get endAt {
+    final last = lastDate;
+    return last == null
+        ? null
+        : DateTime(last.year, last.month, last.day, 23, 59, 59);
+  }
 
   BookingSelection copyWith({
     DateTime? date,
+    DateTime? endDate,
+    bool clearEndDate = false,
     int? guests,
     String? notes,
     String? voucherCode,
@@ -60,6 +86,7 @@ class BookingSelection extends Equatable {
       BookingSelection(
         venue: venue,
         date: date ?? this.date,
+        endDate: clearEndDate ? null : endDate ?? this.endDate,
         guests: guests ?? this.guests,
         notes: notes ?? this.notes,
         voucherCode: voucherCode ?? this.voucherCode,
@@ -69,7 +96,7 @@ class BookingSelection extends Equatable {
 
   @override
   List<Object?> get props =>
-      [venue, date, guests, notes, voucherCode, package, excluded];
+      [venue, date, endDate, guests, notes, voucherCode, package, excluded];
 }
 
 /// The price of a booking as the API works it out. The app never computes the

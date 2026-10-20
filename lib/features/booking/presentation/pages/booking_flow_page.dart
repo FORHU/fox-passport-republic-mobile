@@ -7,6 +7,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/booking/data/booking_repository.dart';
 import 'package:flutter_template/features/booking/domain/booking_models.dart';
+import 'package:flutter_template/features/booking/presentation/widgets/booking_dates.dart';
 import 'package:flutter_template/features/booking/presentation/widgets/booking_result_views.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -23,7 +24,6 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 enum _Step { dates, guests, review, pay, done }
 
@@ -121,6 +121,40 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
     } finally {
       if (mounted) setState(() => _priceLoading = false);
     }
+  }
+
+  /// Most days one venue booking can run, as in the gear flow.
+  static const _maxDays = 60;
+
+  /// The first tap picks the day. A later day after it extends the booking up
+  /// to that day, if every day between is free; anything else starts over
+  /// from the tapped day. A package is one evening, so it only takes a day.
+  void _pickDay(DateTime day) {
+    final start = _selection.date;
+    final canExtend = _selection.package == null &&
+        start != null &&
+        _selection.endDate == null &&
+        day.isAfter(start) &&
+        day.difference(start).inDays < _maxDays &&
+        !_hasUnavailableDay(start, day);
+    setState(() {
+      _selection = canExtend
+          ? _selection.copyWith(endDate: day)
+          : _selection.copyWith(date: day, clearEndDate: true);
+    });
+  }
+
+  /// Whether any day from [from] through [to] is already booked.
+  bool _hasUnavailableDay(DateTime from, DateTime to) {
+    final taken = {
+      for (final d in _unavailable) DateTime(d.year, d.month, d.day),
+    };
+    for (var d = DateTime(from.year, from.month, from.day);
+        !d.isAfter(to);
+        d = DateTime(d.year, d.month, d.day + 1)) {
+      if (taken.contains(d)) return true;
+    }
+    return false;
   }
 
   void _go(_Step step) {
@@ -301,11 +335,20 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
               month: _month,
               today: _today,
               selected: _selection.date,
+              selectedEnd: _selection.endDate,
               unavailable: _unavailable,
-              onSelect: (d) =>
-                  setState(() => _selection = _selection.copyWith(date: d)),
+              onSelect: _pickDay,
               onMonthChanged: (m) => setState(() => _month = m),
             ),
+            // A package is one evening, as on the web; only a venue can run
+            // for several days.
+            if (_selection.package == null) ...[
+              const SizedBox(height: 12),
+              Text(
+                l10n.bookPickRangeHint,
+                style: AppTypography.body(color: AppColors.textMuted),
+              ),
+            ],
           ],
         ),
       _Step.guests => ListView(
@@ -351,7 +394,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
           total: _pricing?.totalAmount ?? 0,
           currency: _selection.venue.currency,
           venue: _selection.venue.title,
-          date: _selection.date,
+          when: bookingDatesLabel(_selection, locale, pattern: 'd MMM'),
           locale: locale,
           formatter: ref.watch(moneyFormatterProvider),
           onTap: _pay,
@@ -363,7 +406,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
   Widget _bottomBar(AppLocalizations l10n, String locale) {
     final date = _selection.date;
     final shortDate =
-        date == null ? null : DateFormat('EEE d MMM', locale).format(date);
+        date == null ? null : bookingDatesLabel(_selection, locale);
 
     Widget wide(String label, VoidCallback? onTap, {bool loading = false}) =>
         _PillButton(label: label, onTap: onTap, loading: loading, wide: true);
@@ -371,7 +414,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
     final body = switch (_step) {
       _Step.dates => _SummaryRow(
           title: shortDate ?? l10n.bookPickDate,
-          subtitle: date == null ? null : l10n.bookDayCount(1),
+          subtitle: date == null ? null : l10n.bookDayCount(_selection.days),
           button: _PillButton(
             label: l10n.bookNext,
             onTap: date == null ? null : () => _go(_Step.guests),
@@ -840,7 +883,6 @@ class _Review extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final venue = selection.venue;
-    final date = selection.date;
     final price = pricing;
     final currency = venue.currency;
     String money(num v) => formatter.format(v, currency, locale: locale);
@@ -878,9 +920,11 @@ class _Review extends StatelessWidget {
             children: [
               _EditRow(
                 label: l10n.bookDate,
-                value: date == null
-                    ? ''
-                    : DateFormat('EEE d MMM y', locale).format(date),
+                value: bookingDatesLabel(
+                  selection,
+                  locale,
+                  pattern: 'EEE d MMM y',
+                ),
                 onEdit: onEditDate,
               ),
               const SizedBox(height: 4),
@@ -1099,7 +1143,7 @@ class _Pay extends StatelessWidget {
     required this.total,
     required this.currency,
     required this.venue,
-    required this.date,
+    required this.when,
     required this.locale,
     required this.formatter,
     required this.onTap,
@@ -1109,14 +1153,15 @@ class _Pay extends StatelessWidget {
   final num total;
   final String currency;
   final String venue;
-  final DateTime? date;
+
+  /// The booked day or days, already formatted; empty before a day is chosen.
+  final String when;
   final String locale;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final when = date == null ? '' : DateFormat('d MMM', locale).format(date!);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),

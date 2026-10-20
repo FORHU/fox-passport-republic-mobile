@@ -14,6 +14,7 @@ class BookingCalendar extends StatelessWidget {
     required this.unavailable,
     required this.onSelect,
     required this.onMonthChanged,
+    this.selectedEnd,
     this.monthsAhead = 11,
     super.key,
   });
@@ -22,6 +23,10 @@ class BookingCalendar extends StatelessWidget {
   final DateTime month;
   final DateTime today;
   final DateTime? selected;
+
+  /// The last day of a chosen range; the days from [selected] to here are
+  /// tinted. Null for a single day.
+  final DateTime? selectedEnd;
   final Set<DateTime> unavailable;
   final ValueChanged<DateTime> onSelect;
   final ValueChanged<DateTime> onMonthChanged;
@@ -135,7 +140,13 @@ class BookingCalendar extends StatelessWidget {
     final isPast = date.isBefore(_day(today));
     final isTaken = taken.contains(date);
     final enabled = !isPast && !isTaken;
-    final isSelected = selected != null && _day(selected!) == date;
+    final start = selected == null ? null : _day(selected!);
+    final end = selectedEnd == null ? null : _day(selectedEnd!);
+    final isSelected = date == start || date == end;
+    final inRange = start != null &&
+        end != null &&
+        date.isAfter(start) &&
+        date.isBefore(end);
 
     return Semantics(
       button: true,
@@ -154,7 +165,11 @@ class BookingCalendar extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected ? AppColors.accent : Colors.transparent,
+                color: isSelected
+                    ? AppColors.accent
+                    : inRange
+                        ? AppColors.accent.withValues(alpha: 0.25)
+                        : Colors.transparent,
               ),
               child: Text(
                 '$dayOfMonth',

@@ -2806,6 +2806,12 @@ abstract class AppLocalizations {
   /// **'Pick a date'**
   String get bookPickDate;
 
+  /// No description provided for @bookPickRangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a second day to book several days in a row.'**
+  String get bookPickRangeHint;
+
   /// No description provided for @bookGuestsTitle.
   ///
   /// In en, this message translates to:

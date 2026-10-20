@@ -58,6 +58,38 @@ void main() {
       final s = BookingSelection(venue: _venue, date: DateTime(2026, 10, 17));
       expect(s.startAt, DateTime(2026, 10, 17));
       expect(s.endAt, DateTime(2026, 10, 17, 23, 59, 59));
+      expect(s.days, 1);
+    });
+
+    test('a range runs from the start of the first day to the end of the last',
+        () {
+      final s = BookingSelection(
+        venue: _venue,
+        date: DateTime(2026, 10, 17),
+        endDate: DateTime(2026, 10, 19),
+      );
+      expect(s.startAt, DateTime(2026, 10, 17));
+      expect(s.endAt, DateTime(2026, 10, 19, 23, 59, 59));
+      expect(s.days, 3);
+    });
+
+    test('counts days across a month end and a clock change', () {
+      final s = BookingSelection(
+        venue: _venue,
+        date: DateTime(2026, 10, 30),
+        endDate: DateTime(2026, 11, 2),
+      );
+      expect(s.days, 4);
+    });
+
+    test('clearEndDate goes back to a single day', () {
+      final s = BookingSelection(
+        venue: _venue,
+        date: DateTime(2026, 10, 17),
+        endDate: DateTime(2026, 10, 19),
+      ).copyWith(clearEndDate: true);
+      expect(s.endDate, isNull);
+      expect(s.days, 1);
     });
   });
 
@@ -114,6 +146,49 @@ void main() {
     expect(find.text('Pay ₱26,250'), findsOneWidget);
     expect(find.text('Or pay by card'.toUpperCase()), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a second day books several days, priced per day', (
+    tester,
+  ) async {
+    _bigScreen(tester);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('20').first);
+    await tester.pumpAndSettle();
+    expect(find.text('1 day'), findsOneWidget);
+
+    await tester.tap(find.text('22').first);
+    await tester.pumpAndSettle();
+    expect(find.text('3 days'), findsOneWidget);
+
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+
+    // Three days of the 25,000 rate, plus the 5% sample fee.
+    expect(find.text('₱75,000'), findsWidgets);
+    expect(find.text('₱78,750'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a range cannot jump over a booked day, it starts again', (
+    tester,
+  ) async {
+    _bigScreen(tester);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+
+    // The 24th and 25th are booked in the sample calendar.
+    await tester.tap(find.text('20').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('26').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 day'), findsOneWidget);
+    expect(find.text('3 days'), findsNothing);
   });
 
   testWidgets('going over capacity warns and ends in a request, not a charge', (

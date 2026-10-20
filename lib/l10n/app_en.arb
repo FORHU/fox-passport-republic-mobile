@@ -498,6 +498,7 @@
   "@bookDayCount": {"placeholders": {"count": {"type": "int"}}},
   "bookNext": "Next",
   "bookPickDate": "Pick a date",
+  "bookPickRangeHint": "Tap a second day to book several days in a row.",
   "bookGuestsTitle": "How many guests?",
   "bookFitsUpTo": "Fits up to {count}",
   "@bookFitsUpTo": {"placeholders": {"count": {"type": "int"}}},

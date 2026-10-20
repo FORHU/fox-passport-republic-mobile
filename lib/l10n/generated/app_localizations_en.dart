@@ -1493,6 +1493,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookPickDate => 'Pick a date';
 
   @override
+  String get bookPickRangeHint =>
+      'Tap a second day to book several days in a row.';
+
+  @override
   String get bookGuestsTitle => 'How many guests?';
 
   @override

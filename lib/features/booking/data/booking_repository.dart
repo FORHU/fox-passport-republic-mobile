@@ -86,6 +86,7 @@ class BookingRepository {
         rate: venue.price ?? 0,
         guests: s.guests,
         capacity: venue.capacity,
+        days: s.days,
       );
     }
     final body = await _api.get(
@@ -100,7 +101,7 @@ class BookingRepository {
     );
     final data = body is Map ? body['data'] : null;
     if (data is! Map) throw StateError('No price in the response');
-    return VenuePricing.fromJson(data.cast<String, dynamic>());
+    return VenuePricing.fromJson(data.cast<String, dynamic>(), days: s.days);
   }
 
   /// Creates the booking. When [VenuePricing.needsApproval] it is a request and
