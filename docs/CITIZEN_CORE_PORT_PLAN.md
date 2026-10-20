@@ -210,4 +210,3 @@ Each milestone ends with `flutter analyze` clean and tests passing.
    `foxpassport://` scheme itself does **not** go in those consoles.
 4. **Identifiers:** the Android `applicationId` and iOS bundle ID are still the
    template's `com.example.*`. Rename before registering OAuth clients.
-- [ ] M10 Messages (partial: inbox, text chat, requests, and tab connected; realtime and advanced chat actions remain)
