@@ -45,11 +45,11 @@ class MainLayout extends ConsumerWidget {
       ),
       _Destination(
         item: NavBarItem(
-          label: context.l10n.search,
-          icon: Icons.search_rounded,
-          activeIcon: Icons.search_rounded,
+          label: context.l10n.republicTitle,
+          icon: Icons.groups_outlined,
+          activeIcon: Icons.groups_rounded,
         ),
-        route: RouteNames.search,
+        route: RouteNames.republic,
       ),
       _Destination(
         item: NavBarItem(

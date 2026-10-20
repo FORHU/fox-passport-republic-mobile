@@ -222,7 +222,7 @@ class HomePage extends ConsumerWidget {
                 ),
               ),
               RepublicTeaser(
-                onOpen: () => unawaited(context.push(RouteNames.republic)),
+                onOpen: () => context.go(RouteNames.republic),
               ),
               if (oneThing.isNotEmpty) ...[
                 const SizedBox(height: 24),
