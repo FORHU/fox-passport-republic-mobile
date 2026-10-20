@@ -1760,6 +1760,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePlanNew => 'Plan something new';
 
   @override
+  String get homeSearchHint => 'Search venues, Foxers and events';
+
+  @override
+  String get homeStartPlanning => 'Start planning';
+
+  @override
+  String get homeContinuePlanning => 'Continue planning';
+
+  @override
   String get homeBookOne => 'Or book just one thing';
 
   @override

@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
+import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
@@ -87,39 +87,22 @@ class HomePage extends ConsumerWidget {
               // An upcoming booking, if there is one. Failing or empty means
               // no strip and no error.
               if (ticket != null) _NextNight(ticket: ticket),
-              if (last != null) ...[
-                const SizedBox(height: 16),
-                _ContinueCard(
-                  occasion: last,
-                  count: categories
-                      ?.where((c) => Occasion.fromName(c.name) == last)
-                      .firstOrNull
-                      ?.count,
-                  onTap: () => openOccasion(last),
-                ),
-              ],
+              const SizedBox(height: 16),
+              _HomeSearch(onTap: () => context.go(RouteNames.search)),
               const SizedBox(height: 22),
               Text(
                 last == null ? l10n.homePlanning : l10n.homePlanNew,
                 style: AppTypography.display(size: 20),
               ),
               const SizedBox(height: 12),
-              _OccasionGrid(
+              OccasionShowcase(
                 tiles: tiles,
                 more: moreCategories(categories),
+                city: area.city,
+                continuing: last,
                 onOccasion: openOccasion,
                 onAll: () => unawaited(context.push(RouteNames.allCategories)),
               ),
-              if (oneThing.isNotEmpty) ...[
-                const SizedBox(height: 24),
-                Text(l10n.homeBookOne, style: AppTypography.display(size: 20)),
-                const SizedBox(height: 12),
-                _OneThingRow(
-                  items: oneThing,
-                  onTap: (item) =>
-                      context.go(RouteNames.searchFor(item.kind.name)),
-                ),
-              ],
               ...soon.when(
                 loading: () => [
                   const SizedBox(height: 24),
@@ -140,7 +123,68 @@ class HomePage extends ConsumerWidget {
                         _SoonRow(items: page.items),
                       ],
               ),
+              if (oneThing.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                Text(l10n.homeBookOne, style: AppTypography.display(size: 20)),
+                const SizedBox(height: 12),
+                _OneThingRow(
+                  items: oneThing,
+                  onTap: (item) =>
+                      context.go(RouteNames.searchFor(item.kind.name)),
+                ),
+              ],
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A search bar that opens the Search tab: the app's main job, one tap from
+/// the first screen.
+class _HomeSearch extends StatelessWidget {
+  const _HomeSearch({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final hint = context.l10n.homeSearchHint;
+    return Semantics(
+      button: true,
+      label: hint,
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brPill,
+        child: InkWell(
+          borderRadius: AppRadius.brPill,
+          onTap: onTap,
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.brPill,
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    hint,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.body(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -349,220 +393,6 @@ class _NextNight extends StatelessWidget {
 }
 
 /// "Continue: birthday": what they last opened, one tap back to it.
-class _ContinueCard extends StatelessWidget {
-  const _ContinueCard({
-    required this.occasion,
-    required this.count,
-    required this.onTap,
-  });
-
-  final Occasion occasion;
-  final int? count;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final style = occasion.style;
-    return Material(
-      color: style.background,
-      borderRadius: AppRadius.brMd,
-      child: InkWell(
-        borderRadius: AppRadius.brMd,
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.brMd,
-            border: Border.all(color: style.border),
-          ),
-          child: Row(
-            children: [
-              Icon(occasion.icon, color: style.icon),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.homeContinue(
-                        occasionLabel(l10n, occasion).toLowerCase(),
-                      ),
-                      style: AppTypography.display(size: 15),
-                    ),
-                    if (count != null)
-                      Text(
-                        l10n.homeIdeas(count!),
-                        style: AppTypography.body(
-                          size: 12,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textSecondary,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The 3 x 2 grid: the occasions, then the dashed "All" tile.
-class _OccasionGrid extends StatelessWidget {
-  const _OccasionGrid({
-    required this.tiles,
-    required this.more,
-    required this.onOccasion,
-    required this.onAll,
-  });
-
-  final List<OccasionTileData> tiles;
-  final int more;
-  final ValueChanged<Occasion> onOccasion;
-  final VoidCallback onAll;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final cells = <Widget>[
-      for (final t in tiles)
-        _OccasionTile(
-          label: occasionLabel(l10n, t.occasion),
-          sub: t.count == null ? null : l10n.homeIdeas(t.count!),
-          style: t.occasion.style,
-          icon: t.occasion.icon,
-          onTap: () => onOccasion(t.occasion),
-        ),
-      _OccasionTile(
-        label: l10n.occasionAll,
-        sub: more > 0 ? l10n.homeMoreCount(more) : null,
-        style: OccasionColors.other,
-        icon: Icons.grid_view_rounded,
-        dashed: true,
-        onTap: onAll,
-      ),
-    ];
-    return GridView.count(
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 0.98,
-      children: cells,
-    );
-  }
-}
-
-class _OccasionTile extends StatelessWidget {
-  const _OccasionTile({
-    required this.label,
-    required this.style,
-    required this.icon,
-    required this.onTap,
-    this.sub,
-    this.dashed = false,
-  });
-
-  final String label;
-  final String? sub;
-  final OccasionStyle style;
-  final IconData icon;
-  final bool dashed;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: sub == null ? label : '$label, $sub',
-      child: Material(
-        color: dashed ? Colors.transparent : style.background,
-        borderRadius: AppRadius.brMd,
-        child: InkWell(
-          borderRadius: AppRadius.brMd,
-          onTap: onTap,
-          child: CustomPaint(
-            painter: dashed ? _DashedBorder(style.border) : null,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: dashed
-                  ? null
-                  : BoxDecoration(
-                      borderRadius: AppRadius.brMd,
-                      border: Border.all(color: style.border),
-                    ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(icon, color: style.icon, size: 26),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.display(size: 15),
-                      ),
-                      if (sub != null)
-                        Text(
-                          sub!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.body(
-                            size: 12,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DashedBorder extends CustomPainter {
-  const _DashedBorder(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    final path = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Offset.zero & size,
-          const Radius.circular(12),
-        ),
-      );
-    for (final metric in path.computeMetrics()) {
-      var distance = 0.0;
-      while (distance < metric.length) {
-        canvas.drawPath(metric.extractPath(distance, distance + 6), paint);
-        distance += 10;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorder old) => old.color != color;
-}
-
 class _OneThingRow extends StatelessWidget {
   const _OneThingRow({required this.items, required this.onTap});
 

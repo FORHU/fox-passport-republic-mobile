@@ -3304,6 +3304,24 @@ abstract class AppLocalizations {
   /// **'Plan something new'**
   String get homePlanNew;
 
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search venues, Foxers and events'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeStartPlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Start planning'**
+  String get homeStartPlanning;
+
+  /// No description provided for @homeContinuePlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue planning'**
+  String get homeContinuePlanning;
+
   /// No description provided for @homeBookOne.
   ///
   /// In en, this message translates to:
