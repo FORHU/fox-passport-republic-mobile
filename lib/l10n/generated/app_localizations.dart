@@ -2290,6 +2290,180 @@ abstract class AppLocalizations {
   /// **'Currency'**
   String get settingsCurrency;
 
+  /// No description provided for @settingsPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get settingsPreferences;
+
+  /// No description provided for @settingsSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsSecurity;
+
+  /// No description provided for @settingsEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get settingsEditProfile;
+
+  /// No description provided for @settingsBlockedUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked users'**
+  String get settingsBlockedUsers;
+
+  /// No description provided for @settingsBlockedUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'People who can\'t send you a follow request'**
+  String get settingsBlockedUsersHint;
+
+  /// No description provided for @settingsChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get settingsChangePassword;
+
+  /// No description provided for @settingsChangePasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a new password to keep your account safe'**
+  String get settingsChangePasswordHint;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @settingsDeleteAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently remove your account'**
+  String get settingsDeleteAccountHint;
+
+  /// No description provided for @blockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked users'**
+  String get blockedTitle;
+
+  /// No description provided for @blockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked people can\'t send you a new follow request. You can unblock anyone at any time.'**
+  String get blockedBody;
+
+  /// No description provided for @blockedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t blocked anyone.'**
+  String get blockedEmpty;
+
+  /// No description provided for @blockedUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get blockedUnblock;
+
+  /// No description provided for @blockedUnblocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was unblocked.'**
+  String blockedUnblocked(String name);
+
+  /// No description provided for @blockedUnblockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t unblock them. Try again.'**
+  String get blockedUnblockFailed;
+
+  /// No description provided for @passwordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get passwordTitle;
+
+  /// No description provided for @passwordCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get passwordCurrent;
+
+  /// No description provided for @passwordNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get passwordNew;
+
+  /// No description provided for @passwordConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get passwordConfirm;
+
+  /// No description provided for @passwordSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get passwordSave;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password was changed.'**
+  String get passwordChanged;
+
+  /// No description provided for @passwordChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t change your password. Try again.'**
+  String get passwordChangeFailed;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is permanent. All your data, including bookings, badges, stamps and listings, will be erased. Cancel any active bookings first.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password'**
+  String get deleteAccountPassword;
+
+  /// No description provided for @deleteAccountType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountType;
+
+  /// No description provided for @deleteAccountMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountMismatch;
+
+  /// No description provided for @deleteAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountAction;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t delete your account. Try again.'**
+  String get deleteAccountFailed;
+
   /// No description provided for @currencyTitle.
   ///
   /// In en, this message translates to:
@@ -4120,11 +4294,11 @@ abstract class AppLocalizations {
   /// **'We couldn\'t sign you out. Try again.'**
   String get signOutFailed;
 
-  /// No description provided for @profileEditName.
+  /// No description provided for @profileEdit.
   ///
   /// In en, this message translates to:
-  /// **'Edit name'**
-  String get profileEditName;
+  /// **'Edit profile'**
+  String get profileEdit;
 
   /// No description provided for @profileNameLabel.
   ///
@@ -4132,23 +4306,65 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get profileNameLabel;
 
+  /// No description provided for @profileUsernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get profileUsernameLabel;
+
+  /// No description provided for @profilePhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get profilePhoneLabel;
+
+  /// No description provided for @profilePrivateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Private profile'**
+  String get profilePrivateTitle;
+
+  /// No description provided for @profilePrivateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'New followers must be approved by you. Your followers and following lists are hidden from everyone else.'**
+  String get profilePrivateBody;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photo was updated.'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @profilePhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update your photo. Try again.'**
+  String get profilePhotoFailed;
+
   /// No description provided for @profileSave.
   ///
   /// In en, this message translates to:
-  /// **'Save'**
+  /// **'Save changes'**
   String get profileSave;
 
-  /// No description provided for @profileNameUpdated.
+  /// No description provided for @profileUpdated.
   ///
   /// In en, this message translates to:
-  /// **'Your name was updated.'**
-  String get profileNameUpdated;
+  /// **'Your profile was updated.'**
+  String get profileUpdated;
 
-  /// No description provided for @profileNameUpdateFailed.
+  /// No description provided for @profileUpdateFailed.
   ///
   /// In en, this message translates to:
-  /// **'We couldn\'t update your name. Try again.'**
-  String get profileNameUpdateFailed;
+  /// **'We couldn\'t update your profile. Try again.'**
+  String get profileUpdateFailed;
 
   /// No description provided for @profileLoadFailed.
   ///

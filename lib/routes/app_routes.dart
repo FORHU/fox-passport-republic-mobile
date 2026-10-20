@@ -7,6 +7,7 @@ import 'package:flutter_template/features/auth/presentation/pages/login_page.dar
 import 'package:flutter_template/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
+import 'package:flutter_template/features/blocks/presentation/pages/blocked_users_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/item_booking_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
@@ -23,10 +24,12 @@ import 'package:flutter_template/features/occasion/presentation/pages/all_catego
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
+import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
@@ -174,6 +177,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.settings,
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: RouteNames.changePassword,
+        builder: (context, state) => const ChangePasswordPage(),
+      ),
+      GoRoute(
+        path: RouteNames.blockedUsers,
+        builder: (context, state) => const BlockedUsersPage(),
+      ),
+      GoRoute(
+        path: RouteNames.profileEdit,
+        builder: (context, state) => const EditProfilePage(),
       ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.

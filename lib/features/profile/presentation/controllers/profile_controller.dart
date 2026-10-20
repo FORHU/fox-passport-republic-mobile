@@ -4,11 +4,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
+import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:flutter_template/features/profile/domain/usecases/get_profile_usecase.dart';
-import 'package:flutter_template/features/profile/domain/usecases/update_profile_name_usecase.dart';
 
 // --- Dependency wiring (Riverpod providers) ---
 
@@ -19,10 +20,6 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 
 final getProfileUseCaseProvider = Provider<GetProfileUseCase>(
   (ref) => GetProfileUseCase(ref.watch(profileRepositoryProvider)),
-);
-
-final updateProfileNameUseCaseProvider = Provider<UpdateProfileNameUseCase>(
-  (ref) => UpdateProfileNameUseCase(ref.watch(profileRepositoryProvider)),
 );
 
 // --- State ---
@@ -61,14 +58,54 @@ class ProfileController extends Notifier<ProfileState> {
     return const ProfileState(isLoading: true);
   }
 
-  /// Saves a new display name. Returns null on success, else the message to
-  /// show. On success the session user is renamed too, so Settings and the
-  /// Passport show the new name at once.
-  Future<String?> updateName(String name) async {
-    final result = await ref.read(updateProfileNameUseCaseProvider)(name);
+  /// Saves the changed parts of the profile. Returns null on success, else
+  /// the message to show. On success the session user takes the new name,
+  /// username and photo too, so Settings and the Passport show them at once.
+  Future<String?> updateProfile(ProfileUpdate update) async {
+    final result =
+        await ref.read(profileRepositoryProvider).updateProfile(update);
     return result.fold((failure) => failure.message, (_) {
-      ref.read(authControllerProvider.notifier).setSessionName(name.trim());
+      ref.read(authControllerProvider.notifier).setSessionProfile(
+            name: update.name?.trim(),
+            username: update.username?.trim(),
+            imageUrl: update.imageUrl,
+          );
       unawaited(fetchProfile());
+      return null;
+    });
+  }
+
+  /// Uploads a new profile photo and makes it the profile's. Returns null on
+  /// success, else the message to show.
+  Future<String?> changePhoto(PickedPhoto photo) async {
+    final uploaded =
+        await ref.read(profileRepositoryProvider).uploadPhoto(photo);
+    final url = uploaded.fold<String?>((_) => null, (url) => url);
+    if (url == null) return uploaded.fold((f) => f.message, (_) => '');
+    return updateProfile(ProfileUpdate(imageUrl: url));
+  }
+
+  /// Returns null on success, else the message to show.
+  Future<String?> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final result = await ref.read(profileRepositoryProvider).changePassword(
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        );
+    return result.fold((failure) => failure.message, (_) => null);
+  }
+
+  /// Deletes the account and ends the session. Returns null on success, else
+  /// the message to show.
+  Future<String?> deleteAccount(String password) async {
+    final result =
+        await ref.read(profileRepositoryProvider).deleteAccount(password);
+    return result.fold((failure) => failure.message, (_) {
+      // The account is gone, so there is no session to sign out of on the
+      // server: clear it here and the router sends them to the start.
+      unawaited(ref.read(authControllerProvider.notifier).onUnauthenticated());
       return null;
     });
   }

@@ -71,6 +71,10 @@ class RouteNames {
   static const String passport = '/passport';
   static const String profile = '/profile';
 
+  /// Edit the profile: photo, name, username, phone, privacy. Pushed from
+  /// Profile and Settings.
+  static const String profileEdit = '/profile/edit';
+
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
 
@@ -79,6 +83,12 @@ class RouteNames {
 
   /// Settings: location, account, sign out. Pushed from Passport.
   static const String settings = '/settings';
+
+  /// Change the password. Pushed from Settings.
+  static const String changePassword = '/settings/password';
+
+  /// The people you blocked, with a way to unblock. Pushed from Settings.
+  static const String blockedUsers = '/settings/blocked';
 
   /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.
   static const String foxer = '/foxer';

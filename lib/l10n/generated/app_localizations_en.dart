@@ -1187,6 +1187,101 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsCurrency => 'Currency';
 
   @override
+  String get settingsPreferences => 'Preferences';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsEditProfile => 'Edit profile';
+
+  @override
+  String get settingsBlockedUsers => 'Blocked users';
+
+  @override
+  String get settingsBlockedUsersHint =>
+      'People who can\'t send you a follow request';
+
+  @override
+  String get settingsChangePassword => 'Change password';
+
+  @override
+  String get settingsChangePasswordHint =>
+      'Use a new password to keep your account safe';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountHint => 'Permanently remove your account';
+
+  @override
+  String get blockedTitle => 'Blocked users';
+
+  @override
+  String get blockedBody =>
+      'Blocked people can\'t send you a new follow request. You can unblock anyone at any time.';
+
+  @override
+  String get blockedEmpty => 'You haven\'t blocked anyone.';
+
+  @override
+  String get blockedUnblock => 'Unblock';
+
+  @override
+  String blockedUnblocked(String name) {
+    return '$name was unblocked.';
+  }
+
+  @override
+  String get blockedUnblockFailed => 'We couldn\'t unblock them. Try again.';
+
+  @override
+  String get passwordTitle => 'Change password';
+
+  @override
+  String get passwordCurrent => 'Current password';
+
+  @override
+  String get passwordNew => 'New password';
+
+  @override
+  String get passwordConfirm => 'Confirm new password';
+
+  @override
+  String get passwordSave => 'Update password';
+
+  @override
+  String get passwordChanged => 'Your password was changed.';
+
+  @override
+  String get passwordChangeFailed =>
+      'We couldn\'t change your password. Try again.';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'This is permanent. All your data, including bookings, badges, stamps and listings, will be erased. Cancel any active bookings first.';
+
+  @override
+  String get deleteAccountPassword => 'Confirm your password';
+
+  @override
+  String get deleteAccountType => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountMismatch => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountAction => 'Delete my account';
+
+  @override
+  String get deleteAccountFailed =>
+      'We couldn\'t delete your account. Try again.';
+
+  @override
   String get currencyTitle => 'Show prices in';
 
   @override
@@ -2219,20 +2314,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutFailed => 'We couldn\'t sign you out. Try again.';
 
   @override
-  String get profileEditName => 'Edit name';
+  String get profileEdit => 'Edit profile';
 
   @override
   String get profileNameLabel => 'Name';
 
   @override
-  String get profileSave => 'Save';
+  String get profileUsernameLabel => 'Username';
 
   @override
-  String get profileNameUpdated => 'Your name was updated.';
+  String get profilePhoneLabel => 'Phone number';
 
   @override
-  String get profileNameUpdateFailed =>
-      'We couldn\'t update your name. Try again.';
+  String get profilePrivateTitle => 'Private profile';
+
+  @override
+  String get profilePrivateBody =>
+      'New followers must be approved by you. Your followers and following lists are hidden from everyone else.';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profilePhotoUpdated => 'Your photo was updated.';
+
+  @override
+  String get profilePhotoFailed => 'We couldn\'t update your photo. Try again.';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileUpdated => 'Your profile was updated.';
+
+  @override
+  String get profileUpdateFailed =>
+      'We couldn\'t update your profile. Try again.';
 
   @override
   String get profileLoadFailed =>
