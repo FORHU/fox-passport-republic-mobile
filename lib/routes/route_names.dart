@@ -21,6 +21,9 @@ class RouteNames {
 
   /// Bottom-nav tabs.
   static const String home = '/';
+
+  /// Search lives inside the Home tab (opened from its search bar), not as a
+  /// tab of its own.
   static const String search = '/search';
 
   /// `/search?kind=venues` — opens Search on one of its switches.
@@ -53,7 +56,7 @@ class RouteNames {
   /// order, because the tab index is the branch index.
   static const List<String> shellTabs = [
     home,
-    search,
+    republic,
     tickets,
     messages,
     passport,

@@ -296,7 +296,7 @@ class _Body extends StatelessWidget {
             title: Text(l10n.republicTitle),
             subtitle: Text(l10n.republicRowBody),
             trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push(RouteNames.republic),
+            onTap: () => context.go(RouteNames.republic),
           ),
         ),
       ],
@@ -395,7 +395,7 @@ class _SavedTab extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () => context.push(RouteNames.republic),
+                onPressed: () => context.go(RouteNames.republic),
                 child: Text(l10n.passportSavedAction),
               ),
             ],
