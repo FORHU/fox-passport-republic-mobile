@@ -152,7 +152,10 @@ void main() {
 
     expect(find.text('averie'), findsOneWidget);
     expect(find.text('OUTDOOR'), findsOneWidget);
-    expect(find.text('Baguio, Benguet'), findsOneWidget);
+    // In the header, and again under the Location heading, as on the web.
+    expect(find.text('Baguio, Benguet'), findsNWidgets(2));
+    expect(find.text('Location'), findsOneWidget);
+    expect(find.text('Exact location provided after booking'), findsOneWidget);
     expect(find.text('Up to 150 guests'), findsOneWidget);
     expect(find.text('LED Screen'), findsOneWidget);
     expect(find.text('Air conditioning'), findsOneWidget);

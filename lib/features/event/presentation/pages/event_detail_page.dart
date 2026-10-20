@@ -224,12 +224,10 @@ class _Loaded extends ConsumerWidget {
                       ),
                     ],
                     LocationCard(
-                      lines: [place],
+                      title: l10n.whereYoullBe,
+                      place: place,
                       lat: package.lat,
                       lng: package.lng,
-                      query: [package.name, place]
-                          .where((p) => p.isNotEmpty)
-                          .join(', '),
                     ),
                     if (package.items.isNotEmpty) ...[
                       const SizedBox(height: 24),

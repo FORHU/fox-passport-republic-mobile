@@ -124,10 +124,8 @@ class _ScheduledEventDetailPageState
             ),
           _EventFact(label: l10n.searchEventPrice, value: price ?? '—'),
           LocationCard(
-            lines: [_item.city ?? ''],
-            query: [_item.title, _item.city ?? '']
-                .where((p) => p.isNotEmpty)
-                .join(', '),
+            title: l10n.whereYoullBe,
+            place: _item.city ?? '',
           ),
         ],
       ),
