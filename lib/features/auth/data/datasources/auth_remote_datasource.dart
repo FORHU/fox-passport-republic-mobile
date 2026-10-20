@@ -80,20 +80,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return UserModel.fromJson((data as Map).cast<String, dynamic>());
   }
 
-  /// Native flow: a Google ID token / Facebook access token from the SDK.
-  /// Response is `{ data: { accessToken, refreshToken, isNewUser, user } }`,
-  /// which [UserModel.fromJson] already unwraps.
+  /// Native flow: a Google ID token / Facebook access token from the SDK,
+  /// signed in through Better Auth. Response is `{ token, user }`, which
+  /// [UserModel.fromJson] already reads.
   @override
   Future<UserModel> loginWithSocialToken(
     SocialProvider provider,
     String token,
   ) async {
-    final data = switch (provider) {
-      SocialProvider.google =>
-        await _api.post(ApiEndpoints.googleMobile, {'idToken': token}),
-      SocialProvider.facebook =>
-        await _api.post(ApiEndpoints.facebookMobile, {'accessToken': token}),
-    };
+    final data = await _api.post(ApiEndpoints.socialSignIn, {
+      'provider': provider.name,
+      // Facebook's is an access token, which Better Auth checks with
+      // Facebook's debug_token; it reads it from `accessToken`.
+      'idToken': {
+        'token': token,
+        if (provider == SocialProvider.facebook) 'accessToken': token,
+      },
+    });
     return UserModel.fromJson((data as Map).cast<String, dynamic>());
   }
 
@@ -115,7 +118,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> verifyEmail(String email, String otpCode) async {
     await _api.post(ApiEndpoints.verifyEmail, {
       'email': email.trim(),
-      'otpCode': otpCode.trim(),
+      'otp': otpCode.trim(),
     });
   }
 
@@ -123,6 +126,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> resendVerificationOtp(String email) async {
     await _api.post(ApiEndpoints.resendVerificationOtp, {
       'email': email.trim(),
+      'type': 'email-verification',
     });
   }
 
@@ -139,8 +143,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   ) async {
     await _api.post(ApiEndpoints.resetPassword, {
       'email': email.trim(),
-      'otpCode': otpCode.trim(),
-      'newPassword': newPassword,
+      'otp': otpCode.trim(),
+      'password': newPassword,
     });
   }
 }
