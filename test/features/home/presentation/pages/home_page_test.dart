@@ -6,7 +6,10 @@ import 'package:flutter_template/features/home/presentation/pages/home_page.dart
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
+import 'package:flutter_template/features/republic/data/feed_controller.dart';
+import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
@@ -19,6 +22,16 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockStorageService extends Mock implements StorageService {}
+
+/// A Republic feed that already has its posts.
+class _FakeFeed extends FeedController {
+  _FakeFeed(super.tab, this._posts);
+
+  final List<Post> _posts;
+
+  @override
+  Future<FeedState> build() async => FeedState(posts: _posts);
+}
 
 /// A person who last opened one occasion.
 class _FixedLast extends LastOccasion {
@@ -58,6 +71,10 @@ Widget _app({
   List<CatalogItem> packages = const [],
   List<CatalogItem> elsewhere = const [],
   String? city,
+  List<CatalogItem> venues = const [],
+  List<CatalogItem> foxers = const [],
+  List<Post> posts = const [],
+  List<Ticket> past = const [],
 }) {
   final storage = MockStorageService();
   when(storage.readUserModel).thenReturn(null);
@@ -82,13 +99,19 @@ Widget _app({
       // The city's own events, or (no city in the query) events anywhere.
       catalogProvider.overrideWith((ref, q) async {
         if (soonFails) throw Exception('offline');
-        final items = city != null && q.city == null ? elsewhere : soon;
+        final items = switch (q.kind) {
+          CatalogKind.venues => venues,
+          CatalogKind.foxers => foxers,
+          _ => city != null && q.city == null ? elsewhere : soon,
+        };
         return CatalogPage(items: items, total: items.length);
       }),
       if (city != null)
         areaFilterProvider
             .overrideWithValue(AreaFilter(city: city, label: city)),
       packagesProvider.overrideWith((ref, q) async => packages),
+      pastTicketsProvider.overrideWith((ref) async => past),
+      feedControllerProvider.overrideWith2((tab) => _FakeFeed(tab, posts)),
       // No network in tests: a photo is whatever [covers] says, else none.
       occasionCoverProvider.overrideWith((ref, q) async => covers[q.category]),
       if (last != null)
@@ -153,6 +176,22 @@ void main() {
             GoRoute(
               path: '/search',
               builder: (_, __) => const Scaffold(body: Text('SEARCH SCREEN')),
+            ),
+            GoRoute(
+              path: RouteNames.venueDetail,
+              builder: (_, s) => Scaffold(
+                body: Text('VENUE ${(s.extra! as CatalogItem).title}'),
+              ),
+            ),
+            GoRoute(
+              path: RouteNames.foxer,
+              builder: (_, s) => Scaffold(
+                body: Text('FOXER ${(s.extra! as CatalogItem).title}'),
+              ),
+            ),
+            GoRoute(
+              path: RouteNames.republic,
+              builder: (_, __) => const Scaffold(body: Text('REPUBLIC SCREEN')),
             ),
             GoRoute(
               path: '/event',
@@ -406,6 +445,187 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(loads, greaterThan(before));
+    });
+
+    group('first event checklist', () {
+      testWidgets('shows for someone with no bookings', (tester) async {
+        _phone(tester);
+        await tester.pumpWidget(_app());
+        await tester.pumpAndSettle();
+
+        expect(find.text('Plan your first event'), findsOneWidget);
+        expect(find.text('0 of 3 done'), findsOneWidget);
+        expect(find.text("Pick what you're planning"), findsOneWidget);
+        expect(find.text('Choose a package or venue'), findsOneWidget);
+        expect(find.text('Book it and get your ticket'), findsOneWidget);
+        expect(find.text('Start'), findsOneWidget);
+      });
+
+      testWidgets('ticks step one once an occasion has been opened', (
+        tester,
+      ) async {
+        _phone(tester);
+        await tester.pumpWidget(_app(last: Occasion.wedding));
+        await tester.pumpAndSettle();
+
+        expect(find.text('1 of 3 done'), findsOneWidget);
+        expect(find.text('Continue'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+      });
+
+      testWidgets('is gone once there is a booking, upcoming or past', (
+        tester,
+      ) async {
+        _phone(tester);
+        await tester.pumpWidget(_app(tickets: [Ticket.sample()]));
+        await tester.pumpAndSettle();
+        expect(find.text('Plan your first event'), findsNothing);
+
+        await tester.pumpWidget(_app(past: [Ticket.sample()]));
+        await tester.pumpAndSettle();
+        expect(find.text('Plan your first event'), findsNothing);
+      });
+
+      testWidgets('Start opens the occasion on the big card', (tester) async {
+        _phone(tester);
+        await tester.pumpWidget(_app(router: routerFor()));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Start'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('OCCASION birthday'), findsOneWidget);
+      });
+
+      testWidgets('Continue reopens the occasion they were on', (tester) async {
+        _phone(tester);
+        await tester.pumpWidget(
+          _app(last: Occasion.wedding, router: routerFor()),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Continue'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('OCCASION wedding'), findsOneWidget);
+      });
+    });
+
+    group('venues, Foxers and the Republic', () {
+      const venue = CatalogItem(
+        id: 'v1',
+        kind: CatalogKind.venues,
+        title: 'Sky Hall',
+        city: 'Baguio',
+        capacity: 200,
+        price: 25000,
+        billingRate: 'daily',
+      );
+      const foxer = CatalogItem(
+        id: 'f1',
+        kind: CatalogKind.foxers,
+        title: 'Maria Mayor',
+        city: 'Baguio',
+        rating: 4.8,
+      );
+      final post = Post(
+        id: 'p1',
+        author: const PostAuthor(id: 'u1', name: 'Ada Lovelace'),
+        content: 'Great night at the market',
+        createdAt: DateTime(2026, 10, 20),
+        likesCount: 3,
+      );
+
+      testWidgets('venues in the city, with where, guests and price', (
+        tester,
+      ) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(_app(city: 'Baguio', venues: const [venue]));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Venues in Baguio'), findsOneWidget);
+        expect(find.text('Sky Hall'), findsOneWidget);
+        expect(find.text('Baguio · 200 guests'), findsOneWidget);
+        expect(find.text('₱25,000/day'), findsOneWidget);
+      });
+
+      testWidgets('without a city the venues heading has none', (tester) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(_app(venues: const [venue]));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Venues to browse'), findsOneWidget);
+      });
+
+      testWidgets('a venue opens its page', (tester) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(
+          _app(router: routerFor(), venues: const [venue]),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Sky Hall'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('VENUE Sky Hall'), findsOneWidget);
+      });
+
+      testWidgets('Foxers to plan with, with city and rating', (tester) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(_app(foxers: const [foxer]));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Foxers to plan with'), findsOneWidget);
+        expect(find.text('Maria Mayor'), findsOneWidget);
+        expect(find.text('Baguio'), findsOneWidget);
+        expect(find.text('4.8'), findsOneWidget);
+      });
+
+      testWidgets('a Foxer opens their profile', (tester) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(
+          _app(router: routerFor(), foxers: const [foxer]),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Maria Mayor'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('FOXER Maria Mayor'), findsOneWidget);
+      });
+
+      testWidgets('two community posts, and they open the Republic', (
+        tester,
+      ) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(
+          _app(router: routerFor(), posts: [post, post, post]),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('From the Republic'), findsOneWidget);
+        expect(find.text('Ada Lovelace'), findsNWidgets(2));
+        expect(find.text('Great night at the market'), findsNWidgets(2));
+        expect(find.text('3'), findsNWidgets(2));
+
+        await tester.tap(find.text('Ada Lovelace').first);
+        await tester.pumpAndSettle();
+        expect(find.text('REPUBLIC SCREEN'), findsOneWidget);
+      });
+
+      testWidgets('none of them: no headings, no empty boxes, no error', (
+        tester,
+      ) async {
+        _phone(tester, size: const Size(800, 4000));
+        await tester.pumpWidget(_app(city: 'Baguio'));
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('Venues in'), findsNothing);
+        expect(find.text('Foxers to plan with'), findsNothing);
+        expect(find.text('From the Republic'), findsNothing);
+        expect(find.text('Try again'), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
     });
 
     testWidgets('happening soon comes before "book just one thing"', (

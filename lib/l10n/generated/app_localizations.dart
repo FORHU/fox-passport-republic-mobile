@@ -3334,6 +3334,72 @@ abstract class AppLocalizations {
   /// **'From {price}'**
   String packageFromPrice(String price);
 
+  /// No description provided for @homeVenuesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues to browse'**
+  String get homeVenuesTitle;
+
+  /// No description provided for @homeVenuesTitleIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues in {city}'**
+  String homeVenuesTitleIn(String city);
+
+  /// No description provided for @homeFoxersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxers to plan with'**
+  String get homeFoxersTitle;
+
+  /// No description provided for @homeRepublicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From the Republic'**
+  String get homeRepublicTitle;
+
+  /// No description provided for @homeChecklistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan your first event'**
+  String get homeChecklistTitle;
+
+  /// No description provided for @homeChecklistProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String homeChecklistProgress(int done, int total);
+
+  /// No description provided for @homeChecklistStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what you\'re planning'**
+  String get homeChecklistStep1;
+
+  /// No description provided for @homeChecklistStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a package or venue'**
+  String get homeChecklistStep2;
+
+  /// No description provided for @homeChecklistStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Book it and get your ticket'**
+  String get homeChecklistStep3;
+
+  /// No description provided for @homeChecklistStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get homeChecklistStart;
+
+  /// No description provided for @homeChecklistContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get homeChecklistContinue;
+
   /// No description provided for @homeComingUp.
   ///
   /// In en, this message translates to:
