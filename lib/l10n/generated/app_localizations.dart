@@ -2356,6 +2356,270 @@ abstract class AppLocalizations {
   /// **'Permanently remove your account'**
   String get settingsDeleteAccountHint;
 
+  /// No description provided for @spaceCitizen.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen'**
+  String get spaceCitizen;
+
+  /// No description provided for @spaceVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get spaceVenue;
+
+  /// No description provided for @spaceEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get spaceEvent;
+
+  /// No description provided for @spaceCitizenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse, plan and book'**
+  String get spaceCitizenHint;
+
+  /// No description provided for @spaceVenueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venues and the requests for them'**
+  String get spaceVenueHint;
+
+  /// No description provided for @spaceEventHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your events and guest check-in'**
+  String get spaceEventHint;
+
+  /// No description provided for @spaceSwitchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch space'**
+  String get spaceSwitchTitle;
+
+  /// No description provided for @spaceSwitchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You hold more than one role. Choose where to work.'**
+  String get spaceSwitchHint;
+
+  /// No description provided for @spaceNowIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Now in {space}'**
+  String spaceNowIn(String space);
+
+  /// No description provided for @spaceManageOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage on the web'**
+  String get spaceManageOnWeb;
+
+  /// No description provided for @spaceTabRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get spaceTabRequests;
+
+  /// No description provided for @spaceTabVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get spaceTabVenues;
+
+  /// No description provided for @spaceTabEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get spaceTabEvents;
+
+  /// No description provided for @spaceTabCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get spaceTabCheckIn;
+
+  /// No description provided for @requestsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get requestsTitle;
+
+  /// No description provided for @requestsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your venue to their events. Confirm the ones you can host.'**
+  String get requestsIntro;
+
+  /// No description provided for @requestsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your venue to their event, it shows up here.'**
+  String get requestsEmpty;
+
+  /// No description provided for @requestFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {name}'**
+  String requestFrom(String name);
+
+  /// No description provided for @requestReplyBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply by {date}'**
+  String requestReplyBy(String date);
+
+  /// No description provided for @requestAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get requestAccept;
+
+  /// No description provided for @requestDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get requestDecline;
+
+  /// No description provided for @requestAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Request accepted.'**
+  String get requestAccepted;
+
+  /// No description provided for @requestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined.'**
+  String get requestDeclined;
+
+  /// No description provided for @requestActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update that request. Try again.'**
+  String get requestActionFailed;
+
+  /// No description provided for @requestDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this request?'**
+  String get requestDeclineTitle;
+
+  /// No description provided for @requestDeclineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll be told you can\'t host it.'**
+  String get requestDeclineBody;
+
+  /// No description provided for @requestStatusAwaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your reply'**
+  String get requestStatusAwaiting;
+
+  /// No description provided for @requestStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get requestStatusPending;
+
+  /// No description provided for @requestStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get requestStatusApproved;
+
+  /// No description provided for @requestStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get requestStatusRejected;
+
+  /// No description provided for @requestStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get requestStatusCancelled;
+
+  /// No description provided for @listingsVenuesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t listed a venue yet. Add one on the web.'**
+  String get listingsVenuesEmpty;
+
+  /// No description provided for @listingsEventsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t created an event yet. Build one on the web.'**
+  String get listingsEventsEmpty;
+
+  /// No description provided for @listingStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get listingStatusDraft;
+
+  /// No description provided for @listingStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get listingStatusPending;
+
+  /// No description provided for @listingStatusLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get listingStatusLive;
+
+  /// No description provided for @listingStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get listingStatusRejected;
+
+  /// No description provided for @listingStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get listingStatusArchived;
+
+  /// No description provided for @checkInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get checkInTitle;
+
+  /// No description provided for @checkInIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the code printed under the QR on a guest\'s ticket.'**
+  String get checkInIntro;
+
+  /// No description provided for @checkInCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket code'**
+  String get checkInCodeLabel;
+
+  /// No description provided for @checkInAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in guest'**
+  String get checkInAction;
+
+  /// No description provided for @checkInDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest checked in.'**
+  String get checkInDone;
+
+  /// No description provided for @checkInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t check that guest in. Check the code and try again.'**
+  String get checkInFailed;
+
   /// No description provided for @blockedTitle.
   ///
   /// In en, this message translates to:

@@ -63,6 +63,12 @@ class ApiEndpoints {
   static const String servicesBrowse = '/service/browse';
 
   // ── Venues ──────────────────────────────────────────────────────────────
+  /// What suppliers are asked to confirm for other people's events.
+  static const String providerRequests = '/event-transactions/provider';
+  static String requestReview(String id) => '/event-transactions/$id/review';
+
+  /// Checks a guest in by the code on their ticket.
+  static const String bookingCheckIn = '/bookings/check-in';
   static const String venues = '/venues';
   static const String venuesNear = '/venues/near';
   static const String venuesCatalog = '/venues/catalog';
