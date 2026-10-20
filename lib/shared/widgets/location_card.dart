@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -12,14 +13,16 @@ import 'package:latlong2/latlong.dart' show LatLng;
 /// as the web draws it. The exact spot is only given after booking, so there
 /// is no way to open directions from here.
 ///
-/// With no coordinates the map is a placeholder panel. Draws nothing when
-/// there is no place and no coordinates either.
+/// The map is Mapbox's dark style, as on the web, and needs the app's public
+/// Mapbox token. With no coordinates, or no token, the map is a placeholder
+/// panel. Draws nothing when there is no place and no coordinates either.
 class LocationCard extends StatelessWidget {
   const LocationCard({
     required this.title,
     required this.place,
     this.lat,
     this.lng,
+    this.mapboxToken,
     this.tileProvider,
     super.key,
   });
@@ -31,13 +34,28 @@ class LocationCard extends StatelessWidget {
   final double? lat;
   final double? lng;
 
+  /// The Mapbox public token; the app's configured one unless a test sets it.
+  @visibleForTesting
+  final String? mapboxToken;
+
   /// Where the map tiles come from; the network unless a test swaps it.
   @visibleForTesting
   final TileProvider? tileProvider;
 
-  /// The same dark basemap as the web (CARTO Dark Matter).
-  static const _tiles =
-      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  /// Mapbox's dark style (`dark-v11`), the same one the web uses, as 256 px
+  /// tiles; `{r}` becomes `@2x` on a sharp screen.
+  static String _tileUrl(String token) =>
+      'https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/256/'
+      '{z}/{x}/{y}{r}?access_token=$token';
+
+  static String _configuredToken() {
+    try {
+      return AppConfig.instance.mapboxToken;
+    } on Object {
+      // Config not loaded (some tests): no map.
+      return '';
+    }
+  }
 
   bool get _hasPin => lat != null && lng != null;
 
@@ -46,6 +64,7 @@ class LocationCard extends StatelessWidget {
     final hasPlace = place.trim().isNotEmpty;
     if (!hasPlace && !_hasPin) return const SizedBox.shrink();
     final l10n = context.l10n;
+    final token = (mapboxToken ?? _configuredToken()).trim();
 
     return Padding(
       padding: const EdgeInsets.only(top: 24),
@@ -69,9 +88,10 @@ class LocationCard extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  if (_hasPin)
+                  if (_hasPin && token.isNotEmpty)
                     _PinMap(
                       point: LatLng(lat!, lng!),
+                      tileUrl: _tileUrl(token),
                       tileProvider: tileProvider,
                     )
                   else
@@ -94,9 +114,14 @@ class LocationCard extends StatelessWidget {
 }
 
 class _PinMap extends StatelessWidget {
-  const _PinMap({required this.point, this.tileProvider});
+  const _PinMap({
+    required this.point,
+    required this.tileUrl,
+    this.tileProvider,
+  });
 
   final LatLng point;
+  final String tileUrl;
   final TileProvider? tileProvider;
 
   @override
@@ -118,7 +143,7 @@ class _PinMap extends StatelessWidget {
       ),
       children: [
         TileLayer(
-          urlTemplate: LocationCard._tiles,
+          urlTemplate: tileUrl,
           userAgentPackageName: 'com.example.flutter_template',
           retinaMode: RetinaMode.isHighDensity(context),
           tileProvider: tileProvider,
@@ -140,7 +165,7 @@ class _PinMap extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 6, 2),
             child: Text(
-              '© OpenStreetMap contributors © CARTO',
+              '© Mapbox © OpenStreetMap',
               style: TextStyle(fontSize: 9, color: AppColors.textMuted),
             ),
           ),
