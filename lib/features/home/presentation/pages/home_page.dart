@@ -7,11 +7,9 @@ import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
-import 'package:flutter_template/features/home/presentation/widgets/passport_strip.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
-import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -89,7 +87,6 @@ class HomePage extends ConsumerWidget {
               ..invalidate(categoriesProvider)
               ..invalidate(catalogProvider(soonQuery))
               ..invalidate(catalogProvider(anywhereQuery))
-              ..invalidate(passportProvider)
               ..invalidate(
                 packagesProvider(
                   (category: tiles.first.occasion.name, city: area.city),
@@ -114,8 +111,6 @@ class HomePage extends ConsumerWidget {
               if (ticket != null) _NextNight(ticket: ticket),
               const SizedBox(height: 16),
               _HomeSearch(onTap: () => context.go(RouteNames.search)),
-              const SizedBox(height: 14),
-              PassportStrip(onTap: () => context.go(RouteNames.passport)),
               const SizedBox(height: 22),
               Text(
                 last == null ? l10n.homePlanning : l10n.homePlanNew,

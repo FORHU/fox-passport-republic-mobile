@@ -12,8 +12,9 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// A row of ready-made event packages: photo, name and price. Shared by the
-/// Occasion page and Home. Tapping one opens its page.
+/// A row of ready-made event packages: photo, name, how many guests it fits,
+/// and the price in the accent colour. Shared by the Occasion page and Home.
+/// Tapping one opens its page.
 class PackagesRow extends ConsumerWidget {
   const PackagesRow({required this.items, super.key});
 
@@ -25,21 +26,20 @@ class PackagesRow extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final formatter = ref.watch(moneyFormatterProvider);
     return SizedBox(
-      height: 212,
+      height: 196,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, i) {
           final item = items[i];
-          final price = (item.price ?? 0) > 0
-              ? catalogPriceLabel(
-                  l10n,
-                  item,
-                  locale: locale,
-                  formatter: formatter,
-                )
-              : null;
+          final price = catalogPriceLabel(
+            l10n,
+            item,
+            locale: locale,
+            formatter: formatter,
+          );
+          final guests = item.capacity;
           return InkWell(
             borderRadius: AppRadius.brMd,
             onTap: () => context.push(RouteNames.eventDetail, extra: item),
@@ -50,27 +50,37 @@ class PackagesRow extends ConsumerWidget {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: PhotoBox(
-                      url: item.imageUrl,
-                      height: 128,
-                    ),
+                    child: PhotoBox(url: item.imageUrl, height: 112),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     item.title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTypography.display(size: 15),
+                    style: AppTypography.display(size: 14),
                   ),
-                  const SizedBox(height: 2),
+                  if (guests != null && guests > 0) ...[
+                    const SizedBox(height: 1),
+                    Text(
+                      l10n.venueUpTo(guests),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(size: 12),
+                    ),
+                  ],
+                  const SizedBox(height: 3),
                   Text(
-                    price ?? l10n.occasionAskPrice,
+                    price == null
+                        ? l10n.occasionAskPrice
+                        : l10n.packageFromPrice(price),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTypography.body(
                       size: 13,
                       color: price == null
                           ? AppColors.textMuted
-                          : AppColors.textPrimary,
-                      weight: FontWeight.w600,
+                          : AppColors.accent,
+                      weight: FontWeight.w700,
                     ),
                   ),
                 ],

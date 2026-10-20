@@ -6,8 +6,6 @@ import 'package:flutter_template/features/home/presentation/pages/home_page.dart
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
-import 'package:flutter_template/features/passport/data/passport_repository.dart';
-import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -57,7 +55,6 @@ Widget _app({
   Occasion? last,
   Map<String, String> covers = const {},
   GoRouter? router,
-  PassportSummary? passport,
   List<CatalogItem> packages = const [],
   List<CatalogItem> elsewhere = const [],
   String? city,
@@ -91,12 +88,6 @@ Widget _app({
       if (city != null)
         areaFilterProvider
             .overrideWithValue(AreaFilter(city: city, label: city)),
-      // A Passport only when the test gives one; otherwise it "fails" and the
-      // strip stays out of the way.
-      passportProvider.overrideWith((ref) async {
-        if (passport == null) throw Exception('offline');
-        return passport;
-      }),
       packagesProvider.overrideWith((ref, q) async => packages),
       // No network in tests: a photo is whatever [covers] says, else none.
       occasionCoverProvider.overrideWith((ref, q) async => covers[q.category]),
@@ -162,10 +153,6 @@ void main() {
             GoRoute(
               path: '/search',
               builder: (_, __) => const Scaffold(body: Text('SEARCH SCREEN')),
-            ),
-            GoRoute(
-              path: '/passport',
-              builder: (_, __) => const Scaffold(body: Text('PASSPORT SCREEN')),
             ),
             GoRoute(
               path: '/event',
@@ -247,63 +234,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('SEARCH SCREEN'), findsOneWidget);
-    });
-
-    testWidgets('a Passport strip shows level, XP and the next step', (
-      tester,
-    ) async {
-      _phone(tester);
-      await tester.pumpWidget(_app(passport: PassportSummary.sample()));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Citizen · Level 1'), findsOneWidget);
-      expect(find.text('15 XP'), findsOneWidget);
-      // It has a stamp already, so the next step is the next level.
-      expect(find.text('Level 2 at 50'), findsOneWidget);
-    });
-
-    testWidgets('a new Passport asks for the first stamp', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(
-        _app(
-          passport: PassportSummary.fromTotalXp(
-            totalXp: 0,
-            stamps: const [],
-            badges: const [],
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('Attend an event to earn your first stamp.'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('the Passport strip opens the Passport', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(
-        _app(passport: PassportSummary.sample(), router: routerFor()),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Citizen · Level 1'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('PASSPORT SCREEN'), findsOneWidget);
-    });
-
-    testWidgets('no Passport strip, and no error, when it cannot load', (
-      tester,
-    ) async {
-      _phone(tester);
-      await tester.pumpWidget(_app());
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('Level 1'), findsNothing);
-      expect(find.text('Try again'), findsNothing);
-      expect(tester.takeException(), isNull);
     });
 
     testWidgets('packages for the big card are listed, in the city', (

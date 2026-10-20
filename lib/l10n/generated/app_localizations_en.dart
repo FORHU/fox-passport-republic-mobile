@@ -1776,6 +1776,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String packageFromPrice(String price) {
+    return 'From $price';
+  }
+
+  @override
   String get homeComingUp => 'Coming up';
 
   @override

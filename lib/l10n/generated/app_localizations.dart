@@ -3328,6 +3328,12 @@ abstract class AppLocalizations {
   /// **'Popular {occasion} packages in {city}'**
   String homePackagesTitleIn(String occasion, String city);
 
+  /// No description provided for @packageFromPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'From {price}'**
+  String packageFromPrice(String price);
+
   /// No description provided for @homeComingUp.
   ///
   /// In en, this message translates to:

@@ -594,6 +594,8 @@
   "@homePackagesTitle": {"placeholders":{"occasion":{"type":"String"}}},
   "homePackagesTitleIn": "Popular {occasion} packages in {city}",
   "@homePackagesTitleIn": {"placeholders":{"occasion":{"type":"String"},"city":{"type":"String"}}},
+  "packageFromPrice": "From {price}",
+  "@packageFromPrice": {"placeholders":{"price":{"type":"String"}}},
   "homeComingUp": "Coming up",
   "homeComingUpElsewhere": "Nothing in {city} yet, so here is what is on elsewhere.",
   "@homeComingUpElsewhere": {"placeholders":{"city":{"type":"String"}}},
