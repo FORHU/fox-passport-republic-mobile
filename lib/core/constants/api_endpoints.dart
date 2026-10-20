@@ -29,6 +29,10 @@ class ApiEndpoints {
   static const String profile = '/profile';
   static const String changePassword = '/profile/change-password';
   static const String users = '/users';
+
+  /// The people the signed-in user has blocked.
+  static const String blocks = '/blocks';
+  static String unblock(String userId) => '/blocks/$userId';
   static const String foxers = '/users/foxers';
   static String foxerById(String id) => '/users/foxers/$id';
   static const String matches = '/matches';

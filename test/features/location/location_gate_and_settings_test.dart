@@ -166,7 +166,15 @@ void main() {
     expect(find.text('Where you are'), findsOneWidget);
     expect(find.text('Baguio'), findsOneWidget);
     expect(find.text('Mia'), findsOneWidget);
+    expect(find.text('Edit profile'), findsOneWidget);
+    expect(find.text('Blocked users'), findsOneWidget);
+
+    // Security and sign out are further down the list.
+    await tester.scrollUntilVisible(find.text('Sign out'), 200);
+    expect(find.text('Change password'), findsOneWidget);
+    expect(find.text('Delete account'), findsOneWidget);
     expect(find.text('Sign out'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Where you are'), -200);
 
     await tester.tap(find.text('Where you are'));
     await tester.pumpAndSettle();
