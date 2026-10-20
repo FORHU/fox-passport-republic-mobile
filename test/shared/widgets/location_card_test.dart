@@ -36,6 +36,7 @@ void main() {
           place: 'Cebu City, Cebu',
           lat: 10.3157,
           lng: 123.8854,
+          mapboxToken: 'pk.test-token',
           tileProvider: _BlankTiles(),
         ),
       ),
@@ -50,6 +51,52 @@ void main() {
     // The exact spot is only given after booking: nothing to open Maps with.
     expect(find.text('Directions'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('draws Mapbox dark tiles, not a keyless free basemap', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        LocationCard(
+          title: 'Location',
+          place: 'Baguio',
+          lat: 16.4,
+          lng: 120.6,
+          mapboxToken: 'pk.test-token',
+          tileProvider: _BlankTiles(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final url = tester.widget<TileLayer>(find.byType(TileLayer)).urlTemplate!;
+    expect(
+      url,
+      startsWith('https://api.mapbox.com/styles/v1/mapbox/dark-v11/'),
+    );
+    expect(url, contains('access_token=pk.test-token'));
+    expect(url, isNot(contains('cartocdn')));
+  });
+
+  testWidgets('a pin without a Mapbox token falls back to the placeholder', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        const LocationCard(
+          title: 'Location',
+          place: 'Baguio',
+          lat: 16.4,
+          lng: 120.6,
+          mapboxToken: '  ',
+        ),
+      ),
+    );
+
+    expect(find.byType(FlutterMap), findsNothing);
+    expect(find.byIcon(Icons.location_off_outlined), findsOneWidget);
+    expect(find.text('Baguio'), findsOneWidget);
   });
 
   testWidgets('without a pin: the place and a placeholder, no map', (
@@ -74,6 +121,7 @@ void main() {
           place: '',
           lat: 16.4,
           lng: 120.6,
+          mapboxToken: 'pk.test-token',
           tileProvider: _BlankTiles(),
         ),
       ),
