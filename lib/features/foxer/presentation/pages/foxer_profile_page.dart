@@ -12,6 +12,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/foxers/foxer_profile.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -131,15 +132,10 @@ class _LoadedState extends ConsumerState<_Loaded> {
       children: [
         Row(
           children: [
-            CircleAvatar(
+            AvatarImage(
+              url: profile.imageUrl,
               radius: 36,
-              backgroundColor: AppColors.surfaceRaised,
-              backgroundImage: profile.imageUrl == null
-                  ? null
-                  : NetworkImage(profile.imageUrl!),
-              child: profile.imageUrl == null
-                  ? Text(initial, style: AppTypography.display(size: 28))
-                  : null,
+              fallback: Text(initial, style: AppTypography.display(size: 28)),
             ),
             const SizedBox(width: 16),
             Expanded(

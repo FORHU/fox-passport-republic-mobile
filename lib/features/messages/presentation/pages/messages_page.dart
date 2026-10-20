@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/utils/asset_url.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_template/features/messages/domain/entities/conversation.
 import 'package:flutter_template/features/messages/presentation/widgets/new_chat_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -458,20 +458,16 @@ class _Avatar extends StatelessWidget {
           width: 44,
           height: 44,
           alignment: Alignment.center,
+          // Clips the picture to the circle or rounded square.
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: AppColors.surfaceRaised,
             border: Border.all(color: AppColors.border),
             borderRadius: square ? AppRadius.brSm : null,
             shape: square ? BoxShape.rectangle : BoxShape.circle,
-            image: imageUrl == null
-                ? null
-                : DecorationImage(
-                    image: NetworkImage(resolveAssetUrl(imageUrl!)),
-                    fit: BoxFit.cover,
-                  ),
           ),
           child: imageUrl != null
-              ? null
+              ? NetworkImageBox(url: imageUrl!, width: 44, height: 44)
               : group
                   ? const Icon(
                       Icons.groups_2_outlined,

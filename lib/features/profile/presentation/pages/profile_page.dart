@@ -6,6 +6,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/auth/presentation/widgets/sign_out.dart';
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/shared/widgets/app_input.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -159,17 +160,13 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
-    return CircleAvatar(
+    return AvatarImage(
+      url: imageUrl,
       radius: 44,
-      backgroundColor: AppColors.surface,
-      backgroundImage: hasImage ? NetworkImage(imageUrl!) : null,
-      child: hasImage
-          ? null
-          : Text(
-              name.isEmpty ? '?' : name.characters.first.toUpperCase(),
-              style: AppTypography.display(size: 32, color: AppColors.accent),
-            ),
+      fallback: Text(
+        name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+        style: AppTypography.display(size: 32, color: AppColors.accent),
+      ),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
-import 'package:flutter_template/core/utils/asset_url.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/messages_realtime.dart';
@@ -12,6 +11,8 @@ import 'package:flutter_template/features/messages/domain/entities/conversation.
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
+import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -811,14 +812,7 @@ class _MessageBubble extends StatelessWidget {
                     height: 90,
                     margin: const EdgeInsets.only(top: 6),
                     color: AppColors.surfaceRaised,
-                    child: Image.network(
-                      resolveAssetUrl(url),
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.image_outlined,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
+                    child: NetworkImageBox(url: url, width: 150, height: 90),
                   ),
                 ),
               const SizedBox(height: 4),
@@ -1081,23 +1075,18 @@ class _ChatAvatar extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         clipBehavior: Clip.none,
         children: [
-          CircleAvatar(
+          AvatarImage(
+            url: imageUrl,
             radius: 18,
-            backgroundColor: AppColors.surfaceRaised,
-            backgroundImage: imageUrl == null
-                ? null
-                : NetworkImage(resolveAssetUrl(imageUrl!)),
-            child: imageUrl != null
-                ? null
-                : group
-                    ? const Icon(
-                        Icons.groups_2_outlined,
-                        color: AppColors.textMuted,
-                      )
-                    : Text(
-                        name.isEmpty ? '?' : name[0].toUpperCase(),
-                        style: AppTypography.display(size: 14),
-                      ),
+            fallback: group
+                ? const Icon(
+                    Icons.groups_2_outlined,
+                    color: AppColors.textMuted,
+                  )
+                : Text(
+                    name.isEmpty ? '?' : name[0].toUpperCase(),
+                    style: AppTypography.display(size: 14),
+                  ),
           ),
           if (online)
             Positioned(
