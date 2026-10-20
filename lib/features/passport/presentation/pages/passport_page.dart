@@ -221,7 +221,7 @@ class _Body extends StatelessWidget {
         _IdCard(
           summary: summary,
           name: name,
-          onTap: () => context.go(RouteNames.profile),
+          onTap: () => context.push(RouteNames.profile),
         ),
         const SizedBox(height: 24),
         _SectionHeader(
