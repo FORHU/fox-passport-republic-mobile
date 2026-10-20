@@ -4,6 +4,8 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/auth/presentation/widgets/sign_out.dart';
 import 'package:flutter_template/features/settings/presentation/widgets/delete_account_sheet.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/currency/currency_sheet.dart';
@@ -36,6 +38,8 @@ class SettingsPage extends ConsumerWidget {
       _ => filter.city ?? l10n.settingsLocationNone,
     };
     final name = user?.name ?? '';
+    final spaces = ref.watch(availableSpacesProvider);
+    final activeSpace = ref.watch(activeSpaceProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -68,6 +72,16 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => context.push(RouteNames.profileEdit),
           ),
           const SizedBox(height: 8),
+          // Only for someone who holds a role to switch to.
+          if (spaces.length > 1) ...[
+            _Row(
+              icon: Icons.swap_horiz_rounded,
+              title: l10n.spaceSwitchTitle,
+              value: l10n.spaceNowIn(spaceLabel(l10n, activeSpace)),
+              onTap: () => showSpaceSheet(context),
+            ),
+            const SizedBox(height: 8),
+          ],
           _Row(
             icon: Icons.workspace_premium_outlined,
             title: l10n.rolesTitle,

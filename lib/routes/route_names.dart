@@ -99,6 +99,18 @@ class RouteNames {
   /// The Republic: the community feed.
   static const String republic = '/republic';
 
+  /// The Venue space, for someone who holds the VenueFoxer role: requests for
+  /// their venues, their venues, check-in and messages.
+  static const String spaceVenue = '/space/venue';
+  static const String spaceVenueListings = '/space/venue/listings';
+  static const String spaceVenueCheckIn = '/space/venue/check-in';
+  static const String spaceVenueMessages = '/space/venue/messages';
+
+  /// The Event space, for an EventFoxer: their events, check-in and messages.
+  static const String spaceEvent = '/space/event';
+  static const String spaceEventCheckIn = '/space/event/check-in';
+  static const String spaceEventMessages = '/space/event/messages';
+
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.
   static const String itemBooking = '/book/item';

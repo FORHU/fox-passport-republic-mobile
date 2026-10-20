@@ -31,6 +31,12 @@ import 'package:flutter_template/features/roles/presentation/pages/roles_page.da
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/space_listings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
@@ -121,6 +127,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // The carousel is a signed-out screen.
       if (goingToLogin || goingToRegister || at == RouteNames.welcome) {
         return RouteNames.home;
+      }
+
+      // A space needs the role that opens it.
+      final roles = ref.read(heldRolesProvider);
+      final inSpace = AppSpace.forPath(at);
+      if (inSpace != null && !inSpace.isAvailableTo(roles)) {
+        return RouteNames.home;
+      }
+      // Opening the app, or landing on Home, goes to the space they were last
+      // working in. Switching back to Citizen saves Citizen first, so this
+      // does not pull them out again.
+      if (at == RouteNames.home) {
+        final active = ref.read(activeSpaceProvider);
+        if (active != AppSpace.citizen) return active.root;
       }
       return null;
     },
@@ -333,6 +353,82 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.passport,
                 builder: (context, state) => const PassportPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Venue space: its own tabs and bottom bar.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => SpaceLayout(
+          navigationShell: navigationShell,
+          items: SpaceLayout.venueItems(context),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenue,
+                builder: (context, state) => const VenueRequestsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueListings,
+                builder: (context, state) =>
+                    const SpaceListingsPage(kind: ListingKind.venues),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueCheckIn,
+                builder: (context, state) => const CheckInPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueMessages,
+                builder: (context, state) => const MessagesPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Event space.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => SpaceLayout(
+          navigationShell: navigationShell,
+          items: SpaceLayout.eventItems(context),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEvent,
+                builder: (context, state) =>
+                    const SpaceListingsPage(kind: ListingKind.events),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventCheckIn,
+                builder: (context, state) => const CheckInPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventMessages,
+                builder: (context, state) => const MessagesPage(),
               ),
             ],
           ),

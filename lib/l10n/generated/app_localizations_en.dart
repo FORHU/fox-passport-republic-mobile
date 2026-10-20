@@ -1216,6 +1216,152 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDeleteAccountHint => 'Permanently remove your account';
 
   @override
+  String get spaceCitizen => 'Citizen';
+
+  @override
+  String get spaceVenue => 'Venue';
+
+  @override
+  String get spaceEvent => 'Event';
+
+  @override
+  String get spaceCitizenHint => 'Browse, plan and book';
+
+  @override
+  String get spaceVenueHint => 'Your venues and the requests for them';
+
+  @override
+  String get spaceEventHint => 'Your events and guest check-in';
+
+  @override
+  String get spaceSwitchTitle => 'Switch space';
+
+  @override
+  String get spaceSwitchHint =>
+      'You hold more than one role. Choose where to work.';
+
+  @override
+  String spaceNowIn(String space) {
+    return 'Now in $space';
+  }
+
+  @override
+  String get spaceManageOnWeb => 'Manage on the web';
+
+  @override
+  String get spaceTabRequests => 'Requests';
+
+  @override
+  String get spaceTabVenues => 'Venues';
+
+  @override
+  String get spaceTabEvents => 'Events';
+
+  @override
+  String get spaceTabCheckIn => 'Check-in';
+
+  @override
+  String get requestsTitle => 'Requests';
+
+  @override
+  String get requestsIntro =>
+      'People adding your venue to their events. Confirm the ones you can host.';
+
+  @override
+  String get requestsEmpty =>
+      'No requests yet. When someone adds your venue to their event, it shows up here.';
+
+  @override
+  String requestFrom(String name) {
+    return 'From $name';
+  }
+
+  @override
+  String requestReplyBy(String date) {
+    return 'Reply by $date';
+  }
+
+  @override
+  String get requestAccept => 'Accept';
+
+  @override
+  String get requestDecline => 'Decline';
+
+  @override
+  String get requestAccepted => 'Request accepted.';
+
+  @override
+  String get requestDeclined => 'Request declined.';
+
+  @override
+  String get requestActionFailed =>
+      'We couldn\'t update that request. Try again.';
+
+  @override
+  String get requestDeclineTitle => 'Decline this request?';
+
+  @override
+  String get requestDeclineBody => 'They\'ll be told you can\'t host it.';
+
+  @override
+  String get requestStatusAwaiting => 'Needs your reply';
+
+  @override
+  String get requestStatusPending => 'Pending';
+
+  @override
+  String get requestStatusApproved => 'Accepted';
+
+  @override
+  String get requestStatusRejected => 'Declined';
+
+  @override
+  String get requestStatusCancelled => 'Cancelled';
+
+  @override
+  String get listingsVenuesEmpty =>
+      'You haven\'t listed a venue yet. Add one on the web.';
+
+  @override
+  String get listingsEventsEmpty =>
+      'You haven\'t created an event yet. Build one on the web.';
+
+  @override
+  String get listingStatusDraft => 'Draft';
+
+  @override
+  String get listingStatusPending => 'In review';
+
+  @override
+  String get listingStatusLive => 'Live';
+
+  @override
+  String get listingStatusRejected => 'Rejected';
+
+  @override
+  String get listingStatusArchived => 'Archived';
+
+  @override
+  String get checkInTitle => 'Check-in';
+
+  @override
+  String get checkInIntro =>
+      'Type the code printed under the QR on a guest\'s ticket.';
+
+  @override
+  String get checkInCodeLabel => 'Ticket code';
+
+  @override
+  String get checkInAction => 'Check in guest';
+
+  @override
+  String get checkInDone => 'Guest checked in.';
+
+  @override
+  String get checkInFailed =>
+      'We couldn\'t check that guest in. Check the code and try again.';
+
+  @override
   String get blockedTitle => 'Blocked users';
 
   @override
