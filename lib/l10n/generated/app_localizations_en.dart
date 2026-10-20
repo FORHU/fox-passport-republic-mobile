@@ -1789,6 +1789,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get homeGearTitle => 'Gear to rent';
+
+  @override
+  String get homeServicesTitle => 'Services to add';
+
+  @override
   String get homeFoxersTitle => 'Foxers to plan with';
 
   @override

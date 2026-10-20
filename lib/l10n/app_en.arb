@@ -599,6 +599,8 @@
   "homeVenuesTitle": "Venues to browse",
   "homeVenuesTitleIn": "Venues in {city}",
   "@homeVenuesTitleIn": {"placeholders":{"city":{"type":"String"}}},
+  "homeGearTitle": "Gear to rent",
+  "homeServicesTitle": "Services to add",
   "homeFoxersTitle": "Foxers to plan with",
   "homeRepublicTitle": "From the Republic",
   "homeChecklistTitle": "Plan your first event",

@@ -8,10 +8,10 @@ import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/home/presentation/widgets/first_event_checklist.dart';
 import 'package:flutter_template/features/home/presentation/widgets/foxers_row.dart';
+import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/home/presentation/widgets/republic_teaser.dart';
 import 'package:flutter_template/features/home/presentation/widgets/section_title.dart';
-import 'package:flutter_template/features/home/presentation/widgets/venues_row.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
@@ -108,6 +108,16 @@ class HomePage extends ConsumerWidget {
                   CatalogQuery(CatalogKind.foxers, limit: 8, city: area.city),
                 ),
               )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.gear, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.services, limit: 6, city: area.city),
+                ),
+              )
               ..invalidate(feedControllerProvider(null))
               ..invalidate(
                 packagesProvider(
@@ -179,7 +189,11 @@ class HomePage extends ConsumerWidget {
                         _SoonRow(items: page.items),
                       ],
               ),
-              HomeVenues(
+              HomeItems(
+                kind: CatalogKind.venues,
+                title: area.city == null || area.city!.isEmpty
+                    ? context.l10n.homeVenuesTitle
+                    : context.l10n.homeVenuesTitleIn(area.city!),
                 city: area.city,
                 onSeeAll: () => context.go(
                   RouteNames.searchFor('venues', city: area.city),
@@ -189,6 +203,22 @@ class HomePage extends ConsumerWidget {
                 city: area.city,
                 onSeeAll: () => context.go(
                   RouteNames.searchFor('foxers', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.gear,
+                title: context.l10n.homeGearTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('gear', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.services,
+                title: context.l10n.homeServicesTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('services', city: area.city),
                 ),
               ),
               RepublicTeaser(

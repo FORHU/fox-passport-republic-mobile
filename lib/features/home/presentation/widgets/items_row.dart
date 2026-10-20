@@ -14,12 +14,21 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// Venues to browse, in the chosen city: photo, name, where and how many it
-/// holds, and the price. A placeholder while they load; nothing when there are
-/// none or the call fails, so Home never shows an empty box.
-class HomeVenues extends ConsumerWidget {
-  const HomeVenues({required this.city, required this.onSeeAll, super.key});
+/// Catalog items of one kind (venues, gear to rent, services to add) in the
+/// chosen city: photo, name, where, and the price. Opens the venue, or the
+/// item to book. A placeholder while they load; nothing when there are none
+/// or the call fails, so Home never shows an empty box.
+class HomeItems extends ConsumerWidget {
+  const HomeItems({
+    required this.kind,
+    required this.title,
+    required this.city,
+    required this.onSeeAll,
+    super.key,
+  });
 
+  final CatalogKind kind;
+  final String title;
   final String? city;
   final VoidCallback onSeeAll;
 
@@ -27,11 +36,8 @@ class HomeVenues extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final venues = ref.watch(
-      catalogProvider(CatalogQuery(CatalogKind.venues, limit: 6, city: city)),
+      catalogProvider(CatalogQuery(kind, limit: 6, city: city)),
     );
-    final title = city == null || city!.isEmpty
-        ? l10n.homeVenuesTitle
-        : l10n.homeVenuesTitleIn(city!);
 
     return venues.when(
       loading: () => const Padding(
@@ -60,7 +66,7 @@ class HomeVenues extends ConsumerWidget {
                     onAction: onSeeAll,
                   ),
                   const SizedBox(height: 4),
-                  _VenueCards(items: page.items),
+                  _ItemCards(items: page.items),
                 ],
               ),
             ),
@@ -68,8 +74,8 @@ class HomeVenues extends ConsumerWidget {
   }
 }
 
-class _VenueCards extends ConsumerWidget {
-  const _VenueCards({required this.items});
+class _ItemCards extends ConsumerWidget {
+  const _ItemCards({required this.items});
 
   final List<CatalogItem> items;
 
@@ -95,7 +101,12 @@ class _VenueCards extends ConsumerWidget {
           );
           return InkWell(
             borderRadius: AppRadius.brMd,
-            onTap: () => context.push(RouteNames.venueDetail, extra: item),
+            onTap: () => context.push(
+              item.kind == CatalogKind.venues
+                  ? RouteNames.venueDetail
+                  : RouteNames.itemBooking,
+              extra: item,
+            ),
             child: SizedBox(
               width: 200,
               child: Column(

@@ -73,6 +73,8 @@ Widget _app({
   String? city,
   List<CatalogItem> venues = const [],
   List<CatalogItem> foxers = const [],
+  List<CatalogItem> gear = const [],
+  List<CatalogItem> services = const [],
   List<Post> posts = const [],
   List<Ticket> past = const [],
 }) {
@@ -102,6 +104,8 @@ Widget _app({
         final items = switch (q.kind) {
           CatalogKind.venues => venues,
           CatalogKind.foxers => foxers,
+          CatalogKind.gear => gear,
+          CatalogKind.services => services,
           _ => city != null && q.city == null ? elsewhere : soon,
         };
         return CatalogPage(items: items, total: items.length);
@@ -181,6 +185,12 @@ void main() {
               path: RouteNames.venueDetail,
               builder: (_, s) => Scaffold(
                 body: Text('VENUE ${(s.extra! as CatalogItem).title}'),
+              ),
+            ),
+            GoRoute(
+              path: RouteNames.itemBooking,
+              builder: (_, s) => Scaffold(
+                body: Text('ITEM ${(s.extra! as CatalogItem).title}'),
               ),
             ),
             GoRoute(
@@ -581,6 +591,37 @@ void main() {
         expect(find.text('4.8'), findsOneWidget);
       });
 
+      testWidgets('gear and services rows open the item to book', (
+        tester,
+      ) async {
+        _phone(tester, size: const Size(800, 4000));
+        const lights = CatalogItem(
+          id: 'g1',
+          kind: CatalogKind.gear,
+          title: 'Stage Lights',
+          city: 'Baguio',
+          price: 1500,
+        );
+        const dj = CatalogItem(
+          id: 's1',
+          kind: CatalogKind.services,
+          title: 'DJ Set',
+          city: 'Baguio',
+          price: 8000,
+        );
+        await tester.pumpWidget(
+          _app(router: routerFor(), gear: const [lights], services: const [dj]),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Gear to rent'), findsOneWidget);
+        expect(find.text('Services to add'), findsOneWidget);
+
+        await tester.tap(find.text('Stage Lights'));
+        await tester.pumpAndSettle();
+        expect(find.text('ITEM Stage Lights'), findsOneWidget);
+      });
+
       testWidgets('a Foxer opens their profile', (tester) async {
         _phone(tester, size: const Size(800, 4000));
         await tester.pumpWidget(
@@ -622,6 +663,8 @@ void main() {
 
         expect(find.textContaining('Venues in'), findsNothing);
         expect(find.text('Foxers to plan with'), findsNothing);
+        expect(find.text('Gear to rent'), findsNothing);
+        expect(find.text('Services to add'), findsNothing);
         expect(find.text('From the Republic'), findsNothing);
         expect(find.text('Try again'), findsNothing);
         expect(tester.takeException(), isNull);

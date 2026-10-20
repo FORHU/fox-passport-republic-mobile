@@ -3346,6 +3346,18 @@ abstract class AppLocalizations {
   /// **'Venues in {city}'**
   String homeVenuesTitleIn(String city);
 
+  /// No description provided for @homeGearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear to rent'**
+  String get homeGearTitle;
+
+  /// No description provided for @homeServicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Services to add'**
+  String get homeServicesTitle;
+
   /// No description provided for @homeFoxersTitle.
   ///
   /// In en, this message translates to:
