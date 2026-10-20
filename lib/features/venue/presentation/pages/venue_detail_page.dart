@@ -153,6 +153,13 @@ class _Loaded extends ConsumerWidget {
                           ),
                       ],
                     ),
+                    if (venue.address != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        venue.address!,
+                        style: AppTypography.body(size: 13),
+                      ),
+                    ],
                     if (venue.isSample) ...[
                       const SizedBox(height: 10),
                       Text(
@@ -168,16 +175,10 @@ class _Loaded extends ConsumerWidget {
                       ),
                     ],
                     LocationCard(
-                      // The name and the place are already above; the street
-                      // address is what the card adds.
-                      lines: [venue.address ?? venue.country ?? ''],
+                      title: l10n.searchEventLocation,
+                      place: venue.place,
                       lat: venue.lat,
                       lng: venue.lng,
-                      query: [
-                        venue.name,
-                        venue.address ?? '',
-                        venue.city ?? '',
-                      ].where((p) => p.isNotEmpty).join(', '),
                     ),
                     _Chips(title: l10n.venueIncluded, values: included),
                     _Chips(title: l10n.venueAmenities, values: venue.amenities),

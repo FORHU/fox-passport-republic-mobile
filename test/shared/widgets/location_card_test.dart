@@ -1,72 +1,102 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
-import 'package:flutter_template/shared/location/map_link.dart';
 import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+// A 1 x 1 transparent PNG, so no tile ever goes to the network.
+final Uint8List _blankTile = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA'
+  '60e6kgAAAABJRU5ErkJggg==',
+);
+
+class _BlankTiles extends TileProvider {
+  @override
+  ImageProvider getImage(TileCoordinates coordinates, TileLayer options) =>
+      MemoryImage(_blankTile);
+}
 
 Widget _app(Widget child) => MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: child),
+      home: Scaffold(body: SingleChildScrollView(child: child)),
     );
 
 void main() {
-  group('mapsUri', () {
-    test('opens the pin when there are coordinates', () {
-      final uri = mapsUri(lat: 16.4023, lng: 120.596, query: 'Sky Hall');
-      expect(uri!.host, 'www.google.com');
-      expect(uri.queryParameters['query'], '16.4023,120.596');
-    });
+  testWidgets('with a pin: the heading, the place, a map and the chip', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        LocationCard(
+          title: "Where you'll be",
+          place: 'Cebu City, Cebu',
+          lat: 10.3157,
+          lng: 123.8854,
+          tileProvider: _BlankTiles(),
+        ),
+      ),
+    );
+    await tester.pump();
 
-    test('searches the text when there is no pin', () {
-      final uri = mapsUri(query: ' Sky Hall, Baguio ');
-      expect(uri!.queryParameters['query'], 'Sky Hall, Baguio');
-    });
-
-    test('a pin with only one coordinate falls back to the text', () {
-      final uri = mapsUri(lat: 16.4, query: 'Sky Hall');
-      expect(uri!.queryParameters['query'], 'Sky Hall');
-    });
-
-    test('has nothing to open without a pin or text', () {
-      expect(mapsUri(), isNull);
-      expect(mapsUri(query: '  '), isNull);
-    });
+    expect(find.text("Where you'll be"), findsOneWidget);
+    expect(find.text('Cebu City, Cebu'), findsOneWidget);
+    expect(find.byType(FlutterMap), findsOneWidget);
+    expect(find.byType(MarkerLayer), findsOneWidget);
+    expect(find.text('Exact location provided after booking'), findsOneWidget);
+    // The exact spot is only given after booking: nothing to open Maps with.
+    expect(find.text('Directions'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
-  group('LocationCard', () {
-    testWidgets('shows the place and a Directions button', (tester) async {
-      await tester.pumpWidget(
-        _app(
-          const LocationCard(
-            lines: ['Sky Hall', '12 Session Road', 'Baguio, Benguet'],
-            query: 'Sky Hall, Baguio',
-          ),
+  testWidgets('without a pin: the place and a placeholder, no map', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(const LocationCard(title: 'Location', place: 'Baguio, Benguet')),
+    );
+
+    expect(find.text('Location'), findsOneWidget);
+    expect(find.text('Baguio, Benguet'), findsOneWidget);
+    expect(find.byType(FlutterMap), findsNothing);
+    expect(find.byIcon(Icons.location_off_outlined), findsOneWidget);
+    expect(find.text('Exact location provided after booking'), findsOneWidget);
+  });
+
+  testWidgets('a pin alone is enough, with no place to name', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        LocationCard(
+          title: 'Location',
+          place: '',
+          lat: 16.4,
+          lng: 120.6,
+          tileProvider: _BlankTiles(),
         ),
-      );
+      ),
+    );
+    await tester.pump();
 
-      expect(find.text('Location'), findsOneWidget);
-      expect(find.text('Sky Hall'), findsOneWidget);
-      expect(find.text('12 Session Road'), findsOneWidget);
-      expect(find.text('Directions'), findsOneWidget);
-    });
+    expect(find.byType(FlutterMap), findsOneWidget);
+  });
 
-    testWidgets('skips blank lines', (tester) async {
-      await tester.pumpWidget(
-        _app(const LocationCard(lines: ['Sky Hall', '  ', ''], query: 'Sky')),
-      );
+  testWidgets('one coordinate is not a pin', (tester) async {
+    await tester.pumpWidget(
+      _app(const LocationCard(title: 'Location', place: 'Baguio', lat: 16.4)),
+    );
 
-      expect(find.text('Sky Hall'), findsOneWidget);
-      expect(find.byType(Text), findsNWidgets(3)); // title, line, button
-    });
+    expect(find.byType(FlutterMap), findsNothing);
+  });
 
-    testWidgets('draws nothing when there is no place', (tester) async {
-      await tester.pumpWidget(
-        _app(const LocationCard(lines: [''], query: '')),
-      );
+  testWidgets('draws nothing with no place and no pin', (tester) async {
+    await tester.pumpWidget(
+      _app(const LocationCard(title: 'Location', place: '  ')),
+    );
 
-      expect(find.text('Location'), findsNothing);
-      expect(find.text('Directions'), findsNothing);
-    });
+    expect(find.text('Location'), findsNothing);
+    expect(find.byType(FlutterMap), findsNothing);
   });
 }
