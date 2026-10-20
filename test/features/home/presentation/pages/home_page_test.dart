@@ -5,10 +5,14 @@ import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
+import 'package:flutter_template/features/occasion/data/packages_repository.dart';
+import 'package:flutter_template/features/passport/data/passport_repository.dart';
+import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
+import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
@@ -53,6 +57,10 @@ Widget _app({
   Occasion? last,
   Map<String, String> covers = const {},
   GoRouter? router,
+  PassportSummary? passport,
+  List<CatalogItem> packages = const [],
+  List<CatalogItem> elsewhere = const [],
+  String? city,
 }) {
   final storage = MockStorageService();
   when(storage.readUserModel).thenReturn(null);
@@ -74,10 +82,22 @@ Widget _app({
           unreadCount: unread,
         ),
       ),
+      // The city's own events, or (no city in the query) events anywhere.
       catalogProvider.overrideWith((ref, q) async {
         if (soonFails) throw Exception('offline');
-        return CatalogPage(items: soon, total: soon.length);
+        final items = city != null && q.city == null ? elsewhere : soon;
+        return CatalogPage(items: items, total: items.length);
       }),
+      if (city != null)
+        areaFilterProvider
+            .overrideWithValue(AreaFilter(city: city, label: city)),
+      // A Passport only when the test gives one; otherwise it "fails" and the
+      // strip stays out of the way.
+      passportProvider.overrideWith((ref) async {
+        if (passport == null) throw Exception('offline');
+        return passport;
+      }),
+      packagesProvider.overrideWith((ref, q) async => packages),
       // No network in tests: a photo is whatever [covers] says, else none.
       occasionCoverProvider.overrideWith((ref, q) async => covers[q.category]),
       if (last != null)
@@ -142,6 +162,16 @@ void main() {
             GoRoute(
               path: '/search',
               builder: (_, __) => const Scaffold(body: Text('SEARCH SCREEN')),
+            ),
+            GoRoute(
+              path: '/passport',
+              builder: (_, __) => const Scaffold(body: Text('PASSPORT SCREEN')),
+            ),
+            GoRoute(
+              path: '/event',
+              builder: (_, s) => Scaffold(
+                body: Text('EVENT ${(s.extra! as CatalogItem).title}'),
+              ),
             ),
             GoRoute(
               path: '/occasion/:name',
@@ -217,6 +247,235 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('SEARCH SCREEN'), findsOneWidget);
+    });
+
+    testWidgets('a Passport strip shows level, XP and the next step', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(passport: PassportSummary.sample()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Citizen · Level 1'), findsOneWidget);
+      expect(find.text('15 XP'), findsOneWidget);
+      // It has a stamp already, so the next step is the next level.
+      expect(find.text('Level 2 at 50'), findsOneWidget);
+    });
+
+    testWidgets('a new Passport asks for the first stamp', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(
+          passport: PassportSummary.fromTotalXp(
+            totalXp: 0,
+            stamps: const [],
+            badges: const [],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Attend an event to earn your first stamp.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('the Passport strip opens the Passport', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(passport: PassportSummary.sample(), router: routerFor()),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Citizen · Level 1'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('PASSPORT SCREEN'), findsOneWidget);
+    });
+
+    testWidgets('no Passport strip, and no error, when it cannot load', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Level 1'), findsNothing);
+      expect(find.text('Try again'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('packages for the big card are listed, in the city', (
+      tester,
+    ) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(
+        _app(
+          city: 'Baguio',
+          packages: const [
+            CatalogItem(
+              id: 't1',
+              kind: CatalogKind.events,
+              title: 'Garden Birthday',
+              price: 12000,
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Birthday is the big card (most bookable), so its packages are shown.
+      expect(find.text('Popular birthday packages in Baguio'), findsOneWidget);
+      expect(find.text('Garden Birthday'), findsOneWidget);
+    });
+
+    testWidgets('without a city the packages heading has no city', (
+      tester,
+    ) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(
+        _app(
+          packages: const [
+            CatalogItem(id: 't1', kind: CatalogKind.events, title: 'Garden'),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Popular birthday packages'), findsOneWidget);
+    });
+
+    testWidgets('a package opens its page', (tester) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(
+        _app(
+          router: routerFor(),
+          packages: const [
+            CatalogItem(
+              id: 't1',
+              kind: CatalogKind.events,
+              title: 'Garden Birthday',
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Garden Birthday'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('EVENT Garden Birthday'), findsOneWidget);
+    });
+
+    testWidgets('no packages: no heading and no empty box', (tester) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(_app(city: 'Baguio'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Popular'), findsNothing);
+    });
+
+    testWidgets('Coming up falls back to events elsewhere, and says so', (
+      tester,
+    ) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(
+        _app(
+          city: 'Baguio',
+          elsewhere: [
+            CatalogItem(
+              id: 'e1',
+              kind: CatalogKind.events,
+              title: 'Night Market',
+              city: 'Manila',
+              eventStartAt: DateTime(2026, 10, 24, 19),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Coming up'), findsOneWidget);
+      expect(
+        find.text('Nothing in Baguio yet, so here is what is on elsewhere.'),
+        findsOneWidget,
+      );
+      expect(find.text('Night Market'), findsOneWidget);
+      expect(find.text('Manila'), findsOneWidget);
+      expect(find.text('Happening soon near you'), findsNothing);
+    });
+
+    testWidgets('when the city has events, it is Happening soon, not Coming up',
+        (
+      tester,
+    ) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(
+        _app(
+          city: 'Baguio',
+          soon: [
+            CatalogItem(
+              id: 'e1',
+              kind: CatalogKind.events,
+              title: 'Local Night',
+              eventStartAt: DateTime(2026, 10, 24, 19),
+            ),
+          ],
+          elsewhere: [
+            CatalogItem(
+              id: 'e2',
+              kind: CatalogKind.events,
+              title: 'Far Away Night',
+              eventStartAt: DateTime(2026, 10, 25, 19),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Happening soon near you'), findsOneWidget);
+      expect(find.text('Local Night'), findsOneWidget);
+      expect(find.text('Coming up'), findsNothing);
+      expect(find.text('Far Away Night'), findsNothing);
+    });
+
+    testWidgets('nothing anywhere: neither row, and no error', (tester) async {
+      _phone(tester, size: const Size(800, 3000));
+      await tester.pumpWidget(_app(city: 'Baguio'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Coming up'), findsNothing);
+      expect(find.text('Happening soon near you'), findsNothing);
+      expect(find.text('Try again'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a short Home can still be pulled down to refresh', (
+      tester,
+    ) async {
+      _phone(tester, size: const Size(800, 3000));
+      var loads = 0;
+      await tester.pumpWidget(
+        _app(
+          categories: () async {
+            loads++;
+            return _categories;
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      final before = loads;
+
+      // A refresh starts after a pull of a quarter of the screen (750 here).
+      await tester.flingFrom(
+        const Offset(400, 300),
+        const Offset(0, 1500),
+        1500,
+      );
+      await tester.pumpAndSettle();
+
+      expect(loads, greaterThan(before));
     });
 
     testWidgets('happening soon comes before "book just one thing"', (

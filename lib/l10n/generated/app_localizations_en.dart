@@ -1766,6 +1766,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStartPlanning => 'Start planning';
 
   @override
+  String homePackagesTitle(String occasion) {
+    return 'Popular $occasion packages';
+  }
+
+  @override
+  String homePackagesTitleIn(String occasion, String city) {
+    return 'Popular $occasion packages in $city';
+  }
+
+  @override
+  String get homeComingUp => 'Coming up';
+
+  @override
+  String homeComingUpElsewhere(String city) {
+    return 'Nothing in $city yet, so here is what is on elsewhere.';
+  }
+
+  @override
   String get homeContinuePlanning => 'Continue planning';
 
   @override

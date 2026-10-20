@@ -3316,6 +3316,30 @@ abstract class AppLocalizations {
   /// **'Start planning'**
   String get homeStartPlanning;
 
+  /// No description provided for @homePackagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular {occasion} packages'**
+  String homePackagesTitle(String occasion);
+
+  /// No description provided for @homePackagesTitleIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular {occasion} packages in {city}'**
+  String homePackagesTitleIn(String occasion, String city);
+
+  /// No description provided for @homeComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get homeComingUp;
+
+  /// No description provided for @homeComingUpElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in {city} yet, so here is what is on elsewhere.'**
+  String homeComingUpElsewhere(String city);
+
   /// No description provided for @homeContinuePlanning.
   ///
   /// In en, this message translates to:

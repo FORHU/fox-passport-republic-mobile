@@ -7,7 +7,11 @@ import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
+import 'package:flutter_template/features/home/presentation/widgets/passport_strip.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
+import 'package:flutter_template/features/occasion/data/packages_repository.dart';
+import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
+import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -51,6 +55,18 @@ class HomePage extends ConsumerWidget {
       sortBy: 'date_asc',
     );
     final soon = ref.watch(catalogProvider(soonQuery));
+    // Nothing on in the chosen city: look for events anywhere, so the row is
+    // not simply missing. Only asked once the city's own answer is empty.
+    final anywhereQuery = CatalogQuery(
+      CatalogKind.events,
+      limit: 6,
+      fromDate: DateTime(now.year, now.month, now.day),
+      sortBy: 'date_asc',
+    );
+    final nothingHere =
+        area.city != null && (soon.asData?.value.items.isEmpty ?? false);
+    final elsewhere =
+        nothingHere ? ref.watch(catalogProvider(anywhereQuery)) : null;
 
     final tiles = occasionTiles(categories, preferred: last);
     final oneThing = singleBookings(categories);
@@ -71,9 +87,18 @@ class HomePage extends ConsumerWidget {
             ref
               ..invalidate(upcomingTicketsProvider)
               ..invalidate(categoriesProvider)
-              ..invalidate(catalogProvider(soonQuery));
+              ..invalidate(catalogProvider(soonQuery))
+              ..invalidate(catalogProvider(anywhereQuery))
+              ..invalidate(passportProvider)
+              ..invalidate(
+                packagesProvider(
+                  (category: tiles.first.occasion.name, city: area.city),
+                ),
+              );
           },
           child: ListView(
+            // Always scrollable, so a short page can still be pulled down.
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             children: [
               _Header(
@@ -89,6 +114,8 @@ class HomePage extends ConsumerWidget {
               if (ticket != null) _NextNight(ticket: ticket),
               const SizedBox(height: 16),
               _HomeSearch(onTap: () => context.go(RouteNames.search)),
+              const SizedBox(height: 14),
+              PassportStrip(onTap: () => context.go(RouteNames.passport)),
               const SizedBox(height: 22),
               Text(
                 last == null ? l10n.homePlanning : l10n.homePlanNew,
@@ -103,6 +130,11 @@ class HomePage extends ConsumerWidget {
                 onOccasion: openOccasion,
                 onAll: () => unawaited(context.push(RouteNames.allCategories)),
               ),
+              _OccasionPackages(
+                occasion: tiles.first.occasion,
+                city: area.city,
+                onSeeAll: () => openOccasion(tiles.first.occasion),
+              ),
               ...soon.when(
                 loading: () => [
                   const SizedBox(height: 24),
@@ -110,7 +142,7 @@ class HomePage extends ConsumerWidget {
                 ],
                 error: (_, __) => const <Widget>[],
                 data: (page) => page.items.isEmpty
-                    ? const <Widget>[]
+                    ? _comingUp(context, elsewhere, area.city)
                     : [
                         const SizedBox(height: 24),
                         _SectionTitle(
@@ -604,6 +636,90 @@ class _SoonSkeleton extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Coming up" with events from anywhere, when the chosen city has none. Says
+/// so, so the row is not mistaken for local events. Nothing while the second
+/// answer is still loading, failed, or empty.
+List<Widget> _comingUp(
+  BuildContext context,
+  AsyncValue<CatalogPage>? elsewhere,
+  String? city,
+) {
+  final items = elsewhere?.asData?.value.items ?? const <CatalogItem>[];
+  if (items.isEmpty || city == null) return const <Widget>[];
+  final l10n = context.l10n;
+  return [
+    const SizedBox(height: 24),
+    _SectionTitle(
+      title: l10n.homeComingUp,
+      action: l10n.seeAll,
+      onAction: () => context.go(RouteNames.searchFor('events')),
+    ),
+    Text(l10n.homeComingUpElsewhere(city), style: AppTypography.body(size: 12)),
+    const SizedBox(height: 12),
+    _SoonRow(items: items),
+  ];
+}
+
+/// Ready-made packages for one occasion, in the chosen city. A short
+/// placeholder while they load; nothing at all when there are none or they
+/// fail, so Home never shows an empty box.
+class _OccasionPackages extends ConsumerWidget {
+  const _OccasionPackages({
+    required this.occasion,
+    required this.city,
+    required this.onSeeAll,
+  });
+
+  final Occasion occasion;
+  final String? city;
+  final VoidCallback onSeeAll;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final packages = ref.watch(
+      packagesProvider((category: occasion.name, city: city)),
+    );
+    final label = occasionLabel(l10n, occasion).toLowerCase();
+    final title = city == null || city!.isEmpty
+        ? l10n.homePackagesTitle(label)
+        : l10n.homePackagesTitleIn(label, city!);
+
+    return packages.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: 24),
+        child: SkeletonPulse(
+          child: Row(
+            children: [
+              Expanded(child: SkeletonBox(height: 128)),
+              SizedBox(width: 12),
+              Expanded(child: SkeletonBox(height: 128)),
+            ],
+          ),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (items) => items.isEmpty
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _SectionTitle(
+                    title: title,
+                    action: l10n.seeAll,
+                    onAction: onSeeAll,
+                  ),
+                  const SizedBox(height: 4),
+                  PackagesRow(items: items),
+                ],
+              ),
+            ),
     );
   }
 }
