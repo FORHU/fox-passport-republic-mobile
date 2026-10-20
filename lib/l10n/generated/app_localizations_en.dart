@@ -906,6 +906,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMap => 'The map is coming soon';
 
   @override
+  String get directionsAction => 'Directions';
+
+  @override
   String get comingSoonWallet => 'Wallet passes are coming soon';
 
   @override

@@ -1768,6 +1768,12 @@ abstract class AppLocalizations {
   /// **'The map is coming soon'**
   String get comingSoonMap;
 
+  /// No description provided for @directionsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get directionsAction;
+
   /// No description provided for @comingSoonWallet.
   ///
   /// In en, this message translates to:

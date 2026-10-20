@@ -56,6 +56,8 @@ class EventPackage extends Equatable {
     this.category,
     this.city,
     this.state,
+    this.lat,
+    this.lng,
     this.imageUrl,
     this.hostName,
     this.maxAttendees,
@@ -92,6 +94,9 @@ class EventPackage extends Equatable {
       return v is String && v.trim().isNotEmpty ? v.trim() : null;
     }
 
+    // A missing pin stays null; `n` would turn it into 0, 0.
+    double? coordinate(Object? v) => v is num ? v.toDouble() : null;
+
     final images = json['images'];
     String? image;
     if (images is List && images.isNotEmpty) {
@@ -107,6 +112,8 @@ class EventPackage extends Equatable {
       category: text('category'),
       city: text('targetCity'),
       state: text('targetState'),
+      lat: coordinate(json['lat']),
+      lng: coordinate(json['lng']),
       imageUrl: image,
       hostName: owner is Map ? owner['name']?.toString() : null,
       maxAttendees: (json['maxAttendees'] as num?)?.toInt(),
@@ -164,6 +171,10 @@ class EventPackage extends Equatable {
   final String? category;
   final String? city;
   final String? state;
+
+  /// The event's pin, when the EventFoxer has set one.
+  final double? lat;
+  final double? lng;
   final String? imageUrl;
   final String? hostName;
   final int? maxAttendees;
@@ -225,6 +236,8 @@ class EventPackage extends Equatable {
         category,
         city,
         state,
+        lat,
+        lng,
         imageUrl,
         hostName,
         maxAttendees,
