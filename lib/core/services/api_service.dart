@@ -43,11 +43,10 @@ class ApiService {
       client.interceptors.add(MockInterceptor());
     }
 
-    // 1. Attach the bearer token and transparently refresh it on a 401.
+    // 1. Attach the session token; a 401 ends the session.
     client.interceptors.add(
       AuthInterceptor(
         storage,
-        baseUrl: client.options.baseUrl,
         cookieService: cookieService,
         onUnauthenticated: onUnauthenticated,
       ),
