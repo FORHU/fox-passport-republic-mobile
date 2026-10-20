@@ -210,12 +210,3 @@ Each milestone ends with `flutter analyze` clean and tests passing.
    `foxpassport://` scheme itself does **not** go in those consoles.
 4. **Identifiers:** the Android `applicationId` and iOS bundle ID are still the
    template's `com.example.*`. Rename before registering OAuth clients.
-- [ ] M3 Browse + Search
-- [ ] M4 Detail screens
-- [ ] M5 Booking (+ payment stub)
-- [ ] M6 Tickets
-- [ ] M7 Passport, Favorites, Notifications
-- [ ] M8 Map (Mapbox)
-- [ ] M9 Polish
-- [ ] M10 Messages (partial: inbox, text chat, requests, and tab connected; realtime and advanced chat actions remain)
-- [ ] M11 Navigation and Home (Bookings tab, Map into Search, data-driven Home, occasion results)

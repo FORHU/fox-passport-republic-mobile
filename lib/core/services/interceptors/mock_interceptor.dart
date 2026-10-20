@@ -721,13 +721,6 @@ class MockInterceptor extends Interceptor {
             'refreshToken': 'mock-refresh-token',
           }),
         );
-      case ApiEndpoints.refresh:
-        handler.resolve(
-          _ok(options, {
-            'token': 'mock-access-token',
-            'refreshToken': 'mock-refresh-token',
-          }),
-        );
       case ApiEndpoints.logout:
         handler.resolve(_ok(options, {'success': true}));
       case ApiEndpoints.me:
