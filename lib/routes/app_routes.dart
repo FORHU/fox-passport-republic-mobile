@@ -186,6 +186,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.blockedUsers,
         builder: (context, state) => const BlockedUsersPage(),
       ),
+      // Profile is opened from both Passport and Settings, so it is a screen
+      // of its own, not part of the Passport tab: a route inside a tab cannot
+      // be pushed from outside it (the tab's page would be on the stack twice).
+      GoRoute(
+        path: RouteNames.profile,
+        builder: (context, state) => const ProfilePage(),
+      ),
       GoRoute(
         path: RouteNames.profileEdit,
         builder: (context, state) => const EditProfilePage(),
@@ -326,10 +333,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.passport,
                 builder: (context, state) => const PassportPage(),
-              ),
-              GoRoute(
-                path: RouteNames.profile,
-                builder: (context, state) => const ProfilePage(),
               ),
             ],
           ),
