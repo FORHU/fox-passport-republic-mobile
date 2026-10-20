@@ -8,6 +8,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -152,13 +153,6 @@ class _Loaded extends ConsumerWidget {
                           ),
                       ],
                     ),
-                    if (venue.address != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        venue.address!,
-                        style: AppTypography.body(size: 13),
-                      ),
-                    ],
                     if (venue.isSample) ...[
                       const SizedBox(height: 10),
                       Text(
@@ -173,6 +167,18 @@ class _Loaded extends ConsumerWidget {
                         style: AppTypography.body(),
                       ),
                     ],
+                    LocationCard(
+                      // The name and the place are already above; the street
+                      // address is what the card adds.
+                      lines: [venue.address ?? venue.country ?? ''],
+                      lat: venue.lat,
+                      lng: venue.lng,
+                      query: [
+                        venue.name,
+                        venue.address ?? '',
+                        venue.city ?? '',
+                      ].where((p) => p.isNotEmpty).join(', '),
+                    ),
                     _Chips(title: l10n.venueIncluded, values: included),
                     _Chips(title: l10n.venueAmenities, values: venue.amenities),
                     _Chips(

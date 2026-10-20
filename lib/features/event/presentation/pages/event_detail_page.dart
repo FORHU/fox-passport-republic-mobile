@@ -7,6 +7,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -222,6 +223,14 @@ class _Loaded extends ConsumerWidget {
                         style: AppTypography.body(),
                       ),
                     ],
+                    LocationCard(
+                      lines: [place],
+                      lat: package.lat,
+                      lng: package.lng,
+                      query: [package.name, place]
+                          .where((p) => p.isNotEmpty)
+                          .join(', '),
+                    ),
                     if (package.items.isNotEmpty) ...[
                       const SizedBox(height: 24),
                       Text(
