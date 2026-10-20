@@ -718,7 +718,6 @@ class MockInterceptor extends Interceptor {
             'email': email,
             'name': email.split('@').first,
             'token': 'mock-access-token',
-            'refreshToken': 'mock-refresh-token',
           }),
         );
       case ApiEndpoints.logout:
@@ -739,7 +738,6 @@ class MockInterceptor extends Interceptor {
               'district': '',
               'roleType': <String>[],
               'token': 'mock-access-token',
-              'refreshToken': 'mock-refresh-token',
               'bio': 'Building great things with Flutter.',
               'joinedAt': '2024-01-15T00:00:00.000Z',
             }),
