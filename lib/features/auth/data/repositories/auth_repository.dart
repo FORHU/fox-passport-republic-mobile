@@ -57,10 +57,6 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Stores tokens and the cached user — shared by every sign-in path.
   Future<void> _persistSession(UserModel user) async {
     await _storage.saveToken(user.token);
-    final refreshToken = user.refreshToken;
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await _storage.saveRefreshToken(refreshToken);
-    }
     // Save full user model to local cache for instant offline startup.
     await _storage.saveUserModel(user);
   }
@@ -81,8 +77,6 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = switch (credential) {
         SocialToken(:final value) =>
           await _remote.loginWithSocialToken(provider, value),
-        SocialExchangeCode(:final code) =>
-          await _remote.exchangeSocialCode(provider, code),
       };
       await _persistSession(user);
       return Right(user);
@@ -159,8 +153,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // server. A 401 is the exception: the session is already invalid
     // server-side (interceptor cleared tokens), so we treat it as logged out.
     try {
-      final refreshToken = await _storage.readRefreshToken();
-      await _remote.logout(refreshToken);
+      await _remote.logout();
     } on UnauthorizedException catch (_) {
       // Session already gone server-side — fall through and clear local state.
     } on NetworkException catch (e) {

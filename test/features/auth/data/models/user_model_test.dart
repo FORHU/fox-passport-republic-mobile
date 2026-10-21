@@ -6,7 +6,6 @@ void main() {
     test('parses roles and verification from a login response', () {
       final model = UserModel.fromJson(const {
         'accessToken': 'a',
-        'refreshToken': 'r',
         'user': {
           'id': 'u1',
           'email': 'foxer@example.com',

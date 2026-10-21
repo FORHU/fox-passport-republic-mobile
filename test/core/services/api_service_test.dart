@@ -41,7 +41,6 @@ class _StubAdapter implements HttpClientAdapter {
 ApiService _apiReturning({required int status, required Object body}) {
   final storage = MockStorageService();
   when(storage.readToken).thenAnswer((_) async => null);
-  when(storage.readRefreshToken).thenAnswer((_) async => null);
   when(storage.clearSession).thenAnswer((_) async {});
 
   final dio = Dio()
