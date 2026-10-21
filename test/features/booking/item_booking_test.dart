@@ -225,6 +225,9 @@ void main() {
     expect(find.text('Sample speaker'), findsOneWidget);
     expect(find.text('Pick a date.'), findsOneWidget);
 
+    // Next month: every day in it is still ahead, whatever today is.
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('28').first);
     await tester.pumpAndSettle();
 
