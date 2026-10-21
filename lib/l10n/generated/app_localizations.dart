@@ -1768,6 +1768,18 @@ abstract class AppLocalizations {
   /// **'The map is coming soon'**
   String get comingSoonMap;
 
+  /// No description provided for @whereYoullBe.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you\'ll be'**
+  String get whereYoullBe;
+
+  /// No description provided for @locationAfterBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact location provided after booking'**
+  String get locationAfterBooking;
+
   /// No description provided for @comingSoonWallet.
   ///
   /// In en, this message translates to:

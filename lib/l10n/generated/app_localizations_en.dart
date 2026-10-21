@@ -906,6 +906,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMap => 'The map is coming soon';
 
   @override
+  String get whereYoullBe => 'Where you\'ll be';
+
+  @override
+  String get locationAfterBooking => 'Exact location provided after booking';
+
+  @override
   String get comingSoonWallet => 'Wallet passes are coming soon';
 
   @override
