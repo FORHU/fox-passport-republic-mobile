@@ -4,8 +4,8 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
-import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
@@ -49,7 +49,7 @@ class SpaceListingsPage extends ConsumerWidget {
           venues ? l10n.spaceTabVenues : l10n.spaceTabEvents,
           style: AppTypography.display(size: 18),
         ),
-        actions: const [SpaceSwitchButton()],
+        actions: const [SpaceTopActions()],
       ),
       body: listings.when(
         loading: () => const Center(
@@ -104,25 +104,10 @@ class _ListingCard extends StatelessWidget {
 
   final SpaceListing item;
 
-  static String? statusLabel(AppLocalizations l10n, String status) =>
-      switch (status) {
-        'draft' => l10n.listingStatusDraft,
-        'pending' => l10n.listingStatusPending,
-        'available' || 'published' => l10n.listingStatusLive,
-        'rejected' => l10n.listingStatusRejected,
-        'archived' => l10n.listingStatusArchived,
-        _ => null,
-      };
-
   @override
   Widget build(BuildContext context) {
-    final label = statusLabel(context.l10n, item.status);
-    final live = item.status == 'available' || item.status == 'published';
-    final color = live
-        ? AppColors.success
-        : item.status == 'rejected'
-            ? AppColors.error
-            : AppColors.textMuted;
+    final label = listingStatusLabel(context.l10n, item.status);
+    final color = listingStatusColor(item.status);
 
     return Container(
       padding: const EdgeInsets.all(12),

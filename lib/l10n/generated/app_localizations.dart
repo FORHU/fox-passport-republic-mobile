@@ -2428,6 +2428,258 @@ abstract class AppLocalizations {
   /// **'Check-in'**
   String get spaceTabCheckIn;
 
+  /// No description provided for @spaceTabOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get spaceTabOverview;
+
+  /// No description provided for @spaceTabCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get spaceTabCalendar;
+
+  /// No description provided for @spaceTabEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get spaceTabEarnings;
+
+  /// No description provided for @spaceTabMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get spaceTabMore;
+
+  /// No description provided for @venueKpiLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues live'**
+  String get venueKpiLive;
+
+  /// No description provided for @venueKpiLiveValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{live} of {total}'**
+  String venueKpiLiveValue(int live, int total);
+
+  /// No description provided for @venueKpiUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings, next 30 days'**
+  String get venueKpiUpcoming;
+
+  /// No description provided for @venueKpiPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid out'**
+  String get venueKpiPaid;
+
+  /// No description provided for @venueKpiPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending payouts'**
+  String get venueKpiPending;
+
+  /// No description provided for @venueNeedsReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your reply'**
+  String get venueNeedsReply;
+
+  /// No description provided for @venueSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get venueSeeAll;
+
+  /// No description provided for @venueNothingWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is waiting for you.'**
+  String get venueNothingWaiting;
+
+  /// No description provided for @venueComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up at your venues'**
+  String get venueComingUp;
+
+  /// No description provided for @venueNothingUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings in the next 30 days.'**
+  String get venueNothingUpcoming;
+
+  /// No description provided for @venueQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get venueQuickActions;
+
+  /// No description provided for @venueQuickCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in a guest'**
+  String get venueQuickCheckIn;
+
+  /// No description provided for @venueQuickCloseDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Close a day'**
+  String get venueQuickCloseDay;
+
+  /// No description provided for @venueQuickAddVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a venue'**
+  String get venueQuickAddVenue;
+
+  /// No description provided for @venueAddVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Add venue'**
+  String get venueAddVenue;
+
+  /// No description provided for @venueHubEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get venueHubEdit;
+
+  /// No description provided for @venueHubEditHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, photos, location, pricing'**
+  String get venueHubEditHint;
+
+  /// No description provided for @venueHubAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get venueHubAvailability;
+
+  /// No description provided for @venueHubAvailabilityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'See bookings and close days'**
+  String get venueHubAvailabilityHint;
+
+  /// No description provided for @venueHubPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get venueHubPublic;
+
+  /// No description provided for @venueHubPublicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How guests see it'**
+  String get venueHubPublicHint;
+
+  /// No description provided for @earningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get earningsTitle;
+
+  /// No description provided for @earningsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get earningsPending;
+
+  /// No description provided for @earningsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid out'**
+  String get earningsPaid;
+
+  /// No description provided for @earningsRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent payouts'**
+  String get earningsRecent;
+
+  /// No description provided for @earningsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No payouts yet. They appear after a guest is checked in.'**
+  String get earningsNone;
+
+  /// No description provided for @earningsSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout setup'**
+  String get earningsSetup;
+
+  /// No description provided for @earningsSetupReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Payouts are on'**
+  String get earningsSetupReady;
+
+  /// No description provided for @earningsSetupReadyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be paid to your bank account.'**
+  String get earningsSetupReadyHint;
+
+  /// No description provided for @earningsSetupStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up payouts'**
+  String get earningsSetupStart;
+
+  /// No description provided for @earningsSetupFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish payout setup'**
+  String get earningsSetupFinish;
+
+  /// No description provided for @earningsSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens on the web. It asks for your bank and identity details.'**
+  String get earningsSetupHint;
+
+  /// No description provided for @payoutPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get payoutPending;
+
+  /// No description provided for @payoutPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get payoutPaid;
+
+  /// No description provided for @payoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get payoutFailed;
+
+  /// No description provided for @payoutSourceVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue booking'**
+  String get payoutSourceVenue;
+
+  /// No description provided for @payoutSourceOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get payoutSourceOther;
+
+  /// No description provided for @moreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get moreTitle;
+
   /// No description provided for @requestsTitle.
   ///
   /// In en, this message translates to:

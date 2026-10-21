@@ -79,6 +79,20 @@ class SpacesRepository {
     ];
   }
 
+  /// Totals and the latest payouts.
+  Future<PayoutSummary> payouts({int limit = 10}) async {
+    final body = await _api.get(
+      ApiEndpoints.payoutsMe,
+      query: {'limit': limit},
+    );
+    return PayoutSummary.fromJson(body);
+  }
+
+  Future<StripeStatus> stripeStatus() async {
+    final body = await _api.get(ApiEndpoints.stripeStatus);
+    return StripeStatus.fromJson(body);
+  }
+
   /// Closes a day of a venue: nobody can book it until it is opened again.
   Future<void> blockDay(String venueId, DateTime day) async {
     await _api.post(ApiEndpoints.venueBlockedDates(venueId), {
@@ -124,4 +138,14 @@ final FutureProvider<List<SpaceListing>> myVenuesProvider =
 final FutureProvider<List<SpaceListing>> myEventsProvider =
     FutureProvider.autoDispose<List<SpaceListing>>(
   (ref) => ref.watch(spacesRepositoryProvider).myEvents(),
+);
+
+final FutureProvider<PayoutSummary> payoutsProvider =
+    FutureProvider.autoDispose<PayoutSummary>(
+  (ref) => ref.watch(spacesRepositoryProvider).payouts(),
+);
+
+final FutureProvider<StripeStatus> stripeStatusProvider =
+    FutureProvider.autoDispose<StripeStatus>(
+  (ref) => ref.watch(spacesRepositoryProvider).stripeStatus(),
 );

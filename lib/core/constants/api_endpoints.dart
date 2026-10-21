@@ -67,6 +67,12 @@ class ApiEndpoints {
   static const String providerRequests = '/event-transactions/provider';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
+  /// What the person has been paid and is owed, newest first.
+  static const String payoutsMe = '/payouts/me';
+
+  /// How far the person's payout account (Stripe) is set up.
+  static const String stripeStatus = '/stripe-connect/status';
+
   /// Checks a guest in by the code on their ticket.
   static const String bookingCheckIn = '/bookings/check-in';
   static const String venues = '/venues';

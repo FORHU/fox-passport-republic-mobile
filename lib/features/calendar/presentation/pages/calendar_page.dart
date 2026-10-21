@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/calendar/presentation/widgets/venue_hold_chip.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -24,6 +25,7 @@ class CalendarView extends ConsumerStatefulWidget {
   const CalendarView({
     required this.onOpenTickets,
     this.manageVenues = false,
+    this.initialVenueId,
     super.key,
   });
 
@@ -35,6 +37,10 @@ class CalendarView extends ConsumerStatefulWidget {
   /// lets them open or close a day.
   final bool manageVenues;
 
+  /// With [manageVenues]: show this venue on its own to begin with, as when
+  /// arriving from a venue's page.
+  final String? initialVenueId;
+
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
 }
@@ -45,7 +51,17 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   final Set<CalendarRole> _hidden = {};
 
   /// The one venue to show, or null for all of them.
-  String? _venueFilter;
+  late String? _venueFilter = widget.initialVenueId;
+
+  @override
+  void didUpdateWidget(CalendarView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The tab is kept alive, so a later arrival from another venue's page
+    // reaches this same state: follow it.
+    if (widget.initialVenueId != oldWidget.initialVenueId) {
+      _venueFilter = widget.initialVenueId;
+    }
+  }
 
   static DateTime _dayOf(DateTime d) => DateTime(d.year, d.month, d.day);
   static DateTime _firstOfMonth(DateTime d) => DateTime(d.year, d.month);
@@ -643,7 +659,7 @@ class _EntryTile extends StatelessWidget {
                         ),
                         if (hold != null) ...[
                           const SizedBox(height: 6),
-                          _HoldChip(hold: hold),
+                          VenueHoldChip(hold: hold),
                         ],
                         if (entry.isBlock && onOpenDay != null)
                           TextButton(
@@ -695,7 +711,7 @@ class _EntryTile extends StatelessWidget {
                 ),
                 if (entry.hold != null) ...[
                   const SizedBox(height: 8),
-                  _HoldChip(hold: entry.hold!),
+                  VenueHoldChip(hold: entry.hold!),
                 ] else if (entry.status.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -722,31 +738,6 @@ class _EntryTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Where a booking at the person's venue stands with the venue.
-class _HoldChip extends StatelessWidget {
-  const _HoldChip({required this.hold});
-
-  final VenueHold hold;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final (label, color) = switch (hold) {
-      VenueHold.awaitingReply => (l10n.calendarHoldAwaiting, AppColors.warning),
-      VenueHold.held => (l10n.calendarHoldHeld, AppColors.textSecondary),
-      VenueHold.confirmed => (l10n.calendarHoldConfirmed, AppColors.success),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: AppRadius.brPill,
-      ),
-      child: Text(label, style: AppTypography.label(color: color)),
     );
   }
 }

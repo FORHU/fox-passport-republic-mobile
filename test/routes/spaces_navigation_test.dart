@@ -8,6 +8,9 @@ import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/routes/app_routes.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
@@ -103,12 +106,74 @@ void main() {
     await settle(tester);
 
     expect(where(), RouteNames.spaceVenue);
-    for (final tab in ['Requests', 'Venues', 'Check-in', 'Messages']) {
+    for (final tab in ['Overview', 'Venues', 'Calendar', 'Earnings', 'More']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
     // The Citizen bar is not there.
     expect(find.text('Bookings'), findsNothing);
     expect(find.text('Passport'), findsNothing);
+    await finish(tester);
+  });
+
+  testWidgets('the Venue space moves between its five tabs', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+    router.go(RouteNames.spaceVenue);
+    await settle(tester);
+
+    for (final (label, path) in [
+      ('Venues', RouteNames.spaceVenueVenues),
+      ('Calendar', RouteNames.spaceVenueCalendar),
+      ('Earnings', RouteNames.spaceVenueEarnings),
+      ('More', RouteNames.spaceVenueMore),
+      ('Overview', RouteNames.spaceVenue),
+    ]) {
+      await tester.tap(find.text(label).last);
+      await settle(tester);
+      expect(where(), path, reason: label);
+    }
+    await finish(tester);
+  });
+
+  testWidgets('More opens Requests, and back returns to More', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
+
+    await tester.tap(find.text('Requests'));
+    await settle(tester);
+    expect(find.byType(VenueRequestsPage), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(find.byType(VenueMorePage), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('More opens Messages with a way back', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
+
+    await tester.tap(find.text('Messages'));
+    await settle(tester);
+    expect(find.byType(MessagesPage), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Back'));
+    await settle(tester);
+    expect(find.byType(VenueMorePage), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('a venue opens its hub inside the Venues tab', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+
+    router.go(RouteNames.spaceVenueHub('v1'));
+    await settle(tester);
+
+    expect(where(), RouteNames.spaceVenueHub('v1'));
+    // Still inside the Venue space, with its bottom bar.
+    expect(find.text('Earnings'), findsWidgets);
     await finish(tester);
   });
 
