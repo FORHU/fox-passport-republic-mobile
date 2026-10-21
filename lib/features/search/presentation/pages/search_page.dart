@@ -217,8 +217,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     children: [
                       // Search is a page inside Home, not a tab: a way back.
                       IconButton(
-                        tooltip: MaterialLocalizations.of(context)
-                            .backButtonTooltip,
+                        tooltip:
+                            MaterialLocalizations.of(context).backButtonTooltip,
                         onPressed: () => context.canPop()
                             ? context.pop()
                             : context.go(RouteNames.home),
