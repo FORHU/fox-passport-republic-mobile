@@ -151,6 +151,8 @@ class ApiEndpoints {
   static const String conversationsInbox = '/conversations/inbox';
   static const String socketTicket = '/auth/socket-ticket';
   static const String uploadFile = '/files/upload-direct';
+  static const String venueBoundaries = '/venues/boundaries';
+  static const String cancellationPolicies = '/cancellation-policies';
   static const String fxRates = '/fx/rates';
   static String conversationMute(String id) => '/conversations/$id/mute';
   static String conversationPin(String id) => '/conversations/$id/pin';

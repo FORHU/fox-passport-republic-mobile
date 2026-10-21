@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
+import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 
 /// What the Venue and Event spaces read and do.
 class SpacesRepository {
@@ -110,6 +114,77 @@ class SpacesRepository {
       '${day.year.toString().padLeft(4, '0')}-'
       '${day.month.toString().padLeft(2, '0')}-'
       '${day.day.toString().padLeft(2, '0')}';
+
+  /// The venue as saved, to edit.
+  Future<VenueDetail> venueDetail(String id) async {
+    final body = await _api.get(ApiEndpoints.venueById(id));
+    final detail = VenueDetail.tryParse(body);
+    if (detail == null) throw const FormatException('Venue response is bad');
+    return detail;
+  }
+
+  /// Saves a new venue and returns its id. [submit] sends it for review;
+  /// otherwise it stays a draft.
+  Future<String> createVenue(VenueDraft draft, {required bool submit}) async {
+    final body = await _api.post(
+      ApiEndpoints.venues,
+      draft.toJson(status: submit ? 'pending' : 'draft'),
+    );
+    final venue = body is Map ? (body['venue'] ?? body['data']) : null;
+    final id = venue is Map ? venue['id'] : null;
+    if (id is! String) throw const FormatException('No id for the new venue');
+    return id;
+  }
+
+  /// Saves changes. A live venue is sent without a status so it stays live.
+  Future<void> updateVenue(
+    String id,
+    VenueDraft draft, {
+    required bool live,
+    required bool submit,
+  }) async {
+    final status = live ? null : (submit ? 'pending' : 'draft');
+    await _api.put(ApiEndpoints.venueById(id), draft.toJson(status: status));
+  }
+
+  /// Uploads a photo and returns the id the venue needs, with its url.
+  Future<VenuePhoto> uploadVenuePhoto(PickedPhoto photo) async {
+    final form = FormData.fromMap({
+      'file': MultipartFile.fromBytes(photo.bytes, filename: photo.name),
+    });
+    final body = await _api.post(ApiEndpoints.uploadFile, form);
+    final fileId = body is Map ? body['fileId'] : null;
+    final url =
+        body is Map ? (body['url'] ?? (body['file'] as Map?)?['url']) : null;
+    if (fileId is! String || url is! String) {
+      throw const FormatException('The upload came back without a file id');
+    }
+    return VenuePhoto(fileId: fileId, url: url);
+  }
+
+  /// Other venues' service areas, so a new one can avoid them.
+  Future<List<VenueBoundary>> neighbourBoundaries({String? excludeId}) async {
+    final body = await _api.get(
+      ApiEndpoints.venueBoundaries,
+      query: {if (excludeId != null) 'excludeId': excludeId},
+    );
+    final rows = body is Map ? body['boundaries'] : null;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (VenueBoundary.tryParse(row) case final b?) b,
+    ];
+  }
+
+  Future<List<CancellationPolicyOption>> cancellationPolicies() async {
+    final body = await _api.get(ApiEndpoints.cancellationPolicies);
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (CancellationPolicyOption.tryParse(row) case final p?) p,
+    ];
+  }
 
   /// Checks a guest in by the code on their ticket.
   Future<CheckInResult> checkIn(String ticketCode) async {
