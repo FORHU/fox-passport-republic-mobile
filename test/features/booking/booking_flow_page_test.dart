@@ -89,6 +89,9 @@ void main() {
     expect(find.text('1 OF 3'), findsOneWidget);
 
     // Next is off until a day is picked. Day 20 is never a sample booked day.
+    // Next month: every day in it is still ahead, whatever today is.
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('20').first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
@@ -123,6 +126,9 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
+    // Next month: every day in it is still ahead, whatever today is.
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('20').first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
@@ -210,6 +216,9 @@ void stalePaymentTests() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
+    // Next month: every day in it is still ahead, whatever today is.
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded));
     await tester.pumpAndSettle();
     await tester.tap(find.text('20').first);
     await tester.pumpAndSettle();
