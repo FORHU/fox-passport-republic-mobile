@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/widgets/app_input.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -58,7 +58,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
       backgroundColor: AppColors.canvas,
       appBar: AppBar(
         title: Text(l10n.checkInTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceSwitchButton()],
+        actions: const [SpaceTopActions()],
       ),
       body: Form(
         key: _form,

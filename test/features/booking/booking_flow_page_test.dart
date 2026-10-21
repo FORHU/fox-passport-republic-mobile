@@ -8,6 +8,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../../support/future_day.dart';
 
 class _MockApi extends Mock implements ApiService {}
 
@@ -120,8 +121,8 @@ void main() {
     expect(find.text('When is it?'), findsOneWidget);
     expect(find.text('1 OF 3'), findsOneWidget);
 
-    // Next is off until a day is picked. Day 20 is never a sample booked day.
-    await tester.tap(find.text('20').first);
+    // Next is off until a day is picked: one ahead of today and free.
+    await tapFutureDay(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
@@ -198,7 +199,7 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('20').first);
+    await tapFutureDay(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
@@ -286,7 +287,7 @@ void stalePaymentTests() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('20').first);
+    await tapFutureDay(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();

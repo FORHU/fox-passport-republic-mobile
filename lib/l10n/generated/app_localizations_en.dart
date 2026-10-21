@@ -1267,6 +1267,136 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spaceTabCheckIn => 'Check-in';
 
   @override
+  String get spaceTabOverview => 'Overview';
+
+  @override
+  String get spaceTabCalendar => 'Calendar';
+
+  @override
+  String get spaceTabEarnings => 'Earnings';
+
+  @override
+  String get spaceTabMore => 'More';
+
+  @override
+  String get venueKpiLive => 'Venues live';
+
+  @override
+  String venueKpiLiveValue(int live, int total) {
+    return '$live of $total';
+  }
+
+  @override
+  String get venueKpiUpcoming => 'Bookings, next 30 days';
+
+  @override
+  String get venueKpiPaid => 'Paid out';
+
+  @override
+  String get venueKpiPending => 'Pending payouts';
+
+  @override
+  String get venueNeedsReply => 'Needs your reply';
+
+  @override
+  String get venueSeeAll => 'See all';
+
+  @override
+  String get venueNothingWaiting => 'Nothing is waiting for you.';
+
+  @override
+  String get venueComingUp => 'Coming up at your venues';
+
+  @override
+  String get venueNothingUpcoming => 'No bookings in the next 30 days.';
+
+  @override
+  String get venueQuickActions => 'Quick actions';
+
+  @override
+  String get venueQuickCheckIn => 'Check in a guest';
+
+  @override
+  String get venueQuickCloseDay => 'Close a day';
+
+  @override
+  String get venueQuickAddVenue => 'Add a venue';
+
+  @override
+  String get venueAddVenue => 'Add venue';
+
+  @override
+  String get venueHubEdit => 'Edit details';
+
+  @override
+  String get venueHubEditHint => 'Name, photos, location, pricing';
+
+  @override
+  String get venueHubAvailability => 'Availability';
+
+  @override
+  String get venueHubAvailabilityHint => 'See bookings and close days';
+
+  @override
+  String get venueHubPublic => 'View public page';
+
+  @override
+  String get venueHubPublicHint => 'How guests see it';
+
+  @override
+  String get earningsTitle => 'Earnings';
+
+  @override
+  String get earningsPending => 'Pending';
+
+  @override
+  String get earningsPaid => 'Paid out';
+
+  @override
+  String get earningsRecent => 'Recent payouts';
+
+  @override
+  String get earningsNone =>
+      'No payouts yet. They appear after a guest is checked in.';
+
+  @override
+  String get earningsSetup => 'Payout setup';
+
+  @override
+  String get earningsSetupReady => 'Payouts are on';
+
+  @override
+  String get earningsSetupReadyHint => 'You\'ll be paid to your bank account.';
+
+  @override
+  String get earningsSetupStart => 'Set up payouts';
+
+  @override
+  String get earningsSetupFinish => 'Finish payout setup';
+
+  @override
+  String get earningsSetupHint =>
+      'Opens on the web. It asks for your bank and identity details.';
+
+  @override
+  String get payoutPending => 'Pending';
+
+  @override
+  String get payoutPaid => 'Paid';
+
+  @override
+  String get payoutFailed => 'Failed';
+
+  @override
+  String get payoutSourceVenue => 'Venue booking';
+
+  @override
+  String get payoutSourceOther => 'Other';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
   String get requestsTitle => 'Requests';
 
   @override
@@ -1994,6 +2124,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarManageOnWeb => 'Manage this on the web.';
+
+  @override
+  String get calendarHoldAwaiting => 'Needs your reply';
+
+  @override
+  String get calendarHoldHeld => 'Held';
+
+  @override
+  String get calendarHoldConfirmed => 'Confirmed';
+
+  @override
+  String get calendarBlocked => 'Blocked';
+
+  @override
+  String get calendarAllVenues => 'All venues';
+
+  @override
+  String get calendarDayManage => 'Open or close this day';
+
+  @override
+  String calendarDayManageTitle(String date) {
+    return 'Open or close $date';
+  }
+
+  @override
+  String get calendarDayOpen => 'Open';
+
+  @override
+  String get calendarDayClosed => 'Closed';
+
+  @override
+  String get calendarDayBooked => 'Booked, so it can\'t be closed';
+
+  @override
+  String get calendarDayFailed => 'We couldn\'t update that day. Try again.';
+
+  @override
+  String get calendarOpenDay => 'Open this day';
 
   @override
   String get bookings => 'Bookings';

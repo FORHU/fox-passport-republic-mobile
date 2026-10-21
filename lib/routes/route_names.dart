@@ -102,12 +102,21 @@ class RouteNames {
   /// The Republic: the community feed.
   static const String republic = '/republic';
 
-  /// The Venue space, for someone who holds the VenueFoxer role: requests for
-  /// their venues, their venues, check-in and messages.
+  /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:
+  /// Overview, Venues, Calendar, Earnings and More.
   static const String spaceVenue = '/space/venue';
-  static const String spaceVenueListings = '/space/venue/listings';
-  static const String spaceVenueCheckIn = '/space/venue/check-in';
-  static const String spaceVenueMessages = '/space/venue/messages';
+  static const String spaceVenueVenues = '/space/venue/venues';
+
+  /// One of their venues: what they can do with it.
+  static String spaceVenueHub(String venueId) => '$spaceVenueVenues/$venueId';
+  static const String spaceVenueCalendar = '/space/venue/calendar';
+  static const String spaceVenueEarnings = '/space/venue/earnings';
+  static const String spaceVenueMore = '/space/venue/more';
+
+  /// Opened from More: requests for their venues, check-in and messages.
+  static const String spaceVenueRequests = '/space/venue/more/requests';
+  static const String spaceVenueCheckIn = '/space/venue/more/check-in';
+  static const String spaceVenueMessages = '/space/venue/more/messages';
 
   /// The Event space, for an EventFoxer: their events, check-in and messages.
   static const String spaceEvent = '/space/event';

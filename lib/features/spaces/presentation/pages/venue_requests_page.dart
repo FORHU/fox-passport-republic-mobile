@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -17,57 +17,60 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
+/// Accepts or declines a request for one of the person's venues, asking first
+/// before a decline, and says how it went. Shared by the Requests list and the
+/// Overview.
+Future<void> answerVenueRequest(
+  BuildContext context,
+  WidgetRef ref,
+  VenueRequest request, {
+  required bool accept,
+}) async {
+  final l10n = context.l10n;
+  if (!accept) {
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(l10n.requestDeclineTitle),
+        content: Text(l10n.requestDeclineBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.messageCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              l10n.requestDecline,
+              style: const TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (sure != true || !context.mounted) return;
+  }
+  try {
+    await ref
+        .read(spacesRepositoryProvider)
+        .reviewVenueRequest(request.id, accept: accept);
+    ref.invalidate(venueRequestsProvider);
+    if (context.mounted) {
+      showTopToast(
+        context,
+        accept ? l10n.requestAccepted : l10n.requestDeclined,
+      );
+    }
+  } on Object {
+    if (context.mounted) showTopToast(context, l10n.requestActionFailed);
+  }
+}
+
 /// Requests for your venues: people adding a venue of yours to their event.
 /// The ones that need a reply come first, with Accept and Decline.
 class VenueRequestsPage extends ConsumerWidget {
   const VenueRequestsPage({super.key});
-
-  Future<void> _review(
-    BuildContext context,
-    WidgetRef ref,
-    VenueRequest request, {
-    required bool accept,
-  }) async {
-    final l10n = context.l10n;
-    if (!accept) {
-      final sure = await showDialog<bool>(
-        context: context,
-        builder: (_) => AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: Text(l10n.requestDeclineTitle),
-          content: Text(l10n.requestDeclineBody),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.messageCancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(
-                l10n.requestDecline,
-                style: const TextStyle(color: AppColors.error),
-              ),
-            ),
-          ],
-        ),
-      );
-      if (sure != true || !context.mounted) return;
-    }
-    try {
-      await ref
-          .read(spacesRepositoryProvider)
-          .reviewVenueRequest(request.id, accept: accept);
-      ref.invalidate(venueRequestsProvider);
-      if (context.mounted) {
-        showTopToast(
-          context,
-          accept ? l10n.requestAccepted : l10n.requestDeclined,
-        );
-      }
-    } on Object {
-      if (context.mounted) showTopToast(context, l10n.requestActionFailed);
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,7 +81,7 @@ class VenueRequestsPage extends ConsumerWidget {
       backgroundColor: AppColors.canvas,
       appBar: AppBar(
         title: Text(l10n.requestsTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceSwitchButton()],
+        actions: const [SpaceTopActions()],
       ),
       body: requests.when(
         loading: () => const Center(
@@ -111,13 +114,13 @@ class VenueRequestsPage extends ConsumerWidget {
                 )
               else
                 for (final request in list) ...[
-                  _RequestCard(
+                  VenueRequestCard(
                     request: request,
                     onAccept: () => unawaited(
-                      _review(context, ref, request, accept: true),
+                      answerVenueRequest(context, ref, request, accept: true),
                     ),
                     onDecline: () => unawaited(
-                      _review(context, ref, request, accept: false),
+                      answerVenueRequest(context, ref, request, accept: false),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -130,11 +133,14 @@ class VenueRequestsPage extends ConsumerWidget {
   }
 }
 
-class _RequestCard extends ConsumerWidget {
-  const _RequestCard({
+/// One request for a venue: what it is for, who asked, the price, and Accept
+/// and Decline while it waits for a reply.
+class VenueRequestCard extends ConsumerWidget {
+  const VenueRequestCard({
     required this.request,
     required this.onAccept,
     required this.onDecline,
+    super.key,
   });
 
   final VenueRequest request;

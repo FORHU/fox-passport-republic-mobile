@@ -67,6 +67,12 @@ class ApiEndpoints {
   static const String providerRequests = '/event-transactions/provider';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
+  /// What the person has been paid and is owed, newest first.
+  static const String payoutsMe = '/payouts/me';
+
+  /// How far the person's payout account (Stripe) is set up.
+  static const String stripeStatus = '/stripe-connect/status';
+
   /// Checks a guest in by the code on their ticket.
   static const String bookingCheckIn = '/bookings/check-in';
   static const String venues = '/venues';
@@ -75,6 +81,12 @@ class ApiEndpoints {
   static String venueById(String id) => '/venues/$id';
   static String venueUnavailableDates(String id) =>
       '/venues/$id/unavailable-dates';
+
+  /// The days the venue's owner has closed. POST `{date}` to close one;
+  /// DELETE [venueBlockedDate] (a `YYYY-MM-DD`) to open it again.
+  static String venueBlockedDates(String id) => '/venues/$id/blocked-dates';
+  static String venueBlockedDate(String id, String date) =>
+      '/venues/$id/blocked-dates/$date';
 
   // ── Bookings ────────────────────────────────────────────────────────────
   static const String bookingDraft = '/bookings/draft';
