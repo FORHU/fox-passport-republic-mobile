@@ -130,3 +130,19 @@ class VenueDetail {
     );
   }
 }
+
+/// A country or state in a dropdown: the code the API looks places up by, and
+/// the name the venue stores.
+class PlaceOption {
+  const PlaceOption({required this.code, required this.name});
+
+  final String code;
+  final String name;
+
+  static PlaceOption? tryParse(Object? raw) {
+    if (raw is! Map) return null;
+    final name = '${raw['name'] ?? ''}'.trim();
+    if (name.isEmpty) return null;
+    return PlaceOption(code: '${raw['code'] ?? ''}', name: name);
+  }
+}

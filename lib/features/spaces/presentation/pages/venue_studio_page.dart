@@ -343,21 +343,7 @@ class _LocationStep extends StatelessWidget {
           value: d.address,
           onChanged: (v) => edit((x) => x.copyWith(address: v)),
         ),
-        _Field(
-          label: l10n.studioCity,
-          value: d.city,
-          onChanged: (v) => edit((x) => x.copyWith(city: v)),
-        ),
-        _Field(
-          label: l10n.studioState,
-          value: d.state,
-          onChanged: (v) => edit((x) => x.copyWith(state: v)),
-        ),
-        _Field(
-          label: l10n.studioCountry,
-          value: d.country,
-          onChanged: (v) => edit((x) => x.copyWith(country: v)),
-        ),
+        _PlaceFields(state: state, ref: ref, id: id),
         const SizedBox(height: 8),
         Text(l10n.studioServiceArea, style: AppTypography.display()),
         const SizedBox(height: 4),
@@ -489,7 +475,9 @@ class _PhotosStep extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              l10n.studioPhotoFailed,
+              state.errorDetail == null
+                  ? l10n.studioPhotoFailed
+                  : l10n.studioPhotoFailedWhy(state.errorDetail!),
               style: AppTypography.body(size: 13, color: AppColors.error),
             ),
           ),
@@ -857,6 +845,159 @@ class _FieldState extends State<_Field> {
               : null,
           decoration: InputDecoration(labelText: widget.label),
           onChanged: widget.onChanged,
+        ),
+      );
+}
+
+/// Country, state and city as dropdowns that narrow down in turn, with a
+/// button that fills them in from where the phone is. When the lists cannot be
+/// loaded they fall back to plain text fields.
+class _PlaceFields extends StatelessWidget {
+  const _PlaceFields({
+    required this.state,
+    required this.ref,
+    required this.id,
+  });
+
+  final VenueStudioState state;
+  final WidgetRef ref;
+  final String? id;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final d = state.draft;
+    final studio = ref.read(venueStudioProvider(id).notifier);
+
+    String? problem;
+    switch (state.locateProblem) {
+      case 'denied':
+        problem = l10n.studioLocateDenied;
+      case 'off':
+        problem = l10n.studioLocateOff;
+      case 'failed':
+        problem = l10n.studioLocateFailed;
+    }
+
+    if (state.countries.isEmpty) {
+      return Column(
+        children: [
+          _Field(
+            label: l10n.studioCountry,
+            value: d.country,
+            onChanged: (v) => studio.edit((x) => x.copyWith(country: v)),
+          ),
+          _Field(
+            label: l10n.studioState,
+            value: d.state,
+            onChanged: (v) => studio.edit((x) => x.copyWith(state: v)),
+          ),
+          _Field(
+            label: l10n.studioCity,
+            value: d.city,
+            onChanged: (v) => studio.edit((x) => x.copyWith(city: v)),
+          ),
+        ],
+      );
+    }
+
+    // A city the phone found, or one saved on the web, may not be in the list.
+    final cities = [
+      ...state.cities,
+      if (d.city.isNotEmpty && !state.cities.contains(d.city)) d.city,
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OutlinedButton.icon(
+          onPressed: state.locating ? null : studio.useMyLocation,
+          icon: state.locating
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.my_location_rounded, size: 18),
+          label: Text(l10n.studioUseMyLocation),
+        ),
+        if (problem != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              problem,
+              style: AppTypography.body(size: 13, color: AppColors.warning),
+            ),
+          ),
+        const SizedBox(height: 16),
+        _PlaceMenu(
+          label: l10n.studioCountry,
+          value: d.country,
+          options: [for (final c in state.countries) c.name],
+          onPicked: (name) => studio.pickCountry(
+            state.countries.firstWhere((c) => c.name == name),
+          ),
+        ),
+        if (state.states.isNotEmpty)
+          _PlaceMenu(
+            label: l10n.studioState,
+            value: d.state,
+            options: [for (final s in state.states) s.name],
+            onPicked: (name) => studio.pickState(
+              state.states.firstWhere((s) => s.name == name),
+            ),
+          ),
+        if (d.country.isNotEmpty)
+          if (cities.isNotEmpty)
+            _PlaceMenu(
+              label: l10n.studioCity,
+              value: d.city,
+              options: cities,
+              onPicked: studio.pickCity,
+            )
+          else
+            _Field(
+              label: l10n.studioCity,
+              value: d.city,
+              onChanged: studio.pickCity,
+            ),
+      ],
+    );
+  }
+}
+
+/// A dropdown you can type into to narrow a long list.
+class _PlaceMenu extends StatelessWidget {
+  const _PlaceMenu({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onPicked,
+  });
+
+  final String label;
+  final String value;
+  final List<String> options;
+  final ValueChanged<String> onPicked;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: DropdownMenu<String>(
+          // Rebuilt when the value is set from elsewhere, such as the phone's
+          // position, or the list changes under it.
+          key: ValueKey('$label|$value|${options.length}'),
+          label: Text(label),
+          initialSelection: options.contains(value) ? value : null,
+          expandedInsets: EdgeInsets.zero,
+          enableFilter: true,
+          requestFocusOnTap: true,
+          menuHeight: 280,
+          dropdownMenuEntries: [
+            for (final o in options) DropdownMenuEntry(value: o, label: o),
+          ],
+          onSelected: (v) {
+            if (v != null) onPicked(v);
+          },
         ),
       );
 }

@@ -1544,6 +1544,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'This venue is live. Your changes show to guests as soon as you save.';
 
   @override
+  String get studioUseMyLocation => 'Use my current location';
+
+  @override
+  String get studioLocateDenied =>
+      'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.';
+
+  @override
+  String get studioLocateOff =>
+      'Turn on your phone\'s location, or tap the map instead.';
+
+  @override
+  String get studioLocateFailed =>
+      'We couldn\'t find where you are. Tap the map instead.';
+
+  @override
+  String studioPhotoFailedWhy(String reason) {
+    return 'That photo didn\'t upload: $reason';
+  }
+
+  @override
   String get studioMapNeedsToken =>
       'The map isn\'t available, so the pin can\'t be placed.';
 

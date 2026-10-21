@@ -176,6 +176,36 @@ class SpacesRepository {
     ];
   }
 
+  Future<List<PlaceOption>> countries() =>
+      _places(ApiEndpoints.locationCountries);
+
+  Future<List<PlaceOption>> states(String countryCode) =>
+      _places(ApiEndpoints.locationStates(countryCode));
+
+  /// The cities of a country, or of one of its states.
+  Future<List<String>> cities(String countryCode, {String? stateCode}) async {
+    final body = await _api.get(
+      ApiEndpoints.locationCities(countryCode),
+      query: stateCode == null ? null : {'state': stateCode},
+    );
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if ('$row'.trim().isNotEmpty) '$row'.trim(),
+    ];
+  }
+
+  Future<List<PlaceOption>> _places(String path) async {
+    final body = await _api.get(path);
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (PlaceOption.tryParse(row) case final p?) p,
+    ];
+  }
+
   Future<List<CancellationPolicyOption>> cancellationPolicies() async {
     final body = await _api.get(ApiEndpoints.cancellationPolicies);
     final rows = body is Map ? body['data'] : body;

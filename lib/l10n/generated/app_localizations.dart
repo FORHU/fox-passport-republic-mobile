@@ -2974,6 +2974,36 @@ abstract class AppLocalizations {
   /// **'This venue is live. Your changes show to guests as soon as you save.'**
   String get studioLiveNote;
 
+  /// No description provided for @studioUseMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my current location'**
+  String get studioUseMyLocation;
+
+  /// No description provided for @studioLocateDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.'**
+  String get studioLocateDenied;
+
+  /// No description provided for @studioLocateOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on your phone\'s location, or tap the map instead.'**
+  String get studioLocateOff;
+
+  /// No description provided for @studioLocateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find where you are. Tap the map instead.'**
+  String get studioLocateFailed;
+
+  /// No description provided for @studioPhotoFailedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload: {reason}'**
+  String studioPhotoFailedWhy(String reason);
+
   /// No description provided for @studioMapNeedsToken.
   ///
   /// In en, this message translates to:

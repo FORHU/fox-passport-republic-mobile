@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
+import 'package:flutter_template/shared/location/device_locator.dart';
 
 /// The steps of the studio, in order.
 enum StudioStep { basics, location, photos, details, pricing, review }
@@ -22,6 +24,14 @@ class VenueStudioState {
     this.live = false,
     this.neighbours = const [],
     this.policies = const [],
+    this.errorDetail,
+    this.countries = const [],
+    this.states = const [],
+    this.cities = const [],
+    this.countryCode,
+    this.stateCode,
+    this.locating = false,
+    this.locateProblem,
   });
 
   final VenueDraft draft;
@@ -40,6 +50,22 @@ class VenueStudioState {
   final bool live;
   final List<VenueBoundary> neighbours;
   final List<CancellationPolicyOption> policies;
+
+  /// What the server said when the last upload or save was refused.
+  final String? errorDetail;
+
+  /// The dropdowns for the venue's place, narrowing country to state to city.
+  final List<PlaceOption> countries;
+  final List<PlaceOption> states;
+  final List<String> cities;
+  final String? countryCode;
+  final String? stateCode;
+
+  /// Finding the phone's position for the pin.
+  final bool locating;
+
+  /// Why that did not work: `denied`, `off` or `failed`.
+  final String? locateProblem;
 
   /// Names of the venues whose service area this one runs into.
   List<String> get overlapping {
@@ -65,6 +91,16 @@ class VenueStudioState {
     bool? live,
     List<VenueBoundary>? neighbours,
     List<CancellationPolicyOption>? policies,
+    String? errorDetail,
+    List<PlaceOption>? countries,
+    List<PlaceOption>? states,
+    List<String>? cities,
+    String? countryCode,
+    String? stateCode,
+    bool clearStateCode = false,
+    bool? locating,
+    String? locateProblem,
+    bool clearLocateProblem = false,
   }) =>
       VenueStudioState(
         draft: draft ?? this.draft,
@@ -77,6 +113,15 @@ class VenueStudioState {
         live: live ?? this.live,
         neighbours: neighbours ?? this.neighbours,
         policies: policies ?? this.policies,
+        errorDetail: clearError ? null : errorDetail ?? this.errorDetail,
+        countries: countries ?? this.countries,
+        states: states ?? this.states,
+        cities: cities ?? this.cities,
+        countryCode: countryCode ?? this.countryCode,
+        stateCode: clearStateCode ? null : stateCode ?? this.stateCode,
+        locating: locating ?? this.locating,
+        locateProblem:
+            clearLocateProblem ? null : locateProblem ?? this.locateProblem,
       );
 }
 
@@ -96,9 +141,11 @@ class VenueStudioController extends Notifier<VenueStudioState> {
   SpacesRepository get _repo => ref.read(spacesRepositoryProvider);
 
   Future<void> _load() async {
-    // The map and the policy list are extras: the studio works without them.
+    // The map, policies and place lists are extras: the studio works without
+    // them.
     unawaited(_loadNeighbours());
     unawaited(_loadPolicies());
+    final countries = _loadCountries();
     final id = venueId;
     if (id == null) return;
     try {
@@ -110,7 +157,127 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       );
     } on Object {
       state = state.copyWith(loading: false, loadFailed: true);
+      return;
     }
+    await countries;
+    await _matchSavedPlace();
+  }
+
+  Future<void> _loadCountries() async {
+    try {
+      final all = await _repo.countries();
+      state = state.copyWith(countries: all);
+    } on Object {
+      // The country can still be typed by name.
+    }
+  }
+
+  /// Finds the saved venue's country and state in the lists, so the dropdowns
+  /// narrow down to its city.
+  Future<void> _matchSavedPlace() async {
+    final country = state.countries
+        .where(
+          (c) => c.name.toLowerCase() == state.draft.country.toLowerCase(),
+        )
+        .firstOrNull;
+    if (country == null) return;
+    state = state.copyWith(countryCode: country.code);
+    await _loadStates(country.code, keepState: state.draft.state);
+  }
+
+  /// Loads a country's states and, when it has none or one is already chosen,
+  /// its cities.
+  Future<void> _loadStates(String countryCode, {String? keepState}) async {
+    try {
+      final states = await _repo.states(countryCode);
+      final kept = states
+          .where((s) => s.name.toLowerCase() == keepState?.toLowerCase())
+          .firstOrNull;
+      state = state.copyWith(
+        states: states,
+        stateCode: kept?.code,
+        clearStateCode: kept == null,
+      );
+      if (states.isEmpty || kept != null) {
+        await _loadCities(countryCode, kept?.code);
+      }
+    } on Object {
+      state = state.copyWith(states: const <PlaceOption>[]);
+      await _loadCities(countryCode, null);
+    }
+  }
+
+  Future<void> _loadCities(String countryCode, String? stateCode) async {
+    try {
+      final all = await _repo.cities(countryCode, stateCode: stateCode);
+      state = state.copyWith(cities: all);
+    } on Object {
+      state = state.copyWith(cities: const <String>[]);
+    }
+  }
+
+  /// Chooses a country: the state and city start over.
+  Future<void> pickCountry(PlaceOption country) async {
+    state = state.copyWith(
+      draft: state.draft.copyWith(
+        country: country.name,
+        state: '',
+        city: '',
+      ),
+      countryCode: country.code,
+      clearStateCode: true,
+      states: const <PlaceOption>[],
+      cities: const <String>[],
+      clearError: true,
+    );
+    await _loadStates(country.code);
+  }
+
+  Future<void> pickState(PlaceOption chosen) async {
+    state = state.copyWith(
+      draft: state.draft.copyWith(state: chosen.name, city: ''),
+      stateCode: chosen.code,
+      cities: const <String>[],
+      clearError: true,
+    );
+    final code = state.countryCode;
+    if (code != null) await _loadCities(code, chosen.code);
+  }
+
+  void pickCity(String city) => edit((d) => d.copyWith(city: city));
+
+  /// Puts the pin where the phone is and fills in the town and country.
+  Future<void> useMyLocation() async {
+    if (state.locating) return;
+    state = state.copyWith(locating: true, clearLocateProblem: true);
+    final locator = ref.read(deviceLocatorProvider);
+    final found = await locator.locate();
+    if (!found.isOk) {
+      state = state.copyWith(
+        locating: false,
+        locateProblem: switch (found.outcome) {
+          LocateOutcome.denied => 'denied',
+          LocateOutcome.serviceOff => 'off',
+          _ => 'failed',
+        },
+      );
+      return;
+    }
+    final here = (lat: found.lat!, lng: found.lng!);
+    state = state.copyWith(draft: state.draft.copyWith(center: here));
+
+    final place = await locator.placeAt(here.lat, here.lng);
+    final code = place.countryCode?.toUpperCase();
+    final country = code == null
+        ? null
+        : state.countries
+            .where((c) => c.code.toUpperCase() == code)
+            .firstOrNull;
+    if (country != null && country.code != state.countryCode) {
+      await pickCountry(country);
+    }
+    if (place.city != null) pickCity(place.city!);
+    state = state.copyWith(locating: false);
   }
 
   Future<void> _loadNeighbours() async {
@@ -161,8 +328,14 @@ class VenueStudioController extends Notifier<VenueStudioState> {
           photos: [...state.draft.photos, uploaded],
         ),
       );
-    } on Object {
-      state = state.copyWith(uploading: false, error: 'photo');
+    } on Object catch (e) {
+      // Say why when the server did: a storage problem looks the same as a
+      // bad photo otherwise.
+      state = state.copyWith(
+        uploading: false,
+        error: 'photo',
+        errorDetail: e is AppException ? e.message : null,
+      );
     }
   }
 

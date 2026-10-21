@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -9,10 +10,23 @@ import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/venue_studio_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRepo extends Mock implements SpacesRepository {}
+
+class _FakeLocator implements DeviceLocator {
+  LocateResult result =
+      const LocateResult(LocateOutcome.ok, lat: 14.6, lng: 121);
+  DevicePlace place = const DevicePlace(city: 'Quezon City', countryCode: 'PH');
+
+  @override
+  Future<LocateResult> locate({bool prompt = true}) async => result;
+
+  @override
+  Future<DevicePlace> placeAt(double lat, double lng) async => place;
+}
 
 class _FakePicker implements PhotoPicker {
   @override
@@ -37,6 +51,7 @@ const _ready = VenueDraft(
 
 void main() {
   late _MockRepo repo;
+  late _FakeLocator locator;
 
   setUpAll(() {
     registerFallbackValue(const VenueDraft());
@@ -48,6 +63,20 @@ void main() {
     when(() => repo.neighbourBoundaries(excludeId: any(named: 'excludeId')))
         .thenAnswer((_) async => const []);
     when(() => repo.cancellationPolicies()).thenAnswer((_) async => const []);
+    locator = _FakeLocator();
+    when(() => repo.countries()).thenAnswer(
+      (_) async => const [
+        PlaceOption(code: 'PH', name: 'Philippines'),
+        PlaceOption(code: 'US', name: 'United States'),
+      ],
+    );
+    when(() => repo.states('PH')).thenAnswer(
+      (_) async => const [PlaceOption(code: 'NCR', name: 'Metro Manila')],
+    );
+    when(() => repo.states('US')).thenAnswer((_) async => const []);
+    when(() => repo.cities('PH', stateCode: 'NCR'))
+        .thenAnswer((_) async => ['Manila', 'Quezon City']);
+    when(() => repo.cities('US')).thenAnswer((_) async => ['Austin']);
   });
 
   ProviderContainer container(String? venueId) {
@@ -55,6 +84,7 @@ void main() {
       overrides: [
         spacesRepositoryProvider.overrideWithValue(repo),
         photoPickerProvider.overrideWithValue(_FakePicker()),
+        deviceLocatorProvider.overrideWithValue(locator),
       ],
     );
     addTearDown(c.dispose);
@@ -113,7 +143,8 @@ void main() {
       final c = container('v1');
       await settle();
 
-      expect(c.read(venueStudioProvider('v1')).loadFailed, isTrue);
+      final s = c.read(venueStudioProvider('v1'));
+      expect(s.loadFailed, isTrue);
     });
 
     test('a photo that uploads is added; five is the most', () async {
@@ -255,6 +286,158 @@ void main() {
     });
   });
 
+  group('the place of a venue', () {
+    test('lists countries, and narrows to states and then cities', () async {
+      final c = container(null);
+      await settle();
+      expect(
+        c.read(venueStudioProvider(null)).countries.map((p) => p.name),
+        ['Philippines', 'United States'],
+      );
+
+      final studio = c.read(venueStudioProvider(null).notifier);
+      await studio.pickCountry(
+        const PlaceOption(code: 'PH', name: 'Philippines'),
+      );
+      var state = c.read(venueStudioProvider(null));
+      expect(state.draft.country, 'Philippines');
+      expect(state.states.map((s) => s.name), ['Metro Manila']);
+      // A country with states waits for one before listing cities.
+      expect(state.cities, isEmpty);
+
+      await studio.pickState(
+        const PlaceOption(code: 'NCR', name: 'Metro Manila'),
+      );
+      state = c.read(venueStudioProvider(null));
+      expect(state.draft.state, 'Metro Manila');
+      expect(state.cities, ['Manila', 'Quezon City']);
+    });
+
+    test('a country without states lists its cities straight away', () async {
+      final c = container(null);
+      await settle();
+
+      await c
+          .read(venueStudioProvider(null).notifier)
+          .pickCountry(const PlaceOption(code: 'US', name: 'United States'));
+
+      expect(c.read(venueStudioProvider(null)).cities, ['Austin']);
+    });
+
+    test('changing the country clears the state and city', () async {
+      final c = container(null);
+      await settle();
+      final studio = c.read(venueStudioProvider(null).notifier)
+        ..edit((d) => d.copyWith(state: 'Metro Manila', city: 'Manila'));
+
+      await studio.pickCountry(
+        const PlaceOption(code: 'US', name: 'United States'),
+      );
+
+      final draft = c.read(venueStudioProvider(null)).draft;
+      expect(draft.state, isEmpty);
+      expect(draft.city, isEmpty);
+    });
+
+    test('a saved venue opens with its dropdowns narrowed down', () async {
+      when(() => repo.venueDetail('v1')).thenAnswer(
+        (_) async => VenueDetail(
+          id: 'v1',
+          status: 'draft',
+          draft: _ready.copyWith(
+            country: 'Philippines',
+            state: 'Metro Manila',
+            city: 'Manila',
+          ),
+        ),
+      );
+      final c = container('v1');
+      await settle();
+      await settle();
+
+      final state = c.read(venueStudioProvider('v1'));
+      expect(state.countryCode, 'PH');
+      expect(state.stateCode, 'NCR');
+      expect(state.cities, contains('Manila'));
+    });
+
+    test('the lists failing leaves the venue editable', () async {
+      when(() => repo.countries()).thenThrow(Exception('down'));
+      final c = container(null);
+      await settle();
+
+      expect(c.read(venueStudioProvider(null)).countries, isEmpty);
+      c.read(venueStudioProvider(null).notifier).pickCity('Cebu');
+      expect(c.read(venueStudioProvider(null)).draft.city, 'Cebu');
+    });
+  });
+
+  group('using the phone location', () {
+    test('drops the pin and fills in the country and city', () async {
+      final c = container(null);
+      await settle();
+
+      await c.read(venueStudioProvider(null).notifier).useMyLocation();
+
+      final state = c.read(venueStudioProvider(null));
+      expect(state.draft.center, (lat: 14.6, lng: 121.0));
+      expect(state.draft.country, 'Philippines');
+      expect(state.draft.city, 'Quezon City');
+      expect(state.locating, isFalse);
+      expect(state.locateProblem, isNull);
+    });
+
+    test('still drops the pin when the town cannot be worked out', () async {
+      locator.place = const DevicePlace();
+      final c = container(null);
+      await settle();
+
+      await c.read(venueStudioProvider(null).notifier).useMyLocation();
+
+      final state = c.read(venueStudioProvider(null));
+      expect(state.draft.center, isNotNull);
+      expect(state.draft.city, isEmpty);
+    });
+
+    test('says why when location is refused, off or failing', () async {
+      final c = container(null);
+      await settle();
+      final studio = c.read(venueStudioProvider(null).notifier);
+
+      locator.result = const LocateResult(LocateOutcome.denied);
+      await studio.useMyLocation();
+      expect(c.read(venueStudioProvider(null)).locateProblem, 'denied');
+
+      locator.result = const LocateResult(LocateOutcome.serviceOff);
+      await studio.useMyLocation();
+      expect(c.read(venueStudioProvider(null)).locateProblem, 'off');
+
+      locator.result = const LocateResult(LocateOutcome.failed);
+      await studio.useMyLocation();
+      final state = c.read(venueStudioProvider(null));
+      expect(state.locateProblem, 'failed');
+      expect(state.draft.center, isNull);
+      expect(state.locating, isFalse);
+    });
+  });
+
+  group('a photo that will not upload', () {
+    test('keeps the reason the server gave', () async {
+      when(() => repo.uploadVenuePhoto(any())).thenThrow(
+        const ServerException('The storage keys are wrong'),
+      );
+      final c = container(null);
+
+      await c
+          .read(venueStudioProvider(null).notifier)
+          .addPhoto(PickedPhoto(bytes: Uint8List(1), name: 'a.jpg'));
+
+      final state = c.read(venueStudioProvider(null));
+      expect(state.error, 'photo');
+      expect(state.errorDetail, 'The storage keys are wrong');
+    });
+  });
+
   group('the studio screen', () {
     Future<void> pump(WidgetTester tester, {String? venueId}) async {
       tester.view
@@ -266,6 +449,7 @@ void main() {
           overrides: [
             spacesRepositoryProvider.overrideWithValue(repo),
             photoPickerProvider.overrideWithValue(_FakePicker()),
+            deviceLocatorProvider.overrideWithValue(locator),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -306,6 +490,28 @@ void main() {
         find.widgetWithText(ElevatedButton, 'Send for review'),
       );
       expect(submit.onPressed, isNull);
+    });
+
+    testWidgets('the location step offers dropdowns and the phone location', (
+      tester,
+    ) async {
+      await pump(tester);
+      await tester.tap(find.text('Next'));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Use my current location'), findsOneWidget);
+      expect(find.byType(DropdownMenu<String>), findsOneWidget);
+      expect(find.text('Country'), findsOneWidget);
+      // State and city wait for a country.
+      expect(find.text('City'), findsNothing);
+
+      await tester.tap(find.text('Use my current location'));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('City'), findsOneWidget);
     });
 
     testWidgets('typing fills the draft', (tester) async {
