@@ -8,7 +8,6 @@ class UserModel extends UserEntity {
     required super.email,
     required super.name,
     required this.token,
-    this.refreshToken,
     super.username,
     super.systemRole,
     super.roleType,
@@ -29,7 +28,6 @@ class UserModel extends UserEntity {
             : payload;
 
     final token = (payload['token'] ?? payload['accessToken'] ?? '').toString();
-    final refreshToken = payload['refreshToken'] as String?;
 
     final rawRoles = user['roleType'];
     final roles = rawRoles is List
@@ -42,7 +40,6 @@ class UserModel extends UserEntity {
       name: (user['name'] ?? user['username'] ?? payload['name'] ?? '')
           .toString(),
       token: token,
-      refreshToken: refreshToken,
       username: (user['username'] ?? '').toString(),
       systemRole: (user['systemRole'] ?? 'user').toString(),
       roleType: roles,
@@ -62,12 +59,8 @@ class UserModel extends UserEntity {
     return null;
   }
 
-  /// Short-lived access token (bearer).
+  /// The Better Auth session token, sent as a bearer token.
   final String token;
-
-  /// Long-lived token used to obtain a new access token. Optional — some
-  /// backends issue only an access token.
-  final String? refreshToken;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -79,9 +72,8 @@ class UserModel extends UserEntity {
         'isEmailVerified': isEmailVerified,
         'imgId': imageUrl,
         'token': token,
-        'refreshToken': refreshToken,
       };
 
   @override
-  List<Object?> get props => [...super.props, token, refreshToken];
+  List<Object?> get props => [...super.props, token];
 }

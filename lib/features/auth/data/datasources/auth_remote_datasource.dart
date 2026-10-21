@@ -14,10 +14,9 @@ abstract class AuthRemoteDataSource {
     String? countryCode,
     String roleName,
   });
-  Future<void> logout(String? refreshToken);
+  Future<void> logout();
   Future<UserModel> checkAuth(String token);
   Future<UserModel> loginWithSocialToken(SocialProvider provider, String token);
-  Future<UserModel> exchangeSocialCode(SocialProvider provider, String code);
   Future<void> verifyEmail(String email, String otpCode);
   Future<void> resendVerificationOtp(String email);
   Future<void> forgotPassword(String email);
@@ -67,11 +66,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout(String? refreshToken) async {
-    final payload = <String, dynamic>{};
-    if (refreshToken != null) payload['refreshToken'] = refreshToken;
-
-    await _api.post(ApiEndpoints.logout, payload);
+  Future<void> logout() async {
+    // Better Auth's sign-out reads the session from the bearer token.
+    await _api.post(ApiEndpoints.logout, <String, dynamic>{});
   }
 
   @override
@@ -97,20 +94,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         if (provider == SocialProvider.facebook) 'accessToken': token,
       },
     });
-    return UserModel.fromJson((data as Map).cast<String, dynamic>());
-  }
-
-  /// Browser flow: redeems the one-time `xc` code from the app-scheme redirect.
-  @override
-  Future<UserModel> exchangeSocialCode(
-    SocialProvider provider,
-    String code,
-  ) async {
-    final path = switch (provider) {
-      SocialProvider.google => ApiEndpoints.googleExchange,
-      SocialProvider.facebook => ApiEndpoints.facebookExchange,
-    };
-    final data = await _api.post(path, {'code': code});
     return UserModel.fromJson((data as Map).cast<String, dynamic>());
   }
 

@@ -16,15 +16,8 @@ class ApiEndpoints {
   static const String forgotPassword = '/auth/email-otp/request-password-reset';
   static const String resetPassword = '/auth/email-otp/reset-password';
 
-  // Social sign-in. `socialSignIn` takes a token the app got on-device
-  // (Better Auth). The plain paths start the browser redirect flow and
-  // `*Exchange` redeems its code — still the API's own endpoints, until the
-  // app is native-only (docs/BETTER-AUTH-CONSOLIDATION.md, phase 3b).
+  // Social sign-in: a provider token minted on-device, verified by Better Auth.
   static const String socialSignIn = '/auth/sign-in/social';
-  static const String googleStart = '/auth/google';
-  static const String facebookStart = '/auth/facebook';
-  static const String googleExchange = '/auth/google/exchange';
-  static const String facebookExchange = '/auth/facebook/exchange';
 
   // ── Profile / users ─────────────────────────────────────────────────────
   static const String me = '/profile';
