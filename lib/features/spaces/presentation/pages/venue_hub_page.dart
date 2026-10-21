@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -21,12 +19,6 @@ class VenueHubPage extends ConsumerWidget {
   const VenueHubPage({required this.venueId, super.key});
 
   final String venueId;
-
-  Future<void> _editOnWeb(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard/venues/$venueId/edit');
-    if (!opened && context.mounted) showTopToast(context, message);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,7 +48,8 @@ class VenueHubPage extends ConsumerWidget {
           }
           return _Hub(
             venue: venue,
-            onEdit: () => _editOnWeb(context),
+            onEdit: () =>
+                context.push(RouteNames.spaceVenueStudioEdit(venueId)),
             onAvailability: () => context.go(
               '${RouteNames.spaceVenueCalendar}?venue=${venue.id}',
             ),

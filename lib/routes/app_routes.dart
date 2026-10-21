@@ -42,6 +42,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_pa
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
@@ -223,6 +224,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.profileEdit,
         builder: (context, state) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: RouteNames.spaceVenueStudio,
+        builder: (context, state) => const VenueStudioPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.spaceVenueStudio}/:venueId',
+        builder: (context, state) =>
+            VenueStudioPage(venueId: state.pathParameters['venueId']),
       ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.

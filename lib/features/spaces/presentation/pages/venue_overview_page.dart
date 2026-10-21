@@ -206,7 +206,7 @@ class VenueOverviewPage extends ConsumerWidget {
                 _QuickAction(
                   icon: Icons.add_business_outlined,
                   label: l10n.venueQuickAddVenue,
-                  onTap: () => context.go(RouteNames.spaceVenueVenues),
+                  onTap: () => context.push(RouteNames.spaceVenueStudio),
                 ),
               ],
             ),

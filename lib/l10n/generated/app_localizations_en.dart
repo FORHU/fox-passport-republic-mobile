@@ -1326,6 +1326,228 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get studioTitleNew => 'New venue';
+
+  @override
+  String get studioTitleEdit => 'Edit venue';
+
+  @override
+  String get studioStepBasics => 'Basics';
+
+  @override
+  String get studioStepLocation => 'Location';
+
+  @override
+  String get studioStepPhotos => 'Photos';
+
+  @override
+  String get studioStepDetails => 'What\'s included';
+
+  @override
+  String get studioStepPricing => 'Pricing';
+
+  @override
+  String get studioStepReview => 'Review';
+
+  @override
+  String get studioName => 'Venue name';
+
+  @override
+  String get studioDescription => 'Describe your venue';
+
+  @override
+  String get studioCapacity => 'Capacity (guests)';
+
+  @override
+  String get studioCategory => 'Type of venue';
+
+  @override
+  String get studioCategoryIndoor => 'Indoor';
+
+  @override
+  String get studioCategoryOutdoor => 'Outdoor';
+
+  @override
+  String get studioCategoryHotel => 'Hotel';
+
+  @override
+  String get studioCategoryBeachResort => 'Beach resort';
+
+  @override
+  String get studioCategoryGarden => 'Garden';
+
+  @override
+  String get studioCategoryMix => 'Indoor and outdoor';
+
+  @override
+  String get studioCategoryOther => 'Other';
+
+  @override
+  String get studioAddress => 'Street address';
+
+  @override
+  String get studioCity => 'City';
+
+  @override
+  String get studioState => 'State or province';
+
+  @override
+  String get studioCountry => 'Country';
+
+  @override
+  String get studioServiceArea => 'Service area';
+
+  @override
+  String get studioServiceAreaHint =>
+      'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.';
+
+  @override
+  String get studioRadius => 'Radius';
+
+  @override
+  String studioRadiusValue(int meters) {
+    return '$meters m';
+  }
+
+  @override
+  String studioOverlap(String names) {
+    return 'This area overlaps $names. Move the pin or shrink the radius.';
+  }
+
+  @override
+  String get studioNoPin => 'No pin yet';
+
+  @override
+  String get studioPhotosHint => 'Add 1 to 5 photos. The first is the cover.';
+
+  @override
+  String get studioAddPhoto => 'Add photo';
+
+  @override
+  String get studioPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get studioIncluded => 'What guests get';
+
+  @override
+  String get studioSpaceType => 'Spaces';
+
+  @override
+  String get studioAmenities => 'Amenities';
+
+  @override
+  String get studioTechAv => 'Tech and AV';
+
+  @override
+  String get studioStaffing => 'Staffing';
+
+  @override
+  String get studioPolicies => 'House rules';
+
+  @override
+  String get studioAddCustom => 'Add your own';
+
+  @override
+  String get studioPrice => 'Price';
+
+  @override
+  String get studioBillingRate => 'Charged';
+
+  @override
+  String get studioRateHourly => 'Hourly';
+
+  @override
+  String get studioRateDaily => 'Daily';
+
+  @override
+  String get studioRateWeekly => 'Weekly';
+
+  @override
+  String get studioRateMonthly => 'Monthly';
+
+  @override
+  String get studioRateYearly => 'Yearly';
+
+  @override
+  String get studioRateOneTime => 'One time';
+
+  @override
+  String get studioExtraGuest => 'Extra guest fee (optional)';
+
+  @override
+  String get studioCancellation => 'Cancellation policy';
+
+  @override
+  String get studioReviewReady => 'Ready to send for review';
+
+  @override
+  String get studioReviewMissing => 'Still to fill in';
+
+  @override
+  String get studioMissingName => 'Venue name';
+
+  @override
+  String get studioMissingCategory => 'Type of venue';
+
+  @override
+  String get studioMissingDescription => 'Description';
+
+  @override
+  String get studioMissingCapacity => 'Capacity';
+
+  @override
+  String get studioMissingAddress => 'Address, city and country';
+
+  @override
+  String get studioMissingLocation => 'A pin on the map';
+
+  @override
+  String get studioMissingPhotos => 'At least one photo';
+
+  @override
+  String get studioMissingPrice => 'A price';
+
+  @override
+  String get studioNext => 'Next';
+
+  @override
+  String get studioBack => 'Back';
+
+  @override
+  String get studioSaveDraft => 'Save as draft';
+
+  @override
+  String get studioSubmit => 'Send for review';
+
+  @override
+  String get studioSaveChanges => 'Save changes';
+
+  @override
+  String get studioSavedDraft => 'Draft saved.';
+
+  @override
+  String get studioSubmitted =>
+      'Sent for review. We\'ll tell you when it\'s live.';
+
+  @override
+  String get studioSavedChanges => 'Changes saved.';
+
+  @override
+  String get studioSaveFailed => 'We couldn\'t save that. Try again.';
+
+  @override
+  String get studioOverlapRefused =>
+      'Another venue already covers part of this area. Move the pin.';
+
+  @override
+  String get studioLiveNote =>
+      'This venue is live. Your changes show to guests as soon as you save.';
+
+  @override
+  String get studioMapNeedsToken =>
+      'The map isn\'t available, so the pin can\'t be placed.';
+
+  @override
   String get venueHubEdit => 'Edit details';
 
   @override

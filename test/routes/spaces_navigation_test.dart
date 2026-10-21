@@ -1,3 +1,5 @@
+import 'dart:async';
+
 // The Venue and Event spaces, driven through the real router: a space needs
 // its role, the app opens in the space last worked in, and switching works.
 
@@ -174,6 +176,36 @@ void main() {
     expect(where(), RouteNames.spaceVenueHub('v1'));
     // Still inside the Venue space, with its bottom bar.
     expect(find.text('Earnings'), findsWidgets);
+    await finish(tester);
+  });
+
+  testWidgets('Add venue opens the studio, and back returns to the tab', (
+    tester,
+  ) async {
+    await boot(tester, roles: const ['venueFoxer']);
+    router.go(RouteNames.spaceVenueVenues);
+    await settle(tester);
+
+    await tester.tap(find.text('Add venue'));
+    await settle(tester);
+
+    expect(find.text('New venue'), findsOneWidget);
+    expect(find.text('Venue name'), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(find.text('New venue'), findsNothing);
+    expect(where(), RouteNames.spaceVenueVenues);
+    await finish(tester);
+  });
+
+  testWidgets('the studio can edit a venue by its id', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+
+    unawaited(router.push(RouteNames.spaceVenueStudioEdit('v1')));
+    await settle(tester);
+
+    expect(find.text('Edit venue'), findsOneWidget);
     await finish(tester);
   });
 

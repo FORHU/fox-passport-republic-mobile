@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_top_
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -19,12 +17,6 @@ import 'package:go_router/go_router.dart';
 /// stands, and a way to add another. Tapping one opens its hub.
 class VenuesPage extends ConsumerWidget {
   const VenuesPage({super.key});
-
-  Future<void> _add(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/venue-foxer/create-venue');
-    if (!opened && context.mounted) showTopToast(context, message);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +33,7 @@ class VenuesPage extends ConsumerWidget {
         actions: const [SpaceTopActions()],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _add(context),
+        onPressed: () => context.push(RouteNames.spaceVenueStudio),
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.onAccent,
         icon: const Icon(Icons.add_rounded),

@@ -2554,6 +2554,432 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @studioTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New venue'**
+  String get studioTitleNew;
+
+  /// No description provided for @studioTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit venue'**
+  String get studioTitleEdit;
+
+  /// No description provided for @studioStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get studioStepBasics;
+
+  /// No description provided for @studioStepLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get studioStepLocation;
+
+  /// No description provided for @studioStepPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get studioStepPhotos;
+
+  /// No description provided for @studioStepDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s included'**
+  String get studioStepDetails;
+
+  /// No description provided for @studioStepPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get studioStepPricing;
+
+  /// No description provided for @studioStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get studioStepReview;
+
+  /// No description provided for @studioName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get studioName;
+
+  /// No description provided for @studioDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your venue'**
+  String get studioDescription;
+
+  /// No description provided for @studioCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity (guests)'**
+  String get studioCapacity;
+
+  /// No description provided for @studioCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of venue'**
+  String get studioCategory;
+
+  /// No description provided for @studioCategoryIndoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor'**
+  String get studioCategoryIndoor;
+
+  /// No description provided for @studioCategoryOutdoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdoor'**
+  String get studioCategoryOutdoor;
+
+  /// No description provided for @studioCategoryHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get studioCategoryHotel;
+
+  /// No description provided for @studioCategoryBeachResort.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach resort'**
+  String get studioCategoryBeachResort;
+
+  /// No description provided for @studioCategoryGarden.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden'**
+  String get studioCategoryGarden;
+
+  /// No description provided for @studioCategoryMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor and outdoor'**
+  String get studioCategoryMix;
+
+  /// No description provided for @studioCategoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get studioCategoryOther;
+
+  /// No description provided for @studioAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Street address'**
+  String get studioAddress;
+
+  /// No description provided for @studioCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get studioCity;
+
+  /// No description provided for @studioState.
+  ///
+  /// In en, this message translates to:
+  /// **'State or province'**
+  String get studioState;
+
+  /// No description provided for @studioCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get studioCountry;
+
+  /// No description provided for @studioServiceArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Service area'**
+  String get studioServiceArea;
+
+  /// No description provided for @studioServiceAreaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.'**
+  String get studioServiceAreaHint;
+
+  /// No description provided for @studioRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'Radius'**
+  String get studioRadius;
+
+  /// No description provided for @studioRadiusValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String studioRadiusValue(int meters);
+
+  /// No description provided for @studioOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'This area overlaps {names}. Move the pin or shrink the radius.'**
+  String studioOverlap(String names);
+
+  /// No description provided for @studioNoPin.
+  ///
+  /// In en, this message translates to:
+  /// **'No pin yet'**
+  String get studioNoPin;
+
+  /// No description provided for @studioPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add 1 to 5 photos. The first is the cover.'**
+  String get studioPhotosHint;
+
+  /// No description provided for @studioAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get studioAddPhoto;
+
+  /// No description provided for @studioPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload. Try again.'**
+  String get studioPhotoFailed;
+
+  /// No description provided for @studioIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'What guests get'**
+  String get studioIncluded;
+
+  /// No description provided for @studioSpaceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces'**
+  String get studioSpaceType;
+
+  /// No description provided for @studioAmenities.
+  ///
+  /// In en, this message translates to:
+  /// **'Amenities'**
+  String get studioAmenities;
+
+  /// No description provided for @studioTechAv.
+  ///
+  /// In en, this message translates to:
+  /// **'Tech and AV'**
+  String get studioTechAv;
+
+  /// No description provided for @studioStaffing.
+  ///
+  /// In en, this message translates to:
+  /// **'Staffing'**
+  String get studioStaffing;
+
+  /// No description provided for @studioPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'House rules'**
+  String get studioPolicies;
+
+  /// No description provided for @studioAddCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your own'**
+  String get studioAddCustom;
+
+  /// No description provided for @studioPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get studioPrice;
+
+  /// No description provided for @studioBillingRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get studioBillingRate;
+
+  /// No description provided for @studioRateHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly'**
+  String get studioRateHourly;
+
+  /// No description provided for @studioRateDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get studioRateDaily;
+
+  /// No description provided for @studioRateWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get studioRateWeekly;
+
+  /// No description provided for @studioRateMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get studioRateMonthly;
+
+  /// No description provided for @studioRateYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get studioRateYearly;
+
+  /// No description provided for @studioRateOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One time'**
+  String get studioRateOneTime;
+
+  /// No description provided for @studioExtraGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra guest fee (optional)'**
+  String get studioExtraGuest;
+
+  /// No description provided for @studioCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation policy'**
+  String get studioCancellation;
+
+  /// No description provided for @studioReviewReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to send for review'**
+  String get studioReviewReady;
+
+  /// No description provided for @studioReviewMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Still to fill in'**
+  String get studioReviewMissing;
+
+  /// No description provided for @studioMissingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get studioMissingName;
+
+  /// No description provided for @studioMissingCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of venue'**
+  String get studioMissingCategory;
+
+  /// No description provided for @studioMissingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get studioMissingDescription;
+
+  /// No description provided for @studioMissingCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get studioMissingCapacity;
+
+  /// No description provided for @studioMissingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address, city and country'**
+  String get studioMissingAddress;
+
+  /// No description provided for @studioMissingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'A pin on the map'**
+  String get studioMissingLocation;
+
+  /// No description provided for @studioMissingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one photo'**
+  String get studioMissingPhotos;
+
+  /// No description provided for @studioMissingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'A price'**
+  String get studioMissingPrice;
+
+  /// No description provided for @studioNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get studioNext;
+
+  /// No description provided for @studioBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get studioBack;
+
+  /// No description provided for @studioSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as draft'**
+  String get studioSaveDraft;
+
+  /// No description provided for @studioSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get studioSubmit;
+
+  /// No description provided for @studioSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get studioSaveChanges;
+
+  /// No description provided for @studioSavedDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved.'**
+  String get studioSavedDraft;
+
+  /// No description provided for @studioSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for review. We\'ll tell you when it\'s live.'**
+  String get studioSubmitted;
+
+  /// No description provided for @studioSavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get studioSavedChanges;
+
+  /// No description provided for @studioSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save that. Try again.'**
+  String get studioSaveFailed;
+
+  /// No description provided for @studioOverlapRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Another venue already covers part of this area. Move the pin.'**
+  String get studioOverlapRefused;
+
+  /// No description provided for @studioLiveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This venue is live. Your changes show to guests as soon as you save.'**
+  String get studioLiveNote;
+
+  /// No description provided for @studioMapNeedsToken.
+  ///
+  /// In en, this message translates to:
+  /// **'The map isn\'t available, so the pin can\'t be placed.'**
+  String get studioMapNeedsToken;
+
   /// No description provided for @venueHubEdit.
   ///
   /// In en, this message translates to:
