@@ -76,6 +76,12 @@ class ApiEndpoints {
   static String venueUnavailableDates(String id) =>
       '/venues/$id/unavailable-dates';
 
+  /// The days the venue's owner has closed. POST `{date}` to close one;
+  /// DELETE [venueBlockedDate] (a `YYYY-MM-DD`) to open it again.
+  static String venueBlockedDates(String id) => '/venues/$id/blocked-dates';
+  static String venueBlockedDate(String id, String date) =>
+      '/venues/$id/blocked-dates/$date';
+
   // ── Bookings ────────────────────────────────────────────────────────────
   static const String bookingDraft = '/bookings/draft';
   static const String bookingFromTemplate = '/bookings/from-template';

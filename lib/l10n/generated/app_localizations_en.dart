@@ -1986,6 +1986,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarManageOnWeb => 'Manage this on the web.';
 
   @override
+  String get calendarHoldAwaiting => 'Needs your reply';
+
+  @override
+  String get calendarHoldHeld => 'Held';
+
+  @override
+  String get calendarHoldConfirmed => 'Confirmed';
+
+  @override
+  String get calendarBlocked => 'Blocked';
+
+  @override
+  String get calendarAllVenues => 'All venues';
+
+  @override
+  String get calendarDayManage => 'Open or close this day';
+
+  @override
+  String calendarDayManageTitle(String date) {
+    return 'Open or close $date';
+  }
+
+  @override
+  String get calendarDayOpen => 'Open';
+
+  @override
+  String get calendarDayClosed => 'Closed';
+
+  @override
+  String get calendarDayBooked => 'Booked, so it can\'t be closed';
+
+  @override
+  String get calendarDayFailed => 'We couldn\'t update that day. Try again.';
+
+  @override
+  String get calendarOpenDay => 'Open this day';
+
+  @override
   String get bookings => 'Bookings';
 
   @override

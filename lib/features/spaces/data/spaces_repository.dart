@@ -79,6 +79,24 @@ class SpacesRepository {
     ];
   }
 
+  /// Closes a day of a venue: nobody can book it until it is opened again.
+  Future<void> blockDay(String venueId, DateTime day) async {
+    await _api.post(ApiEndpoints.venueBlockedDates(venueId), {
+      'date': _dateOnly(day),
+    });
+  }
+
+  /// Opens a day that was closed.
+  Future<void> unblockDay(String venueId, DateTime day) async {
+    await _api.delete(ApiEndpoints.venueBlockedDate(venueId, _dateOnly(day)));
+  }
+
+  /// `YYYY-MM-DD` of a local calendar day, as the API takes it.
+  static String _dateOnly(DateTime day) =>
+      '${day.year.toString().padLeft(4, '0')}-'
+      '${day.month.toString().padLeft(2, '0')}-'
+      '${day.day.toString().padLeft(2, '0')}';
+
   /// Checks a guest in by the code on their ticket.
   Future<CheckInResult> checkIn(String ticketCode) async {
     final body = await _api.patch(ApiEndpoints.bookingCheckIn, {

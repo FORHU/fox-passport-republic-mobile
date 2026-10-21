@@ -3712,6 +3712,78 @@ abstract class AppLocalizations {
   /// **'Manage this on the web.'**
   String get calendarManageOnWeb;
 
+  /// No description provided for @calendarHoldAwaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your reply'**
+  String get calendarHoldAwaiting;
+
+  /// No description provided for @calendarHoldHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held'**
+  String get calendarHoldHeld;
+
+  /// No description provided for @calendarHoldConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get calendarHoldConfirmed;
+
+  /// No description provided for @calendarBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get calendarBlocked;
+
+  /// No description provided for @calendarAllVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'All venues'**
+  String get calendarAllVenues;
+
+  /// No description provided for @calendarDayManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open or close this day'**
+  String get calendarDayManage;
+
+  /// No description provided for @calendarDayManageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open or close {date}'**
+  String calendarDayManageTitle(String date);
+
+  /// No description provided for @calendarDayOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get calendarDayOpen;
+
+  /// No description provided for @calendarDayClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get calendarDayClosed;
+
+  /// No description provided for @calendarDayBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked, so it can\'t be closed'**
+  String get calendarDayBooked;
+
+  /// No description provided for @calendarDayFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t update that day. Try again.'**
+  String get calendarDayFailed;
+
+  /// No description provided for @calendarOpenDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this day'**
+  String get calendarOpenDay;
+
   /// No description provided for @bookings.
   ///
   /// In en, this message translates to:
