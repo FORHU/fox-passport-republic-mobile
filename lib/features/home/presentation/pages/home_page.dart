@@ -6,10 +6,16 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
+import 'package:flutter_template/features/home/presentation/widgets/first_event_checklist.dart';
+import 'package:flutter_template/features/home/presentation/widgets/foxers_row.dart';
+import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
+import 'package:flutter_template/features/home/presentation/widgets/republic_teaser.dart';
+import 'package:flutter_template/features/home/presentation/widgets/section_title.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
+import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -53,6 +59,10 @@ class HomePage extends ConsumerWidget {
       sortBy: 'date_asc',
     );
     final soon = ref.watch(catalogProvider(soonQuery));
+    // No bookings at all (and both lists have answered): offer the checklist.
+    final pastTickets = ref.watch(pastTicketsProvider);
+    final noBookings = (upcomingTickets.asData?.value.isEmpty ?? false) &&
+        (pastTickets.asData?.value.isEmpty ?? false);
     // Nothing on in the chosen city: look for events anywhere, so the row is
     // not simply missing. Only asked once the city's own answer is empty.
     final anywhereQuery = CatalogQuery(
@@ -87,6 +97,28 @@ class HomePage extends ConsumerWidget {
               ..invalidate(categoriesProvider)
               ..invalidate(catalogProvider(soonQuery))
               ..invalidate(catalogProvider(anywhereQuery))
+              ..invalidate(pastTicketsProvider)
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.venues, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.foxers, limit: 8, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.gear, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.services, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(feedControllerProvider(null))
               ..invalidate(
                 packagesProvider(
                   (category: tiles.first.occasion.name, city: area.city),
@@ -111,6 +143,13 @@ class HomePage extends ConsumerWidget {
               if (ticket != null) _NextNight(ticket: ticket),
               const SizedBox(height: 16),
               _HomeSearch(onTap: () => context.go(RouteNames.search)),
+              if (noBookings) ...[
+                const SizedBox(height: 16),
+                FirstEventChecklist(
+                  pickedOccasion: last != null,
+                  onStart: () => openOccasion(last ?? tiles.first.occasion),
+                ),
+              ],
               const SizedBox(height: 22),
               Text(
                 last == null ? l10n.homePlanning : l10n.homePlanNew,
@@ -140,7 +179,7 @@ class HomePage extends ConsumerWidget {
                     ? _comingUp(context, elsewhere, area.city)
                     : [
                         const SizedBox(height: 24),
-                        _SectionTitle(
+                        HomeSectionTitle(
                           title: l10n.homeHappeningSoon,
                           action: l10n.seeAll,
                           onAction: () =>
@@ -149,6 +188,41 @@ class HomePage extends ConsumerWidget {
                         const SizedBox(height: 12),
                         _SoonRow(items: page.items),
                       ],
+              ),
+              HomeItems(
+                kind: CatalogKind.venues,
+                title: area.city == null || area.city!.isEmpty
+                    ? context.l10n.homeVenuesTitle
+                    : context.l10n.homeVenuesTitleIn(area.city!),
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('venues', city: area.city),
+                ),
+              ),
+              HomeFoxers(
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('foxers', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.gear,
+                title: context.l10n.homeGearTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('gear', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.services,
+                title: context.l10n.homeServicesTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('services', city: area.city),
+                ),
+              ),
+              RepublicTeaser(
+                onOpen: () => unawaited(context.push(RouteNames.republic)),
               ),
               if (oneThing.isNotEmpty) ...[
                 const SizedBox(height: 24),
@@ -479,39 +553,6 @@ class _OneThingRow extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
-    required this.title,
-    required this.action,
-    required this.onAction,
-  });
-
-  final String title;
-  final String action;
-  final VoidCallback onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(title, style: AppTypography.display(size: 20)),
-        ),
-        GestureDetector(
-          onTap: onAction,
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(action, style: AppTypography.body()),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Public events with a date badge.
 class _SoonRow extends StatelessWidget {
   const _SoonRow({required this.items});
 
@@ -648,7 +689,7 @@ List<Widget> _comingUp(
   final l10n = context.l10n;
   return [
     const SizedBox(height: 24),
-    _SectionTitle(
+    HomeSectionTitle(
       title: l10n.homeComingUp,
       action: l10n.seeAll,
       onAction: () => context.go(RouteNames.searchFor('events')),
@@ -705,7 +746,7 @@ class _OccasionPackages extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _SectionTitle(
+                  HomeSectionTitle(
                     title: title,
                     action: l10n.seeAll,
                     onAction: onSeeAll,
