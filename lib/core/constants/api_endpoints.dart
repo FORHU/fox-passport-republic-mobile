@@ -68,6 +68,14 @@ class ApiEndpoints {
   static String requestReview(String id) => '/event-transactions/$id/review';
 
   /// What the person has been paid and is owed, newest first.
+  static const String venueAffiliationsMine = '/venue-affiliations/mine';
+  static String venueAffiliationApprove(String id) =>
+      '/venue-affiliations/$id/approve';
+  static String venueAffiliationReject(String id) =>
+      '/venue-affiliations/$id/reject';
+  static String venueAffiliationCancel(String id) =>
+      '/venue-affiliations/$id/cancel';
+  static String venueAffiliation(String id) => '/venue-affiliations/$id';
   static const String payoutsMe = '/payouts/me';
 
   /// How far the person's payout account (Stripe) is set up.

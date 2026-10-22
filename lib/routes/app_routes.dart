@@ -34,8 +34,10 @@ import 'package:flutter_template/features/settings/presentation/pages/settings_p
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/space_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
@@ -444,6 +446,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => const VenueRequestsPage(),
                   ),
                   GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.mayor),
+                  ),
+                  GoRoute(
                     path: 'check-in',
                     builder: (context, state) => const CheckInPage(),
                   ),
@@ -471,6 +478,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.spaceEvent,
                 builder: (context, state) =>
                     const SpaceListingsPage(kind: ListingKind.events),
+                routes: [
+                  GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.eventFoxer),
+                  ),
+                ],
               ),
             ],
           ),

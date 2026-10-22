@@ -2554,6 +2554,198 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @partnersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Partners'**
+  String get partnersTitle;
+
+  /// No description provided for @partnersIntroMayor.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Foxers who want to run events at your venues.'**
+  String get partnersIntroMayor;
+
+  /// No description provided for @partnersIntroEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'The venues you can run your events at.'**
+  String get partnersIntroEvent;
+
+  /// No description provided for @partnersNeedsAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your answer'**
+  String get partnersNeedsAnswer;
+
+  /// No description provided for @partnersWaitingForThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for them'**
+  String get partnersWaitingForThem;
+
+  /// No description provided for @partnersActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get partnersActive;
+
+  /// No description provided for @partnersPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get partnersPast;
+
+  /// No description provided for @partnersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No partners yet.'**
+  String get partnersEmpty;
+
+  /// No description provided for @partnersApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} applied to host at {venue}'**
+  String partnersApplied(String name, String venue);
+
+  /// No description provided for @partnersYouInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'You invited {name} to host at {venue}'**
+  String partnersYouInvited(String name, String venue);
+
+  /// No description provided for @partnersInvitedYou.
+  ///
+  /// In en, this message translates to:
+  /// **'{venue} invited you to host events there'**
+  String partnersInvitedYou(String venue);
+
+  /// No description provided for @partnersYouApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'You applied to host at {venue}'**
+  String partnersYouApplied(String venue);
+
+  /// No description provided for @partnersActiveAt.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} at {venue}'**
+  String partnersActiveAt(String name, String venue);
+
+  /// No description provided for @partnersAgreedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed price: {price}'**
+  String partnersAgreedPrice(String price);
+
+  /// No description provided for @partnersApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get partnersApprove;
+
+  /// No description provided for @partnersAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get partnersAccept;
+
+  /// No description provided for @partnersReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get partnersReject;
+
+  /// No description provided for @partnersDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get partnersDecline;
+
+  /// No description provided for @partnersWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get partnersWithdraw;
+
+  /// No description provided for @partnersRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'End partnership'**
+  String get partnersRevoke;
+
+  /// No description provided for @partnersRevokeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End this partnership?'**
+  String get partnersRevokeTitle;
+
+  /// No description provided for @partnersRevokeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will no longer be partnered with {venue}.'**
+  String partnersRevokeBody(String name, String venue);
+
+  /// No description provided for @partnersRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Say no to this?'**
+  String get partnersRejectTitle;
+
+  /// No description provided for @partnersRejectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will be told you said no.'**
+  String get partnersRejectBody;
+
+  /// No description provided for @partnersApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Done. They\'ve been told.'**
+  String get partnersApproved;
+
+  /// No description provided for @partnersRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined. They\'ve been told.'**
+  String get partnersRejected;
+
+  /// No description provided for @partnersWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn.'**
+  String get partnersWithdrawn;
+
+  /// No description provided for @partnersRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Partnership ended.'**
+  String get partnersRevoked;
+
+  /// No description provided for @partnersActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again.'**
+  String get partnersActionFailed;
+
+  /// No description provided for @partnersStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get partnersStatusRejected;
+
+  /// No description provided for @partnersStatusRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get partnersStatusRevoked;
+
+  /// No description provided for @partnersOpenRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue partners'**
+  String get partnersOpenRow;
+
   /// No description provided for @studioTitleNew.
   ///
   /// In en, this message translates to:

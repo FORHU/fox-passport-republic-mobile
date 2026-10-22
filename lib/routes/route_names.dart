@@ -109,6 +109,7 @@ class RouteNames {
   static const String spaceVenueCalendar = '/space/venue/calendar';
   static const String spaceVenueEarnings = '/space/venue/earnings';
   static const String spaceVenueMore = '/space/venue/more';
+  static const String spaceVenuePartners = '/space/venue/more/partners';
 
   /// Adding or editing a venue: full screen, outside the tabs, so it can be
   /// pushed from the Venues tab and from a venue's hub alike.
@@ -124,6 +125,7 @@ class RouteNames {
   /// The Event space, for an EventFoxer: their events, check-in and messages.
   static const String spaceEvent = '/space/event';
   static const String spaceEventCheckIn = '/space/event/check-in';
+  static const String spaceEventPartners = '/space/event/partners';
   static const String spaceEventMessages = '/space/event/messages';
 
   /// One piece of gear or one service, with its booking. Takes the row as

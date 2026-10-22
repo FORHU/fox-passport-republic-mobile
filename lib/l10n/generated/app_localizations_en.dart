@@ -1326,6 +1326,117 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get partnersTitle => 'Partners';
+
+  @override
+  String get partnersIntroMayor =>
+      'Event Foxers who want to run events at your venues.';
+
+  @override
+  String get partnersIntroEvent => 'The venues you can run your events at.';
+
+  @override
+  String get partnersNeedsAnswer => 'Needs your answer';
+
+  @override
+  String get partnersWaitingForThem => 'Waiting for them';
+
+  @override
+  String get partnersActive => 'Active';
+
+  @override
+  String get partnersPast => 'Past';
+
+  @override
+  String get partnersEmpty => 'No partners yet.';
+
+  @override
+  String partnersApplied(String name, String venue) {
+    return '$name applied to host at $venue';
+  }
+
+  @override
+  String partnersYouInvited(String name, String venue) {
+    return 'You invited $name to host at $venue';
+  }
+
+  @override
+  String partnersInvitedYou(String venue) {
+    return '$venue invited you to host events there';
+  }
+
+  @override
+  String partnersYouApplied(String venue) {
+    return 'You applied to host at $venue';
+  }
+
+  @override
+  String partnersActiveAt(String name, String venue) {
+    return '$name at $venue';
+  }
+
+  @override
+  String partnersAgreedPrice(String price) {
+    return 'Agreed price: $price';
+  }
+
+  @override
+  String get partnersApprove => 'Approve';
+
+  @override
+  String get partnersAccept => 'Accept';
+
+  @override
+  String get partnersReject => 'Reject';
+
+  @override
+  String get partnersDecline => 'Decline';
+
+  @override
+  String get partnersWithdraw => 'Withdraw';
+
+  @override
+  String get partnersRevoke => 'End partnership';
+
+  @override
+  String get partnersRevokeTitle => 'End this partnership?';
+
+  @override
+  String partnersRevokeBody(String name, String venue) {
+    return '$name will no longer be partnered with $venue.';
+  }
+
+  @override
+  String get partnersRejectTitle => 'Say no to this?';
+
+  @override
+  String get partnersRejectBody => 'They will be told you said no.';
+
+  @override
+  String get partnersApproved => 'Done. They\'ve been told.';
+
+  @override
+  String get partnersRejected => 'Declined. They\'ve been told.';
+
+  @override
+  String get partnersWithdrawn => 'Withdrawn.';
+
+  @override
+  String get partnersRevoked => 'Partnership ended.';
+
+  @override
+  String get partnersActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String get partnersStatusRejected => 'Declined';
+
+  @override
+  String get partnersStatusRevoked => 'Ended';
+
+  @override
+  String get partnersOpenRow => 'Venue partners';
+
+  @override
   String get studioTitleNew => 'New venue';
 
   @override

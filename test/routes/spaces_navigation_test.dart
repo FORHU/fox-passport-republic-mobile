@@ -5,12 +5,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_template/app.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
+import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/routes/app_routes.dart';
@@ -44,6 +48,7 @@ void main() {
     WidgetTester tester, {
     required List<String> roles,
     String? savedSpace,
+    List<Override> overrides = const [],
   }) async {
     AppConfig.instance = const AppConfig.dev();
     SharedPreferences.setMockInitialValues({
@@ -58,6 +63,7 @@ void main() {
         sharedPreferencesProvider.overrideWithValue(prefs),
         authControllerProvider.overrideWith(() => _Session(roles)),
         realtimeServiceProvider.overrideWithValue(null),
+        ...overrides,
       ],
     );
     addTearDown(container.dispose);
@@ -196,6 +202,40 @@ void main() {
     await settle(tester);
     expect(find.text('New venue'), findsNothing);
     expect(where(), RouteNames.spaceVenueVenues);
+    await finish(tester);
+  });
+
+  testWidgets('More opens Partners, and back returns to More', (tester) async {
+    await boot(tester, roles: const ['venueFoxer']);
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
+
+    await tester.tap(find.text('Partners'));
+    await settle(tester);
+    expect(find.byType(PartnersPage), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(where(), RouteNames.spaceVenueMore);
+    await finish(tester);
+  });
+
+  testWidgets('the Event space opens its venue partners', (tester) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [myEventsProvider.overrideWith((ref) async => const [])],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('Venue partners'));
+    await settle(tester);
+    expect(find.byType(PartnersPage), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(where(), RouteNames.spaceEvent);
     await finish(tester);
   });
 

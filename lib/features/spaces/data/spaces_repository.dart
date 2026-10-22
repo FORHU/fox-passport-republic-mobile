@@ -4,6 +4,7 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
@@ -216,6 +217,36 @@ class SpacesRepository {
     ];
   }
 
+  /// Every venue partnership the person is in, as a Mayor and as an Event
+  /// Foxer.
+  Future<PartnerLists> partners() async {
+    final body = await _api.get(ApiEndpoints.venueAffiliationsMine);
+    return PartnerLists.fromJson(body);
+  }
+
+  /// Approves an application (Mayor) or accepts an invitation (Event Foxer).
+  Future<void> approvePartner(String id) async {
+    await _api.patch(ApiEndpoints.venueAffiliationApprove(id));
+  }
+
+  /// Rejects an application or declines an invitation.
+  Future<void> rejectPartner(String id, {String? reason}) async {
+    await _api.patch(ApiEndpoints.venueAffiliationReject(id), {
+      if (reason != null && reason.trim().isNotEmpty)
+        'rejectionReason': reason.trim(),
+    });
+  }
+
+  /// Takes back something the person started that is still waiting.
+  Future<void> cancelPartner(String id) async {
+    await _api.patch(ApiEndpoints.venueAffiliationCancel(id));
+  }
+
+  /// Ends an approved partnership. Only the Mayor can.
+  Future<void> revokePartner(String id) async {
+    await _api.delete(ApiEndpoints.venueAffiliation(id));
+  }
+
   /// Checks a guest in by the code on their ticket.
   Future<CheckInResult> checkIn(String ticketCode) async {
     final body = await _api.patch(ApiEndpoints.bookingCheckIn, {
@@ -253,4 +284,9 @@ final FutureProvider<PayoutSummary> payoutsProvider =
 final FutureProvider<StripeStatus> stripeStatusProvider =
     FutureProvider.autoDispose<StripeStatus>(
   (ref) => ref.watch(spacesRepositoryProvider).stripeStatus(),
+);
+
+final FutureProvider<PartnerLists> partnersProvider =
+    FutureProvider.autoDispose<PartnerLists>(
+  (ref) => ref.watch(spacesRepositoryProvider).partners(),
 );

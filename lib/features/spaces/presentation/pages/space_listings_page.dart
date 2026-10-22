@@ -6,6 +6,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
 enum ListingKind { venues, events }
 
@@ -69,6 +71,10 @@ class SpaceListingsPage extends ConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
+              if (!venues) ...[
+                const _PartnersLink(),
+                const SizedBox(height: 12),
+              ],
               if (items.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
@@ -149,4 +155,39 @@ class _ListingCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Opens the venues the person's events can run at.
+class _PartnersLink extends StatelessWidget {
+  const _PartnersLink();
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: () => context.push(RouteNames.spaceEventPartners),
+        borderRadius: AppRadius.brCard,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: AppRadius.brCard,
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.handshake_outlined, color: AppColors.accent),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  context.l10n.partnersOpenRow,
+                  style: AppTypography.body(),
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+              ),
+            ],
+          ),
+        ),
+      );
 }

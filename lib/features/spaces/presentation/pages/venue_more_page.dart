@@ -52,6 +52,12 @@ class VenueMorePage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           _MoreRow(
+            icon: Icons.handshake_outlined,
+            title: l10n.partnersTitle,
+            onTap: () => context.push(RouteNames.spaceVenuePartners),
+          ),
+          const SizedBox(height: 8),
+          _MoreRow(
             icon: Icons.qr_code_scanner_rounded,
             title: l10n.spaceTabCheckIn,
             onTap: () => context.push(RouteNames.spaceVenueCheckIn),
