@@ -70,6 +70,10 @@ const maxEventWords = 500;
 /// The description length the web recommends before submitting.
 const recommendedEventWords = 100;
 
+/// What the web puts in the description of a new event that has none: the
+/// API needs one to create it, though it does not say so.
+const defaultEventDescription = 'Event created via Creator Studio.';
+
 /// The most photos an event may have.
 const maxEventPhotos = 5;
 
@@ -356,9 +360,11 @@ class EventDraft {
       );
 
   /// The body for create and update, as the web sends it. Events are never
-  /// public from here: the API publishes them after review.
-  Map<String, dynamic> toJson() {
-    final text = withCategoryOtherNote(description, category, categoryOther);
+  /// public from here: the API publishes them after review. A new event with no
+  /// description gets the web's default, since the API cannot create without.
+  Map<String, dynamic> toJson({bool forCreate = false}) {
+    var text = withCategoryOtherNote(description, category, categoryOther);
+    if (text.isEmpty && forCreate) text = defaultEventDescription;
     return {
       'name': title.trim(),
       if (text.isNotEmpty) 'description': text,

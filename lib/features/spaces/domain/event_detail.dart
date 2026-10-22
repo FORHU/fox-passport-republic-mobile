@@ -227,6 +227,8 @@ class EventDetail {
 
     final category = eventCategoryLabel(raw['category']);
     var description = _text(raw['description']) ?? '';
+    // The default the web adds to a new event with none is not the host's.
+    if (description == defaultEventDescription) description = '';
     var categoryOther = '';
     if (category == 'Other') {
       final split = splitCategoryOtherNote(description);

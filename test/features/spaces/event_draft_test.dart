@@ -254,6 +254,38 @@ void main() {
       expect(json['description'], 'Event type: Pop-up\n\nCome');
     });
 
+    test('a new event with no description gets the web default', () {
+      const draft = EventDraft(title: 'Bonfire');
+
+      // The API cannot create an event without a description.
+      expect(
+        draft.toJson(forCreate: true)['description'],
+        'Event created via Creator Studio.',
+      );
+      // An update leaves it out, so what is saved stays.
+      expect(draft.toJson().containsKey('description'), isFalse);
+    });
+
+    test('the default is not used when there is a description', () {
+      const draft = EventDraft(title: 'Bonfire', description: 'A fun night');
+
+      expect(draft.toJson(forCreate: true)['description'], 'A fun night');
+    });
+
+    test('the default is hidden when the event is read back', () {
+      final detail = EventDetail.tryParse({
+        'template': {
+          'id': 't1',
+          'name': 'Bonfire',
+          'category': 'social',
+          'description': 'Event created via Creator Studio.',
+        },
+      })!;
+
+      expect(detail.draft.description, isEmpty);
+      expect(detail.draft.words, 0);
+    });
+
     test('no attendees means none is sent', () {
       expect(
         const EventDraft(title: 'x', maxAttendees: 0)

@@ -88,6 +88,9 @@ void main() {
       expect(body['isPublic'], isFalse);
       // A status is never sent: the API decides, and a new event is a draft.
       expect(body.containsKey('status'), isFalse);
+      // No description was written, so the web's default goes in: the API
+      // cannot create an event without one.
+      expect(body['description'], 'Event created via Creator Studio.');
     });
 
     test('fails when the API gives no id back', () async {

@@ -302,7 +302,10 @@ class SpacesRepository {
 
   /// Saves a new event as a draft and returns its id.
   Future<String> createEvent(EventDraft draft) async {
-    final body = await _api.post(ApiEndpoints.events, draft.toJson());
+    final body = await _api.post(
+      ApiEndpoints.events,
+      draft.toJson(forCreate: true),
+    );
     final created =
         body is Map ? (body['template'] ?? body['data'] ?? body) : null;
     final id = created is Map ? created['id'] : null;
