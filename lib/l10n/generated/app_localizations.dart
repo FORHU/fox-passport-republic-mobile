@@ -2554,6 +2554,486 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @esTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get esTitleNew;
+
+  /// No description provided for @esTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get esTitleEdit;
+
+  /// No description provided for @esStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get esStepBasics;
+
+  /// No description provided for @esStepLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get esStepLocation;
+
+  /// No description provided for @esStepPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get esStepPhotos;
+
+  /// No description provided for @esStepPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get esStepPackage;
+
+  /// No description provided for @esStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get esStepReview;
+
+  /// No description provided for @esTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get esTitle;
+
+  /// No description provided for @esCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get esCategory;
+
+  /// No description provided for @esCatCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get esCatCorporate;
+
+  /// No description provided for @esCatBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get esCatBirthday;
+
+  /// No description provided for @esCatWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get esCatWedding;
+
+  /// No description provided for @esCatSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get esCatSocial;
+
+  /// No description provided for @esCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get esCatOther;
+
+  /// No description provided for @esCatOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify the event category'**
+  String get esCatOtherHint;
+
+  /// No description provided for @esDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get esDescription;
+
+  /// No description provided for @esWordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / 500 words'**
+  String esWordCount(int count);
+
+  /// No description provided for @esWordsToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more to reach 100'**
+  String esWordsToGo(int count);
+
+  /// No description provided for @esAttendees.
+  ///
+  /// In en, this message translates to:
+  /// **'Max attendees'**
+  String get esAttendees;
+
+  /// No description provided for @esPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation policy'**
+  String get esPolicy;
+
+  /// No description provided for @esLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the event takes place. Choosing a venue fills this in for you.'**
+  String get esLocationHint;
+
+  /// No description provided for @esPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 5 photos. Five is recommended.'**
+  String get esPhotosHint;
+
+  /// No description provided for @esPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Core package'**
+  String get esPackageTitle;
+
+  /// No description provided for @esPackageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The venue and everything your event includes.'**
+  String get esPackageHint;
+
+  /// No description provided for @esVenueSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get esVenueSlot;
+
+  /// No description provided for @esNoVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'No venue yet'**
+  String get esNoVenue;
+
+  /// No description provided for @esChooseVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a venue'**
+  String get esChooseVenue;
+
+  /// No description provided for @esAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to package'**
+  String get esAdd;
+
+  /// No description provided for @esPackageEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing else added yet.'**
+  String get esPackageEmpty;
+
+  /// No description provided for @esEditItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {name}'**
+  String esEditItem(String name);
+
+  /// No description provided for @esAgreedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed price'**
+  String get esAgreedPrice;
+
+  /// No description provided for @esListed.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed: {price}'**
+  String esListed(String price);
+
+  /// No description provided for @esOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get esOptional;
+
+  /// No description provided for @esRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from package'**
+  String get esRemove;
+
+  /// No description provided for @esDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get esDone;
+
+  /// No description provided for @esCostVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get esCostVenue;
+
+  /// No description provided for @esCostTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esCostTalent;
+
+  /// No description provided for @esCostServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services and equipment'**
+  String get esCostServices;
+
+  /// No description provided for @esCostTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Package cost'**
+  String get esCostTotal;
+
+  /// No description provided for @esMargin.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin'**
+  String get esMargin;
+
+  /// No description provided for @esSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested price'**
+  String get esSuggested;
+
+  /// No description provided for @esPickVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get esPickVenues;
+
+  /// No description provided for @esPickTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esPickTalent;
+
+  /// No description provided for @esPickServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get esPickServices;
+
+  /// No description provided for @esPickEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get esPickEquipment;
+
+  /// No description provided for @esPickSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get esPickSearch;
+
+  /// No description provided for @esPickNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found.'**
+  String get esPickNone;
+
+  /// No description provided for @esPickMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get esPickMore;
+
+  /// No description provided for @esAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get esAdded;
+
+  /// No description provided for @esAccessApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get esAccessApproved;
+
+  /// No description provided for @esAccessPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get esAccessPending;
+
+  /// No description provided for @esAccessApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply first'**
+  String get esAccessApply;
+
+  /// No description provided for @esToastAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {name} to your package'**
+  String esToastAdded(String name);
+
+  /// No description provided for @esToastDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already in your package'**
+  String esToastDuplicate(String name);
+
+  /// No description provided for @esToastOneVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Only one venue can be in the package. Remove the existing venue first.'**
+  String get esToastOneVenue;
+
+  /// No description provided for @esToastVenuePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your affiliation with this venue is still pending approval.'**
+  String get esToastVenuePending;
+
+  /// No description provided for @esToastVenueApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this venue first. You need an approved affiliation to host here.'**
+  String get esToastVenueApply;
+
+  /// No description provided for @esReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get esReadyTitle;
+
+  /// No description provided for @esReadyCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category selected'**
+  String get esReadyCategory;
+
+  /// No description provided for @esReadyOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what kind of event it is'**
+  String get esReadyOther;
+
+  /// No description provided for @esReadyVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved venue attached'**
+  String get esReadyVenue;
+
+  /// No description provided for @esReadyGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'5 photos'**
+  String get esReadyGallery;
+
+  /// No description provided for @esReadyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'100+ word description'**
+  String get esReadyDescription;
+
+  /// No description provided for @esRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get esRequired;
+
+  /// No description provided for @esRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get esRecommended;
+
+  /// No description provided for @esScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% ready'**
+  String esScore(int pct);
+
+  /// No description provided for @esNotDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has already been sent for review, so you can only save changes.'**
+  String get esNotDraft;
+
+  /// No description provided for @esSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as draft'**
+  String get esSaveDraft;
+
+  /// No description provided for @esSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get esSubmit;
+
+  /// No description provided for @esSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get esSaveChanges;
+
+  /// No description provided for @esSavedDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved.'**
+  String get esSavedDraft;
+
+  /// No description provided for @esSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for review.'**
+  String get esSubmitted;
+
+  /// No description provided for @esSavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get esSavedChanges;
+
+  /// No description provided for @esNeedsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an event title before saving.'**
+  String get esNeedsTitle;
+
+  /// No description provided for @esSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save that. Try again.'**
+  String get esSaveFailed;
+
+  /// No description provided for @esPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload. Try again.'**
+  String get esPhotoFailed;
+
+  /// No description provided for @esPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved, but some items could not be added. Fix them and send it again.'**
+  String get esPartial;
+
+  /// No description provided for @esProblemLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {reason}'**
+  String esProblemLine(String name, String reason);
+
+  /// No description provided for @esEditEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get esEditEvent;
+
+  /// No description provided for @esViewPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get esViewPublic;
+
   /// No description provided for @eventsSearchHint.
   ///
   /// In en, this message translates to:
@@ -3721,7 +4201,7 @@ abstract class AppLocalizations {
   /// No description provided for @listingsEventsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'You haven\'t created an event yet. Build one on the web.'**
+  /// **'You haven\'t created an event yet. Tap New event to start one.'**
   String get listingsEventsEmpty;
 
   /// No description provided for @listingStatusDraft.

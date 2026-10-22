@@ -17,6 +17,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
@@ -264,12 +265,64 @@ void main() {
 
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
+    // A menu offers what can be done with it.
+    expect(find.text('Edit event'), findsOneWidget);
+    expect(find.text('View public page'), findsOneWidget);
+
+    await tester.tap(find.text('View public page'));
+    await settle(tester);
     expect(find.byType(EventDetailPage), findsOneWidget);
 
     router.pop();
     await settle(tester);
     expect(find.byType(EventDetailPage), findsNothing);
     expect(find.text('Ada Birthday'), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('Edit event opens the studio on that event', (tester) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [
+        myEventsProvider.overrideWith(
+          (ref) async => const [
+            SpaceListing(id: 'e1', name: 'Ada Birthday', status: 'draft'),
+          ],
+        ),
+      ],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('Ada Birthday'));
+    await settle(tester);
+    await tester.tap(find.text('Edit event'));
+    await settle(tester);
+
+    expect(find.byType(EventStudioPage), findsOneWidget);
+    expect(find.text('Edit event'), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('New event opens the studio, and back returns', (tester) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [myEventsProvider.overrideWith((ref) async => const [])],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('New event'));
+    await settle(tester);
+    expect(find.byType(EventStudioPage), findsOneWidget);
+    expect(find.text('New event'), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(find.byType(EventStudioPage), findsNothing);
+    expect(where(), RouteNames.spaceEvent);
     await finish(tester);
   });
 

@@ -5,6 +5,7 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/venue_studio_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/service_area_map.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -274,18 +275,18 @@ class _BasicsStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Field(
+        StudioField(
           label: l10n.studioName,
           value: d.name,
           onChanged: (v) => edit((x) => x.copyWith(name: v)),
         ),
-        _Field(
+        StudioField(
           label: l10n.studioDescription,
           value: d.description,
           maxLines: 4,
           onChanged: (v) => edit((x) => x.copyWith(description: v)),
         ),
-        _Field(
+        StudioField(
           label: l10n.studioCapacity,
           value: d.capacity?.toString() ?? '',
           number: true,
@@ -338,12 +339,28 @@ class _LocationStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Field(
+        StudioField(
           label: l10n.studioAddress,
           value: d.address,
           onChanged: (v) => edit((x) => x.copyWith(address: v)),
         ),
-        _PlaceFields(state: state, ref: ref, id: id),
+        PlaceFields(
+          country: d.country,
+          state: d.state,
+          city: d.city,
+          countries: state.countries,
+          states: state.states,
+          cities: state.cities,
+          locating: state.locating,
+          locateProblem: state.locateProblem,
+          onCountryText: (v) => edit((x) => x.copyWith(country: v)),
+          onStateText: (v) => edit((x) => x.copyWith(state: v)),
+          onCityText: ref.read(venueStudioProvider(id).notifier).pickCity,
+          onPickCountry: ref.read(venueStudioProvider(id).notifier).pickCountry,
+          onPickState: ref.read(venueStudioProvider(id).notifier).pickState,
+          onUseMyLocation:
+              ref.read(venueStudioProvider(id).notifier).useMyLocation,
+        ),
         const SizedBox(height: 8),
         Text(l10n.studioServiceArea, style: AppTypography.display()),
         const SizedBox(height: 4),
@@ -667,7 +684,7 @@ class _PricingStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Field(
+        StudioField(
           label: l10n.studioPrice,
           value: d.price?.toString() ?? '',
           number: true,
@@ -696,7 +713,7 @@ class _PricingStep extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _Field(
+        StudioField(
           label: l10n.studioExtraGuest,
           value: d.extraGuestRate?.toString() ?? '',
           number: true,
@@ -792,212 +809,4 @@ class _ReviewStep extends StatelessWidget {
       ],
     );
   }
-}
-
-/// A text field that keeps its own cursor while the draft behind it changes.
-class _Field extends StatefulWidget {
-  const _Field({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-    this.maxLines = 1,
-    this.number = false,
-  });
-
-  final String label;
-  final String value;
-  final ValueChanged<String> onChanged;
-  final int maxLines;
-  final bool number;
-
-  @override
-  State<_Field> createState() => _FieldState();
-}
-
-class _FieldState extends State<_Field> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.value);
-
-  @override
-  void didUpdateWidget(_Field old) {
-    super.didUpdateWidget(old);
-    // Follows the draft when it is loaded or changed from elsewhere, but not
-    // while the host is typing (the text already matches then).
-    if (widget.value != _controller.text && widget.value != old.value) {
-      _controller.text = widget.value;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: TextField(
-          controller: _controller,
-          maxLines: widget.maxLines,
-          keyboardType: widget.number
-              ? const TextInputType.numberWithOptions(decimal: true)
-              : null,
-          decoration: InputDecoration(labelText: widget.label),
-          onChanged: widget.onChanged,
-        ),
-      );
-}
-
-/// Country, state and city as dropdowns that narrow down in turn, with a
-/// button that fills them in from where the phone is. When the lists cannot be
-/// loaded they fall back to plain text fields.
-class _PlaceFields extends StatelessWidget {
-  const _PlaceFields({
-    required this.state,
-    required this.ref,
-    required this.id,
-  });
-
-  final VenueStudioState state;
-  final WidgetRef ref;
-  final String? id;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final d = state.draft;
-    final studio = ref.read(venueStudioProvider(id).notifier);
-
-    String? problem;
-    switch (state.locateProblem) {
-      case 'denied':
-        problem = l10n.studioLocateDenied;
-      case 'off':
-        problem = l10n.studioLocateOff;
-      case 'failed':
-        problem = l10n.studioLocateFailed;
-    }
-
-    if (state.countries.isEmpty) {
-      return Column(
-        children: [
-          _Field(
-            label: l10n.studioCountry,
-            value: d.country,
-            onChanged: (v) => studio.edit((x) => x.copyWith(country: v)),
-          ),
-          _Field(
-            label: l10n.studioState,
-            value: d.state,
-            onChanged: (v) => studio.edit((x) => x.copyWith(state: v)),
-          ),
-          _Field(
-            label: l10n.studioCity,
-            value: d.city,
-            onChanged: (v) => studio.edit((x) => x.copyWith(city: v)),
-          ),
-        ],
-      );
-    }
-
-    // A city the phone found, or one saved on the web, may not be in the list.
-    final cities = [
-      ...state.cities,
-      if (d.city.isNotEmpty && !state.cities.contains(d.city)) d.city,
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        OutlinedButton.icon(
-          onPressed: state.locating ? null : studio.useMyLocation,
-          icon: state.locating
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.my_location_rounded, size: 18),
-          label: Text(l10n.studioUseMyLocation),
-        ),
-        if (problem != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              problem,
-              style: AppTypography.body(size: 13, color: AppColors.warning),
-            ),
-          ),
-        const SizedBox(height: 16),
-        _PlaceMenu(
-          label: l10n.studioCountry,
-          value: d.country,
-          options: [for (final c in state.countries) c.name],
-          onPicked: (name) => studio.pickCountry(
-            state.countries.firstWhere((c) => c.name == name),
-          ),
-        ),
-        if (state.states.isNotEmpty)
-          _PlaceMenu(
-            label: l10n.studioState,
-            value: d.state,
-            options: [for (final s in state.states) s.name],
-            onPicked: (name) => studio.pickState(
-              state.states.firstWhere((s) => s.name == name),
-            ),
-          ),
-        if (d.country.isNotEmpty)
-          if (cities.isNotEmpty)
-            _PlaceMenu(
-              label: l10n.studioCity,
-              value: d.city,
-              options: cities,
-              onPicked: studio.pickCity,
-            )
-          else
-            _Field(
-              label: l10n.studioCity,
-              value: d.city,
-              onChanged: studio.pickCity,
-            ),
-      ],
-    );
-  }
-}
-
-/// A dropdown you can type into to narrow a long list.
-class _PlaceMenu extends StatelessWidget {
-  const _PlaceMenu({
-    required this.label,
-    required this.value,
-    required this.options,
-    required this.onPicked,
-  });
-
-  final String label;
-  final String value;
-  final List<String> options;
-  final ValueChanged<String> onPicked;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: DropdownMenu<String>(
-          // Rebuilt when the value is set from elsewhere, such as the phone's
-          // position, or the list changes under it.
-          key: ValueKey('$label|$value|${options.length}'),
-          label: Text(label),
-          initialSelection: options.contains(value) ? value : null,
-          expandedInsets: EdgeInsets.zero,
-          enableFilter: true,
-          requestFocusOnTap: true,
-          menuHeight: 280,
-          dropdownMenuEntries: [
-            for (final o in options) DropdownMenuEntry(value: o, label: o),
-          ],
-          onSelected: (v) {
-            if (v != null) onPicked(v);
-          },
-        ),
-      );
 }
