@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
@@ -92,6 +95,8 @@ void main() {
     PayoutSummary payouts = const PayoutSummary(),
     StripeStatus stripe = const StripeStatus(),
     List<CalendarEntry> calendar = const [],
+    PartnerLists partners = const PartnerLists(),
+    Future<List<VenueRequest>>? requestsLoad,
   }) async {
     _tall(tester);
     SharedPreferences.setMockInitialValues({});
@@ -109,6 +114,8 @@ void main() {
           RouteNames.spaceVenueVenues,
           RouteNames.settings,
           RouteNames.spaceVenueMore,
+          RouteNames.spaceVenuePartners,
+          RouteNames.spaceVenueEarnings,
         ])
           GoRoute(path: path, builder: (_, s) => marker(s.uri.toString())),
         GoRoute(
@@ -133,10 +140,12 @@ void main() {
           spacesRepositoryProvider
               .overrideWithValue(SpacesRepository(api, 'u1')),
           myVenuesProvider.overrideWith((ref) async => venues),
-          venueRequestsProvider.overrideWith((ref) async => requests),
+          venueRequestsProvider
+              .overrideWith((ref) => requestsLoad ?? Future.value(requests)),
           payoutsProvider.overrideWith((ref) async => payouts),
           stripeStatusProvider.overrideWith((ref) async => stripe),
           venueCalendarProvider.overrideWith((ref, range) async => calendar),
+          partnersProvider.overrideWith((ref) async => partners),
         ],
         child: MaterialApp.router(
           routerConfig: router,
@@ -193,10 +202,12 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('says when nothing is waiting or coming up', (tester) async {
+    testWidgets('says when all is clear and nothing is coming up', (
+      tester,
+    ) async {
       await pump(tester, const VenueOverviewPage());
 
-      expect(find.text('Nothing is waiting for you.'), findsOneWidget);
+      expect(find.text("You're all caught up."), findsOneWidget);
       expect(find.text('No bookings in the next 30 days.'), findsOneWidget);
     });
 
@@ -232,6 +243,177 @@ void main() {
       expect(find.text('No bookings in the next 30 days.'), findsOneWidget);
     });
 
+    group('what needs the person', () {
+      Partner application(String id) => Partner.tryParse(
+            {
+              'id': id,
+              'status': 'pending',
+              'initiatedBy': 'eventFoxer',
+              'venue': {'id': 'v1', 'name': 'Sky Hall'},
+              'eventFoxer': {'id': 'e1', 'name': 'Ada'},
+            },
+            PartnerSide.mayor,
+          )!;
+
+      const rejected = SpaceListing(
+        id: 'v3',
+        name: 'Declined Hall',
+        status: 'rejected',
+      );
+      const draft =
+          SpaceListing(id: 'v4', name: 'Draft Villa', status: 'draft');
+
+      testWidgets('lists partner applications that are waiting', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          const VenueOverviewPage(),
+          partners: PartnerLists(
+            asMayor: [application('a'), application('b')],
+          ),
+        );
+
+        expect(find.text('2 partner applications are waiting'), findsOneWidget);
+        expect(find.text("You're all caught up."), findsNothing);
+
+        await tester.tap(find.text('2 partner applications are waiting'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('AT ${RouteNames.spaceVenuePartners}'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('says how many venues are in review, declined or drafts', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          const VenueOverviewPage(),
+          venues: const [_sky, _barn, rejected, draft],
+        );
+
+        expect(find.text('1 venue is in review'), findsOneWidget);
+        expect(find.text('1 venue was declined'), findsOneWidget);
+        expect(find.text('1 draft to finish'), findsOneWidget);
+        expect(find.text("You're all caught up."), findsNothing);
+
+        await tester.tap(find.text('1 venue was declined'));
+        await tester.pumpAndSettle();
+        expect(find.text('AT ${RouteNames.spaceVenueVenues}'), findsOneWidget);
+      });
+
+      testWidgets('a live venue alone leaves nothing to do', (tester) async {
+        await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
+
+        expect(find.text("You're all caught up."), findsOneWidget);
+        expect(find.textContaining('venue is'), findsNothing);
+      });
+
+      testWidgets('does not claim all is clear while it is still loading', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          const VenueOverviewPage(),
+          requestsLoad: Completer<List<VenueRequest>>().future,
+        );
+
+        expect(find.text("You're all caught up."), findsNothing);
+      });
+
+      testWidgets('requests, partners and venues all show together', (
+        tester,
+      ) async {
+        await pump(
+          tester,
+          const VenueOverviewPage(),
+          requests: [_request('r1')],
+          venues: const [_sky, draft],
+          partners: PartnerLists(asMayor: [application('a')]),
+        );
+
+        expect(find.text('Accept'), findsOneWidget);
+        expect(find.text('1 partner application is waiting'), findsOneWidget);
+        expect(find.text('1 draft to finish'), findsOneWidget);
+      });
+    });
+
+    testWidgets('puts the quick actions first, above what needs the person', (
+      tester,
+    ) async {
+      await pump(tester, const VenueOverviewPage());
+
+      final actions = tester.getTopLeft(find.text('Check in a guest')).dy;
+      final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
+      final numbers = tester.getTopLeft(find.text('NUMBERS')).dy;
+      expect(actions, lessThan(attention));
+      expect(attention, lessThan(numbers));
+    });
+
+    testWidgets('each number opens where its detail is', (tester) async {
+      await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
+
+      await tester.tap(find.text('Venues live'));
+      await tester.pumpAndSettle();
+      expect(find.text('AT ${RouteNames.spaceVenueVenues}'), findsOneWidget);
+    });
+
+    testWidgets('the money numbers open Earnings', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        payouts: const PayoutSummary(totals: PayoutTotals(pending: 5000)),
+      );
+
+      await tester.tap(find.text('Pending payouts'));
+      await tester.pumpAndSettle();
+      expect(find.text('AT ${RouteNames.spaceVenueEarnings}'), findsOneWidget);
+    });
+
+    testWidgets('a booking today is marked Today', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        calendar: [
+          _booking('Wedding', VenueHold.confirmed, inDays: 0),
+          _booking('Reunion', VenueHold.held, inDays: 5),
+        ],
+      );
+
+      expect(find.text('TODAY'), findsOneWidget);
+    });
+
+    testWidgets('tiles in a row line up', (tester) async {
+      await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
+      // A phone-width screen, where a long label can wrap onto a second line.
+      tester.view.physicalSize = const Size(360, 2000);
+      await tester.pumpAndSettle();
+
+      Finder tile(String label) => find.ancestor(
+            of: find.text(label),
+            matching: find.byType(InkWell),
+          );
+      // Each row's tiles start at the same height and are as tall as each
+      // other, however their labels wrap.
+      for (final pair in [
+        ('Venues live', 'Bookings, next 30 days'),
+        ('Paid out', 'Pending payouts'),
+        ('Check in a guest', 'Close a day'),
+        ('Close a day', 'Add a venue'),
+      ]) {
+        expect(
+          tester.getTopLeft(tile(pair.$1)).dy,
+          tester.getTopLeft(tile(pair.$2)).dy,
+        );
+        expect(
+          tester.getSize(tile(pair.$1)).height,
+          tester.getSize(tile(pair.$2)).height,
+        );
+      }
+    });
+
     testWidgets('the quick actions go where they say', (tester) async {
       await pump(tester, const VenueOverviewPage());
 
@@ -257,6 +439,132 @@ void main() {
       await pump(tester, const VenuesPage());
 
       expect(find.textContaining("haven't listed a venue"), findsOneWidget);
+    });
+
+    group('finding one among many', () {
+      const many = [
+        _sky,
+        _barn,
+        SpaceListing(
+          id: 'v3',
+          name: 'Harbour Pavilion',
+          status: 'available',
+          city: 'Sydney',
+        ),
+        SpaceListing(
+          id: 'v4',
+          name: 'Garden Estate',
+          status: 'draft',
+          city: 'Los Angeles',
+        ),
+      ];
+
+      testWidgets('shows how many there are, and filters by status', (
+        tester,
+      ) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        expect(find.text('4 venues'), findsOneWidget);
+        expect(find.text('All 4'), findsOneWidget);
+        expect(find.text('Live 2'), findsOneWidget);
+        expect(find.text('In review 1'), findsOneWidget);
+        expect(find.text('Draft 1'), findsOneWidget);
+
+        await tester.tap(find.text('Live 2'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Sky Hall'), findsOneWidget);
+        expect(find.text('Harbour Pavilion'), findsOneWidget);
+        expect(find.text('Old Barn'), findsNothing);
+        expect(find.text('Garden Estate'), findsNothing);
+        expect(find.text('2 of 4 venues'), findsOneWidget);
+
+        await tester.tap(find.text('All 4'));
+        await tester.pumpAndSettle();
+        expect(find.text('Old Barn'), findsOneWidget);
+      });
+
+      testWidgets('searches by name or by town', (tester) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.enterText(find.byType(TextField), 'harb');
+        await tester.pumpAndSettle();
+        expect(find.text('Harbour Pavilion'), findsOneWidget);
+        expect(find.text('Sky Hall'), findsNothing);
+        expect(find.text('1 of 4 venues'), findsOneWidget);
+
+        await tester.enterText(find.byType(TextField), 'los angeles');
+        await tester.pumpAndSettle();
+        expect(find.text('Garden Estate'), findsOneWidget);
+      });
+
+      testWidgets('search and a status filter work together', (tester) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.tap(find.text('Live 2'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'garden');
+        await tester.pumpAndSettle();
+
+        // The garden venue is a draft, so a Live filter hides it.
+        expect(find.text('Garden Estate'), findsNothing);
+        expect(find.text('No venues match.'), findsOneWidget);
+      });
+
+      testWidgets('clearing the search brings every venue back', (
+        tester,
+      ) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.enterText(find.byType(TextField), 'zzz');
+        await tester.pumpAndSettle();
+        expect(find.text('No venues match.'), findsOneWidget);
+
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('No venues match.'), findsNothing);
+        expect(find.text('4 venues'), findsOneWidget);
+      });
+
+      testWidgets('one status only needs no filter row', (tester) async {
+        await pump(tester, const VenuesPage(), venues: const [_sky]);
+
+        expect(find.text('1 venue'), findsOneWidget);
+        expect(find.byType(ChoiceChip), findsNothing);
+      });
+
+      testWidgets('hides the search when there are no venues', (tester) async {
+        await pump(tester, const VenuesPage());
+
+        expect(find.byType(TextField), findsNothing);
+      });
+
+      testWidgets('a long list is built lazily, and every venue is reachable', (
+        tester,
+      ) async {
+        final lots = [
+          for (var i = 0; i < 60; i++)
+            SpaceListing(
+              id: 'x$i',
+              name: 'Venue number $i',
+              status: 'available',
+              city: 'Town',
+            ),
+        ];
+        await pump(tester, const VenuesPage(), venues: lots);
+
+        expect(find.text('60 venues'), findsOneWidget);
+        // Not all 60 rows are built at once.
+        expect(
+          tester.widgetList(find.textContaining('Venue number')).length,
+          lessThan(60),
+        );
+
+        await tester.enterText(find.byType(TextField), 'number 59');
+        await tester.pumpAndSettle();
+        expect(find.text('Venue number 59'), findsOneWidget);
+      });
     });
 
     testWidgets('tapping a venue opens its hub', (tester) async {

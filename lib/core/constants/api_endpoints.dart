@@ -68,6 +68,16 @@ class ApiEndpoints {
   static String requestReview(String id) => '/event-transactions/$id/review';
 
   /// What the person has been paid and is owed, newest first.
+  static const String venueAffiliationsMine = '/venue-affiliations/mine';
+  static const String venueAffiliationApply = '/venue-affiliations/apply';
+  static const String venueAffiliationInvite = '/venue-affiliations/invite';
+  static String venueAffiliationApprove(String id) =>
+      '/venue-affiliations/$id/approve';
+  static String venueAffiliationReject(String id) =>
+      '/venue-affiliations/$id/reject';
+  static String venueAffiliationCancel(String id) =>
+      '/venue-affiliations/$id/cancel';
+  static String venueAffiliation(String id) => '/venue-affiliations/$id';
   static const String payoutsMe = '/payouts/me';
 
   /// How far the person's payout account (Stripe) is set up.
@@ -78,6 +88,11 @@ class ApiEndpoints {
   static const String venues = '/venues';
   static const String venuesNear = '/venues/near';
   static const String venuesCatalog = '/venues/catalog';
+
+  /// Where a new venue is created. The API keeps creation on its own path,
+  /// `POST /venues/create`; `POST /venues` is not a route.
+  static const String venueCreate = '/venues/create';
+
   static String venueById(String id) => '/venues/$id';
   static String venueUnavailableDates(String id) =>
       '/venues/$id/unavailable-dates';
