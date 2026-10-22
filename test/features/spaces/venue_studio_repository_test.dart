@@ -36,7 +36,7 @@ void main() {
 
   group('creating a venue', () {
     test('saves a draft, or sends it for review', () async {
-      when(() => api.post('/venues', any())).thenAnswer(
+      when(() => api.post('/venues/create', any())).thenAnswer(
         (_) async => {
           'venue': {'id': 'v9'},
         },
@@ -45,15 +45,28 @@ void main() {
       expect(await repo.createVenue(_draft, submit: false), 'v9');
       await repo.createVenue(_draft, submit: true);
 
-      final bodies = verify(() => api.post('/venues', captureAny()))
+      final bodies = verify(() => api.post('/venues/create', captureAny()))
           .captured
           .cast<Map<String, dynamic>>();
       expect(bodies[0]['status'], 'draft');
       expect(bodies[1]['status'], 'pending');
     });
 
+    test("goes to the API's create path, not the collection", () async {
+      when(() => api.post('/venues/create', any())).thenAnswer(
+        (_) async => {
+          'venue': {'id': 'v9'},
+        },
+      );
+
+      await repo.createVenue(_draft, submit: false);
+
+      verify(() => api.post('/venues/create', any())).called(1);
+      verifyNever(() => api.post('/venues', any()));
+    });
+
     test('fails when the API gives no id back', () async {
-      when(() => api.post('/venues', any())).thenAnswer((_) async => {});
+      when(() => api.post('/venues/create', any())).thenAnswer((_) async => {});
 
       expect(
         () => repo.createVenue(_draft, submit: false),

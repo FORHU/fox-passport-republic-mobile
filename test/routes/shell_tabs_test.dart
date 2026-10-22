@@ -40,6 +40,7 @@ void main() {
     ]);
     expect(rootsOf(shells[2]), [
       RouteNames.spaceEvent,
+      RouteNames.spaceEventCalendar,
       RouteNames.spaceEventCheckIn,
       RouteNames.spaceEventMessages,
     ]);

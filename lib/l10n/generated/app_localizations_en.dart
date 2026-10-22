@@ -1326,6 +1326,103 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get overviewAttention => 'Needs your attention';
+
+  @override
+  String get overviewAllClear => 'You\'re all caught up.';
+
+  @override
+  String overviewPartnersWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partner applications are waiting',
+      one: '1 partner application is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues are in review',
+      one: '1 venue is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues were declined',
+      one: '1 venue was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get overviewTodayAhead => 'Today and coming up';
+
+  @override
+  String get overviewToday => 'Today';
+
+  @override
+  String get overviewNumbers => 'Numbers';
+
+  @override
+  String calendarAllVenuesCount(int count) {
+    return 'All venues ($count)';
+  }
+
+  @override
+  String get calendarShowAllVenues => 'Show all venues';
+
+  @override
+  String get venuesSearchHint => 'Search by name or city';
+
+  @override
+  String get venuesSearchClear => 'Clear search';
+
+  @override
+  String venuesFilterAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String venuesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues',
+      one: '1 venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String venuesCountOf(int shown, int total) {
+    return '$shown of $total venues';
+  }
+
+  @override
+  String get venuesNoMatch => 'No venues match.';
+
+  @override
   String get partnersTitle => 'Partners';
 
   @override
@@ -1435,6 +1532,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get partnersOpenRow => 'Venue partners';
+
+  @override
+  String get partnersInvite => 'Invite an Event Foxer';
+
+  @override
+  String get partnersInviteTitle => 'Choose an Event Foxer';
+
+  @override
+  String get partnersInviteHint => 'Search Event Foxers';
+
+  @override
+  String get partnersInviteNone => 'No Event Foxers found.';
+
+  @override
+  String get partnersChooseVenue => 'Which venue?';
+
+  @override
+  String get partnersInviteNoVenue =>
+      'You need a live venue to invite someone.';
+
+  @override
+  String partnersInviteConfirmTitle(String name) {
+    return 'Invite $name?';
+  }
+
+  @override
+  String partnersInviteConfirmBody(String venue) {
+    return 'They\'ll be asked to host events at $venue.';
+  }
+
+  @override
+  String get partnersInviteAction => 'Invite';
+
+  @override
+  String get partnersInviteSent => 'Invitation sent.';
+
+  @override
+  String get partnersApply => 'Apply to a venue';
+
+  @override
+  String get partnersApplyTitle => 'Choose a venue';
+
+  @override
+  String get partnersSearchHint => 'Search venues';
+
+  @override
+  String get partnersApplyNone => 'No venues found.';
+
+  @override
+  String get partnersAlready => 'Already on your list';
+
+  @override
+  String partnersApplyConfirmTitle(String venue) {
+    return 'Apply to $venue?';
+  }
+
+  @override
+  String get partnersApplyConfirmBody =>
+      'The venue\'s Mayor will be asked to approve.';
+
+  @override
+  String get partnersApplyAction => 'Apply';
+
+  @override
+  String get partnersApplySent => 'Applied. The Mayor has been told.';
 
   @override
   String get studioTitleNew => 'New venue';
@@ -1835,7 +1997,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkInIntro =>
-      'Type the code printed under the QR on a guest\'s ticket.';
+      'Scan the QR on a guest\'s ticket, or type the code printed under it.';
+
+  @override
+  String get checkInScan => 'Scan ticket';
+
+  @override
+  String get checkInScanTitle => 'Scan a ticket';
+
+  @override
+  String get checkInScanHint => 'Point the camera at the QR on the ticket.';
+
+  @override
+  String get checkInTorch => 'Light';
+
+  @override
+  String get checkInCameraDenied =>
+      'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
+
+  @override
+  String get checkInCameraFailed =>
+      'The camera isn\'t available. Type the code instead.';
+
+  @override
+  String get checkInTypeInstead => 'Type the code';
 
   @override
   String get checkInCodeLabel => 'Ticket code';
