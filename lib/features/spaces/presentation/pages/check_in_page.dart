@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/ticket_scanner_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/widgets/app_input.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
@@ -51,6 +52,15 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
     showTopToast(context, message);
   }
 
+  /// Opens the camera; a code it reads is checked in straight away.
+  Future<void> _scan() async {
+    if (_checking) return;
+    final code = await ref.read(ticketScannerProvider)(context);
+    if (code == null || !mounted) return;
+    _code.text = code;
+    await _checkIn();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -67,6 +77,12 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
           children: [
             Text(l10n.checkInIntro, style: AppTypography.body(size: 13)),
             const SizedBox(height: 20),
+            SecondaryButton(
+              label: l10n.checkInScan,
+              icon: Icons.qr_code_scanner_rounded,
+              onPressed: _checking ? null : _scan,
+            ),
+            const SizedBox(height: 16),
             AppInput(
               label: l10n.checkInCodeLabel,
               controller: _code,
@@ -77,7 +93,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
             const SizedBox(height: 20),
             PrimaryButton(
               label: l10n.checkInAction,
-              icon: Icons.qr_code_scanner_rounded,
+              icon: Icons.check_circle_outline_rounded,
               isLoading: _checking,
               onPressed: _checking ? null : _checkIn,
             ),

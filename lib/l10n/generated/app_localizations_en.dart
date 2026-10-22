@@ -1835,7 +1835,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkInIntro =>
-      'Type the code printed under the QR on a guest\'s ticket.';
+      'Scan the QR on a guest\'s ticket, or type the code printed under it.';
+
+  @override
+  String get checkInScan => 'Scan ticket';
+
+  @override
+  String get checkInScanTitle => 'Scan a ticket';
+
+  @override
+  String get checkInScanHint => 'Point the camera at the QR on the ticket.';
+
+  @override
+  String get checkInTorch => 'Light';
+
+  @override
+  String get checkInCameraDenied =>
+      'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
+
+  @override
+  String get checkInCameraFailed =>
+      'The camera isn\'t available. Type the code instead.';
+
+  @override
+  String get checkInTypeInstead => 'Type the code';
 
   @override
   String get checkInCodeLabel => 'Ticket code';

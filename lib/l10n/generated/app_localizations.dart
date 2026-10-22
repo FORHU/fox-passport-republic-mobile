@@ -3493,8 +3493,50 @@ abstract class AppLocalizations {
   /// No description provided for @checkInIntro.
   ///
   /// In en, this message translates to:
-  /// **'Type the code printed under the QR on a guest\'s ticket.'**
+  /// **'Scan the QR on a guest\'s ticket, or type the code printed under it.'**
   String get checkInIntro;
+
+  /// No description provided for @checkInScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan ticket'**
+  String get checkInScan;
+
+  /// No description provided for @checkInScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a ticket'**
+  String get checkInScanTitle;
+
+  /// No description provided for @checkInScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the QR on the ticket.'**
+  String get checkInScanHint;
+
+  /// No description provided for @checkInTorch.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get checkInTorch;
+
+  /// No description provided for @checkInCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in your phone\'s settings, or type the code instead.'**
+  String get checkInCameraDenied;
+
+  /// No description provided for @checkInCameraFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera isn\'t available. Type the code instead.'**
+  String get checkInCameraFailed;
+
+  /// No description provided for @checkInTypeInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the code'**
+  String get checkInTypeInstead;
 
   /// No description provided for @checkInCodeLabel.
   ///
