@@ -127,6 +127,13 @@ class RouteNames {
   static const String spaceEventCalendar = '/space/event/calendar';
 
   /// Creating or editing an event: full screen, outside the tabs.
+  /// The team of a venue or event: Organizers and Check-in Helpers. The list
+  /// of what can have a team is one per space; the team itself takes the
+  /// venue or event as `extra`.
+  static const String spaceTeamVenues = '/space/team/venues';
+  static const String spaceTeamEvents = '/space/team/events';
+  static const String spaceTeamDetail = '/space/team/detail';
+
   static const String spaceEventStudio = '/space/event/studio';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';

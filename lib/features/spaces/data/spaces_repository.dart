@@ -9,6 +9,7 @@ import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 
@@ -292,6 +293,127 @@ class SpacesRepository {
     await _api.delete(ApiEndpoints.venueAffiliation(id));
   }
 
+  // ── Team: Organizers and Check-in Helpers ──────────────────────────────
+
+  String _teamPath(TeamTarget target) => target.isEvent
+      ? ApiEndpoints.eventTeam(target.id)
+      : ApiEndpoints.venueTeam(target.id);
+
+  /// The venues the person can build a team for.
+  Future<List<TeamTarget>> teamVenues() async => [
+        for (final v in await myVenues())
+          TeamTarget(
+            isEvent: false,
+            id: v.id,
+            name: v.name,
+            detail: [v.city, v.status].whereType<String>().join(' · '),
+          ),
+      ];
+
+  /// The events the person organizes that can still take a team. The API gives
+  /// at most 50 at a time, so this asks page by page.
+  Future<List<TeamTarget>> teamEvents() async {
+    if (_userId == null) return const [];
+    const pageSize = 50;
+    const maxPages = 40;
+    final all = <TeamTarget>[];
+    for (var page = 1; page <= maxPages; page++) {
+      final body = await _api.get(
+        ApiEndpoints.organizerEvents,
+        query: {'organizerId': _userId, 'limit': pageSize, 'page': page},
+      );
+      final rows = body is Map ? body['events'] ?? body['data'] : body;
+      if (rows is! List) {
+        throw const FormatException('Events response is not a list');
+      }
+      all.addAll([
+        for (final row in rows)
+          if (teamTargetFromEvent(row) case final t?) t,
+      ]);
+      final total = body is Map ? body['total'] : null;
+      if (rows.length < pageSize ||
+          (total is int && page * pageSize >= total)) {
+        break;
+      }
+    }
+    return all;
+  }
+
+  /// Everyone on the venue's or event's team, invited, asking, or past.
+  Future<List<TeamMember>> team(TeamTarget target) async {
+    final body = await _api.get(_teamPath(target));
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) {
+      throw const FormatException('Team response is not a list');
+    }
+    return [
+      for (final row in rows)
+        if (TeamMember.tryParse(row) case final m?) m,
+    ];
+  }
+
+  /// Invites an Organizer (by email, or someone picked from the search), or
+  /// adds a Check-in Helper by email. The API says why when it refuses.
+  Future<void> appoint(
+    TeamTarget target,
+    TeamKind kind, {
+    String? email,
+    String? userId,
+  }) async {
+    await _api.post(_teamPath(target), {
+      'kind': kind.api,
+      if (userId != null) 'userId': userId else 'email': email?.trim(),
+    });
+  }
+
+  /// Removes someone from the team, or withdraws an invitation.
+  Future<void> removeFromTeam(TeamTarget target, String appointmentId) async {
+    await _api
+        .delete('${_teamPath(target)}/${Uri.encodeComponent(appointmentId)}');
+  }
+
+  /// Answers an Organizer's request to join.
+  Future<void> answerTeamRequest(
+    TeamTarget target,
+    String appointmentId, {
+    required bool accept,
+  }) async {
+    final id = Uri.encodeComponent(appointmentId);
+    await _api.post(
+      '${_teamPath(target)}/$id/${accept ? 'approve' : 'decline'}-request',
+    );
+  }
+
+  /// Whether Organizers may ask to join this venue or event.
+  Future<bool> acceptsOrganizerRequests(TeamTarget target) async {
+    final body = await _api.get('${_teamPath(target)}/settings');
+    final data = body is Map ? body['data'] : null;
+    return data is Map && data['acceptsOrganizerRequests'] == true;
+  }
+
+  Future<void> setAcceptsOrganizerRequests(
+    TeamTarget target, {
+    required bool value,
+  }) async {
+    await _api.patch('${_teamPath(target)}/settings', {
+      'acceptsOrganizerRequests': value,
+    });
+  }
+
+  /// Approved Organizers matching a name or city.
+  Future<List<OrganizerCard>> searchOrganizers(String query) async {
+    final body = await _api.get(
+      ApiEndpoints.organizerSearch,
+      query: {'q': query.trim()},
+    );
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (OrganizerCard.tryParse(row) case final c?) c,
+    ];
+  }
+
   /// The event as saved, to edit.
   Future<EventDetail> eventDetail(String id) async {
     final body = await _api.get(ApiEndpoints.eventById(id));
@@ -551,3 +673,35 @@ final partnersWaitingProvider =
   if (lists == null) return 0;
   return lists.forSide(side).where((p) => p.awaitingMe).length;
 });
+
+final FutureProvider<List<TeamTarget>> teamVenuesProvider =
+    FutureProvider.autoDispose<List<TeamTarget>>(
+  (ref) => ref.watch(spacesRepositoryProvider).teamVenues(),
+);
+
+final FutureProvider<List<TeamTarget>> teamEventsProvider =
+    FutureProvider.autoDispose<List<TeamTarget>>(
+  (ref) => ref.watch(spacesRepositoryProvider).teamEvents(),
+);
+
+// The family types are not exported by flutter_riverpod, so they are inferred.
+// ignore: specify_nonobvious_property_types
+final teamProvider =
+    FutureProvider.autoDispose.family<List<TeamMember>, TeamTarget>(
+  (ref, target) => ref.watch(spacesRepositoryProvider).team(target),
+);
+
+// Same as above: the family type is inferred.
+// ignore: specify_nonobvious_property_types
+final teamAcceptsRequestsProvider =
+    FutureProvider.autoDispose.family<bool, TeamTarget>(
+  (ref, target) =>
+      ref.watch(spacesRepositoryProvider).acceptsOrganizerRequests(target),
+);
+
+// Same as above: the family type is inferred.
+// ignore: specify_nonobvious_property_types
+final organizerSearchProvider =
+    FutureProvider.autoDispose.family<List<OrganizerCard>, String>(
+  (ref, query) => ref.watch(spacesRepositoryProvider).searchOrganizers(query),
+);

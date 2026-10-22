@@ -35,12 +35,15 @@ import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_detail_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
@@ -237,6 +240,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '${RouteNames.spaceVenueStudio}/:venueId',
         builder: (context, state) =>
             VenueStudioPage(venueId: state.pathParameters['venueId']),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamVenues,
+        builder: (context, state) => const TeamPage(events: false),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamEvents,
+        builder: (context, state) => const TeamPage(events: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamDetail,
+        // Opened with the venue or event as `extra`; without it (a restored
+        // link) there is nothing to show, so go back to the list.
+        redirect: (context, state) =>
+            state.extra is TeamTarget ? null : RouteNames.spaceVenue,
+        builder: (context, state) =>
+            TeamDetailPage(target: state.extra! as TeamTarget),
       ),
       GoRoute(
         path: RouteNames.spaceEventStudio,
