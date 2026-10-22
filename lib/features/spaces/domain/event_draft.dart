@@ -376,3 +376,13 @@ class EventDraft {
     };
   }
 }
+
+/// An item the API would not put in the event, and what it said.
+class PackageProblem {
+  const PackageProblem(this.name, this.message);
+
+  final String name;
+
+  /// The server's words, or empty when it gave none.
+  final String message;
+}

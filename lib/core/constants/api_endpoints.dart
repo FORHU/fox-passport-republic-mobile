@@ -59,6 +59,18 @@ class ApiEndpoints {
   static const String eventRecommendations = '/event-templates/recommendations';
   static String eventBrowseById(String id) => '/event-templates/browse/$id';
   static String eventById(String id) => '/event-templates/$id';
+  static const String assets = '/asset';
+  static const String services = '/service';
+  static String eventSubmit(String id) => '/event-templates/$id/submit';
+  static String eventVenues(String id) => '/event-templates/$id/venues';
+  static String eventVenue(String id, String venueId) =>
+      '/event-templates/$id/venues/$venueId';
+  static String eventAssets(String id) => '/event-templates/$id/assets';
+  static String eventAsset(String id, String assetId) =>
+      '/event-templates/$id/assets/$assetId';
+  static String eventServices(String id) => '/event-templates/$id/services';
+  static String eventService(String id, String serviceId) =>
+      '/event-templates/$id/services/$serviceId';
   static const String assetsBrowse = '/asset/browse';
   static const String servicesBrowse = '/service/browse';
 
