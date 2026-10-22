@@ -115,33 +115,34 @@ class VenueStudioPage extends ConsumerWidget {
           : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: Row(
-                  children: [
-                    if (step != StudioStep.basics)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: OutlinedButton(
-                          onPressed: controller.back,
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(0, 52),
-                          ),
-                          child: Text(l10n.studioBack),
-                        ),
-                      ),
-                    Expanded(
-                      child: last
-                          ? _FinalActions(
-                              state: state,
-                              onDraft: () => _save(context, ref, submit: false),
-                              onSubmit: () => _save(context, ref, submit: true),
-                            )
-                          : AppButton(
+                child: last
+                    ? _FinalActions(
+                        state: state,
+                        onBack: controller.back,
+                        onDraft: () => _save(context, ref, submit: false),
+                        onSubmit: () => _save(context, ref, submit: true),
+                      )
+                    : Row(
+                        children: [
+                          if (step != StudioStep.basics)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: OutlinedButton(
+                                onPressed: controller.back,
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size(0, 52),
+                                ),
+                                child: Text(l10n.studioBack),
+                              ),
+                            ),
+                          Expanded(
+                            child: AppButton(
                               label: l10n.studioNext,
                               onPressed: controller.next,
                             ),
-                    ),
-                  ],
-                ),
+                          ),
+                        ],
+                      ),
               ),
             ),
     );
@@ -212,41 +213,65 @@ class _LiveNote extends StatelessWidget {
 class _FinalActions extends StatelessWidget {
   const _FinalActions({
     required this.state,
+    required this.onBack,
     required this.onDraft,
     required this.onSubmit,
   });
 
   final VenueStudioState state;
+  final VoidCallback onBack;
   final VoidCallback onDraft;
   final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final back = OutlinedButton(
+      onPressed: onBack,
+      style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
+      child: Text(l10n.studioBack),
+    );
     // A live venue only ever keeps its changes; it never goes back to draft.
     if (state.live) {
-      return AppButton(
-        label: l10n.studioSaveChanges,
-        isLoading: state.saving,
-        onPressed: state.draft.readyToSubmit && state.overlapping.isEmpty
-            ? onSubmit
-            : null,
+      return Row(
+        children: [
+          back,
+          const SizedBox(width: 12),
+          Expanded(
+            child: AppButton(
+              label: l10n.studioSaveChanges,
+              isLoading: state.saving,
+              onPressed: state.draft.readyToSubmit && state.overlapping.isEmpty
+                  ? onSubmit
+                  : null,
+            ),
+          ),
+        ],
       );
     }
-    return Row(
+    // Three buttons side by side do not fit a phone: the main one gets a row
+    // of its own, with Back and Save as draft below it.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        OutlinedButton(
-          onPressed: state.saving ? null : onDraft,
-          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
-          child: Text(l10n.studioSaveDraft),
+        AppButton(
+          label: l10n.studioSubmit,
+          isLoading: state.saving,
+          onPressed: state.canSubmit ? onSubmit : null,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: AppButton(
-            label: l10n.studioSubmit,
-            isLoading: state.saving,
-            onPressed: state.canSubmit ? onSubmit : null,
-          ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: back),
+            const SizedBox(width: 12),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: state.saving ? null : onDraft,
+                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
+                child: Text(l10n.studioSaveDraft),
+              ),
+            ),
+          ],
         ),
       ],
     );

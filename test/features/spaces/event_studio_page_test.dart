@@ -521,6 +521,32 @@ void main() {
       expect(find.text('0% ready'), findsOneWidget);
     });
 
+    testWidgets('the buttons fit a phone, the main one across the full width', (
+      tester,
+    ) async {
+      await pump(tester);
+      tester.view.physicalSize = const Size(360, 900);
+      await goToStep(tester, 'Review');
+
+      final send = tester.getSize(
+        find.widgetWithText(ElevatedButton, 'Send for review'),
+      );
+      final back = tester.getSize(find.widgetWithText(OutlinedButton, 'Back'));
+      final draft = tester.getSize(
+        find.widgetWithText(OutlinedButton, 'Save as draft'),
+      );
+      // On a 360 wide screen the main button spans it (less the margins) and
+      // is not squeezed next to the others.
+      expect(send.width, greaterThan(300));
+      expect(back.width + draft.width, lessThan(send.width));
+      final sendTop = tester
+          .getTopLeft(find.widgetWithText(ElevatedButton, 'Send for review'))
+          .dy;
+      final backTop =
+          tester.getTopLeft(find.widgetWithText(OutlinedButton, 'Back')).dy;
+      expect(sendTop, lessThan(backTop));
+    });
+
     testWidgets('cannot be sent for review until it is ready', (tester) async {
       await pump(tester);
       await goToStep(tester, 'Review');

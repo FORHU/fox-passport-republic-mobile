@@ -137,33 +137,34 @@ class EventStudioPage extends ConsumerWidget {
           : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: Row(
-                  children: [
-                    if (step != EventStep.basics)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: OutlinedButton(
-                          onPressed: controller.back,
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(0, 52),
-                          ),
-                          child: Text(l10n.studioBack),
-                        ),
-                      ),
-                    Expanded(
-                      child: last
-                          ? _FinalActions(
-                              id: eventId,
-                              onDraft: () => _save(context, ref, submit: false),
-                              onSubmit: () => _save(context, ref, submit: true),
-                            )
-                          : AppButton(
+                child: last
+                    ? _FinalActions(
+                        id: eventId,
+                        onBack: controller.back,
+                        onDraft: () => _save(context, ref, submit: false),
+                        onSubmit: () => _save(context, ref, submit: true),
+                      )
+                    : Row(
+                        children: [
+                          if (step != EventStep.basics)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: OutlinedButton(
+                                onPressed: controller.back,
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size(0, 52),
+                                ),
+                                child: Text(l10n.studioBack),
+                              ),
+                            ),
+                          Expanded(
+                            child: AppButton(
                               label: l10n.studioNext,
                               onPressed: controller.next,
                             ),
-                    ),
-                  ],
-                ),
+                          ),
+                        ],
+                      ),
               ),
             ),
     );
@@ -217,11 +218,13 @@ class _StepBar extends StatelessWidget {
 class _FinalActions extends ConsumerWidget {
   const _FinalActions({
     required this.id,
+    required this.onBack,
     required this.onDraft,
     required this.onSubmit,
   });
 
   final String? id;
+  final VoidCallback onBack;
   final VoidCallback onDraft;
   final VoidCallback onSubmit;
 
@@ -230,27 +233,49 @@ class _FinalActions extends ConsumerWidget {
     final l10n = context.l10n;
     final state = ref.watch(eventStudioProvider(id));
     final isDraft = state.isNew || state.status == 'draft';
+    final back = OutlinedButton(
+      onPressed: onBack,
+      style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
+      child: Text(l10n.studioBack),
+    );
     if (!isDraft) {
-      return AppButton(
-        label: l10n.esSaveChanges,
-        isLoading: state.saving,
-        onPressed: onDraft,
+      return Row(
+        children: [
+          back,
+          const SizedBox(width: 12),
+          Expanded(
+            child: AppButton(
+              label: l10n.esSaveChanges,
+              isLoading: state.saving,
+              onPressed: onDraft,
+            ),
+          ),
+        ],
       );
     }
-    return Row(
+    // Three buttons side by side do not fit a phone: the main one gets a row
+    // of its own, with Back and Save as draft below it.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        OutlinedButton(
-          onPressed: state.saving ? null : onDraft,
-          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
-          child: Text(l10n.esSaveDraft),
+        AppButton(
+          label: l10n.esSubmit,
+          isLoading: state.saving,
+          onPressed: state.canSubmit ? onSubmit : null,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: AppButton(
-            label: l10n.esSubmit,
-            isLoading: state.saving,
-            onPressed: state.canSubmit ? onSubmit : null,
-          ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: back),
+            const SizedBox(width: 12),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: state.saving ? null : onDraft,
+                style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
+                child: Text(l10n.esSaveDraft),
+              ),
+            ),
+          ],
         ),
       ],
     );
