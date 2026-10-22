@@ -24,6 +24,7 @@ class Partner {
     required this.id,
     required this.venueId,
     required this.venueName,
+    required this.partnerId,
     required this.partnerName,
     required this.status,
     required this.startedByEventFoxer,
@@ -38,7 +39,8 @@ class Partner {
   final String venueId;
   final String venueName;
 
-  /// The Event Foxer, as the Mayor sees them.
+  /// The Event Foxer's account, and name as the Mayor sees them.
+  final String partnerId;
   final String partnerName;
   final PartnerStatus status;
 
@@ -77,6 +79,7 @@ class Partner {
       id: raw['id'] as String,
       venueId: venue['id'] as String,
       venueName: '${venue['name'] ?? ''}',
+      partnerId: foxer is Map ? '${foxer['id'] ?? ''}' : '',
       partnerName: foxer is Map ? '${foxer['name'] ?? ''}' : '',
       status: status,
       startedByEventFoxer: raw['initiatedBy'] == 'eventFoxer',

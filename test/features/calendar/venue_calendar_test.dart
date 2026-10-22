@@ -272,30 +272,147 @@ void main() {
         app(
           [
             _booking('a', 'Wedding', VenueHold.confirmed),
-            _booking(
-              'b',
-              'Reunion',
-              VenueHold.confirmed,
-              venue: _oldBarn,
-            ),
+            _booking('b', 'Reunion', VenueHold.confirmed, venue: _oldBarn),
           ],
           venues: const [_skyHall, _oldBarn],
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('All venues'), findsOneWidget);
+      expect(find.text('All venues (2)'), findsOneWidget);
       expect(find.text('Wedding'), findsOneWidget);
       expect(find.text('Reunion'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Sky Hall'));
+      await tester.tap(find.text('All venues (2)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Sky Hall'));
       await tester.pumpAndSettle();
 
+      // The button now names the venue, and the other venue's booking is gone.
+      expect(find.text('Sky Hall'), findsOneWidget);
       expect(find.text('Wedding'), findsOneWidget);
       expect(find.text('Reunion'), findsNothing);
 
-      await tester.tap(find.text('All venues'));
+      await tester.tap(find.byTooltip('Show all venues'));
       await tester.pumpAndSettle();
+      expect(find.text('All venues (2)'), findsOneWidget);
       expect(find.text('Reunion'), findsOneWidget);
+    });
+
+    testWidgets('many venues are one button, never a wall of chips', (
+      tester,
+    ) async {
+      _tall(tester);
+      final many = [
+        for (var i = 0; i < 50; i++)
+          SpaceListing(id: 'v$i', name: 'Venue $i', status: 'available'),
+      ];
+      await tester.pumpWidget(
+        app([_booking('a', 'Wedding', VenueHold.confirmed)], venues: many),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ChoiceChip), findsNothing);
+      expect(find.text('All venues (50)'), findsOneWidget);
+      // The day's list is on screen, not pushed below fifty chips.
+      expect(find.text('Wedding'), findsOneWidget);
+    });
+
+    testWidgets('the venue list can be searched', (tester) async {
+      _tall(tester);
+      final many = [
+        for (var i = 0; i < 50; i++)
+          SpaceListing(
+            id: 'v$i',
+            name: 'Venue $i',
+            status: 'available',
+            city: i == 7 ? 'Baguio' : 'Town',
+          ),
+      ];
+      await tester.pumpWidget(app(const [], venues: many));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('All venues (50)'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'baguio');
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(ListTile, 'Venue 7'), findsOneWidget);
+      expect(find.widgetWithText(ListTile, 'Venue 8'), findsNothing);
+      // Searching narrows the list, so the all-venues row steps aside.
+      expect(find.widgetWithText(ListTile, 'All venues (50)'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'nowhere');
+      await tester.pumpAndSettle();
+      expect(find.text('No venues match.'), findsOneWidget);
+    });
+
+    testWidgets('closing the venue list without choosing changes nothing', (
+      tester,
+    ) async {
+      _tall(tester);
+      await tester.pumpWidget(
+        app(
+          [_booking('a', 'Wedding', VenueHold.confirmed)],
+          venues: const [_skyHall, _oldBarn],
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('All venues (2)'));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(find.text('All venues (2)'), findsOneWidget);
+      expect(find.text('Wedding'), findsOneWidget);
+    });
+
+    testWidgets('choosing All venues again clears a chosen venue', (
+      tester,
+    ) async {
+      _tall(tester);
+      await tester.pumpWidget(
+        app(const [], venues: const [_skyHall, _oldBarn]),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('All venues (2)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Old Barn'));
+      await tester.pumpAndSettle();
+      expect(find.text('Old Barn'), findsOneWidget);
+
+      await tester.tap(find.text('Old Barn'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'All venues (2)'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('All venues (2)'), findsOneWidget);
+    });
+
+    testWidgets('tapping a day brings its bookings into view', (tester) async {
+      // A short screen: the day's list starts below the fold.
+      tester.view
+        ..physicalSize = const Size(800, 520)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        app([_booking('a', 'Wedding', VenueHold.confirmed)]),
+      );
+      await tester.pumpAndSettle();
+
+      // To begin with, the booking is below the bottom of the screen.
+      final before = find.text('Wedding');
+      expect(
+        before.evaluate().isEmpty || tester.getCenter(before).dy > 520,
+        isTrue,
+      );
+      final day = DateTime.now().day;
+      final cells = find.text('$day');
+      await tester.tap(day <= 14 ? cells.first : cells.last);
+      await tester.pumpAndSettle();
+
+      final y = tester.getCenter(find.text('Wedding')).dy;
+      expect(y, greaterThan(0));
+      expect(y, lessThan(520));
     });
 
     testWidgets('with one venue there is no filter to choose', (tester) async {
@@ -303,7 +420,7 @@ void main() {
       await tester.pumpWidget(app(const []));
       await tester.pumpAndSettle();
 
-      expect(find.text('All venues'), findsNothing);
+      expect(find.textContaining('All venues'), findsNothing);
     });
 
     testWidgets('the Citizen calendar has none of the venue controls', (
@@ -314,7 +431,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Open or close this day'), findsNothing);
-      expect(find.text('All venues'), findsNothing);
+      expect(find.textContaining('All venues'), findsNothing);
     });
   });
 }
