@@ -14,6 +14,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
@@ -269,6 +270,39 @@ void main() {
     await settle(tester);
     expect(find.byType(EventDetailPage), findsNothing);
     expect(find.text('Ada Birthday'), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('a waiting application shows a badge on More and Partners', (
+    tester,
+  ) async {
+    await boot(
+      tester,
+      roles: const ['venueFoxer'],
+      overrides: [
+        partnersProvider.overrideWith(
+          (ref) async => PartnerLists(
+            asMayor: [
+              Partner.tryParse(
+                {
+                  'id': 'a',
+                  'status': 'pending',
+                  'initiatedBy': 'eventFoxer',
+                  'venue': {'id': 'v1', 'name': 'Sky Hall'},
+                  'eventFoxer': {'id': 'e1', 'name': 'Ada'},
+                },
+                PartnerSide.mayor,
+              )!,
+            ],
+          ),
+        ),
+      ],
+    );
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
+
+    // On the More tab of the bar, and on the Partners row.
+    expect(find.text('1'), findsNWidgets(2));
     await finish(tester);
   });
 

@@ -290,3 +290,13 @@ final FutureProvider<PartnerLists> partnersProvider =
     FutureProvider.autoDispose<PartnerLists>(
   (ref) => ref.watch(spacesRepositoryProvider).partners(),
 );
+
+/// How many partnerships on one side wait for the person's answer, for badges.
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final partnersWaitingProvider =
+    Provider.autoDispose.family<int, PartnerSide>((ref, side) {
+  final lists = ref.watch(partnersProvider).asData?.value;
+  if (lists == null) return 0;
+  return lists.forSide(side).where((p) => p.awaitingMe).length;
+});

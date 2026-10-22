@@ -119,6 +119,48 @@ void main() {
     });
   });
 
+  group('the waiting count', () {
+    ProviderContainer containerWith(PartnerLists lists) {
+      final c = ProviderContainer(
+        overrides: [partnersProvider.overrideWith((ref) async => lists)],
+      );
+      addTearDown(c.dispose);
+      return c;
+    }
+
+    test('counts only what waits for the person, per side', () async {
+      final lists = PartnerLists(
+        asMayor: [
+          Partner.tryParse(_row('a'), PartnerSide.mayor)!,
+          Partner.tryParse(_row('b'), PartnerSide.mayor)!,
+          // The Mayor's own invitation waits for the Event Foxer.
+          Partner.tryParse(
+            _row('c', initiatedBy: 'venueFoxer'),
+            PartnerSide.mayor,
+          )!,
+          Partner.tryParse(_row('d', status: 'approved'), PartnerSide.mayor)!,
+        ],
+        asEventFoxer: [
+          Partner.tryParse(
+            _row('e', initiatedBy: 'venueFoxer'),
+            PartnerSide.eventFoxer,
+          )!,
+        ],
+      );
+      final c = containerWith(lists)..listen(partnersProvider, (_, __) {});
+      await c.read(partnersProvider.future);
+
+      expect(c.read(partnersWaitingProvider(PartnerSide.mayor)), 2);
+      expect(c.read(partnersWaitingProvider(PartnerSide.eventFoxer)), 1);
+    });
+
+    test('is zero until the list has loaded', () {
+      final c = containerWith(const PartnerLists());
+
+      expect(c.read(partnersWaitingProvider(PartnerSide.mayor)), 0);
+    });
+  });
+
   group('the partner calls', () {
     late _MockApi api;
     late SpacesRepository repo;
