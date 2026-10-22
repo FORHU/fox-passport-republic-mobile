@@ -259,6 +259,132 @@ void main() {
       expect(find.textContaining("haven't listed a venue"), findsOneWidget);
     });
 
+    group('finding one among many', () {
+      const many = [
+        _sky,
+        _barn,
+        SpaceListing(
+          id: 'v3',
+          name: 'Harbour Pavilion',
+          status: 'available',
+          city: 'Sydney',
+        ),
+        SpaceListing(
+          id: 'v4',
+          name: 'Garden Estate',
+          status: 'draft',
+          city: 'Los Angeles',
+        ),
+      ];
+
+      testWidgets('shows how many there are, and filters by status', (
+        tester,
+      ) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        expect(find.text('4 venues'), findsOneWidget);
+        expect(find.text('All 4'), findsOneWidget);
+        expect(find.text('Live 2'), findsOneWidget);
+        expect(find.text('In review 1'), findsOneWidget);
+        expect(find.text('Draft 1'), findsOneWidget);
+
+        await tester.tap(find.text('Live 2'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Sky Hall'), findsOneWidget);
+        expect(find.text('Harbour Pavilion'), findsOneWidget);
+        expect(find.text('Old Barn'), findsNothing);
+        expect(find.text('Garden Estate'), findsNothing);
+        expect(find.text('2 of 4 venues'), findsOneWidget);
+
+        await tester.tap(find.text('All 4'));
+        await tester.pumpAndSettle();
+        expect(find.text('Old Barn'), findsOneWidget);
+      });
+
+      testWidgets('searches by name or by town', (tester) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.enterText(find.byType(TextField), 'harb');
+        await tester.pumpAndSettle();
+        expect(find.text('Harbour Pavilion'), findsOneWidget);
+        expect(find.text('Sky Hall'), findsNothing);
+        expect(find.text('1 of 4 venues'), findsOneWidget);
+
+        await tester.enterText(find.byType(TextField), 'los angeles');
+        await tester.pumpAndSettle();
+        expect(find.text('Garden Estate'), findsOneWidget);
+      });
+
+      testWidgets('search and a status filter work together', (tester) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.tap(find.text('Live 2'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'garden');
+        await tester.pumpAndSettle();
+
+        // The garden venue is a draft, so a Live filter hides it.
+        expect(find.text('Garden Estate'), findsNothing);
+        expect(find.text('No venues match.'), findsOneWidget);
+      });
+
+      testWidgets('clearing the search brings every venue back', (
+        tester,
+      ) async {
+        await pump(tester, const VenuesPage(), venues: many);
+
+        await tester.enterText(find.byType(TextField), 'zzz');
+        await tester.pumpAndSettle();
+        expect(find.text('No venues match.'), findsOneWidget);
+
+        await tester.tap(find.byTooltip('Clear search'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('No venues match.'), findsNothing);
+        expect(find.text('4 venues'), findsOneWidget);
+      });
+
+      testWidgets('one status only needs no filter row', (tester) async {
+        await pump(tester, const VenuesPage(), venues: const [_sky]);
+
+        expect(find.text('1 venue'), findsOneWidget);
+        expect(find.byType(ChoiceChip), findsNothing);
+      });
+
+      testWidgets('hides the search when there are no venues', (tester) async {
+        await pump(tester, const VenuesPage());
+
+        expect(find.byType(TextField), findsNothing);
+      });
+
+      testWidgets('a long list is built lazily, and every venue is reachable', (
+        tester,
+      ) async {
+        final lots = [
+          for (var i = 0; i < 60; i++)
+            SpaceListing(
+              id: 'x$i',
+              name: 'Venue number $i',
+              status: 'available',
+              city: 'Town',
+            ),
+        ];
+        await pump(tester, const VenuesPage(), venues: lots);
+
+        expect(find.text('60 venues'), findsOneWidget);
+        // Not all 60 rows are built at once.
+        expect(
+          tester.widgetList(find.textContaining('Venue number')).length,
+          lessThan(60),
+        );
+
+        await tester.enterText(find.byType(TextField), 'number 59');
+        await tester.pumpAndSettle();
+        expect(find.text('Venue number 59'), findsOneWidget);
+      });
+    });
+
     testWidgets('tapping a venue opens its hub', (tester) async {
       await pump(tester, const VenuesPage(), venues: const [_sky]);
 

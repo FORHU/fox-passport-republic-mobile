@@ -1326,6 +1326,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get venuesSearchHint => 'Search by name or city';
+
+  @override
+  String get venuesSearchClear => 'Clear search';
+
+  @override
+  String venuesFilterAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String venuesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues',
+      one: '1 venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String venuesCountOf(int shown, int total) {
+    return '$shown of $total venues';
+  }
+
+  @override
+  String get venuesNoMatch => 'No venues match.';
+
+  @override
   String get partnersTitle => 'Partners';
 
   @override
