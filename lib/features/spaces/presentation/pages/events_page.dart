@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_filters.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
@@ -11,7 +13,6 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_top_
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
@@ -40,11 +41,57 @@ class _EventsPageState extends ConsumerState<EventsPage> {
     super.dispose();
   }
 
-  /// Creating an event is done on the web for now.
-  Future<void> _newOnWeb() async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard/events');
-    if (!opened && mounted) showTopToast(context, message);
+  /// What can be done with an event: edit it, or see the page guests see.
+  Future<void> _openEvent(BuildContext context, SpaceListing event) {
+    final l10n = context.l10n;
+    return showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      builder: (sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                event.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.display(),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: Text(l10n.esEditEvent),
+              onTap: () {
+                Navigator.of(sheet).pop();
+                unawaited(
+                  context.push(RouteNames.spaceEventStudioEdit(event.id)),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.open_in_new_rounded),
+              title: Text(l10n.esViewPublic),
+              onTap: () {
+                Navigator.of(sheet).pop();
+                unawaited(
+                  context.push(
+                    RouteNames.eventDetail,
+                    extra: CatalogItem(
+                      id: event.id,
+                      kind: CatalogKind.events,
+                      title: event.name,
+                      city: event.city,
+                      imageUrl: event.imageUrl,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -141,7 +188,9 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                               child: QuickActionTile(
                                 icon: Icons.add_circle_outline_rounded,
                                 label: l10n.eventsNewOnWeb,
-                                onTap: _newOnWeb,
+                                onTap: () => context.push(
+                                  RouteNames.spaceEventStudio,
+                                ),
                               ),
                             ),
                           ],
@@ -242,17 +291,7 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (context, i) => ListingCard(
                         listing: shown[i],
-                        // Opens the page guests see; its status is on the card.
-                        onTap: () => context.push(
-                          RouteNames.eventDetail,
-                          extra: CatalogItem(
-                            id: shown[i].id,
-                            kind: CatalogKind.events,
-                            title: shown[i].name,
-                            city: shown[i].city,
-                            imageUrl: shown[i].imageUrl,
-                          ),
-                        ),
+                        onTap: () => _openEvent(context, shown[i]),
                       ),
                     ),
                   ),

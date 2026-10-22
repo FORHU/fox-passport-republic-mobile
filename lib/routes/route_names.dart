@@ -125,6 +125,11 @@ class RouteNames {
   /// The Event space, for an EventFoxer: their events, check-in and messages.
   static const String spaceEvent = '/space/event';
   static const String spaceEventCalendar = '/space/event/calendar';
+
+  /// Creating or editing an event: full screen, outside the tabs.
+  static const String spaceEventStudio = '/space/event/studio';
+  static String spaceEventStudioEdit(String eventId) =>
+      '$spaceEventStudio/$eventId';
   static const String spaceEventCheckIn = '/space/event/check-in';
   static const String spaceEventPartners = '/space/event/partners';
   static const String spaceEventMessages = '/space/event/messages';

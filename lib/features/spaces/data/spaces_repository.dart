@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
+import 'package:flutter_template/features/spaces/domain/event_detail.dart';
+import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -287,6 +290,212 @@ class SpacesRepository {
   /// Ends an approved partnership. Only the Mayor can.
   Future<void> revokePartner(String id) async {
     await _api.delete(ApiEndpoints.venueAffiliation(id));
+  }
+
+  /// The event as saved, to edit.
+  Future<EventDetail> eventDetail(String id) async {
+    final body = await _api.get(ApiEndpoints.eventById(id));
+    final detail = EventDetail.tryParse(body);
+    if (detail == null) throw const FormatException('Event response is bad');
+    return detail;
+  }
+
+  /// Saves a new event as a draft and returns its id.
+  Future<String> createEvent(EventDraft draft) async {
+    final body = await _api.post(
+      ApiEndpoints.events,
+      draft.toJson(forCreate: true),
+    );
+    final created =
+        body is Map ? (body['template'] ?? body['data'] ?? body) : null;
+    final id = created is Map ? created['id'] : null;
+    if (id is! String) throw const FormatException('No id for the new event');
+    return id;
+  }
+
+  /// Saves changes to an event. Its status does not change.
+  Future<void> updateEvent(String id, EventDraft draft) async {
+    await _api.put(ApiEndpoints.eventById(id), draft.toJson());
+  }
+
+  /// Sends a draft for review. The API only allows it for a draft.
+  Future<void> submitEvent(String id) async {
+    await _api.post(ApiEndpoints.eventSubmit(id));
+  }
+
+  /// Makes the saved event's package match [items]: what was taken out is
+  /// removed, what is new is attached, and what the host changed the price or
+  /// optional flag of (compared with [before]) is attached again. Each attach
+  /// is checked by the API (a venue needs an approved affiliation and a
+  /// matching place), so a refusal is reported, not hidden.
+  Future<List<PackageProblem>> syncEventPackage(
+    String id,
+    List<PackageItem> items, {
+    List<PackageItem> before = const [],
+  }) async {
+    final problems = <PackageProblem>[];
+    final current = await _api.get(ApiEndpoints.eventById(id));
+    final template = current is Map
+        ? (current['template'] is Map ? current['template'] : current) as Map
+        : const <String, Object?>{};
+
+    Set<String> ids(String key, String idKey) => {
+          if (template[key] is List)
+            for (final row in template[key] as List)
+              if (row is Map && row[idKey] != null) '${row[idKey]}',
+        };
+
+    bool changed(PackageItem item) {
+      final was = before.where((b) => b.id == item.id).firstOrNull;
+      return was != null &&
+          (was.price != item.price || was.isOptional != item.isOptional);
+    }
+
+    Future<void> run(PackageItem item, Future<void> Function() call) async {
+      try {
+        await call();
+      } on AppException catch (e) {
+        problems.add(PackageProblem(item.name, e.message));
+      } on Object {
+        problems.add(PackageProblem(item.name, ''));
+      }
+    }
+
+    // The venue: only one, and it replaces any other.
+    final venue = items.where((i) => i.isVenue).firstOrNull;
+    final venueIds = ids('templateVenues', 'venueId');
+    for (final old in venueIds) {
+      if (old != venue?.id || changed(venue!)) {
+        await _api.delete(ApiEndpoints.eventVenue(id, old));
+      }
+    }
+    if (venue != null && (!venueIds.contains(venue.id) || changed(venue))) {
+      await run(
+        venue,
+        () => _api.post(ApiEndpoints.eventVenues(id), {
+          'venueId': venue.id,
+          'agreedPrice': venue.price,
+          'isOptional': venue.isOptional,
+        }),
+      );
+    }
+
+    // Assets, then services: remove what left, attach what is new or changed.
+    final assets = [
+      for (final i in items)
+        if (!i.isVenue && !i.isService) i,
+    ];
+    final assetIds = ids('templateAssets', 'assetId');
+    for (final old in assetIds) {
+      final kept = assets.where((a) => a.id == old).firstOrNull;
+      if (kept == null || changed(kept)) {
+        await _api.delete(ApiEndpoints.eventAsset(id, old));
+      }
+    }
+    for (final asset in assets) {
+      if (!assetIds.contains(asset.id) || changed(asset)) {
+        await run(
+          asset,
+          () => _api.post(ApiEndpoints.eventAssets(id), {
+            'assetId': asset.id,
+            'quantity': 1,
+            'agreedPrice': asset.price,
+            'isOptional': asset.isOptional,
+          }),
+        );
+      }
+    }
+
+    final services = [
+      for (final i in items)
+        if (i.isService) i,
+    ];
+    final serviceIds = ids('templateServices', 'serviceId');
+    for (final old in serviceIds) {
+      final kept = services.where((s) => s.id == old).firstOrNull;
+      if (kept == null || changed(kept)) {
+        await _api.delete(ApiEndpoints.eventService(id, old));
+      }
+    }
+    for (final service in services) {
+      if (!serviceIds.contains(service.id) || changed(service)) {
+        await run(
+          service,
+          () => _api.post(ApiEndpoints.eventServices(id), {
+            'serviceId': service.id,
+            'agreedPrice': service.price,
+            'isOptional': service.isOptional,
+          }),
+        );
+      }
+    }
+    return problems;
+  }
+
+  /// Live venues to put in an event, searched by name or town. Their access
+  /// for the host is worked out by the caller.
+  Future<({List<PackageItem> items, int total})> venueChoices({
+    String query = '',
+    int page = 1,
+  }) async {
+    final body = await _api.get(
+      ApiEndpoints.venues,
+      query: {
+        'limit': 50,
+        'page': page,
+        if (query.trim().isNotEmpty) 'search': query.trim(),
+      },
+    );
+    final rows = body is Map ? (body['venues'] ?? body['data']) : body;
+    final items = <PackageItem>[
+      if (rows is List)
+        for (final row in rows)
+          // Only a live venue can be offered.
+          if (row is Map && row['status'] == 'available')
+            if (packageItemFromVenue(row, access: VenueAccess.none)
+                case final v?)
+              v,
+    ];
+    final total = body is Map && body['total'] is int
+        ? body['total'] as int
+        : items.length;
+    return (items: items, total: total);
+  }
+
+  /// Assets to put in an event (talent, equipment, and some services).
+  Future<({List<PackageItem> items, int total})> assetChoices({
+    int page = 1,
+  }) =>
+      _supplies(ApiEndpoints.assets, 'assets', page, packageItemFromAsset);
+
+  /// Services to put in an event (performers and other services).
+  Future<({List<PackageItem> items, int total})> serviceChoices({
+    int page = 1,
+  }) =>
+      _supplies(
+        ApiEndpoints.services,
+        'services',
+        page,
+        packageItemFromService,
+      );
+
+  Future<({List<PackageItem> items, int total})> _supplies(
+    String path,
+    String key,
+    int page,
+    PackageItem? Function(Object? row) parse,
+  ) async {
+    final body = await _api.get(path, query: {'limit': 50, 'page': page});
+    final rows = body is Map ? (body[key] ?? body['data']) : body;
+    final items = <PackageItem>[
+      if (rows is List)
+        for (final row in rows)
+          if (parse(row) case final item?) item,
+    ];
+    final total = body is Map && body['total'] is int
+        ? body['total'] as int
+        : items.length;
+    return (items: items, total: total);
   }
 
   /// Checks a guest in by the code on their ticket.

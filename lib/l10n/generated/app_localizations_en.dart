@@ -1326,6 +1326,268 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get esTitleNew => 'New event';
+
+  @override
+  String get esTitleEdit => 'Edit event';
+
+  @override
+  String get esStepBasics => 'Basics';
+
+  @override
+  String get esStepLocation => 'Location';
+
+  @override
+  String get esStepPhotos => 'Photos';
+
+  @override
+  String get esStepPackage => 'Package';
+
+  @override
+  String get esStepReview => 'Review';
+
+  @override
+  String get esTitle => 'Event title';
+
+  @override
+  String get esCategory => 'Category';
+
+  @override
+  String get esCatCorporate => 'Corporate';
+
+  @override
+  String get esCatBirthday => 'Birthday';
+
+  @override
+  String get esCatWedding => 'Wedding';
+
+  @override
+  String get esCatSocial => 'Social';
+
+  @override
+  String get esCatOther => 'Other';
+
+  @override
+  String get esCatOtherHint => 'Please specify the event category';
+
+  @override
+  String get esDescription => 'Description';
+
+  @override
+  String esWordCount(int count) {
+    return '$count / 500 words';
+  }
+
+  @override
+  String esWordsToGo(int count) {
+    return '$count more to reach 100';
+  }
+
+  @override
+  String get esAttendees => 'Max attendees';
+
+  @override
+  String get esPolicy => 'Cancellation policy';
+
+  @override
+  String get esLocationHint =>
+      'Where the event takes place. Choosing a venue fills this in for you.';
+
+  @override
+  String get esPhotosHint => 'Up to 5 photos. Five is recommended.';
+
+  @override
+  String get esPackageTitle => 'Core package';
+
+  @override
+  String get esPackageHint => 'The venue and everything your event includes.';
+
+  @override
+  String get esVenueSlot => 'Venue';
+
+  @override
+  String get esNoVenue => 'No venue yet';
+
+  @override
+  String get esChooseVenue => 'Choose a venue';
+
+  @override
+  String get esAdd => 'Add to package';
+
+  @override
+  String get esPackageEmpty => 'Nothing else added yet.';
+
+  @override
+  String esEditItem(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get esAgreedPrice => 'Agreed price';
+
+  @override
+  String esListed(String price) {
+    return 'Listed: $price';
+  }
+
+  @override
+  String get esOptional => 'Optional';
+
+  @override
+  String get esRemove => 'Remove from package';
+
+  @override
+  String get esDone => 'Done';
+
+  @override
+  String get esCostVenue => 'Venue';
+
+  @override
+  String get esCostTalent => 'Talent';
+
+  @override
+  String get esCostServices => 'Services and equipment';
+
+  @override
+  String get esCostTotal => 'Package cost';
+
+  @override
+  String get esMargin => 'Margin';
+
+  @override
+  String get esSuggested => 'Suggested price';
+
+  @override
+  String get esPickVenues => 'Venues';
+
+  @override
+  String get esPickTalent => 'Talent';
+
+  @override
+  String get esPickServices => 'Services';
+
+  @override
+  String get esPickEquipment => 'Equipment';
+
+  @override
+  String get esPickSearch => 'Search';
+
+  @override
+  String get esPickNone => 'Nothing found.';
+
+  @override
+  String get esPickMore => 'Load more';
+
+  @override
+  String get esAdded => 'Added';
+
+  @override
+  String get esAccessApproved => 'Approved';
+
+  @override
+  String get esAccessPending => 'Pending';
+
+  @override
+  String get esAccessApply => 'Apply first';
+
+  @override
+  String esToastAdded(String name) {
+    return 'Added $name to your package';
+  }
+
+  @override
+  String esToastDuplicate(String name) {
+    return '$name is already in your package';
+  }
+
+  @override
+  String get esToastOneVenue =>
+      'Only one venue can be in the package. Remove the existing venue first.';
+
+  @override
+  String get esToastVenuePending =>
+      'Your affiliation with this venue is still pending approval.';
+
+  @override
+  String get esToastVenueApply =>
+      'Apply to this venue first. You need an approved affiliation to host here.';
+
+  @override
+  String get esReadyTitle => 'Event title';
+
+  @override
+  String get esReadyCategory => 'Category selected';
+
+  @override
+  String get esReadyOther => 'Say what kind of event it is';
+
+  @override
+  String get esReadyVenue => 'Approved venue attached';
+
+  @override
+  String get esReadyGallery => '5 photos';
+
+  @override
+  String get esReadyDescription => '100+ word description';
+
+  @override
+  String get esRequired => 'Required';
+
+  @override
+  String get esRecommended => 'Recommended';
+
+  @override
+  String esScore(int pct) {
+    return '$pct% ready';
+  }
+
+  @override
+  String get esNotDraft =>
+      'This event has already been sent for review, so you can only save changes.';
+
+  @override
+  String get esSaveDraft => 'Save as draft';
+
+  @override
+  String get esSubmit => 'Send for review';
+
+  @override
+  String get esSaveChanges => 'Save changes';
+
+  @override
+  String get esSavedDraft => 'Draft saved.';
+
+  @override
+  String get esSubmitted => 'Sent for review.';
+
+  @override
+  String get esSavedChanges => 'Changes saved.';
+
+  @override
+  String get esNeedsTitle => 'Add an event title before saving.';
+
+  @override
+  String get esSaveFailed => 'We couldn\'t save that. Try again.';
+
+  @override
+  String get esPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get esPartial =>
+      'Saved, but some items could not be added. Fix them and send it again.';
+
+  @override
+  String esProblemLine(String name, String reason) {
+    return '$name: $reason';
+  }
+
+  @override
+  String get esEditEvent => 'Edit event';
+
+  @override
+  String get esViewPublic => 'View public page';
+
+  @override
   String get eventsSearchHint => 'Search your events';
 
   @override
@@ -2044,7 +2306,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listingsEventsEmpty =>
-      'You haven\'t created an event yet. Build one on the web.';
+      'You haven\'t created an event yet. Tap New event to start one.';
 
   @override
   String get listingStatusDraft => 'Draft';
