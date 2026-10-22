@@ -51,7 +51,7 @@ class SpaceLayout extends StatelessWidget {
     ];
   }
 
-  /// The Event space: Events, Check-in, Messages.
+  /// The Event space: Events, Calendar, Check-in, Messages.
   static List<NavBarItem> eventItems(BuildContext context) {
     final l10n = context.l10n;
     return [
@@ -59,6 +59,11 @@ class SpaceLayout extends StatelessWidget {
         label: l10n.spaceTabEvents,
         icon: Icons.celebration_outlined,
         activeIcon: Icons.celebration_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabCalendar,
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month_rounded,
       ),
       NavBarItem(
         label: l10n.spaceTabCheckIn,

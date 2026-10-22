@@ -7,6 +7,7 @@ import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
@@ -88,7 +89,7 @@ class SpaceListingsPage extends ConsumerWidget {
                 )
               else
                 for (final item in items) ...[
-                  _ListingCard(item: item),
+                  _ListingCard(item: item, kind: kind),
                   const SizedBox(height: 10),
                 ],
               const SizedBox(height: 8),
@@ -106,52 +107,68 @@ class SpaceListingsPage extends ConsumerWidget {
 }
 
 class _ListingCard extends StatelessWidget {
-  const _ListingCard({required this.item});
+  const _ListingCard({required this.item, required this.kind});
 
   final SpaceListing item;
+  final ListingKind kind;
 
   @override
   Widget build(BuildContext context) {
     final label = listingStatusLabel(context.l10n, item.status);
     final color = listingStatusColor(item.status);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brCard,
-        border: Border.all(color: AppColors.border),
+    final venues = kind == ListingKind.venues;
+    return InkWell(
+      borderRadius: AppRadius.brCard,
+      // Opens the page guests see, with its status shown on the card.
+      onTap: () => context.push(
+        venues ? RouteNames.venueDetail : RouteNames.eventDetail,
+        extra: CatalogItem(
+          id: item.id,
+          kind: venues ? CatalogKind.venues : CatalogKind.events,
+          title: item.name,
+          city: item.city,
+          imageUrl: item.imageUrl,
+        ),
       ),
-      child: Row(
-        children: [
-          PhotoBox(url: item.imageUrl, width: 64, height: 64),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.display(size: 15),
-                ),
-                if (item.city != null)
-                  Text(item.city!, style: AppTypography.body(size: 12)),
-              ],
-            ),
-          ),
-          if (label != null)
-            Container(
-              margin: const EdgeInsets.only(left: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: AppRadius.brPill,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brCard,
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            PhotoBox(url: item.imageUrl, width: 64, height: 64),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.display(size: 15),
+                  ),
+                  if (item.city != null)
+                    Text(item.city!, style: AppTypography.body(size: 12)),
+                ],
               ),
-              child: Text(label, style: AppTypography.label(color: color)),
             ),
-        ],
+            if (label != null)
+              Container(
+                margin: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: AppRadius.brPill,
+                ),
+                child: Text(label, style: AppTypography.label(color: color)),
+              ),
+          ],
+        ),
       ),
     );
   }

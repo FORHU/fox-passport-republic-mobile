@@ -128,7 +128,7 @@ class SpacesRepository {
   /// otherwise it stays a draft.
   Future<String> createVenue(VenueDraft draft, {required bool submit}) async {
     final body = await _api.post(
-      ApiEndpoints.venues,
+      ApiEndpoints.venueCreate,
       draft.toJson(status: submit ? 'pending' : 'draft'),
     );
     final venue = body is Map ? (body['venue'] ?? body['data']) : null;
