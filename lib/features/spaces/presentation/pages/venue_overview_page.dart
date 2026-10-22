@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
@@ -119,7 +120,7 @@ class VenueOverviewPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: _QuickAction(
+                    child: QuickActionTile(
                       icon: Icons.qr_code_scanner_rounded,
                       label: l10n.venueQuickCheckIn,
                       onTap: () => context.go(RouteNames.spaceVenueCheckIn),
@@ -127,7 +128,7 @@ class VenueOverviewPage extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _QuickAction(
+                    child: QuickActionTile(
                       icon: Icons.event_busy_outlined,
                       label: l10n.venueQuickCloseDay,
                       onTap: () => context.go(RouteNames.spaceVenueCalendar),
@@ -135,7 +136,7 @@ class VenueOverviewPage extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _QuickAction(
+                    child: QuickActionTile(
                       icon: Icons.add_business_outlined,
                       label: l10n.venueQuickAddVenue,
                       onTap: () => context.push(RouteNames.spaceVenueStudio),
@@ -144,13 +145,13 @@ class VenueOverviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            _SectionHeader(
+            HomeSectionHeader(
               title: l10n.overviewAttention,
               action: waiting.isEmpty ? null : l10n.venueSeeAll,
               onAction: () => context.go(RouteNames.spaceVenueRequests),
             ),
             if (loaded && !somethingToDo)
-              _AllClear(text: l10n.overviewAllClear),
+              AllClearCard(text: l10n.overviewAllClear),
             for (final request in waiting.take(3)) ...[
               VenueRequestCard(
                 request: request,
@@ -164,34 +165,34 @@ class VenueOverviewPage extends ConsumerWidget {
               const SizedBox(height: 10),
             ],
             if (partnersWaiting > 0)
-              _AttentionRow(
+              AttentionRow(
                 icon: Icons.handshake_outlined,
                 color: AppColors.warning,
                 text: l10n.overviewPartnersWaiting(partnersWaiting),
                 onTap: () => context.push(RouteNames.spaceVenuePartners),
               ),
             if (declined > 0)
-              _AttentionRow(
+              AttentionRow(
                 icon: Icons.error_outline_rounded,
                 color: AppColors.error,
                 text: l10n.overviewVenuesDeclined(declined),
                 onTap: () => context.go(RouteNames.spaceVenueVenues),
               ),
             if (inReview > 0)
-              _AttentionRow(
+              AttentionRow(
                 icon: Icons.hourglass_top_rounded,
                 color: AppColors.textSecondary,
                 text: l10n.overviewVenuesInReview(inReview),
                 onTap: () => context.go(RouteNames.spaceVenueVenues),
               ),
             if (drafts > 0)
-              _AttentionRow(
+              AttentionRow(
                 icon: Icons.edit_note_rounded,
                 color: AppColors.textSecondary,
                 text: l10n.overviewVenuesDrafts(drafts),
                 onTap: () => context.go(RouteNames.spaceVenueVenues),
               ),
-            _SectionHeader(
+            HomeSectionHeader(
               title: l10n.overviewTodayAhead,
               action: ahead.isEmpty ? null : l10n.venueSeeAll,
               onAction: () => context.go(RouteNames.spaceVenueCalendar),
@@ -206,7 +207,7 @@ class VenueOverviewPage extends ConsumerWidget {
                 _UpcomingTile(entry: entry, locale: locale),
                 const SizedBox(height: 8),
               ],
-            _SectionHeader(title: l10n.overviewNumbers),
+            HomeSectionHeader(title: l10n.overviewNumbers),
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -320,112 +321,6 @@ class _Kpi extends StatelessWidget {
   }
 }
 
-/// One thing that needs the person: what it is, and a tap to deal with it.
-class _AttentionRow extends StatelessWidget {
-  const _AttentionRow({
-    required this.icon,
-    required this.color,
-    required this.text,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color color;
-  final String text;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brMd,
-        child: InkWell(
-          borderRadius: AppRadius.brMd,
-          onTap: onTap,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 52),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.brMd,
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 22, color: color),
-                const SizedBox(width: 12),
-                Expanded(child: Text(text, style: AppTypography.body())),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.textMuted,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Shown when nothing is waiting on the person.
-class _AllClear extends StatelessWidget {
-  const _AllClear({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brMd,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle_rounded, color: AppColors.success),
-          const SizedBox(width: 12),
-          Expanded(child: Text(text, style: AppTypography.body())),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, this.action, this.onAction});
-
-  final String title;
-  final String? action;
-  final VoidCallback? onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(title.toUpperCase(), style: AppTypography.label()),
-          ),
-          if (action != null)
-            TextButton(
-              onPressed: onAction,
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.accent,
-                minimumSize: const Size(0, 36),
-              ),
-              child: Text(action!),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
 /// A booking: its day (or "Today"), what it is and when it starts.
 class _UpcomingTile extends StatelessWidget {
   const _UpcomingTile({required this.entry, required this.locale});
@@ -493,53 +388,6 @@ class _UpcomingTile extends StatelessWidget {
           ),
           if (hold != null) VenueHoldChip(hold: hold),
         ],
-      ),
-    );
-  }
-}
-
-/// A large, thumb-sized shortcut: the icon over its name.
-class _QuickAction extends StatelessWidget {
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: AppRadius.brMd,
-      child: InkWell(
-        borderRadius: AppRadius.brMd,
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 76),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.brMd,
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 24, color: AppColors.accent),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.label(color: AppColors.textPrimary),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
