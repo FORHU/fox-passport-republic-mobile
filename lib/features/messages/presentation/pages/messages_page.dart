@@ -19,7 +19,11 @@ import 'package:intl/intl.dart';
 enum _ConversationFilter { all, bookings, groups, requests }
 
 class MessagesPage extends ConsumerStatefulWidget {
-  const MessagesPage({super.key});
+  const MessagesPage({this.showBack = false, super.key});
+
+  /// A back arrow, for when it is opened from another screen (the Venue
+  /// space's More menu) rather than being a tab of its own.
+  final bool showBack;
 
   @override
   ConsumerState<MessagesPage> createState() => _MessagesPageState();
@@ -52,6 +56,13 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
               padding: const EdgeInsets.fromLTRB(20, 14, 16, 12),
               child: Row(
                 children: [
+                  if (widget.showBack)
+                    IconButton(
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => context.pop(),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                   Expanded(
                     child: _searching
                         ? TextField(

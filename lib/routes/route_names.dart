@@ -99,6 +99,36 @@ class RouteNames {
   /// The Republic: the community feed.
   static const String republic = '/republic';
 
+  /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:
+  /// Overview, Venues, Calendar, Earnings and More.
+  static const String spaceVenue = '/space/venue';
+  static const String spaceVenueVenues = '/space/venue/venues';
+
+  /// One of their venues: what they can do with it.
+  static String spaceVenueHub(String venueId) => '$spaceVenueVenues/$venueId';
+  static const String spaceVenueCalendar = '/space/venue/calendar';
+  static const String spaceVenueEarnings = '/space/venue/earnings';
+  static const String spaceVenueMore = '/space/venue/more';
+  static const String spaceVenuePartners = '/space/venue/more/partners';
+
+  /// Adding or editing a venue: full screen, outside the tabs, so it can be
+  /// pushed from the Venues tab and from a venue's hub alike.
+  static const String spaceVenueStudio = '/space/venue/studio';
+  static String spaceVenueStudioEdit(String venueId) =>
+      '$spaceVenueStudio/$venueId';
+
+  /// Opened from More: requests for their venues, check-in and messages.
+  static const String spaceVenueRequests = '/space/venue/more/requests';
+  static const String spaceVenueCheckIn = '/space/venue/more/check-in';
+  static const String spaceVenueMessages = '/space/venue/more/messages';
+
+  /// The Event space, for an EventFoxer: their events, check-in and messages.
+  static const String spaceEvent = '/space/event';
+  static const String spaceEventCalendar = '/space/event/calendar';
+  static const String spaceEventCheckIn = '/space/event/check-in';
+  static const String spaceEventPartners = '/space/event/partners';
+  static const String spaceEventMessages = '/space/event/messages';
+
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.
   static const String itemBooking = '/book/item';
