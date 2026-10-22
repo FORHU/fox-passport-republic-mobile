@@ -2746,6 +2746,66 @@ abstract class AppLocalizations {
   /// **'Venue partners'**
   String get partnersOpenRow;
 
+  /// No description provided for @partnersInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite an Event Foxer'**
+  String get partnersInvite;
+
+  /// No description provided for @partnersInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an Event Foxer'**
+  String get partnersInviteTitle;
+
+  /// No description provided for @partnersInviteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Event Foxers'**
+  String get partnersInviteHint;
+
+  /// No description provided for @partnersInviteNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No Event Foxers found.'**
+  String get partnersInviteNone;
+
+  /// No description provided for @partnersChooseVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Which venue?'**
+  String get partnersChooseVenue;
+
+  /// No description provided for @partnersInviteNoVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'You need a live venue to invite someone.'**
+  String get partnersInviteNoVenue;
+
+  /// No description provided for @partnersInviteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite {name}?'**
+  String partnersInviteConfirmTitle(String name);
+
+  /// No description provided for @partnersInviteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll be asked to host events at {venue}.'**
+  String partnersInviteConfirmBody(String venue);
+
+  /// No description provided for @partnersInviteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get partnersInviteAction;
+
+  /// No description provided for @partnersInviteSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent.'**
+  String get partnersInviteSent;
+
   /// No description provided for @partnersApply.
   ///
   /// In en, this message translates to:

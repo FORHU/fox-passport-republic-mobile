@@ -1437,6 +1437,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersOpenRow => 'Venue partners';
 
   @override
+  String get partnersInvite => 'Invite an Event Foxer';
+
+  @override
+  String get partnersInviteTitle => 'Choose an Event Foxer';
+
+  @override
+  String get partnersInviteHint => 'Search Event Foxers';
+
+  @override
+  String get partnersInviteNone => 'No Event Foxers found.';
+
+  @override
+  String get partnersChooseVenue => 'Which venue?';
+
+  @override
+  String get partnersInviteNoVenue =>
+      'You need a live venue to invite someone.';
+
+  @override
+  String partnersInviteConfirmTitle(String name) {
+    return 'Invite $name?';
+  }
+
+  @override
+  String partnersInviteConfirmBody(String venue) {
+    return 'They\'ll be asked to host events at $venue.';
+  }
+
+  @override
+  String get partnersInviteAction => 'Invite';
+
+  @override
+  String get partnersInviteSent => 'Invitation sent.';
+
+  @override
   String get partnersApply => 'Apply to a venue';
 
   @override

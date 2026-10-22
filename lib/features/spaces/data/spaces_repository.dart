@@ -229,6 +229,15 @@ class SpacesRepository {
     await _api.post(ApiEndpoints.venueAffiliationApply, {'venueId': venueId});
   }
 
+  /// A Mayor asks an Event Foxer to host events at one of their venues. The
+  /// Event Foxer decides.
+  Future<void> inviteEventFoxer(String venueId, String eventFoxerId) async {
+    await _api.post(ApiEndpoints.venueAffiliationInvite, {
+      'venueId': venueId,
+      'eventFoxerId': eventFoxerId,
+    });
+  }
+
   /// Approves an application (Mayor) or accepts an invitation (Event Foxer).
   Future<void> approvePartner(String id) async {
     await _api.patch(ApiEndpoints.venueAffiliationApprove(id));

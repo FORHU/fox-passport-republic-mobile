@@ -6,6 +6,7 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -198,6 +199,19 @@ void main() {
       verify(() => api.delete('/venue-affiliations/a1')).called(1);
     });
 
+    test('inviting names the venue and the Event Foxer', () async {
+      when(() => api.post(any(), any())).thenAnswer((_) async => {});
+
+      await repo.inviteEventFoxer('v9', 'e2');
+
+      verify(
+        () => api.post(
+          '/venue-affiliations/invite',
+          {'venueId': 'v9', 'eventFoxerId': 'e2'},
+        ),
+      ).called(1);
+    });
+
     test('applying names the venue', () async {
       when(() => api.post(any(), any())).thenAnswer((_) async => {});
 
@@ -222,10 +236,16 @@ void main() {
     late _MockRepo repo;
 
     late _MockCatalog catalog;
+    var venues = const <SpaceListing>[
+      SpaceListing(id: 'v1', name: 'Sky Hall', status: 'available'),
+    ];
 
     setUp(() {
       repo = _MockRepo();
       catalog = _MockCatalog();
+      venues = const [
+        SpaceListing(id: 'v1', name: 'Sky Hall', status: 'available'),
+      ];
     });
 
     Future<void> pump(
@@ -245,12 +265,14 @@ void main() {
       when(() => repo.cancelPartner(any())).thenAnswer((_) async {});
       when(() => repo.revokePartner(any())).thenAnswer((_) async {});
       when(() => repo.applyToVenue(any())).thenAnswer((_) async {});
+      when(() => repo.inviteEventFoxer(any(), any())).thenAnswer((_) async {});
       await tester.pumpWidget(
         ProviderScope(
           retry: (_, __) => null,
           overrides: [
             spacesRepositoryProvider.overrideWithValue(repo),
             catalogRepositoryProvider.overrideWithValue(catalog),
+            myVenuesProvider.overrideWith((ref) async => venues),
             sharedPreferencesProvider.overrideWithValue(prefs),
             authControllerProvider.overrideWith(_Session.new),
           ],
@@ -417,8 +439,9 @@ void main() {
       expect(find.text('No partners yet.'), findsOneWidget);
     });
 
-    testWidgets('only an Event Foxer sees the Apply button', (tester) async {
+    testWidgets('each side sees only its own button', (tester) async {
       await pump(tester, PartnerSide.mayor, const PartnerLists());
+      expect(find.text('Invite an Event Foxer'), findsOneWidget);
       expect(find.text('Apply to a venue'), findsNothing);
     });
 
@@ -498,6 +521,122 @@ void main() {
       await tester.pumpAndSettle();
 
       verifyNever(() => repo.applyToVenue(any()));
+    });
+
+    void foxers(List<CatalogItem> items) {
+      registerFallbackValue(CatalogKind.venues);
+      when(
+        () => catalog.fetch(
+          any(),
+          query: any(named: 'query'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => CatalogPage(items: items, total: items.length));
+    }
+
+    const ada = CatalogItem(
+      id: 'e1',
+      kind: CatalogKind.foxers,
+      title: 'Ada Events',
+      roles: ['eventFoxer'],
+    );
+    const bo = CatalogItem(
+      id: 'e2',
+      kind: CatalogKind.foxers,
+      title: 'Bo Events',
+      roles: ['eventFoxer'],
+    );
+    const gus = CatalogItem(
+      id: 'g1',
+      kind: CatalogKind.foxers,
+      title: 'Gus Gear',
+      roles: ['gearFoxer'],
+    );
+
+    testWidgets('a Mayor invites an Event Foxer to their venue', (
+      tester,
+    ) async {
+      foxers([bo, gus]);
+      await pump(tester, PartnerSide.mayor, const PartnerLists());
+
+      await tester.tap(find.text('Invite an Event Foxer'));
+      await tester.pumpAndSettle();
+      expect(find.text('Choose an Event Foxer'), findsOneWidget);
+      // Only Event Foxers are offered.
+      expect(find.text('Bo Events'), findsOneWidget);
+      expect(find.text('Gus Gear'), findsNothing);
+
+      await tester.tap(find.text('Bo Events'));
+      await tester.pumpAndSettle();
+      expect(find.text('Invite Bo Events?'), findsOneWidget);
+      expect(
+        find.text("They'll be asked to host events at Sky Hall."),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.widgetWithText(TextButton, 'Invite'));
+      await tester.pumpAndSettle();
+      verify(() => repo.inviteEventFoxer('v1', 'e2')).called(1);
+      expect(find.text('Invitation sent.'), findsOneWidget);
+    });
+
+    testWidgets('someone already partnered at the venue cannot be asked again',
+        (
+      tester,
+    ) async {
+      foxers([ada, bo]);
+      await pump(tester, PartnerSide.mayor, mayorLists([_row('a')]));
+
+      await tester.tap(find.text('Invite an Event Foxer'));
+      await tester.pumpAndSettle();
+      expect(find.text('Already on your list'), findsOneWidget);
+
+      await tester.tap(find.text('Ada Events').last);
+      await tester.pumpAndSettle();
+      verifyNever(() => repo.inviteEventFoxer(any(), any()));
+    });
+
+    testWidgets('with several live venues the Mayor chooses which', (
+      tester,
+    ) async {
+      foxers([bo]);
+      venues = const [
+        SpaceListing(id: 'v1', name: 'Sky Hall', status: 'available'),
+        SpaceListing(id: 'v2', name: 'Old Barn', status: 'available'),
+        SpaceListing(id: 'v3', name: 'Draft Villa', status: 'draft'),
+      ];
+      await pump(tester, PartnerSide.mayor, const PartnerLists());
+
+      await tester.tap(find.text('Invite an Event Foxer'));
+      await tester.pumpAndSettle();
+      expect(find.text('Which venue?'), findsOneWidget);
+      // A venue that is not live yet is not offered.
+      expect(find.text('Draft Villa'), findsNothing);
+
+      await tester.tap(find.text('Old Barn'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bo Events'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Invite'));
+      await tester.pumpAndSettle();
+
+      verify(() => repo.inviteEventFoxer('v2', 'e2')).called(1);
+    });
+
+    testWidgets('a Mayor with no live venue is told why', (tester) async {
+      venues = const [
+        SpaceListing(id: 'v3', name: 'Draft Villa', status: 'draft'),
+      ];
+      await pump(tester, PartnerSide.mayor, const PartnerLists());
+
+      await tester.tap(find.text('Invite an Event Foxer'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('You need a live venue to invite someone.'),
+        findsOneWidget,
+      );
+      expect(find.text('Choose an Event Foxer'), findsNothing);
     });
 
     testWidgets('says so when an action fails', (tester) async {

@@ -10,30 +10,56 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// Lets the person search for a venue and pick one. Venues in [taken] are
-/// shown but cannot be picked. Gives back the venue, or null.
-Future<CatalogItem?> pickVenue(
+/// Lets the person search the catalog for a venue or Foxer and pick one. Ones
+/// in [taken] are shown but cannot be picked, and only ones that pass [where]
+/// are shown at all. Gives back the pick, or null.
+Future<CatalogItem?> pickCatalogItem(
   BuildContext context, {
+  required CatalogKind kind,
+  required String title,
+  required String hint,
+  required String empty,
   Set<String> taken = const {},
+  bool Function(CatalogItem item)? where,
 }) {
   return showModalBottomSheet<CatalogItem>(
     context: context,
     isScrollControlled: true,
     backgroundColor: AppColors.surface,
-    builder: (_) => VenuePickerSheet(taken: taken),
+    builder: (_) => CatalogPickerSheet(
+      kind: kind,
+      title: title,
+      hint: hint,
+      empty: empty,
+      taken: taken,
+      where: where,
+    ),
   );
 }
 
-class VenuePickerSheet extends ConsumerStatefulWidget {
-  const VenuePickerSheet({this.taken = const {}, super.key});
+class CatalogPickerSheet extends ConsumerStatefulWidget {
+  const CatalogPickerSheet({
+    required this.kind,
+    required this.title,
+    required this.hint,
+    required this.empty,
+    this.taken = const {},
+    this.where,
+    super.key,
+  });
 
+  final CatalogKind kind;
+  final String title;
+  final String hint;
+  final String empty;
   final Set<String> taken;
+  final bool Function(CatalogItem item)? where;
 
   @override
-  ConsumerState<VenuePickerSheet> createState() => _VenuePickerSheetState();
+  ConsumerState<CatalogPickerSheet> createState() => _CatalogPickerSheetState();
 }
 
-class _VenuePickerSheetState extends ConsumerState<VenuePickerSheet> {
+class _CatalogPickerSheetState extends ConsumerState<CatalogPickerSheet> {
   Timer? _debounce;
   String _query = '';
   Future<CatalogPage>? _results;
@@ -52,7 +78,7 @@ class _VenuePickerSheetState extends ConsumerState<VenuePickerSheet> {
 
   Future<CatalogPage> _load() => ref
       .read(catalogRepositoryProvider)
-      .fetch(CatalogKind.venues, query: _query, limit: 30);
+      .fetch(widget.kind, query: _query, limit: 30);
 
   void _onChanged(String text) {
     _debounce?.cancel();
@@ -82,7 +108,7 @@ class _VenuePickerSheetState extends ConsumerState<VenuePickerSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.partnersApplyTitle,
+                    widget.title,
                     style: AppTypography.display(size: 18),
                   ),
                   const SizedBox(height: 12),
@@ -90,7 +116,7 @@ class _VenuePickerSheetState extends ConsumerState<VenuePickerSheet> {
                     autofocus: true,
                     onChanged: _onChanged,
                     decoration: InputDecoration(
-                      hintText: l10n.partnersSearchHint,
+                      hintText: widget.hint,
                       prefixIcon: const Icon(Icons.search_rounded),
                     ),
                   ),
@@ -108,13 +134,16 @@ class _VenuePickerSheetState extends ConsumerState<VenuePickerSheet> {
                       ),
                     );
                   }
-                  final items = snapshot.data?.items ?? const <CatalogItem>[];
+                  final items = [
+                    for (final item
+                        in snapshot.data?.items ?? const <CatalogItem>[])
+                      if (!item.isSample && (widget.where?.call(item) ?? true))
+                        item,
+                  ];
                   if (snapshot.hasError || items.isEmpty) {
                     return Center(
                       child: Text(
-                        snapshot.hasError
-                            ? l10n.apiLoadFailed
-                            : l10n.partnersApplyNone,
+                        snapshot.hasError ? l10n.apiLoadFailed : widget.empty,
                         style: AppTypography.body(color: AppColors.textMuted),
                       ),
                     );
