@@ -66,6 +66,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera scans a guest's ticket QR code to check them in.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Fox Passport uses your location to show venues and Foxers near you.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

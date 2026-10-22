@@ -906,6 +906,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMap => 'The map is coming soon';
 
   @override
+  String get whereYoullBe => 'Where you\'ll be';
+
+  @override
+  String get locationAfterBooking => 'Exact location provided after booking';
+
+  @override
   String get comingSoonWallet => 'Wallet passes are coming soon';
 
   @override
@@ -1320,6 +1326,521 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get overviewAttention => 'Needs your attention';
+
+  @override
+  String get overviewAllClear => 'You\'re all caught up.';
+
+  @override
+  String overviewPartnersWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partner applications are waiting',
+      one: '1 partner application is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues are in review',
+      one: '1 venue is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues were declined',
+      one: '1 venue was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get overviewTodayAhead => 'Today and coming up';
+
+  @override
+  String get overviewToday => 'Today';
+
+  @override
+  String get overviewNumbers => 'Numbers';
+
+  @override
+  String calendarAllVenuesCount(int count) {
+    return 'All venues ($count)';
+  }
+
+  @override
+  String get calendarShowAllVenues => 'Show all venues';
+
+  @override
+  String get venuesSearchHint => 'Search by name or city';
+
+  @override
+  String get venuesSearchClear => 'Clear search';
+
+  @override
+  String venuesFilterAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String venuesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues',
+      one: '1 venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String venuesCountOf(int shown, int total) {
+    return '$shown of $total venues';
+  }
+
+  @override
+  String get venuesNoMatch => 'No venues match.';
+
+  @override
+  String get partnersTitle => 'Partners';
+
+  @override
+  String get partnersIntroMayor =>
+      'Event Foxers who want to run events at your venues.';
+
+  @override
+  String get partnersIntroEvent => 'The venues you can run your events at.';
+
+  @override
+  String get partnersNeedsAnswer => 'Needs your answer';
+
+  @override
+  String get partnersWaitingForThem => 'Waiting for them';
+
+  @override
+  String get partnersActive => 'Active';
+
+  @override
+  String get partnersPast => 'Past';
+
+  @override
+  String get partnersEmpty => 'No partners yet.';
+
+  @override
+  String partnersApplied(String name, String venue) {
+    return '$name applied to host at $venue';
+  }
+
+  @override
+  String partnersYouInvited(String name, String venue) {
+    return 'You invited $name to host at $venue';
+  }
+
+  @override
+  String partnersInvitedYou(String venue) {
+    return '$venue invited you to host events there';
+  }
+
+  @override
+  String partnersYouApplied(String venue) {
+    return 'You applied to host at $venue';
+  }
+
+  @override
+  String partnersActiveAt(String name, String venue) {
+    return '$name at $venue';
+  }
+
+  @override
+  String partnersAgreedPrice(String price) {
+    return 'Agreed price: $price';
+  }
+
+  @override
+  String get partnersApprove => 'Approve';
+
+  @override
+  String get partnersAccept => 'Accept';
+
+  @override
+  String get partnersReject => 'Reject';
+
+  @override
+  String get partnersDecline => 'Decline';
+
+  @override
+  String get partnersWithdraw => 'Withdraw';
+
+  @override
+  String get partnersRevoke => 'End partnership';
+
+  @override
+  String get partnersRevokeTitle => 'End this partnership?';
+
+  @override
+  String partnersRevokeBody(String name, String venue) {
+    return '$name will no longer be partnered with $venue.';
+  }
+
+  @override
+  String get partnersRejectTitle => 'Say no to this?';
+
+  @override
+  String get partnersRejectBody => 'They will be told you said no.';
+
+  @override
+  String get partnersApproved => 'Done. They\'ve been told.';
+
+  @override
+  String get partnersRejected => 'Declined. They\'ve been told.';
+
+  @override
+  String get partnersWithdrawn => 'Withdrawn.';
+
+  @override
+  String get partnersRevoked => 'Partnership ended.';
+
+  @override
+  String get partnersActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String get partnersStatusRejected => 'Declined';
+
+  @override
+  String get partnersStatusRevoked => 'Ended';
+
+  @override
+  String get partnersOpenRow => 'Venue partners';
+
+  @override
+  String get partnersInvite => 'Invite an Event Foxer';
+
+  @override
+  String get partnersInviteTitle => 'Choose an Event Foxer';
+
+  @override
+  String get partnersInviteHint => 'Search Event Foxers';
+
+  @override
+  String get partnersInviteNone => 'No Event Foxers found.';
+
+  @override
+  String get partnersChooseVenue => 'Which venue?';
+
+  @override
+  String get partnersInviteNoVenue =>
+      'You need a live venue to invite someone.';
+
+  @override
+  String partnersInviteConfirmTitle(String name) {
+    return 'Invite $name?';
+  }
+
+  @override
+  String partnersInviteConfirmBody(String venue) {
+    return 'They\'ll be asked to host events at $venue.';
+  }
+
+  @override
+  String get partnersInviteAction => 'Invite';
+
+  @override
+  String get partnersInviteSent => 'Invitation sent.';
+
+  @override
+  String get partnersApply => 'Apply to a venue';
+
+  @override
+  String get partnersApplyTitle => 'Choose a venue';
+
+  @override
+  String get partnersSearchHint => 'Search venues';
+
+  @override
+  String get partnersApplyNone => 'No venues found.';
+
+  @override
+  String get partnersAlready => 'Already on your list';
+
+  @override
+  String partnersApplyConfirmTitle(String venue) {
+    return 'Apply to $venue?';
+  }
+
+  @override
+  String get partnersApplyConfirmBody =>
+      'The venue\'s Mayor will be asked to approve.';
+
+  @override
+  String get partnersApplyAction => 'Apply';
+
+  @override
+  String get partnersApplySent => 'Applied. The Mayor has been told.';
+
+  @override
+  String get studioTitleNew => 'New venue';
+
+  @override
+  String get studioTitleEdit => 'Edit venue';
+
+  @override
+  String get studioStepBasics => 'Basics';
+
+  @override
+  String get studioStepLocation => 'Location';
+
+  @override
+  String get studioStepPhotos => 'Photos';
+
+  @override
+  String get studioStepDetails => 'What\'s included';
+
+  @override
+  String get studioStepPricing => 'Pricing';
+
+  @override
+  String get studioStepReview => 'Review';
+
+  @override
+  String get studioName => 'Venue name';
+
+  @override
+  String get studioDescription => 'Describe your venue';
+
+  @override
+  String get studioCapacity => 'Capacity (guests)';
+
+  @override
+  String get studioCategory => 'Type of venue';
+
+  @override
+  String get studioCategoryIndoor => 'Indoor';
+
+  @override
+  String get studioCategoryOutdoor => 'Outdoor';
+
+  @override
+  String get studioCategoryHotel => 'Hotel';
+
+  @override
+  String get studioCategoryBeachResort => 'Beach resort';
+
+  @override
+  String get studioCategoryGarden => 'Garden';
+
+  @override
+  String get studioCategoryMix => 'Indoor and outdoor';
+
+  @override
+  String get studioCategoryOther => 'Other';
+
+  @override
+  String get studioAddress => 'Street address';
+
+  @override
+  String get studioCity => 'City';
+
+  @override
+  String get studioState => 'State or province';
+
+  @override
+  String get studioCountry => 'Country';
+
+  @override
+  String get studioServiceArea => 'Service area';
+
+  @override
+  String get studioServiceAreaHint =>
+      'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.';
+
+  @override
+  String get studioRadius => 'Radius';
+
+  @override
+  String studioRadiusValue(int meters) {
+    return '$meters m';
+  }
+
+  @override
+  String studioOverlap(String names) {
+    return 'This area overlaps $names. Move the pin or shrink the radius.';
+  }
+
+  @override
+  String get studioNoPin => 'No pin yet';
+
+  @override
+  String get studioPhotosHint => 'Add 1 to 5 photos. The first is the cover.';
+
+  @override
+  String get studioAddPhoto => 'Add photo';
+
+  @override
+  String get studioPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get studioIncluded => 'What guests get';
+
+  @override
+  String get studioSpaceType => 'Spaces';
+
+  @override
+  String get studioAmenities => 'Amenities';
+
+  @override
+  String get studioTechAv => 'Tech and AV';
+
+  @override
+  String get studioStaffing => 'Staffing';
+
+  @override
+  String get studioPolicies => 'House rules';
+
+  @override
+  String get studioAddCustom => 'Add your own';
+
+  @override
+  String get studioPrice => 'Price';
+
+  @override
+  String get studioBillingRate => 'Charged';
+
+  @override
+  String get studioRateHourly => 'Hourly';
+
+  @override
+  String get studioRateDaily => 'Daily';
+
+  @override
+  String get studioRateWeekly => 'Weekly';
+
+  @override
+  String get studioRateMonthly => 'Monthly';
+
+  @override
+  String get studioRateYearly => 'Yearly';
+
+  @override
+  String get studioRateOneTime => 'One time';
+
+  @override
+  String get studioExtraGuest => 'Extra guest fee (optional)';
+
+  @override
+  String get studioCancellation => 'Cancellation policy';
+
+  @override
+  String get studioReviewReady => 'Ready to send for review';
+
+  @override
+  String get studioReviewMissing => 'Still to fill in';
+
+  @override
+  String get studioMissingName => 'Venue name';
+
+  @override
+  String get studioMissingCategory => 'Type of venue';
+
+  @override
+  String get studioMissingDescription => 'Description';
+
+  @override
+  String get studioMissingCapacity => 'Capacity';
+
+  @override
+  String get studioMissingAddress => 'Address, city and country';
+
+  @override
+  String get studioMissingLocation => 'A pin on the map';
+
+  @override
+  String get studioMissingPhotos => 'At least one photo';
+
+  @override
+  String get studioMissingPrice => 'A price';
+
+  @override
+  String get studioNext => 'Next';
+
+  @override
+  String get studioBack => 'Back';
+
+  @override
+  String get studioSaveDraft => 'Save as draft';
+
+  @override
+  String get studioSubmit => 'Send for review';
+
+  @override
+  String get studioSaveChanges => 'Save changes';
+
+  @override
+  String get studioSavedDraft => 'Draft saved.';
+
+  @override
+  String get studioSubmitted =>
+      'Sent for review. We\'ll tell you when it\'s live.';
+
+  @override
+  String get studioSavedChanges => 'Changes saved.';
+
+  @override
+  String get studioSaveFailed => 'We couldn\'t save that. Try again.';
+
+  @override
+  String get studioOverlapRefused =>
+      'Another venue already covers part of this area. Move the pin.';
+
+  @override
+  String get studioLiveNote =>
+      'This venue is live. Your changes show to guests as soon as you save.';
+
+  @override
+  String get studioUseMyLocation => 'Use my current location';
+
+  @override
+  String get studioLocateDenied =>
+      'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.';
+
+  @override
+  String get studioLocateOff =>
+      'Turn on your phone\'s location, or tap the map instead.';
+
+  @override
+  String get studioLocateFailed =>
+      'We couldn\'t find where you are. Tap the map instead.';
+
+  @override
+  String studioPhotoFailedWhy(String reason) {
+    return 'That photo didn\'t upload: $reason';
+  }
+
+  @override
+  String get studioMapNeedsToken =>
+      'The map isn\'t available, so the pin can\'t be placed.';
+
+  @override
   String get venueHubEdit => 'Edit details';
 
   @override
@@ -1476,7 +1997,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkInIntro =>
-      'Type the code printed under the QR on a guest\'s ticket.';
+      'Scan the QR on a guest\'s ticket, or type the code printed under it.';
+
+  @override
+  String get checkInScan => 'Scan ticket';
+
+  @override
+  String get checkInScanTitle => 'Scan a ticket';
+
+  @override
+  String get checkInScanHint => 'Point the camera at the QR on the ticket.';
+
+  @override
+  String get checkInTorch => 'Light';
+
+  @override
+  String get checkInCameraDenied =>
+      'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
+
+  @override
+  String get checkInCameraFailed =>
+      'The camera isn\'t available. Type the code instead.';
+
+  @override
+  String get checkInTypeInstead => 'Type the code';
 
   @override
   String get checkInCodeLabel => 'Ticket code';

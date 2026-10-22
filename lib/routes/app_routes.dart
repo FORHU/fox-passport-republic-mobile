@@ -34,14 +34,18 @@ import 'package:flutter_template/features/settings/presentation/pages/settings_p
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/space_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
@@ -224,6 +228,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.profileEdit,
         builder: (context, state) => const EditProfilePage(),
       ),
+      GoRoute(
+        path: RouteNames.spaceVenueStudio,
+        builder: (context, state) => const VenueStudioPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.spaceVenueStudio}/:venueId',
+        builder: (context, state) =>
+            VenueStudioPage(venueId: state.pathParameters['venueId']),
+      ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.
       GoRoute(
@@ -373,6 +386,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             navigationShell: navigationShell,
             items: SpaceLayout.venueItems(
               context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.mayor)),
               waiting: ref.watch(venueRequestsProvider).maybeWhen(
                     data: (list) => list.where((r) => r.needsReply).length,
                     orElse: () => 0,
@@ -434,6 +449,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => const VenueRequestsPage(),
                   ),
                   GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.mayor),
+                  ),
+                  GoRoute(
                     path: 'check-in',
                     builder: (context, state) => const CheckInPage(),
                   ),
@@ -450,9 +470,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       // The Event space.
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => SpaceLayout(
-          navigationShell: navigationShell,
-          items: SpaceLayout.eventItems(context),
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of partnerships waiting for an answer, on the Events tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.eventItems(
+              context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer)),
+            ),
+          ),
         ),
         branches: [
           StatefulShellBranch(
@@ -461,6 +488,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.spaceEvent,
                 builder: (context, state) =>
                     const SpaceListingsPage(kind: ListingKind.events),
+                routes: [
+                  GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.eventFoxer),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventCalendar,
+                builder: (context, state) => const EventCalendarPage(),
               ),
             ],
           ),

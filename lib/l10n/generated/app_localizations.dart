@@ -1768,6 +1768,18 @@ abstract class AppLocalizations {
   /// **'The map is coming soon'**
   String get comingSoonMap;
 
+  /// No description provided for @whereYoullBe.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you\'ll be'**
+  String get whereYoullBe;
+
+  /// No description provided for @locationAfterBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact location provided after booking'**
+  String get locationAfterBooking;
+
   /// No description provided for @comingSoonWallet.
   ///
   /// In en, this message translates to:
@@ -2542,6 +2554,870 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @overviewAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your attention'**
+  String get overviewAttention;
+
+  /// No description provided for @overviewAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up.'**
+  String get overviewAllClear;
+
+  /// No description provided for @overviewPartnersWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 partner application is waiting} other{{count} partner applications are waiting}}'**
+  String overviewPartnersWaiting(int count);
+
+  /// No description provided for @overviewVenuesInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue is in review} other{{count} venues are in review}}'**
+  String overviewVenuesInReview(int count);
+
+  /// No description provided for @overviewVenuesDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue was declined} other{{count} venues were declined}}'**
+  String overviewVenuesDeclined(int count);
+
+  /// No description provided for @overviewVenuesDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 draft to finish} other{{count} drafts to finish}}'**
+  String overviewVenuesDrafts(int count);
+
+  /// No description provided for @overviewTodayAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'Today and coming up'**
+  String get overviewTodayAhead;
+
+  /// No description provided for @overviewToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get overviewToday;
+
+  /// No description provided for @overviewNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get overviewNumbers;
+
+  /// No description provided for @calendarAllVenuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All venues ({count})'**
+  String calendarAllVenuesCount(int count);
+
+  /// No description provided for @calendarShowAllVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all venues'**
+  String get calendarShowAllVenues;
+
+  /// No description provided for @venuesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or city'**
+  String get venuesSearchHint;
+
+  /// No description provided for @venuesSearchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get venuesSearchClear;
+
+  /// No description provided for @venuesFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count}'**
+  String venuesFilterAll(int count);
+
+  /// No description provided for @venuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue} other{{count} venues}}'**
+  String venuesCount(int count);
+
+  /// No description provided for @venuesCountOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {total} venues'**
+  String venuesCountOf(int shown, int total);
+
+  /// No description provided for @venuesNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No venues match.'**
+  String get venuesNoMatch;
+
+  /// No description provided for @partnersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Partners'**
+  String get partnersTitle;
+
+  /// No description provided for @partnersIntroMayor.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Foxers who want to run events at your venues.'**
+  String get partnersIntroMayor;
+
+  /// No description provided for @partnersIntroEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'The venues you can run your events at.'**
+  String get partnersIntroEvent;
+
+  /// No description provided for @partnersNeedsAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your answer'**
+  String get partnersNeedsAnswer;
+
+  /// No description provided for @partnersWaitingForThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for them'**
+  String get partnersWaitingForThem;
+
+  /// No description provided for @partnersActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get partnersActive;
+
+  /// No description provided for @partnersPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get partnersPast;
+
+  /// No description provided for @partnersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No partners yet.'**
+  String get partnersEmpty;
+
+  /// No description provided for @partnersApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} applied to host at {venue}'**
+  String partnersApplied(String name, String venue);
+
+  /// No description provided for @partnersYouInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'You invited {name} to host at {venue}'**
+  String partnersYouInvited(String name, String venue);
+
+  /// No description provided for @partnersInvitedYou.
+  ///
+  /// In en, this message translates to:
+  /// **'{venue} invited you to host events there'**
+  String partnersInvitedYou(String venue);
+
+  /// No description provided for @partnersYouApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'You applied to host at {venue}'**
+  String partnersYouApplied(String venue);
+
+  /// No description provided for @partnersActiveAt.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} at {venue}'**
+  String partnersActiveAt(String name, String venue);
+
+  /// No description provided for @partnersAgreedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed price: {price}'**
+  String partnersAgreedPrice(String price);
+
+  /// No description provided for @partnersApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get partnersApprove;
+
+  /// No description provided for @partnersAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get partnersAccept;
+
+  /// No description provided for @partnersReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get partnersReject;
+
+  /// No description provided for @partnersDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get partnersDecline;
+
+  /// No description provided for @partnersWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get partnersWithdraw;
+
+  /// No description provided for @partnersRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'End partnership'**
+  String get partnersRevoke;
+
+  /// No description provided for @partnersRevokeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End this partnership?'**
+  String get partnersRevokeTitle;
+
+  /// No description provided for @partnersRevokeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} will no longer be partnered with {venue}.'**
+  String partnersRevokeBody(String name, String venue);
+
+  /// No description provided for @partnersRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Say no to this?'**
+  String get partnersRejectTitle;
+
+  /// No description provided for @partnersRejectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will be told you said no.'**
+  String get partnersRejectBody;
+
+  /// No description provided for @partnersApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Done. They\'ve been told.'**
+  String get partnersApproved;
+
+  /// No description provided for @partnersRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined. They\'ve been told.'**
+  String get partnersRejected;
+
+  /// No description provided for @partnersWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn.'**
+  String get partnersWithdrawn;
+
+  /// No description provided for @partnersRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Partnership ended.'**
+  String get partnersRevoked;
+
+  /// No description provided for @partnersActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again.'**
+  String get partnersActionFailed;
+
+  /// No description provided for @partnersStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get partnersStatusRejected;
+
+  /// No description provided for @partnersStatusRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get partnersStatusRevoked;
+
+  /// No description provided for @partnersOpenRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue partners'**
+  String get partnersOpenRow;
+
+  /// No description provided for @partnersInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite an Event Foxer'**
+  String get partnersInvite;
+
+  /// No description provided for @partnersInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an Event Foxer'**
+  String get partnersInviteTitle;
+
+  /// No description provided for @partnersInviteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Event Foxers'**
+  String get partnersInviteHint;
+
+  /// No description provided for @partnersInviteNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No Event Foxers found.'**
+  String get partnersInviteNone;
+
+  /// No description provided for @partnersChooseVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Which venue?'**
+  String get partnersChooseVenue;
+
+  /// No description provided for @partnersInviteNoVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'You need a live venue to invite someone.'**
+  String get partnersInviteNoVenue;
+
+  /// No description provided for @partnersInviteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite {name}?'**
+  String partnersInviteConfirmTitle(String name);
+
+  /// No description provided for @partnersInviteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll be asked to host events at {venue}.'**
+  String partnersInviteConfirmBody(String venue);
+
+  /// No description provided for @partnersInviteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get partnersInviteAction;
+
+  /// No description provided for @partnersInviteSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent.'**
+  String get partnersInviteSent;
+
+  /// No description provided for @partnersApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to a venue'**
+  String get partnersApply;
+
+  /// No description provided for @partnersApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a venue'**
+  String get partnersApplyTitle;
+
+  /// No description provided for @partnersSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search venues'**
+  String get partnersSearchHint;
+
+  /// No description provided for @partnersApplyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No venues found.'**
+  String get partnersApplyNone;
+
+  /// No description provided for @partnersAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'Already on your list'**
+  String get partnersAlready;
+
+  /// No description provided for @partnersApplyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to {venue}?'**
+  String partnersApplyConfirmTitle(String venue);
+
+  /// No description provided for @partnersApplyConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The venue\'s Mayor will be asked to approve.'**
+  String get partnersApplyConfirmBody;
+
+  /// No description provided for @partnersApplyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get partnersApplyAction;
+
+  /// No description provided for @partnersApplySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied. The Mayor has been told.'**
+  String get partnersApplySent;
+
+  /// No description provided for @studioTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New venue'**
+  String get studioTitleNew;
+
+  /// No description provided for @studioTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit venue'**
+  String get studioTitleEdit;
+
+  /// No description provided for @studioStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get studioStepBasics;
+
+  /// No description provided for @studioStepLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get studioStepLocation;
+
+  /// No description provided for @studioStepPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get studioStepPhotos;
+
+  /// No description provided for @studioStepDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s included'**
+  String get studioStepDetails;
+
+  /// No description provided for @studioStepPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get studioStepPricing;
+
+  /// No description provided for @studioStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get studioStepReview;
+
+  /// No description provided for @studioName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get studioName;
+
+  /// No description provided for @studioDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your venue'**
+  String get studioDescription;
+
+  /// No description provided for @studioCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity (guests)'**
+  String get studioCapacity;
+
+  /// No description provided for @studioCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of venue'**
+  String get studioCategory;
+
+  /// No description provided for @studioCategoryIndoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor'**
+  String get studioCategoryIndoor;
+
+  /// No description provided for @studioCategoryOutdoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdoor'**
+  String get studioCategoryOutdoor;
+
+  /// No description provided for @studioCategoryHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get studioCategoryHotel;
+
+  /// No description provided for @studioCategoryBeachResort.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach resort'**
+  String get studioCategoryBeachResort;
+
+  /// No description provided for @studioCategoryGarden.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden'**
+  String get studioCategoryGarden;
+
+  /// No description provided for @studioCategoryMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor and outdoor'**
+  String get studioCategoryMix;
+
+  /// No description provided for @studioCategoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get studioCategoryOther;
+
+  /// No description provided for @studioAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Street address'**
+  String get studioAddress;
+
+  /// No description provided for @studioCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get studioCity;
+
+  /// No description provided for @studioState.
+  ///
+  /// In en, this message translates to:
+  /// **'State or province'**
+  String get studioState;
+
+  /// No description provided for @studioCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get studioCountry;
+
+  /// No description provided for @studioServiceArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Service area'**
+  String get studioServiceArea;
+
+  /// No description provided for @studioServiceAreaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.'**
+  String get studioServiceAreaHint;
+
+  /// No description provided for @studioRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'Radius'**
+  String get studioRadius;
+
+  /// No description provided for @studioRadiusValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String studioRadiusValue(int meters);
+
+  /// No description provided for @studioOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'This area overlaps {names}. Move the pin or shrink the radius.'**
+  String studioOverlap(String names);
+
+  /// No description provided for @studioNoPin.
+  ///
+  /// In en, this message translates to:
+  /// **'No pin yet'**
+  String get studioNoPin;
+
+  /// No description provided for @studioPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add 1 to 5 photos. The first is the cover.'**
+  String get studioPhotosHint;
+
+  /// No description provided for @studioAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get studioAddPhoto;
+
+  /// No description provided for @studioPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload. Try again.'**
+  String get studioPhotoFailed;
+
+  /// No description provided for @studioIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'What guests get'**
+  String get studioIncluded;
+
+  /// No description provided for @studioSpaceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces'**
+  String get studioSpaceType;
+
+  /// No description provided for @studioAmenities.
+  ///
+  /// In en, this message translates to:
+  /// **'Amenities'**
+  String get studioAmenities;
+
+  /// No description provided for @studioTechAv.
+  ///
+  /// In en, this message translates to:
+  /// **'Tech and AV'**
+  String get studioTechAv;
+
+  /// No description provided for @studioStaffing.
+  ///
+  /// In en, this message translates to:
+  /// **'Staffing'**
+  String get studioStaffing;
+
+  /// No description provided for @studioPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'House rules'**
+  String get studioPolicies;
+
+  /// No description provided for @studioAddCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your own'**
+  String get studioAddCustom;
+
+  /// No description provided for @studioPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get studioPrice;
+
+  /// No description provided for @studioBillingRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get studioBillingRate;
+
+  /// No description provided for @studioRateHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly'**
+  String get studioRateHourly;
+
+  /// No description provided for @studioRateDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get studioRateDaily;
+
+  /// No description provided for @studioRateWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get studioRateWeekly;
+
+  /// No description provided for @studioRateMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get studioRateMonthly;
+
+  /// No description provided for @studioRateYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get studioRateYearly;
+
+  /// No description provided for @studioRateOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One time'**
+  String get studioRateOneTime;
+
+  /// No description provided for @studioExtraGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra guest fee (optional)'**
+  String get studioExtraGuest;
+
+  /// No description provided for @studioCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation policy'**
+  String get studioCancellation;
+
+  /// No description provided for @studioReviewReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to send for review'**
+  String get studioReviewReady;
+
+  /// No description provided for @studioReviewMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Still to fill in'**
+  String get studioReviewMissing;
+
+  /// No description provided for @studioMissingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue name'**
+  String get studioMissingName;
+
+  /// No description provided for @studioMissingCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of venue'**
+  String get studioMissingCategory;
+
+  /// No description provided for @studioMissingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get studioMissingDescription;
+
+  /// No description provided for @studioMissingCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get studioMissingCapacity;
+
+  /// No description provided for @studioMissingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address, city and country'**
+  String get studioMissingAddress;
+
+  /// No description provided for @studioMissingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'A pin on the map'**
+  String get studioMissingLocation;
+
+  /// No description provided for @studioMissingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one photo'**
+  String get studioMissingPhotos;
+
+  /// No description provided for @studioMissingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'A price'**
+  String get studioMissingPrice;
+
+  /// No description provided for @studioNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get studioNext;
+
+  /// No description provided for @studioBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get studioBack;
+
+  /// No description provided for @studioSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as draft'**
+  String get studioSaveDraft;
+
+  /// No description provided for @studioSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get studioSubmit;
+
+  /// No description provided for @studioSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get studioSaveChanges;
+
+  /// No description provided for @studioSavedDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved.'**
+  String get studioSavedDraft;
+
+  /// No description provided for @studioSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for review. We\'ll tell you when it\'s live.'**
+  String get studioSubmitted;
+
+  /// No description provided for @studioSavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get studioSavedChanges;
+
+  /// No description provided for @studioSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save that. Try again.'**
+  String get studioSaveFailed;
+
+  /// No description provided for @studioOverlapRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Another venue already covers part of this area. Move the pin.'**
+  String get studioOverlapRefused;
+
+  /// No description provided for @studioLiveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This venue is live. Your changes show to guests as soon as you save.'**
+  String get studioLiveNote;
+
+  /// No description provided for @studioUseMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my current location'**
+  String get studioUseMyLocation;
+
+  /// No description provided for @studioLocateDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.'**
+  String get studioLocateDenied;
+
+  /// No description provided for @studioLocateOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on your phone\'s location, or tap the map instead.'**
+  String get studioLocateOff;
+
+  /// No description provided for @studioLocateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find where you are. Tap the map instead.'**
+  String get studioLocateFailed;
+
+  /// No description provided for @studioPhotoFailedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload: {reason}'**
+  String studioPhotoFailedWhy(String reason);
+
+  /// No description provided for @studioMapNeedsToken.
+  ///
+  /// In en, this message translates to:
+  /// **'The map isn\'t available, so the pin can\'t be placed.'**
+  String get studioMapNeedsToken;
+
   /// No description provided for @venueHubEdit.
   ///
   /// In en, this message translates to:
@@ -2833,8 +3709,50 @@ abstract class AppLocalizations {
   /// No description provided for @checkInIntro.
   ///
   /// In en, this message translates to:
-  /// **'Type the code printed under the QR on a guest\'s ticket.'**
+  /// **'Scan the QR on a guest\'s ticket, or type the code printed under it.'**
   String get checkInIntro;
+
+  /// No description provided for @checkInScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan ticket'**
+  String get checkInScan;
+
+  /// No description provided for @checkInScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a ticket'**
+  String get checkInScanTitle;
+
+  /// No description provided for @checkInScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the QR on the ticket.'**
+  String get checkInScanHint;
+
+  /// No description provided for @checkInTorch.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get checkInTorch;
+
+  /// No description provided for @checkInCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in your phone\'s settings, or type the code instead.'**
+  String get checkInCameraDenied;
+
+  /// No description provided for @checkInCameraFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera isn\'t available. Type the code instead.'**
+  String get checkInCameraFailed;
+
+  /// No description provided for @checkInTypeInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the code'**
+  String get checkInTypeInstead;
 
   /// No description provided for @checkInCodeLabel.
   ///
