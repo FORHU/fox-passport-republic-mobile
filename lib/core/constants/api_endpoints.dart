@@ -86,6 +86,11 @@ class ApiEndpoints {
   static const String venues = '/venues';
   static const String venuesNear = '/venues/near';
   static const String venuesCatalog = '/venues/catalog';
+
+  /// Where a new venue is created. The API keeps creation on its own path,
+  /// `POST /venues/create`; `POST /venues` is not a route.
+  static const String venueCreate = '/venues/create';
+
   static String venueById(String id) => '/venues/$id';
   static String venueUnavailableDates(String id) =>
       '/venues/$id/unavailable-dates';
