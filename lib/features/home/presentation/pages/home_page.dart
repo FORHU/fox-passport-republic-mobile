@@ -6,7 +6,16 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
+import 'package:flutter_template/features/home/presentation/widgets/first_event_checklist.dart';
+import 'package:flutter_template/features/home/presentation/widgets/foxers_row.dart';
+import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
+import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
+import 'package:flutter_template/features/home/presentation/widgets/republic_teaser.dart';
+import 'package:flutter_template/features/home/presentation/widgets/section_title.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
+import 'package:flutter_template/features/occasion/data/packages_repository.dart';
+import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
+import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -17,7 +26,6 @@ import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
@@ -51,6 +59,22 @@ class HomePage extends ConsumerWidget {
       sortBy: 'date_asc',
     );
     final soon = ref.watch(catalogProvider(soonQuery));
+    // No bookings at all (and both lists have answered): offer the checklist.
+    final pastTickets = ref.watch(pastTicketsProvider);
+    final noBookings = (upcomingTickets.asData?.value.isEmpty ?? false) &&
+        (pastTickets.asData?.value.isEmpty ?? false);
+    // Nothing on in the chosen city: look for events anywhere, so the row is
+    // not simply missing. Only asked once the city's own answer is empty.
+    final anywhereQuery = CatalogQuery(
+      CatalogKind.events,
+      limit: 6,
+      fromDate: DateTime(now.year, now.month, now.day),
+      sortBy: 'date_asc',
+    );
+    final nothingHere =
+        area.city != null && (soon.asData?.value.items.isEmpty ?? false);
+    final elsewhere =
+        nothingHere ? ref.watch(catalogProvider(anywhereQuery)) : null;
 
     final tiles = occasionTiles(categories, preferred: last);
     final oneThing = singleBookings(categories);
@@ -71,9 +95,39 @@ class HomePage extends ConsumerWidget {
             ref
               ..invalidate(upcomingTicketsProvider)
               ..invalidate(categoriesProvider)
-              ..invalidate(catalogProvider(soonQuery));
+              ..invalidate(catalogProvider(soonQuery))
+              ..invalidate(catalogProvider(anywhereQuery))
+              ..invalidate(pastTicketsProvider)
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.venues, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.foxers, limit: 8, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.gear, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(
+                catalogProvider(
+                  CatalogQuery(CatalogKind.services, limit: 6, city: area.city),
+                ),
+              )
+              ..invalidate(feedControllerProvider(null))
+              ..invalidate(
+                packagesProvider(
+                  (category: tiles.first.occasion.name, city: area.city),
+                ),
+              );
           },
           child: ListView(
+            // Always scrollable, so a short page can still be pulled down.
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             children: [
               _Header(
@@ -87,15 +141,13 @@ class HomePage extends ConsumerWidget {
               // An upcoming booking, if there is one. Failing or empty means
               // no strip and no error.
               if (ticket != null) _NextNight(ticket: ticket),
-              if (last != null) ...[
+              const SizedBox(height: 16),
+              _HomeSearch(onTap: () => context.go(RouteNames.search)),
+              if (noBookings) ...[
                 const SizedBox(height: 16),
-                _ContinueCard(
-                  occasion: last,
-                  count: categories
-                      ?.where((c) => Occasion.fromName(c.name) == last)
-                      .firstOrNull
-                      ?.count,
-                  onTap: () => openOccasion(last),
+                FirstEventChecklist(
+                  pickedOccasion: last != null,
+                  onStart: () => openOccasion(last ?? tiles.first.occasion),
                 ),
               ],
               const SizedBox(height: 22),
@@ -104,11 +156,73 @@ class HomePage extends ConsumerWidget {
                 style: AppTypography.display(size: 20),
               ),
               const SizedBox(height: 12),
-              _OccasionGrid(
+              OccasionShowcase(
                 tiles: tiles,
                 more: moreCategories(categories),
+                city: area.city,
+                continuing: last,
                 onOccasion: openOccasion,
                 onAll: () => unawaited(context.push(RouteNames.allCategories)),
+              ),
+              _OccasionPackages(
+                occasion: tiles.first.occasion,
+                city: area.city,
+                onSeeAll: () => openOccasion(tiles.first.occasion),
+              ),
+              ...soon.when(
+                loading: () => [
+                  const SizedBox(height: 24),
+                  const _SoonSkeleton(),
+                ],
+                error: (_, __) => const <Widget>[],
+                data: (page) => page.items.isEmpty
+                    ? _comingUp(context, elsewhere, area.city)
+                    : [
+                        const SizedBox(height: 24),
+                        HomeSectionTitle(
+                          title: l10n.homeHappeningSoon,
+                          action: l10n.seeAll,
+                          onAction: () =>
+                              context.go(RouteNames.searchFor('events')),
+                        ),
+                        const SizedBox(height: 12),
+                        _SoonRow(items: page.items),
+                      ],
+              ),
+              HomeItems(
+                kind: CatalogKind.venues,
+                title: area.city == null || area.city!.isEmpty
+                    ? context.l10n.homeVenuesTitle
+                    : context.l10n.homeVenuesTitleIn(area.city!),
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('venues', city: area.city),
+                ),
+              ),
+              HomeFoxers(
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('foxers', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.gear,
+                title: context.l10n.homeGearTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('gear', city: area.city),
+                ),
+              ),
+              HomeItems(
+                kind: CatalogKind.services,
+                title: context.l10n.homeServicesTitle,
+                city: area.city,
+                onSeeAll: () => context.go(
+                  RouteNames.searchFor('services', city: area.city),
+                ),
+              ),
+              RepublicTeaser(
+                onOpen: () => unawaited(context.push(RouteNames.republic)),
               ),
               if (oneThing.isNotEmpty) ...[
                 const SizedBox(height: 24),
@@ -120,27 +234,58 @@ class HomePage extends ConsumerWidget {
                       context.go(RouteNames.searchFor(item.kind.name)),
                 ),
               ],
-              ...soon.when(
-                loading: () => [
-                  const SizedBox(height: 24),
-                  const _SoonSkeleton(),
-                ],
-                error: (_, __) => const <Widget>[],
-                data: (page) => page.items.isEmpty
-                    ? const <Widget>[]
-                    : [
-                        const SizedBox(height: 24),
-                        _SectionTitle(
-                          title: l10n.homeHappeningSoon,
-                          action: l10n.seeAll,
-                          onAction: () =>
-                              context.go(RouteNames.searchFor('events')),
-                        ),
-                        const SizedBox(height: 12),
-                        _SoonRow(items: page.items),
-                      ],
-              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A search bar that opens the Search tab: the app's main job, one tap from
+/// the first screen.
+class _HomeSearch extends StatelessWidget {
+  const _HomeSearch({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final hint = context.l10n.homeSearchHint;
+    return Semantics(
+      button: true,
+      label: hint,
+      child: Material(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brPill,
+        child: InkWell(
+          borderRadius: AppRadius.brPill,
+          onTap: onTap,
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.brPill,
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    hint,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.body(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -349,220 +494,6 @@ class _NextNight extends StatelessWidget {
 }
 
 /// "Continue: birthday": what they last opened, one tap back to it.
-class _ContinueCard extends StatelessWidget {
-  const _ContinueCard({
-    required this.occasion,
-    required this.count,
-    required this.onTap,
-  });
-
-  final Occasion occasion;
-  final int? count;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final style = occasion.style;
-    return Material(
-      color: style.background,
-      borderRadius: AppRadius.brMd,
-      child: InkWell(
-        borderRadius: AppRadius.brMd,
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.brMd,
-            border: Border.all(color: style.border),
-          ),
-          child: Row(
-            children: [
-              Icon(occasion.icon, color: style.icon),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.homeContinue(
-                        occasionLabel(l10n, occasion).toLowerCase(),
-                      ),
-                      style: AppTypography.display(size: 15),
-                    ),
-                    if (count != null)
-                      Text(
-                        l10n.homeIdeas(count!),
-                        style: AppTypography.body(
-                          size: 12,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textSecondary,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The 3 x 2 grid: the occasions, then the dashed "All" tile.
-class _OccasionGrid extends StatelessWidget {
-  const _OccasionGrid({
-    required this.tiles,
-    required this.more,
-    required this.onOccasion,
-    required this.onAll,
-  });
-
-  final List<OccasionTileData> tiles;
-  final int more;
-  final ValueChanged<Occasion> onOccasion;
-  final VoidCallback onAll;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final cells = <Widget>[
-      for (final t in tiles)
-        _OccasionTile(
-          label: occasionLabel(l10n, t.occasion),
-          sub: t.count == null ? null : l10n.homeIdeas(t.count!),
-          style: t.occasion.style,
-          icon: t.occasion.icon,
-          onTap: () => onOccasion(t.occasion),
-        ),
-      _OccasionTile(
-        label: l10n.occasionAll,
-        sub: more > 0 ? l10n.homeMoreCount(more) : null,
-        style: OccasionColors.other,
-        icon: Icons.grid_view_rounded,
-        dashed: true,
-        onTap: onAll,
-      ),
-    ];
-    return GridView.count(
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 0.98,
-      children: cells,
-    );
-  }
-}
-
-class _OccasionTile extends StatelessWidget {
-  const _OccasionTile({
-    required this.label,
-    required this.style,
-    required this.icon,
-    required this.onTap,
-    this.sub,
-    this.dashed = false,
-  });
-
-  final String label;
-  final String? sub;
-  final OccasionStyle style;
-  final IconData icon;
-  final bool dashed;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: sub == null ? label : '$label, $sub',
-      child: Material(
-        color: dashed ? Colors.transparent : style.background,
-        borderRadius: AppRadius.brMd,
-        child: InkWell(
-          borderRadius: AppRadius.brMd,
-          onTap: onTap,
-          child: CustomPaint(
-            painter: dashed ? _DashedBorder(style.border) : null,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: dashed
-                  ? null
-                  : BoxDecoration(
-                      borderRadius: AppRadius.brMd,
-                      border: Border.all(color: style.border),
-                    ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(icon, color: style.icon, size: 26),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.display(size: 15),
-                      ),
-                      if (sub != null)
-                        Text(
-                          sub!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.body(
-                            size: 12,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DashedBorder extends CustomPainter {
-  const _DashedBorder(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    final path = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Offset.zero & size,
-          const Radius.circular(12),
-        ),
-      );
-    for (final metric in path.computeMetrics()) {
-      var distance = 0.0;
-      while (distance < metric.length) {
-        canvas.drawPath(metric.extractPath(distance, distance + 6), paint);
-        distance += 10;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedBorder old) => old.color != color;
-}
-
 class _OneThingRow extends StatelessWidget {
   const _OneThingRow({required this.items, required this.onTap});
 
@@ -622,39 +553,6 @@ class _OneThingRow extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
-    required this.title,
-    required this.action,
-    required this.onAction,
-  });
-
-  final String title;
-  final String action;
-  final VoidCallback onAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(title, style: AppTypography.display(size: 20)),
-        ),
-        GestureDetector(
-          onTap: onAction,
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(action, style: AppTypography.body()),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Public events with a date badge.
 class _SoonRow extends StatelessWidget {
   const _SoonRow({required this.items});
 
@@ -774,6 +672,90 @@ class _SoonSkeleton extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Coming up" with events from anywhere, when the chosen city has none. Says
+/// so, so the row is not mistaken for local events. Nothing while the second
+/// answer is still loading, failed, or empty.
+List<Widget> _comingUp(
+  BuildContext context,
+  AsyncValue<CatalogPage>? elsewhere,
+  String? city,
+) {
+  final items = elsewhere?.asData?.value.items ?? const <CatalogItem>[];
+  if (items.isEmpty || city == null) return const <Widget>[];
+  final l10n = context.l10n;
+  return [
+    const SizedBox(height: 24),
+    HomeSectionTitle(
+      title: l10n.homeComingUp,
+      action: l10n.seeAll,
+      onAction: () => context.go(RouteNames.searchFor('events')),
+    ),
+    Text(l10n.homeComingUpElsewhere(city), style: AppTypography.body(size: 12)),
+    const SizedBox(height: 12),
+    _SoonRow(items: items),
+  ];
+}
+
+/// Ready-made packages for one occasion, in the chosen city. A short
+/// placeholder while they load; nothing at all when there are none or they
+/// fail, so Home never shows an empty box.
+class _OccasionPackages extends ConsumerWidget {
+  const _OccasionPackages({
+    required this.occasion,
+    required this.city,
+    required this.onSeeAll,
+  });
+
+  final Occasion occasion;
+  final String? city;
+  final VoidCallback onSeeAll;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final packages = ref.watch(
+      packagesProvider((category: occasion.name, city: city)),
+    );
+    final label = occasionLabel(l10n, occasion).toLowerCase();
+    final title = city == null || city!.isEmpty
+        ? l10n.homePackagesTitle(label)
+        : l10n.homePackagesTitleIn(label, city!);
+
+    return packages.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: 24),
+        child: SkeletonPulse(
+          child: Row(
+            children: [
+              Expanded(child: SkeletonBox(height: 128)),
+              SizedBox(width: 12),
+              Expanded(child: SkeletonBox(height: 128)),
+            ],
+          ),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (items) => items.isEmpty
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeSectionTitle(
+                    title: title,
+                    action: l10n.seeAll,
+                    onAction: onSeeAll,
+                  ),
+                  const SizedBox(height: 4),
+                  PackagesRow(items: items),
+                ],
+              ),
+            ),
     );
   }
 }

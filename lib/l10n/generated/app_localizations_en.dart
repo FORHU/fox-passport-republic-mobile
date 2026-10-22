@@ -906,6 +906,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMap => 'The map is coming soon';
 
   @override
+  String get whereYoullBe => 'Where you\'ll be';
+
+  @override
+  String get locationAfterBooking => 'Exact location provided after booking';
+
+  @override
   String get comingSoonWallet => 'Wallet passes are coming soon';
 
   @override
@@ -1758,6 +1764,81 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homePlanNew => 'Plan something new';
+
+  @override
+  String get homeSearchHint => 'Search venues, Foxers and events';
+
+  @override
+  String get homeStartPlanning => 'Start planning';
+
+  @override
+  String homePackagesTitle(String occasion) {
+    return 'Popular $occasion packages';
+  }
+
+  @override
+  String homePackagesTitleIn(String occasion, String city) {
+    return 'Popular $occasion packages in $city';
+  }
+
+  @override
+  String packageFromPrice(String price) {
+    return 'From $price';
+  }
+
+  @override
+  String get homeVenuesTitle => 'Venues to browse';
+
+  @override
+  String homeVenuesTitleIn(String city) {
+    return 'Venues in $city';
+  }
+
+  @override
+  String get homeGearTitle => 'Gear to rent';
+
+  @override
+  String get homeServicesTitle => 'Services to add';
+
+  @override
+  String get homeFoxersTitle => 'Foxers to plan with';
+
+  @override
+  String get homeRepublicTitle => 'From the Republic';
+
+  @override
+  String get homeChecklistTitle => 'Plan your first event';
+
+  @override
+  String homeChecklistProgress(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get homeChecklistStep1 => 'Pick what you\'re planning';
+
+  @override
+  String get homeChecklistStep2 => 'Choose a package or venue';
+
+  @override
+  String get homeChecklistStep3 => 'Book it and get your ticket';
+
+  @override
+  String get homeChecklistStart => 'Start';
+
+  @override
+  String get homeChecklistContinue => 'Continue';
+
+  @override
+  String get homeComingUp => 'Coming up';
+
+  @override
+  String homeComingUpElsewhere(String city) {
+    return 'Nothing in $city yet, so here is what is on elsewhere.';
+  }
+
+  @override
+  String get homeContinuePlanning => 'Continue planning';
 
   @override
   String get homeBookOne => 'Or book just one thing';
