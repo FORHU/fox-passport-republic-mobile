@@ -1437,6 +1437,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersOpenRow => 'Venue partners';
 
   @override
+  String get partnersApply => 'Apply to a venue';
+
+  @override
+  String get partnersApplyTitle => 'Choose a venue';
+
+  @override
+  String get partnersSearchHint => 'Search venues';
+
+  @override
+  String get partnersApplyNone => 'No venues found.';
+
+  @override
+  String get partnersAlready => 'Already on your list';
+
+  @override
+  String partnersApplyConfirmTitle(String venue) {
+    return 'Apply to $venue?';
+  }
+
+  @override
+  String get partnersApplyConfirmBody =>
+      'The venue\'s Mayor will be asked to approve.';
+
+  @override
+  String get partnersApplyAction => 'Apply';
+
+  @override
+  String get partnersApplySent => 'Applied. The Mayor has been told.';
+
+  @override
   String get studioTitleNew => 'New venue';
 
   @override

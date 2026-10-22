@@ -8,6 +8,8 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class _MockApi extends Mock implements ApiService {}
 
 class _MockRepo extends Mock implements SpacesRepository {}
+
+class _MockCatalog extends Mock implements CatalogRepository {}
 
 class _Session extends AuthController {
   @override
@@ -194,6 +198,16 @@ void main() {
       verify(() => api.delete('/venue-affiliations/a1')).called(1);
     });
 
+    test('applying names the venue', () async {
+      when(() => api.post(any(), any())).thenAnswer((_) async => {});
+
+      await repo.applyToVenue('v9');
+
+      verify(
+        () => api.post('/venue-affiliations/apply', {'venueId': 'v9'}),
+      ).called(1);
+    });
+
     test('lists both directions from /mine', () async {
       when(() => api.get('/venue-affiliations/mine'))
           .thenAnswer((_) async => _body(mayor: [_row('a')]));
@@ -207,7 +221,12 @@ void main() {
   group('the Partners screen', () {
     late _MockRepo repo;
 
-    setUp(() => repo = _MockRepo());
+    late _MockCatalog catalog;
+
+    setUp(() {
+      repo = _MockRepo();
+      catalog = _MockCatalog();
+    });
 
     Future<void> pump(
       WidgetTester tester,
@@ -225,11 +244,13 @@ void main() {
       when(() => repo.rejectPartner(any())).thenAnswer((_) async {});
       when(() => repo.cancelPartner(any())).thenAnswer((_) async {});
       when(() => repo.revokePartner(any())).thenAnswer((_) async {});
+      when(() => repo.applyToVenue(any())).thenAnswer((_) async {});
       await tester.pumpWidget(
         ProviderScope(
           retry: (_, __) => null,
           overrides: [
             spacesRepositoryProvider.overrideWithValue(repo),
+            catalogRepositoryProvider.overrideWithValue(catalog),
             sharedPreferencesProvider.overrideWithValue(prefs),
             authControllerProvider.overrideWith(_Session.new),
           ],
@@ -394,6 +415,89 @@ void main() {
     testWidgets('says so when there are no partners yet', (tester) async {
       await pump(tester, PartnerSide.mayor, const PartnerLists());
       expect(find.text('No partners yet.'), findsOneWidget);
+    });
+
+    testWidgets('only an Event Foxer sees the Apply button', (tester) async {
+      await pump(tester, PartnerSide.mayor, const PartnerLists());
+      expect(find.text('Apply to a venue'), findsNothing);
+    });
+
+    testWidgets('an Event Foxer finds a venue and applies to it', (
+      tester,
+    ) async {
+      registerFallbackValue(CatalogKind.venues);
+      when(
+        () => catalog.fetch(
+          any(),
+          query: any(named: 'query'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer(
+        (_) async => const CatalogPage(
+          items: [
+            CatalogItem(id: 'v9', kind: CatalogKind.venues, title: 'Moon Hall'),
+            CatalogItem(id: 'v1', kind: CatalogKind.venues, title: 'Sky Hall'),
+          ],
+          total: 2,
+        ),
+      );
+      await pump(
+        tester,
+        PartnerSide.eventFoxer,
+        PartnerLists(
+          asEventFoxer: [
+            Partner.tryParse(_row('a'), PartnerSide.eventFoxer)!,
+          ],
+        ),
+      );
+
+      await tester.tap(find.text('Apply to a venue'));
+      await tester.pumpAndSettle();
+      expect(find.text('Choose a venue'), findsOneWidget);
+      // Sky Hall (v1) is already on the list, so it cannot be picked.
+      expect(find.text('Already on your list'), findsOneWidget);
+      await tester.tap(find.text('Sky Hall'));
+      await tester.pumpAndSettle();
+      verifyNever(() => repo.applyToVenue(any()));
+
+      await tester.tap(find.text('Moon Hall'));
+      await tester.pumpAndSettle();
+      expect(find.text('Apply to Moon Hall?'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(TextButton, 'Apply'));
+      await tester.pumpAndSettle();
+      verify(() => repo.applyToVenue('v9')).called(1);
+      expect(find.text('Applied. The Mayor has been told.'), findsOneWidget);
+    });
+
+    testWidgets('backing out of the confirmation applies to nothing', (
+      tester,
+    ) async {
+      registerFallbackValue(CatalogKind.venues);
+      when(
+        () => catalog.fetch(
+          any(),
+          query: any(named: 'query'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer(
+        (_) async => const CatalogPage(
+          items: [
+            CatalogItem(id: 'v9', kind: CatalogKind.venues, title: 'Moon Hall'),
+          ],
+          total: 1,
+        ),
+      );
+      await pump(tester, PartnerSide.eventFoxer, const PartnerLists());
+
+      await tester.tap(find.text('Apply to a venue'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Moon Hall'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => repo.applyToVenue(any()));
     });
 
     testWidgets('says so when an action fails', (tester) async {

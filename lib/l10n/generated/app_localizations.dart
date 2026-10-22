@@ -2746,6 +2746,60 @@ abstract class AppLocalizations {
   /// **'Venue partners'**
   String get partnersOpenRow;
 
+  /// No description provided for @partnersApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to a venue'**
+  String get partnersApply;
+
+  /// No description provided for @partnersApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a venue'**
+  String get partnersApplyTitle;
+
+  /// No description provided for @partnersSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search venues'**
+  String get partnersSearchHint;
+
+  /// No description provided for @partnersApplyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No venues found.'**
+  String get partnersApplyNone;
+
+  /// No description provided for @partnersAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'Already on your list'**
+  String get partnersAlready;
+
+  /// No description provided for @partnersApplyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to {venue}?'**
+  String partnersApplyConfirmTitle(String venue);
+
+  /// No description provided for @partnersApplyConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The venue\'s Mayor will be asked to approve.'**
+  String get partnersApplyConfirmBody;
+
+  /// No description provided for @partnersApplyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get partnersApplyAction;
+
+  /// No description provided for @partnersApplySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied. The Mayor has been told.'**
+  String get partnersApplySent;
+
   /// No description provided for @studioTitleNew.
   ///
   /// In en, this message translates to:

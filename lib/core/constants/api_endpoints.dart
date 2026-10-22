@@ -69,6 +69,7 @@ class ApiEndpoints {
 
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
+  static const String venueAffiliationApply = '/venue-affiliations/apply';
   static String venueAffiliationApprove(String id) =>
       '/venue-affiliations/$id/approve';
   static String venueAffiliationReject(String id) =>

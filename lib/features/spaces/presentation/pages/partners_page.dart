@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/venue_picker_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -66,6 +67,32 @@ class PartnersPage extends ConsumerWidget {
     return sure ?? false;
   }
 
+  /// Picks a venue and applies to host events there. A venue already on the
+  /// list, in any state, cannot be applied to again.
+  Future<void> _apply(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final taken = {
+      for (final p in ref.read(partnersProvider).asData?.value.asEventFoxer ??
+          const <Partner>[])
+        p.venueId,
+    };
+    final venue = await pickVenue(context, taken: taken);
+    if (venue == null || !context.mounted) return;
+    final sure = await _confirm(
+      context,
+      title: l10n.partnersApplyConfirmTitle(venue.title),
+      body: l10n.partnersApplyConfirmBody,
+      yes: l10n.partnersApplyAction,
+    );
+    if (!sure || !context.mounted) return;
+    await _run(
+      context,
+      ref,
+      () => ref.read(spacesRepositoryProvider).applyToVenue(venue.id),
+      l10n.partnersApplySent,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -74,6 +101,15 @@ class PartnersPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      floatingActionButton: side == PartnerSide.eventFoxer
+          ? FloatingActionButton.extended(
+              onPressed: () => _apply(context, ref),
+              backgroundColor: AppColors.accent,
+              foregroundColor: AppColors.onAccent,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l10n.partnersApply),
+            )
+          : null,
       appBar: AppBar(
         title: Text(
           l10n.partnersTitle,
@@ -186,7 +222,13 @@ class PartnersPage extends ConsumerWidget {
             onRefresh: () => ref.refresh(partnersProvider.future),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              padding: EdgeInsets.fromLTRB(
+                16,
+                4,
+                16,
+                // Room under the last card for the Apply button.
+                side == PartnerSide.eventFoxer ? 96 : 24,
+              ),
               children: [
                 Text(
                   side == PartnerSide.mayor
