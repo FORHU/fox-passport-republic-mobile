@@ -12,6 +12,7 @@ import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
+import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
@@ -168,6 +169,9 @@ void main() {
         ],
         child: MaterialApp.router(
           routerConfig: router,
+          // The real theme: its buttons are as wide as their parent unless told
+          // otherwise, which a plain theme would hide.
+          theme: AppTheme.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
         ),

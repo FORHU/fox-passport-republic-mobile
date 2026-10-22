@@ -122,6 +122,9 @@ class VenueStudioPage extends ConsumerWidget {
                         padding: const EdgeInsets.only(right: 12),
                         child: OutlinedButton(
                           onPressed: controller.back,
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(0, 52),
+                          ),
                           child: Text(l10n.studioBack),
                         ),
                       ),
@@ -234,6 +237,7 @@ class _FinalActions extends StatelessWidget {
       children: [
         OutlinedButton(
           onPressed: state.saving ? null : onDraft,
+          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 52)),
           child: Text(l10n.studioSaveDraft),
         ),
         const SizedBox(width: 12),
