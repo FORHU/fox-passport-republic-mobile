@@ -33,12 +33,14 @@ void main() {
     expect(rootsOf(shells[0]), RouteNames.shellTabs);
     expect(rootsOf(shells[1]), [
       RouteNames.spaceVenue,
-      RouteNames.spaceVenueListings,
-      RouteNames.spaceVenueCheckIn,
-      RouteNames.spaceVenueMessages,
+      RouteNames.spaceVenueVenues,
+      RouteNames.spaceVenueCalendar,
+      RouteNames.spaceVenueEarnings,
+      RouteNames.spaceVenueMore,
     ]);
     expect(rootsOf(shells[2]), [
       RouteNames.spaceEvent,
+      RouteNames.spaceEventCalendar,
       RouteNames.spaceEventCheckIn,
       RouteNames.spaceEventMessages,
     ]);
