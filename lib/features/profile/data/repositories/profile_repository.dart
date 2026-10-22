@@ -1,14 +1,26 @@
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/errors/failure.dart';
+import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
+import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:fpdart/fpdart.dart';
 
 /// Repository contract (the abstraction the domain layer depends on).
 abstract class ProfileRepository {
   Future<Either<Failure, ProfileEntity>> getProfile();
 
-  Future<Either<Failure, Unit>> updateName(String name);
+  Future<Either<Failure, Unit>> updateProfile(ProfileUpdate update);
+
+  /// Uploads a photo and returns its URL.
+  Future<Either<Failure, String>> uploadPhoto(PickedPhoto photo);
+
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
+  Future<Either<Failure, Unit>> deleteAccount(String password);
 }
 
 /// Coordinates the remote data source. Catches the data layer's typed
@@ -23,8 +35,33 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _guard(_remote.getProfile);
 
   @override
-  Future<Either<Failure, Unit>> updateName(String name) => _guard(() async {
-        await _remote.updateName(name);
+  Future<Either<Failure, Unit>> updateProfile(ProfileUpdate update) =>
+      _guard(() async {
+        await _remote.updateProfile(update);
+        return unit;
+      });
+
+  @override
+  Future<Either<Failure, String>> uploadPhoto(PickedPhoto photo) =>
+      _guard(() => _remote.uploadPhoto(photo));
+
+  @override
+  Future<Either<Failure, Unit>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) =>
+      _guard(() async {
+        await _remote.changePassword(
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        );
+        return unit;
+      });
+
+  @override
+  Future<Either<Failure, Unit>> deleteAccount(String password) =>
+      _guard(() async {
+        await _remote.deleteAccount(password);
         return unit;
       });
 

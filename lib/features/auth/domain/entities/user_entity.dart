@@ -32,15 +32,20 @@ class UserEntity extends Equatable {
   final String? imageUrl;
 
   /// The same user with another [name], as after they edit their profile.
-  UserEntity withName(String name) => UserEntity(
+  UserEntity withName(String name) => withProfile(name: name);
+
+  /// The same user with the parts of their profile that changed, as after
+  /// they edit it. A part left out stays as it was.
+  UserEntity withProfile({String? name, String? username, String? imageUrl}) =>
+      UserEntity(
         id: id,
         email: email,
-        name: name,
-        username: username,
+        name: name ?? this.name,
+        username: username ?? this.username,
         systemRole: systemRole,
         roleType: roleType,
         isEmailVerified: isEmailVerified,
-        imageUrl: imageUrl,
+        imageUrl: imageUrl ?? this.imageUrl,
       );
 
   /// A Citizen holds no RoleType.

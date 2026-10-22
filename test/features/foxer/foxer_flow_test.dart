@@ -15,6 +15,7 @@ import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import '../../support/future_day.dart';
 
 class _MockApi extends Mock implements ApiService {}
 
@@ -307,8 +308,7 @@ void main() {
       await tester.tap(find.text('Garden Birthday'));
       await tester.tap(find.byIcon(Icons.add_rounded));
       await tester.pumpAndSettle();
-      // The 28th is never in the past or taken, whatever today is.
-      await tester.tap(find.text('28').first);
+      await tapFutureDay(tester);
       await tester.pumpAndSettle();
       expect(send().onPressed, isNotNull);
 

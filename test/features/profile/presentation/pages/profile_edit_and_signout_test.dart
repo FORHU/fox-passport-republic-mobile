@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
@@ -79,7 +78,7 @@ void main() {
     );
   });
 
-  group('editing the name', () {
+  group('the profile', () {
     testWidgets('shows who you are and when you joined', (tester) async {
       await _pump(tester, repo);
 
@@ -88,54 +87,31 @@ void main() {
       expect(find.text('Member since March 2025'), findsOneWidget);
     });
 
-    testWidgets('saves a new name and shows it everywhere', (tester) async {
-      when(() => repo.updateName('Ada Byron'))
-          .thenAnswer((_) async => const Right(unit));
-      final container = await _pump(tester, repo);
+    testWidgets('shows the username and phone number too', (tester) async {
+      when(repo.getProfile).thenAnswer(
+        (_) async => const Right(
+          ProfileEntity(
+            id: 'u1',
+            name: 'Ada',
+            email: 'ada@example.com',
+            username: 'ada_l',
+            phone: '+639171234567',
+          ),
+        ),
+      );
+      await _pump(tester, repo);
 
-      await tester.tap(find.text('Edit name'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextFormField), 'Ada Byron');
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-
-      verify(() => repo.updateName('Ada Byron')).called(1);
-      expect(find.text('Your name was updated.'), findsOneWidget);
-      expect(container.read(authControllerProvider).user?.name, 'Ada Byron');
+      expect(find.text('@ada_l'), findsOneWidget);
+      expect(find.text('+639171234567'), findsOneWidget);
     });
 
-    testWidgets('refuses a name that is not a name, without calling the API', (
+    testWidgets('has an Edit profile button, in place of Edit name', (
       tester,
     ) async {
       await _pump(tester, repo);
 
-      await tester.tap(find.text('Edit name'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextFormField), 'R2D2');
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Name can only contain letters'), findsOneWidget);
-      verifyNever(() => repo.updateName(any()));
-    });
-
-    testWidgets('keeps the sheet open and says so when saving fails', (
-      tester,
-    ) async {
-      when(() => repo.updateName(any())).thenAnswer(
-        (_) async => const Left(ServerFailure('Name is taken')),
-      );
-      final container = await _pump(tester, repo);
-
-      await tester.tap(find.text('Edit name'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextFormField), 'Grace');
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Name is taken'), findsOneWidget);
-      expect(find.text('Save'), findsOneWidget);
-      expect(container.read(authControllerProvider).user?.name, 'Ada');
+      expect(find.text('Edit profile'), findsOneWidget);
+      expect(find.text('Edit name'), findsNothing);
     });
   });
 

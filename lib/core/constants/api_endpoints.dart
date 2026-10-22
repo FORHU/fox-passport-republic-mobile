@@ -24,6 +24,10 @@ class ApiEndpoints {
   static const String profile = '/profile';
   static const String changePassword = '/profile/change-password';
   static const String users = '/users';
+
+  /// The people the signed-in user has blocked.
+  static const String blocks = '/blocks';
+  static String unblock(String userId) => '/blocks/$userId';
   static const String foxers = '/users/foxers';
   static String foxerById(String id) => '/users/foxers/$id';
   static const String matches = '/matches';
@@ -54,12 +58,45 @@ class ApiEndpoints {
   static const String servicesBrowse = '/service/browse';
 
   // ── Venues ──────────────────────────────────────────────────────────────
+  /// What suppliers are asked to confirm for other people's events.
+  static const String providerRequests = '/event-transactions/provider';
+  static String requestReview(String id) => '/event-transactions/$id/review';
+
+  /// What the person has been paid and is owed, newest first.
+  static const String venueAffiliationsMine = '/venue-affiliations/mine';
+  static const String venueAffiliationApply = '/venue-affiliations/apply';
+  static const String venueAffiliationInvite = '/venue-affiliations/invite';
+  static String venueAffiliationApprove(String id) =>
+      '/venue-affiliations/$id/approve';
+  static String venueAffiliationReject(String id) =>
+      '/venue-affiliations/$id/reject';
+  static String venueAffiliationCancel(String id) =>
+      '/venue-affiliations/$id/cancel';
+  static String venueAffiliation(String id) => '/venue-affiliations/$id';
+  static const String payoutsMe = '/payouts/me';
+
+  /// How far the person's payout account (Stripe) is set up.
+  static const String stripeStatus = '/stripe-connect/status';
+
+  /// Checks a guest in by the code on their ticket.
+  static const String bookingCheckIn = '/bookings/check-in';
   static const String venues = '/venues';
   static const String venuesNear = '/venues/near';
   static const String venuesCatalog = '/venues/catalog';
+
+  /// Where a new venue is created. The API keeps creation on its own path,
+  /// `POST /venues/create`; `POST /venues` is not a route.
+  static const String venueCreate = '/venues/create';
+
   static String venueById(String id) => '/venues/$id';
   static String venueUnavailableDates(String id) =>
       '/venues/$id/unavailable-dates';
+
+  /// The days the venue's owner has closed. POST `{date}` to close one;
+  /// DELETE [venueBlockedDate] (a `YYYY-MM-DD`) to open it again.
+  static String venueBlockedDates(String id) => '/venues/$id/blocked-dates';
+  static String venueBlockedDate(String id, String date) =>
+      '/venues/$id/blocked-dates/$date';
 
   // ── Bookings ────────────────────────────────────────────────────────────
   static const String bookingDraft = '/bookings/draft';
@@ -124,6 +161,8 @@ class ApiEndpoints {
   static const String conversationsInbox = '/conversations/inbox';
   static const String socketTicket = '/auth/socket-ticket';
   static const String uploadFile = '/files/upload-direct';
+  static const String venueBoundaries = '/venues/boundaries';
+  static const String cancellationPolicies = '/cancellation-policies';
   static const String fxRates = '/fx/rates';
   static String conversationMute(String id) => '/conversations/$id/mute';
   static String conversationPin(String id) => '/conversations/$id/pin';

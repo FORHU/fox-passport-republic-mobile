@@ -8,6 +8,7 @@ import 'package:flutter_template/core/services/adapter_config/adapter_config.dar
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
 import 'package:flutter_template/core/services/interceptors/mock_interceptor.dart';
+import 'package:flutter_template/core/services/interceptors/redacting_log_interceptor.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
 
@@ -74,11 +75,9 @@ class ApiService {
       ),
     );
 
-    // 3. Verbose request/response logging (dev only).
+    // 3. Request/response logging (dev only), with secrets redacted.
     if (AppConfig.instance.enableLogging) {
-      client.interceptors.add(
-        LogInterceptor(requestBody: true, responseBody: true),
-      );
+      client.interceptors.add(RedactingLogInterceptor(appLogger.d));
     }
   }
 

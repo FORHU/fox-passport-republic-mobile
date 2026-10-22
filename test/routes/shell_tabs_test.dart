@@ -21,13 +21,28 @@ void main() {
     addTearDown(container.dispose);
 
     final router = container.read(goRouterProvider);
-    final shell =
-        router.configuration.routes.whereType<StatefulShellRoute>().single;
-    final roots = [
-      for (final branch in shell.branches)
-        (branch.routes.first as GoRoute).path,
-    ];
+    // The Citizen tabs come first, then the Venue and Event spaces.
+    final shells =
+        router.configuration.routes.whereType<StatefulShellRoute>().toList();
+    List<String> rootsOf(StatefulShellRoute shell) => [
+          for (final branch in shell.branches)
+            (branch.routes.first as GoRoute).path,
+        ];
 
-    expect(roots, RouteNames.shellTabs);
+    expect(shells, hasLength(3));
+    expect(rootsOf(shells[0]), RouteNames.shellTabs);
+    expect(rootsOf(shells[1]), [
+      RouteNames.spaceVenue,
+      RouteNames.spaceVenueVenues,
+      RouteNames.spaceVenueCalendar,
+      RouteNames.spaceVenueEarnings,
+      RouteNames.spaceVenueMore,
+    ]);
+    expect(rootsOf(shells[2]), [
+      RouteNames.spaceEvent,
+      RouteNames.spaceEventCalendar,
+      RouteNames.spaceEventCheckIn,
+      RouteNames.spaceEventMessages,
+    ]);
   });
 }

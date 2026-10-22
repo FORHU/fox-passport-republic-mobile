@@ -3,17 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/auth/presentation/widgets/sign_out.dart';
+import 'package:flutter_template/features/settings/presentation/widgets/delete_account_sheet.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/currency/currency_sheet.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// Settings: where "near you" is measured from, the account, and sign out.
+/// Settings: the account (profile, roles, who you blocked), where "near you"
+/// is measured from and the currency, security, and sign out.
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
@@ -32,6 +37,9 @@ class SettingsPage extends ConsumerWidget {
           : '${l10n.settingsLocationDevice} · ${filter.label}',
       _ => filter.city ?? l10n.settingsLocationNone,
     };
+    final name = user?.name ?? '';
+    final spaces = ref.watch(availableSpacesProvider);
+    final activeSpace = ref.watch(activeSpaceProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -43,7 +51,52 @@ class SettingsPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          _Section(label: l10n.settingsLocation),
+          _Section(label: l10n.settingsAccount),
+          _Row(
+            leading: AvatarImage(
+              url: user?.imageUrl,
+              radius: 18,
+              fallback: Text(
+                name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+                style: AppTypography.display(size: 15, color: AppColors.accent),
+              ),
+            ),
+            title: name.isNotEmpty ? name : l10n.profile,
+            value: user?.email,
+            onTap: () => context.push(RouteNames.profile),
+          ),
+          const SizedBox(height: 8),
+          _Row(
+            icon: Icons.edit_outlined,
+            title: l10n.settingsEditProfile,
+            onTap: () => context.push(RouteNames.profileEdit),
+          ),
+          const SizedBox(height: 8),
+          // Only for someone who holds a role to switch to.
+          if (spaces.length > 1) ...[
+            _Row(
+              icon: Icons.swap_horiz_rounded,
+              title: l10n.spaceSwitchTitle,
+              value: l10n.spaceNowIn(spaceLabel(l10n, activeSpace)),
+              onTap: () => showSpaceSheet(context),
+            ),
+            const SizedBox(height: 8),
+          ],
+          _Row(
+            icon: Icons.workspace_premium_outlined,
+            title: l10n.rolesTitle,
+            value: l10n.rolesSettingsHint,
+            onTap: () => context.push(RouteNames.roles),
+          ),
+          const SizedBox(height: 8),
+          _Row(
+            icon: Icons.block_rounded,
+            title: l10n.settingsBlockedUsers,
+            value: l10n.settingsBlockedUsersHint,
+            onTap: () => context.push(RouteNames.blockedUsers),
+          ),
+          const SizedBox(height: 24),
+          _Section(label: l10n.settingsPreferences),
           _Row(
             icon: Icons.location_on_outlined,
             title: l10n.settingsLocationTitle,
@@ -60,21 +113,22 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => showCurrencySheet(context),
           ),
           const SizedBox(height: 24),
-          _Section(label: l10n.settingsAccount),
+          _Section(label: l10n.settingsSecurity),
           _Row(
-            icon: Icons.person_outline_rounded,
-            title: user?.name.isNotEmpty ?? false ? user!.name : l10n.profile,
-            value: user?.email,
-            onTap: () => context.push(RouteNames.profile),
+            icon: Icons.lock_outline_rounded,
+            title: l10n.settingsChangePassword,
+            value: l10n.settingsChangePasswordHint,
+            onTap: () => context.push(RouteNames.changePassword),
           ),
           const SizedBox(height: 8),
           _Row(
-            icon: Icons.workspace_premium_outlined,
-            title: l10n.rolesTitle,
-            value: l10n.rolesSettingsHint,
-            onTap: () => context.push(RouteNames.roles),
+            icon: Icons.delete_outline_rounded,
+            title: l10n.settingsDeleteAccount,
+            value: l10n.settingsDeleteAccountHint,
+            danger: true,
+            onTap: () => showDeleteAccountSheet(context),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
           _Row(
             icon: Icons.logout_rounded,
             title: l10n.settingsSignOut,
@@ -101,14 +155,17 @@ class _Section extends StatelessWidget {
 
 class _Row extends StatelessWidget {
   const _Row({
-    required this.icon,
     required this.title,
     required this.onTap,
+    this.icon,
+    this.leading,
     this.value,
     this.danger = false,
   });
 
-  final IconData icon;
+  /// An icon, or [leading] to put something else (a photo) in its place.
+  final IconData? icon;
+  final Widget? leading;
   final String title;
   final String? value;
   final bool danger;
@@ -130,7 +187,12 @@ class _Row extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: danger ? color : AppColors.textMuted),
+            leading ??
+                Icon(
+                  icon,
+                  size: 22,
+                  color: danger ? color : AppColors.textMuted,
+                ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -152,7 +214,7 @@ class _Row extends StatelessWidget {
                 ],
               ),
             ),
-            if (!danger)
+            if (!danger || value != null)
               const Icon(
                 Icons.chevron_right_rounded,
                 color: AppColors.textMuted,

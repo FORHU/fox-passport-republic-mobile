@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -60,6 +61,8 @@ class _PassportPageState extends ConsumerState<PassportPage> {
                         style: AppTypography.display(size: 28),
                       ),
                     ),
+                    // Only for someone who holds a role to switch to.
+                    const SpaceSwitchButton(),
                     IconButton(
                       tooltip: l10n.settingsTitle,
                       onPressed: () => context.push(RouteNames.settings),
@@ -221,7 +224,7 @@ class _Body extends StatelessWidget {
         _IdCard(
           summary: summary,
           name: name,
-          onTap: () => context.go(RouteNames.profile),
+          onTap: () => context.push(RouteNames.profile),
         ),
         const SizedBox(height: 24),
         _SectionHeader(
