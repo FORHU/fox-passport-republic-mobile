@@ -22,7 +22,6 @@ void main() {
     email: 'g@example.com',
     name: 'G',
     token: 'access',
-    refreshToken: 'refresh',
   );
 
   late MockRemote remote;
@@ -43,7 +42,6 @@ void main() {
 
     when(() => social.isSupported).thenReturn(true);
     when(() => storage.saveToken(any())).thenAnswer((_) async {});
-    when(() => storage.saveRefreshToken(any())).thenAnswer((_) async {});
     when(() => storage.saveUserModel(any())).thenAnswer((_) async {});
   });
 
@@ -62,22 +60,6 @@ void main() {
 
       expect(result.getRight().toNullable(), tUser);
       verify(() => storage.saveToken('access')).called(1);
-      verify(() => storage.saveRefreshToken('refresh')).called(1);
-      verifyNever(() => remote.exchangeSocialCode(any(), any()));
-    });
-
-    test('redeems the exchange code from the browser flow', () async {
-      when(() => social.obtain(SocialProvider.facebook))
-          .thenAnswer((_) async => const SocialExchangeCode('xc-123'));
-      when(
-        () => remote.exchangeSocialCode(SocialProvider.facebook, 'xc-123'),
-      ).thenAnswer((_) async => tUser);
-
-      final result = await repository.loginWithSocial(SocialProvider.facebook);
-
-      expect(result.isRight(), isTrue);
-      verify(() => storage.saveToken('access')).called(1);
-      verifyNever(() => remote.loginWithSocialToken(any(), any()));
     });
 
     test('a dismissed provider UI is a quiet cancellation', () async {

@@ -8,21 +8,16 @@ class ApiEndpoints {
   // ── Auth (Better Auth) ─────────────────────────────────────────────────
   static const String login = '/auth/sign-in/email';
   static const String register = '/auth/sign-up/email';
-  static const String refresh = '/auth/refresh-token';
   static const String logout = '/auth/sign-out';
-  static const String verifyEmail = '/auth/verify-email';
-  static const String resendVerificationOtp = '/auth/resend-verification-otp';
-  static const String forgotPassword = '/auth/forgot-password';
-  static const String resetPassword = '/auth/reset-password';
+  // Email codes: Better Auth's emailOTP plugin.
+  static const String verifyEmail = '/auth/email-otp/verify-email';
+  static const String resendVerificationOtp =
+      '/auth/email-otp/send-verification-otp';
+  static const String forgotPassword = '/auth/email-otp/request-password-reset';
+  static const String resetPassword = '/auth/email-otp/reset-password';
 
-  // Social sign-in. `*Mobile` take a token the app got on-device; the plain
-  // path starts the browser redirect flow and `*Exchange` redeems its code.
-  static const String googleMobile = '/auth/google/mobile';
-  static const String facebookMobile = '/auth/facebook/mobile';
-  static const String googleStart = '/auth/google';
-  static const String facebookStart = '/auth/facebook';
-  static const String googleExchange = '/auth/google/exchange';
-  static const String facebookExchange = '/auth/facebook/exchange';
+  // Social sign-in: a provider token minted on-device, verified by Better Auth.
+  static const String socialSignIn = '/auth/sign-in/social';
 
   // ── Profile / users ─────────────────────────────────────────────────────
   static const String me = '/profile';

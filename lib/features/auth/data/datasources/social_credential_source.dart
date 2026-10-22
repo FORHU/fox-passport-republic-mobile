@@ -1,17 +1,13 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_template/core/config/app_config.dart';
-import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 enum SocialProvider { google, facebook }
 
-/// What the platform handed back. Which of the two depends on the path taken:
-/// the native SDK yields a provider [SocialToken]; the browser redirect flow
-/// yields a one-time [SocialExchangeCode] the API redeems for a session.
+/// What the platform handed back: a provider token minted on-device, which
+/// the API's Better Auth `/auth/sign-in/social` verifies.
 sealed class SocialCredential {
   const SocialCredential();
 }
@@ -20,12 +16,6 @@ sealed class SocialCredential {
 class SocialToken extends SocialCredential {
   const SocialToken(this.value);
   final String value;
-}
-
-/// The `xc` code from the API's redirect back to the app's URL scheme.
-class SocialExchangeCode extends SocialCredential {
-  const SocialExchangeCode(this.code);
-  final String code;
 }
 
 /// The user closed the provider's UI. Not an error worth showing.
@@ -66,7 +56,11 @@ class PlatformSocialCredentialSource implements SocialCredentialSource {
   Future<SocialCredential> _google() async {
     final native = _config.googleServerClientId.isNotEmpty &&
         GoogleSignIn.instance.supportsAuthenticate();
-    if (!native) return _browser(ApiEndpoints.googleStart);
+    if (!native) {
+      throw const ServerException(
+        'Google sign-in is not set up on this build.',
+      );
+    }
 
     try {
       if (!_googleInitialised) {
@@ -97,7 +91,9 @@ class PlatformSocialCredentialSource implements SocialCredentialSource {
 
   Future<SocialCredential> _facebook() async {
     if (!_config.facebookNativeEnabled) {
-      return _browser(ApiEndpoints.facebookStart);
+      throw const ServerException(
+        'Facebook sign-in is not set up on this build.',
+      );
     }
 
     // `enabled` tracking, not the iOS default `limited`: a limited login
@@ -120,38 +116,5 @@ class PlatformSocialCredentialSource implements SocialCredentialSource {
       case LoginStatus.operationInProgress:
         throw ServerException(result.message ?? 'Facebook sign-in failed.');
     }
-  }
-
-  // ── Browser redirect flow (both providers) ────────────────────────────
-
-  /// Opens the API's `/auth/<provider>?origin=<app scheme>` in the system
-  /// browser. The API sends it back to `<origin>/auth/<provider>/callback`,
-  /// which the OS hands to this app, carrying `?xc=<one-time code>` — or
-  /// `?<provider>AuthError=1` when the provider or the server refused.
-  Future<SocialCredential> _browser(String startPath) async {
-    final url = Uri.parse('${_config.baseUrl}$startPath').replace(
-      queryParameters: {'origin': _config.socialRedirectOrigin},
-    );
-
-    final String callback;
-    try {
-      callback = await FlutterWebAuth2.authenticate(
-        url: url.toString(),
-        callbackUrlScheme: _config.socialRedirectScheme,
-        options: const FlutterWebAuth2Options(preferEphemeral: true),
-      );
-    } on PlatformException catch (e) {
-      if (e.code == 'CANCELED') throw const SocialSignInCancelled();
-      throw ServerException(e.message ?? 'Sign-in could not be completed.');
-    }
-
-    final params = Uri.parse(callback).queryParameters;
-    final code = params['xc'];
-    if (code == null || code.isEmpty) {
-      throw const ServerException(
-        'Sign-in was refused. Please try again or use another method.',
-      );
-    }
-    return SocialExchangeCode(code);
   }
 }

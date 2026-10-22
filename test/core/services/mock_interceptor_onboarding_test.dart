@@ -115,7 +115,6 @@ void main() {
     AppConfig.instance = const AppConfig.dev(useMock: true);
     final storage = _MockStorageService();
     when(storage.readToken).thenAnswer((_) async => null);
-    when(storage.readRefreshToken).thenAnswer((_) async => null);
     when(storage.clearSession).thenAnswer((_) async {});
     final api = ApiService(storage: storage);
 

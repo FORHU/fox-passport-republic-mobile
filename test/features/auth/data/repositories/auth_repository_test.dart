@@ -35,16 +35,15 @@ void main() {
       email: tEmail,
       name: 'Test',
       token: 'access-token',
-      refreshToken: 'refresh-token',
     );
 
-    test('returns Right(user) and persists both tokens on success', () async {
+    test('returns Right(user) and persists the session token on success',
+        () async {
       // Arrange
       when(
         () => mockRemote.login(tEmail, tPassword),
       ).thenAnswer((_) async => tUser);
       when(() => mockStorage.saveToken(any())).thenAnswer((_) async {});
-      when(() => mockStorage.saveRefreshToken(any())).thenAnswer((_) async {});
       when(() => mockStorage.saveUserModel(any())).thenAnswer((_) async {});
 
       // Act
@@ -54,7 +53,6 @@ void main() {
       expect(result.isRight(), isTrue);
       expect(result.getRight().toNullable(), tUser);
       verify(() => mockStorage.saveToken('access-token')).called(1);
-      verify(() => mockStorage.saveRefreshToken('refresh-token')).called(1);
     });
 
     test('maps UnauthorizedException to UnauthorizedFailure', () async {
@@ -131,8 +129,7 @@ void main() {
   group('AuthRepositoryImpl.logout', () {
     test('clears the session and returns Right(null)', () async {
       // Arrange
-      when(() => mockStorage.readRefreshToken()).thenAnswer((_) async => null);
-      when(() => mockRemote.logout(any())).thenAnswer((_) async {});
+      when(() => mockRemote.logout()).thenAnswer((_) async {});
       when(() => mockStorage.clearSession()).thenAnswer((_) async {});
 
       // Act
@@ -147,10 +144,7 @@ void main() {
       'returns Left(CacheFailure) when clearing the session throws',
       () async {
         // Arrange
-        when(
-          () => mockStorage.readRefreshToken(),
-        ).thenAnswer((_) async => null);
-        when(() => mockRemote.logout(any())).thenAnswer((_) async {});
+        when(() => mockRemote.logout()).thenAnswer((_) async {});
         when(
           () => mockStorage.clearSession(),
         ).thenThrow(Exception('disk error'));
