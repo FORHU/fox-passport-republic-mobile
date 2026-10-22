@@ -386,6 +386,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             navigationShell: navigationShell,
             items: SpaceLayout.venueItems(
               context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.mayor)),
               waiting: ref.watch(venueRequestsProvider).maybeWhen(
                     data: (list) => list.where((r) => r.needsReply).length,
                     orElse: () => 0,
@@ -468,9 +470,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       // The Event space.
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => SpaceLayout(
-          navigationShell: navigationShell,
-          items: SpaceLayout.eventItems(context),
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of partnerships waiting for an answer, on the Events tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.eventItems(
+              context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer)),
+            ),
+          ),
         ),
         branches: [
           StatefulShellBranch(

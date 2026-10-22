@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
@@ -175,36 +176,52 @@ class _ListingCard extends StatelessWidget {
 }
 
 /// Opens the venues the person's events can run at.
-class _PartnersLink extends StatelessWidget {
+class _PartnersLink extends ConsumerWidget {
   const _PartnersLink();
 
   @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: () => context.push(RouteNames.spaceEventPartners),
-        borderRadius: AppRadius.brCard,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: AppRadius.brCard,
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.handshake_outlined, color: AppColors.accent),
-              const SizedBox(width: 12),
-              Expanded(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final waiting = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
+    return InkWell(
+      onTap: () => context.push(RouteNames.spaceEventPartners),
+      borderRadius: AppRadius.brCard,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brCard,
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.handshake_outlined, color: AppColors.accent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.l10n.partnersOpenRow,
+                style: AppTypography.body(),
+              ),
+            ),
+            if (waiting > 0)
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  borderRadius: AppRadius.brPill,
+                ),
                 child: Text(
-                  context.l10n.partnersOpenRow,
-                  style: AppTypography.body(),
+                  '$waiting',
+                  style: AppTypography.label(color: AppColors.onAccent),
                 ),
               ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textMuted,
-              ),
-            ],
-          ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textMuted,
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -34,6 +35,8 @@ class VenueMorePage extends ConsumerWidget {
             )
             .length ??
         0;
+    final partnersWaiting =
+        ref.watch(partnersWaitingProvider(PartnerSide.mayor));
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -54,6 +57,7 @@ class VenueMorePage extends ConsumerWidget {
           _MoreRow(
             icon: Icons.handshake_outlined,
             title: l10n.partnersTitle,
+            badge: partnersWaiting == 0 ? null : '$partnersWaiting',
             onTap: () => context.push(RouteNames.spaceVenuePartners),
           ),
           const SizedBox(height: 8),

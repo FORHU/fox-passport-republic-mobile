@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/catalog_picker_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -66,6 +69,124 @@ class PartnersPage extends ConsumerWidget {
     return sure ?? false;
   }
 
+  /// A Mayor invites an Event Foxer to host at one of their live venues: the
+  /// venue first (when there is a choice), then the Foxer.
+  Future<void> _invite(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final repo = ref.read(spacesRepositoryProvider);
+    List<SpaceListing> mine;
+    try {
+      mine = await ref.read(myVenuesProvider.future);
+    } on Object {
+      if (context.mounted) showTopToast(context, l10n.partnersActionFailed);
+      return;
+    }
+    final live = [
+      for (final v in mine)
+        if (v.status == 'available') v,
+    ];
+    if (!context.mounted) return;
+    if (live.isEmpty) {
+      showTopToast(context, l10n.partnersInviteNoVenue);
+      return;
+    }
+    final venue =
+        live.length == 1 ? live.first : await _chooseVenue(context, live);
+    if (venue == null || !context.mounted) return;
+
+    // Whoever already has a partnership at this venue cannot be asked again.
+    final taken = {
+      for (final p in ref.read(partnersProvider).asData?.value.asMayor ??
+          const <Partner>[])
+        if (p.venueId == venue.id) p.partnerId,
+    };
+    final foxer = await pickCatalogItem(
+      context,
+      kind: CatalogKind.foxers,
+      title: l10n.partnersInviteTitle,
+      hint: l10n.partnersInviteHint,
+      empty: l10n.partnersInviteNone,
+      taken: taken,
+      where: (item) => item.roles.contains('eventFoxer'),
+    );
+    if (foxer == null || !context.mounted) return;
+    final sure = await _confirm(
+      context,
+      title: l10n.partnersInviteConfirmTitle(foxer.title),
+      body: l10n.partnersInviteConfirmBody(venue.name),
+      yes: l10n.partnersInviteAction,
+    );
+    if (!sure || !context.mounted) return;
+    await _run(
+      context,
+      ref,
+      () => repo.inviteEventFoxer(venue.id, foxer.id),
+      l10n.partnersInviteSent,
+    );
+  }
+
+  Future<SpaceListing?> _chooseVenue(
+    BuildContext context,
+    List<SpaceListing> venues,
+  ) {
+    return showModalBottomSheet<SpaceListing>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      builder: (sheet) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16),
+          children: [
+            Text(
+              context.l10n.partnersChooseVenue,
+              style: AppTypography.display(size: 18),
+            ),
+            const SizedBox(height: 8),
+            for (final v in venues)
+              ListTile(
+                title: Text(v.name),
+                subtitle: v.city == null ? null : Text(v.city!),
+                onTap: () => Navigator.of(sheet).pop(v),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Picks a venue and applies to host events there. A venue already on the
+  /// list, in any state, cannot be applied to again.
+  Future<void> _apply(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final taken = {
+      for (final p in ref.read(partnersProvider).asData?.value.asEventFoxer ??
+          const <Partner>[])
+        p.venueId,
+    };
+    final venue = await pickCatalogItem(
+      context,
+      kind: CatalogKind.venues,
+      title: l10n.partnersApplyTitle,
+      hint: l10n.partnersSearchHint,
+      empty: l10n.partnersApplyNone,
+      taken: taken,
+    );
+    if (venue == null || !context.mounted) return;
+    final sure = await _confirm(
+      context,
+      title: l10n.partnersApplyConfirmTitle(venue.title),
+      body: l10n.partnersApplyConfirmBody,
+      yes: l10n.partnersApplyAction,
+    );
+    if (!sure || !context.mounted) return;
+    await _run(
+      context,
+      ref,
+      () => ref.read(spacesRepositoryProvider).applyToVenue(venue.id),
+      l10n.partnersApplySent,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -74,6 +195,19 @@ class PartnersPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => side == PartnerSide.eventFoxer
+            ? _apply(context, ref)
+            : _invite(context, ref),
+        backgroundColor: AppColors.accent,
+        foregroundColor: AppColors.onAccent,
+        icon: const Icon(Icons.add_rounded),
+        label: Text(
+          side == PartnerSide.eventFoxer
+              ? l10n.partnersApply
+              : l10n.partnersInvite,
+        ),
+      ),
       appBar: AppBar(
         title: Text(
           l10n.partnersTitle,
@@ -186,7 +320,13 @@ class PartnersPage extends ConsumerWidget {
             onRefresh: () => ref.refresh(partnersProvider.future),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                4,
+                16,
+                // Room under the last card for the button.
+                96,
+              ),
               children: [
                 Text(
                   side == PartnerSide.mayor

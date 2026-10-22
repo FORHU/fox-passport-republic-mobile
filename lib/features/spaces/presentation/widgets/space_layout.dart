@@ -17,16 +17,24 @@ class SpaceLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final List<NavBarItem> items;
 
+  static String? _badge(int count) =>
+      count == 0 ? null : (count > 99 ? '99+' : '$count');
+
   /// The Venue space: Overview, Venues, Calendar, Earnings and More.
-  /// [waiting] is how many requests need a reply, shown on Overview.
-  static List<NavBarItem> venueItems(BuildContext context, {int waiting = 0}) {
+  /// [waiting] is how many requests need a reply, shown on Overview;
+  /// [partnersWaiting] is how many partnerships do, shown on More.
+  static List<NavBarItem> venueItems(
+    BuildContext context, {
+    int waiting = 0,
+    int partnersWaiting = 0,
+  }) {
     final l10n = context.l10n;
     return [
       NavBarItem(
         label: l10n.spaceTabOverview,
         icon: Icons.dashboard_outlined,
         activeIcon: Icons.dashboard_rounded,
-        badgeLabel: waiting == 0 ? null : (waiting > 99 ? '99+' : '$waiting'),
+        badgeLabel: _badge(waiting),
       ),
       NavBarItem(
         label: l10n.spaceTabVenues,
@@ -47,18 +55,23 @@ class SpaceLayout extends StatelessWidget {
         label: l10n.spaceTabMore,
         icon: Icons.menu_rounded,
         activeIcon: Icons.menu_rounded,
+        badgeLabel: _badge(partnersWaiting),
       ),
     ];
   }
 
   /// The Event space: Events, Calendar, Check-in, Messages.
-  static List<NavBarItem> eventItems(BuildContext context) {
+  static List<NavBarItem> eventItems(
+    BuildContext context, {
+    int partnersWaiting = 0,
+  }) {
     final l10n = context.l10n;
     return [
       NavBarItem(
         label: l10n.spaceTabEvents,
         icon: Icons.celebration_outlined,
         activeIcon: Icons.celebration_rounded,
+        badgeLabel: _badge(partnersWaiting),
       ),
       NavBarItem(
         label: l10n.spaceTabCalendar,
