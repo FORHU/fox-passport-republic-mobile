@@ -72,39 +72,44 @@ class SpacesRepository {
     return all;
   }
 
-  Future<List<SpaceListing>> myEvents() => _listings(
-        ApiEndpoints.events,
-        query: {'ownerId': _userId, 'limit': 50},
-        keys: const ['templates', 'eventTemplates', 'data'],
-        cityKey: 'targetCity',
-      );
-
-  Future<List<SpaceListing>> _listings(
-    String path, {
-    required Map<String, dynamic> query,
-    required List<String> keys,
-    String cityKey = 'city',
-  }) async {
+  /// Every event the person runs. The API gives at most 50 at a time, so this
+  /// asks page by page until it has them all.
+  Future<List<SpaceListing>> myEvents() async {
     if (_userId == null) return const [];
-    final body = await _api.get(path, query: query);
-    Object? rows;
-    if (body is Map) {
-      for (final key in keys) {
-        if (body[key] is List) {
-          rows = body[key];
-          break;
+    const pageSize = 50;
+    const maxPages = 40;
+    final all = <SpaceListing>[];
+    for (var page = 1; page <= maxPages; page++) {
+      final body = await _api.get(
+        ApiEndpoints.events,
+        query: {'ownerId': _userId, 'limit': pageSize, 'page': page},
+      );
+      Object? rows;
+      if (body is Map) {
+        for (final key in const ['templates', 'eventTemplates', 'data']) {
+          if (body[key] is List) {
+            rows = body[key];
+            break;
+          }
         }
+      } else if (body is List) {
+        rows = body;
       }
-    } else if (body is List) {
-      rows = body;
+      if (rows is! List) {
+        throw const FormatException('Listings response is not a list');
+      }
+      all.addAll([
+        for (final row in rows)
+          if (SpaceListing.tryParse(row, cityKey: 'targetCity') case final l?)
+            l,
+      ]);
+      final total = body is Map ? body['total'] : null;
+      // Done when a page comes up short, or the API says there are no more.
+      if (rows.length < pageSize || (total is int && all.length >= total)) {
+        break;
+      }
     }
-    if (rows is! List) {
-      throw const FormatException('Listings response is not a list');
-    }
-    return [
-      for (final row in rows)
-        if (SpaceListing.tryParse(row, cityKey: cityKey) case final l?) l,
-    ];
+    return all;
   }
 
   /// Totals and the latest payouts.

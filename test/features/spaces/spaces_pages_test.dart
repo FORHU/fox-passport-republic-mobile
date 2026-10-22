@@ -8,7 +8,7 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
-import 'package:flutter_template/features/spaces/presentation/pages/space_listings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -197,58 +197,173 @@ void main() {
     });
   });
 
-  group('listings', () {
-    testWidgets('lists your venues with their status', (tester) async {
-      when(() => api.get(ApiEndpoints.venues, query: any(named: 'query')))
-          .thenAnswer(
-        (_) async => {
-          'data': [
-            {
-              'id': 'v1',
-              'name': 'Sky Hall',
-              'status': 'available',
-              'city': 'Baguio',
-            },
-            {'id': 'v2', 'name': 'Old Barn', 'status': 'pending'},
-          ],
-        },
-      );
+  group('the Event home', () {
+    Map<String, Object?> event(
+      String id,
+      String name,
+      String status, {
+      String? city,
+    }) =>
+        {
+          'id': id,
+          'name': name,
+          'status': status,
+          if (city != null) 'targetCity': city,
+        };
 
-      await pump(tester, const SpaceListingsPage(kind: ListingKind.venues));
+    Map<String, Object?> invite(String id) => {
+          'id': id,
+          'status': 'pending',
+          'initiatedBy': 'venueFoxer',
+          'venue': {'id': 'v1', 'name': 'Sky Hall'},
+          'eventFoxer': {'id': 'e1', 'name': 'Ada'},
+        };
 
-      expect(find.text('Venues'), findsOneWidget);
-      expect(find.text('Sky Hall'), findsOneWidget);
-      expect(find.text('Baguio'), findsOneWidget);
-      expect(find.text('Live'), findsOneWidget);
-      expect(find.text('In review'), findsOneWidget);
-      expect(find.text('Manage on the web'), findsOneWidget);
-    });
-
-    testWidgets('your events come from the event list', (tester) async {
+    void api_({
+      List<Map<String, Object?>> events = const [],
+      List<Map<String, Object?>> invites = const [],
+    }) {
       when(() => api.get(ApiEndpoints.events, query: any(named: 'query')))
           .thenAnswer(
+        (_) async => {'templates': events, 'total': events.length},
+      );
+      when(() => api.get(ApiEndpoints.venueAffiliationsMine)).thenAnswer(
         (_) async => {
-          'templates': [
-            {'id': 'e1', 'name': 'Bonfire Night', 'status': 'published'},
-          ],
+          'data': {'asVenueMayor': <Object>[], 'asEventFoxer': invites},
         },
       );
+    }
 
-      await pump(tester, const SpaceListingsPage(kind: ListingKind.events));
+    testWidgets('lists your events with their town and status', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          event('e1', 'Bonfire Night', 'published', city: 'Baguio'),
+          event('e2', 'Garden Party', 'pending'),
+        ],
+      );
+      await pump(tester, const EventsPage());
 
-      expect(find.text('Events'), findsOneWidget);
       expect(find.text('Bonfire Night'), findsOneWidget);
+      expect(find.text('Baguio'), findsOneWidget);
+      expect(find.text('Live'), findsOneWidget);
+      expect(find.text('Garden Party'), findsOneWidget);
+      expect(find.text('2 events'), findsOneWidget);
+    });
+
+    testWidgets('puts the quick actions first', (tester) async {
+      api_(events: [event('e1', 'Bonfire Night', 'published')]);
+      await pump(tester, const EventsPage());
+
+      final actions = tester.getTopLeft(find.text('Check in a guest')).dy;
+      final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
+      expect(actions, lessThan(attention));
+      expect(find.text('Venue partners'), findsOneWidget);
+      expect(find.text('New event'), findsOneWidget);
+    });
+
+    testWidgets('says when all is clear', (tester) async {
+      api_(events: [event('e1', 'Bonfire Night', 'published')]);
+      await pump(tester, const EventsPage());
+
+      expect(find.text("You're all caught up."), findsOneWidget);
+    });
+
+    testWidgets('lists venue invitations waiting for an answer', (
+      tester,
+    ) async {
+      api_(
+        events: [event('e1', 'Bonfire Night', 'published')],
+        invites: [invite('a'), invite('b')],
+      );
+      await pump(tester, const EventsPage());
+
+      expect(find.text('2 venue invitations are waiting'), findsOneWidget);
+      expect(find.text("You're all caught up."), findsNothing);
+      // The Venue partners shortcut carries the count.
+      expect(find.text('2'), findsOneWidget);
+    });
+
+    testWidgets('says how many events are in review, declined or drafts', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          event('e1', 'Live One', 'published'),
+          event('e2', 'Waiting One', 'pending'),
+          event('e3', 'Declined One', 'rejected'),
+          event('e4', 'Draft One', 'draft'),
+        ],
+      );
+      await pump(tester, const EventsPage());
+
+      expect(find.text('1 event is in review'), findsOneWidget);
+      expect(find.text('1 event was declined'), findsOneWidget);
+      expect(find.text('1 draft to finish'), findsOneWidget);
+    });
+
+    testWidgets('tapping a status row shows just those events', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          event('e1', 'Live One', 'published'),
+          event('e2', 'Draft One', 'draft'),
+        ],
+      );
+      await pump(tester, const EventsPage());
+
+      await tester.tap(find.text('1 draft to finish'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Draft One'), findsOneWidget);
+      expect(find.text('Live One'), findsNothing);
+      expect(find.text('1 of 2 events'), findsOneWidget);
+    });
+
+    testWidgets('filters by status and searches by name', (tester) async {
+      api_(
+        events: [
+          event('e1', 'Bonfire Night', 'published', city: 'Baguio'),
+          event('e2', 'Garden Party', 'published', city: 'Sydney'),
+          event('e3', 'Old Draft', 'draft'),
+        ],
+      );
+      await pump(tester, const EventsPage());
+
+      expect(find.text('Live 2'), findsOneWidget);
+      await tester.tap(find.text('Live 2'));
+      await tester.pumpAndSettle();
+      expect(find.text('Old Draft'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'sydney');
+      await tester.pumpAndSettle();
+      expect(find.text('Garden Party'), findsOneWidget);
+      expect(find.text('Bonfire Night'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'zzz');
+      await tester.pumpAndSettle();
+      expect(find.text('No events match.'), findsOneWidget);
     });
 
     testWidgets('says what to do when there is nothing listed yet', (
       tester,
     ) async {
-      when(() => api.get(ApiEndpoints.venues, query: any(named: 'query')))
-          .thenAnswer((_) async => {'data': <Object>[]});
+      api_();
+      await pump(tester, const EventsPage());
 
-      await pump(tester, const SpaceListingsPage(kind: ListingKind.venues));
+      expect(find.textContaining("haven't created an event"), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
+    });
 
-      expect(find.textContaining("haven't listed a venue"), findsOneWidget);
+    testWidgets('says so when the events cannot be loaded', (tester) async {
+      when(() => api.get(ApiEndpoints.events, query: any(named: 'query')))
+          .thenThrow(Exception('down'));
+      await pump(tester, const EventsPage());
+
+      expect(find.text("We couldn't load this right now."), findsOneWidget);
+      expect(find.text('Try again'), findsOneWidget);
     });
   });
 

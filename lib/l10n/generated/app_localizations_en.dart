@@ -1326,6 +1326,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get eventsSearchHint => 'Search your events';
+
+  @override
+  String eventsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsCountOf(int shown, int total) {
+    return '$shown of $total events';
+  }
+
+  @override
+  String get eventsNoMatch => 'No events match.';
+
+  @override
+  String eventsInvitesWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venue invitations are waiting',
+      one: '1 venue invitation is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events are in review',
+      one: '1 event is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events were declined',
+      one: '1 event was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventsNewOnWeb => 'New event';
+
+  @override
   String get overviewAttention => 'Needs your attention';
 
   @override
