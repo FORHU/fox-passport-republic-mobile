@@ -10,7 +10,6 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/payments/payments_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import '../../support/future_day.dart';
 
 class _MockApi extends Mock implements ApiService {}
 
@@ -226,7 +225,10 @@ void main() {
     expect(find.text('Sample speaker'), findsOneWidget);
     expect(find.text('Pick a date.'), findsOneWidget);
 
-    await tapFutureDay(tester);
+    // Next month: every day in it is still ahead, whatever today is.
+    await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('28').first);
     await tester.pumpAndSettle();
 
     expect(find.text('Total'), findsOneWidget);

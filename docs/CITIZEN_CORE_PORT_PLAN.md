@@ -197,8 +197,7 @@ Each milestone ends with `flutter analyze` clean and tests passing.
 
 #### Setup still needed (credentials I do not have)
 1. **Google:** create Android + iOS OAuth clients in Google Cloud (package
-   `com.example.flutter_template` / bundle `com.example.flutterTemplate` —
-   change these first, see below). Put the **web** client ID in the mobile
+   and bundle `com.foxpassport.app`). Put the **web** client ID in the mobile
    `.env.dev` as `GOOGLE_SERVER_CLIENT_ID`; iOS client ID as `GOOGLE_CLIENT_ID`.
    On iOS also add the reversed client ID as a URL scheme in `Info.plist`.
 2. **Facebook:** add the app ID + client token to `AndroidManifest.xml`
@@ -208,14 +207,5 @@ Each milestone ends with `flutter analyze` clean and tests passing.
 3. **Registered redirect:** the Google/Facebook consoles need the API's own
    `/auth/<provider>/callback` URL (already the case for the web app) — the
    `foxpassport://` scheme itself does **not** go in those consoles.
-4. **Identifiers:** the Android `applicationId` and iOS bundle ID are still the
-   template's `com.example.*`. Rename before registering OAuth clients.
-- [ ] M3 Browse + Search
-- [ ] M4 Detail screens
-- [ ] M5 Booking (+ payment stub)
-- [ ] M6 Tickets
-- [ ] M7 Passport, Favorites, Notifications
-- [ ] M8 Map (Mapbox)
-- [ ] M9 Polish
-- [ ] M10 Messages (partial: inbox, text chat, requests, and tab connected; realtime and advanced chat actions remain)
-- [ ] M11 Navigation and Home (Bookings tab, Map into Search, data-driven Home, occasion results)
+4. **Identifiers:** done 21 Oct — Android `applicationId`/namespace and the
+   iOS/macOS bundle ID are `com.foxpassport.app` (Linux too).
