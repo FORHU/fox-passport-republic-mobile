@@ -43,11 +43,34 @@ class SpacesRepository {
     });
   }
 
-  Future<List<SpaceListing>> myVenues() => _listings(
+  /// Every venue the person runs. The API gives at most 100 at a time, so this
+  /// asks page by page until it has them all.
+  Future<List<SpaceListing>> myVenues() async {
+    if (_userId == null) return const [];
+    const pageSize = 100;
+    const maxPages = 20;
+    final all = <SpaceListing>[];
+    for (var page = 1; page <= maxPages; page++) {
+      final body = await _api.get(
         ApiEndpoints.venues,
-        query: {'hostId': _userId, 'limit': 50},
-        keys: const ['venues', 'data'],
+        query: {'hostId': _userId, 'limit': pageSize, 'page': page},
       );
+      final rows = body is Map ? body['venues'] ?? body['data'] : body;
+      if (rows is! List) {
+        throw const FormatException('Listings response is not a list');
+      }
+      all.addAll([
+        for (final row in rows)
+          if (SpaceListing.tryParse(row) case final l?) l,
+      ]);
+      final total = body is Map ? body['total'] : null;
+      // Done when a page comes up short, or the API says there are no more.
+      if (rows.length < pageSize || (total is int && all.length >= total)) {
+        break;
+      }
+    }
+    return all;
+  }
 
   Future<List<SpaceListing>> myEvents() => _listings(
         ApiEndpoints.events,
@@ -227,6 +250,15 @@ class SpacesRepository {
   /// An Event Foxer asks to run events at a venue. Its Mayor decides.
   Future<void> applyToVenue(String venueId) async {
     await _api.post(ApiEndpoints.venueAffiliationApply, {'venueId': venueId});
+  }
+
+  /// A Mayor asks an Event Foxer to host events at one of their venues. The
+  /// Event Foxer decides.
+  Future<void> inviteEventFoxer(String venueId, String eventFoxerId) async {
+    await _api.post(ApiEndpoints.venueAffiliationInvite, {
+      'venueId': venueId,
+      'eventFoxerId': eventFoxerId,
+    });
   }
 
   /// Approves an application (Mayor) or accepts an invitation (Event Foxer).

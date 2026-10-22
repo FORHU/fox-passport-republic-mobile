@@ -123,6 +123,25 @@ class SpaceListing extends Equatable {
   final String? city;
   final String? imageUrl;
 
+  /// Which filter group the status belongs to: `live`, `pending`, `draft`,
+  /// `rejected` or `archived`. Anything unknown counts as a draft.
+  String get group => switch (status) {
+        'available' || 'published' => 'live',
+        'pending' => 'pending',
+        'rejected' => 'rejected',
+        'archived' => 'archived',
+        _ => 'draft',
+      };
+
+  /// Whether the name or town contains [query], ignoring case. A blank query
+  /// matches everything.
+  bool matches(String query) {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return true;
+    return name.toLowerCase().contains(q) ||
+        (city?.toLowerCase().contains(q) ?? false);
+  }
+
   @override
   List<Object?> get props => [id, name, status, city, imageUrl];
 }
