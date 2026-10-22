@@ -2554,6 +2554,108 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @overviewAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your attention'**
+  String get overviewAttention;
+
+  /// No description provided for @overviewAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up.'**
+  String get overviewAllClear;
+
+  /// No description provided for @overviewPartnersWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 partner application is waiting} other{{count} partner applications are waiting}}'**
+  String overviewPartnersWaiting(int count);
+
+  /// No description provided for @overviewVenuesInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue is in review} other{{count} venues are in review}}'**
+  String overviewVenuesInReview(int count);
+
+  /// No description provided for @overviewVenuesDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue was declined} other{{count} venues were declined}}'**
+  String overviewVenuesDeclined(int count);
+
+  /// No description provided for @overviewVenuesDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 draft to finish} other{{count} drafts to finish}}'**
+  String overviewVenuesDrafts(int count);
+
+  /// No description provided for @overviewTodayAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'Today and coming up'**
+  String get overviewTodayAhead;
+
+  /// No description provided for @overviewToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get overviewToday;
+
+  /// No description provided for @overviewNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get overviewNumbers;
+
+  /// No description provided for @calendarAllVenuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All venues ({count})'**
+  String calendarAllVenuesCount(int count);
+
+  /// No description provided for @calendarShowAllVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all venues'**
+  String get calendarShowAllVenues;
+
+  /// No description provided for @venuesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or city'**
+  String get venuesSearchHint;
+
+  /// No description provided for @venuesSearchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get venuesSearchClear;
+
+  /// No description provided for @venuesFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count}'**
+  String venuesFilterAll(int count);
+
+  /// No description provided for @venuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue} other{{count} venues}}'**
+  String venuesCount(int count);
+
+  /// No description provided for @venuesCountOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {total} venues'**
+  String venuesCountOf(int shown, int total);
+
+  /// No description provided for @venuesNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No venues match.'**
+  String get venuesNoMatch;
+
   /// No description provided for @partnersTitle.
   ///
   /// In en, this message translates to:

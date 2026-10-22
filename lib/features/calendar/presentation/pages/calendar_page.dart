@@ -73,6 +73,27 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
     return _month.subtract(Duration(days: lead));
   }
 
+  final GlobalKey _agendaKey = GlobalKey();
+
+  /// Picks a day. In the Venue space the list for that day may sit below a
+  /// full month, so it is brought into view.
+  void _select(DateTime day) {
+    setState(() => _selected = day);
+    if (!widget.manageVenues) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _agendaKey.currentContext;
+      if (!mounted || target == null) return;
+      Scrollable.ensureVisible(
+        target,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        // The heading lands a little below the middle, so the lower weeks of
+        // the grid stay in sight above the list.
+        alignment: 0.45,
+      );
+    });
+  }
+
   void _go(int months) => setState(() {
         _month = DateTime(_month.year, _month.month + months);
         _selected = _month;
@@ -119,7 +140,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
           locale: locale,
           onMonth: _go,
           onToday: _today,
-          onSelect: (d) => setState(() => _selected = d),
+          onSelect: _select,
+          agendaKey: _agendaKey,
           onToggleRole: _toggleRole,
           onOpenTickets: widget.onOpenTickets,
           manageVenues: widget.manageVenues,
@@ -147,7 +169,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
           locale: locale,
           onMonth: _go,
           onToday: _today,
-          onSelect: (d) => setState(() => _selected = d),
+          onSelect: _select,
+          agendaKey: _agendaKey,
           onToggleRole: _toggleRole,
           onOpenTickets: widget.onOpenTickets,
           manageVenues: widget.manageVenues,
@@ -240,6 +263,7 @@ class _Body extends StatelessWidget {
     this.venues = const [],
     this.venueFilter,
     this.onVenueFilter,
+    this.agendaKey,
     this.onManageDay,
     this.onOpenDay,
   });
@@ -263,6 +287,9 @@ class _Body extends StatelessWidget {
   final String? venueFilter;
   final ValueChanged<String?>? onVenueFilter;
   final VoidCallback? onManageDay;
+
+  /// Marks the heading of the chosen day's list, to scroll it into view.
+  final Key? agendaKey;
   final ValueChanged<CalendarEntry>? onOpenDay;
 
   @override
@@ -295,6 +322,16 @@ class _Body extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
+        // With many venues a row of chips for each would fill the screen, so
+        // the choice is one button that opens a list with a search.
+        if (manageVenues && venues.length > 1) ...[
+          _VenueSelector(
+            venues: venues,
+            selectedId: venueFilter,
+            onChanged: (id) => onVenueFilter?.call(id),
+          ),
+          const SizedBox(height: 8),
+        ],
         Row(
           children: [
             IconButton(
@@ -388,48 +425,36 @@ class _Body extends StatelessWidget {
               minHeight: 2,
             ),
           ),
-        if (manageVenues && venues.length > 1) ...[
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              ChoiceChip(
-                selected: venueFilter == null,
-                onSelected: (_) => onVenueFilter?.call(null),
-                label: Text(l10n.calendarAllVenues),
-              ),
-              for (final venue in venues)
-                ChoiceChip(
-                  selected: venueFilter == venue.id,
-                  onSelected: (_) => onVenueFilter?.call(venue.id),
-                  label: Text(venue.name),
-                ),
-            ],
-          ),
-        ],
         if (present.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final role in present)
-                FilterChip(
-                  selected: !hidden.contains(role),
-                  onSelected: (_) => onToggleRole(role),
-                  avatar: CircleAvatar(
-                    radius: 5,
-                    backgroundColor: roleColor(role),
+          const SizedBox(height: 12),
+          // One scrolling row, so the legend never grows into a block that
+          // pushes the day's list off the screen.
+          SizedBox(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (final role in present)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: FilterChip(
+                      selected: !hidden.contains(role),
+                      onSelected: (_) => onToggleRole(role),
+                      avatar: CircleAvatar(
+                        radius: 5,
+                        backgroundColor: roleColor(role),
+                      ),
+                      label: Text(roleLabel(l10n, role)),
+                      showCheckmark: false,
+                    ),
                   ),
-                  label: Text(roleLabel(l10n, role)),
-                  showCheckmark: false,
-                ),
-            ],
+              ],
+            ),
           ),
         ],
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         Row(
+          key: agendaKey,
           children: [
             Expanded(
               child: Text(
@@ -861,6 +886,184 @@ class _DayManageSheet extends ConsumerWidget {
               },
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// One button that says which venue the calendar shows, and opens a searchable
+/// list to change it. A venue is cleared with the cross.
+class _VenueSelector extends StatelessWidget {
+  const _VenueSelector({
+    required this.venues,
+    required this.selectedId,
+    required this.onChanged,
+  });
+
+  final List<SpaceListing> venues;
+  final String? selectedId;
+  final ValueChanged<String?> onChanged;
+
+  Future<void> _open(BuildContext context) async {
+    final pick = await showModalBottomSheet<_VenuePick>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.surface,
+      builder: (_) => _VenueSheet(venues: venues, selectedId: selectedId),
+    );
+    // Dismissing the sheet changes nothing; choosing All venues is a pick.
+    if (pick != null) onChanged(pick.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final chosen = venues.where((v) => v.id == selectedId).firstOrNull;
+    return Material(
+      color: AppColors.surface,
+      borderRadius: AppRadius.brCard,
+      child: InkWell(
+        borderRadius: AppRadius.brCard,
+        onTap: () => unawaited(_open(context)),
+        child: Container(
+          height: 48,
+          padding: const EdgeInsets.only(left: 12, right: 4),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.brCard,
+            border: Border.all(
+              color: chosen == null ? AppColors.border : AppColors.accent,
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.storefront_outlined,
+                size: 20,
+                color: AppColors.textMuted,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  chosen?.name ?? l10n.calendarAllVenuesCount(venues.length),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body(),
+                ),
+              ),
+              if (chosen != null)
+                IconButton(
+                  tooltip: l10n.calendarShowAllVenues,
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                  onPressed: () => onChanged(null),
+                )
+              else
+                const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Icon(
+                    Icons.arrow_drop_down_rounded,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A choice from the venue list: a venue, or all of them when [id] is null.
+class _VenuePick {
+  const _VenuePick(this.id);
+
+  final String? id;
+}
+
+class _VenueSheet extends StatefulWidget {
+  const _VenueSheet({required this.venues, required this.selectedId});
+
+  final List<SpaceListing> venues;
+  final String? selectedId;
+
+  @override
+  State<_VenueSheet> createState() => _VenueSheetState();
+}
+
+class _VenueSheetState extends State<_VenueSheet> {
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final shown = [
+      for (final v in widget.venues)
+        if (v.matches(_query)) v,
+    ];
+    final searching = _query.trim().isNotEmpty;
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.75,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: TextField(
+                onChanged: (v) => setState(() => _query = v),
+                decoration: InputDecoration(
+                  hintText: l10n.venuesSearchHint,
+                  prefixIcon: const Icon(Icons.search_rounded),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 16),
+                children: [
+                  // All venues is offered unless a search is narrowing things.
+                  if (!searching)
+                    ListTile(
+                      leading: const Icon(Icons.layers_outlined),
+                      title: Text(
+                        l10n.calendarAllVenuesCount(widget.venues.length),
+                      ),
+                      trailing: widget.selectedId == null
+                          ? const Icon(
+                              Icons.check_rounded,
+                              color: AppColors.accent,
+                            )
+                          : null,
+                      onTap: () =>
+                          Navigator.of(context).pop(const _VenuePick(null)),
+                    ),
+                  for (final v in shown)
+                    ListTile(
+                      title: Text(v.name, maxLines: 1),
+                      subtitle: v.city == null ? null : Text(v.city!),
+                      trailing: v.id == widget.selectedId
+                          ? const Icon(
+                              Icons.check_rounded,
+                              color: AppColors.accent,
+                            )
+                          : null,
+                      onTap: () => Navigator.of(context).pop(_VenuePick(v.id)),
+                    ),
+                  if (shown.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        l10n.venuesNoMatch,
+                        textAlign: TextAlign.center,
+                        style: AppTypography.body(color: AppColors.textMuted),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

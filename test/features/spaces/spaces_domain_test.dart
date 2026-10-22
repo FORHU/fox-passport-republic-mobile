@@ -109,6 +109,35 @@ void main() {
   });
 
   group('SpaceListing', () {
+    test('groups its status for filtering', () {
+      SpaceListing with_(String status) =>
+          SpaceListing(id: '1', name: 'x', status: status);
+
+      expect(with_('available').group, 'live');
+      expect(with_('published').group, 'live');
+      expect(with_('pending').group, 'pending');
+      expect(with_('rejected').group, 'rejected');
+      expect(with_('archived').group, 'archived');
+      expect(with_('draft').group, 'draft');
+      expect(with_('').group, 'draft');
+    });
+
+    test('is found by name or town, ignoring case', () {
+      const l = SpaceListing(
+        id: '1',
+        name: 'Sky Hall',
+        status: 'available',
+        city: 'Baguio',
+      );
+
+      expect(l.matches(''), isTrue);
+      expect(l.matches('  '), isTrue);
+      expect(l.matches('sky'), isTrue);
+      expect(l.matches('BAGUIO'), isTrue);
+      expect(l.matches('hall b'), isFalse);
+      expect(l.matches('manila'), isFalse);
+    });
+
     test('reads a venue, with its city', () {
       final l = SpaceListing.tryParse({
         'id': 'v1',
@@ -247,9 +276,59 @@ void main() {
       verify(
         () => api.get(
           ApiEndpoints.venues,
-          query: {'hostId': 'u1', 'limit': 50},
+          query: {'hostId': 'u1', 'limit': 100, 'page': 1},
         ),
       ).called(1);
+    });
+
+    test('my venues come page by page until all are in', () async {
+      Map<String, Object> page(int from, int count) => {
+            'venues': [
+              for (var i = from; i < from + count; i++)
+                {'id': 'v$i', 'name': 'Venue $i', 'status': 'available'},
+            ],
+            'total': 130,
+          };
+      when(
+        () => api.get(
+          ApiEndpoints.venues,
+          query: {'hostId': 'u1', 'limit': 100, 'page': 1},
+        ),
+      ).thenAnswer((_) async => page(0, 100));
+      when(
+        () => api.get(
+          ApiEndpoints.venues,
+          query: {'hostId': 'u1', 'limit': 100, 'page': 2},
+        ),
+      ).thenAnswer((_) async => page(100, 30));
+
+      final list = await repo.myVenues();
+
+      expect(list, hasLength(130));
+      expect(list.last.id, 'v129');
+      verifyNever(
+        () => api.get(
+          ApiEndpoints.venues,
+          query: {'hostId': 'u1', 'limit': 100, 'page': 3},
+        ),
+      );
+    });
+
+    test('stops asking once the total is reached on a full page', () async {
+      when(() => api.get(ApiEndpoints.venues, query: any(named: 'query')))
+          .thenAnswer(
+        (_) async => {
+          'venues': [
+            for (var i = 0; i < 100; i++)
+              {'id': 'v$i', 'name': 'Venue $i', 'status': 'available'},
+          ],
+          'total': 100,
+        },
+      );
+
+      expect(await repo.myVenues(), hasLength(100));
+      verify(() => api.get(ApiEndpoints.venues, query: any(named: 'query')))
+          .called(1);
     });
 
     test('my events are asked for by owner, from either list key', () async {
