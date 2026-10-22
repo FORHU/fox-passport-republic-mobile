@@ -1326,6 +1326,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String get overviewAttention => 'Needs your attention';
+
+  @override
+  String get overviewAllClear => 'You\'re all caught up.';
+
+  @override
+  String overviewPartnersWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partner applications are waiting',
+      one: '1 partner application is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues are in review',
+      one: '1 venue is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues were declined',
+      one: '1 venue was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get overviewTodayAhead => 'Today and coming up';
+
+  @override
+  String get overviewToday => 'Today';
+
+  @override
+  String get overviewNumbers => 'Numbers';
+
+  @override
   String calendarAllVenuesCount(int count) {
     return 'All venues ($count)';
   }
