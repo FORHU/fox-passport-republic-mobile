@@ -114,32 +114,35 @@ class VenueOverviewPage extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
             // What the person does most, within reach of the thumb.
-            Row(
-              children: [
-                Expanded(
-                  child: _QuickAction(
-                    icon: Icons.qr_code_scanner_rounded,
-                    label: l10n.venueQuickCheckIn,
-                    onTap: () => context.go(RouteNames.spaceVenueCheckIn),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.qr_code_scanner_rounded,
+                      label: l10n.venueQuickCheckIn,
+                      onTap: () => context.go(RouteNames.spaceVenueCheckIn),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _QuickAction(
-                    icon: Icons.event_busy_outlined,
-                    label: l10n.venueQuickCloseDay,
-                    onTap: () => context.go(RouteNames.spaceVenueCalendar),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.event_busy_outlined,
+                      label: l10n.venueQuickCloseDay,
+                      onTap: () => context.go(RouteNames.spaceVenueCalendar),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _QuickAction(
-                    icon: Icons.add_business_outlined,
-                    label: l10n.venueQuickAddVenue,
-                    onTap: () => context.push(RouteNames.spaceVenueStudio),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.add_business_outlined,
+                      label: l10n.venueQuickAddVenue,
+                      onTap: () => context.push(RouteNames.spaceVenueStudio),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             _SectionHeader(
               title: l10n.overviewAttention,

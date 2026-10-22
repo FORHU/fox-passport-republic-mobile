@@ -385,7 +385,7 @@ void main() {
       expect(find.text('TODAY'), findsOneWidget);
     });
 
-    testWidgets('number tiles in a row line up', (tester) async {
+    testWidgets('tiles in a row line up', (tester) async {
       await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
       // A phone-width screen, where a long label can wrap onto a second line.
       tester.view.physicalSize = const Size(360, 2000);
@@ -400,6 +400,8 @@ void main() {
       for (final pair in [
         ('Venues live', 'Bookings, next 30 days'),
         ('Paid out', 'Pending payouts'),
+        ('Check in a guest', 'Close a day'),
+        ('Close a day', 'Add a venue'),
       ]) {
         expect(
           tester.getTopLeft(tile(pair.$1)).dy,
