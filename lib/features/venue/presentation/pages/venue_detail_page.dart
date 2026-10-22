@@ -8,6 +8,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -173,6 +174,12 @@ class _Loaded extends ConsumerWidget {
                         style: AppTypography.body(),
                       ),
                     ],
+                    LocationCard(
+                      title: l10n.searchEventLocation,
+                      place: venue.place,
+                      lat: venue.lat,
+                      lng: venue.lng,
+                    ),
                     _Chips(title: l10n.venueIncluded, values: included),
                     _Chips(title: l10n.venueAmenities, values: venue.amenities),
                     _Chips(

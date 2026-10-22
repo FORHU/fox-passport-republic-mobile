@@ -43,6 +43,7 @@ dependencies:
   flutter_facebook_auth: ^7.2.0
   flutter_localizations:
     sdk: flutter
+  flutter_map: ^8.3.2
   flutter_riverpod: ^3.3.2
   flutter_secure_storage: ^10.3.1
   flutter_web_auth_2: ^5.1.0
@@ -55,7 +56,9 @@ dependencies:
   google_sign_in: ^7.2.0
   image_picker: ^1.2.4
   intl: ^0.20.2
+  latlong2: ^0.10.1
   logger: ^2.7.0
+  mobile_scanner: ^7.4.2
   qr_flutter: ^4.1.0
   screen_brightness: ^2.1.11
   shared_preferences: ^2.3.2
