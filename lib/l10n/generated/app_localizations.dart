@@ -2554,6 +2554,18 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @calendarAllVenuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All venues ({count})'**
+  String calendarAllVenuesCount(int count);
+
+  /// No description provided for @calendarShowAllVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all venues'**
+  String get calendarShowAllVenues;
+
   /// No description provided for @venuesSearchHint.
   ///
   /// In en, this message translates to:

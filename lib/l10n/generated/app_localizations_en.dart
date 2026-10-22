@@ -1326,6 +1326,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get venueAddVenue => 'Add venue';
 
   @override
+  String calendarAllVenuesCount(int count) {
+    return 'All venues ($count)';
+  }
+
+  @override
+  String get calendarShowAllVenues => 'Show all venues';
+
+  @override
   String get venuesSearchHint => 'Search by name or city';
 
   @override
