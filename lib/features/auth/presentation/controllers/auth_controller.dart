@@ -275,9 +275,20 @@ class AuthController extends Notifier<AuthState> {
 
   /// Shows a new display name everywhere the session user is read, once the
   /// server has accepted it.
-  void setSessionName(String name) {
+  void setSessionName(String name) => setSessionProfile(name: name);
+
+  /// Shows a changed name, username or photo everywhere the session user is
+  /// read, once the server has accepted it.
+  void setSessionProfile({String? name, String? username, String? imageUrl}) {
     final user = state.user;
-    if (user != null) state = state.copyWith(user: user.withName(name));
+    if (user == null) return;
+    state = state.copyWith(
+      user: user.withProfile(
+        name: name,
+        username: username,
+        imageUrl: imageUrl,
+      ),
+    );
   }
 
   Future<bool> logout() async {

@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/validators.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/auth/presentation/widgets/sign_out.dart';
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
-import 'package:flutter_template/shared/widgets/app_input.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-/// Who you are on FoxPassport: name, email, when you joined, and the two
-/// things you do with an account here, rename it and sign out.
+/// Who you are on FoxPassport: photo, name, username, email, phone and when
+/// you joined, with a way in to edit it and a way to sign out.
 ///
 /// Backed by [ProfileController]. While the full profile loads, or if it
 /// fails, the name and email of the signed-in session are shown instead.
@@ -30,6 +29,9 @@ class ProfilePage extends ConsumerWidget {
 
     final name = state.profile?.name ?? sessionUser?.name ?? '';
     final email = state.profile?.email ?? sessionUser?.email ?? '';
+    final username = state.profile?.username ?? sessionUser?.username ?? '';
+    final phone = state.profile?.phone;
+    final photo = state.profile?.imageUrl ?? sessionUser?.imageUrl;
     final joinedAt = state.profile?.joinedAt;
     final bio = state.profile?.bio;
     final loadFailed = state.error != null && state.profile == null;
@@ -47,7 +49,7 @@ class ProfilePage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20),
           children: [
-            Center(child: _Avatar(name: name, imageUrl: sessionUser?.imageUrl)),
+            Center(child: _Avatar(name: name, imageUrl: photo)),
             const SizedBox(height: 16),
             if (name.isNotEmpty)
               Text(
@@ -55,10 +57,26 @@ class ProfilePage extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: AppTypography.display(size: 24),
               ),
+            if (username.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                '@$username',
+                textAlign: TextAlign.center,
+                style: AppTypography.body(color: AppColors.accent),
+              ),
+            ],
             if (email.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(
                 email,
+                textAlign: TextAlign.center,
+                style: AppTypography.body(),
+              ),
+            ],
+            if (phone != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                phone,
                 textAlign: TextAlign.center,
                 style: AppTypography.body(),
               ),
@@ -112,10 +130,11 @@ class ProfilePage extends ConsumerWidget {
             ],
             const SizedBox(height: 28),
             SecondaryButton(
-              label: l10n.profileEditName,
+              label: l10n.profileEdit,
               icon: Icons.edit_outlined,
-              onPressed:
-                  name.isEmpty ? null : () => _editName(context, ref, name),
+              onPressed: name.isEmpty
+                  ? null
+                  : () => context.push(RouteNames.profileEdit),
             ),
             const SizedBox(height: 12),
             TextButton.icon(
@@ -131,24 +150,6 @@ class ProfilePage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _editName(
-    BuildContext context,
-    WidgetRef ref,
-    String current,
-  ) async {
-    final saved = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.surface,
-      builder: (_) => _EditNameSheet(current: current),
-    );
-    if (saved == true && context.mounted) {
-      showTopToast(context, context.l10n.profileNameUpdated);
-    }
   }
 }
 
@@ -166,78 +167,6 @@ class _Avatar extends StatelessWidget {
       fallback: Text(
         name.isEmpty ? '?' : name.characters.first.toUpperCase(),
         style: AppTypography.display(size: 32, color: AppColors.accent),
-      ),
-    );
-  }
-}
-
-class _EditNameSheet extends ConsumerStatefulWidget {
-  const _EditNameSheet({required this.current});
-
-  final String current;
-
-  @override
-  ConsumerState<_EditNameSheet> createState() => _EditNameSheetState();
-}
-
-class _EditNameSheetState extends ConsumerState<_EditNameSheet> {
-  final _form = GlobalKey<FormState>();
-  late final _name = TextEditingController(text: widget.current);
-  bool _saving = false;
-
-  @override
-  void dispose() {
-    _name.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    if (_saving || !(_form.currentState?.validate() ?? false)) return;
-    final failed = context.l10n.profileNameUpdateFailed;
-    setState(() => _saving = true);
-    final error = await ref.read(profileControllerProvider.notifier).updateName(
-          _name.text,
-        );
-    if (!mounted) return;
-    if (error == null) {
-      Navigator.of(context).pop(true);
-      return;
-    }
-    setState(() => _saving = false);
-    showTopToast(context, error.isEmpty ? failed : error);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        4,
-        20,
-        20 + MediaQuery.viewInsetsOf(context).bottom,
-      ),
-      child: Form(
-        key: _form,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(l10n.profileEditName, style: AppTypography.display(size: 18)),
-            const SizedBox(height: 16),
-            AppInput(
-              label: l10n.profileNameLabel,
-              controller: _name,
-              validator: Validators.signupName,
-            ),
-            const SizedBox(height: 16),
-            PrimaryButton(
-              label: l10n.profileSave,
-              isLoading: _saving,
-              onPressed: _saving ? null : _save,
-            ),
-          ],
-        ),
       ),
     );
   }
