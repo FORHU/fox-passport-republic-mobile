@@ -6735,6 +6735,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That didn\'t go through. Try again.'**
   String get teamActionFailed;
+
+  /// No description provided for @studioStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'STEP {n} OF {total}'**
+  String studioStepOf(int n, int total);
+
+  /// No description provided for @studioCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover'**
+  String get studioCover;
+
+  /// No description provided for @studioPhotoCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of {max} photos'**
+  String studioPhotoCount(int n, int max);
+
+  /// No description provided for @esCardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get esCardDetails;
+
+  /// No description provided for @esCardGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests and policy'**
+  String get esCardGuests;
+
+  /// No description provided for @esAddTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esAddTalent;
+
+  /// No description provided for @esAddServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get esAddServices;
+
+  /// No description provided for @esAddEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get esAddEquipment;
+
+  /// No description provided for @esAddHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to your package'**
+  String get esAddHint;
+
+  /// No description provided for @esYourPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price to sell at'**
+  String get esYourPrice;
+
+  /// No description provided for @esPackageItems.
+  ///
+  /// In en, this message translates to:
+  /// **'What is included'**
+  String get esPackageItems;
 }
 
 class _AppLocalizationsDelegate

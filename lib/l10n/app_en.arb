@@ -1239,5 +1239,18 @@
   "teamWithdrawn": "Invitation withdrawn",
   "teamRequestAccepted": "Request accepted",
   "teamRequestDeclined": "Request declined",
-  "teamActionFailed": "That didn't go through. Try again."
+  "teamActionFailed": "That didn't go through. Try again.",
+  "studioStepOf": "STEP {n} OF {total}",
+  "@studioStepOf": {"placeholders":{"n":{"type":"int"},"total":{"type":"int"}}},
+  "studioCover": "Cover",
+  "studioPhotoCount": "{n} of {max} photos",
+  "@studioPhotoCount": {"placeholders":{"n":{"type":"int"},"max":{"type":"int"}}},
+  "esCardDetails": "Details",
+  "esCardGuests": "Guests and policy",
+  "esAddTalent": "Talent",
+  "esAddServices": "Services",
+  "esAddEquipment": "Equipment",
+  "esAddHint": "Add to your package",
+  "esYourPrice": "Price to sell at",
+  "esPackageItems": "What is included"
 }
