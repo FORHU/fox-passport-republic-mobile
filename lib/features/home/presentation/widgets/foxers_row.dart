@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -58,7 +60,11 @@ class HomeFoxers extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   SizedBox(
-                    height: 170,
+                    // Grows with the text size so a larger font does not clip.
+                    height: math.max(
+                      170,
+                      110 + MediaQuery.textScalerOf(context).scale(58),
+                    ),
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: page.items.length,
