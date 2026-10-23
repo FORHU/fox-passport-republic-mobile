@@ -6435,6 +6435,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increase {thing}'**
   String a11yIncrease(String thing);
+
+  /// No description provided for @teamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get teamTitle;
+
+  /// No description provided for @teamIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.'**
+  String get teamIntro;
+
+  /// No description provided for @teamYourVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venues'**
+  String get teamYourVenues;
+
+  /// No description provided for @teamYourEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Your upcoming events'**
+  String get teamYourEvents;
+
+  /// No description provided for @teamNoVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no venues yet.'**
+  String get teamNoVenues;
+
+  /// No description provided for @teamNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no upcoming events.'**
+  String get teamNoEvents;
+
+  /// No description provided for @teamAcceptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept requests from Organizers'**
+  String get teamAcceptsTitle;
+
+  /// No description provided for @teamAcceptsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved Organizers can ask to join. You decide on every request.'**
+  String get teamAcceptsBody;
+
+  /// No description provided for @teamRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests to join'**
+  String get teamRequests;
+
+  /// No description provided for @teamAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get teamAccept;
+
+  /// No description provided for @teamDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get teamDecline;
+
+  /// No description provided for @teamKindOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get teamKindOrganizer;
+
+  /// No description provided for @teamKindHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Helper'**
+  String get teamKindHelper;
+
+  /// No description provided for @teamHintOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.'**
+  String get teamHintOrganizer;
+
+  /// No description provided for @teamHintHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone, added straight away, who can only check guests in at the door.'**
+  String get teamHintHelper;
+
+  /// No description provided for @teamFieldOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or city, or type an email'**
+  String get teamFieldOrganizer;
+
+  /// No description provided for @teamFieldHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Their email address'**
+  String get teamFieldHelper;
+
+  /// No description provided for @teamSendInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Send invitation'**
+  String get teamSendInvite;
+
+  /// No description provided for @teamAddHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Add helper'**
+  String get teamAddHelper;
+
+  /// No description provided for @teamSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching Organizers…'**
+  String get teamSearching;
+
+  /// No description provided for @teamNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No approved Organizers match. You can still invite someone by email.'**
+  String get teamNoMatches;
+
+  /// No description provided for @teamInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get teamInvite;
+
+  /// No description provided for @teamOnTeamAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'On the team'**
+  String get teamOnTeamAlready;
+
+  /// No description provided for @teamLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String teamLevel(int level);
+
+  /// No description provided for @teamOnTheTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'On the team'**
+  String get teamOnTheTeam;
+
+  /// No description provided for @teamWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for an answer'**
+  String get teamWaiting;
+
+  /// No description provided for @teamSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {date}'**
+  String teamSince(String date);
+
+  /// No description provided for @teamExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String teamExpires(String date);
+
+  /// No description provided for @teamEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No one else yet. Only you can run this.'**
+  String get teamEmpty;
+
+  /// No description provided for @teamLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your team.'**
+  String get teamLoadFailed;
+
+  /// No description provided for @teamRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get teamRemove;
+
+  /// No description provided for @teamWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get teamWithdraw;
+
+  /// No description provided for @teamRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String teamRemoveTitle(String name);
+
+  /// No description provided for @teamRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will no longer be on this team.'**
+  String get teamRemoveBody;
+
+  /// No description provided for @teamWithdrawTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw the invitation to {name}?'**
+  String teamWithdrawTitle(String name);
+
+  /// No description provided for @teamWithdrawBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will no longer be able to accept it.'**
+  String get teamWithdrawBody;
+
+  /// No description provided for @teamPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past ({count})'**
+  String teamPast(int count);
+
+  /// No description provided for @teamPastExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation expired'**
+  String get teamPastExpired;
+
+  /// No description provided for @teamPastDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get teamPastDeclined;
+
+  /// No description provided for @teamPastFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Event over'**
+  String get teamPastFinished;
+
+  /// No description provided for @teamPastLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get teamPastLeft;
+
+  /// No description provided for @teamPastRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer role removed'**
+  String get teamPastRevoked;
+
+  /// No description provided for @teamPastRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed'**
+  String get teamPastRemoved;
+
+  /// No description provided for @teamInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent'**
+  String get teamInvited;
+
+  /// No description provided for @teamHelperAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Helper added'**
+  String get teamHelperAdded;
+
+  /// No description provided for @teamRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the team'**
+  String get teamRemoved;
+
+  /// No description provided for @teamWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation withdrawn'**
+  String get teamWithdrawn;
+
+  /// No description provided for @teamRequestAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Request accepted'**
+  String get teamRequestAccepted;
+
+  /// No description provided for @teamRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined'**
+  String get teamRequestDeclined;
+
+  /// No description provided for @teamActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again.'**
+  String get teamActionFailed;
 }
 
 class _AppLocalizationsDelegate

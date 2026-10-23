@@ -76,6 +76,15 @@ class ApiEndpoints {
 
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
+
+  /// The events (not templates) a person organizes, and the team of one venue
+  /// or event: Organizers and Check-in Helpers.
+  static const String organizerEvents = '/events';
+  static const String organizerSearch = '/appointments/organizers';
+  static String venueTeam(String id) =>
+      '/venues/${Uri.encodeComponent(id)}/appointments';
+  static String eventTeam(String id) =>
+      '/events/${Uri.encodeComponent(id)}/appointments';
   static const String venueAffiliationApply = '/venue-affiliations/apply';
   static const String venueAffiliationInvite = '/venue-affiliations/invite';
   static String venueAffiliationApprove(String id) =>

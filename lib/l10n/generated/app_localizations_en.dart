@@ -3561,4 +3561,171 @@ class AppLocalizationsEn extends AppLocalizations {
   String a11yIncrease(String thing) {
     return 'Increase $thing';
   }
+
+  @override
+  String get teamTitle => 'Team';
+
+  @override
+  String get teamIntro =>
+      'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.';
+
+  @override
+  String get teamYourVenues => 'Your venues';
+
+  @override
+  String get teamYourEvents => 'Your upcoming events';
+
+  @override
+  String get teamNoVenues => 'You have no venues yet.';
+
+  @override
+  String get teamNoEvents => 'You have no upcoming events.';
+
+  @override
+  String get teamAcceptsTitle => 'Accept requests from Organizers';
+
+  @override
+  String get teamAcceptsBody =>
+      'Approved Organizers can ask to join. You decide on every request.';
+
+  @override
+  String get teamRequests => 'Requests to join';
+
+  @override
+  String get teamAccept => 'Accept';
+
+  @override
+  String get teamDecline => 'Decline';
+
+  @override
+  String get teamKindOrganizer => 'Organizer';
+
+  @override
+  String get teamKindHelper => 'Check-in Helper';
+
+  @override
+  String get teamHintOrganizer =>
+      'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.';
+
+  @override
+  String get teamHintHelper =>
+      'Anyone, added straight away, who can only check guests in at the door.';
+
+  @override
+  String get teamFieldOrganizer => 'Search by name or city, or type an email';
+
+  @override
+  String get teamFieldHelper => 'Their email address';
+
+  @override
+  String get teamSendInvite => 'Send invitation';
+
+  @override
+  String get teamAddHelper => 'Add helper';
+
+  @override
+  String get teamSearching => 'Searching Organizers…';
+
+  @override
+  String get teamNoMatches =>
+      'No approved Organizers match. You can still invite someone by email.';
+
+  @override
+  String get teamInvite => 'Invite';
+
+  @override
+  String get teamOnTeamAlready => 'On the team';
+
+  @override
+  String teamLevel(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String get teamOnTheTeam => 'On the team';
+
+  @override
+  String get teamWaiting => 'Waiting for an answer';
+
+  @override
+  String teamSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String teamExpires(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String get teamEmpty => 'No one else yet. Only you can run this.';
+
+  @override
+  String get teamLoadFailed => 'Couldn\'t load your team.';
+
+  @override
+  String get teamRemove => 'Remove';
+
+  @override
+  String get teamWithdraw => 'Withdraw';
+
+  @override
+  String teamRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get teamRemoveBody => 'They will no longer be on this team.';
+
+  @override
+  String teamWithdrawTitle(String name) {
+    return 'Withdraw the invitation to $name?';
+  }
+
+  @override
+  String get teamWithdrawBody => 'They will no longer be able to accept it.';
+
+  @override
+  String teamPast(int count) {
+    return 'Past ($count)';
+  }
+
+  @override
+  String get teamPastExpired => 'Invitation expired';
+
+  @override
+  String get teamPastDeclined => 'Declined';
+
+  @override
+  String get teamPastFinished => 'Event over';
+
+  @override
+  String get teamPastLeft => 'Left';
+
+  @override
+  String get teamPastRevoked => 'Organizer role removed';
+
+  @override
+  String get teamPastRemoved => 'Removed';
+
+  @override
+  String get teamInvited => 'Invitation sent';
+
+  @override
+  String get teamHelperAdded => 'Helper added';
+
+  @override
+  String get teamRemoved => 'Removed from the team';
+
+  @override
+  String get teamWithdrawn => 'Invitation withdrawn';
+
+  @override
+  String get teamRequestAccepted => 'Request accepted';
+
+  @override
+  String get teamRequestDeclined => 'Request declined';
+
+  @override
+  String get teamActionFailed => 'That didn\'t go through. Try again.';
 }

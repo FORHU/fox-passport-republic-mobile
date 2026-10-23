@@ -186,6 +186,16 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: QuickActionTile(
+                                icon: Icons.groups_outlined,
+                                label: l10n.teamTitle,
+                                onTap: () => context.push(
+                                  RouteNames.spaceTeamEvents,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: QuickActionTile(
                                 icon: Icons.add_circle_outline_rounded,
                                 label: l10n.eventsNewOnWeb,
                                 onTap: () => context.push(
