@@ -345,14 +345,19 @@ class _BasicsStep extends ConsumerWidget {
         Row(
           children: [
             Text(l10n.esDescription, style: AppTypography.label()),
-            const Spacer(),
-            Text(
-              [
-                l10n.esWordCount(words),
-                if (words > 0 && words < recommendedEventWords)
-                  l10n.esWordsToGo(recommendedEventWords - words),
-              ].join(' · '),
-              style: AppTypography.label(color: countColor),
+            const SizedBox(width: 12),
+            // Takes what is left and wraps, so a large font cannot push the
+            // row wider than the screen.
+            Expanded(
+              child: Text(
+                [
+                  l10n.esWordCount(words),
+                  if (words > 0 && words < recommendedEventWords)
+                    l10n.esWordsToGo(recommendedEventWords - words),
+                ].join(' · '),
+                textAlign: TextAlign.end,
+                style: AppTypography.label(color: countColor),
+              ),
             ),
           ],
         ),
