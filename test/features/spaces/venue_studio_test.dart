@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -105,6 +106,21 @@ void main() {
       expect(state.loading, isFalse);
       expect(state.canSubmit, isFalse);
       expect(state.step, StudioStep.basics);
+    });
+
+    test('leaving the screen while a venue loads does not crash', () async {
+      final loaded = Completer<VenueDetail>();
+      when(() => repo.venueDetail('v1')).thenAnswer((_) => loaded.future);
+      final c = container('v1');
+      await settle();
+
+      // The host backs out before the answer arrives.
+      c.dispose();
+      loaded.complete(
+        const VenueDetail(id: 'v1', status: 'available', draft: _ready),
+      );
+      await settle();
+      await settle();
     });
 
     test('steps forward and back, and not past either end', () async {
