@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -72,16 +73,19 @@ Future<void> answerVenueRequest(
 /// Requests for your venues: people adding a venue of yours to their event.
 /// The ones that need a reply come first, with Accept and Decline.
 class VenueRequestsPage extends ConsumerWidget {
-  const VenueRequestsPage({this.supply = false, super.key});
+  const VenueRequestsPage({this.provider, super.key});
 
-  /// Requests for gear and services (the Provider space) rather than venues.
-  final bool supply;
+  /// Set in a provider's space, for requests for their gear or services
+  /// rather than venues.
+  final ProviderKind? provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final provider = supply ? supplyRequestsProvider : venueRequestsProvider;
-    final requests = ref.watch(provider);
+    final source = provider == null
+        ? venueRequestsProvider
+        : supplyRequestsProvider(provider!.request);
+    final requests = ref.watch(source);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -94,18 +98,22 @@ class VenueRequestsPage extends ConsumerWidget {
           kind: AppStateKind.error,
           title: l10n.apiLoadFailed,
           actionLabel: l10n.retry,
-          onAction: () => ref.invalidate(provider),
+          onAction: () => ref.invalidate(source),
         ),
         data: (list) => RefreshIndicator(
           color: AppColors.accent,
           backgroundColor: AppColors.surface,
-          onRefresh: () => ref.refresh(provider.future),
+          onRefresh: () => ref.refresh(source.future),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
               Text(
-                supply ? l10n.requestsIntroSupply : l10n.requestsIntro,
+                switch (provider) {
+                  null => l10n.requestsIntro,
+                  ProviderKind.gear => l10n.requestsIntroGear,
+                  ProviderKind.services => l10n.requestsIntroServices,
+                },
                 style: AppTypography.body(size: 13),
               ),
               const SizedBox(height: 16),
@@ -113,7 +121,11 @@ class VenueRequestsPage extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Text(
-                    supply ? l10n.requestsEmptySupply : l10n.requestsEmpty,
+                    switch (provider) {
+                      null => l10n.requestsEmpty,
+                      ProviderKind.gear => l10n.requestsEmptyGear,
+                      ProviderKind.services => l10n.requestsEmptyServices,
+                    },
                     textAlign: TextAlign.center,
                     style: AppTypography.body(color: AppColors.textMuted),
                   ),

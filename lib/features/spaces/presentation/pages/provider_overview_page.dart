@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -23,11 +25,14 @@ import 'package:intl/intl.dart';
 /// confirmed and coming up, and the numbers. For someone who lists gear,
 /// services or performances.
 class ProviderOverviewPage extends ConsumerWidget {
-  const ProviderOverviewPage({super.key});
+  const ProviderOverviewPage({required this.kind, super.key});
+
+  /// Gear or services: what this space is for.
+  final ProviderKind kind;
 
   Future<void> _addOnWeb(BuildContext context) async {
     final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard');
+    final opened = await openWebApp(kind.webAdd);
     if (!opened && context.mounted) showTopToast(context, message);
   }
 
@@ -37,9 +42,10 @@ class ProviderOverviewPage extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final money = ref.watch(moneyFormatterProvider);
 
-    final requests = ref.watch(supplyRequestsProvider);
-    final assets = ref.watch(myAssetsProvider);
-    final services = ref.watch(myServicesProvider);
+    final requestsSource = supplyRequestsProvider(kind.request);
+    final listingsSource = kind.isGear ? myAssetsProvider : myServicesProvider;
+    final requests = ref.watch(requestsSource);
+    final items = ref.watch(listingsSource);
     final payouts = ref.watch(payoutsProvider);
 
     final all = requests.asData?.value ?? const <VenueRequest>[];
@@ -59,24 +65,20 @@ class ProviderOverviewPage extends ConsumerWidget {
     ]..sort((a, b) => a.startAt!.compareTo(b.startAt!));
     final inMonth = ahead.where((r) => r.startAt!.isBefore(horizon)).length;
 
-    final listings = [
-      ...?assets.asData?.value,
-      ...?services.asData?.value,
-    ];
+    final listings = items.asData?.value ?? const <SpaceListing>[];
     final live = listings.where((l) => l.group == 'live').length;
-    final loaded = requests.hasValue && assets.hasValue && services.hasValue;
+    final loaded = requests.hasValue && items.hasValue;
 
     String dash(AsyncValue<Object?> value, String Function() shown) =>
         value.hasValue ? shown() : '—';
 
     Future<void> refresh() async {
       ref
-        ..invalidate(supplyRequestsProvider)
-        ..invalidate(myAssetsProvider)
-        ..invalidate(myServicesProvider)
+        ..invalidate(requestsSource)
+        ..invalidate(listingsSource)
         ..invalidate(payoutsProvider);
       try {
-        await ref.read(supplyRequestsProvider.future);
+        await ref.read(requestsSource.future);
       } on Object {
         // The page shows what it has; the tiles read "—" for the rest.
       }
@@ -102,16 +104,19 @@ class ProviderOverviewPage extends ConsumerWidget {
                       icon: Icons.inbox_outlined,
                       label: l10n.requestsTitle,
                       badge: waiting.length,
-                      onTap: () =>
-                          context.push(RouteNames.spaceProviderRequests),
+                      onTap: () => context.push(kind.requests),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: QuickActionTile(
                       icon: Icons.inventory_2_outlined,
-                      label: l10n.spaceTabListings,
-                      onTap: () => context.go(RouteNames.spaceProviderListings),
+                      label: listingsLabel(
+                        l10n,
+                        kind,
+                        roles: ref.watch(heldRolesProvider),
+                      ),
+                      onTap: () => context.go(kind.listings),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -145,7 +150,7 @@ class ProviderOverviewPage extends ConsumerWidget {
                 icon: Icons.inbox_outlined,
                 color: AppColors.warning,
                 text: l10n.providerRequestsWaiting(waiting.length),
-                onTap: () => context.push(RouteNames.spaceProviderRequests),
+                onTap: () => context.push(kind.requests),
               ),
             HomeSectionHeader(title: l10n.providerComingUp),
             if (ahead.isEmpty)
@@ -166,7 +171,7 @@ class ProviderOverviewPage extends ConsumerWidget {
                   Expanded(
                     child: KpiTile(
                       label: l10n.providerStatLive,
-                      onTap: () => context.go(RouteNames.spaceProviderListings),
+                      onTap: () => context.go(kind.listings),
                       value: loaded ? '$live / ${listings.length}' : '—',
                     ),
                   ),
@@ -174,7 +179,7 @@ class ProviderOverviewPage extends ConsumerWidget {
                   Expanded(
                     child: KpiTile(
                       label: l10n.providerStatJobs,
-                      onTap: () => context.go(RouteNames.spaceProviderCalendar),
+                      onTap: () => context.go(kind.calendar),
                       value: dash(requests, () => '$inMonth'),
                     ),
                   ),
@@ -189,7 +194,7 @@ class ProviderOverviewPage extends ConsumerWidget {
                   Expanded(
                     child: KpiTile(
                       label: l10n.venueKpiPaid,
-                      onTap: () => context.go(RouteNames.spaceProviderEarnings),
+                      onTap: () => context.go(kind.earnings),
                       value: dash(
                         payouts,
                         () => money.format(
@@ -204,7 +209,7 @@ class ProviderOverviewPage extends ConsumerWidget {
                   Expanded(
                     child: KpiTile(
                       label: l10n.venueKpiPending,
-                      onTap: () => context.go(RouteNames.spaceProviderEarnings),
+                      onTap: () => context.go(kind.earnings),
                       value: dash(
                         payouts,
                         () => money.format(

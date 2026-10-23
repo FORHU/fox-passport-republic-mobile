@@ -39,25 +39,18 @@ class SpacesRepository {
     ];
   }
 
-  /// Requests to confirm your gear and services in other people's events,
-  /// those awaiting a reply first.
-  Future<List<VenueRequest>> supplyRequests() async {
+  /// Requests to confirm your gear (or your services) in other people's
+  /// events, those awaiting a reply first.
+  Future<List<VenueRequest>> supplyRequests(RequestKind kind) async {
     final body = await _api.get(ApiEndpoints.providerRequests);
-    if (body is! Map) {
-      throw const FormatException('Requests response is not a map');
+    final rows = body is Map ? body['${kind.name}s'] : null;
+    if (rows is! List) {
+      throw FormatException('Requests response has no ${kind.name}s list');
     }
-    final requests = <VenueRequest>[];
-    for (final kind in const [RequestKind.asset, RequestKind.service]) {
-      final rows = body['${kind.name}s'];
-      if (rows is! List) {
-        throw FormatException('Requests response has no ${kind.name}s list');
-      }
-      for (final row in rows) {
-        if (VenueRequest.tryParse(row, kind: kind) case final request?) {
-          requests.add(request);
-        }
-      }
-    }
+    final requests = [
+      for (final row in rows)
+        if (VenueRequest.tryParse(row, kind: kind) case final request?) request,
+    ];
     return [
       ...requests.where((r) => r.needsReply),
       ...requests.where((r) => !r.needsReply),
@@ -703,9 +696,11 @@ final FutureProvider<List<VenueRequest>> venueRequestsProvider =
   (ref) => ref.watch(spacesRepositoryProvider).venueRequests(),
 );
 
-final FutureProvider<List<VenueRequest>> supplyRequestsProvider =
-    FutureProvider.autoDispose<List<VenueRequest>>(
-  (ref) => ref.watch(spacesRepositoryProvider).supplyRequests(),
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final supplyRequestsProvider =
+    FutureProvider.autoDispose.family<List<VenueRequest>, RequestKind>(
+  (ref, kind) => ref.watch(spacesRepositoryProvider).supplyRequests(kind),
 );
 
 final FutureProvider<List<SpaceListing>> myAssetsProvider =

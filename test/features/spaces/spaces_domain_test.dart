@@ -46,20 +46,20 @@ void main() {
           AppSpace.citizen,
           AppSpace.venue,
           AppSpace.event,
-          AppSpace.provider,
+          AppSpace.gear,
         ],
       );
     });
 
-    test('Gear, Service and Performer Foxers share the Provider space', () {
-      for (final role in const [
-        'gearFoxer',
-        'serviceFoxer',
-        'performerFoxer',
-      ]) {
+    test('Gear has its own space; Service and Performer share Services', () {
+      expect(
+        AppSpace.availableTo(const ['gearFoxer']),
+        [AppSpace.citizen, AppSpace.gear],
+      );
+      for (final role in const ['serviceFoxer', 'performerFoxer']) {
         expect(
           AppSpace.availableTo([role]),
-          [AppSpace.citizen, AppSpace.provider],
+          [AppSpace.citizen, AppSpace.services],
           reason: role,
         );
       }
@@ -76,7 +76,8 @@ void main() {
       expect(AppSpace.forPath('/space/venue'), AppSpace.venue);
       expect(AppSpace.forPath('/space/venue/check-in'), AppSpace.venue);
       expect(AppSpace.forPath('/space/event'), AppSpace.event);
-      expect(AppSpace.forPath('/space/provider/more'), AppSpace.provider);
+      expect(AppSpace.forPath('/space/gear/more'), AppSpace.gear);
+      expect(AppSpace.forPath('/space/services'), AppSpace.services);
       expect(AppSpace.forPath('/'), isNull);
       expect(AppSpace.forPath('/passport'), isNull);
       // A name that only starts the same is not the space.

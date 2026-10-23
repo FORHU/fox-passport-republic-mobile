@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -14,28 +15,62 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// The name of a space, as the person reads it.
-String spaceLabel(AppLocalizations l10n, AppSpace space) => switch (space) {
+/// Whether the person lists performances and nothing else, for whom the
+/// Services space reads "Performer".
+bool _performerOnly(List<String> roles) =>
+    roles.contains('performerFoxer') && !roles.contains('serviceFoxer');
+
+/// The name of a space, as the person reads it. [roles] are the roles they
+/// hold: a Performer Foxer's Services space is called Performer.
+String spaceLabel(
+  AppLocalizations l10n,
+  AppSpace space, {
+  List<String> roles = const [],
+}) =>
+    switch (space) {
       AppSpace.citizen => l10n.spaceCitizen,
       AppSpace.venue => l10n.spaceVenue,
       AppSpace.event => l10n.spaceEvent,
-      AppSpace.provider => l10n.spaceProvider,
+      AppSpace.gear => l10n.spaceGear,
+      AppSpace.services =>
+        _performerOnly(roles) ? l10n.spacePerformer : l10n.spaceServices,
     };
 
-String spaceHint(AppLocalizations l10n, AppSpace space) => switch (space) {
+String spaceHint(
+  AppLocalizations l10n,
+  AppSpace space, {
+  List<String> roles = const [],
+}) =>
+    switch (space) {
       AppSpace.citizen => l10n.spaceCitizenHint,
       AppSpace.venue => l10n.spaceVenueHint,
       AppSpace.event => l10n.spaceEventHint,
-      AppSpace.provider => l10n.spaceProviderHint,
+      AppSpace.gear => l10n.spaceGearHint,
+      AppSpace.services => _performerOnly(roles)
+          ? l10n.spacePerformerHint
+          : l10n.spaceServicesHint,
     };
 
-/// The colour a space is known by: the role's own for Venue and Event, and a
-/// neutral white for Citizen.
+/// What a provider's Listings tab is called: Gear, Services or Performances.
+String listingsLabel(
+  AppLocalizations l10n,
+  ProviderKind kind, {
+  List<String> roles = const [],
+}) =>
+    kind.isGear
+        ? l10n.providerGear
+        : (_performerOnly(roles)
+            ? l10n.spaceTabPerformances
+            : l10n.providerServices);
+
+/// The colour a space is known by: the role's own for the spaces that have
+/// one, and a neutral white for Citizen.
 Color spaceColor(AppSpace space) => switch (space) {
       AppSpace.citizen => AppColors.textPrimary,
       AppSpace.venue => AppColors.roleVenue,
       AppSpace.event => AppColors.roleEvent,
-      AppSpace.provider => AppColors.roleGear,
+      AppSpace.gear => AppColors.roleGear,
+      AppSpace.services => AppColors.roleTalent,
     };
 
 /// Lets someone who holds a role choose where to work: Citizen, or the Venue
@@ -59,6 +94,7 @@ class _SpaceSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final spaces = ref.watch(availableSpacesProvider);
+    final roles = ref.watch(heldRolesProvider);
     final active = ref.watch(activeSpaceProvider);
     final user = ref.watch(authControllerProvider).user;
     final name = user?.name ?? '';
@@ -115,13 +151,15 @@ class _SpaceSheet extends ConsumerWidget {
           for (final space in spaces) ...[
             _SpaceRow(
               space: space,
+              roles: roles,
               selected: space == active,
               onTap: () async {
                 final router = GoRouter.of(context);
                 final navigator = Navigator.of(context);
                 final overlay = Overlay.of(context, rootOverlay: true);
                 final calm = MediaQuery.disableAnimationsOf(context);
-                final switched = l10n.spaceSwitched(spaceLabel(l10n, space));
+                final switched =
+                    l10n.spaceSwitched(spaceLabel(l10n, space, roles: roles));
                 navigator.pop();
                 if (space == active) return;
 
@@ -158,11 +196,13 @@ class _SpaceSheet extends ConsumerWidget {
 class _SpaceRow extends StatelessWidget {
   const _SpaceRow({
     required this.space,
+    required this.roles,
     required this.selected,
     required this.onTap,
   });
 
   final AppSpace space;
+  final List<String> roles;
   final bool selected;
   final VoidCallback onTap;
 
@@ -210,12 +250,12 @@ class _SpaceRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      spaceLabel(l10n, space),
+                      spaceLabel(l10n, space, roles: roles),
                       style: AppTypography.display(size: 15),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      spaceHint(l10n, space),
+                      spaceHint(l10n, space, roles: roles),
                       style: AppTypography.body(
                         size: 12,
                         color: AppColors.textMuted,
@@ -345,6 +385,7 @@ class SpaceSwitchButton extends ConsumerWidget {
     if (spaces.length < 2) return const SizedBox.shrink();
     final l10n = context.l10n;
     final active = ref.watch(activeSpaceProvider);
+    final roles = ref.watch(heldRolesProvider);
     final color = spaceColor(active);
 
     return Padding(
@@ -366,14 +407,14 @@ class SpaceSwitchButton extends ConsumerWidget {
                 children: [
                   // Named for a screen reader, which cannot read an icon alone.
                   Tooltip(
-                    message: spaceLabel(l10n, active),
+                    message: spaceLabel(l10n, active, roles: roles),
                     child: Icon(active.icon, size: 16, color: color),
                   ),
                   if (!compact) ...[
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        spaceLabel(l10n, active),
+                        spaceLabel(l10n, active, roles: roles),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTypography.display(size: 13, color: color),

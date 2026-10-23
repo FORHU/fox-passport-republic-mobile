@@ -14,12 +14,18 @@ enum AppSpace {
     icon: Icons.celebration_outlined,
     requiredRoles: ['eventFoxer'],
   ),
-  // Gear, Service and Performer Foxers all own things that get booked, so
-  // they share one space (the roles document's "provider" grouping).
-  provider(
-    root: '/space/provider',
+  // Gear owns assets; Service and Performer Foxers both list services (the web
+  // gives them the same list under two permissions), so a Performer opens the
+  // Services space.
+  gear(
+    root: '/space/gear',
     icon: Icons.inventory_2_outlined,
-    requiredRoles: ['gearFoxer', 'serviceFoxer', 'performerFoxer'],
+    requiredRoles: ['gearFoxer'],
+  ),
+  services(
+    root: '/space/services',
+    icon: Icons.design_services_outlined,
+    requiredRoles: ['serviceFoxer', 'performerFoxer'],
   );
 
   const AppSpace({

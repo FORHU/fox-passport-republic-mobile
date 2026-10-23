@@ -6,21 +6,23 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_filters.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
-import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// What a provider lists: gear for a Gear Foxer, services and performances
-/// for a Service or Performer Foxer. Someone with both sees both, behind a
-/// switch.
+/// What a provider lists: gear in the Gear space, services (and performances)
+/// in the Services space.
 class ProviderListingsPage extends ConsumerStatefulWidget {
-  const ProviderListingsPage({super.key});
+  const ProviderListingsPage({required this.kind, super.key});
+
+  final ProviderKind kind;
 
   @override
   ConsumerState<ProviderListingsPage> createState() =>
@@ -31,9 +33,6 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
   final _search = TextEditingController();
   String _query = '';
   String? _group;
-
-  /// Gear when true; otherwise services.
-  bool _gear = true;
 
   @override
   void dispose() {
@@ -50,9 +49,7 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
   /// Adding and editing a listing is done on the web for now.
   Future<void> _showActions(SpaceListing listing) async {
     final l10n = context.l10n;
-    final path = _gear
-        ? '/creator-dashboard/assets/${listing.id}'
-        : '/creator-dashboard/services/${listing.id}/edit';
+    final path = widget.kind.webEdit(listing.id);
     final edit = await showModalBottomSheet<bool>(
       context: context,
       backgroundColor: AppColors.surface,
@@ -84,23 +81,17 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final roles = ref.watch(heldRolesProvider);
-    final hasGear = roles.contains('gearFoxer');
-    final hasServices =
-        roles.contains('serviceFoxer') || roles.contains('performerFoxer');
-    // Someone who holds only one of the two sees that one, with no switch.
-    final gear = hasGear && (!hasServices || _gear);
+    final gear = widget.kind.isGear;
     final provider = gear ? myAssetsProvider : myServicesProvider;
     final items = ref.watch(provider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: SpaceAppBar(title: l10n.spaceTabListings),
+      appBar: SpaceAppBar(
+        title: listingsLabel(l10n, widget.kind, roles: roles),
+      ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => unawaited(
-          _openOnWeb(
-            gear ? '/creator-dashboard/assets' : '/creator-dashboard/services',
-          ),
-        ),
+        onPressed: () => unawaited(_openOnWeb(widget.kind.webAdd)),
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.onAccent,
         icon: const Icon(Icons.add_rounded),
@@ -108,21 +99,6 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
       ),
       body: Column(
         children: [
-          if (hasGear && hasServices)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: SegmentedPills<bool>(
-                value: gear,
-                onChanged: (v) => setState(() {
-                  _gear = v;
-                  _group = null;
-                }),
-                options: [
-                  SegmentOption(true, l10n.providerGear),
-                  SegmentOption(false, l10n.providerServices),
-                ],
-              ),
-            ),
           Expanded(
             child: items.when(
               loading: () => const Center(

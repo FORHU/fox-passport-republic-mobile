@@ -5,9 +5,12 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,7 +98,7 @@ void main() {
       repo = SpacesRepository(api, 'u1');
     });
 
-    test('lists gear and service requests together, replies first', () async {
+    test('lists the requests for one kind, replies first', () async {
       when(() => api.get('/event-transactions/provider')).thenAnswer(
         (_) async => {
           'venues': [
@@ -103,6 +106,7 @@ void main() {
           ],
           'assets': [
             _row('a1', 'asset', status: 'approved'),
+            _row('a2', 'asset'),
           ],
           'services': [
             _row('s1', 'service'),
@@ -110,18 +114,23 @@ void main() {
         },
       );
 
-      final list = await repo.supplyRequests();
+      final gear = await repo.supplyRequests(RequestKind.asset);
+      final services = await repo.supplyRequests(RequestKind.service);
 
-      // The venue is not theirs to supply; the one needing a reply is first.
-      expect(list.map((r) => r.id), ['s1', 'a1']);
-      expect(list.first.kind, RequestKind.service);
+      // Gear is not mixed with services, and the one needing a reply is first.
+      expect(gear.map((r) => r.id), ['a2', 'a1']);
+      expect(services.map((r) => r.id), ['s1']);
+      expect(services.single.kind, RequestKind.service);
     });
 
-    test('says so when the response has no lists', () async {
+    test('says so when the response has no list for the kind', () async {
       when(() => api.get('/event-transactions/provider'))
           .thenAnswer((_) async => {'venues': <Object>[]});
 
-      expect(repo.supplyRequests(), throwsFormatException);
+      expect(
+        repo.supplyRequests(RequestKind.asset),
+        throwsFormatException,
+      );
     });
 
     test('answers a request as the kind of thing it is', () async {
@@ -219,7 +228,7 @@ void main() {
             spacesRepositoryProvider.overrideWithValue(repo),
             sharedPreferencesProvider.overrideWithValue(prefs),
             authControllerProvider.overrideWith(() => _Session(roles)),
-            supplyRequestsProvider.overrideWith((ref) async => requests),
+            supplyRequestsProvider.overrideWith((ref, kind) async => requests),
             myAssetsProvider.overrideWith((ref) async => assets),
             myServicesProvider.overrideWith((ref) async => services),
             payoutsProvider.overrideWith((ref) async => const PayoutSummary()),
@@ -239,7 +248,7 @@ void main() {
     testWidgets('the overview says all is clear when nothing waits', (
       tester,
     ) async {
-      await pump(tester, const ProviderOverviewPage());
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
 
       expect(find.text("You're all caught up."), findsOneWidget);
       expect(find.text('Nothing confirmed yet.'), findsOneWidget);
@@ -254,7 +263,7 @@ void main() {
           kind: RequestKind.asset,
         )!,
       ];
-      await pump(tester, const ProviderOverviewPage());
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
 
       expect(find.text('PA system'), findsOneWidget);
       await tester.tap(find.text('Accept').first);
@@ -286,26 +295,17 @@ void main() {
           kind: RequestKind.service,
         )!,
       ];
-      await pump(tester, const ProviderOverviewPage(), roles: ['serviceFoxer']);
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.services),
+        roles: ['serviceFoxer'],
+      );
 
       expect(find.text('DJ set'), findsOneWidget);
       expect(find.text('Gala'), findsOneWidget);
     });
 
-    testWidgets('gear shows for a Gear Foxer, with no switch', (tester) async {
-      assets = const [
-        SpaceListing(id: 'g1', name: 'PA system', status: 'available'),
-      ];
-      await pump(tester, const ProviderListingsPage());
-
-      expect(find.text('PA system'), findsOneWidget);
-      // One kind of thing, so nothing to switch between.
-      expect(find.text('Services'), findsNothing);
-    });
-
-    testWidgets('someone with both can switch between gear and services', (
-      tester,
-    ) async {
+    testWidgets('the Gear space lists gear', (tester) async {
       assets = const [
         SpaceListing(id: 'g1', name: 'PA system', status: 'available'),
       ];
@@ -314,26 +314,41 @@ void main() {
       ];
       await pump(
         tester,
-        const ProviderListingsPage(),
-        roles: ['gearFoxer', 'serviceFoxer'],
+        const ProviderListingsPage(kind: ProviderKind.gear),
       );
 
       expect(find.text('PA system'), findsOneWidget);
-      await tester.tap(find.text('Services'));
-      await tester.pumpAndSettle();
+      // Services belong to the Services space.
+      expect(find.text('DJ set'), findsNothing);
+    });
+
+    testWidgets('the Services space lists services', (tester) async {
+      assets = const [
+        SpaceListing(id: 'g1', name: 'PA system', status: 'available'),
+      ];
+      services = const [
+        SpaceListing(id: 's1', name: 'DJ set', status: 'available'),
+      ];
+      await pump(
+        tester,
+        const ProviderListingsPage(kind: ProviderKind.services),
+        roles: ['serviceFoxer'],
+      );
+
       expect(find.text('DJ set'), findsOneWidget);
       expect(find.text('PA system'), findsNothing);
     });
 
-    testWidgets('a Performer Foxer sees services, and an empty message', (
+    testWidgets('the tab of a Performer Foxer is called Performances', (
       tester,
     ) async {
       await pump(
         tester,
-        const ProviderListingsPage(),
+        const ProviderListingsPage(kind: ProviderKind.services),
         roles: ['performerFoxer'],
       );
 
+      expect(find.text('Performances'), findsWidgets);
       expect(find.text('You have no services listed yet.'), findsOneWidget);
       expect(find.text('Add on the web'), findsOneWidget);
     });
@@ -344,12 +359,41 @@ void main() {
       assets = const [
         SpaceListing(id: 'g1', name: 'PA system', status: 'available'),
       ];
-      await pump(tester, const ProviderListingsPage());
+      await pump(
+        tester,
+        const ProviderListingsPage(kind: ProviderKind.gear),
+      );
 
       await tester.tap(find.text('PA system'));
       await tester.pumpAndSettle();
 
       expect(find.text('Edit on the web'), findsOneWidget);
+    });
+  });
+
+  group('space names follow the roles held', () {
+    test('the Services space of a Performer Foxer is called Performer', () {
+      final context = {
+        'performer': ['performerFoxer'],
+        'service': ['serviceFoxer'],
+        'both': ['serviceFoxer', 'performerFoxer'],
+      };
+      // Names need the generated strings; the roles decide which one.
+      final l10n = lookupAppLocalizations(const Locale('en'));
+
+      expect(
+        spaceLabel(l10n, AppSpace.services, roles: context['performer']!),
+        'Performer',
+      );
+      expect(
+        spaceLabel(l10n, AppSpace.services, roles: context['service']!),
+        'Services',
+      );
+      expect(
+        spaceLabel(l10n, AppSpace.services, roles: context['both']!),
+        'Services',
+      );
+      expect(spaceLabel(l10n, AppSpace.gear), 'Gear');
     });
   });
 }

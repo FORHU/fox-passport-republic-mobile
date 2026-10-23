@@ -3778,22 +3778,42 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get spaceProvider => 'Provider';
+  String get spaceGear => 'Gear';
 
   @override
-  String get spaceProviderHint =>
-      'Your gear and services, and the requests for them';
+  String get spaceGearHint => 'Your gear and the requests for it';
 
   @override
-  String get spaceTabListings => 'Listings';
+  String get spaceServices => 'Services';
 
   @override
-  String get requestsIntroSupply =>
-      'People adding your gear or services to their events. Confirm the ones you can supply.';
+  String get spaceServicesHint => 'Your services and the requests for them';
 
   @override
-  String get requestsEmptySupply =>
-      'No requests yet. When someone adds your gear or service to their event, it shows up here.';
+  String get spacePerformer => 'Performer';
+
+  @override
+  String get spacePerformerHint =>
+      'Your performances and the requests for them';
+
+  @override
+  String get spaceTabPerformances => 'Performances';
+
+  @override
+  String get requestsIntroGear =>
+      'People adding your gear to their events. Confirm the ones you can supply.';
+
+  @override
+  String get requestsEmptyGear =>
+      'No requests yet. When someone adds your gear to their event, it shows up here.';
+
+  @override
+  String get requestsIntroServices =>
+      'People adding your services to their events. Confirm the ones you can do.';
+
+  @override
+  String get requestsEmptyServices =>
+      'No requests yet. When someone adds your service to their event, it shows up here.';
 
   @override
   String get providerGear => 'Gear';

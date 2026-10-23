@@ -141,16 +141,6 @@ class RouteNames {
   static const String spaceEventPartners = '/space/event/partners';
   static const String spaceEventMessages = '/space/event/messages';
 
-  /// The Provider space, for a Gear, Service or Performer Foxer: Overview,
-  /// Listings, Calendar, Earnings and More.
-  static const String spaceProvider = '/space/provider';
-  static const String spaceProviderListings = '/space/provider/listings';
-  static const String spaceProviderCalendar = '/space/provider/calendar';
-  static const String spaceProviderEarnings = '/space/provider/earnings';
-  static const String spaceProviderMore = '/space/provider/more';
-  static const String spaceProviderRequests = '/space/provider/more/requests';
-  static const String spaceProviderMessages = '/space/provider/more/messages';
-
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.
   static const String itemBooking = '/book/item';

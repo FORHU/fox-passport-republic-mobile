@@ -91,10 +91,12 @@ class SpaceLayout extends StatelessWidget {
     ];
   }
 
-  /// The Provider space: Overview, Listings, Calendar, Earnings and More.
-  /// [waiting] is how many requests need a reply, shown on Overview.
+  /// A provider's space: Overview, [listings] (Gear, Services or
+  /// Performances), Calendar, Earnings and More. [waiting] is how many
+  /// requests need a reply, shown on Overview.
   static List<NavBarItem> providerItems(
     BuildContext context, {
+    required String listings,
     int waiting = 0,
   }) {
     final l10n = context.l10n;
@@ -106,7 +108,7 @@ class SpaceLayout extends StatelessWidget {
         badgeLabel: _badge(waiting),
       ),
       NavBarItem(
-        label: l10n.spaceTabListings,
+        label: listings,
         icon: Icons.inventory_2_outlined,
         activeIcon: Icons.inventory_2_rounded,
       ),
