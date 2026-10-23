@@ -103,13 +103,7 @@ class _EventsPageState extends ConsumerState<EventsPage> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          l10n.spaceTabEvents,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.spaceTabEvents),
       body: events.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),

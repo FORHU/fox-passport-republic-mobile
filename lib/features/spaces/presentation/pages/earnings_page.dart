@@ -41,13 +41,7 @@ class EarningsPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          l10n.spaceTabEarnings,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.spaceTabEarnings),
       body: payouts.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),

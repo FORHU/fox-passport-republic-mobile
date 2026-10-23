@@ -99,13 +99,7 @@ class VenueOverviewPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          l10n.spaceTabOverview,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.spaceTabOverview),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,

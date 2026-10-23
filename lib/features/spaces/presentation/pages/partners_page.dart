@@ -208,13 +208,7 @@ class PartnersPage extends ConsumerWidget {
               : l10n.partnersInvite,
         ),
       ),
-      appBar: AppBar(
-        title: Text(
-          l10n.partnersTitle,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.partnersTitle),
       body: lists.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),
