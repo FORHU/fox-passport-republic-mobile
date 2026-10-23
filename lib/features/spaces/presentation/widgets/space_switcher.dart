@@ -116,18 +116,28 @@ class _SpaceSheet extends ConsumerWidget {
               onTap: () async {
                 final router = GoRouter.of(context);
                 final navigator = Navigator.of(context);
-                final label = spaceLabel(l10n, space);
-                final switched = l10n.spaceSwitched(label);
-                if (space == active) {
-                  navigator.pop();
-                  return;
-                }
-                await ref.read(activeSpaceProvider.notifier).select(space);
+                final overlay = Overlay.of(context, rootOverlay: true);
+                final calm = MediaQuery.disableAnimationsOf(context);
+                final switched = l10n.spaceSwitched(spaceLabel(l10n, space));
                 navigator.pop();
-                router.go(space.root);
-                if (context.mounted) {
-                  showTopToast(
-                    context,
+                if (space == active) return;
+
+                Future<void> change() async {
+                  await ref.read(activeSpaceProvider.notifier).select(space);
+                  router.go(space.root);
+                }
+
+                // The two spaces are different apps, so the old one fades out
+                // and the new one fades in rather than one jumping to the
+                // other.
+                if (calm) {
+                  await change();
+                } else {
+                  await _fadeThrough(overlay, change);
+                }
+                if (overlay.mounted) {
+                  showTopToastIn(
+                    overlay,
                     switched,
                     duration: const Duration(seconds: 2),
                   );
@@ -230,16 +240,101 @@ class _SpaceRow extends StatelessWidget {
   }
 }
 
+/// Covers the screen with the canvas colour, runs [change] behind it, and
+/// fades back out.
+Future<void> _fadeThrough(
+  OverlayState overlay,
+  Future<void> Function() change,
+) async {
+  final done = Completer<void>();
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (_) => _FadeVeil(
+      change: change,
+      onDone: () {
+        entry.remove();
+        if (!done.isCompleted) done.complete();
+      },
+    ),
+  );
+  overlay.insert(entry);
+  await done.future;
+}
+
+class _FadeVeil extends StatefulWidget {
+  const _FadeVeil({required this.change, required this.onDone});
+
+  final Future<void> Function() change;
+  final VoidCallback onDone;
+
+  @override
+  State<_FadeVeil> createState() => _FadeVeilState();
+}
+
+class _FadeVeilState extends State<_FadeVeil>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fade = AnimationController(vsync: this);
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_run());
+  }
+
+  Future<void> _run() async {
+    try {
+      await _fade.animateTo(
+        1,
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+      );
+      await widget.change();
+      // A moment for the new space to draw before it is uncovered.
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      if (!mounted) return;
+      await _fade.animateTo(
+        0,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeIn,
+      );
+    } on Object {
+      // Whatever went wrong, never leave the screen covered.
+    } finally {
+      widget.onDone();
+    }
+  }
+
+  @override
+  void dispose() {
+    _fade.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Absorbs taps while it is up, so nothing is pressed mid-switch.
+    return FadeTransition(
+      opacity: _fade,
+      child: const ModalBarrier(color: AppColors.canvas, dismissible: false),
+    );
+  }
+}
+
 /// The space the person is in, as a small pill for a screen's top bar. It
 /// opens the switcher. Draws nothing for someone with no role to switch to.
 class SpaceSwitchButton extends ConsumerWidget {
   const SpaceSwitchButton({
     this.padding = const EdgeInsets.only(right: 8),
+    this.compact = false,
     super.key,
   });
 
   /// Space around the pill.
   final EdgeInsets padding;
+
+  /// Just the space's icon and a chevron, for a row that has no room for its
+  /// name.
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -266,16 +361,22 @@ class SpaceSwitchButton extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(active.icon, size: 16, color: color),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      spaceLabel(l10n, active),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.display(size: 13, color: color),
-                    ),
+                  // Named for a screen reader, which cannot read an icon alone.
+                  Tooltip(
+                    message: spaceLabel(l10n, active),
+                    child: Icon(active.icon, size: 16, color: color),
                   ),
+                  if (!compact) ...[
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        spaceLabel(l10n, active),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.display(size: 13, color: color),
+                      ),
+                    ),
+                  ],
                   const Icon(
                     Icons.expand_more_rounded,
                     size: 18,

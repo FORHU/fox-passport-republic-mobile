@@ -440,6 +440,8 @@ void main() {
 
     expect(where(), RouteNames.spaceEvent);
     expect(prefs.getString('active_space_u1'), 'event');
+    // The switch fades through and says where they are now.
+    expect(find.text('Now in the Event space'), findsOneWidget);
     for (final tab in ['Events', 'Check-in', 'Messages']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }

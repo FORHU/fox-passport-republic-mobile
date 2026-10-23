@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 Widget _app({List<Ticket> upcoming = const [], List<Ticket> past = const []}) {
   return ProviderScope(
     overrides: [
+      availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
       upcomingTicketsProvider.overrideWith((ref) async => upcoming),
       pastTicketsProvider.overrideWith((ref) async => past),
     ],
