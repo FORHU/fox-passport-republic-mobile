@@ -7,25 +7,43 @@ enum AppSpace {
   venue(
     root: '/space/venue',
     icon: Icons.storefront_outlined,
-    requiredRole: 'venueFoxer',
+    requiredRoles: ['venueFoxer'],
   ),
   event(
     root: '/space/event',
     icon: Icons.celebration_outlined,
-    requiredRole: 'eventFoxer',
+    requiredRoles: ['eventFoxer'],
+  ),
+  // Gear owns assets; Service and Performer Foxers both list services (the web
+  // gives them the same list under two permissions), so a Performer opens the
+  // Services space.
+  gear(
+    root: '/space/gear',
+    icon: Icons.inventory_2_outlined,
+    requiredRoles: ['gearFoxer'],
+  ),
+  services(
+    root: '/space/services',
+    icon: Icons.design_services_outlined,
+    requiredRoles: ['serviceFoxer', 'performerFoxer'],
   );
 
-  const AppSpace({required this.root, required this.icon, this.requiredRole});
+  const AppSpace({
+    required this.root,
+    required this.icon,
+    this.requiredRoles = const [],
+  });
 
   /// Where the space opens.
   final String root;
   final IconData icon;
 
-  /// The `RoleType` that opens this space; null for Citizen.
-  final String? requiredRole;
+  /// The `RoleType`s that open this space: holding any one is enough. Empty
+  /// for Citizen, which everyone has.
+  final List<String> requiredRoles;
 
   bool isAvailableTo(List<String> roles) =>
-      requiredRole == null || roles.contains(requiredRole);
+      requiredRoles.isEmpty || requiredRoles.any(roles.contains);
 
   /// The spaces a person with [roles] can switch between, Citizen first.
   static List<AppSpace> availableTo(List<String> roles) => [

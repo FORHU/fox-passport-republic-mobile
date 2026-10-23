@@ -20,6 +20,9 @@ enum RequestStatus {
       };
 }
 
+/// What a request is for. The API names the nested record the same way.
+enum RequestKind { venue, asset, service }
+
 /// Someone has put your venue into their event and wants you to confirm it
 /// (a row of `GET /event-transactions/provider`).
 class VenueRequest extends Equatable {
@@ -28,6 +31,7 @@ class VenueRequest extends Equatable {
     required this.venueName,
     required this.eventName,
     required this.status,
+    this.kind = RequestKind.venue,
     this.clientName,
     this.startAt,
     this.price,
@@ -36,14 +40,18 @@ class VenueRequest extends Equatable {
   });
 
   /// Reads one entry of the response's `venues`; null when it has no id.
-  static VenueRequest? tryParse(Object? row) {
+  static VenueRequest? tryParse(
+    Object? row, {
+    RequestKind kind = RequestKind.venue,
+  }) {
     if (row is! Map || row['id'] == null) return null;
     final event = row['event'];
-    final venue = row['venue'];
+    final venue = row[kind.name];
     final client = event is Map ? event['client'] : null;
     final price = row['agreedPrice'];
     return VenueRequest(
       id: '${row['id']}',
+      kind: kind,
       venueName: venue is Map ? '${venue['name'] ?? ''}' : '',
       eventName: event is Map ? '${event['name'] ?? ''}' : '',
       status: RequestStatus.parse(row['status']),
@@ -59,6 +67,11 @@ class VenueRequest extends Equatable {
   }
 
   final String id;
+
+  /// A venue, a piece of gear or a service.
+  final RequestKind kind;
+
+  /// The name of the venue, asset or service asked for.
   final String venueName;
   final String eventName;
   final RequestStatus status;
@@ -75,6 +88,7 @@ class VenueRequest extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        kind,
         venueName,
         eventName,
         status,
@@ -126,10 +140,10 @@ class SpaceListing extends Equatable {
   /// Which filter group the status belongs to: `live`, `pending`, `draft`,
   /// `rejected` or `archived`. Anything unknown counts as a draft.
   String get group => switch (status) {
-        'available' || 'published' => 'live',
+        'available' || 'published' || 'reserved' => 'live',
         'pending' => 'pending',
         'rejected' => 'rejected',
-        'archived' => 'archived',
+        'archived' || 'paused' => 'archived',
         _ => 'draft',
       };
 

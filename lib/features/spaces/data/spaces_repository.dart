@@ -39,12 +39,69 @@ class SpacesRepository {
     ];
   }
 
-  /// Confirms or declines a request for your venue.
-  Future<void> reviewVenueRequest(String id, {required bool accept}) async {
+  /// Requests to confirm your gear (or your services) in other people's
+  /// events, those awaiting a reply first.
+  Future<List<VenueRequest>> supplyRequests(RequestKind kind) async {
+    final body = await _api.get(ApiEndpoints.providerRequests);
+    final rows = body is Map ? body['${kind.name}s'] : null;
+    if (rows is! List) {
+      throw FormatException('Requests response has no ${kind.name}s list');
+    }
+    final requests = [
+      for (final row in rows)
+        if (VenueRequest.tryParse(row, kind: kind) case final request?) request,
+    ];
+    return [
+      ...requests.where((r) => r.needsReply),
+      ...requests.where((r) => !r.needsReply),
+    ];
+  }
+
+  /// Confirms or declines a request for your venue, gear or service.
+  Future<void> reviewVenueRequest(
+    String id, {
+    required bool accept,
+    RequestKind kind = RequestKind.venue,
+  }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
-      'type': 'venue',
+      'type': kind.name,
       'action': accept ? 'confirm' : 'reject',
     });
+  }
+
+  /// The gear the person lists. The API gives at most 50 at a time, so this
+  /// asks page by page.
+  Future<List<SpaceListing>> myAssets() =>
+      _owned(ApiEndpoints.assets, 'assets');
+
+  /// The services (and performances) the person lists.
+  Future<List<SpaceListing>> myServices() =>
+      _owned(ApiEndpoints.services, 'services');
+
+  Future<List<SpaceListing>> _owned(String path, String key) async {
+    if (_userId == null) return const [];
+    const pageSize = 50;
+    const maxPages = 40;
+    final all = <SpaceListing>[];
+    for (var page = 1; page <= maxPages; page++) {
+      final body = await _api.get(
+        path,
+        query: {'ownerId': _userId, 'limit': pageSize, 'page': page},
+      );
+      final rows = body is Map ? body[key] ?? body['data'] : body;
+      if (rows is! List) {
+        throw const FormatException('Listings response is not a list');
+      }
+      all.addAll([
+        for (final row in rows)
+          if (SpaceListing.tryParse(row) case final l?) l,
+      ]);
+      final total = body is Map ? body['total'] : null;
+      if (rows.length < pageSize || (total is int && all.length >= total)) {
+        break;
+      }
+    }
+    return all;
   }
 
   /// Every venue the person runs. The API gives at most 100 at a time, so this
@@ -637,6 +694,23 @@ final spacesRepositoryProvider = Provider<SpacesRepository>((ref) {
 final FutureProvider<List<VenueRequest>> venueRequestsProvider =
     FutureProvider.autoDispose<List<VenueRequest>>(
   (ref) => ref.watch(spacesRepositoryProvider).venueRequests(),
+);
+
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final supplyRequestsProvider =
+    FutureProvider.autoDispose.family<List<VenueRequest>, RequestKind>(
+  (ref, kind) => ref.watch(spacesRepositoryProvider).supplyRequests(kind),
+);
+
+final FutureProvider<List<SpaceListing>> myAssetsProvider =
+    FutureProvider.autoDispose<List<SpaceListing>>(
+  (ref) => ref.watch(spacesRepositoryProvider).myAssets(),
+);
+
+final FutureProvider<List<SpaceListing>> myServicesProvider =
+    FutureProvider.autoDispose<List<SpaceListing>>(
+  (ref) => ref.watch(spacesRepositoryProvider).myServices(),
 );
 
 final FutureProvider<List<SpaceListing>> myVenuesProvider =

@@ -6819,6 +6819,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now in the {space} space'**
   String spaceSwitched(String space);
+
+  /// No description provided for @spaceGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get spaceGear;
+
+  /// No description provided for @spaceGearHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear and the requests for it'**
+  String get spaceGearHint;
+
+  /// No description provided for @spaceServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get spaceServices;
+
+  /// No description provided for @spaceServicesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your services and the requests for them'**
+  String get spaceServicesHint;
+
+  /// No description provided for @spacePerformer.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get spacePerformer;
+
+  /// No description provided for @spacePerformerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your performances and the requests for them'**
+  String get spacePerformerHint;
+
+  /// No description provided for @spaceTabPerformances.
+  ///
+  /// In en, this message translates to:
+  /// **'Performances'**
+  String get spaceTabPerformances;
+
+  /// No description provided for @requestsIntroGear.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your gear to their events. Confirm the ones you can supply.'**
+  String get requestsIntroGear;
+
+  /// No description provided for @requestsEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your gear to their event, it shows up here.'**
+  String get requestsEmptyGear;
+
+  /// No description provided for @requestsIntroServices.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your services to their events. Confirm the ones you can do.'**
+  String get requestsIntroServices;
+
+  /// No description provided for @requestsEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your service to their event, it shows up here.'**
+  String get requestsEmptyServices;
+
+  /// No description provided for @providerGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get providerGear;
+
+  /// No description provided for @providerServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get providerServices;
+
+  /// No description provided for @providerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your listings'**
+  String get providerSearchHint;
+
+  /// No description provided for @providerEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no gear listed yet.'**
+  String get providerEmptyGear;
+
+  /// No description provided for @providerEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no services listed yet.'**
+  String get providerEmptyServices;
+
+  /// No description provided for @providerAddOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Add on the web'**
+  String get providerAddOnWeb;
+
+  /// No description provided for @providerListingEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit on the web'**
+  String get providerListingEdit;
+
+  /// No description provided for @providerListingView.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get providerListingView;
+
+  /// No description provided for @providerStatLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings live'**
+  String get providerStatLive;
+
+  /// No description provided for @providerStatJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs, next 30 days'**
+  String get providerStatJobs;
+
+  /// No description provided for @providerComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed and coming up'**
+  String get providerComingUp;
+
+  /// No description provided for @providerNothingComing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing confirmed yet.'**
+  String get providerNothingComing;
+
+  /// No description provided for @providerRequestsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
+  String providerRequestsWaiting(int count);
 }
 
 class _AppLocalizationsDelegate
