@@ -3728,4 +3728,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teamActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String studioStepOf(int n, int total) {
+    return 'STEP $n OF $total';
+  }
+
+  @override
+  String get studioCover => 'Cover';
+
+  @override
+  String studioPhotoCount(int n, int max) {
+    return '$n of $max photos';
+  }
+
+  @override
+  String get esCardDetails => 'Details';
+
+  @override
+  String get esCardGuests => 'Guests and policy';
+
+  @override
+  String get esAddTalent => 'Talent';
+
+  @override
+  String get esAddServices => 'Services';
+
+  @override
+  String get esAddEquipment => 'Equipment';
+
+  @override
+  String get esAddHint => 'Add to your package';
+
+  @override
+  String get esYourPrice => 'Price to sell at';
+
+  @override
+  String get esPackageItems => 'What is included';
 }

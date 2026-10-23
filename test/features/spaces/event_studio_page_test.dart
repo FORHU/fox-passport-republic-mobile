@@ -10,6 +10,7 @@ import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/theme/app_theme.dart';
@@ -182,7 +183,9 @@ void main() {
   }
 
   Future<void> goToStep(WidgetTester tester, String label) async {
-    await tester.tap(find.textContaining(label).first);
+    const order = ['Basics', 'Location', 'Photos', 'Package', 'Review'];
+    await tester
+        .tap(find.byKey(ValueKey('studio-step-${order.indexOf(label)}')));
     await tester.pumpAndSettle();
   }
 
@@ -208,7 +211,7 @@ void main() {
             .text,
         '100',
       );
-      expect(find.text('Back'), findsNothing);
+      expect(find.byType(StudioBackButton), findsNothing);
     });
 
     testWidgets('the word counter follows what is typed', (tester) async {
@@ -287,7 +290,7 @@ void main() {
       await pump(tester);
       await openPackage(tester);
 
-      expect(find.text('Core package'), findsOneWidget);
+      expect(find.text('What is included'), findsOneWidget);
       expect(find.text('Choose a venue'), findsOneWidget);
       expect(find.text('Nothing else added yet.'), findsOneWidget);
       expect(find.text('Package cost'), findsOneWidget);
@@ -365,7 +368,7 @@ void main() {
     ) async {
       await pump(tester);
       await openPackage(tester);
-      await tester.tap(find.text('Add to package'));
+      await tester.tap(find.widgetWithText(InkWell, 'Talent'));
       await tester.pumpAndSettle();
 
       // Opens on Talent.
@@ -385,7 +388,7 @@ void main() {
     testWidgets('a supply list can be searched', (tester) async {
       await pump(tester);
       await openPackage(tester);
-      await tester.tap(find.text('Add to package'));
+      await tester.tap(find.widgetWithText(InkWell, 'Talent'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ChoiceChip, 'Services'));
       await tester.pumpAndSettle();
@@ -450,7 +453,7 @@ void main() {
     ) async {
       await pump(tester);
       await openPackage(tester);
-      await tester.tap(find.text('Add to package'));
+      await tester.tap(find.widgetWithText(InkWell, 'Talent'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Live band'));
       await tester.pumpAndSettle();
@@ -483,7 +486,7 @@ void main() {
       await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.widgetWithText(ChoiceChip, '40%'));
+      await tester.tap(find.text('40%'));
       await tester.pumpAndSettle();
 
       expect(find.text('₱70,000'), findsOneWidget);
@@ -778,7 +781,7 @@ void main() {
 
       await tester.tap(find.text('Back'));
       await tester.pumpAndSettle();
-      expect(find.text('Core package'), findsOneWidget);
+      expect(find.text('STEP 4 OF 5'), findsOneWidget);
     });
 
     testWidgets('the location step explains that a venue fills it in', (
