@@ -54,8 +54,10 @@ Future<void> answerVenueRequest(
   try {
     await ref
         .read(spacesRepositoryProvider)
-        .reviewVenueRequest(request.id, accept: accept);
-    ref.invalidate(venueRequestsProvider);
+        .reviewVenueRequest(request.id, accept: accept, kind: request.kind);
+    ref
+      ..invalidate(venueRequestsProvider)
+      ..invalidate(supplyRequestsProvider);
     if (context.mounted) {
       showTopToast(
         context,
@@ -70,12 +72,16 @@ Future<void> answerVenueRequest(
 /// Requests for your venues: people adding a venue of yours to their event.
 /// The ones that need a reply come first, with Accept and Decline.
 class VenueRequestsPage extends ConsumerWidget {
-  const VenueRequestsPage({super.key});
+  const VenueRequestsPage({this.supply = false, super.key});
+
+  /// Requests for gear and services (the Provider space) rather than venues.
+  final bool supply;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final requests = ref.watch(venueRequestsProvider);
+    final provider = supply ? supplyRequestsProvider : venueRequestsProvider;
+    final requests = ref.watch(provider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -88,23 +94,26 @@ class VenueRequestsPage extends ConsumerWidget {
           kind: AppStateKind.error,
           title: l10n.apiLoadFailed,
           actionLabel: l10n.retry,
-          onAction: () => ref.invalidate(venueRequestsProvider),
+          onAction: () => ref.invalidate(provider),
         ),
         data: (list) => RefreshIndicator(
           color: AppColors.accent,
           backgroundColor: AppColors.surface,
-          onRefresh: () => ref.refresh(venueRequestsProvider.future),
+          onRefresh: () => ref.refresh(provider.future),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
-              Text(l10n.requestsIntro, style: AppTypography.body(size: 13)),
+              Text(
+                supply ? l10n.requestsIntroSupply : l10n.requestsIntro,
+                style: AppTypography.body(size: 13),
+              ),
               const SizedBox(height: 16),
               if (list.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Text(
-                    l10n.requestsEmpty,
+                    supply ? l10n.requestsEmptySupply : l10n.requestsEmpty,
                     textAlign: TextAlign.center,
                     style: AppTypography.body(color: AppColors.textMuted),
                   ),

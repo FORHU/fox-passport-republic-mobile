@@ -7,25 +7,37 @@ enum AppSpace {
   venue(
     root: '/space/venue',
     icon: Icons.storefront_outlined,
-    requiredRole: 'venueFoxer',
+    requiredRoles: ['venueFoxer'],
   ),
   event(
     root: '/space/event',
     icon: Icons.celebration_outlined,
-    requiredRole: 'eventFoxer',
+    requiredRoles: ['eventFoxer'],
+  ),
+  // Gear, Service and Performer Foxers all own things that get booked, so
+  // they share one space (the roles document's "provider" grouping).
+  provider(
+    root: '/space/provider',
+    icon: Icons.inventory_2_outlined,
+    requiredRoles: ['gearFoxer', 'serviceFoxer', 'performerFoxer'],
   );
 
-  const AppSpace({required this.root, required this.icon, this.requiredRole});
+  const AppSpace({
+    required this.root,
+    required this.icon,
+    this.requiredRoles = const [],
+  });
 
   /// Where the space opens.
   final String root;
   final IconData icon;
 
-  /// The `RoleType` that opens this space; null for Citizen.
-  final String? requiredRole;
+  /// The `RoleType`s that open this space: holding any one is enough. Empty
+  /// for Citizen, which everyone has.
+  final List<String> requiredRoles;
 
   bool isAvailableTo(List<String> roles) =>
-      requiredRole == null || roles.contains(requiredRole);
+      requiredRoles.isEmpty || requiredRoles.any(roles.contains);
 
   /// The spaces a person with [roles] can switch between, Citizen first.
   static List<AppSpace> availableTo(List<String> roles) => [

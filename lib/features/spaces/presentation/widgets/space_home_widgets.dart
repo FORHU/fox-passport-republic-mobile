@@ -176,3 +176,49 @@ class QuickActionTile extends StatelessWidget {
     );
   }
 }
+
+/// A figure that opens the place where its detail is.
+class KpiTile extends StatelessWidget {
+  const KpiTile({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: AppRadius.brCard,
+      child: InkWell(
+        borderRadius: AppRadius.brCard,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.brCard,
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.display(size: 22),
+              ),
+              const SizedBox(height: 4),
+              Text(label, style: AppTypography.body(size: 12)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

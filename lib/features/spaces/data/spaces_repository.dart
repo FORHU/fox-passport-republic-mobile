@@ -39,12 +39,76 @@ class SpacesRepository {
     ];
   }
 
-  /// Confirms or declines a request for your venue.
-  Future<void> reviewVenueRequest(String id, {required bool accept}) async {
+  /// Requests to confirm your gear and services in other people's events,
+  /// those awaiting a reply first.
+  Future<List<VenueRequest>> supplyRequests() async {
+    final body = await _api.get(ApiEndpoints.providerRequests);
+    if (body is! Map) {
+      throw const FormatException('Requests response is not a map');
+    }
+    final requests = <VenueRequest>[];
+    for (final kind in const [RequestKind.asset, RequestKind.service]) {
+      final rows = body['${kind.name}s'];
+      if (rows is! List) {
+        throw FormatException('Requests response has no ${kind.name}s list');
+      }
+      for (final row in rows) {
+        if (VenueRequest.tryParse(row, kind: kind) case final request?) {
+          requests.add(request);
+        }
+      }
+    }
+    return [
+      ...requests.where((r) => r.needsReply),
+      ...requests.where((r) => !r.needsReply),
+    ];
+  }
+
+  /// Confirms or declines a request for your venue, gear or service.
+  Future<void> reviewVenueRequest(
+    String id, {
+    required bool accept,
+    RequestKind kind = RequestKind.venue,
+  }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
-      'type': 'venue',
+      'type': kind.name,
       'action': accept ? 'confirm' : 'reject',
     });
+  }
+
+  /// The gear the person lists. The API gives at most 50 at a time, so this
+  /// asks page by page.
+  Future<List<SpaceListing>> myAssets() =>
+      _owned(ApiEndpoints.assets, 'assets');
+
+  /// The services (and performances) the person lists.
+  Future<List<SpaceListing>> myServices() =>
+      _owned(ApiEndpoints.services, 'services');
+
+  Future<List<SpaceListing>> _owned(String path, String key) async {
+    if (_userId == null) return const [];
+    const pageSize = 50;
+    const maxPages = 40;
+    final all = <SpaceListing>[];
+    for (var page = 1; page <= maxPages; page++) {
+      final body = await _api.get(
+        path,
+        query: {'ownerId': _userId, 'limit': pageSize, 'page': page},
+      );
+      final rows = body is Map ? body[key] ?? body['data'] : body;
+      if (rows is! List) {
+        throw const FormatException('Listings response is not a list');
+      }
+      all.addAll([
+        for (final row in rows)
+          if (SpaceListing.tryParse(row) case final l?) l,
+      ]);
+      final total = body is Map ? body['total'] : null;
+      if (rows.length < pageSize || (total is int && all.length >= total)) {
+        break;
+      }
+    }
+    return all;
   }
 
   /// Every venue the person runs. The API gives at most 100 at a time, so this
@@ -637,6 +701,21 @@ final spacesRepositoryProvider = Provider<SpacesRepository>((ref) {
 final FutureProvider<List<VenueRequest>> venueRequestsProvider =
     FutureProvider.autoDispose<List<VenueRequest>>(
   (ref) => ref.watch(spacesRepositoryProvider).venueRequests(),
+);
+
+final FutureProvider<List<VenueRequest>> supplyRequestsProvider =
+    FutureProvider.autoDispose<List<VenueRequest>>(
+  (ref) => ref.watch(spacesRepositoryProvider).supplyRequests(),
+);
+
+final FutureProvider<List<SpaceListing>> myAssetsProvider =
+    FutureProvider.autoDispose<List<SpaceListing>>(
+  (ref) => ref.watch(spacesRepositoryProvider).myAssets(),
+);
+
+final FutureProvider<List<SpaceListing>> myServicesProvider =
+    FutureProvider.autoDispose<List<SpaceListing>>(
+  (ref) => ref.watch(spacesRepositoryProvider).myServices(),
 );
 
 final FutureProvider<List<SpaceListing>> myVenuesProvider =

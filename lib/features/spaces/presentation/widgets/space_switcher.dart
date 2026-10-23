@@ -19,12 +19,14 @@ String spaceLabel(AppLocalizations l10n, AppSpace space) => switch (space) {
       AppSpace.citizen => l10n.spaceCitizen,
       AppSpace.venue => l10n.spaceVenue,
       AppSpace.event => l10n.spaceEvent,
+      AppSpace.provider => l10n.spaceProvider,
     };
 
 String spaceHint(AppLocalizations l10n, AppSpace space) => switch (space) {
       AppSpace.citizen => l10n.spaceCitizenHint,
       AppSpace.venue => l10n.spaceVenueHint,
       AppSpace.event => l10n.spaceEventHint,
+      AppSpace.provider => l10n.spaceProviderHint,
     };
 
 /// The colour a space is known by: the role's own for Venue and Event, and a
@@ -33,6 +35,7 @@ Color spaceColor(AppSpace space) => switch (space) {
       AppSpace.citizen => AppColors.textPrimary,
       AppSpace.venue => AppColors.roleVenue,
       AppSpace.event => AppColors.roleEvent,
+      AppSpace.provider => AppColors.roleGear,
     };
 
 /// Lets someone who holds a role choose where to work: Citizen, or the Venue

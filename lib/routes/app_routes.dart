@@ -42,6 +42,9 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_calend
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/team_detail_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/team_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
@@ -548,6 +551,76 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.spaceEventMessages,
                 builder: (context, state) => const MessagesPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Provider space: gear, services and performances.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of requests waiting for a reply, on the Overview tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.providerItems(
+              context,
+              waiting: ref.watch(supplyRequestsProvider).maybeWhen(
+                    data: (list) => list.where((r) => r.needsReply).length,
+                    orElse: () => 0,
+                  ),
+            ),
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceProvider,
+                builder: (context, state) => const ProviderOverviewPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceProviderListings,
+                builder: (context, state) => const ProviderListingsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceProviderCalendar,
+                builder: (context, state) => const EventCalendarPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceProviderEarnings,
+                builder: (context, state) => const EarningsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceProviderMore,
+                builder: (context, state) => const ProviderMorePage(),
+                routes: [
+                  GoRoute(
+                    path: 'requests',
+                    builder: (context, state) =>
+                        const VenueRequestsPage(supply: true),
+                  ),
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) =>
+                        const MessagesPage(showBack: true),
+                  ),
+                ],
               ),
             ],
           ),

@@ -3776,4 +3776,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String spaceSwitched(String space) {
     return 'Now in the $space space';
   }
+
+  @override
+  String get spaceProvider => 'Provider';
+
+  @override
+  String get spaceProviderHint =>
+      'Your gear and services, and the requests for them';
+
+  @override
+  String get spaceTabListings => 'Listings';
+
+  @override
+  String get requestsIntroSupply =>
+      'People adding your gear or services to their events. Confirm the ones you can supply.';
+
+  @override
+  String get requestsEmptySupply =>
+      'No requests yet. When someone adds your gear or service to their event, it shows up here.';
+
+  @override
+  String get providerGear => 'Gear';
+
+  @override
+  String get providerServices => 'Services';
+
+  @override
+  String get providerSearchHint => 'Search your listings';
+
+  @override
+  String get providerEmptyGear => 'You have no gear listed yet.';
+
+  @override
+  String get providerEmptyServices => 'You have no services listed yet.';
+
+  @override
+  String get providerAddOnWeb => 'Add on the web';
+
+  @override
+  String get providerListingEdit => 'Edit on the web';
+
+  @override
+  String get providerListingView => 'View public page';
+
+  @override
+  String get providerStatLive => 'Listings live';
+
+  @override
+  String get providerStatJobs => 'Jobs, next 30 days';
+
+  @override
+  String get providerComingUp => 'Confirmed and coming up';
+
+  @override
+  String get providerNothingComing => 'Nothing confirmed yet.';
+
+  @override
+  String providerRequestsWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests need your reply',
+      one: '1 request needs your reply',
+    );
+    return '$_temp0';
+  }
 }

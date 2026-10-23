@@ -6819,6 +6819,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now in the {space} space'**
   String spaceSwitched(String space);
+
+  /// No description provided for @spaceProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get spaceProvider;
+
+  /// No description provided for @spaceProviderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear and services, and the requests for them'**
+  String get spaceProviderHint;
+
+  /// No description provided for @spaceTabListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get spaceTabListings;
+
+  /// No description provided for @requestsIntroSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your gear or services to their events. Confirm the ones you can supply.'**
+  String get requestsIntroSupply;
+
+  /// No description provided for @requestsEmptySupply.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your gear or service to their event, it shows up here.'**
+  String get requestsEmptySupply;
+
+  /// No description provided for @providerGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get providerGear;
+
+  /// No description provided for @providerServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get providerServices;
+
+  /// No description provided for @providerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your listings'**
+  String get providerSearchHint;
+
+  /// No description provided for @providerEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no gear listed yet.'**
+  String get providerEmptyGear;
+
+  /// No description provided for @providerEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no services listed yet.'**
+  String get providerEmptyServices;
+
+  /// No description provided for @providerAddOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Add on the web'**
+  String get providerAddOnWeb;
+
+  /// No description provided for @providerListingEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit on the web'**
+  String get providerListingEdit;
+
+  /// No description provided for @providerListingView.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get providerListingView;
+
+  /// No description provided for @providerStatLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings live'**
+  String get providerStatLive;
+
+  /// No description provided for @providerStatJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs, next 30 days'**
+  String get providerStatJobs;
+
+  /// No description provided for @providerComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed and coming up'**
+  String get providerComingUp;
+
+  /// No description provided for @providerNothingComing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing confirmed yet.'**
+  String get providerNothingComing;
+
+  /// No description provided for @providerRequestsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
+  String providerRequestsWaiting(int count);
 }
 
 class _AppLocalizationsDelegate
