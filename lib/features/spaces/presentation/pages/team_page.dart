@@ -27,10 +27,7 @@ class TeamPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(l10n.teamTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.teamTitle),
       body: targets.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),

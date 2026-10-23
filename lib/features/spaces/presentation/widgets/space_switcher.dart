@@ -233,7 +233,13 @@ class _SpaceRow extends StatelessWidget {
 /// The space the person is in, as a small pill for a screen's top bar. It
 /// opens the switcher. Draws nothing for someone with no role to switch to.
 class SpaceSwitchButton extends ConsumerWidget {
-  const SpaceSwitchButton({super.key});
+  const SpaceSwitchButton({
+    this.padding = const EdgeInsets.only(right: 8),
+    super.key,
+  });
+
+  /// Space around the pill.
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -244,7 +250,7 @@ class SpaceSwitchButton extends ConsumerWidget {
     final color = spaceColor(active);
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: padding,
       child: Material(
         color: AppColors.surface,
         shape: const StadiumBorder(

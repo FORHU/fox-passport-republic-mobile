@@ -41,13 +41,7 @@ class _VenuesPageState extends ConsumerState<VenuesPage> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          l10n.spaceTabVenues,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.spaceTabVenues),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.spaceVenueStudio),
         backgroundColor: AppColors.accent,

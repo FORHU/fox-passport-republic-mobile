@@ -66,10 +66,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
     final l10n = context.l10n;
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(l10n.checkInTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.checkInTitle),
       body: Form(
         key: _form,
         child: ListView(
