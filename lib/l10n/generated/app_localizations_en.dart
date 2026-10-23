@@ -3765,4 +3765,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get esPackageItems => 'What is included';
+
+  @override
+  String get spaceWorkingAs => 'Working as';
+
+  @override
+  String get spaceCurrent => 'Current';
+
+  @override
+  String spaceSwitched(String space) {
+    return 'Now in the $space space';
+  }
 }

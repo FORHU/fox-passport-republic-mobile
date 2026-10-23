@@ -6801,6 +6801,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What is included'**
   String get esPackageItems;
+
+  /// No description provided for @spaceWorkingAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Working as'**
+  String get spaceWorkingAs;
+
+  /// No description provided for @spaceCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get spaceCurrent;
+
+  /// No description provided for @spaceSwitched.
+  ///
+  /// In en, this message translates to:
+  /// **'Now in the {space} space'**
+  String spaceSwitched(String space);
 }
 
 class _AppLocalizationsDelegate
