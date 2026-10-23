@@ -150,22 +150,26 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     if (id == null) return;
     try {
       final detail = await _repo.venueDetail(id);
+      if (!ref.mounted) return;
       state = state.copyWith(
         draft: detail.draft,
         live: detail.isLive,
         loading: false,
       );
     } on Object {
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, loadFailed: true);
       return;
     }
     await countries;
+    if (!ref.mounted) return;
     await _matchSavedPlace();
   }
 
   Future<void> _loadCountries() async {
     try {
       final all = await _repo.countries();
+      if (!ref.mounted) return;
       state = state.copyWith(countries: all);
     } on Object {
       // The country can still be typed by name.
@@ -190,6 +194,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
   Future<void> _loadStates(String countryCode, {String? keepState}) async {
     try {
       final states = await _repo.states(countryCode);
+      if (!ref.mounted) return;
       final kept = states
           .where((s) => s.name.toLowerCase() == keepState?.toLowerCase())
           .firstOrNull;
@@ -202,6 +207,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
         await _loadCities(countryCode, kept?.code);
       }
     } on Object {
+      if (!ref.mounted) return;
       state = state.copyWith(states: const <PlaceOption>[]);
       await _loadCities(countryCode, null);
     }
@@ -210,8 +216,10 @@ class VenueStudioController extends Notifier<VenueStudioState> {
   Future<void> _loadCities(String countryCode, String? stateCode) async {
     try {
       final all = await _repo.cities(countryCode, stateCode: stateCode);
+      if (!ref.mounted) return;
       state = state.copyWith(cities: all);
     } on Object {
+      if (!ref.mounted) return;
       state = state.copyWith(cities: const <String>[]);
     }
   }
@@ -252,6 +260,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     state = state.copyWith(locating: true, clearLocateProblem: true);
     final locator = ref.read(deviceLocatorProvider);
     final found = await locator.locate();
+    if (!ref.mounted) return;
     if (!found.isOk) {
       state = state.copyWith(
         locating: false,
@@ -267,6 +276,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     state = state.copyWith(draft: state.draft.copyWith(center: here));
 
     final place = await locator.placeAt(here.lat, here.lng);
+    if (!ref.mounted) return;
     final code = place.countryCode?.toUpperCase();
     final country = code == null
         ? null
@@ -275,6 +285,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
             .firstOrNull;
     if (country != null && country.code != state.countryCode) {
       await pickCountry(country);
+      if (!ref.mounted) return;
     }
     if (place.city != null) pickCity(place.city!);
     state = state.copyWith(locating: false);
@@ -283,6 +294,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
   Future<void> _loadNeighbours() async {
     try {
       final all = await _repo.neighbourBoundaries(excludeId: venueId);
+      if (!ref.mounted) return;
       state = state.copyWith(neighbours: all);
     } on Object {
       // The API still refuses an overlap when the host saves.
@@ -292,6 +304,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
   Future<void> _loadPolicies() async {
     try {
       final all = await _repo.cancellationPolicies();
+      if (!ref.mounted) return;
       state = state.copyWith(policies: all);
     } on Object {
       // Optional.
@@ -322,6 +335,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     state = state.copyWith(uploading: true, clearError: true);
     try {
       final uploaded = await _repo.uploadVenuePhoto(photo);
+      if (!ref.mounted) return;
       state = state.copyWith(
         uploading: false,
         draft: state.draft.copyWith(
@@ -331,6 +345,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     } on Object catch (e) {
       // Say why when the server did: a storage problem looks the same as a
       // bad photo otherwise.
+      if (!ref.mounted) return;
       state = state.copyWith(
         uploading: false,
         error: 'photo',
@@ -368,9 +383,12 @@ class VenueStudioController extends Notifier<VenueStudioState> {
           submit: submit,
         );
       }
+      // It was saved even if the screen has gone.
+      if (!ref.mounted) return true;
       state = state.copyWith(saving: false);
       return true;
     } on Object catch (e) {
+      if (!ref.mounted) return false;
       state = state.copyWith(
         saving: false,
         error: '$e'.contains('overlaps') || '$e'.contains('409')
