@@ -95,7 +95,7 @@ void main() {
     expect(where(), RouteNames.home);
     expect(find.text('Requests'), findsNothing);
     // And has no switcher: nothing to switch to.
-    expect(find.text('Switch space'), findsNothing);
+    expect(find.text('WORKING AS'), findsNothing);
     await finish(tester);
   });
 
@@ -413,9 +413,9 @@ void main() {
     expect(where(), RouteNames.spaceVenue);
 
     // The button on the page names the space they are in.
-    await tester.tap(find.byIcon(Icons.swap_horiz_rounded));
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
     await settle(tester);
-    expect(find.text('Switch space'), findsOneWidget);
+    expect(find.text('WORKING AS'), findsOneWidget);
     await tester.tap(find.text('Citizen'));
     await settle(tester);
 
@@ -433,7 +433,7 @@ void main() {
 
     router.go(RouteNames.passport);
     await settle(tester);
-    await tester.tap(find.byIcon(Icons.swap_horiz_rounded));
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
     await settle(tester);
     await tester.tap(find.text('Event'));
     await settle(tester);
