@@ -4,6 +4,8 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -23,6 +25,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           storageServiceProvider.overrideWithValue(storage),
           passportProvider.overrideWith(
             (ref) async => PassportSummary.sample(),

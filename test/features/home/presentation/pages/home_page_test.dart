@@ -8,6 +8,8 @@ import 'package:flutter_template/features/notifications/data/notifications_repos
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -87,6 +89,7 @@ Widget _app({
     // A failed section stays failed here; Riverpod would retry it itself.
     retry: (_, __) => null,
     overrides: [
+      availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
       storageServiceProvider.overrideWithValue(storage),
       upcomingTicketsProvider.overrideWith((ref) async => tickets),
       categoriesProvider.overrideWith(

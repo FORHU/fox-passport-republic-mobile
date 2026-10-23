@@ -69,27 +69,3 @@ class SpaceAppBar extends ConsumerWidget implements PreferredSizeWidget {
     );
   }
 }
-
-/// The space pill on a line of its own at the top of a Citizen tab, which has
-/// no app bar. Nothing, and no space, for someone with a single role.
-class SpacePillRow extends ConsumerWidget {
-  const SpacePillRow({this.horizontal = 16, super.key});
-
-  /// Space at the left, to line up with what is below it; none inside a list
-  /// that already pads its children.
-  final double horizontal;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(availableSpacesProvider).length < 2) {
-      return const SizedBox.shrink();
-    }
-    return Padding(
-      padding: EdgeInsets.fromLTRB(horizontal, 8, horizontal, 0),
-      child: const Align(
-        alignment: Alignment.centerLeft,
-        child: SpaceSwitchButton(padding: EdgeInsets.zero),
-      ),
-    );
-  }
-}

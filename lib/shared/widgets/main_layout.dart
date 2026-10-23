@@ -6,7 +6,6 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/notifications/data/notifications_realtime.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
@@ -98,18 +97,7 @@ class MainLayout extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.ui.background,
-      // The space pill sits above every tab, for someone who holds a role to
-      // switch to; for everyone else it takes no room. The safe area is taken
-      // here, so the tabs below it do not add it twice.
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            const SpacePillRow(),
-            Expanded(child: navigationShell),
-          ],
-        ),
-      ),
+      body: navigationShell,
       bottomNavigationBar: AnimatedBottomNavigation(
         items: [for (final d in destinations) d.item],
         currentIndex: currentIndex,

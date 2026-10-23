@@ -101,25 +101,5 @@ void main() {
         findsNothing,
       );
     });
-
-    testWidgets('the Citizen row takes no room without a second role', (
-      tester,
-    ) async {
-      await pump(tester, roles: const [], row: const SpacePillRow());
-
-      expect(find.byType(SpaceSwitchButton), findsNothing);
-      expect(tester.getSize(find.byType(SpacePillRow)), Size.zero);
-    });
-
-    testWidgets('the Citizen row shows the pill for two roles', (tester) async {
-      await pump(
-        tester,
-        roles: ['eventFoxer'],
-        row: const Align(alignment: Alignment.topLeft, child: SpacePillRow()),
-      );
-
-      // The app bar's own pill plus the row's.
-      expect(find.byType(SpaceSwitchButton), findsNWidgets(2));
-    });
   });
 }
