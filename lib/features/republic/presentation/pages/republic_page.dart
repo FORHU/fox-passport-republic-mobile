@@ -148,17 +148,6 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       size: 28,
                     ),
                   ),
-                  IconButton(
-                    tooltip: l10n.republicSavedOpen,
-                    onPressed: () =>
-                        unawaited(context.push(RouteNames.republicSaved)),
-                    icon: const Icon(Icons.bookmark_border_rounded, size: 28),
-                  ),
-                  IconButton(
-                    tooltip: l10n.republicCompose,
-                    onPressed: _compose,
-                    icon: const Icon(Icons.add_box_outlined, size: 28),
-                  ),
                 ],
               ),
             ),
@@ -198,41 +187,55 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         ),
                       ),
                     ),
-                  Center(
-                    child: PopupMenuButton<FeedSort>(
-                      tooltip: l10n.republicSortBy,
-                      initialValue: sort,
-                      onSelected: ref.read(feedSortProvider.notifier).choose,
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: FeedSort.recent,
-                          child: Text(l10n.republicSortRecent),
+                ],
+              ),
+            ),
+            // Saved on the left, the order on the right: fixed, so neither
+            // is lost off the edge of the scrolling tabs.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 16, 4),
+              child: Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () =>
+                        unawaited(context.push(RouteNames.republicSaved)),
+                    icon: const Icon(Icons.bookmark_border_rounded, size: 18),
+                    label: Text(l10n.republicSavedOpen),
+                  ),
+                  const Spacer(),
+                  PopupMenuButton<FeedSort>(
+                    tooltip: l10n.republicSortBy,
+                    initialValue: sort,
+                    onSelected: ref.read(feedSortProvider.notifier).choose,
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: FeedSort.recent,
+                        child: Text(l10n.republicSortRecent),
+                      ),
+                      PopupMenuItem(
+                        value: FeedSort.top,
+                        child: Text(l10n.republicSortTop),
+                      ),
+                    ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.swap_vert_rounded,
+                          size: 18,
+                          color: AppColors.textMuted,
                         ),
-                        PopupMenuItem(
-                          value: FeedSort.top,
-                          child: Text(l10n.republicSortTop),
-                        ),
-                      ],
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.swap_vert_rounded,
-                            size: 18,
+                        const SizedBox(width: 4),
+                        Text(
+                          sort == FeedSort.top
+                              ? l10n.republicSortTop
+                              : l10n.republicSortRecent,
+                          style: AppTypography.body(
+                            size: 13,
                             color: AppColors.textMuted,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            sort == FeedSort.top
-                                ? l10n.republicSortTop
-                                : l10n.republicSortRecent,
-                            style: AppTypography.body(
-                              size: 13,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

@@ -5869,7 +5869,7 @@ abstract class AppLocalizations {
   /// No description provided for @republicSavedOpen.
   ///
   /// In en, this message translates to:
-  /// **'Saved posts'**
+  /// **'Saved'**
   String get republicSavedOpen;
 
   /// No description provided for @republicReportTitle.

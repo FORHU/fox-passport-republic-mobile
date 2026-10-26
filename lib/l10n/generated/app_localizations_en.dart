@@ -3202,7 +3202,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Nothing saved yet. Save a post from its menu.';
 
   @override
-  String get republicSavedOpen => 'Saved posts';
+  String get republicSavedOpen => 'Saved';
 
   @override
   String get republicReportTitle => 'Report this post';

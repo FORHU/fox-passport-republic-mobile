@@ -160,6 +160,19 @@ void main() {
       expect(find.text('Recent'), findsOneWidget);
     });
 
+    testWidgets('the header has only search; Saved is a labelled button', (
+      tester,
+    ) async {
+      await pumpPage(tester);
+
+      expect(find.byIcon(Icons.search_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.add_box_outlined), findsNothing);
+      expect(find.byIcon(Icons.bookmark_border_rounded), findsOneWidget);
+      expect(find.text('Saved'), findsOneWidget);
+      // Writing a post stays one tap away, from the row under the header.
+      expect(find.text("What's on your mind?"), findsOneWidget);
+    });
+
     testWidgets('choosing Top posts reads the feed that way', (tester) async {
       await pumpPage(tester);
       clearInteractions(api);
