@@ -3256,6 +3256,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReactions => 'Reactions';
 
   @override
+  String get republicTabPartners => 'Partners';
+
+  @override
+  String get republicSortBy => 'Sort by';
+
+  @override
+  String get republicSortRecent => 'Recent';
+
+  @override
+  String get republicSortTop => 'Top posts';
+
+  @override
+  String get republicSearchHint => 'Search the Republic';
+
+  @override
+  String republicSearchEmpty(String query) {
+    return 'No posts match “$query”.';
+  }
+
+  @override
+  String get republicClearSearch => 'Clear search';
+
+  @override
   String get republicShare => 'Share';
 
   @override

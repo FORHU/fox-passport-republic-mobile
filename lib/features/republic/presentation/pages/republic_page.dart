@@ -26,10 +26,12 @@ class RepublicPage extends ConsumerStatefulWidget {
 
 class _RepublicPageState extends ConsumerState<RepublicPage> {
   // Tab ids as the API names them; null is everything.
-  static const _tabs = <String?>[null, 'community', 'marketplace'];
+  static const _tabs = <String?>[null, 'community', 'marketplace', 'partners'];
 
   String? _tab;
   final _scroll = ScrollController();
+  final _search = TextEditingController();
+  bool _searching = false;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   @override
   void dispose() {
     _scroll.dispose();
+    _search.dispose();
     super.dispose();
   }
 
@@ -59,6 +62,23 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
   PostActions get _actions => PostActions(context, ref, _tab);
 
+  void _applySearch(String term) {
+    ref.read(feedSearchProvider.notifier).set(term);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+  }
+
+  void _clearSearch() {
+    _search.clear();
+    _applySearch('');
+  }
+
+  /// A tapped `#tag` searches for it.
+  void _searchFor(String tag) {
+    _search.text = tag;
+    setState(() => _searching = true);
+    _applySearch(tag);
+  }
+
   Future<void> _compose() async {
     if (!_signedIn()) return;
     final posted = await context.push<bool>(RouteNames.republicCompose);
@@ -72,6 +92,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     return switch (tab) {
       'community' => l10n.republicTabCommunity,
       'marketplace' => l10n.republicTabMarketplace,
+      'partners' => l10n.republicTabPartners,
       _ => l10n.republicTabAll,
     };
   }
@@ -80,6 +101,8 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final feed = ref.watch(feedControllerProvider(_tab));
+    final sort = ref.watch(feedSortProvider);
+    final term = ref.watch(feedSearchProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -111,6 +134,21 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                     ),
                   ),
                   IconButton(
+                    tooltip: l10n.republicSearchHint,
+                    onPressed: () {
+                      if (_searching && _search.text.isNotEmpty) {
+                        _clearSearch();
+                      }
+                      setState(() => _searching = !_searching);
+                    },
+                    icon: Icon(
+                      _searching
+                          ? Icons.search_off_rounded
+                          : Icons.search_rounded,
+                      size: 28,
+                    ),
+                  ),
+                  IconButton(
                     tooltip: l10n.republicSavedOpen,
                     onPressed: () =>
                         unawaited(context.push(RouteNames.republicSaved)),
@@ -124,6 +162,25 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                 ],
               ),
             ),
+            if (_searching)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: TextField(
+                  controller: _search,
+                  autofocus: true,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: _applySearch,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    hintText: l10n.republicSearchHint,
+                    suffixIcon: IconButton(
+                      tooltip: l10n.republicClearSearch,
+                      onPressed: _clearSearch,
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ),
+                ),
+              ),
             SizedBox(
               height: 52,
               child: ListView(
@@ -141,6 +198,43 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         ),
                       ),
                     ),
+                  Center(
+                    child: PopupMenuButton<FeedSort>(
+                      tooltip: l10n.republicSortBy,
+                      initialValue: sort,
+                      onSelected: ref.read(feedSortProvider.notifier).choose,
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: FeedSort.recent,
+                          child: Text(l10n.republicSortRecent),
+                        ),
+                        PopupMenuItem(
+                          value: FeedSort.top,
+                          child: Text(l10n.republicSortTop),
+                        ),
+                      ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.swap_vert_rounded,
+                            size: 18,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            sort == FeedSort.top
+                                ? l10n.republicSortTop
+                                : l10n.republicSortRecent,
+                            style: AppTypography.body(
+                              size: 13,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -179,12 +273,23 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         return state.posts.isEmpty
                             ? Padding(
                                 padding: const EdgeInsets.all(32),
-                                child: Text(
-                                  l10n.republicEmpty,
-                                  textAlign: TextAlign.center,
-                                  style: AppTypography.body(
-                                    color: AppColors.textMuted,
-                                  ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      term.isEmpty
+                                          ? l10n.republicEmpty
+                                          : l10n.republicSearchEmpty(term),
+                                      textAlign: TextAlign.center,
+                                      style: AppTypography.body(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                    if (term.isNotEmpty)
+                                      TextButton(
+                                        onPressed: _clearSearch,
+                                        child: Text(l10n.republicClearSearch),
+                                      ),
+                                  ],
                                 ),
                               )
                             : _Footer(
@@ -213,6 +318,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         onMessage: () =>
                             unawaited(_actions.messageAuthor(post)),
                         onShare: () => unawaited(_actions.share(post)),
+                        onHashtag: _searchFor,
                       );
                     },
                   ),

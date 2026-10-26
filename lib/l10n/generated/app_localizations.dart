@@ -5974,6 +5974,48 @@ abstract class AppLocalizations {
   /// **'Reactions'**
   String get republicReactions;
 
+  /// No description provided for @republicTabPartners.
+  ///
+  /// In en, this message translates to:
+  /// **'Partners'**
+  String get republicTabPartners;
+
+  /// No description provided for @republicSortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get republicSortBy;
+
+  /// No description provided for @republicSortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get republicSortRecent;
+
+  /// No description provided for @republicSortTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Top posts'**
+  String get republicSortTop;
+
+  /// No description provided for @republicSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the Republic'**
+  String get republicSearchHint;
+
+  /// No description provided for @republicSearchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts match “{query}”.'**
+  String republicSearchEmpty(String query);
+
+  /// No description provided for @republicClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get republicClearSearch;
+
   /// No description provided for @republicShare.
   ///
   /// In en, this message translates to:
