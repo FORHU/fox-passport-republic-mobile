@@ -7,6 +7,7 @@ import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
@@ -15,7 +16,10 @@ import 'package:flutter_template/features/republic/presentation/widgets/comments
 import 'package:flutter_template/features/republic/presentation/widgets/compose_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_menu_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
+import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
+import 'package:go_router/go_router.dart';
 
 /// What a person can do with a post in a feed list, shared by the Republic
 /// and the Saved posts so both behave the same. [tab] picks the feed whose
@@ -48,6 +52,50 @@ class PostActions {
     final ok = await _feed.react(postId, type);
     if (!ok && context.mounted) {
       showTopToast(context, context.l10n.republicLikeFailed);
+    }
+  }
+
+  Future<void> vote(String postId, String optionId) async {
+    if (!_signedIn()) return;
+    final ok = await _feed.vote(postId, optionId);
+    if (!ok && context.mounted) {
+      showTopToast(context, context.l10n.republicVoteFailed);
+    }
+  }
+
+  /// Opens the venue, gear, service or event a post advertises.
+  void openListing(Post post) {
+    final item = post.listing;
+    if (item == null) return;
+    unawaited(
+      switch (item.kind) {
+        CatalogKind.venues => context.push(RouteNames.venueDetail, extra: item),
+        CatalogKind.events =>
+          context.push(RouteNames.scheduledEventDetail, extra: item),
+        _ => context.push(RouteNames.itemBooking, extra: item),
+      },
+    );
+  }
+
+  /// Starts a chat with the post's author.
+  Future<void> messageAuthor(Post post) async {
+    if (!_signedIn()) return;
+    final me = ref.read(authControllerProvider).user;
+    if (me != null && me.id == post.author.id) return;
+    final l10n = context.l10n;
+    try {
+      final id = await ref
+          .read(messagesRepositoryProvider)
+          .startWithUser(post.author.id);
+      ref.invalidate(conversationsProvider);
+      if (context.mounted) unawaited(context.push(RouteNames.chat(id)));
+    } on Object catch (e) {
+      if (context.mounted) {
+        showTopToast(
+          context,
+          e is AppException ? e.message : l10n.messageStartFailed,
+        );
+      }
     }
   }
 

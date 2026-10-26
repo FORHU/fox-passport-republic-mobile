@@ -6,6 +6,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/republic/data/media_picker.dart';
 import 'package:flutter_template/features/republic/domain/new_post.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/post_extras.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 
 /// Reads and writes the Republic feed: posts, likes and comments.
@@ -162,6 +163,16 @@ class RepublicRepository {
     final body = await _api.post(ApiEndpoints.feedSave(postId));
     final data = body is Map ? body['data'] : null;
     return data is Map && data['saved'] == true;
+  }
+
+  /// Votes for an option, or takes the vote back by choosing it again.
+  /// Returns the poll as the server now has it.
+  Future<PostPoll?> vote(String postId, String optionId) async {
+    final body = await _api.post(
+      ApiEndpoints.feedPollVote(postId),
+      {'optionId': optionId},
+    );
+    return PostPoll.tryParse(body is Map ? body['data'] : null);
   }
 
   /// Stops showing a post that is someone else's, for this person only.

@@ -186,6 +186,20 @@ class FeedController extends AsyncNotifier<FeedState> {
     );
   }
 
+  /// Votes in a poll and shows the poll as the server now has it. Returns
+  /// false when the vote did not go through.
+  Future<bool> vote(String postId, String optionId) async {
+    try {
+      final poll =
+          await ref.read(republicRepositoryProvider).vote(postId, optionId);
+      if (poll == null) return false;
+      _replace(postId, (p) => p.copyWith(poll: poll));
+      return true;
+    } on Object {
+      return false;
+    }
+  }
+
   /// Saves or unsaves. Returns false when the server refuses.
   Future<bool> toggleSave(String postId) async {
     try {

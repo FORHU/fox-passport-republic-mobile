@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/republic/domain/post_extras.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
 
 String? _text(Object? v) =>
     v is String && v.trim().isNotEmpty ? v.trim() : null;
@@ -40,6 +42,13 @@ class Post extends Equatable {
     this.myReaction,
     this.edited = false,
     this.isSavedByMe = false,
+    this.type = 'citizen_experience',
+    this.isPinned = false,
+    this.poll,
+    this.listing,
+    this.review,
+    this.stamp,
+    this.original,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -59,6 +68,13 @@ class Post extends Equatable {
             (json['isLikedByMe'] == true ? ReactionType.like : null),
         edited: json['editedAt'] != null,
         isSavedByMe: json['isSavedByMe'] == true,
+        type: _text(json['type']) ?? 'citizen_experience',
+        isPinned: json['isPinned'] == true,
+        poll: PostPoll.tryParse(json['poll']),
+        listing: listingOf(_text(json['type']) ?? '', json),
+        review: PostReview.tryParse(json['review']),
+        stamp: PostStamp.tryParse(json['stamp']),
+        original: OriginalPost.tryParse(json['originalPost']),
       );
 
   final String id;
@@ -74,6 +90,19 @@ class Post extends Equatable {
   final bool edited;
   final bool isSavedByMe;
 
+  /// `citizen_experience`, `poll`, `venue_spotlight`... see [PostTypes].
+  final String type;
+  final bool isPinned;
+  final PostPoll? poll;
+
+  /// The venue, gear, service or event a marketplace post points at.
+  final CatalogItem? listing;
+  final PostReview? review;
+  final PostStamp? stamp;
+
+  /// The post this one reposts.
+  final OriginalPost? original;
+
   Post copyWith({
     String? content,
     int? likesCount,
@@ -82,6 +111,7 @@ class Post extends Equatable {
     bool clearReaction = false,
     bool? isSavedByMe,
     bool? edited,
+    PostPoll? poll,
   }) =>
       Post(
         id: id,
@@ -95,6 +125,13 @@ class Post extends Equatable {
         myReaction: clearReaction ? null : myReaction ?? this.myReaction,
         edited: edited ?? this.edited,
         isSavedByMe: isSavedByMe ?? this.isSavedByMe,
+        type: type,
+        isPinned: isPinned,
+        poll: poll ?? this.poll,
+        listing: listing,
+        review: review,
+        stamp: stamp,
+        original: original,
       );
 
   @override
@@ -110,6 +147,13 @@ class Post extends Equatable {
         myReaction,
         edited,
         isSavedByMe,
+        type,
+        isPinned,
+        poll,
+        listing,
+        review,
+        stamp,
+        original,
       ];
 }
 

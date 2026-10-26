@@ -3256,6 +3256,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReactions => 'Reactions';
 
   @override
+  String get republicVerifiedStamp => 'Verified Venue Stamp';
+
+  @override
+  String get republicVerifiedBooking => 'Verified booking';
+
+  @override
+  String republicVotesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count votes',
+      one: '1 vote',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get republicVoteFailed => 'Your vote didn\'t go through.';
+
+  @override
+  String get republicPinned => 'Featured in Republic';
+
+  @override
+  String get republicBookVenue => 'Book venue';
+
+  @override
+  String get republicRentGear => 'Rent gear';
+
+  @override
+  String get republicBookService => 'Book service';
+
+  @override
+  String get republicGetTickets => 'Get tickets';
+
+  @override
+  String get republicMessage => 'Message';
+
+  @override
+  String get republicPartnerTitle => 'Official Partner Foxer opportunity';
+
+  @override
+  String get republicPartnerBody =>
+      'Available for funding, package allocations and co-host production.';
+
+  @override
+  String get republicContactPartner => 'Contact partner';
+
+  @override
+  String get republicSharedPost => 'Shared a post';
+
+  @override
   String get republicTypeStory => 'Story';
 
   @override

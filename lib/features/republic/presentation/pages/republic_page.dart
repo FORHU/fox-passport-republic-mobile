@@ -207,6 +207,11 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         onReact: (r) => unawaited(_actions.react(post.id, r)),
                         onReactions: () =>
                             unawaited(_actions.reactions(post.id)),
+                        myUserId: ref.read(authControllerProvider).user?.id,
+                        onVote: (o) => unawaited(_actions.vote(post.id, o)),
+                        onOpenListing: () => _actions.openListing(post),
+                        onMessage: () =>
+                            unawaited(_actions.messageAuthor(post)),
                       );
                     },
                   ),

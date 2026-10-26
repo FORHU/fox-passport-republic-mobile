@@ -133,6 +133,7 @@ class ApiEndpoints {
       '/feed/$id/comments/$commentId/like';
   static String feedPost(String id) => '/feed/$id';
   static String feedSave(String id) => '/feed/$id/save';
+  static String feedPollVote(String id) => '/feed/$id/poll/vote';
   static String feedHide(String id) => '/feed/$id/hide';
   static const String feedSaved = '/feed/saved';
   static const String feedMentionSearch = '/feed/mentions/search';
