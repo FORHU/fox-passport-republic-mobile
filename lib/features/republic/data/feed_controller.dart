@@ -137,6 +137,18 @@ class FeedController extends AsyncNotifier<FeedState> {
     });
   }
 
+  /// Puts a post first in the list, for one you have just written: the feed
+  /// lists featured posts first, so it would otherwise be a screen or two down.
+  void addFirst(Post post) {
+    final latest = state.value;
+    if (latest == null) return;
+    state = AsyncData(
+      latest.copyWith(
+        posts: [post, ...latest.posts.where((p) => p.id != post.id)],
+      ),
+    );
+  }
+
   /// A tap on Like: likes the post, or takes any reaction back.
   Future<bool> toggleLike(String postId) {
     final post = state.value?.posts.where((p) => p.id == postId).firstOrNull;

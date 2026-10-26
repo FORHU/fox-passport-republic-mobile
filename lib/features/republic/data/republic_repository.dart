@@ -123,9 +123,13 @@ class RepublicRepository {
     return data is Map ? Post.fromJson(data.cast<String, dynamic>()) : null;
   }
 
-  /// Sends a post. The API puts it on the right tab for its type.
-  Future<void> createPost(NewPost post) async {
-    await _api.post(ApiEndpoints.feed, post.toJson());
+  /// Sends a post and returns its id (null if the answer has none). The API
+  /// puts it on the right tab for its type.
+  Future<String?> createPost(NewPost post) async {
+    final body = await _api.post(ApiEndpoints.feed, post.toJson());
+    final data = body is Map ? body['data'] : null;
+    final id = data is Map ? data['id'] : null;
+    return id == null ? null : '$id';
   }
 
   /// Uploads a photo and returns its public URL, to attach to a post.

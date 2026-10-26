@@ -17,7 +17,8 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// Writing a post: the words, photos, who can see it, and, for a poll or a
-/// venue spotlight, what goes with it. Pops `true` once it is posted.
+/// venue spotlight, what goes with it. Pops the new post's id once it is
+/// posted (empty if it came back without one).
 class ComposePostPage extends ConsumerStatefulWidget {
   const ComposePostPage({super.key});
 
@@ -133,7 +134,7 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
       for (final photo in _photos) {
         urls.add(await _repo.uploadMedia(photo));
       }
-      await _repo.createPost(
+      final id = await _repo.createPost(
         NewPost(
           type: _type,
           content: _text.text,
@@ -143,7 +144,8 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
           pollOptions: _pollOptions,
         ),
       );
-      if (mounted) Navigator.pop(context, true);
+      // The new post's id, or empty when the answer had none.
+      if (mounted) Navigator.pop(context, id ?? '');
     } on Object catch (e) {
       if (mounted) {
         setState(() => _posting = false);
