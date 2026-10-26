@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_media.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -71,6 +72,10 @@ class PostCard extends StatefulWidget {
     this.onMore,
     this.onReact,
     this.onReactions,
+    this.myUserId,
+    this.onVote,
+    this.onOpenListing,
+    this.onMessage,
     super.key,
   });
 
@@ -86,6 +91,18 @@ class PostCard extends StatefulWidget {
 
   /// Opens who reacted how, from the counts row.
   final VoidCallback? onReactions;
+
+  /// Who is looking, to mark their own poll vote.
+  final String? myUserId;
+
+  /// A poll option was tapped.
+  final ValueChanged<String>? onVote;
+
+  /// The listing a marketplace post points at was opened.
+  final VoidCallback? onOpenListing;
+
+  /// "Message" the author about this post or its listing.
+  final VoidCallback? onMessage;
 
   /// Longer than this and the text folds behind "See more".
   static const foldAt = 280;
@@ -112,6 +129,28 @@ class _PostCardState extends State<PostCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (post.isPinned)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.push_pin_outlined,
+                    size: 16,
+                    color: AppColors.accent,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.republicPinned,
+                    style: AppTypography.body(
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.accent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Row(
@@ -157,6 +196,13 @@ class _PostCardState extends State<PostCard> {
                 onToggle: () => setState(() => _expanded = !_expanded),
               ),
             ),
+          PostEmbeds(
+            post: post,
+            myUserId: widget.myUserId,
+            onVote: widget.onVote,
+            onOpenListing: widget.onOpenListing,
+            onMessage: widget.onMessage,
+          ),
           if (post.mediaUrls.isNotEmpty) ...[
             const SizedBox(height: 10),
             PostMedia(urls: post.mediaUrls),
@@ -248,7 +294,7 @@ class _Body extends StatelessWidget {
       TextSpan(
         style: AppTypography.body(),
         children: [
-          TextSpan(text: shown),
+          ..._withMentions(shown),
           if (long) ...[
             TextSpan(text: expanded ? ' ' : '… '),
             TextSpan(
@@ -315,4 +361,28 @@ class _LikeButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Words with each `@name` in the accent colour.
+List<InlineSpan> _withMentions(String text) {
+  final spans = <InlineSpan>[];
+  var from = 0;
+  for (final m in RegExp('@[A-Za-z0-9_]{1,32}').allMatches(text)) {
+    if (m.start > 0 && !RegExp(r'\s').hasMatch(text[m.start - 1])) continue;
+    if (m.start > from) {
+      spans.add(TextSpan(text: text.substring(from, m.start)));
+    }
+    spans.add(
+      TextSpan(
+        text: m.group(0),
+        style: const TextStyle(
+          color: AppColors.accent,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+    from = m.end;
+  }
+  if (from < text.length) spans.add(TextSpan(text: text.substring(from)));
+  return spans;
 }

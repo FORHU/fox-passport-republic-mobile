@@ -5974,6 +5974,90 @@ abstract class AppLocalizations {
   /// **'Reactions'**
   String get republicReactions;
 
+  /// No description provided for @republicVerifiedStamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Venue Stamp'**
+  String get republicVerifiedStamp;
+
+  /// No description provided for @republicVerifiedBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified booking'**
+  String get republicVerifiedBooking;
+
+  /// No description provided for @republicVotesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 vote} other{{count} votes}}'**
+  String republicVotesCount(int count);
+
+  /// No description provided for @republicVoteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vote didn\'t go through.'**
+  String get republicVoteFailed;
+
+  /// No description provided for @republicPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured in Republic'**
+  String get republicPinned;
+
+  /// No description provided for @republicBookVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Book venue'**
+  String get republicBookVenue;
+
+  /// No description provided for @republicRentGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent gear'**
+  String get republicRentGear;
+
+  /// No description provided for @republicBookService.
+  ///
+  /// In en, this message translates to:
+  /// **'Book service'**
+  String get republicBookService;
+
+  /// No description provided for @republicGetTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Get tickets'**
+  String get republicGetTickets;
+
+  /// No description provided for @republicMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get republicMessage;
+
+  /// No description provided for @republicPartnerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Partner Foxer opportunity'**
+  String get republicPartnerTitle;
+
+  /// No description provided for @republicPartnerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Available for funding, package allocations and co-host production.'**
+  String get republicPartnerBody;
+
+  /// No description provided for @republicContactPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact partner'**
+  String get republicContactPartner;
+
+  /// No description provided for @republicSharedPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared a post'**
+  String get republicSharedPost;
+
   /// No description provided for @republicTypeStory.
   ///
   /// In en, this message translates to:

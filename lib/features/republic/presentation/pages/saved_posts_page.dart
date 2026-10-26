@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
@@ -95,6 +96,10 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
                       onMore: () => unawaited(actions.menu(post)),
                       onReact: (r) => unawaited(actions.react(post.id, r)),
                       onReactions: () => unawaited(actions.reactions(post.id)),
+                      myUserId: ref.read(authControllerProvider).user?.id,
+                      onVote: (o) => unawaited(actions.vote(post.id, o)),
+                      onOpenListing: () => actions.openListing(post),
+                      onMessage: () => unawaited(actions.messageAuthor(post)),
                     );
                   },
                 ),
