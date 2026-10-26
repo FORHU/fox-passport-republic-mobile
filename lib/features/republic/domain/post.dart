@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
 
 String? _text(Object? v) =>
     v is String && v.trim().isNotEmpty ? v.trim() : null;
@@ -36,7 +37,7 @@ class Post extends Equatable {
     this.mediaUrls = const [],
     this.likesCount = 0,
     this.commentsCount = 0,
-    this.isLikedByMe = false,
+    this.myReaction,
     this.edited = false,
     this.isSavedByMe = false,
   });
@@ -53,7 +54,9 @@ class Post extends Equatable {
         ],
         likesCount: (json['likesCount'] as num?)?.toInt() ?? 0,
         commentsCount: (json['commentsCount'] as num?)?.toInt() ?? 0,
-        isLikedByMe: json['isLikedByMe'] == true,
+        // Older rows only say that it was liked.
+        myReaction: ReactionType.tryParse(json['myReaction']) ??
+            (json['isLikedByMe'] == true ? ReactionType.like : null),
         edited: json['editedAt'] != null,
         isSavedByMe: json['isSavedByMe'] == true,
       );
@@ -66,7 +69,8 @@ class Post extends Equatable {
   final List<String> mediaUrls;
   final int likesCount;
   final int commentsCount;
-  final bool isLikedByMe;
+  final ReactionType? myReaction;
+  bool get isLikedByMe => myReaction != null;
   final bool edited;
   final bool isSavedByMe;
 
@@ -74,7 +78,8 @@ class Post extends Equatable {
     String? content,
     int? likesCount,
     int? commentsCount,
-    bool? isLikedByMe,
+    ReactionType? myReaction,
+    bool clearReaction = false,
     bool? isSavedByMe,
     bool? edited,
   }) =>
@@ -87,7 +92,7 @@ class Post extends Equatable {
         mediaUrls: mediaUrls,
         likesCount: likesCount ?? this.likesCount,
         commentsCount: commentsCount ?? this.commentsCount,
-        isLikedByMe: isLikedByMe ?? this.isLikedByMe,
+        myReaction: clearReaction ? null : myReaction ?? this.myReaction,
         edited: edited ?? this.edited,
         isSavedByMe: isSavedByMe ?? this.isSavedByMe,
       );
@@ -102,7 +107,7 @@ class Post extends Equatable {
         mediaUrls,
         likesCount,
         commentsCount,
-        isLikedByMe,
+        myReaction,
         edited,
         isSavedByMe,
       ];

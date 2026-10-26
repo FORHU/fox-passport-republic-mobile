@@ -125,6 +125,7 @@ class ApiEndpoints {
   // ── Republic feed ───────────────────────────────────────────────────────
   static const String feed = '/feed';
   static String feedReaction(String id) => '/feed/$id/reaction';
+  static String feedReactions(String id) => '/feed/$id/reactions';
   static String feedComments(String id) => '/feed/$id/comments';
   static String feedPost(String id) => '/feed/$id';
   static String feedSave(String id) => '/feed/$id/save';

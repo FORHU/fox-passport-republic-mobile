@@ -2,6 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_media.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -66,6 +69,8 @@ class PostCard extends StatefulWidget {
     required this.onLike,
     required this.onComments,
     this.onMore,
+    this.onReact,
+    this.onReactions,
     super.key,
   });
 
@@ -75,6 +80,12 @@ class PostCard extends StatefulWidget {
 
   /// Opens the post's ⋯ menu; no button when null.
   final VoidCallback? onMore;
+
+  /// Chosen from the picker a long press on Like opens; no picker when null.
+  final ValueChanged<ReactionType>? onReact;
+
+  /// Opens who reacted how, from the counts row.
+  final VoidCallback? onReactions;
 
   /// Longer than this and the text folds behind "See more".
   static const foldAt = 280;
@@ -148,23 +159,33 @@ class _PostCardState extends State<PostCard> {
             ),
           if (post.mediaUrls.isNotEmpty) ...[
             const SizedBox(height: 10),
-            NetworkImageBox(
-              url: post.mediaUrls.first,
-              height: 280,
-              width: double.infinity,
-            ),
+            PostMedia(urls: post.mediaUrls),
           ],
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
             child: Row(
               children: [
-                const Icon(
-                  Icons.favorite_rounded,
-                  size: 16,
-                  color: AppColors.accent,
+                InkWell(
+                  onTap: post.likesCount > 0 ? widget.onReactions : null,
+                  child: Row(
+                    children: [
+                      if (post.myReaction != null &&
+                          post.myReaction != ReactionType.like)
+                        Text(
+                          post.myReaction!.emoji,
+                          style: const TextStyle(fontSize: 14),
+                        )
+                      else
+                        const Icon(
+                          Icons.favorite_rounded,
+                          size: 16,
+                          color: AppColors.accent,
+                        ),
+                      const SizedBox(width: 4),
+                      Text('${post.likesCount}', style: muted),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 4),
-                Text('${post.likesCount}', style: muted),
                 const Spacer(),
                 Text(
                   l10n.republicCommentsCount(post.commentsCount),
@@ -177,24 +198,10 @@ class _PostCardState extends State<PostCard> {
           Row(
             children: [
               Expanded(
-                child: TextButton.icon(
-                  onPressed: onLike,
-                  icon: Icon(
-                    post.isLikedByMe
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: post.isLikedByMe
-                        ? AppColors.accent
-                        : AppColors.textMuted,
-                  ),
-                  label: Text(
-                    l10n.republicLike,
-                    style: AppTypography.body(
-                      color: post.isLikedByMe
-                          ? AppColors.accent
-                          : AppColors.textMuted,
-                    ),
-                  ),
+                child: _LikeButton(
+                  reaction: post.myReaction,
+                  onTap: onLike,
+                  onPick: widget.onReact,
                 ),
               ),
               Expanded(
@@ -254,6 +261,57 @@ class _Body extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// Like: a tap likes or takes the reaction back, a long press opens the six
+/// reactions. Once reacted it shows that reaction's emoji and name.
+class _LikeButton extends StatelessWidget {
+  const _LikeButton({
+    required this.reaction,
+    required this.onTap,
+    required this.onPick,
+  });
+
+  final ReactionType? reaction;
+  final VoidCallback onTap;
+  final ValueChanged<ReactionType>? onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final color = reaction != null ? AppColors.accent : AppColors.textMuted;
+    return Builder(
+      builder: (anchor) => InkWell(
+        onTap: onTap,
+        onLongPress: onPick == null
+            ? null
+            : () async {
+                final picked =
+                    await showReactionPicker(anchor, current: reaction);
+                if (picked != null) onPick!(picked);
+              },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (reaction != null)
+                Text(reaction!.emoji, style: const TextStyle(fontSize: 18))
+              else
+                Icon(Icons.favorite_border_rounded, color: color),
+              const SizedBox(width: 8),
+              Text(
+                reaction == null
+                    ? l10n.republicLike
+                    : reactionLabel(l10n, reaction!),
+                style: AppTypography.body(color: color),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
