@@ -7,13 +7,13 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
+import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/comments_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 
 /// The Republic: what the community is posting. Everyone can read; liking,
 /// commenting and posting need an account.
@@ -121,32 +121,37 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _compose,
-        backgroundColor: AppColors.accent,
-        foregroundColor: AppColors.onAccent,
-        icon: const Icon(Icons.edit_outlined),
-        label: Text(l10n.republicPost),
-      ),
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+              padding: EdgeInsets.fromLTRB(
+                Navigator.canPop(context) ? 8 : 16,
+                8,
+                16,
+                0,
+              ),
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
+                  // A tab now; the arrow only shows if it was pushed.
+                  if (Navigator.canPop(context))
+                    IconButton(
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                   Expanded(
                     child: Text(
                       l10n.republicTitle,
-                      style: AppTypography.display(size: 24),
+                      style: AppTypography.display(size: 26),
                     ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.republicCompose,
+                    onPressed: _compose,
+                    icon: const Icon(Icons.add_box_outlined, size: 28),
                   ),
                 ],
               ),
@@ -182,28 +187,39 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                   actionLabel: l10n.retry,
                   onAction: () => ref.invalidate(feedControllerProvider(_tab)),
                 ),
-                data: (state) => state.posts.isEmpty
-                    ? Center(
-                        child: Text(
-                          l10n.republicEmpty,
-                          textAlign: TextAlign.center,
-                          style: AppTypography.body(color: AppColors.textMuted),
-                        ),
-                      )
-                    : RefreshIndicator(
-                        color: AppColors.accent,
-                        onRefresh: () => ref
-                            .read(feedControllerProvider(_tab).notifier)
-                            .refresh(),
-                        child: ListView.separated(
-                          controller: _scroll,
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                          itemCount: state.posts.length + 1,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 14),
-                          itemBuilder: (context, i) {
-                            if (i == state.posts.length) {
-                              return _Footer(
+                data: (state) => RefreshIndicator(
+                  color: AppColors.accent,
+                  onRefresh: () =>
+                      ref.read(feedControllerProvider(_tab).notifier).refresh(),
+                  // The composer is the first row, then the posts, each one
+                  // full width and split by a thick rule, like a feed.
+                  child: ListView.separated(
+                    controller: _scroll,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 24),
+                    itemCount: state.posts.length + 2,
+                    separatorBuilder: (_, __) => const Divider(
+                      height: 8,
+                      thickness: 8,
+                      color: AppColors.surface,
+                    ),
+                    itemBuilder: (context, i) {
+                      if (i == 0) {
+                        return _ComposerRow(onTap: _compose);
+                      }
+                      if (i == state.posts.length + 1) {
+                        return state.posts.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Text(
+                                  l10n.republicEmpty,
+                                  textAlign: TextAlign.center,
+                                  style: AppTypography.body(
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              )
+                            : _Footer(
                                 state: state,
                                 onRetry: () => unawaited(
                                   ref
@@ -213,18 +229,55 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                                       .loadMore(),
                                 ),
                               );
-                            }
-                            final post = state.posts[i];
-                            return PostCard(
-                              post: post,
-                              onLike: () => unawaited(_like(post.id)),
-                              onComments: () => unawaited(_comments(post.id)),
-                            );
-                          },
-                        ),
-                      ),
+                      }
+                      final post = state.posts[i - 1];
+                      return PostCard(
+                        post: post,
+                        onLike: () => unawaited(_like(post.id)),
+                        onComments: () => unawaited(_comments(post.id)),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "What's on your mind?": your photo and a field that opens the composer.
+class _ComposerRow extends ConsumerWidget {
+  const _ComposerRow({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authControllerProvider).user;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: Row(
+          children: [
+            AuthorAvatar(
+              author: PostAuthor(
+                id: user?.id ?? '',
+                name: user?.name ?? '',
+                imageUrl: user?.imageUrl,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.l10n.republicComposePrompt,
+                style: AppTypography.body(color: AppColors.textMuted),
+              ),
+            ),
+            const Icon(Icons.image_outlined, color: AppColors.textMuted),
           ],
         ),
       ),

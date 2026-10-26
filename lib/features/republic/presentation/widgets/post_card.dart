@@ -4,7 +4,6 @@ import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
@@ -58,7 +57,8 @@ class AuthorAvatar extends StatelessWidget {
   }
 }
 
-/// One post: who and when, the words, the first photo, then like and comment.
+/// One post, full width like a feed: who and when, the words, the first photo
+/// edge to edge, the counts, then Like and Comment.
 class PostCard extends StatelessWidget {
   const PostCard({
     required this.post,
@@ -76,83 +76,110 @@ class PostCard extends StatelessWidget {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
     final age = postAge(l10n, post.createdAt, locale);
+    final muted = AppTypography.body(size: 13, color: AppColors.textMuted);
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brLg,
-        border: Border.all(color: AppColors.border),
-      ),
+    return ColoredBox(
+      color: AppColors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              AuthorAvatar(author: post.author),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post.author.name.isEmpty ? '—' : post.author.name,
-                      style: AppTypography.body(weight: FontWeight.w600),
-                    ),
-                    Text(
-                      [
-                        if (age.isNotEmpty) age,
-                        if (post.edited) l10n.republicEdited,
-                      ].join(' · '),
-                      style: AppTypography.body(
-                        size: 12,
-                        color: AppColors.textMuted,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Row(
+              children: [
+                AuthorAvatar(author: post.author),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post.author.name.isEmpty ? '—' : post.author.name,
+                        style: AppTypography.body(weight: FontWeight.w700),
                       ),
-                    ),
-                  ],
+                      Text(
+                        [
+                          if (age.isNotEmpty) age,
+                          if (post.edited) l10n.republicEdited,
+                        ].join(' · '),
+                        style: AppTypography.body(
+                          size: 12,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          if (post.content.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(post.content, style: AppTypography.body()),
-          ],
+          if (post.content.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: Text(post.content, style: AppTypography.body()),
+            ),
           if (post.mediaUrls.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             NetworkImageBox(
               url: post.mediaUrls.first,
-              height: 200,
+              height: 280,
               width: double.infinity,
-              borderRadius: AppRadius.brMd,
             ),
           ],
-          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.favorite_rounded,
+                  size: 16,
+                  color: AppColors.accent,
+                ),
+                const SizedBox(width: 4),
+                Text('${post.likesCount}', style: muted),
+                const Spacer(),
+                Text(
+                  l10n.republicCommentsCount(post.commentsCount),
+                  style: muted,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: AppColors.border),
           Row(
             children: [
-              TextButton.icon(
-                onPressed: onLike,
-                icon: Icon(
-                  post.isLikedByMe
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_border_rounded,
-                  color:
-                      post.isLikedByMe ? AppColors.accent : AppColors.textMuted,
-                ),
-                label: Text(
-                  '${post.likesCount}',
-                  style: AppTypography.body(color: AppColors.textMuted),
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: onLike,
+                  icon: Icon(
+                    post.isLikedByMe
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    color: post.isLikedByMe
+                        ? AppColors.accent
+                        : AppColors.textMuted,
+                  ),
+                  label: Text(
+                    l10n.republicLike,
+                    style: AppTypography.body(
+                      color: post.isLikedByMe
+                          ? AppColors.accent
+                          : AppColors.textMuted,
+                    ),
+                  ),
                 ),
               ),
-              TextButton.icon(
-                onPressed: onComments,
-                icon: const Icon(
-                  Icons.chat_bubble_outline_rounded,
-                  color: AppColors.textMuted,
-                ),
-                label: Text(
-                  '${post.commentsCount}',
-                  style: AppTypography.body(color: AppColors.textMuted),
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: onComments,
+                  icon: const Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    color: AppColors.textMuted,
+                  ),
+                  label: Text(
+                    l10n.republicComments,
+                    style: AppTypography.body(color: AppColors.textMuted),
+                  ),
                 ),
               ),
             ],

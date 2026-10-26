@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
@@ -10,6 +12,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
+
+class _Session extends AuthController {
+  @override
+  AuthState build() => const AuthState(
+        user: UserEntity(id: 'u1', email: 'a@b.co', name: 'Ada'),
+      );
+}
 
 Map<String, dynamic> _post(String id, {int likes = 0, bool liked = false}) => {
       'id': id,
@@ -125,6 +134,7 @@ void main() {
       ProviderScope(
         overrides: [
           republicRepositoryProvider.overrideWithValue(RepublicRepository(api)),
+          authControllerProvider.overrideWith(_Session.new),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -136,6 +146,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Republic'), findsOneWidget);
+    expect(find.text("What's on your mind?"), findsOneWidget);
     expect(find.text('Post 1'), findsOneWidget);
     expect(find.text('Post 2'), findsOneWidget);
     expect(find.text('Maria'), findsNWidgets(2));

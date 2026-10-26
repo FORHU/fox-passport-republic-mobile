@@ -53,7 +53,7 @@ class RouteNames {
   /// order, because the tab index is the branch index.
   static const List<String> shellTabs = [
     home,
-    search,
+    republic,
     tickets,
     messages,
     passport,
@@ -96,7 +96,7 @@ class RouteNames {
   /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
   static const String match = '/match';
 
-  /// The Republic: the community feed.
+  /// The Republic: the community feed. The second bottom-nav tab.
   static const String republic = '/republic';
 
   /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:

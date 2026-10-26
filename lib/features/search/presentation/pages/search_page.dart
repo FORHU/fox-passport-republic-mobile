@@ -212,15 +212,34 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: _SearchField(
-                    controller: _controller,
-                    hint: l10n.searchHint,
-                    onChanged: _onQuery,
-                    onFilters: _openFilters,
-                    filtersLabel: l10n.searchFilters,
-                    showFilters: _kind == CatalogKind.events ||
-                        _kind == CatalogKind.venues,
+                  padding: EdgeInsets.fromLTRB(
+                    Navigator.canPop(context) ? 4 : 16,
+                    12,
+                    16,
+                    0,
+                  ),
+                  // Search is opened from Home, so it can go back there.
+                  child: Row(
+                    children: [
+                      if (Navigator.canPop(context))
+                        IconButton(
+                          tooltip: MaterialLocalizations.of(context)
+                              .backButtonTooltip,
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back_rounded),
+                        ),
+                      Expanded(
+                        child: _SearchField(
+                          controller: _controller,
+                          hint: l10n.searchHint,
+                          onChanged: _onQuery,
+                          onFilters: _openFilters,
+                          filtersLabel: l10n.searchFilters,
+                          showFilters: _kind == CatalogKind.events ||
+                              _kind == CatalogKind.venues,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
