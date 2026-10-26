@@ -99,6 +99,12 @@ class RouteNames {
   /// The Republic: the community feed. The second bottom-nav tab.
   static const String republic = '/republic';
 
+  /// The posts saved from the Republic. Pushed from its header.
+  static const String republicSaved = '/republic/saved';
+
+  /// Writing a post. Pushed from the Republic.
+  static const String republicCompose = '/republic/compose';
+
   /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:
   /// Overview, Venues, Calendar, Earnings and More.
   static const String spaceVenue = '/space/venue';

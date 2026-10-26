@@ -4,6 +4,37 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
+
+/// How the feed is ordered.
+enum FeedSort { recent, top }
+
+class FeedSortNotifier extends Notifier<FeedSort> {
+  @override
+  FeedSort build() => FeedSort.recent;
+
+  // A method, not a setter: Notifier state is changed through calls.
+  // ignore: use_setters_to_change_properties
+  void choose(FeedSort sort) => state = sort;
+}
+
+/// The order every feed tab is read in. Changing it reloads them.
+final feedSortProvider =
+    NotifierProvider<FeedSortNotifier, FeedSort>(FeedSortNotifier.new);
+
+class FeedSearchNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  // Trims the words as they are set, so it is a method, not a setter.
+  // ignore: use_setters_to_change_properties
+  void set(String term) => state = term.trim();
+}
+
+/// The words the feed is filtered by; empty for none. Changing it reloads
+/// every feed tab.
+final feedSearchProvider =
+    NotifierProvider<FeedSearchNotifier, String>(FeedSearchNotifier.new);
 
 /// The posts loaded so far for one tab, and whether more can be loaded.
 class FeedState extends Equatable {
@@ -47,9 +78,29 @@ class FeedController extends AsyncNotifier<FeedState> {
   /// `community`, `marketplace`, `partners`, or null for every tab.
   final String? tab;
 
+  /// The saved list is not sorted or searched like the feed is.
+  bool get _plain => tab == RepublicRepository.savedTab;
+
+  Future<FeedPage> _page({String? cursor}) {
+    final top = !_plain && ref.read(feedSortProvider) == FeedSort.top;
+    final search = _plain ? null : ref.read(feedSearchProvider);
+    return ref.read(republicRepositoryProvider).feed(
+          tab: tab,
+          cursor: cursor,
+          top: top,
+          search: search,
+        );
+  }
+
   @override
   Future<FeedState> build() async {
-    final page = await ref.read(republicRepositoryProvider).feed(tab: tab);
+    // Watched, so choosing a sort or a search reloads the list.
+    if (!_plain) {
+      ref
+        ..watch(feedSortProvider)
+        ..watch(feedSearchProvider);
+    }
+    final page = await _page();
     return FeedState(posts: page.posts, nextCursor: page.nextCursor);
   }
 
@@ -60,9 +111,7 @@ class FeedController extends AsyncNotifier<FeedState> {
       current.copyWith(loadingMore: true, loadMoreFailed: false),
     );
     try {
-      final page = await ref
-          .read(republicRepositoryProvider)
-          .feed(tab: tab, cursor: current.nextCursor);
+      final page = await _page(cursor: current.nextCursor);
       final known = {for (final p in current.posts) p.id};
       state = AsyncData(
         FeedState(
@@ -83,20 +132,25 @@ class FeedController extends AsyncNotifier<FeedState> {
 
   Future<void> refresh() async {
     state = await AsyncValue.guard(() async {
-      final page = await ref.read(republicRepositoryProvider).feed(tab: tab);
+      final page = await _page();
       return FeedState(posts: page.posts, nextCursor: page.nextCursor);
     });
   }
 
-  /// Toggles the like on [postId]. Returns false (and undoes it) when the
-  /// server refuses.
-  Future<bool> toggleLike(String postId) async {
+  /// A tap on Like: likes the post, or takes any reaction back.
+  Future<bool> toggleLike(String postId) {
+    final post = state.value?.posts.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return Future.value(false);
+    return react(postId, post.isLikedByMe ? null : ReactionType.like);
+  }
+
+  /// Sets the reaction on [postId] (null takes it back), shown at once and
+  /// put back if the server refuses. Returns false when it did.
+  Future<bool> react(String postId, ReactionType? type) async {
     final current = state.value;
     if (current == null) return false;
-    final index = current.posts.indexWhere((p) => p.id == postId);
-    if (index < 0) return false;
-    final post = current.posts[index];
-    final liked = !post.isLikedByMe;
+    final post = current.posts.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return false;
 
     void put(Post p) {
       final latest = state.value;
@@ -107,18 +161,32 @@ class FeedController extends AsyncNotifier<FeedState> {
       state = AsyncData(latest.copyWith(posts: list));
     }
 
+    // Only the first reaction adds one; changing it keeps the count.
+    final delta = (type != null ? 1 : 0) - (post.isLikedByMe ? 1 : 0);
     put(
       post.copyWith(
-        isLikedByMe: liked,
-        likesCount: (post.likesCount + (liked ? 1 : -1)).clamp(0, 1 << 30),
+        myReaction: type,
+        clearReaction: type == null,
+        likesCount: (post.likesCount + delta).clamp(0, 1 << 30),
       ),
     );
     try {
-      await ref.read(republicRepositoryProvider).setLiked(postId, liked: liked);
+      await ref.read(republicRepositoryProvider).setReaction(postId, type);
       return true;
     } on Object {
       put(post);
       return false;
+    }
+  }
+
+  /// Takes the server's version of one post, for when its comment count may
+  /// have moved in ways the phone cannot work out (comments deleted).
+  Future<void> reload(String postId) async {
+    try {
+      final fresh = await ref.read(republicRepositoryProvider).post(postId);
+      if (fresh != null) _replace(postId, (_) => fresh);
+    } on Object {
+      // The old count stays; a pull to refresh fixes it.
     }
   }
 
@@ -136,6 +204,81 @@ class FeedController extends AsyncNotifier<FeedState> {
               p,
         ],
       ),
+    );
+  }
+
+  void _replace(String postId, Post Function(Post) change) {
+    final latest = state.value;
+    if (latest == null) return;
+    state = AsyncData(
+      latest.copyWith(
+        posts: [
+          for (final p in latest.posts)
+            if (p.id == postId) change(p) else p,
+        ],
+      ),
+    );
+  }
+
+  /// Takes a post out of the list: deleted, hidden, or unsaved on Saved.
+  void removeLocally(String postId) {
+    final latest = state.value;
+    if (latest == null) return;
+    state = AsyncData(
+      latest.copyWith(
+        posts: [
+          for (final p in latest.posts)
+            if (p.id != postId) p,
+        ],
+      ),
+    );
+  }
+
+  /// Votes in a poll and shows the poll as the server now has it. Returns
+  /// false when the vote did not go through.
+  Future<bool> vote(String postId, String optionId) async {
+    try {
+      final poll =
+          await ref.read(republicRepositoryProvider).vote(postId, optionId);
+      if (poll == null) return false;
+      _replace(postId, (p) => p.copyWith(poll: poll));
+      return true;
+    } on Object {
+      return false;
+    }
+  }
+
+  /// Saves or unsaves. Returns false when the server refuses.
+  Future<bool> toggleSave(String postId) async {
+    try {
+      final saved =
+          await ref.read(republicRepositoryProvider).toggleSave(postId);
+      if (tab == RepublicRepository.savedTab && !saved) {
+        removeLocally(postId);
+      } else {
+        _replace(postId, (p) => p.copyWith(isSavedByMe: saved));
+      }
+      return true;
+    } on Object {
+      return false;
+    }
+  }
+
+  Future<void> hide(String postId) async {
+    await ref.read(republicRepositoryProvider).hide(postId);
+    removeLocally(postId);
+  }
+
+  Future<void> delete(String postId) async {
+    await ref.read(republicRepositoryProvider).delete(postId);
+    removeLocally(postId);
+  }
+
+  Future<void> edit(String postId, String content) async {
+    await ref.read(republicRepositoryProvider).edit(postId, content);
+    _replace(
+      postId,
+      (p) => p.copyWith(content: content.trim(), edited: true),
     );
   }
 }

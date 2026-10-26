@@ -3457,10 +3457,319 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get republicMore => 'More';
+
+  @override
+  String get republicSeeMore => 'See more';
+
+  @override
+  String get republicSeeLess => 'See less';
+
+  @override
+  String get republicMenuCopyLink => 'Copy link';
+
+  @override
+  String get republicMenuSave => 'Save post';
+
+  @override
+  String get republicMenuUnsave => 'Unsave';
+
+  @override
+  String get republicMenuEdit => 'Edit post';
+
+  @override
+  String get republicMenuDelete => 'Delete post';
+
+  @override
+  String get republicMenuHide => 'Hide post';
+
+  @override
+  String get republicMenuReport => 'Report post';
+
+  @override
+  String get republicLinkCopied => 'Link copied';
+
+  @override
+  String get republicSaved => 'Saved';
+
+  @override
+  String get republicUnsaved => 'Removed from saved';
+
+  @override
+  String get republicHidden => 'Post hidden';
+
+  @override
+  String get republicDeleted => 'Post deleted';
+
+  @override
+  String get republicEditTitle => 'Edit post';
+
+  @override
+  String get republicEditSave => 'Save';
+
+  @override
+  String get republicUpdated => 'Post updated';
+
+  @override
+  String get republicDeleteTitle => 'Delete this post?';
+
+  @override
+  String get republicDeleteBody => 'This cannot be undone.';
+
+  @override
+  String get republicDeleteConfirm => 'Delete';
+
+  @override
+  String get republicCancel => 'Cancel';
+
+  @override
+  String get republicActionFailed => 'That didn\'t work. Try again.';
+
+  @override
+  String get republicSavedTitle => 'Saved posts';
+
+  @override
+  String get republicSavedEmpty =>
+      'Nothing saved yet. Save a post from its menu.';
+
+  @override
+  String get republicReportTitle => 'Report this post';
+
+  @override
+  String get republicReported => 'Thanks, we\'ll take a look.';
+
+  @override
+  String get republicReasonSpam => 'Spam';
+
+  @override
+  String get republicReasonHarassment => 'Harassment or bullying';
+
+  @override
+  String get republicReasonHate => 'Hate speech';
+
+  @override
+  String get republicReasonNudity => 'Nudity or sexual content';
+
+  @override
+  String get republicReasonViolence => 'Violence or dangerous content';
+
+  @override
+  String get republicReasonMisinfo => 'Misinformation';
+
+  @override
+  String get republicReasonOther => 'Something else';
+
+  @override
   String get republicComposePrompt => 'What\'s on your mind?';
 
   @override
   String get republicLike => 'Like';
+
+  @override
+  String get republicReactLove => 'Love';
+
+  @override
+  String get republicReactHaha => 'Haha';
+
+  @override
+  String get republicReactWow => 'Wow';
+
+  @override
+  String get republicReactSad => 'Sad';
+
+  @override
+  String get republicReactAngry => 'Angry';
+
+  @override
+  String get republicReactions => 'Reactions';
+
+  @override
+  String get republicTabPartners => 'Partners';
+
+  @override
+  String get republicSortBy => 'Sort by';
+
+  @override
+  String get republicSortRecent => 'Recent';
+
+  @override
+  String get republicSortTop => 'Top posts';
+
+  @override
+  String get republicSearchHint => 'Search the Republic';
+
+  @override
+  String republicSearchEmpty(String query) {
+    return 'No posts match “$query”.';
+  }
+
+  @override
+  String get republicClearSearch => 'Clear search';
+
+  @override
+  String get republicShare => 'Share';
+
+  @override
+  String get republicRepost => 'Repost';
+
+  @override
+  String get republicRepostTitle => 'Repost to your feed';
+
+  @override
+  String get republicRepostHint => 'Say something about this…';
+
+  @override
+  String get republicReposted => 'Reposted to your feed.';
+
+  @override
+  String get republicSendInMessage => 'Send in message';
+
+  @override
+  String get republicSendPostTitle => 'Send post';
+
+  @override
+  String get republicSendSearch => 'Search your chats';
+
+  @override
+  String get republicSendCaptionHint => 'Add a message…';
+
+  @override
+  String get republicSendNoChats => 'No chats to send to. Start a chat first.';
+
+  @override
+  String get republicPostSent => 'Post sent.';
+
+  @override
+  String republicPostSentMany(int count) {
+    return 'Post sent to $count chats.';
+  }
+
+  @override
+  String get republicSendPostFailed =>
+      'We couldn\'t send that post. Try again.';
+
+  @override
+  String get republicVerifiedStamp => 'Verified Venue Stamp';
+
+  @override
+  String get republicVerifiedBooking => 'Verified booking';
+
+  @override
+  String republicVotesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count votes',
+      one: '1 vote',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get republicVoteFailed => 'Your vote didn\'t go through.';
+
+  @override
+  String get republicPinned => 'Featured in Republic';
+
+  @override
+  String get republicBookVenue => 'Book venue';
+
+  @override
+  String get republicRentGear => 'Rent gear';
+
+  @override
+  String get republicBookService => 'Book service';
+
+  @override
+  String get republicGetTickets => 'Get tickets';
+
+  @override
+  String get republicMessage => 'Message';
+
+  @override
+  String get republicPartnerTitle => 'Official Partner Foxer opportunity';
+
+  @override
+  String get republicPartnerBody =>
+      'Available for funding, package allocations and co-host production.';
+
+  @override
+  String get republicContactPartner => 'Contact partner';
+
+  @override
+  String get republicSharedPost => 'Shared a post';
+
+  @override
+  String get republicTypeStory => 'Story';
+
+  @override
+  String get republicTypePoll => 'Poll';
+
+  @override
+  String get republicTypeVenue => 'Spotlight venue';
+
+  @override
+  String get republicVisibility => 'Who can see this';
+
+  @override
+  String get republicVisibilityPublic => 'Public';
+
+  @override
+  String get republicVisibilityFollowers => 'Followers';
+
+  @override
+  String get republicVisibilityOnlyMe => 'Only me';
+
+  @override
+  String get republicPosting => 'Posting…';
+
+  @override
+  String get republicPollHint => 'Ask the Republic a question…';
+
+  @override
+  String republicPollOption(int n) {
+    return 'Option $n';
+  }
+
+  @override
+  String get republicAddOption => 'Add option';
+
+  @override
+  String get republicAddPhotos => 'Add photos';
+
+  @override
+  String republicPhotoCount(int count, int max) {
+    return '$count of $max photos';
+  }
+
+  @override
+  String get republicChooseVenue => 'Choose a venue';
+
+  @override
+  String get republicNoVenues => 'You don\'t have a venue to spotlight yet.';
+
+  @override
+  String get republicReply => 'Reply';
+
+  @override
+  String republicReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get republicEditingComment => 'Editing your comment';
+
+  @override
+  String get republicEditComment => 'Edit';
+
+  @override
+  String get republicDeleteComment => 'Delete comment';
+
+  @override
+  String get republicDeleteCommentTitle => 'Delete this comment?';
+
+  @override
+  String get republicNoReactions => 'No reactions yet.';
 
   @override
   String republicCommentsCount(int count) {

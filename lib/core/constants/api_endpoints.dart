@@ -146,7 +146,20 @@ class ApiEndpoints {
   // ── Republic feed ───────────────────────────────────────────────────────
   static const String feed = '/feed';
   static String feedReaction(String id) => '/feed/$id/reaction';
+  static String feedReactions(String id) => '/feed/$id/reactions';
   static String feedComments(String id) => '/feed/$id/comments';
+  static String feedComment(String id, String commentId) =>
+      '/feed/$id/comments/$commentId';
+  static String feedCommentLike(String id, String commentId) =>
+      '/feed/$id/comments/$commentId/like';
+  static String feedPost(String id) => '/feed/$id';
+  static String feedSave(String id) => '/feed/$id/save';
+  static String feedRepost(String id) => '/feed/$id/repost';
+  static String feedPollVote(String id) => '/feed/$id/poll/vote';
+  static String feedHide(String id) => '/feed/$id/hide';
+  static const String feedSaved = '/feed/saved';
+  static const String feedMentionSearch = '/feed/mentions/search';
+  static const String reports = '/reports';
 
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';
