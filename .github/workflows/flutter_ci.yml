@@ -44,27 +44,8 @@ jobs:
       - name: 🕵️ Analyze Code
         run: flutter analyze
 
-      - name: 🧱 Enforce Feature Isolation (no cross-feature imports)
-        run: |
-          # 'auth' owns app-wide session/identity state and is the one
-          # sanctioned shared feature other features may import (Handbook §2.4).
-          fail=0
-          for dir in lib/features/*/; do
-            feature=$(basename "$dir")
-            matches=$(grep -rnE "import 'package:flutter_template/features/" "$dir" \
-              | grep -vE "features/$feature/" \
-              | grep -vE "features/auth/" || true)
-            if [ -n "$matches" ]; then
-              echo "::error::Cross-feature import detected in feature '$feature':"
-              echo "$matches"
-              fail=1
-            fi
-          done
-          if [ "$fail" -ne 0 ]; then
-            echo "Features must not import from other features (except 'auth'). See the Engineering Handbook §2.4."
-            exit 1
-          fi
-          echo "✅ No disallowed cross-feature imports found."
+      - name: 🧱 Enforce Feature Isolation (no new cross-feature imports)
+        run: bash tools/check_feature_isolation.sh
 
       - name: 🧪 Run Tests
         run: flutter test

@@ -1,0 +1,1 @@
+lib/features/event/presentation/pages/scheduled_event_detail_page.dart imports features/favorites/data/favorites_repository.dart

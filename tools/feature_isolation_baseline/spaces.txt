@@ -1,0 +1,8 @@
+lib/features/spaces/data/spaces_repository.dart imports features/messages/data/photo_picker.dart
+lib/features/spaces/presentation/controllers/event_studio_controller.dart imports features/messages/data/photo_picker.dart
+lib/features/spaces/presentation/controllers/venue_studio_controller.dart imports features/messages/data/photo_picker.dart
+lib/features/spaces/presentation/pages/event_calendar_page.dart imports features/calendar/presentation/pages/calendar_page.dart
+lib/features/spaces/presentation/pages/event_studio_page.dart imports features/messages/data/photo_picker.dart
+lib/features/spaces/presentation/pages/venue_calendar_page.dart imports features/calendar/presentation/pages/calendar_page.dart
+lib/features/spaces/presentation/pages/venue_overview_page.dart imports features/calendar/presentation/widgets/venue_hold_chip.dart
+lib/features/spaces/presentation/pages/venue_studio_page.dart imports features/messages/data/photo_picker.dart

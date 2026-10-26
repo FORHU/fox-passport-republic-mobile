@@ -1,0 +1,2 @@
+lib/features/search/presentation/pages/search_page.dart imports features/favorites/data/favorites_repository.dart
+lib/features/search/presentation/pages/search_page.dart imports features/map/presentation/widgets/places_globe.dart

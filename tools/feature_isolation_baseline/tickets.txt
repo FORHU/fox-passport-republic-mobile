@@ -1,0 +1,3 @@
+lib/features/tickets/presentation/pages/tickets_page.dart imports features/calendar/presentation/pages/calendar_page.dart
+lib/features/tickets/presentation/pages/tickets_page.dart imports features/spaces/presentation/widgets/space_switcher.dart
+lib/features/tickets/presentation/widgets/ticket_card.dart imports features/reviews/presentation/widgets/write_review_sheet.dart
