@@ -3208,9 +3208,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReportTitle => 'Report this post';
 
   @override
-  String get republicReportSend => 'Send report';
-
-  @override
   String get republicReported => 'Thanks, we\'ll take a look.';
 
   @override
@@ -3239,6 +3236,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get republicLike => 'Like';
+
+  @override
+  String get republicReactLove => 'Love';
+
+  @override
+  String get republicReactHaha => 'Haha';
+
+  @override
+  String get republicReactWow => 'Wow';
+
+  @override
+  String get republicReactSad => 'Sad';
+
+  @override
+  String get republicReactAngry => 'Angry';
+
+  @override
+  String get republicReactions => 'Reactions';
+
+  @override
+  String get republicNoReactions => 'No reactions yet.';
 
   @override
   String republicCommentsCount(int count) {

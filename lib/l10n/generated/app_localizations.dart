@@ -5878,12 +5878,6 @@ abstract class AppLocalizations {
   /// **'Report this post'**
   String get republicReportTitle;
 
-  /// No description provided for @republicReportSend.
-  ///
-  /// In en, this message translates to:
-  /// **'Send report'**
-  String get republicReportSend;
-
   /// No description provided for @republicReported.
   ///
   /// In en, this message translates to:
@@ -5943,6 +5937,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Like'**
   String get republicLike;
+
+  /// No description provided for @republicReactLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get republicReactLove;
+
+  /// No description provided for @republicReactHaha.
+  ///
+  /// In en, this message translates to:
+  /// **'Haha'**
+  String get republicReactHaha;
+
+  /// No description provided for @republicReactWow.
+  ///
+  /// In en, this message translates to:
+  /// **'Wow'**
+  String get republicReactWow;
+
+  /// No description provided for @republicReactSad.
+  ///
+  /// In en, this message translates to:
+  /// **'Sad'**
+  String get republicReactSad;
+
+  /// No description provided for @republicReactAngry.
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get republicReactAngry;
+
+  /// No description provided for @republicReactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactions'**
+  String get republicReactions;
+
+  /// No description provided for @republicNoReactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No reactions yet.'**
+  String get republicNoReactions;
 
   /// No description provided for @republicCommentsCount.
   ///

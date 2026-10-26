@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
 
 /// The posts loaded so far for one tab, and whether more can be loaded.
 class FeedState extends Equatable {
@@ -88,15 +89,20 @@ class FeedController extends AsyncNotifier<FeedState> {
     });
   }
 
-  /// Toggles the like on [postId]. Returns false (and undoes it) when the
-  /// server refuses.
-  Future<bool> toggleLike(String postId) async {
+  /// A tap on Like: likes the post, or takes any reaction back.
+  Future<bool> toggleLike(String postId) {
+    final post = state.value?.posts.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return Future.value(false);
+    return react(postId, post.isLikedByMe ? null : ReactionType.like);
+  }
+
+  /// Sets the reaction on [postId] (null takes it back), shown at once and
+  /// put back if the server refuses. Returns false when it did.
+  Future<bool> react(String postId, ReactionType? type) async {
     final current = state.value;
     if (current == null) return false;
-    final index = current.posts.indexWhere((p) => p.id == postId);
-    if (index < 0) return false;
-    final post = current.posts[index];
-    final liked = !post.isLikedByMe;
+    final post = current.posts.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return false;
 
     void put(Post p) {
       final latest = state.value;
@@ -107,14 +113,17 @@ class FeedController extends AsyncNotifier<FeedState> {
       state = AsyncData(latest.copyWith(posts: list));
     }
 
+    // Only the first reaction adds one; changing it keeps the count.
+    final delta = (type != null ? 1 : 0) - (post.isLikedByMe ? 1 : 0);
     put(
       post.copyWith(
-        isLikedByMe: liked,
-        likesCount: (post.likesCount + (liked ? 1 : -1)).clamp(0, 1 << 30),
+        myReaction: type,
+        clearReaction: type == null,
+        likesCount: (post.likesCount + delta).clamp(0, 1 << 30),
       ),
     );
     try {
-      await ref.read(republicRepositoryProvider).setLiked(postId, liked: liked);
+      await ref.read(republicRepositoryProvider).setReaction(postId, type);
       return true;
     } on Object {
       put(post);

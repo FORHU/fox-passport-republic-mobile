@@ -10,9 +10,11 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/comments_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/compose_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_menu_sheet.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 
 /// What a person can do with a post in a feed list, shared by the Republic
@@ -40,6 +42,17 @@ class PostActions {
       showTopToast(context, context.l10n.republicLikeFailed);
     }
   }
+
+  Future<void> react(String postId, ReactionType type) async {
+    if (!_signedIn()) return;
+    final ok = await _feed.react(postId, type);
+    if (!ok && context.mounted) {
+      showTopToast(context, context.l10n.republicLikeFailed);
+    }
+  }
+
+  Future<void> reactions(String postId) =>
+      showReactionBreakdown(context, postId);
 
   Future<void> comments(String postId) async {
     final added = await showCommentsSheet(

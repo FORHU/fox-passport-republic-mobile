@@ -3,6 +3,7 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/domain/reaction.dart';
 
 /// Reads and writes the Republic feed: posts, likes and comments.
 class RepublicRepository {
@@ -39,12 +40,15 @@ class RepublicRepository {
     );
   }
 
-  /// Likes a post, or takes the like back (`liked: false`).
-  Future<void> setLiked(String postId, {required bool liked}) async {
-    await _api.post(
-      ApiEndpoints.feedReaction(postId),
-      {'type': liked ? 'like' : null},
-    );
+  /// Reacts to a post, or takes the reaction back (`type: null`).
+  Future<void> setReaction(String postId, ReactionType? type) async {
+    await _api.post(ApiEndpoints.feedReaction(postId), {'type': type?.name});
+  }
+
+  /// How many people chose each reaction on a post.
+  Future<List<ReactionCount>> reactions(String postId) async {
+    final body = await _api.get(ApiEndpoints.feedReactions(postId));
+    return ReactionCount.parseList(body is Map ? body['data'] : null);
   }
 
   Future<List<PostComment>> comments(String postId) async {
