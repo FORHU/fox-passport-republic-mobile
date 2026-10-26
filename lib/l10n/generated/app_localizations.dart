@@ -5512,6 +5512,12 @@ abstract class AppLocalizations {
   /// **'What are you planning?'**
   String get homePlanning;
 
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name}'**
+  String homeGreeting(String name);
+
   /// No description provided for @homePlanNew.
   ///
   /// In en, this message translates to:

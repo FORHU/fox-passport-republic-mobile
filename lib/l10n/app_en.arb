@@ -997,6 +997,8 @@
   "bookingsNeedsYou": "Needs you",
   "searchList": "List",
   "homePlanning": "What are you planning?",
+  "homeGreeting": "Hi, {name}",
+  "@homeGreeting": {"placeholders":{"name":{"type":"String"}}},
   "homePlanNew": "Plan something new",
   "homeSearchHint": "Search venues, Foxers and events",
   "homeStartPlanning": "Start planning",
