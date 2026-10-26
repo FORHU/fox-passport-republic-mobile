@@ -83,7 +83,15 @@ class _PassportPageState extends ConsumerState<PassportPage> {
                     SegmentOption(_Tab.earn, l10n.passportTabEarn),
                   ],
                   value: _tab,
-                  onChanged: (v) => setState(() => _tab = v),
+                  onChanged: (v) {
+                    // Saved is a screen of its own: everything saved, newest
+                    // first, with the posts to like, comment on and share.
+                    if (v == _Tab.saved) {
+                      context.push<void>(RouteNames.republicSaved).ignore();
+                      return;
+                    }
+                    setState(() => _tab = v);
+                  },
                 ),
               ),
               const SizedBox(height: 16),
@@ -179,7 +187,8 @@ class _PassportPageState extends ConsumerState<PassportPage> {
           },
         );
       case _Tab.saved:
-        return _SavedTab(l10n: l10n);
+        // Opened as its own screen, never shown inline.
+        return const SizedBox.shrink();
       case _Tab.earn:
         return _EarnTab(l10n: l10n);
     }
@@ -299,7 +308,7 @@ class _Body extends StatelessWidget {
             title: Text(l10n.republicTitle),
             subtitle: Text(l10n.republicRowBody),
             trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.go(RouteNames.republic),
+            onTap: () => context.push(RouteNames.republic),
           ),
         ),
       ],
@@ -366,44 +375,6 @@ class _StampsOnly extends StatelessWidget {
             ],
           ),
         ],
-      ],
-    );
-  }
-}
-
-/// Saved posts tab: bookmarked Republic posts.
-class _SavedTab extends StatelessWidget {
-  const _SavedTab({required this.l10n});
-
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-        Text(
-          l10n.passportTabSaved,
-          style: AppTypography.display(size: 20),
-        ),
-        const SizedBox(height: 16),
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.passportSavedEmpty,
-                style: AppTypography.body(color: AppColors.textMuted),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => context.go(RouteNames.republic),
-                child: Text(l10n.passportSavedAction),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

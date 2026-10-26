@@ -77,6 +77,7 @@ class PostCard extends StatefulWidget {
     this.onOpenListing,
     this.onMessage,
     this.onShare,
+    this.onHashtag,
     super.key,
   });
 
@@ -107,6 +108,9 @@ class PostCard extends StatefulWidget {
 
   /// Opens Share: repost, send in a message, copy the link.
   final VoidCallback? onShare;
+
+  /// A `#tag` in the words was tapped; it is passed with its `#`.
+  final ValueChanged<String>? onHashtag;
 
   /// Longer than this and the text folds behind "See more".
   static const foldAt = 280;
@@ -196,6 +200,7 @@ class _PostCardState extends State<PostCard> {
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
               child: _Body(
                 text: post.content,
+                onHashtag: widget.onHashtag,
                 expanded: _expanded,
                 onToggle: () => setState(() => _expanded = !_expanded),
               ),
@@ -295,9 +300,11 @@ class _Body extends StatelessWidget {
     required this.text,
     required this.expanded,
     required this.onToggle,
+    this.onHashtag,
   });
 
   final String text;
+  final ValueChanged<String>? onHashtag;
   final bool expanded;
   final VoidCallback onToggle;
 
@@ -312,7 +319,7 @@ class _Body extends StatelessWidget {
       TextSpan(
         style: AppTypography.body(),
         children: [
-          ..._withMentions(shown),
+          ..._withTags(shown, onHashtag),
           if (long) ...[
             TextSpan(text: expanded ? ' ' : '… '),
             TextSpan(
@@ -381,22 +388,27 @@ class _LikeButton extends StatelessWidget {
   }
 }
 
-/// Words with each `@name` in the accent colour.
-List<InlineSpan> _withMentions(String text) {
+/// Words with each `@name` in the accent colour and each `#tag` too, the
+/// tag opening a search when [onHashtag] is given.
+List<InlineSpan> _withTags(String text, ValueChanged<String>? onHashtag) {
   final spans = <InlineSpan>[];
   var from = 0;
-  for (final m in RegExp('@[A-Za-z0-9_]{1,32}').allMatches(text)) {
+  for (final m in RegExp('[@#][A-Za-z0-9_]{1,32}').allMatches(text)) {
     if (m.start > 0 && !RegExp(r'\s').hasMatch(text[m.start - 1])) continue;
     if (m.start > from) {
       spans.add(TextSpan(text: text.substring(from, m.start)));
     }
+    final word = m.group(0)!;
     spans.add(
       TextSpan(
-        text: m.group(0),
+        text: word,
         style: const TextStyle(
           color: AppColors.accent,
           fontWeight: FontWeight.w600,
         ),
+        recognizer: word.startsWith('#') && onHashtag != null
+            ? (TapGestureRecognizer()..onTap = () => onHashtag(word))
+            : null,
       ),
     );
     from = m.end;

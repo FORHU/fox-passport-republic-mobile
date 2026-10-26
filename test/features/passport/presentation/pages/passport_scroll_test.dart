@@ -70,7 +70,8 @@ void main() {
     _phone(tester);
     await _open(tester);
 
-    for (final tab in ['Stamps', 'Matches', 'Saved', 'Earn', 'Progress']) {
+    // Saved opens its own screen, so it is not a tab to check here.
+    for (final tab in ['Stamps', 'Matches', 'Earn', 'Progress']) {
       // The segmented pills scroll sideways on a narrow screen.
       await tester.ensureVisible(find.text(tab).first);
       await tester.tap(find.text(tab).first);

@@ -26,10 +26,12 @@ class RepublicPage extends ConsumerStatefulWidget {
 
 class _RepublicPageState extends ConsumerState<RepublicPage> {
   // Tab ids as the API names them; null is everything.
-  static const _tabs = <String?>[null, 'community', 'marketplace'];
+  static const _tabs = <String?>[null, 'community', 'marketplace', 'partners'];
 
   String? _tab;
   final _scroll = ScrollController();
+  final _search = TextEditingController();
+  bool _searching = false;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   @override
   void dispose() {
     _scroll.dispose();
+    _search.dispose();
     super.dispose();
   }
 
@@ -59,6 +62,23 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
   PostActions get _actions => PostActions(context, ref, _tab);
 
+  void _applySearch(String term) {
+    ref.read(feedSearchProvider.notifier).set(term);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+  }
+
+  void _clearSearch() {
+    _search.clear();
+    _applySearch('');
+  }
+
+  /// A tapped `#tag` searches for it.
+  void _searchFor(String tag) {
+    _search.text = tag;
+    setState(() => _searching = true);
+    _applySearch(tag);
+  }
+
   Future<void> _compose() async {
     if (!_signedIn()) return;
     final posted = await context.push<bool>(RouteNames.republicCompose);
@@ -72,6 +92,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     return switch (tab) {
       'community' => l10n.republicTabCommunity,
       'marketplace' => l10n.republicTabMarketplace,
+      'partners' => l10n.republicTabPartners,
       _ => l10n.republicTabAll,
     };
   }
@@ -80,6 +101,8 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final feed = ref.watch(feedControllerProvider(_tab));
+    final sort = ref.watch(feedSortProvider);
+    final term = ref.watch(feedSearchProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -111,36 +134,88 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                     ),
                   ),
                   IconButton(
-                    tooltip: l10n.republicSavedOpen,
-                    onPressed: () =>
-                        unawaited(context.push(RouteNames.republicSaved)),
-                    icon: const Icon(Icons.bookmark_border_rounded, size: 28),
-                  ),
-                  IconButton(
-                    tooltip: l10n.republicCompose,
-                    onPressed: _compose,
-                    icon: const Icon(Icons.add_box_outlined, size: 28),
+                    tooltip: l10n.republicSearchHint,
+                    onPressed: () {
+                      if (_searching && _search.text.isNotEmpty) {
+                        _clearSearch();
+                      }
+                      setState(() => _searching = !_searching);
+                    },
+                    icon: Icon(
+                      _searching
+                          ? Icons.search_off_rounded
+                          : Icons.search_rounded,
+                      size: 28,
+                    ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 52,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  for (final t in _tabs)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Center(
-                        child: ChoiceChip(
-                          label: Text(_tabLabel(t)),
-                          selected: _tab == t,
-                          onSelected: (_) => setState(() => _tab = t),
-                        ),
-                      ),
+            if (_searching)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: TextField(
+                  controller: _search,
+                  autofocus: true,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: _applySearch,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    hintText: l10n.republicSearchHint,
+                    suffixIcon: IconButton(
+                      tooltip: l10n.republicClearSearch,
+                      onPressed: _clearSearch,
+                      icon: const Icon(Icons.close_rounded),
                     ),
+                  ),
+                ),
+              ),
+            _FeedTabs(
+              tabs: _tabs,
+              selected: _tab,
+              label: _tabLabel,
+              onSelect: (t) => setState(() => _tab = t),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  PopupMenuButton<FeedSort>(
+                    tooltip: l10n.republicSortBy,
+                    initialValue: sort,
+                    onSelected: ref.read(feedSortProvider.notifier).choose,
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: FeedSort.recent,
+                        child: Text(l10n.republicSortRecent),
+                      ),
+                      PopupMenuItem(
+                        value: FeedSort.top,
+                        child: Text(l10n.republicSortTop),
+                      ),
+                    ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.swap_vert_rounded,
+                          size: 18,
+                          color: AppColors.textMuted,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          sort == FeedSort.top
+                              ? l10n.republicSortTop
+                              : l10n.republicSortRecent,
+                          style: AppTypography.body(
+                            size: 13,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -179,12 +254,23 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         return state.posts.isEmpty
                             ? Padding(
                                 padding: const EdgeInsets.all(32),
-                                child: Text(
-                                  l10n.republicEmpty,
-                                  textAlign: TextAlign.center,
-                                  style: AppTypography.body(
-                                    color: AppColors.textMuted,
-                                  ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      term.isEmpty
+                                          ? l10n.republicEmpty
+                                          : l10n.republicSearchEmpty(term),
+                                      textAlign: TextAlign.center,
+                                      style: AppTypography.body(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                    if (term.isNotEmpty)
+                                      TextButton(
+                                        onPressed: _clearSearch,
+                                        child: Text(l10n.republicClearSearch),
+                                      ),
+                                  ],
                                 ),
                               )
                             : _Footer(
@@ -213,6 +299,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         onMessage: () =>
                             unawaited(_actions.messageAuthor(post)),
                         onShare: () => unawaited(_actions.share(post)),
+                        onHashtag: _searchFor,
                       );
                     },
                   ),
@@ -221,6 +308,73 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The feed's sections as text across the full width, the open one in the
+/// accent colour with a line under it. Fixed rather than scrolling, so every
+/// section is in sight.
+class _FeedTabs extends StatelessWidget {
+  const _FeedTabs({
+    required this.tabs,
+    required this.selected,
+    required this.label,
+    required this.onSelect,
+  });
+
+  final List<String?> tabs;
+  final String? selected;
+  final String Function(String?) label;
+  final ValueChanged<String?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          for (final t in tabs)
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: t == selected,
+                child: InkWell(
+                  onTap: () => onSelect(t),
+                  child: Container(
+                    height: 44,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 3,
+                          color: t == selected
+                              ? AppColors.accent
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label(t),
+                        style: AppTypography.body(
+                          weight: FontWeight.w700,
+                          color: t == selected
+                              ? AppColors.accent
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
