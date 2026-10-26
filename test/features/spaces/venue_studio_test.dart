@@ -488,7 +488,7 @@ void main() {
       expect(find.text('New venue'), findsOneWidget);
       expect(find.text('Venue name'), findsOneWidget);
       expect(find.text('Next'), findsOneWidget);
-      expect(find.text('Back'), findsNothing);
+      expect(find.byTooltip('Back'), findsNothing);
     });
 
     testWidgets('Next walks through to the review, which lists the gaps', (

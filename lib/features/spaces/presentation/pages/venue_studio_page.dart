@@ -5,6 +5,7 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/venue_studio_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/service_area_map.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
@@ -80,17 +81,19 @@ class VenueStudioPage extends ConsumerWidget {
         children: [
           if (state.live) _LiveNote(text: l10n.studioLiveNote),
           switch (step) {
-            StudioStep.basics =>
-              _BasicsStep(state: state, ref: ref, id: venueId),
+            StudioStep.basics => StudioCard(
+                child: _BasicsStep(state: state, ref: ref, id: venueId),
+              ),
             StudioStep.location =>
               _LocationStep(state: state, ref: ref, id: venueId),
             StudioStep.photos =>
               _PhotosStep(state: state, ref: ref, id: venueId),
             StudioStep.details =>
               _DetailsStep(state: state, ref: ref, id: venueId),
-            StudioStep.pricing =>
-              _PricingStep(state: state, ref: ref, id: venueId),
-            StudioStep.review => _ReviewStep(state: state),
+            StudioStep.pricing => StudioCard(
+                child: _PricingStep(state: state, ref: ref, id: venueId),
+              ),
+            StudioStep.review => StudioCard(child: _ReviewStep(state: state)),
           },
         ],
       );
@@ -106,44 +109,40 @@ class VenueStudioPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          _StepBar(step: step, onTap: controller.goTo),
+          if (!state.loading && !state.loadFailed)
+            StudioHeader(
+              current: step.index,
+              total: StudioStep.values.length,
+              title: _stepLabel(l10n, step),
+              onSelect: (i) => controller.goTo(StudioStep.values[i]),
+            ),
           Expanded(child: body),
         ],
       ),
       bottomNavigationBar: state.loading || state.loadFailed
           ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: last
-                    ? _FinalActions(
-                        state: state,
-                        onBack: controller.back,
-                        onDraft: () => _save(context, ref, submit: false),
-                        onSubmit: () => _save(context, ref, submit: true),
-                      )
-                    : Row(
-                        children: [
-                          if (step != StudioStep.basics)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: OutlinedButton(
-                                onPressed: controller.back,
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size(0, 52),
-                                ),
-                                child: Text(l10n.studioBack),
-                              ),
-                            ),
-                          Expanded(
-                            child: AppButton(
-                              label: l10n.studioNext,
-                              onPressed: controller.next,
-                            ),
-                          ),
+          : StudioBar(
+              child: last
+                  ? _FinalActions(
+                      state: state,
+                      onBack: controller.back,
+                      onDraft: () => _save(context, ref, submit: false),
+                      onSubmit: () => _save(context, ref, submit: true),
+                    )
+                  : Row(
+                      children: [
+                        if (step != StudioStep.basics) ...[
+                          StudioBackButton(onPressed: controller.back),
+                          const SizedBox(width: 12),
                         ],
-                      ),
-              ),
+                        Expanded(
+                          child: AppButton(
+                            label: l10n.studioNext,
+                            onPressed: controller.next,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
     );
   }
@@ -157,40 +156,6 @@ String _stepLabel(AppLocalizations l10n, StudioStep step) => switch (step) {
       StudioStep.pricing => l10n.studioStepPricing,
       StudioStep.review => l10n.studioStepReview,
     };
-
-class _StepBar extends StatelessWidget {
-  const _StepBar({required this.step, required this.onTap});
-
-  final StudioStep step;
-  final ValueChanged<StudioStep> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return SizedBox(
-      height: 44,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        children: [
-          for (final s in StudioStep.values)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text('${s.index + 1}  ${_stepLabel(l10n, s)}'),
-                selected: s == step,
-                onSelected: (_) => onTap(s),
-                selectedColor: AppColors.accent,
-                labelStyle: AppTypography.label(
-                  color: s == step ? AppColors.onAccent : AppColors.textPrimary,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
 
 class _LiveNote extends StatelessWidget {
   const _LiveNote({required this.text});
@@ -363,77 +328,88 @@ class _LocationStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final d = state.draft;
-    final edit = ref.read(venueStudioProvider(id).notifier).edit;
+    final studio = ref.read(venueStudioProvider(id).notifier);
+    final edit = studio.edit;
     final overlapping = state.overlapping;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudioField(
-          label: l10n.studioAddress,
-          value: d.address,
-          onChanged: (v) => edit((x) => x.copyWith(address: v)),
-        ),
-        PlaceFields(
-          country: d.country,
-          state: d.state,
-          city: d.city,
-          countries: state.countries,
-          states: state.states,
-          cities: state.cities,
-          locating: state.locating,
-          locateProblem: state.locateProblem,
-          onCountryText: (v) => edit((x) => x.copyWith(country: v)),
-          onStateText: (v) => edit((x) => x.copyWith(state: v)),
-          onCityText: ref.read(venueStudioProvider(id).notifier).pickCity,
-          onPickCountry: ref.read(venueStudioProvider(id).notifier).pickCountry,
-          onPickState: ref.read(venueStudioProvider(id).notifier).pickState,
-          onUseMyLocation:
-              ref.read(venueStudioProvider(id).notifier).useMyLocation,
-        ),
-        const SizedBox(height: 8),
-        Text(l10n.studioServiceArea, style: AppTypography.display()),
-        const SizedBox(height: 4),
-        Text(
-          l10n.studioServiceAreaHint,
-          style: AppTypography.body(size: 13, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 12),
-        ServiceAreaMap(
-          center: d.center,
-          radiusMeters: d.radiusMeters,
-          neighbours: state.neighbours,
-          onPin: (p) => edit((x) => x.copyWith(center: p)),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Text(l10n.studioRadius, style: AppTypography.label()),
-            Expanded(
-              child: Slider(
-                value: d.radiusMeters.clamp(100, 2000).toDouble(),
-                min: 100,
-                max: 2000,
-                divisions: 19,
-                activeColor: AppColors.accent,
-                onChanged: (v) => edit((x) => x.copyWith(radiusMeters: v)),
+        StudioCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StudioField(
+                label: l10n.studioAddress,
+                value: d.address,
+                onChanged: (v) => edit((x) => x.copyWith(address: v)),
               ),
-            ),
-            Text(l10n.studioRadiusValue(d.radiusMeters.round())),
-          ],
+              PlaceFields(
+                country: d.country,
+                state: d.state,
+                city: d.city,
+                countries: state.countries,
+                states: state.states,
+                cities: state.cities,
+                locating: state.locating,
+                locateProblem: state.locateProblem,
+                onCountryText: (v) => edit((x) => x.copyWith(country: v)),
+                onStateText: (v) => edit((x) => x.copyWith(state: v)),
+                onCityText: studio.pickCity,
+                onPickCountry: studio.pickCountry,
+                onPickState: studio.pickState,
+                onUseMyLocation: studio.useMyLocation,
+              ),
+            ],
+          ),
         ),
-        if (d.center == null)
-          Text(
-            l10n.studioNoPin,
-            style: AppTypography.body(size: 13, color: AppColors.textMuted),
+        StudioCard(
+          title: l10n.studioServiceArea,
+          hint: l10n.studioServiceAreaHint,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ServiceAreaMap(
+                center: d.center,
+                radiusMeters: d.radiusMeters,
+                neighbours: state.neighbours,
+                onPin: (p) => edit((x) => x.copyWith(center: p)),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Text(l10n.studioRadius, style: AppTypography.label()),
+                  Expanded(
+                    child: Slider(
+                      value: d.radiusMeters.clamp(100, 2000).toDouble(),
+                      min: 100,
+                      max: 2000,
+                      divisions: 19,
+                      activeColor: AppColors.accent,
+                      onChanged: (v) =>
+                          edit((x) => x.copyWith(radiusMeters: v)),
+                    ),
+                  ),
+                  Text(l10n.studioRadiusValue(d.radiusMeters.round())),
+                ],
+              ),
+              if (d.center == null)
+                Text(
+                  l10n.studioNoPin,
+                  style:
+                      AppTypography.body(size: 13, color: AppColors.textMuted),
+                ),
+              if (overlapping.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    l10n.studioOverlap(overlapping.join(', ')),
+                    style:
+                        AppTypography.body(size: 13, color: AppColors.warning),
+                  ),
+                ),
+            ],
           ),
-        if (overlapping.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              l10n.studioOverlap(overlapping.join(', ')),
-              style: AppTypography.body(size: 13, color: AppColors.warning),
-            ),
-          ),
+        ),
       ],
     );
   }
@@ -457,77 +433,113 @@ class _PhotosStep extends StatelessWidget {
     final l10n = context.l10n;
     final photos = state.draft.photos;
     final controller = ref.read(venueStudioProvider(id).notifier);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.studioPhotosHint,
-          style: AppTypography.body(size: 13, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final photo in photos)
-              Stack(
+    return StudioCard(
+      title: l10n.studioPhotoCount(photos.length, 5),
+      hint: l10n.studioPhotosHint,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LayoutBuilder(
+            builder: (context, box) {
+              // Three to a row, whatever the screen.
+              final size = (box.maxWidth - 16) / 3;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  PhotoBox(url: photo.url, width: 104, height: 104),
-                  Positioned(
-                    top: 2,
-                    right: 2,
-                    child: IconButton.filled(
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => controller.removePhoto(photo.fileId),
-                      icon: const Icon(Icons.close_rounded, size: 16),
-                    ),
-                  ),
-                ],
-              ),
-            if (photos.length < 5)
-              InkWell(
-                onTap: state.uploading ? null : () => _add(ref),
-                borderRadius: AppRadius.brCard,
-                child: Container(
-                  width: 104,
-                  height: 104,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: AppRadius.brCard,
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  alignment: Alignment.center,
-                  child: state.uploading
-                      ? const CircularProgressIndicator(
-                          color: AppColors.accent,
-                          strokeWidth: 2,
-                        )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.add_a_photo_outlined),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.studioAddPhoto,
-                              style: AppTypography.label(),
-                            ),
-                          ],
+                  for (var i = 0; i < photos.length; i++)
+                    Stack(
+                      children: [
+                        PhotoBox(
+                          url: photos[i].url,
+                          width: size,
+                          height: size,
+                          radius: 12,
                         ),
-                ),
-              ),
-          ],
-        ),
-        if (state.error == 'photo')
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              state.errorDetail == null
-                  ? l10n.studioPhotoFailed
-                  : l10n.studioPhotoFailedWhy(state.errorDetail!),
-              style: AppTypography.body(size: 13, color: AppColors.error),
-            ),
+                        if (i == 0)
+                          Positioned(
+                            left: 6,
+                            bottom: 6,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.accent,
+                                borderRadius: AppRadius.brPill,
+                              ),
+                              child: Text(
+                                l10n.studioCover,
+                                style: AppTypography.label(
+                                  color: AppColors.onAccent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: IconButton.filled(
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () =>
+                                controller.removePhoto(photos[i].fileId),
+                            icon: const Icon(Icons.close_rounded, size: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (photos.length < 5)
+                    InkWell(
+                      onTap: state.uploading ? null : () => _add(ref),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: size,
+                        height: size,
+                        decoration: BoxDecoration(
+                          color: AppColors.canvas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderStrong),
+                        ),
+                        alignment: Alignment.center,
+                        child: state.uploading
+                            ? const CircularProgressIndicator(
+                                color: AppColors.accent,
+                                strokeWidth: 2,
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.add_a_photo_outlined,
+                                    color: AppColors.accent,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.studioAddPhoto,
+                                    textAlign: TextAlign.center,
+                                    style: AppTypography.label(),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
-      ],
+          if (state.error == 'photo')
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Text(
+                state.errorDetail == null
+                    ? l10n.studioPhotoFailed
+                    : l10n.studioPhotoFailedWhy(state.errorDetail!),
+                style: AppTypography.body(size: 13, color: AppColors.error),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -649,13 +661,11 @@ class _GroupState extends State<_Group> {
       for (final c in widget.chosen)
         if (!widget.presets.contains(c)) c,
     ];
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+    return StudioCard(
+      title: widget.title,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.title, style: AppTypography.display()),
-          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,

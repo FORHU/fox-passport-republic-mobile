@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_picker_sheet.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
@@ -128,44 +129,40 @@ class EventStudioPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          _StepBar(step: step, onTap: controller.goTo),
+          if (!state.loading && !state.loadFailed)
+            StudioHeader(
+              current: step.index,
+              total: EventStep.values.length,
+              title: _stepLabel(l10n, step),
+              onSelect: (i) => controller.goTo(EventStep.values[i]),
+            ),
           Expanded(child: body),
         ],
       ),
       bottomNavigationBar: state.loading || state.loadFailed
           ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: last
-                    ? _FinalActions(
-                        id: eventId,
-                        onBack: controller.back,
-                        onDraft: () => _save(context, ref, submit: false),
-                        onSubmit: () => _save(context, ref, submit: true),
-                      )
-                    : Row(
-                        children: [
-                          if (step != EventStep.basics)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: OutlinedButton(
-                                onPressed: controller.back,
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size(0, 52),
-                                ),
-                                child: Text(l10n.studioBack),
-                              ),
-                            ),
-                          Expanded(
-                            child: AppButton(
-                              label: l10n.studioNext,
-                              onPressed: controller.next,
-                            ),
-                          ),
+          : StudioBar(
+              child: last
+                  ? _FinalActions(
+                      id: eventId,
+                      onBack: controller.back,
+                      onDraft: () => _save(context, ref, submit: false),
+                      onSubmit: () => _save(context, ref, submit: true),
+                    )
+                  : Row(
+                      children: [
+                        if (step != EventStep.basics) ...[
+                          StudioBackButton(onPressed: controller.back),
+                          const SizedBox(width: 12),
                         ],
-                      ),
-              ),
+                        Expanded(
+                          child: AppButton(
+                            label: l10n.studioNext,
+                            onPressed: controller.next,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
     );
   }
@@ -178,40 +175,6 @@ String _stepLabel(AppLocalizations l10n, EventStep step) => switch (step) {
       EventStep.package => l10n.esStepPackage,
       EventStep.review => l10n.esStepReview,
     };
-
-class _StepBar extends StatelessWidget {
-  const _StepBar({required this.step, required this.onTap});
-
-  final EventStep step;
-  final ValueChanged<EventStep> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return SizedBox(
-      height: 44,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        children: [
-          for (final s in EventStep.values)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text('${s.index + 1}  ${_stepLabel(l10n, s)}'),
-                selected: s == step,
-                onSelected: (_) => onTap(s),
-                selectedColor: AppColors.accent,
-                labelStyle: AppTypography.label(
-                  color: s == step ? AppColors.onAccent : AppColors.textPrimary,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
 
 /// The last step's buttons. A draft (or a new event) can be saved or sent for
 /// review; an event already sent can only have its changes saved.
@@ -314,88 +277,105 @@ class _BasicsStep extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudioField(
-          label: l10n.esTitle,
-          value: d.title,
-          onChanged: (v) => edit((x) => x.copyWith(title: v)),
-        ),
-        Text(l10n.esCategory, style: AppTypography.label()),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final entry in categories.entries)
-              ChoiceChip(
-                label: Text(entry.value),
-                selected: d.category == entry.key,
-                onSelected: (_) => edit((x) => x.copyWith(category: entry.key)),
-              ),
-          ],
-        ),
-        if (d.category == 'Other') ...[
-          const SizedBox(height: 12),
-          StudioField(
-            label: l10n.esCatOtherHint,
-            value: d.categoryOther,
-            onChanged: (v) => edit((x) => x.copyWith(categoryOther: v)),
-          ),
-        ] else
-          const SizedBox(height: 16),
-        Row(
-          children: [
-            Text(l10n.esDescription, style: AppTypography.label()),
-            const SizedBox(width: 12),
-            // Takes what is left and wraps, so a large font cannot push the
-            // row wider than the screen.
-            Expanded(
-              child: Text(
-                [
-                  l10n.esWordCount(words),
-                  if (words > 0 && words < recommendedEventWords)
-                    l10n.esWordsToGo(recommendedEventWords - words),
-                ].join(' · '),
-                textAlign: TextAlign.end,
-                style: AppTypography.label(color: countColor),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        StudioField(
-          label: l10n.esDescription,
-          value: d.description,
-          maxLines: 6,
-          formatters: const [WordLimitFormatter(maxEventWords)],
-          onChanged: (v) => edit((x) => x.copyWith(description: v)),
-        ),
-        StudioField(
-          label: l10n.esAttendees,
-          value: d.maxAttendees > 0 ? '${d.maxAttendees}' : '',
-          number: true,
-          formatters: [FilteringTextInputFormatter.digitsOnly],
-          onChanged: (v) => edit(
-            (x) => x.copyWith(maxAttendees: int.tryParse(v) ?? 0),
-          ),
-        ),
-        if (state.policies.isNotEmpty) ...[
-          Text(l10n.esPolicy, style: AppTypography.label()),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+        StudioCard(
+          title: l10n.esCardDetails,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final policy in state.policies)
-                ChoiceChip(
-                  label: Text(policy.name),
-                  selected: d.cancellationPolicyId == policy.id,
-                  onSelected: (_) => edit(
-                    (x) => x.copyWith(cancellationPolicyId: policy.id),
-                  ),
+              StudioField(
+                label: l10n.esTitle,
+                value: d.title,
+                onChanged: (v) => edit((x) => x.copyWith(title: v)),
+              ),
+              Text(l10n.esCategory, style: AppTypography.label()),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final entry in categories.entries)
+                    ChoiceChip(
+                      label: Text(entry.value),
+                      selected: d.category == entry.key,
+                      onSelected: (_) =>
+                          edit((x) => x.copyWith(category: entry.key)),
+                    ),
+                ],
+              ),
+              if (d.category == 'Other') ...[
+                const SizedBox(height: 12),
+                StudioField(
+                  label: l10n.esCatOtherHint,
+                  value: d.categoryOther,
+                  onChanged: (v) => edit((x) => x.copyWith(categoryOther: v)),
                 ),
+              ] else
+                const SizedBox(height: 16),
+              Row(
+                children: [
+                  Text(l10n.esDescription, style: AppTypography.label()),
+                  const SizedBox(width: 12),
+                  // Takes what is left and wraps, so a large font cannot push
+                  // the row wider than the screen.
+                  Expanded(
+                    child: Text(
+                      [
+                        l10n.esWordCount(words),
+                        if (words > 0 && words < recommendedEventWords)
+                          l10n.esWordsToGo(recommendedEventWords - words),
+                      ].join(' · '),
+                      textAlign: TextAlign.end,
+                      style: AppTypography.label(color: countColor),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              StudioField(
+                label: l10n.esDescription,
+                value: d.description,
+                maxLines: 6,
+                formatters: const [WordLimitFormatter(maxEventWords)],
+                onChanged: (v) => edit((x) => x.copyWith(description: v)),
+              ),
             ],
           ),
-        ],
+        ),
+        StudioCard(
+          title: l10n.esCardGuests,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StudioField(
+                label: l10n.esAttendees,
+                value: d.maxAttendees > 0 ? '${d.maxAttendees}' : '',
+                number: true,
+                formatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (v) => edit(
+                  (x) => x.copyWith(maxAttendees: int.tryParse(v) ?? 0),
+                ),
+              ),
+              if (state.policies.isNotEmpty) ...[
+                Text(l10n.esPolicy, style: AppTypography.label()),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final policy in state.policies)
+                      ChoiceChip(
+                        label: Text(policy.name),
+                        selected: d.cancellationPolicyId == policy.id,
+                        onSelected: (_) => edit(
+                          (x) => x.copyWith(cancellationPolicyId: policy.id),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -412,31 +392,24 @@ class _LocationStep extends ConsumerWidget {
     final state = ref.watch(eventStudioProvider(id));
     final studio = ref.read(eventStudioProvider(id).notifier);
     final d = state.draft;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.esLocationHint,
-          style: AppTypography.body(size: 13, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 16),
-        PlaceFields(
-          country: d.country,
-          state: d.state,
-          city: d.city,
-          countries: state.countries,
-          states: state.states,
-          cities: state.cities,
-          locating: state.locating,
-          locateProblem: state.locateProblem,
-          onCountryText: (v) => studio.edit((x) => x.copyWith(country: v)),
-          onStateText: (v) => studio.edit((x) => x.copyWith(state: v)),
-          onCityText: studio.pickCity,
-          onPickCountry: studio.pickCountry,
-          onPickState: studio.pickState,
-          onUseMyLocation: studio.useMyLocation,
-        ),
-      ],
+    return StudioCard(
+      hint: l10n.esLocationHint,
+      child: PlaceFields(
+        country: d.country,
+        state: d.state,
+        city: d.city,
+        countries: state.countries,
+        states: state.states,
+        cities: state.cities,
+        locating: state.locating,
+        locateProblem: state.locateProblem,
+        onCountryText: (v) => studio.edit((x) => x.copyWith(country: v)),
+        onStateText: (v) => studio.edit((x) => x.copyWith(state: v)),
+        onCityText: studio.pickCity,
+        onPickCountry: studio.pickCountry,
+        onPickState: studio.pickState,
+        onUseMyLocation: studio.useMyLocation,
+      ),
     );
   }
 }
@@ -459,77 +432,114 @@ class _PhotosStep extends ConsumerWidget {
       await studio.addPhoto(photo);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.esPhotosHint,
-          style: AppTypography.body(size: 13, color: AppColors.textMuted),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final photo in photos)
-              Stack(
+    return StudioCard(
+      title: l10n.studioPhotoCount(photos.length, maxEventPhotos),
+      hint: l10n.esPhotosHint,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LayoutBuilder(
+            builder: (context, box) {
+              // Three to a row, whatever the screen.
+              final size = (box.maxWidth - 16) / 3;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  PhotoBox(url: photo.url, width: 104, height: 104),
-                  Positioned(
-                    top: 2,
-                    right: 2,
-                    child: IconButton.filled(
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => studio.removePhoto(photo.fileId),
-                      icon: const Icon(Icons.close_rounded, size: 16),
-                    ),
-                  ),
-                ],
-              ),
-            if (photos.length < maxEventPhotos)
-              InkWell(
-                onTap: state.uploading ? null : add,
-                borderRadius: AppRadius.brCard,
-                child: Container(
-                  width: 104,
-                  height: 104,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: AppRadius.brCard,
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  alignment: Alignment.center,
-                  child: state.uploading
-                      ? const CircularProgressIndicator(
-                          color: AppColors.accent,
-                          strokeWidth: 2,
-                        )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.add_a_photo_outlined),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.studioAddPhoto,
-                              style: AppTypography.label(),
-                            ),
-                          ],
+                  for (var i = 0; i < photos.length; i++)
+                    Stack(
+                      children: [
+                        PhotoBox(
+                          url: photos[i].url,
+                          width: size,
+                          height: size,
+                          radius: 12,
                         ),
-                ),
-              ),
-          ],
-        ),
-        if (state.error == 'photo')
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              state.errorDetail == null
-                  ? l10n.esPhotoFailed
-                  : l10n.studioPhotoFailedWhy(state.errorDetail!),
-              style: AppTypography.body(size: 13, color: AppColors.error),
-            ),
+                        if (i == 0)
+                          Positioned(
+                            left: 6,
+                            bottom: 6,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.accent,
+                                borderRadius: AppRadius.brPill,
+                              ),
+                              child: Text(
+                                l10n.studioCover,
+                                style: AppTypography.label(
+                                  color: AppColors.onAccent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: IconButton.filled(
+                            visualDensity: VisualDensity.compact,
+                            tooltip: l10n.esRemove,
+                            onPressed: () =>
+                                studio.removePhoto(photos[i].fileId),
+                            icon: const Icon(Icons.close_rounded, size: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (photos.length < maxEventPhotos)
+                    InkWell(
+                      onTap: state.uploading ? null : add,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: size,
+                        height: size,
+                        decoration: BoxDecoration(
+                          color: AppColors.canvas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderStrong),
+                        ),
+                        alignment: Alignment.center,
+                        child: state.uploading
+                            ? const CircularProgressIndicator(
+                                color: AppColors.accent,
+                                strokeWidth: 2,
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.add_a_photo_outlined,
+                                    color: AppColors.accent,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.studioAddPhoto,
+                                    textAlign: TextAlign.center,
+                                    style: AppTypography.label(),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
-      ],
+          if (state.error == 'photo')
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Text(
+                state.errorDetail == null
+                    ? l10n.esPhotoFailed
+                    : l10n.studioPhotoFailedWhy(state.errorDetail!),
+                style: AppTypography.body(size: 13, color: AppColors.error),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -556,61 +566,79 @@ class _PackageStep extends ConsumerWidget {
     ];
     final totals = d.totals;
 
+    Widget addTile(IconData icon, String label, ResourceBucket bucket) =>
+        Expanded(
+          child: _AddTile(
+            icon: icon,
+            label: label,
+            onTap: () => showPackagePicker(
+              context,
+              studioId: id,
+              start: bucket,
+            ),
+          ),
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.esPackageTitle, style: AppTypography.display()),
-        const SizedBox(height: 4),
-        Text(
-          l10n.esPackageHint,
-          style: AppTypography.body(size: 13, color: AppColors.textMuted),
+        StudioCard(
+          title: l10n.esVenueSlot,
+          child: venue == null
+              ? OutlinedButton.icon(
+                  onPressed: () => showPackagePicker(context, studioId: id),
+                  icon: const Icon(Icons.apartment_rounded, size: 18),
+                  label: Text(l10n.esChooseVenue),
+                )
+              : _ItemTile(
+                  item: venue,
+                  price: fmt(venue.price),
+                  listed: venue.agreedPrice == null ? null : fmt(venue.cost),
+                  onTap: () => _editItem(context, id, venue.id),
+                ),
         ),
-        const SizedBox(height: 16),
-        Text(l10n.esVenueSlot, style: AppTypography.label()),
-        const SizedBox(height: 8),
-        if (venue == null)
-          OutlinedButton.icon(
-            onPressed: () => showPackagePicker(
-              context,
-              studioId: id,
-            ),
-            icon: const Icon(Icons.apartment_rounded, size: 18),
-            label: Text(l10n.esChooseVenue),
-          )
-        else
-          _ItemTile(
-            item: venue,
-            price: fmt(venue.price),
-            listed: venue.agreedPrice == null ? null : fmt(venue.cost),
-            onTap: () => _editItem(context, id, venue.id),
+        StudioCard(
+          title: l10n.esPackageItems,
+          hint: others.isEmpty ? l10n.esPackageEmpty : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final item in others) ...[
+                _ItemTile(
+                  item: item,
+                  price: fmt(item.price),
+                  listed: item.agreedPrice == null ? null : fmt(item.cost),
+                  onTap: () => _editItem(context, id, item.id),
+                ),
+                const SizedBox(height: 8),
+              ],
+              if (others.isNotEmpty) const SizedBox(height: 4),
+              Text(l10n.esAddHint, style: AppTypography.label()),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  addTile(
+                    Icons.music_note_rounded,
+                    l10n.esAddTalent,
+                    ResourceBucket.talent,
+                  ),
+                  const SizedBox(width: 8),
+                  addTile(
+                    Icons.room_service_outlined,
+                    l10n.esAddServices,
+                    ResourceBucket.service,
+                  ),
+                  const SizedBox(width: 8),
+                  addTile(
+                    Icons.speaker_outlined,
+                    l10n.esAddEquipment,
+                    ResourceBucket.equipment,
+                  ),
+                ],
+              ),
+            ],
           ),
-        const SizedBox(height: 20),
-        if (others.isEmpty)
-          Text(
-            l10n.esPackageEmpty,
-            style: AppTypography.body(size: 13, color: AppColors.textMuted),
-          )
-        else
-          for (final item in others) ...[
-            _ItemTile(
-              item: item,
-              price: fmt(item.price),
-              listed: item.agreedPrice == null ? null : fmt(item.cost),
-              onTap: () => _editItem(context, id, item.id),
-            ),
-            const SizedBox(height: 8),
-          ],
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () => showPackagePicker(
-            context,
-            studioId: id,
-            start: ResourceBucket.talent,
-          ),
-          icon: const Icon(Icons.add_rounded, size: 18),
-          label: Text(l10n.esAdd),
         ),
-        const SizedBox(height: 24),
         _Breakdown(
           venue: fmt(totals.venue),
           talent: fmt(totals.talent),
@@ -621,6 +649,50 @@ class _PackageStep extends ConsumerWidget {
           onMargin: studio.setMargin,
         ),
       ],
+    );
+  }
+}
+
+/// A square button that adds one kind of thing to the package.
+class _AddTile extends StatelessWidget {
+  const _AddTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: AppRadius.brMd,
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 76),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.canvas,
+          borderRadius: AppRadius.brMd,
+          border: Border.all(color: AppColors.borderStrong),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: AppColors.accent),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.body(size: 12),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -840,45 +912,54 @@ class _Breakdown extends StatelessWidget {
           ),
         );
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.canvas,
-        borderRadius: AppRadius.brCard,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          line(l10n.esCostVenue, venue),
-          line(l10n.esCostTalent, talent),
-          line(l10n.esCostServices, services),
-          const Divider(height: 20),
-          line(l10n.esCostTotal, total, bold: true),
-          const SizedBox(height: 12),
-          Text(l10n.esMargin, style: AppTypography.label()),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        StudioCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final pct in const [0, 10, 20, 30, 40])
-                ChoiceChip(
-                  label: Text('$pct%'),
-                  selected: margin == pct,
-                  onSelected: (_) => onMargin(pct),
-                  selectedColor: AppColors.accent,
-                  labelStyle: AppTypography.label(
-                    color: margin == pct
-                        ? AppColors.onAccent
-                        : AppColors.textPrimary,
-                  ),
+              line(l10n.esCostVenue, venue),
+              line(l10n.esCostTalent, talent),
+              line(l10n.esCostServices, services),
+              const Divider(height: 20),
+              line(l10n.esCostTotal, total, bold: true),
+              const SizedBox(height: 14),
+              Text(l10n.esMargin, style: AppTypography.label()),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<int>(
+                  showSelectedIcon: false,
+                  segments: [
+                    for (final pct in const [0, 10, 20, 30, 40])
+                      ButtonSegment(value: pct, label: Text('$pct%')),
+                  ],
+                  selected: {margin},
+                  onSelectionChanged: (s) => onMargin(s.first),
                 ),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          line(l10n.esSuggested, suggested, bold: true),
-        ],
-      ),
+        ),
+        StudioCard(
+          tinted: true,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.esSuggested,
+                  style: AppTypography.body(color: AppColors.textPrimary),
+                ),
+              ),
+              Text(
+                suggested,
+                style: AppTypography.display(size: 26, color: AppColors.accent),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -904,7 +985,7 @@ class _ReviewStep extends ConsumerWidget {
 
     Widget row(String label, {required bool met, required bool required}) =>
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
             children: [
               Icon(
@@ -931,54 +1012,88 @@ class _ReviewStep extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.esScore(d.score), style: AppTypography.display(size: 18)),
-        const SizedBox(height: 4),
-        LinearProgressIndicator(
-          value: d.score / 100,
-          color: AppColors.accent,
-          backgroundColor: AppColors.border,
-          minHeight: 4,
+        StudioCard(
+          child: Row(
+            children: [
+              SizedBox.square(
+                dimension: 64,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox.expand(
+                      child: CircularProgressIndicator(
+                        value: d.score / 100,
+                        strokeWidth: 6,
+                        color: AppColors.accent,
+                        backgroundColor: AppColors.border,
+                      ),
+                    ),
+                    Text(
+                      '${d.score}%',
+                      style: AppTypography.display(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  l10n.esScore(d.score),
+                  style: AppTypography.display(size: 18),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 12),
-        for (final line in d.readiness)
-          row(
-            labels[line.id] ?? line.id,
-            met: line.met,
-            required: line.required,
+        StudioCard(
+          child: Column(
+            children: [
+              for (final line in d.readiness)
+                row(
+                  labels[line.id] ?? line.id,
+                  met: line.met,
+                  required: line.required,
+                ),
+              // A category of Other also needs the host's own words.
+              if (d.category == 'Other')
+                row(
+                  l10n.esReadyOther,
+                  met: !d.categoryOtherMissing,
+                  required: true,
+                ),
+            ],
           ),
-        // A category of Other also needs the host's own words.
-        if (d.category == 'Other')
-          row(
-            l10n.esReadyOther,
-            met: !d.categoryOtherMissing,
-            required: true,
-          ),
+        ),
         if (!state.isNew && state.status != 'draft')
           Padding(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               l10n.esNotDraft,
               style: AppTypography.body(size: 13, color: AppColors.warning),
             ),
           ),
-        if (state.problems.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          Text(
-            l10n.esPartial,
-            style: AppTypography.body(color: AppColors.error),
-          ),
-          const SizedBox(height: 8),
-          for (final p in state.problems)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Text(
-                p.message.isEmpty
-                    ? p.name
-                    : l10n.esProblemLine(p.name, p.message),
-                style: AppTypography.body(size: 13, color: AppColors.error),
-              ),
+        if (state.problems.isNotEmpty)
+          StudioCard(
+            title: l10n.esPartial,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final p in state.problems)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: Text(
+                      p.message.isEmpty
+                          ? p.name
+                          : l10n.esProblemLine(p.name, p.message),
+                      style: AppTypography.body(
+                        size: 13,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-        ],
+          ),
       ],
     );
   }
