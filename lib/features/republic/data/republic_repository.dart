@@ -71,6 +71,44 @@ class RepublicRepository {
     });
   }
 
+  /// Likes a comment, or takes the like back. Returns what the server now
+  /// has: whether it is liked and how many likes it has.
+  Future<({bool liked, int count})> toggleCommentLike(
+    String postId,
+    String commentId,
+  ) async {
+    final body = await _api.post(
+      ApiEndpoints.feedCommentLike(postId, commentId),
+    );
+    final data = body is Map ? body['data'] : null;
+    return (
+      liked: data is Map && data['liked'] == true,
+      count: data is Map ? (data['likesCount'] as num?)?.toInt() ?? 0 : 0,
+    );
+  }
+
+  Future<void> editComment(
+    String postId,
+    String commentId,
+    String content,
+  ) async {
+    await _api.patch(
+      ApiEndpoints.feedComment(postId, commentId),
+      {'content': content.trim()},
+    );
+  }
+
+  Future<void> deleteComment(String postId, String commentId) async {
+    await _api.delete(ApiEndpoints.feedComment(postId, commentId));
+  }
+
+  /// One post as the server has it now.
+  Future<Post?> post(String postId) async {
+    final body = await _api.get(ApiEndpoints.feedPost(postId));
+    final data = body is Map ? body['data'] : null;
+    return data is Map ? Post.fromJson(data.cast<String, dynamic>()) : null;
+  }
+
   /// A text post in the community tab.
   Future<void> createPost(String content) async {
     await _api.post(ApiEndpoints.feed, {

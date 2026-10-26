@@ -5974,6 +5974,42 @@ abstract class AppLocalizations {
   /// **'Reactions'**
   String get republicReactions;
 
+  /// No description provided for @republicReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get republicReply;
+
+  /// No description provided for @republicReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {name}'**
+  String republicReplyingTo(String name);
+
+  /// No description provided for @republicEditingComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing your comment'**
+  String get republicEditingComment;
+
+  /// No description provided for @republicEditComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get republicEditComment;
+
+  /// No description provided for @republicDeleteComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete comment'**
+  String get republicDeleteComment;
+
+  /// No description provided for @republicDeleteCommentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this comment?'**
+  String get republicDeleteCommentTitle;
+
   /// No description provided for @republicNoReactions.
   ///
   /// In en, this message translates to:

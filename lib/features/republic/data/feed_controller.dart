@@ -131,6 +131,17 @@ class FeedController extends AsyncNotifier<FeedState> {
     }
   }
 
+  /// Takes the server's version of one post, for when its comment count may
+  /// have moved in ways the phone cannot work out (comments deleted).
+  Future<void> reload(String postId) async {
+    try {
+      final fresh = await ref.read(republicRepositoryProvider).post(postId);
+      if (fresh != null) _replace(postId, (_) => fresh);
+    } on Object {
+      // The old count stays; a pull to refresh fixes it.
+    }
+  }
+
   /// Bumps a post's comment count after the person comments.
   void commentAdded(String postId) {
     final latest = state.value;
