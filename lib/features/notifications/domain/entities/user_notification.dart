@@ -9,6 +9,7 @@ class UserNotification extends Equatable {
     required this.createdAt,
     required this.isRead,
     this.link,
+    this.eventTemplateId,
   });
 
   factory UserNotification.fromJson(Map<String, dynamic> json) {
@@ -25,6 +26,7 @@ class UserNotification extends Equatable {
       createdAt: createdAt.toLocal(),
       isRead: json['isRead'] == true,
       link: _linkOf(json['metadata']),
+      eventTemplateId: _waitlistTemplateOf(json['type'], json['metadata']),
     );
   }
 
@@ -39,6 +41,19 @@ class UserNotification extends Equatable {
   /// `/booking/<id>` or `/messages?conversationId=<id>`; null when it has none.
   final String? link;
 
+  /// The event a "a spot opened up" notification is about
+  /// (`metadata.templateId`); null for every other kind.
+  final String? eventTemplateId;
+
+  static String? _waitlistTemplateOf(Object? type, Object? metadata) {
+    if (type != waitlistSpotType || metadata is! Map) return null;
+    final id = metadata['templateId'];
+    return id is String && id.isNotEmpty ? id : null;
+  }
+
+  /// The `type` the API gives a waitlist notification.
+  static const waitlistSpotType = 'waitlist_spot_available';
+
   static String? _linkOf(Object? metadata) {
     final link = metadata is Map ? metadata['link'] : null;
     return link is String && link.isNotEmpty ? link : null;
@@ -46,5 +61,5 @@ class UserNotification extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, type, title, message, createdAt, isRead, link];
+      [id, type, title, message, createdAt, isRead, link, eventTemplateId];
 }

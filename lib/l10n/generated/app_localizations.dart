@@ -4048,6 +4048,60 @@ abstract class AppLocalizations {
   /// **'This event is full.'**
   String get eventFull;
 
+  /// No description provided for @eventWaitlistFull.
+  ///
+  /// In en, this message translates to:
+  /// **'This event is full. Join the waitlist and we\'ll tell you when a spot opens.'**
+  String get eventWaitlistFull;
+
+  /// No description provided for @eventWaitlistOn.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re number {position} of {total} on the waitlist. We\'ll tell you when a spot opens.'**
+  String eventWaitlistOn(int position, int total);
+
+  /// No description provided for @eventWaitlistOnNoPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the waitlist. We\'ll tell you when a spot opens.'**
+  String get eventWaitlistOnNoPlace;
+
+  /// No description provided for @eventWaitlistOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'A spot opened up. Book now before it fills again.'**
+  String get eventWaitlistOpened;
+
+  /// No description provided for @eventWaitlistJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join waitlist'**
+  String get eventWaitlistJoin;
+
+  /// No description provided for @eventWaitlistLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave waitlist'**
+  String get eventWaitlistLeave;
+
+  /// No description provided for @eventWaitlistJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the waitlist.'**
+  String get eventWaitlistJoined;
+
+  /// No description provided for @eventWaitlistLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'You left the waitlist.'**
+  String get eventWaitlistLeft;
+
+  /// No description provided for @eventWaitlistFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Try again.'**
+  String get eventWaitlistFailed;
+
   /// No description provided for @eventNotPriced.
   ///
   /// In en, this message translates to:

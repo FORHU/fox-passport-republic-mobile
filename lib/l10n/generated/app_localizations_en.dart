@@ -2229,6 +2229,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFull => 'This event is full.';
 
   @override
+  String get eventWaitlistFull =>
+      'This event is full. Join the waitlist and we\'ll tell you when a spot opens.';
+
+  @override
+  String eventWaitlistOn(int position, int total) {
+    return 'You\'re number $position of $total on the waitlist. We\'ll tell you when a spot opens.';
+  }
+
+  @override
+  String get eventWaitlistOnNoPlace =>
+      'You\'re on the waitlist. We\'ll tell you when a spot opens.';
+
+  @override
+  String get eventWaitlistOpened =>
+      'A spot opened up. Book now before it fills again.';
+
+  @override
+  String get eventWaitlistJoin => 'Join waitlist';
+
+  @override
+  String get eventWaitlistLeave => 'Leave waitlist';
+
+  @override
+  String get eventWaitlistJoined => 'You\'re on the waitlist.';
+
+  @override
+  String get eventWaitlistLeft => 'You left the waitlist.';
+
+  @override
+  String get eventWaitlistFailed => 'That didn\'t work. Try again.';
+
+  @override
   String get eventNotPriced =>
       'This event has no price yet, so it cannot be booked.';
 
