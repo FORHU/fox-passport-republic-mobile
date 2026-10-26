@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/theme/app_theme.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class _Session extends AuthController {
+  _Session(this.roles);
+
+  final List<String> roles;
+
+  @override
+  AuthState build() => AuthState(
+        user: UserEntity(
+          id: 'u1',
+          email: 'a@b.co',
+          name: 'Ada',
+          roleType: roles,
+        ),
+      );
+}
+
+void main() {
+  Future<GlobalKey<NavigatorState>> pump(
+    WidgetTester tester, {
+    required List<String> roles,
+    Widget? row,
+  }) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final navigator = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          authControllerProvider.overrideWith(() => _Session(roles)),
+        ],
+        child: MaterialApp(
+          navigatorKey: navigator,
+          theme: AppTheme.dark,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            appBar: const SpaceAppBar(title: 'Overview'),
+            body: row ?? const SizedBox.shrink(),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    return navigator;
+  }
+
+  group('the space pill', () {
+    testWidgets('leads the top bar of a tab for someone with two roles', (
+      tester,
+    ) async {
+      await pump(tester, roles: ['venueFoxer']);
+
+      expect(find.byType(SpaceSwitchButton), findsOneWidget);
+      final pill = tester.getTopLeft(find.byType(SpaceSwitchButton));
+      final title = tester.getTopLeft(find.text('Overview'));
+      // At the left of the bar, before the title.
+      expect(pill.dx, lessThan(title.dx));
+      expect(pill.dx, lessThan(40));
+    });
+
+    testWidgets('is not there for someone with a single role', (tester) async {
+      await pump(tester, roles: const []);
+
+      expect(find.byType(SpaceSwitchButton), findsNothing);
+      expect(find.text('Overview'), findsOneWidget);
+    });
+
+    testWidgets('gives way to the back button on a page opened over a tab', (
+      tester,
+    ) async {
+      final navigator = await pump(tester, roles: ['venueFoxer']);
+
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(
+            appBar: SpaceAppBar(title: 'Team'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BackButton), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.widgetWithText(AppBar, 'Team'),
+          matching: find.byType(SpaceSwitchButton),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('the Citizen row takes no room without a second role', (
+      tester,
+    ) async {
+      await pump(tester, roles: const [], row: const SpacePillRow());
+
+      expect(find.byType(SpaceSwitchButton), findsNothing);
+      expect(tester.getSize(find.byType(SpacePillRow)), Size.zero);
+    });
+
+    testWidgets('the Citizen row shows the pill for two roles', (tester) async {
+      await pump(
+        tester,
+        roles: ['eventFoxer'],
+        row: const Align(alignment: Alignment.topLeft, child: SpacePillRow()),
+      );
+
+      // The app bar's own pill plus the row's.
+      expect(find.byType(SpaceSwitchButton), findsNWidgets(2));
+    });
+  });
+}

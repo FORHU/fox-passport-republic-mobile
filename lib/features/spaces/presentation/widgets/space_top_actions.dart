@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
@@ -9,9 +10,9 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// What every space screen has in its top bar: the space switcher, and the
-/// person's photo, which opens Settings (the way to Profile and Sign out, which
-/// a space has no tab for).
+/// What every space screen has at the right of its top bar: the person's
+/// photo, which opens Settings (the way to Profile and Sign out, which a space
+/// has no tab for).
 class SpaceTopActions extends ConsumerWidget {
   const SpaceTopActions({super.key});
 
@@ -22,7 +23,6 @@ class SpaceTopActions extends ConsumerWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SpaceSwitchButton(),
         IconButton(
           tooltip: context.l10n.settingsTitle,
           onPressed: () => context.push(RouteNames.settings),
@@ -37,6 +37,59 @@ class SpaceTopActions extends ConsumerWidget {
         ),
         const SizedBox(width: 4),
       ],
+    );
+  }
+}
+
+/// The top bar of a space's screens. On a tab (not a page pushed over one) it
+/// leads with the space pill, for someone who holds more than one role; a
+/// pushed page keeps its back button.
+class SpaceAppBar extends ConsumerWidget implements PreferredSizeWidget {
+  const SpaceAppBar({required this.title, super.key});
+
+  final String title;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final canSwitch = ref.watch(availableSpacesProvider).length >= 2;
+    final showPill = canSwitch && !Navigator.canPop(context);
+    return AppBar(
+      leadingWidth: showPill ? 136 : null,
+      leading: showPill
+          ? const Align(
+              alignment: Alignment.centerLeft,
+              child: SpaceSwitchButton(padding: EdgeInsets.only(left: 12)),
+            )
+          : null,
+      title: Text(title, style: AppTypography.display(size: 18)),
+      actions: const [SpaceTopActions()],
+    );
+  }
+}
+
+/// The space pill on a line of its own at the top of a Citizen tab, which has
+/// no app bar. Nothing, and no space, for someone with a single role.
+class SpacePillRow extends ConsumerWidget {
+  const SpacePillRow({this.horizontal = 16, super.key});
+
+  /// Space at the left, to line up with what is below it; none inside a list
+  /// that already pads its children.
+  final double horizontal;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(availableSpacesProvider).length < 2) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: EdgeInsets.fromLTRB(horizontal, 8, horizontal, 0),
+      child: const Align(
+        alignment: Alignment.centerLeft,
+        child: SpaceSwitchButton(padding: EdgeInsets.zero),
+      ),
     );
   }
 }

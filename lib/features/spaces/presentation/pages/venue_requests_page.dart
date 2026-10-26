@@ -79,10 +79,7 @@ class VenueRequestsPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(l10n.requestsTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.requestsTitle),
       body: requests.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),
