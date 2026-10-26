@@ -157,7 +157,7 @@ class VenueRequestCard extends ConsumerWidget {
         : DateFormat('EEE d MMM', locale).format(request.startAt!);
     final replyBy = request.replyBy == null
         ? null
-        : DateFormat('d MMM, jm', locale).format(request.replyBy!);
+        : DateFormat.MMMd(locale).add_jm().format(request.replyBy!);
 
     return Container(
       padding: const EdgeInsets.all(14),

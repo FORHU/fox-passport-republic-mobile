@@ -82,7 +82,8 @@ class _ScheduledEventDetailPageState
             false;
     final date = _item.eventStartAt == null
         ? '—'
-        : DateFormat('EEEE d MMMM y · jm', locale).format(_item.eventStartAt!);
+        : '${DateFormat.yMMMMEEEEd(locale).format(_item.eventStartAt!)} · '
+            '${DateFormat.jm(locale).format(_item.eventStartAt!)}';
     final price = catalogPriceLabel(
       l10n,
       _item,
