@@ -5716,6 +5716,24 @@ abstract class AppLocalizations {
   /// **'{count}h'**
   String republicHoursAgo(int count);
 
+  /// No description provided for @republicComposePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get republicComposePrompt;
+
+  /// No description provided for @republicLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get republicLike;
+
+  /// No description provided for @republicCommentsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 comment} other{{count} comments}}'**
+  String republicCommentsCount(int count);
+
   /// No description provided for @republicDaysAgo.
   ///
   /// In en, this message translates to:

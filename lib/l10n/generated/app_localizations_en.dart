@@ -3126,6 +3126,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get republicComposePrompt => 'What\'s on your mind?';
+
+  @override
+  String get republicLike => 'Like';
+
+  @override
+  String republicCommentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String republicDaysAgo(int count) {
     return '${count}d';
   }
