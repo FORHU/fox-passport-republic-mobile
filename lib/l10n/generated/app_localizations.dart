@@ -2554,6 +2554,60 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @eventsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your events'**
+  String get eventsSearchHint;
+
+  /// No description provided for @eventsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event} other{{count} events}}'**
+  String eventsCount(int count);
+
+  /// No description provided for @eventsCountOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {total} events'**
+  String eventsCountOf(int shown, int total);
+
+  /// No description provided for @eventsNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No events match.'**
+  String get eventsNoMatch;
+
+  /// No description provided for @eventsInvitesWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 venue invitation is waiting} other{{count} venue invitations are waiting}}'**
+  String eventsInvitesWaiting(int count);
+
+  /// No description provided for @eventsInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event is in review} other{{count} events are in review}}'**
+  String eventsInReview(int count);
+
+  /// No description provided for @eventsDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 event was declined} other{{count} events were declined}}'**
+  String eventsDeclined(int count);
+
+  /// No description provided for @eventsDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 draft to finish} other{{count} drafts to finish}}'**
+  String eventsDrafts(int count);
+
+  /// No description provided for @eventsNewOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get eventsNewOnWeb;
+
   /// No description provided for @overviewAttention.
   ///
   /// In en, this message translates to:

@@ -38,8 +38,8 @@ import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
-import 'package:flutter_template/features/spaces/presentation/pages/space_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
@@ -487,8 +487,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.spaceEvent,
-                builder: (context, state) =>
-                    const SpaceListingsPage(kind: ListingKind.events),
+                builder: (context, state) => const EventsPage(),
                 routes: [
                   GoRoute(
                     path: 'partners',

@@ -347,9 +347,60 @@ void main() {
       verify(
         () => api.get(
           ApiEndpoints.events,
-          query: {'ownerId': 'u1', 'limit': 50},
+          query: {'ownerId': 'u1', 'limit': 50, 'page': 1},
         ),
       ).called(1);
+    });
+
+    test('my events come page by page until all are in', () async {
+      Map<String, Object> page(int from, int count) => {
+            'templates': [
+              for (var i = from; i < from + count; i++)
+                {'id': 'e$i', 'name': 'Event $i', 'status': 'published'},
+            ],
+            'total': 70,
+          };
+      when(
+        () => api.get(
+          ApiEndpoints.events,
+          query: {'ownerId': 'u1', 'limit': 50, 'page': 1},
+        ),
+      ).thenAnswer((_) async => page(0, 50));
+      when(
+        () => api.get(
+          ApiEndpoints.events,
+          query: {'ownerId': 'u1', 'limit': 50, 'page': 2},
+        ),
+      ).thenAnswer((_) async => page(50, 20));
+
+      final list = await repo.myEvents();
+
+      expect(list, hasLength(70));
+      expect(list.last.id, 'e69');
+      verifyNever(
+        () => api.get(
+          ApiEndpoints.events,
+          query: {'ownerId': 'u1', 'limit': 50, 'page': 3},
+        ),
+      );
+    });
+
+    test('an event reads its town from targetCity', () async {
+      when(() => api.get(ApiEndpoints.events, query: any(named: 'query')))
+          .thenAnswer(
+        (_) async => {
+          'templates': [
+            {
+              'id': 'e1',
+              'name': 'Bonfire',
+              'status': 'draft',
+              'targetCity': 'Baguio',
+            },
+          ],
+        },
+      );
+
+      expect((await repo.myEvents()).single.city, 'Baguio');
     });
 
     test('with nobody signed in there is nothing to list', () async {
