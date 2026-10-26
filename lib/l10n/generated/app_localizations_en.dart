@@ -3776,4 +3776,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String spaceSwitched(String space) {
     return 'Now in the $space space';
   }
+
+  @override
+  String get spaceGear => 'Gear';
+
+  @override
+  String get spaceGearHint => 'Your gear and the requests for it';
+
+  @override
+  String get spaceServices => 'Services';
+
+  @override
+  String get spaceServicesHint => 'Your services and the requests for them';
+
+  @override
+  String get spacePerformer => 'Performer';
+
+  @override
+  String get spacePerformerHint =>
+      'Your performances and the requests for them';
+
+  @override
+  String get spaceTabPerformances => 'Performances';
+
+  @override
+  String get requestsIntroGear =>
+      'People adding your gear to their events. Confirm the ones you can supply.';
+
+  @override
+  String get requestsEmptyGear =>
+      'No requests yet. When someone adds your gear to their event, it shows up here.';
+
+  @override
+  String get requestsIntroServices =>
+      'People adding your services to their events. Confirm the ones you can do.';
+
+  @override
+  String get requestsEmptyServices =>
+      'No requests yet. When someone adds your service to their event, it shows up here.';
+
+  @override
+  String get providerGear => 'Gear';
+
+  @override
+  String get providerServices => 'Services';
+
+  @override
+  String get providerSearchHint => 'Search your listings';
+
+  @override
+  String get providerEmptyGear => 'You have no gear listed yet.';
+
+  @override
+  String get providerEmptyServices => 'You have no services listed yet.';
+
+  @override
+  String get providerAddOnWeb => 'Add on the web';
+
+  @override
+  String get providerListingEdit => 'Edit on the web';
+
+  @override
+  String get providerListingView => 'View public page';
+
+  @override
+  String get providerStatLive => 'Listings live';
+
+  @override
+  String get providerStatJobs => 'Jobs, next 30 days';
+
+  @override
+  String get providerComingUp => 'Confirmed and coming up';
+
+  @override
+  String get providerNothingComing => 'Nothing confirmed yet.';
+
+  @override
+  String providerRequestsWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests need your reply',
+      one: '1 request needs your reply',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ticketsOfflineNote(String when) {
+    return 'No connection. Showing the tickets saved $when.';
+  }
 }

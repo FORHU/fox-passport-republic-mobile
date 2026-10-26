@@ -8,15 +8,15 @@ String? listingStatusLabel(AppLocalizations l10n, String status) =>
     switch (status) {
       'draft' => l10n.listingStatusDraft,
       'pending' => l10n.listingStatusPending,
-      'available' || 'published' => l10n.listingStatusLive,
+      'available' || 'published' || 'reserved' => l10n.listingStatusLive,
       'rejected' => l10n.listingStatusRejected,
-      'archived' => l10n.listingStatusArchived,
+      'archived' || 'paused' => l10n.listingStatusArchived,
       _ => null,
     };
 
 /// Live is green, rejected is red, anything else is quiet.
 Color listingStatusColor(String status) => switch (status) {
-      'available' || 'published' => AppColors.success,
+      'available' || 'published' || 'reserved' => AppColors.success,
       'rejected' => AppColors.error,
       'pending' => AppColors.warning,
       _ => AppColors.textMuted,
