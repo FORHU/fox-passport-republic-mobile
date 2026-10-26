@@ -4189,7 +4189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get providerEmptyServices => 'You have no services listed yet.';
 
   @override
-  String get providerAddOnWeb => 'Add on the web';
+  String get providerAddOnWeb => 'Add on web';
 
   @override
   String get providerListingEdit => 'Edit on the web';

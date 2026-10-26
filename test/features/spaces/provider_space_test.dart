@@ -350,7 +350,7 @@ void main() {
 
       expect(find.text('Performances'), findsWidgets);
       expect(find.text('You have no services listed yet.'), findsOneWidget);
-      expect(find.text('Add on the web'), findsOneWidget);
+      expect(find.text('Add on web'), findsOneWidget);
     });
 
     testWidgets('tapping a listing offers to edit it on the web', (
