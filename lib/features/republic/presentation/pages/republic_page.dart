@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
+import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
@@ -81,10 +82,40 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
   Future<void> _compose() async {
     if (!_signedIn()) return;
-    final posted = await context.push<bool>(RouteNames.republicCompose);
-    if (posted != true || !mounted) return;
+    final id = await context.push<String>(RouteNames.republicCompose);
+    if (id == null || !mounted) return;
     showTopToast(context, context.l10n.republicPosted);
-    await ref.read(feedControllerProvider(_tab).notifier).refresh();
+    final repo = ref.read(republicRepositoryProvider);
+    Post? post;
+    try {
+      post = id.isEmpty ? null : await repo.post(id);
+    } on Object {
+      post = null;
+    }
+    if (!mounted) return;
+    if (post == null) {
+      // Not read back: a fresh list will have it, wherever it sorts.
+      await ref.read(feedControllerProvider(_tab).notifier).refresh();
+      return;
+    }
+    // The post may belong to a tab other than the open one: open its tab.
+    if (_tab != null && _tab != post.tab) {
+      setState(() => _tab = post!.tab);
+      // Let the page start watching the new tab's list first: read before
+      // that, it would be built, dropped and built again.
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+    await ref.read(feedControllerProvider(_tab).future);
+    if (!mounted) return;
+    ref.read(feedControllerProvider(_tab).notifier).addFirst(post);
+    if (_scroll.hasClients) {
+      _scroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   String _tabLabel(String? tab) {
