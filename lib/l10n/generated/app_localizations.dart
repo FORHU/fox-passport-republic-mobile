@@ -6963,6 +6963,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
   String providerRequestsWaiting(int count);
+
+  /// No description provided for @ticketsOfflineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Showing the tickets saved {when}.'**
+  String ticketsOfflineNote(String when);
 }
 
 class _AppLocalizationsDelegate

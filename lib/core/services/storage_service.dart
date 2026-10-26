@@ -74,6 +74,10 @@ class StorageService {
     await _secure.delete(key: _refreshTokenKey);
     await _prefs.remove(_userModelKey);
     await _prefs.remove(_onboardingKey);
+    // Saved tickets are the account's: they do not stay for the next one.
+    for (final key in _prefs.getKeys().toList()) {
+      if (key.startsWith('tickets_cache_')) await _prefs.remove(key);
+    }
   }
 }
 

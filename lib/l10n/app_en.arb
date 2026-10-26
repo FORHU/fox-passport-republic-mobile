@@ -1281,5 +1281,7 @@
   "providerComingUp": "Confirmed and coming up",
   "providerNothingComing": "Nothing confirmed yet.",
   "providerRequestsWaiting": "{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}",
-  "@providerRequestsWaiting": {"placeholders":{"count":{"type":"int"}}}
+  "@providerRequestsWaiting": {"placeholders":{"count":{"type":"int"}}},
+  "ticketsOfflineNote": "No connection. Showing the tickets saved {when}.",
+  "@ticketsOfflineNote": {"placeholders":{"when":{"type":"String"}}}
 }
