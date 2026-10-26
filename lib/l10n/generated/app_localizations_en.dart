@@ -3861,4 +3861,9 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String ticketsOfflineNote(String when) {
+    return 'No connection. Showing the tickets saved $when.';
+  }
 }

@@ -14,6 +14,7 @@ class Ticket extends Equatable {
     this.templateId,
     this.hasReview = false,
     this.isSample = false,
+    this.cachedAt,
   });
 
   /// Reads a booking as `GET /bookings/upcoming` returns it.
@@ -33,6 +34,26 @@ class Ticket extends Equatable {
       ticketCode: json['ticketCode']?.toString(),
       templateId: eventMap?['templateId']?.toString(),
       hasReview: json['hasReview'] == true,
+    );
+  }
+
+  /// Reads a ticket saved on the phone by [toCache], marked as the saved copy
+  /// it is, made at [cachedAt].
+  factory Ticket.fromCache(Map<String, dynamic> json, DateTime cachedAt) {
+    final start = DateTime.tryParse('${json['startAt']}')?.toLocal();
+    final end = DateTime.tryParse('${json['endAt']}')?.toLocal();
+    return Ticket(
+      id: '${json['id']}',
+      eventName: '${json['eventName'] ?? ''}',
+      startAt: start ?? cachedAt,
+      endAt: end ?? start ?? cachedAt,
+      status: '${json['status'] ?? 'pending'}',
+      city: json['city'] as String?,
+      guestCount: (json['guestCount'] as num?)?.toInt() ?? 1,
+      ticketCode: json['ticketCode'] as String?,
+      templateId: json['templateId'] as String?,
+      hasReview: json['hasReview'] == true,
+      cachedAt: cachedAt,
     );
   }
 
@@ -72,6 +93,24 @@ class Ticket extends Equatable {
   final bool hasReview;
   final bool isSample;
 
+  /// Set when this is the copy saved on the phone, not what the server just
+  /// said: when it was saved.
+  final DateTime? cachedAt;
+
+  /// What is saved to show this ticket with no signal.
+  Map<String, dynamic> toCache() => {
+        'id': id,
+        'eventName': eventName,
+        'startAt': startAt.toUtc().toIso8601String(),
+        'endAt': endAt.toUtc().toIso8601String(),
+        'status': status,
+        'city': city,
+        'guestCount': guestCount,
+        'ticketCode': ticketCode,
+        'templateId': templateId,
+        'hasReview': hasReview,
+      };
+
   /// Whole calendar days from [now] to the start; 0 is today.
   int daysUntil([DateTime? now]) {
     final today = now ?? DateTime.now();
@@ -93,5 +132,6 @@ class Ticket extends Equatable {
         templateId,
         hasReview,
         isSample,
+        cachedAt,
       ];
 }

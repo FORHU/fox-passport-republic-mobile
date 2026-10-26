@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
+import 'package:flutter_template/features/tickets/presentation/widgets/offline_note.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/tickets_skeleton.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -182,7 +183,13 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                     if (_segment == _Segment.past) {
                       return _groupedByMonth(list);
                     }
-                    return [for (final t in list) _item(t)];
+                    final saved = list.map((t) => t.cachedAt).nonNulls;
+                    return [
+                      // Saved on the phone, not just fetched: say so.
+                      if (saved.isNotEmpty)
+                        OfflineTicketsNote(savedAt: saved.first),
+                      for (final t in list) _item(t),
+                    ];
                   },
                 ),
             ],
