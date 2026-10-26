@@ -5974,6 +5974,84 @@ abstract class AppLocalizations {
   /// **'Reactions'**
   String get republicReactions;
 
+  /// No description provided for @republicShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get republicShare;
+
+  /// No description provided for @republicRepost.
+  ///
+  /// In en, this message translates to:
+  /// **'Repost'**
+  String get republicRepost;
+
+  /// No description provided for @republicRepostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repost to your feed'**
+  String get republicRepostTitle;
+
+  /// No description provided for @republicRepostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something about this…'**
+  String get republicRepostHint;
+
+  /// No description provided for @republicReposted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reposted to your feed.'**
+  String get republicReposted;
+
+  /// No description provided for @republicSendInMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send in message'**
+  String get republicSendInMessage;
+
+  /// No description provided for @republicSendPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send post'**
+  String get republicSendPostTitle;
+
+  /// No description provided for @republicSendSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your chats'**
+  String get republicSendSearch;
+
+  /// No description provided for @republicSendCaptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a message…'**
+  String get republicSendCaptionHint;
+
+  /// No description provided for @republicSendNoChats.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats to send to. Start a chat first.'**
+  String get republicSendNoChats;
+
+  /// No description provided for @republicPostSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Post sent.'**
+  String get republicPostSent;
+
+  /// No description provided for @republicPostSentMany.
+  ///
+  /// In en, this message translates to:
+  /// **'Post sent to {count} chats.'**
+  String republicPostSentMany(int count);
+
+  /// No description provided for @republicSendPostFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send that post. Try again.'**
+  String get republicSendPostFailed;
+
   /// No description provided for @republicVerifiedStamp.
   ///
   /// In en, this message translates to:

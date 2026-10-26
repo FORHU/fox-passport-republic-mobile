@@ -16,6 +16,7 @@ import 'package:flutter_template/features/republic/presentation/widgets/comments
 import 'package:flutter_template/features/republic/presentation/widgets/compose_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_menu_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/share_sheets.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -112,6 +113,59 @@ class PostActions {
       _feed.commentAdded(postId);
     }
     if (result.removed) await _feed.reload(postId);
+  }
+
+  /// The link to a post on the web, or null when the app has no web address.
+  String? _link(Post post) {
+    final base = AppConfig.instance.webAppUrl;
+    if (base.isEmpty) return null;
+    final trimmed =
+        base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+    return '$trimmed/republic?postId=${post.id}';
+  }
+
+  /// Share: repost onto your own feed, send in a chat, or copy the link.
+  Future<void> share(Post post) async {
+    if (!_signedIn()) return;
+    final l10n = context.l10n;
+    final action = await showShareSheet(
+      context,
+      // A repost cannot be reposted; share the original instead.
+      canRepost: post.original == null,
+      canCopyLink: _link(post) != null,
+    );
+    if (action == null || !context.mounted) return;
+    switch (action) {
+      case ShareAction.repost:
+        final caption = await showComposeSheet(
+          context,
+          title: l10n.republicRepostTitle,
+          action: l10n.republicRepost,
+          hint: l10n.republicRepostHint,
+          allowEmpty: true,
+        );
+        if (caption == null || !context.mounted) return;
+        await _run(
+          () async {
+            await ref.read(republicRepositoryProvider).repost(post.id, caption);
+            await _feed.refresh();
+          },
+          l10n.republicReposted,
+        );
+      case ShareAction.send:
+        final sent = await showSendPostSheet(context, post);
+        if (sent > 0 && context.mounted) {
+          showTopToast(
+            context,
+            sent == 1 ? l10n.republicPostSent : l10n.republicPostSentMany(sent),
+          );
+        }
+      case ShareAction.copyLink:
+        final link = _link(post);
+        if (link == null) return;
+        await Clipboard.setData(ClipboardData(text: link));
+        if (context.mounted) showTopToast(context, l10n.republicLinkCopied);
+    }
   }
 
   /// The ⋯ menu of [post] and whatever the person picks from it.

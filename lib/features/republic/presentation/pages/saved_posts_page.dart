@@ -100,6 +100,7 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
                       onVote: (o) => unawaited(actions.vote(post.id, o)),
                       onOpenListing: () => actions.openListing(post),
                       onMessage: () => unawaited(actions.messageAuthor(post)),
+                      onShare: () => unawaited(actions.share(post)),
                     );
                   },
                 ),

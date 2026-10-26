@@ -10,6 +10,8 @@ Future<String?> showComposeSheet(
   String initial = '',
   String? title,
   String? action,
+  String? hint,
+  bool allowEmpty = false,
 }) =>
     showModalBottomSheet<String>(
       context: context,
@@ -21,15 +23,27 @@ Future<String?> showComposeSheet(
         initial: initial,
         title: title,
         action: action,
+        hint: hint,
+        allowEmpty: allowEmpty,
       ),
     );
 
 class _ComposeSheet extends StatefulWidget {
-  const _ComposeSheet({required this.initial, this.title, this.action});
+  const _ComposeSheet({
+    required this.initial,
+    required this.allowEmpty,
+    this.title,
+    this.action,
+    this.hint,
+  });
 
   final String initial;
   final String? title;
   final String? action;
+  final String? hint;
+
+  /// Whether it can be sent with nothing written, as a repost can.
+  final bool allowEmpty;
 
   @override
   State<_ComposeSheet> createState() => _ComposeSheetState();
@@ -69,13 +83,15 @@ class _ComposeSheetState extends State<_ComposeSheet> {
             maxLines: 5,
             maxLength: 5000,
             onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(hintText: l10n.republicComposeHint),
+            decoration: InputDecoration(
+              hintText: widget.hint ?? l10n.republicComposeHint,
+            ),
           ),
           const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _controller.text.trim().isEmpty
+              onPressed: _controller.text.trim().isEmpty && !widget.allowEmpty
                   ? null
                   : () => Navigator.pop(context, _controller.text),
               child: Text(widget.action ?? l10n.republicPost),

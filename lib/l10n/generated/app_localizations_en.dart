@@ -3256,6 +3256,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReactions => 'Reactions';
 
   @override
+  String get republicShare => 'Share';
+
+  @override
+  String get republicRepost => 'Repost';
+
+  @override
+  String get republicRepostTitle => 'Repost to your feed';
+
+  @override
+  String get republicRepostHint => 'Say something about this…';
+
+  @override
+  String get republicReposted => 'Reposted to your feed.';
+
+  @override
+  String get republicSendInMessage => 'Send in message';
+
+  @override
+  String get republicSendPostTitle => 'Send post';
+
+  @override
+  String get republicSendSearch => 'Search your chats';
+
+  @override
+  String get republicSendCaptionHint => 'Add a message…';
+
+  @override
+  String get republicSendNoChats => 'No chats to send to. Start a chat first.';
+
+  @override
+  String get republicPostSent => 'Post sent.';
+
+  @override
+  String republicPostSentMany(int count) {
+    return 'Post sent to $count chats.';
+  }
+
+  @override
+  String get republicSendPostFailed =>
+      'We couldn\'t send that post. Try again.';
+
+  @override
   String get republicVerifiedStamp => 'Verified Venue Stamp';
 
   @override
