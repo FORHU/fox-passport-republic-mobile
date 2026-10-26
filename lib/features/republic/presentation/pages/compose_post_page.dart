@@ -13,6 +13,7 @@ import 'package:flutter_template/features/republic/presentation/widgets/post_car
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// Writing a post: the words, photos, who can see it, and, for a poll or a
@@ -23,6 +24,12 @@ class ComposePostPage extends ConsumerStatefulWidget {
   @override
   ConsumerState<ComposePostPage> createState() => _ComposePostPageState();
 }
+
+/// The words field has no outline, but rounded corners like the other fields.
+final _roundedBorder = OutlineInputBorder(
+  borderRadius: AppRadius.brMd,
+  borderSide: BorderSide.none,
+);
 
 class _ComposePostPageState extends ConsumerState<ComposePostPage> {
   static const _maxPhotos = 10;
@@ -294,9 +301,9 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
             maxLength: 5000,
             onChanged: _onChanged,
             decoration: InputDecoration(
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
+              border: _roundedBorder,
+              enabledBorder: _roundedBorder,
+              focusedBorder: _roundedBorder,
               hintText: _type == ComposeType.poll
                   ? l10n.republicPollHint
                   : l10n.republicComposeHint,
