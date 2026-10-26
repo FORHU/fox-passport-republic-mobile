@@ -197,10 +197,10 @@ class VenueRequestCard extends ConsumerWidget {
                         l10n.requestFrom(request.clientName!),
                         style: AppTypography.body(size: 12),
                       ),
+                    _StatusChip(status: request.status),
                   ],
                 ),
               ),
-              _StatusChip(status: request.status),
             ],
           ),
           if (request.price != null) ...[
@@ -285,7 +285,7 @@ class _StatusChip extends StatelessWidget {
       _ => AppColors.textMuted,
     };
     return Container(
-      margin: const EdgeInsets.only(left: 8),
+      margin: const EdgeInsets.only(top: 6),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
