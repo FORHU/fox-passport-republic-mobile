@@ -13,7 +13,6 @@ import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 
 /// The Republic: what the community is posting. Everyone can read; liking,
 /// commenting and posting need an account.
@@ -133,15 +132,22 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+              padding: EdgeInsets.fromLTRB(
+                Navigator.canPop(context) ? 8 : 16,
+                8,
+                16,
+                0,
+              ),
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
+                  // A tab now; the arrow only shows if it was pushed.
+                  if (Navigator.canPop(context))
+                    IconButton(
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                   Expanded(
                     child: Text(
                       l10n.republicTitle,

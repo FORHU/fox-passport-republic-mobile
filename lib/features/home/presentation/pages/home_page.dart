@@ -142,7 +142,7 @@ class HomePage extends ConsumerWidget {
               // no strip and no error.
               if (ticket != null) _NextNight(ticket: ticket),
               const SizedBox(height: 16),
-              _HomeSearch(onTap: () => context.go(RouteNames.search)),
+              _HomeSearch(onTap: () => context.push(RouteNames.search)),
               if (noBookings) ...[
                 const SizedBox(height: 16),
                 FirstEventChecklist(
@@ -222,7 +222,7 @@ class HomePage extends ConsumerWidget {
                 ),
               ),
               RepublicTeaser(
-                onOpen: () => unawaited(context.push(RouteNames.republic)),
+                onOpen: () => context.go(RouteNames.republic),
               ),
               if (oneThing.isNotEmpty) ...[
                 const SizedBox(height: 24),

@@ -268,10 +268,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: RouteNames.republic,
-        builder: (context, state) => const RepublicPage(),
-      ),
-      GoRoute(
         path: RouteNames.itemBooking,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -329,10 +325,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.notifications,
                 builder: (context, state) => const NotificationsPage(),
               ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
+              // Search lives under Home: it is opened from Home's search bar.
               GoRoute(
                 path: RouteNames.search,
                 builder: (context, state) => SearchPage(
@@ -347,6 +340,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     state.uri.queryParameters['date'] ?? '',
                   ),
                 ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.republic,
+                builder: (context, state) => const RepublicPage(),
               ),
             ],
           ),
