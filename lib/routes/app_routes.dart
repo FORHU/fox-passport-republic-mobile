@@ -27,6 +27,7 @@ import 'package:flutter_template/features/passport/presentation/pages/passport_p
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
@@ -266,6 +267,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }
           return BookingFlowPage(venue: extra! as CatalogItem);
         },
+      ),
+      GoRoute(
+        path: RouteNames.republicSaved,
+        builder: (context, state) => const SavedPostsPage(),
       ),
       GoRoute(
         path: RouteNames.itemBooking,

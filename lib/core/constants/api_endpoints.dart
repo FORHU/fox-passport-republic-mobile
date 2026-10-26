@@ -126,6 +126,11 @@ class ApiEndpoints {
   static const String feed = '/feed';
   static String feedReaction(String id) => '/feed/$id/reaction';
   static String feedComments(String id) => '/feed/$id/comments';
+  static String feedPost(String id) => '/feed/$id';
+  static String feedSave(String id) => '/feed/$id/save';
+  static String feedHide(String id) => '/feed/$id/hide';
+  static const String feedSaved = '/feed/saved';
+  static const String reports = '/reports';
 
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
@@ -59,11 +60,12 @@ class AuthorAvatar extends StatelessWidget {
 
 /// One post, full width like a feed: who and when, the words, the first photo
 /// edge to edge, the counts, then Like and Comment.
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   const PostCard({
     required this.post,
     required this.onLike,
     required this.onComments,
+    this.onMore,
     super.key,
   });
 
@@ -71,8 +73,24 @@ class PostCard extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onComments;
 
+  /// Opens the post's ⋯ menu; no button when null.
+  final VoidCallback? onMore;
+
+  /// Longer than this and the text folds behind "See more".
+  static const foldAt = 280;
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool _expanded = false;
+
   @override
   Widget build(BuildContext context) {
+    final post = widget.post;
+    final onLike = widget.onLike;
+    final onComments = widget.onComments;
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
     final age = postAge(l10n, post.createdAt, locale);
@@ -110,13 +128,23 @@ class PostCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (widget.onMore != null)
+                  IconButton(
+                    tooltip: l10n.republicMore,
+                    onPressed: widget.onMore,
+                    icon: const Icon(Icons.more_horiz_rounded),
+                  ),
               ],
             ),
           ),
           if (post.content.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-              child: Text(post.content, style: AppTypography.body()),
+              child: _Body(
+                text: post.content,
+                expanded: _expanded,
+                onToggle: () => setState(() => _expanded = !_expanded),
+              ),
             ),
           if (post.mediaUrls.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -184,6 +212,47 @@ class PostCard extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The words of a post, folded behind "See more" when they are long.
+class _Body extends StatelessWidget {
+  const _Body({
+    required this.text,
+    required this.expanded,
+    required this.onToggle,
+  });
+
+  final String text;
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final long = text.length > PostCard.foldAt;
+    final shown = long && !expanded
+        ? text.substring(0, PostCard.foldAt).trimRight()
+        : text;
+    return Text.rich(
+      TextSpan(
+        style: AppTypography.body(),
+        children: [
+          TextSpan(text: shown),
+          if (long) ...[
+            TextSpan(text: expanded ? ' ' : '… '),
+            TextSpan(
+              text: expanded ? l10n.republicSeeLess : l10n.republicSeeMore,
+              style: AppTypography.body(
+                weight: FontWeight.w700,
+                color: AppColors.textMuted,
+              ),
+              recognizer: TapGestureRecognizer()..onTap = onToggle,
+            ),
+          ],
         ],
       ),
     );

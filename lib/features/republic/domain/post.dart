@@ -38,6 +38,7 @@ class Post extends Equatable {
     this.commentsCount = 0,
     this.isLikedByMe = false,
     this.edited = false,
+    this.isSavedByMe = false,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -54,6 +55,7 @@ class Post extends Equatable {
         commentsCount: (json['commentsCount'] as num?)?.toInt() ?? 0,
         isLikedByMe: json['isLikedByMe'] == true,
         edited: json['editedAt'] != null,
+        isSavedByMe: json['isSavedByMe'] == true,
       );
 
   final String id;
@@ -66,19 +68,28 @@ class Post extends Equatable {
   final int commentsCount;
   final bool isLikedByMe;
   final bool edited;
+  final bool isSavedByMe;
 
-  Post copyWith({int? likesCount, int? commentsCount, bool? isLikedByMe}) =>
+  Post copyWith({
+    String? content,
+    int? likesCount,
+    int? commentsCount,
+    bool? isLikedByMe,
+    bool? isSavedByMe,
+    bool? edited,
+  }) =>
       Post(
         id: id,
         author: author,
-        content: content,
+        content: content ?? this.content,
         createdAt: createdAt,
         tab: tab,
         mediaUrls: mediaUrls,
         likesCount: likesCount ?? this.likesCount,
         commentsCount: commentsCount ?? this.commentsCount,
         isLikedByMe: isLikedByMe ?? this.isLikedByMe,
-        edited: edited,
+        edited: edited ?? this.edited,
+        isSavedByMe: isSavedByMe ?? this.isSavedByMe,
       );
 
   @override
@@ -93,6 +104,7 @@ class Post extends Equatable {
         commentsCount,
         isLikedByMe,
         edited,
+        isSavedByMe,
       ];
 }
 
