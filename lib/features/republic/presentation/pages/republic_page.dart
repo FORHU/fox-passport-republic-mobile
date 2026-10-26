@@ -170,39 +170,17 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                   ),
                 ),
               ),
-            SizedBox(
-              height: 52,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  for (final t in _tabs)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Center(
-                        child: ChoiceChip(
-                          label: Text(_tabLabel(t)),
-                          selected: _tab == t,
-                          onSelected: (_) => setState(() => _tab = t),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+            _FeedTabs(
+              tabs: _tabs,
+              selected: _tab,
+              label: _tabLabel,
+              onSelect: (t) => setState(() => _tab = t),
             ),
-            // Saved on the left, the order on the right: fixed, so neither
-            // is lost off the edge of the scrolling tabs.
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 16, 4),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton.icon(
-                    onPressed: () =>
-                        unawaited(context.push(RouteNames.republicSaved)),
-                    icon: const Icon(Icons.bookmark_border_rounded, size: 18),
-                    label: Text(l10n.republicSavedOpen),
-                  ),
-                  const Spacer(),
                   PopupMenuButton<FeedSort>(
                     tooltip: l10n.republicSortBy,
                     initialValue: sort,
@@ -330,6 +308,73 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The feed's sections as text across the full width, the open one in the
+/// accent colour with a line under it. Fixed rather than scrolling, so every
+/// section is in sight.
+class _FeedTabs extends StatelessWidget {
+  const _FeedTabs({
+    required this.tabs,
+    required this.selected,
+    required this.label,
+    required this.onSelect,
+  });
+
+  final List<String?> tabs;
+  final String? selected;
+  final String Function(String?) label;
+  final ValueChanged<String?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          for (final t in tabs)
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: t == selected,
+                child: InkWell(
+                  onTap: () => onSelect(t),
+                  child: Container(
+                    height: 44,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 3,
+                          color: t == selected
+                              ? AppColors.accent
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label(t),
+                        style: AppTypography.body(
+                          weight: FontWeight.w700,
+                          color: t == selected
+                              ? AppColors.accent
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

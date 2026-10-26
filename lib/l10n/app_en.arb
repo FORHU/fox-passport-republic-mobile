@@ -1059,7 +1059,6 @@
   "republicActionFailed": "That didn't work. Try again.",
   "republicSavedTitle": "Saved posts",
   "republicSavedEmpty": "Nothing saved yet. Save a post from its menu.",
-  "republicSavedOpen": "Saved",
   "republicReportTitle": "Report this post",
   "republicReported": "Thanks, we'll take a look.",
   "republicReasonSpam": "Spam",

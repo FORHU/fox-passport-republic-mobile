@@ -160,17 +160,43 @@ void main() {
       expect(find.text('Recent'), findsOneWidget);
     });
 
-    testWidgets('the header has only search; Saved is a labelled button', (
+    testWidgets('the header is just search; Saved lives in the Passport', (
       tester,
     ) async {
       await pumpPage(tester);
 
       expect(find.byIcon(Icons.search_rounded), findsOneWidget);
       expect(find.byIcon(Icons.add_box_outlined), findsNothing);
-      expect(find.byIcon(Icons.bookmark_border_rounded), findsOneWidget);
-      expect(find.text('Saved'), findsOneWidget);
+      expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);
+      expect(find.text('Saved'), findsNothing);
       // Writing a post stays one tap away, from the row under the header.
       expect(find.text("What's on your mind?"), findsOneWidget);
+    });
+
+    testWidgets('the four sections fill the width, none cut off', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(360, 800)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpPage(tester);
+
+      for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
+        final box = tester.getRect(find.text(label));
+        expect(box.left, greaterThanOrEqualTo(0), reason: label);
+        expect(box.right, lessThanOrEqualTo(360), reason: label);
+      }
+    });
+
+    testWidgets('tapping a section opens it', (tester) async {
+      await pumpPage(tester);
+      clearInteractions(api);
+
+      await tester.tap(find.text('Partners'));
+      await tester.pumpAndSettle();
+
+      expect(lastQuery()['tab'], 'partners');
     });
 
     testWidgets('choosing Top posts reads the feed that way', (tester) async {

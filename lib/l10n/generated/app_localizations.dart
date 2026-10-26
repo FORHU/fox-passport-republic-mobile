@@ -5866,12 +5866,6 @@ abstract class AppLocalizations {
   /// **'Nothing saved yet. Save a post from its menu.'**
   String get republicSavedEmpty;
 
-  /// No description provided for @republicSavedOpen.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved'**
-  String get republicSavedOpen;
-
   /// No description provided for @republicReportTitle.
   ///
   /// In en, this message translates to:
