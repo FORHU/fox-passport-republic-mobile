@@ -3126,6 +3126,115 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get republicMore => 'More';
+
+  @override
+  String get republicSeeMore => 'See more';
+
+  @override
+  String get republicSeeLess => 'See less';
+
+  @override
+  String get republicMenuCopyLink => 'Copy link';
+
+  @override
+  String get republicMenuSave => 'Save post';
+
+  @override
+  String get republicMenuUnsave => 'Unsave';
+
+  @override
+  String get republicMenuEdit => 'Edit post';
+
+  @override
+  String get republicMenuDelete => 'Delete post';
+
+  @override
+  String get republicMenuHide => 'Hide post';
+
+  @override
+  String get republicMenuReport => 'Report post';
+
+  @override
+  String get republicLinkCopied => 'Link copied';
+
+  @override
+  String get republicSaved => 'Saved';
+
+  @override
+  String get republicUnsaved => 'Removed from saved';
+
+  @override
+  String get republicHidden => 'Post hidden';
+
+  @override
+  String get republicDeleted => 'Post deleted';
+
+  @override
+  String get republicEditTitle => 'Edit post';
+
+  @override
+  String get republicEditSave => 'Save';
+
+  @override
+  String get republicUpdated => 'Post updated';
+
+  @override
+  String get republicDeleteTitle => 'Delete this post?';
+
+  @override
+  String get republicDeleteBody => 'This cannot be undone.';
+
+  @override
+  String get republicDeleteConfirm => 'Delete';
+
+  @override
+  String get republicCancel => 'Cancel';
+
+  @override
+  String get republicActionFailed => 'That didn\'t work. Try again.';
+
+  @override
+  String get republicSavedTitle => 'Saved posts';
+
+  @override
+  String get republicSavedEmpty =>
+      'Nothing saved yet. Save a post from its menu.';
+
+  @override
+  String get republicSavedOpen => 'Saved posts';
+
+  @override
+  String get republicReportTitle => 'Report this post';
+
+  @override
+  String get republicReportSend => 'Send report';
+
+  @override
+  String get republicReported => 'Thanks, we\'ll take a look.';
+
+  @override
+  String get republicReasonSpam => 'Spam';
+
+  @override
+  String get republicReasonHarassment => 'Harassment or bullying';
+
+  @override
+  String get republicReasonHate => 'Hate speech';
+
+  @override
+  String get republicReasonNudity => 'Nudity or sexual content';
+
+  @override
+  String get republicReasonViolence => 'Violence or dangerous content';
+
+  @override
+  String get republicReasonMisinfo => 'Misinformation';
+
+  @override
+  String get republicReasonOther => 'Something else';
+
+  @override
   String get republicComposePrompt => 'What\'s on your mind?';
 
   @override

@@ -8,12 +8,15 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
-import 'package:flutter_template/features/republic/presentation/widgets/comments_sheet.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/compose_sheet.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
 /// The Republic: what the community is posting. Everyone can read; liking,
 /// commenting and posting need an account.
@@ -57,38 +60,12 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     return false;
   }
 
-  Future<void> _like(String postId) async {
-    if (!_signedIn()) return;
-    final ok = await ref
-        .read(feedControllerProvider(_tab).notifier)
-        .toggleLike(postId);
-    if (!ok && mounted) showTopToast(context, context.l10n.republicLikeFailed);
-  }
-
-  Future<void> _comments(String postId) async {
-    final added = await showCommentsSheet(
-      context,
-      postId: postId,
-      signedIn: ref.read(authControllerProvider).user != null,
-    );
-    if (added > 0) {
-      for (var i = 0; i < added; i++) {
-        ref.read(feedControllerProvider(_tab).notifier).commentAdded(postId);
-      }
-    }
-  }
+  PostActions get _actions => PostActions(context, ref, _tab);
 
   Future<void> _compose() async {
     if (!_signedIn()) return;
     final l10n = context.l10n;
-    final text = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.surface,
-      builder: (_) => const _ComposeSheet(),
-    );
+    final text = await showComposeSheet(context);
     if (text == null || text.trim().isEmpty || !mounted) return;
     try {
       await ref.read(republicRepositoryProvider).createPost(text);
@@ -147,6 +124,12 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       l10n.republicTitle,
                       style: AppTypography.display(size: 26),
                     ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.republicSavedOpen,
+                    onPressed: () =>
+                        unawaited(context.push(RouteNames.republicSaved)),
+                    icon: const Icon(Icons.bookmark_border_rounded, size: 28),
                   ),
                   IconButton(
                     tooltip: l10n.republicCompose,
@@ -233,8 +216,9 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       final post = state.posts[i - 1];
                       return PostCard(
                         post: post,
-                        onLike: () => unawaited(_like(post.id)),
-                        onComments: () => unawaited(_comments(post.id)),
+                        onLike: () => unawaited(_actions.like(post.id)),
+                        onComments: () => unawaited(_actions.comments(post.id)),
+                        onMore: () => unawaited(_actions.menu(post)),
                       );
                     },
                   ),
@@ -312,61 +296,5 @@ class _Footer extends StatelessWidget {
       );
     }
     return const SizedBox(height: 8);
-  }
-}
-
-class _ComposeSheet extends StatefulWidget {
-  const _ComposeSheet();
-
-  @override
-  State<_ComposeSheet> createState() => _ComposeSheetState();
-}
-
-class _ComposeSheetState extends State<_ComposeSheet> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        0,
-        20,
-        20 + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.republicCompose, style: AppTypography.display(size: 20)),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            maxLines: 5,
-            maxLength: 5000,
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(hintText: l10n.republicComposeHint),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _controller.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.pop(context, _controller.text),
-              child: Text(l10n.republicPost),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -5716,6 +5716,222 @@ abstract class AppLocalizations {
   /// **'{count}h'**
   String republicHoursAgo(int count);
 
+  /// No description provided for @republicMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get republicMore;
+
+  /// No description provided for @republicSeeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See more'**
+  String get republicSeeMore;
+
+  /// No description provided for @republicSeeLess.
+  ///
+  /// In en, this message translates to:
+  /// **'See less'**
+  String get republicSeeLess;
+
+  /// No description provided for @republicMenuCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get republicMenuCopyLink;
+
+  /// No description provided for @republicMenuSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save post'**
+  String get republicMenuSave;
+
+  /// No description provided for @republicMenuUnsave.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsave'**
+  String get republicMenuUnsave;
+
+  /// No description provided for @republicMenuEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit post'**
+  String get republicMenuEdit;
+
+  /// No description provided for @republicMenuDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete post'**
+  String get republicMenuDelete;
+
+  /// No description provided for @republicMenuHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide post'**
+  String get republicMenuHide;
+
+  /// No description provided for @republicMenuReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report post'**
+  String get republicMenuReport;
+
+  /// No description provided for @republicLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get republicLinkCopied;
+
+  /// No description provided for @republicSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get republicSaved;
+
+  /// No description provided for @republicUnsaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from saved'**
+  String get republicUnsaved;
+
+  /// No description provided for @republicHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Post hidden'**
+  String get republicHidden;
+
+  /// No description provided for @republicDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Post deleted'**
+  String get republicDeleted;
+
+  /// No description provided for @republicEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit post'**
+  String get republicEditTitle;
+
+  /// No description provided for @republicEditSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get republicEditSave;
+
+  /// No description provided for @republicUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Post updated'**
+  String get republicUpdated;
+
+  /// No description provided for @republicDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this post?'**
+  String get republicDeleteTitle;
+
+  /// No description provided for @republicDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone.'**
+  String get republicDeleteBody;
+
+  /// No description provided for @republicDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get republicDeleteConfirm;
+
+  /// No description provided for @republicCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get republicCancel;
+
+  /// No description provided for @republicActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Try again.'**
+  String get republicActionFailed;
+
+  /// No description provided for @republicSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved posts'**
+  String get republicSavedTitle;
+
+  /// No description provided for @republicSavedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved yet. Save a post from its menu.'**
+  String get republicSavedEmpty;
+
+  /// No description provided for @republicSavedOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved posts'**
+  String get republicSavedOpen;
+
+  /// No description provided for @republicReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this post'**
+  String get republicReportTitle;
+
+  /// No description provided for @republicReportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get republicReportSend;
+
+  /// No description provided for @republicReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks, we\'ll take a look.'**
+  String get republicReported;
+
+  /// No description provided for @republicReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get republicReasonSpam;
+
+  /// No description provided for @republicReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or bullying'**
+  String get republicReasonHarassment;
+
+  /// No description provided for @republicReasonHate.
+  ///
+  /// In en, this message translates to:
+  /// **'Hate speech'**
+  String get republicReasonHate;
+
+  /// No description provided for @republicReasonNudity.
+  ///
+  /// In en, this message translates to:
+  /// **'Nudity or sexual content'**
+  String get republicReasonNudity;
+
+  /// No description provided for @republicReasonViolence.
+  ///
+  /// In en, this message translates to:
+  /// **'Violence or dangerous content'**
+  String get republicReasonViolence;
+
+  /// No description provided for @republicReasonMisinfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Misinformation'**
+  String get republicReasonMisinfo;
+
+  /// No description provided for @republicReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get republicReasonOther;
+
   /// No description provided for @republicComposePrompt.
   ///
   /// In en, this message translates to:

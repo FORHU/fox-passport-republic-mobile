@@ -138,6 +138,67 @@ class FeedController extends AsyncNotifier<FeedState> {
       ),
     );
   }
+
+  void _replace(String postId, Post Function(Post) change) {
+    final latest = state.value;
+    if (latest == null) return;
+    state = AsyncData(
+      latest.copyWith(
+        posts: [
+          for (final p in latest.posts)
+            if (p.id == postId) change(p) else p,
+        ],
+      ),
+    );
+  }
+
+  /// Takes a post out of the list: deleted, hidden, or unsaved on Saved.
+  void removeLocally(String postId) {
+    final latest = state.value;
+    if (latest == null) return;
+    state = AsyncData(
+      latest.copyWith(
+        posts: [
+          for (final p in latest.posts)
+            if (p.id != postId) p,
+        ],
+      ),
+    );
+  }
+
+  /// Saves or unsaves. Returns false when the server refuses.
+  Future<bool> toggleSave(String postId) async {
+    try {
+      final saved =
+          await ref.read(republicRepositoryProvider).toggleSave(postId);
+      if (tab == RepublicRepository.savedTab && !saved) {
+        removeLocally(postId);
+      } else {
+        _replace(postId, (p) => p.copyWith(isSavedByMe: saved));
+      }
+      return true;
+    } on Object {
+      return false;
+    }
+  }
+
+  Future<void> hide(String postId) async {
+    await ref.read(republicRepositoryProvider).hide(postId);
+    removeLocally(postId);
+  }
+
+  Future<void> delete(String postId) async {
+    await ref.read(republicRepositoryProvider).delete(postId);
+    removeLocally(postId);
+  }
+
+  Future<void> edit(String postId, String content) async {
+    await ref.read(republicRepositoryProvider).edit(postId, content);
+    _replace(
+      postId,
+      (p) => p.copyWith(content: content.trim(), edited: true),
+    );
+  }
 }
 
 // The family type is long and adds nothing here, so it is left inferred.

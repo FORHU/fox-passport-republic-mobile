@@ -12,14 +12,18 @@ class RepublicRepository {
 
   static const pageSize = 10;
 
+  /// Not a tab of the feed: the posts this person saved. Passed as [feed]'s
+  /// tab so one controller serves both.
+  static const savedTab = 'saved';
+
   /// One page of posts. [tab] is `community`, `marketplace` or `partners`;
   /// null is all of them.
   Future<FeedPage> feed({String? tab, String? cursor}) async {
     final body = await _api.get(
-      ApiEndpoints.feed,
+      tab == savedTab ? ApiEndpoints.feedSaved : ApiEndpoints.feed,
       query: {
         'limit': pageSize,
-        if (tab != null) 'tab': tab,
+        if (tab != null && tab != savedTab) 'tab': tab,
         if (cursor != null) 'cursor': cursor,
       },
     );
@@ -70,6 +74,35 @@ class RepublicRepository {
       'tab': 'community',
       'content': content.trim(),
       'visibility': 'public',
+    });
+  }
+
+  /// Saves a post, or takes it back out. Returns whether it is now saved.
+  Future<bool> toggleSave(String postId) async {
+    final body = await _api.post(ApiEndpoints.feedSave(postId));
+    final data = body is Map ? body['data'] : null;
+    return data is Map && data['saved'] == true;
+  }
+
+  /// Stops showing a post that is someone else's, for this person only.
+  Future<void> hide(String postId) async {
+    await _api.post(ApiEndpoints.feedHide(postId));
+  }
+
+  Future<void> delete(String postId) async {
+    await _api.delete(ApiEndpoints.feedPost(postId));
+  }
+
+  Future<void> edit(String postId, String content) async {
+    await _api
+        .patch(ApiEndpoints.feedPost(postId), {'content': content.trim()});
+  }
+
+  Future<void> report(String postId, String reason) async {
+    await _api.post(ApiEndpoints.reports, {
+      'targetType': 'post',
+      'targetId': postId,
+      'reason': reason,
     });
   }
 }
