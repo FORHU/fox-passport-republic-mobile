@@ -8,6 +8,7 @@ import 'package:flutter_template/features/notifications/data/notifications_repos
 import 'package:flutter_template/features/notifications/domain/entities/user_notification.dart';
 import 'package:flutter_template/features/notifications/domain/notification_route.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -114,7 +115,23 @@ class NotificationsPage extends ConsumerWidget {
       // A failed mark-as-read must not trap the user on this page.
       if (!done) return;
     }
-    if (route == null || !context.mounted) return;
+    if (!context.mounted) return;
+    // A spot opened on a full event: open the event so it can be booked.
+    final templateId = notification.eventTemplateId;
+    if (route == null && templateId != null) {
+      unawaited(
+        context.push(
+          RouteNames.eventDetail,
+          extra: CatalogItem(
+            id: templateId,
+            kind: CatalogKind.events,
+            title: notification.title,
+          ),
+        ),
+      );
+      return;
+    }
+    if (route == null) return;
     // A chat is pushed over the tabs; any other target is a tab to switch to.
     if (route.startsWith('${RouteNames.messages}/')) {
       unawaited(context.push(route));

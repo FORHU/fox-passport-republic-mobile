@@ -53,6 +53,10 @@ class ApiEndpoints {
       '/events/${Uri.encodeComponent(id)}/public-visibility';
   static const String eventRecommendations = '/event-templates/recommendations';
   static String eventBrowseById(String id) => '/event-templates/browse/$id';
+
+  // ── Event waitlist (keyed by the event template) ────────────────────────
+  static const String waitlist = '/waitlist';
+  static String waitlistEntry(String id) => '/waitlist/$id';
   static String eventById(String id) => '/event-templates/$id';
   static const String assets = '/asset';
   static const String services = '/service';

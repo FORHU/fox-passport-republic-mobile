@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/event/data/event_repository.dart';
+import 'package:flutter_template/features/event/data/waitlist_repository.dart';
+import 'package:flutter_template/features/event/domain/waitlist_status.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
@@ -9,6 +13,7 @@ import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
+import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -29,6 +34,38 @@ class EventDetailPage extends ConsumerStatefulWidget {
 class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   /// Optional items switched off.
   final Set<String> _excluded = {};
+
+  /// Joining or leaving the waitlist is on its way.
+  bool _waitlistBusy = false;
+
+  /// Joins the waitlist, or leaves it when already on it.
+  Future<void> _toggleWaitlist(WaitlistStatus status) async {
+    final l10n = context.l10n;
+    if (ref.read(authControllerProvider).user == null) {
+      showTopToast(context, l10n.signInToContinue);
+      return;
+    }
+    setState(() => _waitlistBusy = true);
+    final controller = ref.read(waitlistProvider(widget.item.id).notifier);
+    try {
+      if (status.isOnWaitlist) {
+        await controller.leave();
+        if (mounted) showTopToast(context, l10n.eventWaitlistLeft);
+      } else {
+        await controller.join();
+        if (mounted) showTopToast(context, l10n.eventWaitlistJoined);
+      }
+    } on Object catch (e) {
+      if (mounted) {
+        showTopToast(
+          context,
+          e is AppException ? e.message : l10n.eventWaitlistFailed,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _waitlistBusy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +88,8 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
           item: widget.item,
           package: package,
           excluded: _excluded,
+          waitlistBusy: _waitlistBusy,
+          onWaitlist: _toggleWaitlist,
           onToggle: (id, {required included}) => setState(() {
             if (included) {
               _excluded.remove(id);
@@ -118,11 +157,17 @@ class _Loaded extends ConsumerWidget {
     required this.package,
     required this.excluded,
     required this.onToggle,
+    required this.waitlistBusy,
+    required this.onWaitlist,
   });
 
   final CatalogItem item;
   final EventPackage package;
   final Set<String> excluded;
+  final bool waitlistBusy;
+
+  /// Joins or leaves the waitlist, whichever applies to the given status.
+  final void Function(WaitlistStatus status) onWaitlist;
   final void Function(String id, {required bool included}) onToggle;
 
   @override
@@ -131,7 +176,13 @@ class _Loaded extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final money = ref.watch(moneyFormatterProvider);
     final quote = package.quote(excluded);
+    // A sample row has no server-side event, so no waitlist.
+    final waitlist = package.isSample
+        ? const WaitlistStatus()
+        : ref.watch(waitlistProvider(item.id)).value ?? const WaitlistStatus();
     final bookable = package.isPriced && !package.isFull;
+    // The only thing left to do on a full event is to wait for a place.
+    final waiting = package.isFull && !package.isSample;
     final place = [package.city, package.state]
         .whereType<String>()
         .where((p) => p.isNotEmpty)
@@ -269,7 +320,21 @@ class _Loaded extends ConsumerWidget {
                     ],
                     if (package.isFull) ...[
                       const SizedBox(height: 16),
-                      _Notice(text: l10n.eventFull),
+                      _Notice(
+                        text: !waiting
+                            ? l10n.eventFull
+                            : waitlist.isOnWaitlist
+                                ? (waitlist.position == null
+                                    ? l10n.eventWaitlistOnNoPlace
+                                    : l10n.eventWaitlistOn(
+                                        waitlist.position!,
+                                        waitlist.totalWaiting,
+                                      ))
+                                : l10n.eventWaitlistFull,
+                      ),
+                    ] else if (waitlist.isOnWaitlist) ...[
+                      const SizedBox(height: 16),
+                      _Notice(text: l10n.eventWaitlistOpened),
                     ] else if (!package.isPriced) ...[
                       const SizedBox(height: 16),
                       _Notice(text: l10n.eventNotPriced),
@@ -289,17 +354,23 @@ class _Loaded extends ConsumerWidget {
                       .where((i) => excluded.contains(i.id))
                       .length,
                 ),
-          cta: l10n.eventBook,
-          onTap: bookable
-              ? () => context.push(
-                    RouteNames.book,
-                    extra: EventBookingArgs(
-                      item: item,
-                      package: package,
-                      excluded: {...excluded},
-                    ),
-                  )
-              : null,
+          cta: waiting
+              ? (waitlist.isOnWaitlist
+                  ? l10n.eventWaitlistLeave
+                  : l10n.eventWaitlistJoin)
+              : l10n.eventBook,
+          onTap: waiting
+              ? (waitlistBusy ? null : () => onWaitlist(waitlist))
+              : bookable
+                  ? () => context.push(
+                        RouteNames.book,
+                        extra: EventBookingArgs(
+                          item: item,
+                          package: package,
+                          excluded: {...excluded},
+                        ),
+                      )
+                  : null,
         ),
       ],
     );
