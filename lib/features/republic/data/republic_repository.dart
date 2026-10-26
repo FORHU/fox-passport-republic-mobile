@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/republic/data/media_picker.dart';
+import 'package:flutter_template/features/republic/domain/new_post.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 
@@ -109,14 +112,49 @@ class RepublicRepository {
     return data is Map ? Post.fromJson(data.cast<String, dynamic>()) : null;
   }
 
-  /// A text post in the community tab.
-  Future<void> createPost(String content) async {
-    await _api.post(ApiEndpoints.feed, {
-      'type': 'citizen_experience',
-      'tab': 'community',
-      'content': content.trim(),
-      'visibility': 'public',
+  /// Sends a post. The API puts it on the right tab for its type.
+  Future<void> createPost(NewPost post) async {
+    await _api.post(ApiEndpoints.feed, post.toJson());
+  }
+
+  /// Uploads a photo and returns its public URL, to attach to a post.
+  Future<String> uploadMedia(PickedMedia photo) async {
+    final form = FormData.fromMap({
+      'file': MultipartFile.fromBytes(photo.bytes, filename: photo.name),
     });
+    final body = await _api.post(ApiEndpoints.uploadFile, form);
+    final file = body is Map ? body['file'] : null;
+    final url = (file is Map ? file['url'] : null) ??
+        (body is Map ? body['url'] : null);
+    if (url is! String) throw const FormatException('No url in the upload');
+    return url;
+  }
+
+  /// People whose name or username starts with [query], for an @mention.
+  Future<List<MentionCandidate>> mentionCandidates(String query) async {
+    final body = await _api.get(
+      ApiEndpoints.feedMentionSearch,
+      query: {'q': query},
+    );
+    final data = body is Map ? body['data'] : null;
+    return [
+      for (final row in data as List? ?? const [])
+        if (MentionCandidate.tryParse(row) case final c?) c,
+    ];
+  }
+
+  /// The venues [userId] hosts, to spotlight in a post.
+  Future<List<VenueChoice>> myVenues(String userId) async {
+    final body = await _api.get(
+      ApiEndpoints.venues,
+      query: {'hostId': userId, 'limit': 100},
+    );
+    final rows = body is Map ? (body['venues'] ?? body['data']) as List? : null;
+    return [
+      for (final row in rows ?? const [])
+        if (row is Map && row['id'] != null && row['name'] is String)
+          VenueChoice(id: '${row['id']}', name: row['name'] as String),
+    ];
   }
 
   /// Saves a post, or takes it back out. Returns whether it is now saved.
