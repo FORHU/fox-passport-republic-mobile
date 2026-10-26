@@ -3073,6 +3073,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePlanning => 'What are you planning?';
 
   @override
+  String homeGreeting(String name) {
+    return 'Hi, $name';
+  }
+
+  @override
   String get homePlanNew => 'Plan something new';
 
   @override
