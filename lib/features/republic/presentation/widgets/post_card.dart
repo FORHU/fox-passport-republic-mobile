@@ -44,7 +44,7 @@ class AuthorAvatar extends StatelessWidget {
         height: size,
         child: author.imageUrl == null
             ? ColoredBox(
-                color: AppColors.surface,
+                color: AppColors.surfaceRaised,
                 child: Center(
                   child: Text(
                     name.characters.first.toUpperCase(),
