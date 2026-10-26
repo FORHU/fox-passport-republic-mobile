@@ -1252,5 +1252,9 @@
   "esAddEquipment": "Equipment",
   "esAddHint": "Add to your package",
   "esYourPrice": "Price to sell at",
-  "esPackageItems": "What is included"
+  "esPackageItems": "What is included",
+  "spaceWorkingAs": "Working as",
+  "spaceCurrent": "Current",
+  "spaceSwitched": "Now in the {space} space",
+  "@spaceSwitched": {"placeholders":{"space":{"type":"String"}}}
 }
