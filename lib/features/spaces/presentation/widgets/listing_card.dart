@@ -51,19 +51,21 @@ class ListingCard extends StatelessWidget {
                       style: AppTypography.display(size: 15),
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    // A Wrap, so a large font moves the status to its own
+                    // line instead of overflowing.
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         if (listing.city != null)
-                          Flexible(
-                            child: Text(
-                              listing.city!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTypography.body(size: 12),
-                            ),
+                          Text(
+                            listing.city!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.body(size: 12),
                           ),
-                        if (label != null) ...[
-                          if (listing.city != null) const SizedBox(width: 8),
+                        if (label != null)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -78,7 +80,6 @@ class ListingCard extends StatelessWidget {
                               style: AppTypography.label(color: color),
                             ),
                           ),
-                        ],
                       ],
                     ),
                   ],

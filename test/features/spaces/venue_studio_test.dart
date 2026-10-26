@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_template/features/spaces/presentation/controllers/venue_
 import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
+import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -104,6 +106,21 @@ void main() {
       expect(state.loading, isFalse);
       expect(state.canSubmit, isFalse);
       expect(state.step, StudioStep.basics);
+    });
+
+    test('leaving the screen while a venue loads does not crash', () async {
+      final loaded = Completer<VenueDetail>();
+      when(() => repo.venueDetail('v1')).thenAnswer((_) => loaded.future);
+      final c = container('v1');
+      await settle();
+
+      // The host backs out before the answer arrives.
+      c.dispose();
+      loaded.complete(
+        const VenueDetail(id: 'v1', status: 'available', draft: _ready),
+      );
+      await settle();
+      await settle();
     });
 
     test('steps forward and back, and not past either end', () async {
@@ -452,6 +469,9 @@ void main() {
             deviceLocatorProvider.overrideWithValue(locator),
           ],
           child: MaterialApp(
+            // The real theme: its buttons are as wide as their parent unless
+            // told otherwise, which a plain theme would hide.
+            theme: AppTheme.dark,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: VenueStudioPage(venueId: venueId),
@@ -468,7 +488,7 @@ void main() {
       expect(find.text('New venue'), findsOneWidget);
       expect(find.text('Venue name'), findsOneWidget);
       expect(find.text('Next'), findsOneWidget);
-      expect(find.text('Back'), findsNothing);
+      expect(find.byTooltip('Back'), findsNothing);
     });
 
     testWidgets('Next walks through to the review, which lists the gaps', (

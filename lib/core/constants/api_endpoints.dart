@@ -54,6 +54,18 @@ class ApiEndpoints {
   static const String eventRecommendations = '/event-templates/recommendations';
   static String eventBrowseById(String id) => '/event-templates/browse/$id';
   static String eventById(String id) => '/event-templates/$id';
+  static const String assets = '/asset';
+  static const String services = '/service';
+  static String eventSubmit(String id) => '/event-templates/$id/submit';
+  static String eventVenues(String id) => '/event-templates/$id/venues';
+  static String eventVenue(String id, String venueId) =>
+      '/event-templates/$id/venues/$venueId';
+  static String eventAssets(String id) => '/event-templates/$id/assets';
+  static String eventAsset(String id, String assetId) =>
+      '/event-templates/$id/assets/$assetId';
+  static String eventServices(String id) => '/event-templates/$id/services';
+  static String eventService(String id, String serviceId) =>
+      '/event-templates/$id/services/$serviceId';
   static const String assetsBrowse = '/asset/browse';
   static const String servicesBrowse = '/service/browse';
 
@@ -64,6 +76,15 @@ class ApiEndpoints {
 
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
+
+  /// The events (not templates) a person organizes, and the team of one venue
+  /// or event: Organizers and Check-in Helpers.
+  static const String organizerEvents = '/events';
+  static const String organizerSearch = '/appointments/organizers';
+  static String venueTeam(String id) =>
+      '/venues/${Uri.encodeComponent(id)}/appointments';
+  static String eventTeam(String id) =>
+      '/events/${Uri.encodeComponent(id)}/appointments';
   static const String venueAffiliationApply = '/venue-affiliations/apply';
   static const String venueAffiliationInvite = '/venue-affiliations/invite';
   static String venueAffiliationApprove(String id) =>

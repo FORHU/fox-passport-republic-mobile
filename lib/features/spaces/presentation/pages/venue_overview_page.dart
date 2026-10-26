@@ -99,13 +99,7 @@ class VenueOverviewPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          l10n.spaceTabOverview,
-          style: AppTypography.display(size: 18),
-        ),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.spaceTabOverview),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
@@ -213,7 +207,7 @@ class VenueOverviewPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: _Kpi(
+                    child: KpiTile(
                       label: l10n.venueKpiLive,
                       onTap: () => context.go(RouteNames.spaceVenueVenues),
                       value: dash(
@@ -227,7 +221,7 @@ class VenueOverviewPage extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: _Kpi(
+                    child: KpiTile(
                       label: l10n.venueKpiUpcoming,
                       onTap: () => context.go(RouteNames.spaceVenueCalendar),
                       value: dash(calendar, () => '${bookings.length}'),
@@ -242,7 +236,7 @@ class VenueOverviewPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
-                    child: _Kpi(
+                    child: KpiTile(
                       label: l10n.venueKpiPaid,
                       onTap: () => context.go(RouteNames.spaceVenueEarnings),
                       value: dash(
@@ -257,7 +251,7 @@ class VenueOverviewPage extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: _Kpi(
+                    child: KpiTile(
                       label: l10n.venueKpiPending,
                       onTap: () => context.go(RouteNames.spaceVenueEarnings),
                       value: dash(
@@ -274,47 +268,6 @@ class VenueOverviewPage extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// A figure that opens the place where its detail is.
-class _Kpi extends StatelessWidget {
-  const _Kpi({required this.label, required this.value, required this.onTap});
-
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: AppRadius.brCard,
-      child: InkWell(
-        borderRadius: AppRadius.brCard,
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.brCard,
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.display(size: 22),
-              ),
-              const SizedBox(height: 4),
-              Text(label, style: AppTypography.body(size: 12)),
-            ],
-          ),
         ),
       ),
     );

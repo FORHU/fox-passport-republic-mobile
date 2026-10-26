@@ -32,6 +32,26 @@ class NetworkImageBox extends StatefulWidget {
   State<NetworkImageBox> createState() => _NetworkImageBoxState();
 }
 
+/// How wide, in pixels, to decode a photo shown in a box of [width] by
+/// [height] on a screen of [pixelRatio]: enough to cover the box at this
+/// screen's sharpness, with room for a photo that is not square. Null when the
+/// box has no size, so the photo keeps its own. Without this a 52 dp thumbnail
+/// holds a whole multi-megapixel photo in memory.
+int? decodeWidthFor({
+  required double? width,
+  required double? height,
+  required double pixelRatio,
+}) {
+  final sides = [
+    if (width != null && width.isFinite) width,
+    if (height != null && height.isFinite) height,
+  ];
+  if (sides.isEmpty) return null;
+  final longest = sides.reduce((a, b) => a > b ? a : b);
+  // 1.8 covers a 16:9 photo in a square box without stretching it.
+  return (longest * pixelRatio * 1.8).ceil().clamp(64, 2048);
+}
+
 class _NetworkImageBoxState extends State<NetworkImageBox> {
   /// How many times a failed image tries again by itself, a little later each
   /// time, before it waits for a tap. A weak phone connection often fails a
@@ -88,6 +108,11 @@ class _NetworkImageBoxState extends State<NetworkImageBox> {
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
+        memCacheWidth: decodeWidthFor(
+          width: widget.width,
+          height: widget.height,
+          pixelRatio: MediaQuery.devicePixelRatioOf(context),
+        ),
         fadeInDuration: const Duration(milliseconds: 180),
         placeholder: (context, url) => _Tile(
           width: widget.width,

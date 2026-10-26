@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/login_page.dart';
@@ -35,11 +36,19 @@ import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
+import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_detail_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
@@ -48,6 +57,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_reques
 import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
@@ -236,6 +246,32 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '${RouteNames.spaceVenueStudio}/:venueId',
         builder: (context, state) =>
             VenueStudioPage(venueId: state.pathParameters['venueId']),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamVenues,
+        builder: (context, state) => const TeamPage(events: false),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamEvents,
+        builder: (context, state) => const TeamPage(events: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamDetail,
+        // Opened with the venue or event as `extra`; without it (a restored
+        // link) there is nothing to show, so go back to the list.
+        redirect: (context, state) =>
+            state.extra is TeamTarget ? null : RouteNames.spaceVenue,
+        builder: (context, state) =>
+            TeamDetailPage(target: state.extra! as TeamTarget),
+      ),
+      GoRoute(
+        path: RouteNames.spaceEventStudio,
+        builder: (context, state) => const EventStudioPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.spaceEventStudio}/:eventId',
+        builder: (context, state) =>
+            EventStudioPage(eventId: state.pathParameters['eventId']),
       ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.
@@ -524,6 +560,85 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      // The Gear and Services spaces share their screens.
+      for (final kind in ProviderKind.values) _providerShell(kind),
     ],
   );
 });
+
+/// The shell of a provider's space: Overview, Listings, Calendar, Earnings and
+/// More, for what [kind] supplies.
+StatefulShellRoute _providerShell(ProviderKind kind) {
+  return StatefulShellRoute.indexedStack(
+    builder: (context, state, navigationShell) => Consumer(
+      // A count of requests waiting for a reply, on the Overview tab.
+      builder: (context, ref, _) => SpaceLayout(
+        navigationShell: navigationShell,
+        items: SpaceLayout.providerItems(
+          context,
+          listings: listingsLabel(
+            context.l10n,
+            kind,
+            roles: ref.watch(heldRolesProvider),
+          ),
+          waiting: ref.watch(supplyRequestsProvider(kind.request)).maybeWhen(
+                data: (list) => list.where((r) => r.needsReply).length,
+                orElse: () => 0,
+              ),
+        ),
+      ),
+    ),
+    branches: [
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.root,
+            builder: (context, state) => ProviderOverviewPage(kind: kind),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.listings,
+            builder: (context, state) => ProviderListingsPage(kind: kind),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.calendar,
+            builder: (context, state) => const EventCalendarPage(),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.earnings,
+            builder: (context, state) => const EarningsPage(),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.more,
+            builder: (context, state) => ProviderMorePage(kind: kind),
+            routes: [
+              GoRoute(
+                path: 'requests',
+                builder: (context, state) => VenueRequestsPage(provider: kind),
+              ),
+              GoRoute(
+                path: 'messages',
+                builder: (context, state) => const MessagesPage(showBack: true),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+}

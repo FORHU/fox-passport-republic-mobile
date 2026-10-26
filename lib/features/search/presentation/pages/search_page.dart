@@ -279,16 +279,16 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 if (_isPeopleGroup(_kind))
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                    child: Row(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        for (final k in _peopleKinds) ...[
+                        for (final k in _peopleKinds)
                           _ScopeChip(
                             label: _scopeLabel(l10n, k),
                             selected: _kind == k,
                             onTap: () => setState(() => _kind = k),
                           ),
-                          const SizedBox(width: 8),
-                        ],
                       ],
                     ),
                   ),
@@ -647,6 +647,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ],
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _sortBy,
               decoration: InputDecoration(labelText: l10n.searchSortBy),
               items: [

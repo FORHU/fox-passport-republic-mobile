@@ -34,7 +34,7 @@ Map<String, Object?> _row(
 
 void main() {
   group('AppSpace', () {
-    test('Citizen is always there; Venue and Event need their role', () {
+    test('Citizen is always there; the others need a role', () {
       expect(AppSpace.availableTo(const []), [AppSpace.citizen]);
       expect(
         AppSpace.availableTo(const ['venueFoxer']),
@@ -42,13 +42,32 @@ void main() {
       );
       expect(
         AppSpace.availableTo(const ['eventFoxer', 'venueFoxer', 'gearFoxer']),
-        [AppSpace.citizen, AppSpace.venue, AppSpace.event],
+        [
+          AppSpace.citizen,
+          AppSpace.venue,
+          AppSpace.event,
+          AppSpace.gear,
+        ],
       );
+    });
+
+    test('Gear has its own space; Service and Performer share Services', () {
+      expect(
+        AppSpace.availableTo(const ['gearFoxer']),
+        [AppSpace.citizen, AppSpace.gear],
+      );
+      for (final role in const ['serviceFoxer', 'performerFoxer']) {
+        expect(
+          AppSpace.availableTo([role]),
+          [AppSpace.citizen, AppSpace.services],
+          reason: role,
+        );
+      }
     });
 
     test('other roles open no space of their own yet', () {
       expect(
-        AppSpace.availableTo(const ['gearFoxer', 'investor', 'organizer']),
+        AppSpace.availableTo(const ['investor', 'organizer']),
         [AppSpace.citizen],
       );
     });
@@ -57,6 +76,8 @@ void main() {
       expect(AppSpace.forPath('/space/venue'), AppSpace.venue);
       expect(AppSpace.forPath('/space/venue/check-in'), AppSpace.venue);
       expect(AppSpace.forPath('/space/event'), AppSpace.event);
+      expect(AppSpace.forPath('/space/gear/more'), AppSpace.gear);
+      expect(AppSpace.forPath('/space/services'), AppSpace.services);
       expect(AppSpace.forPath('/'), isNull);
       expect(AppSpace.forPath('/passport'), isNull);
       // A name that only starts the same is not the space.

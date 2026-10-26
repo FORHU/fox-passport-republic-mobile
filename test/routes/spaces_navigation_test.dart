@@ -17,6 +17,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
@@ -94,7 +95,7 @@ void main() {
     expect(where(), RouteNames.home);
     expect(find.text('Requests'), findsNothing);
     // And has no switcher: nothing to switch to.
-    expect(find.text('Switch space'), findsNothing);
+    expect(find.text('WORKING AS'), findsNothing);
     await finish(tester);
   });
 
@@ -264,12 +265,64 @@ void main() {
 
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
+    // A menu offers what can be done with it.
+    expect(find.text('Edit event'), findsOneWidget);
+    expect(find.text('View public page'), findsOneWidget);
+
+    await tester.tap(find.text('View public page'));
+    await settle(tester);
     expect(find.byType(EventDetailPage), findsOneWidget);
 
     router.pop();
     await settle(tester);
     expect(find.byType(EventDetailPage), findsNothing);
     expect(find.text('Ada Birthday'), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('Edit event opens the studio on that event', (tester) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [
+        myEventsProvider.overrideWith(
+          (ref) async => const [
+            SpaceListing(id: 'e1', name: 'Ada Birthday', status: 'draft'),
+          ],
+        ),
+      ],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('Ada Birthday'));
+    await settle(tester);
+    await tester.tap(find.text('Edit event'));
+    await settle(tester);
+
+    expect(find.byType(EventStudioPage), findsOneWidget);
+    expect(find.text('Edit event'), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('New event opens the studio, and back returns', (tester) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [myEventsProvider.overrideWith((ref) async => const [])],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('New event'));
+    await settle(tester);
+    expect(find.byType(EventStudioPage), findsOneWidget);
+    expect(find.text('New event'), findsOneWidget);
+
+    router.pop();
+    await settle(tester);
+    expect(find.byType(EventStudioPage), findsNothing);
+    expect(where(), RouteNames.spaceEvent);
     await finish(tester);
   });
 
@@ -360,9 +413,9 @@ void main() {
     expect(where(), RouteNames.spaceVenue);
 
     // The button on the page names the space they are in.
-    await tester.tap(find.byIcon(Icons.swap_horiz_rounded));
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
     await settle(tester);
-    expect(find.text('Switch space'), findsOneWidget);
+    expect(find.text('WORKING AS'), findsOneWidget);
     await tester.tap(find.text('Citizen'));
     await settle(tester);
 
@@ -380,13 +433,15 @@ void main() {
 
     router.go(RouteNames.passport);
     await settle(tester);
-    await tester.tap(find.byIcon(Icons.swap_horiz_rounded));
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
     await settle(tester);
     await tester.tap(find.text('Event'));
     await settle(tester);
 
     expect(where(), RouteNames.spaceEvent);
     expect(prefs.getString('active_space_u1'), 'event');
+    // The switch fades through and says where they are now.
+    expect(find.text('Now in the Event space'), findsOneWidget);
     for (final tab in ['Events', 'Check-in', 'Messages']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }

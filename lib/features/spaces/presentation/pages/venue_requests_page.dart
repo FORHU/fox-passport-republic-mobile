@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -54,8 +55,10 @@ Future<void> answerVenueRequest(
   try {
     await ref
         .read(spacesRepositoryProvider)
-        .reviewVenueRequest(request.id, accept: accept);
-    ref.invalidate(venueRequestsProvider);
+        .reviewVenueRequest(request.id, accept: accept, kind: request.kind);
+    ref
+      ..invalidate(venueRequestsProvider)
+      ..invalidate(supplyRequestsProvider);
     if (context.mounted) {
       showTopToast(
         context,
@@ -70,19 +73,23 @@ Future<void> answerVenueRequest(
 /// Requests for your venues: people adding a venue of yours to their event.
 /// The ones that need a reply come first, with Accept and Decline.
 class VenueRequestsPage extends ConsumerWidget {
-  const VenueRequestsPage({super.key});
+  const VenueRequestsPage({this.provider, super.key});
+
+  /// Set in a provider's space, for requests for their gear or services
+  /// rather than venues.
+  final ProviderKind? provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final requests = ref.watch(venueRequestsProvider);
+    final source = provider == null
+        ? venueRequestsProvider
+        : supplyRequestsProvider(provider!.request);
+    final requests = ref.watch(source);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(l10n.requestsTitle, style: AppTypography.display(size: 18)),
-        actions: const [SpaceTopActions()],
-      ),
+      appBar: SpaceAppBar(title: l10n.requestsTitle),
       body: requests.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),
@@ -91,23 +98,34 @@ class VenueRequestsPage extends ConsumerWidget {
           kind: AppStateKind.error,
           title: l10n.apiLoadFailed,
           actionLabel: l10n.retry,
-          onAction: () => ref.invalidate(venueRequestsProvider),
+          onAction: () => ref.invalidate(source),
         ),
         data: (list) => RefreshIndicator(
           color: AppColors.accent,
           backgroundColor: AppColors.surface,
-          onRefresh: () => ref.refresh(venueRequestsProvider.future),
+          onRefresh: () => ref.refresh(source.future),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
-              Text(l10n.requestsIntro, style: AppTypography.body(size: 13)),
+              Text(
+                switch (provider) {
+                  null => l10n.requestsIntro,
+                  ProviderKind.gear => l10n.requestsIntroGear,
+                  ProviderKind.services => l10n.requestsIntroServices,
+                },
+                style: AppTypography.body(size: 13),
+              ),
               const SizedBox(height: 16),
               if (list.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Text(
-                    l10n.requestsEmpty,
+                    switch (provider) {
+                      null => l10n.requestsEmpty,
+                      ProviderKind.gear => l10n.requestsEmptyGear,
+                      ProviderKind.services => l10n.requestsEmptyServices,
+                    },
                     textAlign: TextAlign.center,
                     style: AppTypography.body(color: AppColors.textMuted),
                   ),
@@ -197,10 +215,10 @@ class VenueRequestCard extends ConsumerWidget {
                         l10n.requestFrom(request.clientName!),
                         style: AppTypography.body(size: 12),
                       ),
+                    _StatusChip(status: request.status),
                   ],
                 ),
               ),
-              _StatusChip(status: request.status),
             ],
           ),
           if (request.price != null) ...[
@@ -285,7 +303,7 @@ class _StatusChip extends StatelessWidget {
       _ => AppColors.textMuted,
     };
     return Container(
-      margin: const EdgeInsets.only(left: 8),
+      margin: const EdgeInsets.only(top: 6),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),

@@ -2554,6 +2554,486 @@ abstract class AppLocalizations {
   /// **'Add venue'**
   String get venueAddVenue;
 
+  /// No description provided for @esTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get esTitleNew;
+
+  /// No description provided for @esTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get esTitleEdit;
+
+  /// No description provided for @esStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get esStepBasics;
+
+  /// No description provided for @esStepLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get esStepLocation;
+
+  /// No description provided for @esStepPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get esStepPhotos;
+
+  /// No description provided for @esStepPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get esStepPackage;
+
+  /// No description provided for @esStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get esStepReview;
+
+  /// No description provided for @esTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get esTitle;
+
+  /// No description provided for @esCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get esCategory;
+
+  /// No description provided for @esCatCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get esCatCorporate;
+
+  /// No description provided for @esCatBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get esCatBirthday;
+
+  /// No description provided for @esCatWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get esCatWedding;
+
+  /// No description provided for @esCatSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get esCatSocial;
+
+  /// No description provided for @esCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get esCatOther;
+
+  /// No description provided for @esCatOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify the event category'**
+  String get esCatOtherHint;
+
+  /// No description provided for @esDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get esDescription;
+
+  /// No description provided for @esWordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / 500 words'**
+  String esWordCount(int count);
+
+  /// No description provided for @esWordsToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more to reach 100'**
+  String esWordsToGo(int count);
+
+  /// No description provided for @esAttendees.
+  ///
+  /// In en, this message translates to:
+  /// **'Max attendees'**
+  String get esAttendees;
+
+  /// No description provided for @esPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation policy'**
+  String get esPolicy;
+
+  /// No description provided for @esLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the event takes place. Choosing a venue fills this in for you.'**
+  String get esLocationHint;
+
+  /// No description provided for @esPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 5 photos. Five is recommended.'**
+  String get esPhotosHint;
+
+  /// No description provided for @esPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Core package'**
+  String get esPackageTitle;
+
+  /// No description provided for @esPackageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The venue and everything your event includes.'**
+  String get esPackageHint;
+
+  /// No description provided for @esVenueSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get esVenueSlot;
+
+  /// No description provided for @esNoVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'No venue yet'**
+  String get esNoVenue;
+
+  /// No description provided for @esChooseVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a venue'**
+  String get esChooseVenue;
+
+  /// No description provided for @esAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to package'**
+  String get esAdd;
+
+  /// No description provided for @esPackageEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing else added yet.'**
+  String get esPackageEmpty;
+
+  /// No description provided for @esEditItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {name}'**
+  String esEditItem(String name);
+
+  /// No description provided for @esAgreedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed price'**
+  String get esAgreedPrice;
+
+  /// No description provided for @esListed.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed: {price}'**
+  String esListed(String price);
+
+  /// No description provided for @esOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get esOptional;
+
+  /// No description provided for @esRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from package'**
+  String get esRemove;
+
+  /// No description provided for @esDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get esDone;
+
+  /// No description provided for @esCostVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get esCostVenue;
+
+  /// No description provided for @esCostTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esCostTalent;
+
+  /// No description provided for @esCostServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services and equipment'**
+  String get esCostServices;
+
+  /// No description provided for @esCostTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Package cost'**
+  String get esCostTotal;
+
+  /// No description provided for @esMargin.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin'**
+  String get esMargin;
+
+  /// No description provided for @esSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested price'**
+  String get esSuggested;
+
+  /// No description provided for @esPickVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get esPickVenues;
+
+  /// No description provided for @esPickTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esPickTalent;
+
+  /// No description provided for @esPickServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get esPickServices;
+
+  /// No description provided for @esPickEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get esPickEquipment;
+
+  /// No description provided for @esPickSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get esPickSearch;
+
+  /// No description provided for @esPickNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found.'**
+  String get esPickNone;
+
+  /// No description provided for @esPickMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get esPickMore;
+
+  /// No description provided for @esAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get esAdded;
+
+  /// No description provided for @esAccessApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get esAccessApproved;
+
+  /// No description provided for @esAccessPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get esAccessPending;
+
+  /// No description provided for @esAccessApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply first'**
+  String get esAccessApply;
+
+  /// No description provided for @esToastAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {name} to your package'**
+  String esToastAdded(String name);
+
+  /// No description provided for @esToastDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already in your package'**
+  String esToastDuplicate(String name);
+
+  /// No description provided for @esToastOneVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Only one venue can be in the package. Remove the existing venue first.'**
+  String get esToastOneVenue;
+
+  /// No description provided for @esToastVenuePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your affiliation with this venue is still pending approval.'**
+  String get esToastVenuePending;
+
+  /// No description provided for @esToastVenueApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this venue first. You need an approved affiliation to host here.'**
+  String get esToastVenueApply;
+
+  /// No description provided for @esReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title'**
+  String get esReadyTitle;
+
+  /// No description provided for @esReadyCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category selected'**
+  String get esReadyCategory;
+
+  /// No description provided for @esReadyOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what kind of event it is'**
+  String get esReadyOther;
+
+  /// No description provided for @esReadyVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved venue attached'**
+  String get esReadyVenue;
+
+  /// No description provided for @esReadyGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'5 photos'**
+  String get esReadyGallery;
+
+  /// No description provided for @esReadyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'100+ word description'**
+  String get esReadyDescription;
+
+  /// No description provided for @esRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get esRequired;
+
+  /// No description provided for @esRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get esRecommended;
+
+  /// No description provided for @esScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% ready'**
+  String esScore(int pct);
+
+  /// No description provided for @esNotDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has already been sent for review, so you can only save changes.'**
+  String get esNotDraft;
+
+  /// No description provided for @esSaveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as draft'**
+  String get esSaveDraft;
+
+  /// No description provided for @esSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get esSubmit;
+
+  /// No description provided for @esSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get esSaveChanges;
+
+  /// No description provided for @esSavedDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved.'**
+  String get esSavedDraft;
+
+  /// No description provided for @esSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for review.'**
+  String get esSubmitted;
+
+  /// No description provided for @esSavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get esSavedChanges;
+
+  /// No description provided for @esNeedsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an event title before saving.'**
+  String get esNeedsTitle;
+
+  /// No description provided for @esSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save that. Try again.'**
+  String get esSaveFailed;
+
+  /// No description provided for @esPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload. Try again.'**
+  String get esPhotoFailed;
+
+  /// No description provided for @esPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved, but some items could not be added. Fix them and send it again.'**
+  String get esPartial;
+
+  /// No description provided for @esProblemLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {reason}'**
+  String esProblemLine(String name, String reason);
+
+  /// No description provided for @esEditEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get esEditEvent;
+
+  /// No description provided for @esViewPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get esViewPublic;
+
   /// No description provided for @eventsSearchHint.
   ///
   /// In en, this message translates to:
@@ -3721,7 +4201,7 @@ abstract class AppLocalizations {
   /// No description provided for @listingsEventsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'You haven\'t created an event yet. Build one on the web.'**
+  /// **'You haven\'t created an event yet. Tap New event to start one.'**
   String get listingsEventsEmpty;
 
   /// No description provided for @listingStatusDraft.
@@ -5973,6 +6453,540 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increase {thing}'**
   String a11yIncrease(String thing);
+
+  /// No description provided for @teamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get teamTitle;
+
+  /// No description provided for @teamIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.'**
+  String get teamIntro;
+
+  /// No description provided for @teamYourVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venues'**
+  String get teamYourVenues;
+
+  /// No description provided for @teamYourEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Your upcoming events'**
+  String get teamYourEvents;
+
+  /// No description provided for @teamNoVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no venues yet.'**
+  String get teamNoVenues;
+
+  /// No description provided for @teamNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no upcoming events.'**
+  String get teamNoEvents;
+
+  /// No description provided for @teamAcceptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept requests from Organizers'**
+  String get teamAcceptsTitle;
+
+  /// No description provided for @teamAcceptsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved Organizers can ask to join. You decide on every request.'**
+  String get teamAcceptsBody;
+
+  /// No description provided for @teamRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests to join'**
+  String get teamRequests;
+
+  /// No description provided for @teamAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get teamAccept;
+
+  /// No description provided for @teamDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get teamDecline;
+
+  /// No description provided for @teamKindOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get teamKindOrganizer;
+
+  /// No description provided for @teamKindHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Helper'**
+  String get teamKindHelper;
+
+  /// No description provided for @teamHintOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.'**
+  String get teamHintOrganizer;
+
+  /// No description provided for @teamHintHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone, added straight away, who can only check guests in at the door.'**
+  String get teamHintHelper;
+
+  /// No description provided for @teamFieldOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or city, or type an email'**
+  String get teamFieldOrganizer;
+
+  /// No description provided for @teamFieldHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Their email address'**
+  String get teamFieldHelper;
+
+  /// No description provided for @teamSendInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Send invitation'**
+  String get teamSendInvite;
+
+  /// No description provided for @teamAddHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Add helper'**
+  String get teamAddHelper;
+
+  /// No description provided for @teamSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching Organizers…'**
+  String get teamSearching;
+
+  /// No description provided for @teamNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No approved Organizers match. You can still invite someone by email.'**
+  String get teamNoMatches;
+
+  /// No description provided for @teamInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get teamInvite;
+
+  /// No description provided for @teamOnTeamAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'On the team'**
+  String get teamOnTeamAlready;
+
+  /// No description provided for @teamLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String teamLevel(int level);
+
+  /// No description provided for @teamOnTheTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'On the team'**
+  String get teamOnTheTeam;
+
+  /// No description provided for @teamWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for an answer'**
+  String get teamWaiting;
+
+  /// No description provided for @teamSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {date}'**
+  String teamSince(String date);
+
+  /// No description provided for @teamExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String teamExpires(String date);
+
+  /// No description provided for @teamEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No one else yet. Only you can run this.'**
+  String get teamEmpty;
+
+  /// No description provided for @teamLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your team.'**
+  String get teamLoadFailed;
+
+  /// No description provided for @teamRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get teamRemove;
+
+  /// No description provided for @teamWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get teamWithdraw;
+
+  /// No description provided for @teamRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String teamRemoveTitle(String name);
+
+  /// No description provided for @teamRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will no longer be on this team.'**
+  String get teamRemoveBody;
+
+  /// No description provided for @teamWithdrawTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw the invitation to {name}?'**
+  String teamWithdrawTitle(String name);
+
+  /// No description provided for @teamWithdrawBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will no longer be able to accept it.'**
+  String get teamWithdrawBody;
+
+  /// No description provided for @teamPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past ({count})'**
+  String teamPast(int count);
+
+  /// No description provided for @teamPastExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation expired'**
+  String get teamPastExpired;
+
+  /// No description provided for @teamPastDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get teamPastDeclined;
+
+  /// No description provided for @teamPastFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Event over'**
+  String get teamPastFinished;
+
+  /// No description provided for @teamPastLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get teamPastLeft;
+
+  /// No description provided for @teamPastRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer role removed'**
+  String get teamPastRevoked;
+
+  /// No description provided for @teamPastRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed'**
+  String get teamPastRemoved;
+
+  /// No description provided for @teamInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent'**
+  String get teamInvited;
+
+  /// No description provided for @teamHelperAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Helper added'**
+  String get teamHelperAdded;
+
+  /// No description provided for @teamRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the team'**
+  String get teamRemoved;
+
+  /// No description provided for @teamWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation withdrawn'**
+  String get teamWithdrawn;
+
+  /// No description provided for @teamRequestAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Request accepted'**
+  String get teamRequestAccepted;
+
+  /// No description provided for @teamRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined'**
+  String get teamRequestDeclined;
+
+  /// No description provided for @teamActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again.'**
+  String get teamActionFailed;
+
+  /// No description provided for @studioStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'STEP {n} OF {total}'**
+  String studioStepOf(int n, int total);
+
+  /// No description provided for @studioCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover'**
+  String get studioCover;
+
+  /// No description provided for @studioPhotoCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of {max} photos'**
+  String studioPhotoCount(int n, int max);
+
+  /// No description provided for @esCardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get esCardDetails;
+
+  /// No description provided for @esCardGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests and policy'**
+  String get esCardGuests;
+
+  /// No description provided for @esAddTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent'**
+  String get esAddTalent;
+
+  /// No description provided for @esAddServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get esAddServices;
+
+  /// No description provided for @esAddEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get esAddEquipment;
+
+  /// No description provided for @esAddHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to your package'**
+  String get esAddHint;
+
+  /// No description provided for @esYourPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price to sell at'**
+  String get esYourPrice;
+
+  /// No description provided for @esPackageItems.
+  ///
+  /// In en, this message translates to:
+  /// **'What is included'**
+  String get esPackageItems;
+
+  /// No description provided for @spaceWorkingAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Working as'**
+  String get spaceWorkingAs;
+
+  /// No description provided for @spaceCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get spaceCurrent;
+
+  /// No description provided for @spaceSwitched.
+  ///
+  /// In en, this message translates to:
+  /// **'Now in the {space} space'**
+  String spaceSwitched(String space);
+
+  /// No description provided for @spaceGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get spaceGear;
+
+  /// No description provided for @spaceGearHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear and the requests for it'**
+  String get spaceGearHint;
+
+  /// No description provided for @spaceServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get spaceServices;
+
+  /// No description provided for @spaceServicesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your services and the requests for them'**
+  String get spaceServicesHint;
+
+  /// No description provided for @spacePerformer.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get spacePerformer;
+
+  /// No description provided for @spacePerformerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your performances and the requests for them'**
+  String get spacePerformerHint;
+
+  /// No description provided for @spaceTabPerformances.
+  ///
+  /// In en, this message translates to:
+  /// **'Performances'**
+  String get spaceTabPerformances;
+
+  /// No description provided for @requestsIntroGear.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your gear to their events. Confirm the ones you can supply.'**
+  String get requestsIntroGear;
+
+  /// No description provided for @requestsEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your gear to their event, it shows up here.'**
+  String get requestsEmptyGear;
+
+  /// No description provided for @requestsIntroServices.
+  ///
+  /// In en, this message translates to:
+  /// **'People adding your services to their events. Confirm the ones you can do.'**
+  String get requestsIntroServices;
+
+  /// No description provided for @requestsEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet. When someone adds your service to their event, it shows up here.'**
+  String get requestsEmptyServices;
+
+  /// No description provided for @providerGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get providerGear;
+
+  /// No description provided for @providerServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get providerServices;
+
+  /// No description provided for @providerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your listings'**
+  String get providerSearchHint;
+
+  /// No description provided for @providerEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no gear listed yet.'**
+  String get providerEmptyGear;
+
+  /// No description provided for @providerEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no services listed yet.'**
+  String get providerEmptyServices;
+
+  /// No description provided for @providerAddOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Add on the web'**
+  String get providerAddOnWeb;
+
+  /// No description provided for @providerListingEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit on the web'**
+  String get providerListingEdit;
+
+  /// No description provided for @providerListingView.
+  ///
+  /// In en, this message translates to:
+  /// **'View public page'**
+  String get providerListingView;
+
+  /// No description provided for @providerStatLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings live'**
+  String get providerStatLive;
+
+  /// No description provided for @providerStatJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs, next 30 days'**
+  String get providerStatJobs;
+
+  /// No description provided for @providerComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed and coming up'**
+  String get providerComingUp;
+
+  /// No description provided for @providerNothingComing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing confirmed yet.'**
+  String get providerNothingComing;
+
+  /// No description provided for @providerRequestsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
+  String providerRequestsWaiting(int count);
+
+  /// No description provided for @ticketsOfflineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Showing the tickets saved {when}.'**
+  String ticketsOfflineNote(String when);
 }
 
 class _AppLocalizationsDelegate

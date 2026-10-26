@@ -62,7 +62,10 @@ class _PassportPageState extends ConsumerState<PassportPage> {
                       ),
                     ),
                     // Only for someone who holds a role to switch to.
-                    const SpaceSwitchButton(),
+                    const SpaceSwitchButton(
+                      compact: true,
+                      padding: EdgeInsets.only(right: 4),
+                    ),
                     IconButton(
                       tooltip: l10n.settingsTitle,
                       onPressed: () => context.push(RouteNames.settings),

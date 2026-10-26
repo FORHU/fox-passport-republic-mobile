@@ -91,6 +91,45 @@ class SpaceLayout extends StatelessWidget {
     ];
   }
 
+  /// A provider's space: Overview, [listings] (Gear, Services or
+  /// Performances), Calendar, Earnings and More. [waiting] is how many
+  /// requests need a reply, shown on Overview.
+  static List<NavBarItem> providerItems(
+    BuildContext context, {
+    required String listings,
+    int waiting = 0,
+  }) {
+    final l10n = context.l10n;
+    return [
+      NavBarItem(
+        label: l10n.spaceTabOverview,
+        icon: Icons.dashboard_outlined,
+        activeIcon: Icons.dashboard_rounded,
+        badgeLabel: _badge(waiting),
+      ),
+      NavBarItem(
+        label: listings,
+        icon: Icons.inventory_2_outlined,
+        activeIcon: Icons.inventory_2_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabCalendar,
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabEarnings,
+        icon: Icons.account_balance_wallet_outlined,
+        activeIcon: Icons.account_balance_wallet_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabMore,
+        icon: Icons.menu_rounded,
+        activeIcon: Icons.menu_rounded,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentIndex = navigationShell.currentIndex;
