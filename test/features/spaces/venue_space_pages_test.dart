@@ -14,6 +14,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/earnings_pag
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -200,6 +201,29 @@ void main() {
           {'type': 'venue', 'action': 'confirm'},
         ),
       ).called(1);
+    });
+
+    testWidgets('a request says by when to reply, with a real time', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [
+          VenueRequest(
+            id: 'r9',
+            venueName: 'Sky Hall',
+            eventName: 'Ada Birthday',
+            status: RequestStatus.awaitingYou,
+            replyBy: DateTime(2026, 10, 28, 17, 30),
+          ),
+        ],
+      );
+
+      expect(find.textContaining('Oct 28'), findsOneWidget);
+      expect(find.textContaining('5:30'), findsOneWidget);
+      // A pattern letter that is not one prints as itself.
+      expect(find.textContaining(' j'), findsNothing);
     });
 
     testWidgets('says when all is clear and nothing is coming up', (
