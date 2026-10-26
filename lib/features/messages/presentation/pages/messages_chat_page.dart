@@ -775,6 +775,8 @@ class _MessageBubble extends StatelessWidget {
                     ),
                   ),
                 ),
+              if (message.sharedPost != null)
+                _SharedPostCard(post: message.sharedPost!),
               if (message.content.isNotEmpty)
                 Text(
                   message.content,
@@ -1104,4 +1106,58 @@ class _ChatAvatar extends StatelessWidget {
             ),
         ],
       );
+}
+
+/// A Republic post sent in a chat: who wrote it, its first photo and words.
+class _SharedPostCard extends StatelessWidget {
+  const _SharedPostCard({required this.post});
+
+  final SharedPost post;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.canvas,
+        borderRadius: AppRadius.brSm,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (post.imageUrl != null) ...[
+            ClipRRect(
+              borderRadius: AppRadius.brSm,
+              child:
+                  NetworkImageBox(url: post.imageUrl!, width: 48, height: 48),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  post.authorName,
+                  style: AppTypography.body(size: 12, weight: FontWeight.w700),
+                ),
+                Text(
+                  post.content.isEmpty ? l10n.republicSharedPost : post.content,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body(
+                    size: 12,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

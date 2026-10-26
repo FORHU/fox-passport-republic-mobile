@@ -158,6 +158,13 @@ class RepublicRepository {
     ];
   }
 
+  /// Publishes a post of your own that quotes [postId]; the caption may be
+  /// empty.
+  Future<void> repost(String postId, String caption) async {
+    await _api
+        .post(ApiEndpoints.feedRepost(postId), {'caption': caption.trim()});
+  }
+
   /// Saves a post, or takes it back out. Returns whether it is now saved.
   Future<bool> toggleSave(String postId) async {
     final body = await _api.post(ApiEndpoints.feedSave(postId));

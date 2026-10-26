@@ -212,6 +212,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         onOpenListing: () => _actions.openListing(post),
                         onMessage: () =>
                             unawaited(_actions.messageAuthor(post)),
+                        onShare: () => unawaited(_actions.share(post)),
                       );
                     },
                   ),

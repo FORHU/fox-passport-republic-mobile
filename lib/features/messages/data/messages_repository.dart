@@ -56,11 +56,13 @@ class MessagesRepository {
     String content, {
     String? replyToId,
     List<String> attachmentUrls = const [],
+    String? sharedPostId,
   }) async {
     await _api.post(ApiEndpoints.conversationMessages(conversationId), {
       'content': content,
       if (replyToId != null) 'replyToId': replyToId,
       if (attachmentUrls.isNotEmpty) 'attachmentUrls': attachmentUrls,
+      if (sharedPostId != null) 'sharedPostId': sharedPostId,
     });
   }
 

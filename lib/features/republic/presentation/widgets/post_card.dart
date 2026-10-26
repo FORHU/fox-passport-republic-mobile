@@ -76,6 +76,7 @@ class PostCard extends StatefulWidget {
     this.onVote,
     this.onOpenListing,
     this.onMessage,
+    this.onShare,
     super.key,
   });
 
@@ -103,6 +104,9 @@ class PostCard extends StatefulWidget {
 
   /// "Message" the author about this post or its listing.
   final VoidCallback? onMessage;
+
+  /// Opens Share: repost, send in a message, copy the link.
+  final VoidCallback? onShare;
 
   /// Longer than this and the text folds behind "See more".
   static const foldAt = 280;
@@ -263,6 +267,20 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
               ),
+              if (widget.onShare != null)
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: widget.onShare,
+                    icon: const Icon(
+                      Icons.share_outlined,
+                      color: AppColors.textMuted,
+                    ),
+                    label: Text(
+                      l10n.republicShare,
+                      style: AppTypography.body(color: AppColors.textMuted),
+                    ),
+                  ),
+                ),
             ],
           ),
         ],
