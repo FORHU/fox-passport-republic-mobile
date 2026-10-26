@@ -10,7 +10,20 @@ void showTopToast(
   String message, {
   Duration duration = const Duration(seconds: 3),
 }) {
-  final overlay = Overlay.of(context, rootOverlay: true);
+  showTopToastIn(
+    Overlay.of(context, rootOverlay: true),
+    message,
+    duration: duration,
+  );
+}
+
+/// As [showTopToast], on an overlay already in hand: for a caller whose own
+/// context is gone by the time the toast is due.
+void showTopToastIn(
+  OverlayState overlay,
+  String message, {
+  Duration duration = const Duration(seconds: 3),
+}) {
   late final OverlayEntry entry;
   entry = OverlayEntry(
     builder: (_) => _TopToast(

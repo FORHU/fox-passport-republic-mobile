@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
@@ -169,6 +171,7 @@ void main() {
       PaymentsRepository? payments,
     }) =>
         [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           upcomingTicketsProvider.overrideWith((ref) async => <Ticket>[]),
           pastTicketsProvider.overrideWith((ref) async => <Ticket>[]),
           myMatchRequestsProvider.overrideWith((ref) async => items),

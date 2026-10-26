@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/tickets_skeleton.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -106,6 +108,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
             upcomingTicketsProvider.overrideWith((ref) => upcoming.future),
             pastTicketsProvider.overrideWith((ref) => past.future),
             myMatchRequestsProvider.overrideWith((ref) => requests.future),
