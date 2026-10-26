@@ -3256,6 +3256,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReactions => 'Reactions';
 
   @override
+  String get republicReply => 'Reply';
+
+  @override
+  String republicReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get republicEditingComment => 'Editing your comment';
+
+  @override
+  String get republicEditComment => 'Edit';
+
+  @override
+  String get republicDeleteComment => 'Delete comment';
+
+  @override
+  String get republicDeleteCommentTitle => 'Delete this comment?';
+
+  @override
   String get republicNoReactions => 'No reactions yet.';
 
   @override

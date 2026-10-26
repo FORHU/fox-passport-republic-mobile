@@ -121,6 +121,9 @@ class PostComment extends Equatable {
     required this.content,
     required this.createdAt,
     this.replies = const [],
+    this.likesCount = 0,
+    this.isLikedByMe = false,
+    this.edited = false,
   });
 
   factory PostComment.fromJson(Map<String, dynamic> json) => PostComment(
@@ -132,6 +135,10 @@ class PostComment extends Equatable {
           for (final r in json['replies'] as List? ?? const [])
             if (r is Map) PostComment.fromJson(r.cast<String, dynamic>()),
         ],
+        likesCount: (json['likesCount'] as num?)?.toInt() ?? 0,
+        isLikedByMe: json['isLikedByMe'] == true,
+        edited:
+            json['updatedAt'] != null && json['updatedAt'] != json['createdAt'],
       );
 
   final String id;
@@ -139,9 +146,21 @@ class PostComment extends Equatable {
   final String content;
   final DateTime? createdAt;
   final List<PostComment> replies;
+  final int likesCount;
+  final bool isLikedByMe;
+  final bool edited;
 
   @override
-  List<Object?> get props => [id, author, content, createdAt, replies];
+  List<Object?> get props => [
+        id,
+        author,
+        content,
+        createdAt,
+        replies,
+        likesCount,
+        isLikedByMe,
+        edited,
+      ];
 }
 
 /// One page of the feed and where the next one starts (null at the end).

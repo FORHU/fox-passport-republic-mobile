@@ -55,14 +55,15 @@ class PostActions {
       showReactionBreakdown(context, postId);
 
   Future<void> comments(String postId) async {
-    final added = await showCommentsSheet(
+    final result = await showCommentsSheet(
       context,
       postId: postId,
       signedIn: ref.read(authControllerProvider).user != null,
     );
-    for (var i = 0; i < added; i++) {
+    for (var i = 0; i < result.added; i++) {
       _feed.commentAdded(postId);
     }
+    if (result.removed) await _feed.reload(postId);
   }
 
   /// The ⋯ menu of [post] and whatever the person picks from it.
