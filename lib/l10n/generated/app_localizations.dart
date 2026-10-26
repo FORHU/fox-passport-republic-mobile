@@ -5974,6 +5974,96 @@ abstract class AppLocalizations {
   /// **'Reactions'**
   String get republicReactions;
 
+  /// No description provided for @republicTypeStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story'**
+  String get republicTypeStory;
+
+  /// No description provided for @republicTypePoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Poll'**
+  String get republicTypePoll;
+
+  /// No description provided for @republicTypeVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Spotlight venue'**
+  String get republicTypeVenue;
+
+  /// No description provided for @republicVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can see this'**
+  String get republicVisibility;
+
+  /// No description provided for @republicVisibilityPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get republicVisibilityPublic;
+
+  /// No description provided for @republicVisibilityFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get republicVisibilityFollowers;
+
+  /// No description provided for @republicVisibilityOnlyMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Only me'**
+  String get republicVisibilityOnlyMe;
+
+  /// No description provided for @republicPosting.
+  ///
+  /// In en, this message translates to:
+  /// **'Posting…'**
+  String get republicPosting;
+
+  /// No description provided for @republicPollHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the Republic a question…'**
+  String get republicPollHint;
+
+  /// No description provided for @republicPollOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Option {n}'**
+  String republicPollOption(int n);
+
+  /// No description provided for @republicAddOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Add option'**
+  String get republicAddOption;
+
+  /// No description provided for @republicAddPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos'**
+  String get republicAddPhotos;
+
+  /// No description provided for @republicPhotoCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} photos'**
+  String republicPhotoCount(int count, int max);
+
+  /// No description provided for @republicChooseVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a venue'**
+  String get republicChooseVenue;
+
+  /// No description provided for @republicNoVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have a venue to spotlight yet.'**
+  String get republicNoVenues;
+
   /// No description provided for @republicReply.
   ///
   /// In en, this message translates to:

@@ -3256,6 +3256,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicReactions => 'Reactions';
 
   @override
+  String get republicTypeStory => 'Story';
+
+  @override
+  String get republicTypePoll => 'Poll';
+
+  @override
+  String get republicTypeVenue => 'Spotlight venue';
+
+  @override
+  String get republicVisibility => 'Who can see this';
+
+  @override
+  String get republicVisibilityPublic => 'Public';
+
+  @override
+  String get republicVisibilityFollowers => 'Followers';
+
+  @override
+  String get republicVisibilityOnlyMe => 'Only me';
+
+  @override
+  String get republicPosting => 'Posting…';
+
+  @override
+  String get republicPollHint => 'Ask the Republic a question…';
+
+  @override
+  String republicPollOption(int n) {
+    return 'Option $n';
+  }
+
+  @override
+  String get republicAddOption => 'Add option';
+
+  @override
+  String get republicAddPhotos => 'Add photos';
+
+  @override
+  String republicPhotoCount(int count, int max) {
+    return '$count of $max photos';
+  }
+
+  @override
+  String get republicChooseVenue => 'Choose a venue';
+
+  @override
+  String get republicNoVenues => 'You don\'t have a venue to spotlight yet.';
+
+  @override
   String get republicReply => 'Reply';
 
   @override

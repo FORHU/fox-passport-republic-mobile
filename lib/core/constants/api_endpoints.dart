@@ -135,6 +135,7 @@ class ApiEndpoints {
   static String feedSave(String id) => '/feed/$id/save';
   static String feedHide(String id) => '/feed/$id/hide';
   static const String feedSaved = '/feed/saved';
+  static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
 
   // ── Reviews ─────────────────────────────────────────────────────────────

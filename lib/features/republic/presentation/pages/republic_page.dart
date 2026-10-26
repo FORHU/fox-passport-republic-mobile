@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
-import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
-import 'package:flutter_template/features/republic/presentation/widgets/compose_sheet.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -64,22 +61,10 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
   Future<void> _compose() async {
     if (!_signedIn()) return;
-    final l10n = context.l10n;
-    final text = await showComposeSheet(context);
-    if (text == null || text.trim().isEmpty || !mounted) return;
-    try {
-      await ref.read(republicRepositoryProvider).createPost(text);
-      if (!mounted) return;
-      showTopToast(context, l10n.republicPosted);
-      await ref.read(feedControllerProvider(_tab).notifier).refresh();
-    } on Object catch (e) {
-      if (mounted) {
-        showTopToast(
-          context,
-          e is AppException ? e.message : l10n.republicPostFailed,
-        );
-      }
-    }
+    final posted = await context.push<bool>(RouteNames.republicCompose);
+    if (posted != true || !mounted) return;
+    showTopToast(context, context.l10n.republicPosted);
+    await ref.read(feedControllerProvider(_tab).notifier).refresh();
   }
 
   String _tabLabel(String? tab) {
