@@ -42,6 +42,7 @@ import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_bids_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
@@ -256,6 +257,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.spaceTeamEvents,
         builder: (context, state) => const TeamPage(events: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceBidEvents,
+        builder: (context, state) => const TeamPage(events: true, bids: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceBidDetail,
+        redirect: (context, state) =>
+            state.extra is TeamTarget ? null : RouteNames.spaceEvent,
+        builder: (context, state) =>
+            EventBidsPage(event: state.extra! as TeamTarget),
       ),
       GoRoute(
         path: RouteNames.spaceTeamDetail,

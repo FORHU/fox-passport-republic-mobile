@@ -165,6 +165,16 @@ class ApiEndpoints {
   static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
 
+  // Bids on an event: service and gear applications, answered by the host.
+  static String serviceBidsForEvent(String eventId) =>
+      '/bids/service/event/${Uri.encodeComponent(eventId)}';
+  static String assetBidsForEvent(String eventId) =>
+      '/bids/asset/event/${Uri.encodeComponent(eventId)}';
+  static String bidAccept(String id, {required bool isService}) =>
+      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/accept';
+  static String bidReject(String id, {required bool isService}) =>
+      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/reject';
+
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';
   static const String reviewsCreate = '/reviews/create';

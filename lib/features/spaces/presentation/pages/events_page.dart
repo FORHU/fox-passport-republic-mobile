@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_filters.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -199,6 +200,12 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                             ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: 8),
+                      MoreRow(
+                        icon: Icons.how_to_reg_outlined,
+                        title: l10n.bidsTitle,
+                        onTap: () => context.push(RouteNames.spaceBidEvents),
                       ),
                       HomeSectionHeader(title: l10n.overviewAttention),
                       if (partners.hasValue && !somethingToDo)
