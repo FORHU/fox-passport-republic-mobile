@@ -57,6 +57,12 @@ class BlocksRepository {
     ];
   }
 
+  /// Blocks [userId]. The API refuses while you have an active booking with
+  /// them, and says so.
+  Future<void> block(String userId) async {
+    await _api.post(ApiEndpoints.blocks, {'targetId': userId});
+  }
+
   Future<void> unblock(String userId) async {
     await _api.delete(ApiEndpoints.unblock(userId));
   }

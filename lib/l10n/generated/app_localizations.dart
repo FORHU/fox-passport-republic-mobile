@@ -6472,6 +6472,48 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get republicCancel;
 
+  /// No description provided for @republicMenuBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}'**
+  String republicMenuBlock(String name);
+
+  /// No description provided for @blockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}?'**
+  String blockTitle(String name);
+
+  /// No description provided for @blockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will no longer see each other\'s posts and they cannot message you. You can unblock them any time in Settings.'**
+  String get blockBody;
+
+  /// No description provided for @blockConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get blockConfirm;
+
+  /// No description provided for @blockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is blocked.'**
+  String blockDone(String name);
+
+  /// No description provided for @blockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not block them. Try again.'**
+  String get blockFailed;
+
+  /// No description provided for @foxerMenuBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get foxerMenuBlock;
+
   /// No description provided for @republicActionFailed.
   ///
   /// In en, this message translates to:

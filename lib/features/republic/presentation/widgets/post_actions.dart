@@ -18,6 +18,7 @@ import 'package:flutter_template/features/republic/presentation/widgets/post_men
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/share_sheets.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/blocks/confirm_block.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:go_router/go_router.dart';
@@ -177,6 +178,7 @@ class PostActions {
       isOwner: me != null && me.id == post.author.id,
       saved: post.isSavedByMe,
       canCopyLink: base.isNotEmpty,
+      authorName: post.author.name,
     );
     if (action == null || !context.mounted) return;
     switch (action) {
@@ -209,6 +211,16 @@ class PostActions {
       case PostMenuAction.hide:
         if (!_signedIn()) return;
         await _run(() => _feed.hide(post.id), context.l10n.republicHidden);
+      case PostMenuAction.block:
+        if (!_signedIn()) return;
+        final blocked = await confirmBlock(
+          context,
+          ref,
+          userId: post.author.id,
+          name: post.author.name,
+        );
+        // Their posts leave the feed once they are blocked.
+        if (blocked) await _feed.refresh();
       case PostMenuAction.report:
         if (!_signedIn()) return;
         final reason = await showReportSheet(context);
