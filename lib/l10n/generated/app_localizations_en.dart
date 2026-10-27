@@ -2550,6 +2550,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketCancel => 'Cancel booking';
 
   @override
+  String get ticketRequestChange => 'Request a change';
+
+  @override
+  String get editRequestTitle => 'Request a change';
+
+  @override
+  String get editRequestGuests => 'Guests';
+
+  @override
+  String get editRequestDates => 'Change the dates';
+
+  @override
+  String get editRequestReason => 'Why the change? (optional)';
+
+  @override
+  String get editRequestSend => 'Send request';
+
+  @override
+  String get editRequestSent => 'Request sent. The venue will answer soon.';
+
+  @override
+  String get editRequestFailed => 'Could not send that request. Try again.';
+
+  @override
+  String get editRequestWithdraw => 'Withdraw request';
+
+  @override
+  String get editRequestWithdrawn => 'Request withdrawn.';
+
+  @override
+  String get editRequestPending => 'Waiting for the venue';
+
+  @override
+  String get editRequestApplied => 'Approved. Your booking has changed.';
+
+  @override
+  String get editRequestPayOnWeb =>
+      'Approved. Pay the difference on the web to confirm the change.';
+
+  @override
+  String get editRequestDeclined => 'The venue declined';
+
+  @override
+  String get editRequestWithdrawnStatus => 'You withdrew this request';
+
+  @override
+  String get editRequestExpired => 'This request expired';
+
+  @override
   String get cancelTitle => 'Cancel this booking?';
 
   @override

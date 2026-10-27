@@ -135,6 +135,9 @@ class ApiEndpoints {
   static String bookingConfirm(String id) => '/bookings/$id/confirm';
   static String bookingCancelCheck(String id) => '/bookings/$id/cancel/check';
   static String bookingCancel(String id) => '/bookings/$id/cancel';
+  static const String bookingEditRequests = '/booking-edit-requests';
+  static String bookingEditRequestWithdraw(String id) =>
+      '/booking-edit-requests/$id/withdraw';
 
   static const String assetBookings = '/asset/bookings';
   static const String assetPricePreview = '/asset/bookings/price-preview';
