@@ -218,6 +218,7 @@ void main() {
                   isOwner: owner,
                   saved: false,
                   canCopyLink: false,
+                  authorName: 'Ada',
                 ),
                 child: const Text('open'),
               ),
@@ -235,6 +236,7 @@ void main() {
       expect(find.text('Edit post'), findsOneWidget);
       expect(find.text('Delete post'), findsOneWidget);
       expect(find.text('Report post'), findsNothing);
+      expect(find.text('Block Ada'), findsNothing);
       expect(find.text('Save post'), findsOneWidget);
       expect(find.text('Copy link'), findsNothing);
     });
@@ -244,6 +246,7 @@ void main() {
 
       expect(find.text('Hide post'), findsOneWidget);
       expect(find.text('Report post'), findsOneWidget);
+      expect(find.text('Block Ada'), findsOneWidget);
       expect(find.text('Edit post'), findsNothing);
       expect(find.text('Delete post'), findsNothing);
     });

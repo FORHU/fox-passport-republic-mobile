@@ -8,6 +8,7 @@ import 'package:flutter_template/features/foxer/data/foxer_repository.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/blocks/confirm_block.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -28,6 +29,20 @@ class FoxerProfilePage extends ConsumerWidget {
   /// The row that was tapped; it names the Foxer while the rest loads.
   final CatalogItem item;
 
+  Future<void> _block(
+    BuildContext context,
+    WidgetRef ref,
+    FoxerProfile profile,
+  ) async {
+    final blocked = await confirmBlock(
+      context,
+      ref,
+      userId: profile.id,
+      name: profile.name,
+    );
+    if (blocked && context.mounted) context.pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -39,6 +54,18 @@ class FoxerProfilePage extends ConsumerWidget {
         backgroundColor: AppColors.canvas,
         foregroundColor: AppColors.textPrimary,
         title: Text(item.title, style: AppTypography.display()),
+        actions: [
+          // A sample row is not a real account, so there is no one to block.
+          if (async.value case final profile? when !profile.isSample)
+            PopupMenuButton<void>(
+              itemBuilder: (_) => [
+                PopupMenuItem<void>(
+                  onTap: () => unawaited(_block(context, ref, profile)),
+                  child: Text(l10n.foxerMenuBlock),
+                ),
+              ],
+            ),
+        ],
       ),
       body: async.when(
         loading: () => const Center(

@@ -3,7 +3,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 
 /// What the ⋯ menu of a post offers.
-enum PostMenuAction { copyLink, save, edit, delete, hide, report }
+enum PostMenuAction { copyLink, save, edit, delete, hide, report, block }
 
 /// The post's menu. Your own post can be edited or deleted; someone else's can
 /// be hidden or reported. Resolves what was chosen, or null.
@@ -12,6 +12,7 @@ Future<PostMenuAction?> showPostMenu(
   required bool isOwner,
   required bool saved,
   required bool canCopyLink,
+  required String authorName,
 }) {
   final l10n = context.l10n;
   Widget row(
@@ -66,6 +67,12 @@ Future<PostMenuAction?> showPostMenu(
             Icons.flag_outlined,
             l10n.republicMenuReport,
             PostMenuAction.report,
+            danger: true,
+          ),
+          row(
+            Icons.block_rounded,
+            l10n.republicMenuBlock(authorName),
+            PostMenuAction.block,
             danger: true,
           ),
         ],

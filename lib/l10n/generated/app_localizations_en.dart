@@ -3555,6 +3555,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicCancel => 'Cancel';
 
   @override
+  String republicMenuBlock(String name) {
+    return 'Block $name';
+  }
+
+  @override
+  String blockTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockBody =>
+      'You will no longer see each other\'s posts and they cannot message you. You can unblock them any time in Settings.';
+
+  @override
+  String get blockConfirm => 'Block';
+
+  @override
+  String blockDone(String name) {
+    return '$name is blocked.';
+  }
+
+  @override
+  String get blockFailed => 'Could not block them. Try again.';
+
+  @override
+  String get foxerMenuBlock => 'Block';
+
+  @override
   String get republicActionFailed => 'That didn\'t work. Try again.';
 
   @override
