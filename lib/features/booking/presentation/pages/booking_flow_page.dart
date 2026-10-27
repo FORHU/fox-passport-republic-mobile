@@ -216,6 +216,8 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
       if (mounted) setState(() => _step = _Step.done);
     } on PaymentsUnavailable {
       if (mounted) showTopToast(context, l10n.bookPaymentsSoon);
+    } on PaymentCancelled {
+      if (mounted) showTopToast(context, l10n.bookPaymentCancelled);
     } on Object catch (e) {
       if (mounted) {
         showTopToast(context, e is AppException ? e.message : l10n.bookFailed);

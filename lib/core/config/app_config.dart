@@ -24,6 +24,7 @@ class AppConfig {
     this.webAppUrl = '',
     this.mapboxToken = '',
     this.assetHostOverride = '',
+    this.stripePublishableKey = '',
   });
 
   /// Builds config from `flutter_dotenv` values loaded at runtime.
@@ -48,6 +49,7 @@ class AppConfig {
       webAppUrl: (dotenv.env['WEB_APP_URL'] ?? '').trim(),
       mapboxToken: (dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? '').trim(),
       assetHostOverride: (dotenv.env['ASSET_HOST_OVERRIDE'] ?? '').trim(),
+      stripePublishableKey: (dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '').trim(),
     );
   }
 
@@ -64,7 +66,8 @@ class AppConfig {
         socialRedirectOrigin = 'foxpassport://app',
         webAppUrl = '',
         mapboxToken = '',
-        assetHostOverride = '';
+        assetHostOverride = '',
+        stripePublishableKey = '';
 
   /// Explicit production config used by `main_prod.dart` — logging off.
   const AppConfig.prod()
@@ -79,7 +82,8 @@ class AppConfig {
         socialRedirectOrigin = 'foxpassport://app',
         webAppUrl = '',
         mapboxToken = '',
-        assetHostOverride = '';
+        assetHostOverride = '',
+        stripePublishableKey = '';
 
   final Environment environment;
   final String appName;
@@ -123,6 +127,13 @@ class AppConfig {
   /// restrict it by URL / bundle in the Mapbox account. Never put a secret
   /// `sk.…` token here. Empty shows a static placeholder instead of the globe.
   final String mapboxToken;
+
+  /// Stripe's *publishable* key (`pk_…`), for the card payment sheet. Public
+  /// by design, like the web app's `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`; it
+  /// must be from the same Stripe account and mode (test or live) as the
+  /// API's secret key. Never put a secret `sk_…` key here. Empty leaves card
+  /// payments off.
+  final String stripePublishableKey;
 
   /// The scheme part of [socialRedirectOrigin], e.g. `foxpassport`.
   String get socialRedirectScheme => Uri.parse(socialRedirectOrigin).scheme;
