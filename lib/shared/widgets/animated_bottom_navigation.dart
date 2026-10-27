@@ -121,7 +121,7 @@ class _NavItem extends StatelessWidget {
                 // As wide as the icon, so a badge hangs off the icon's corner
                 // and not the edge of the whole cell.
                 SizedBox(
-                  width: initial == null ? 28 : 48,
+                  width: 28,
                   height: 28,
                   child: Center(
                     child: initial == null
@@ -193,7 +193,8 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-/// A pill holding a filled circle with the person's initial.
+/// The person's photo or initial in a ring, the size of the other icons. The
+/// ring turns accent when the Passport is the open tab.
 class _AvatarChip extends StatelessWidget {
   const _AvatarChip({
     required this.initial,
@@ -209,26 +210,26 @@ class _AvatarChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      width: 48,
+      width: 28,
       height: 28,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: AppRadius.brPill,
+        shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? AppColors.accent : AppColors.borderStrong,
-          width: selected ? 1.5 : 1,
+          color: selected ? AppColors.accent : AppColors.text.tertiary,
+          width: selected ? 2 : 1.5,
         ),
       ),
       child: ClipOval(
         child: SizedBox(
-          width: 22,
-          height: 22,
+          width: 20,
+          height: 20,
           child: imageUrl == null || imageUrl!.isEmpty
               ? _Initial(initial: initial)
               : NetworkImageBox(
                   url: imageUrl!,
-                  width: 22,
-                  height: 22,
+                  width: 20,
+                  height: 20,
                 ),
         ),
       ),
