@@ -13,6 +13,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/foxers/foxer_profile.dart';
+import 'package:flutter_template/shared/reports/file_report.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -43,6 +44,19 @@ class FoxerProfilePage extends ConsumerWidget {
     if (blocked && context.mounted) context.pop();
   }
 
+  Future<void> _report(
+    BuildContext context,
+    WidgetRef ref,
+    FoxerProfile profile,
+  ) =>
+      fileReport(
+        context,
+        ref,
+        target: ReportTarget.user,
+        id: profile.id,
+        title: context.l10n.reportUserTitle,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -55,10 +69,15 @@ class FoxerProfilePage extends ConsumerWidget {
         foregroundColor: AppColors.textPrimary,
         title: Text(item.title, style: AppTypography.display()),
         actions: [
-          // A sample row is not a real account, so there is no one to block.
+          // A sample row is not a real account, so there is no one to report or
+          // block.
           if (async.value case final profile? when !profile.isSample)
             PopupMenuButton<void>(
               itemBuilder: (_) => [
+                PopupMenuItem<void>(
+                  onTap: () => unawaited(_report(context, ref, profile)),
+                  child: Text(l10n.foxerMenuReport),
+                ),
                 PopupMenuItem<void>(
                   onTap: () => unawaited(_block(context, ref, profile)),
                   child: Text(l10n.foxerMenuBlock),

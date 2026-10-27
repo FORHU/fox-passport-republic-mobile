@@ -6478,6 +6478,36 @@ abstract class AppLocalizations {
   /// **'Block'**
   String get foxerMenuBlock;
 
+  /// No description provided for @foxerMenuReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get foxerMenuReport;
+
+  /// No description provided for @reportUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this Foxer'**
+  String get reportUserTitle;
+
+  /// No description provided for @reportVenueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this venue'**
+  String get reportVenueTitle;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the report. Try again.'**
+  String get reportFailed;
+
+  /// No description provided for @venueReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this venue'**
+  String get venueReport;
+
   /// No description provided for @republicActionFailed.
   ///
   /// In en, this message translates to:
