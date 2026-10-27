@@ -130,17 +130,17 @@ class ProfilePage extends ConsumerWidget {
             ],
             const SizedBox(height: 28),
             SecondaryButton(
-              label: l10n.profileVerify,
-              icon: Icons.verified_user_outlined,
-              onPressed: () => context.push(RouteNames.identity),
-            ),
-            const SizedBox(height: 12),
-            SecondaryButton(
               label: l10n.profileEdit,
               icon: Icons.edit_outlined,
               onPressed: name.isEmpty
                   ? null
                   : () => context.push(RouteNames.profileEdit),
+            ),
+            const SizedBox(height: 12),
+            SecondaryButton(
+              label: l10n.profileVerify,
+              icon: Icons.verified_user_outlined,
+              onPressed: () => context.push(RouteNames.identity),
             ),
             const SizedBox(height: 12),
             TextButton.icon(

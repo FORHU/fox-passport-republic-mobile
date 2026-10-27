@@ -238,12 +238,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ProfilePage(),
       ),
       GoRoute(
-        path: RouteNames.identity,
-        builder: (context, state) => const IdentityPage(),
-      ),
-      GoRoute(
         path: RouteNames.profileEdit,
         builder: (context, state) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: RouteNames.identity,
+        builder: (context, state) => const IdentityPage(),
       ),
       GoRoute(
         path: RouteNames.spaceVenueStudio,
