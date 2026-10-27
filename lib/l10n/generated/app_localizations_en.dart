@@ -2638,6 +2638,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMessage => 'Message';
 
   @override
+  String get followAction => 'Follow';
+
+  @override
+  String get followRequested => 'Requested';
+
+  @override
+  String get followFollowing => 'Following';
+
+  @override
+  String followFollowers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count followers',
+      one: '1 follower',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followRequestSent => 'Follow request sent.';
+
+  @override
+  String get followFailed => 'Could not update your follow. Try again.';
+
+  @override
   String get foxerOffers => 'What they offer';
 
   @override
