@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/pages/calendar_page.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/offline_note.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
@@ -72,8 +71,6 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
             style: AppTypography.display(size: 28),
           ),
         ),
-        if (!Navigator.canPop(context))
-          const SpaceSwitchButton(compact: true, padding: EdgeInsets.zero),
       ],
     );
     final pills = SegmentedPills<_Segment>(

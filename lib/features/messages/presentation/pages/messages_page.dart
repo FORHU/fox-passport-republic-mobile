@@ -7,7 +7,6 @@ import 'package:flutter_template/features/messages/data/messages_realtime.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/widgets/new_chat_sheet.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
@@ -88,11 +87,6 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
                             style: AppTypography.display(size: 22),
                           ),
                   ),
-                  if (!widget.showBack)
-                    const SpaceSwitchButton(
-                      compact: true,
-                      padding: EdgeInsets.only(right: 4),
-                    ),
                   IconButton(
                     tooltip: l10n.messageSearchHint,
                     onPressed: () => setState(() {
