@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
@@ -33,6 +35,18 @@ class _FakeFeed extends FeedController {
 
   @override
   Future<FeedState> build() async => FeedState(posts: _posts);
+}
+
+/// Someone signed in under a given name.
+class _Session extends AuthController {
+  _Session(this._name);
+
+  final String _name;
+
+  @override
+  AuthState build() => AuthState(
+        user: UserEntity(id: 'u1', email: 'a@b.co', name: _name),
+      );
 }
 
 /// A person who last opened one occasion.
@@ -79,6 +93,7 @@ Widget _app({
   List<CatalogItem> services = const [],
   List<Post> posts = const [],
   List<Ticket> past = const [],
+  String? userName,
 }) {
   final storage = MockStorageService();
   when(storage.readUserModel).thenReturn(null);
@@ -90,6 +105,8 @@ Widget _app({
     retry: (_, __) => null,
     overrides: [
       availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
+      if (userName != null)
+        authControllerProvider.overrideWith(() => _Session(userName)),
       storageServiceProvider.overrideWithValue(storage),
       upcomingTicketsProvider.overrideWith((ref) async => tickets),
       categoriesProvider.overrideWith(
@@ -174,6 +191,77 @@ void main() {
     final birthday = tester.getTopLeft(find.text('Birthday'));
     final wedding = tester.getTopLeft(find.text('Wedding'));
     expect(birthday.dy, lessThan(wedding.dy));
+  });
+
+  group('greeting and quick picks', () {
+    GoRouter routerFor() => GoRouter(
+          routes: [
+            GoRoute(path: '/', builder: (_, __) => const HomePage()),
+            GoRoute(
+              path: RouteNames.search,
+              builder: (_, s) => Scaffold(
+                body: Text('SEARCH ${s.uri.queryParameters['kind']}'),
+              ),
+            ),
+          ],
+        );
+
+    testWidgets('greets a signed-in person by their first name', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(userName: 'Ian Julius Visperas'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hi, Ian'), findsOneWidget);
+    });
+
+    testWidgets('says nothing when there is no name to greet', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Hi,'), findsNothing);
+    });
+
+    testWidgets('a blank name is not a greeting either', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(userName: '   '));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Hi,'), findsNothing);
+    });
+
+    testWidgets('five kinds sit under the search bar, in order', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      final search =
+          tester.getTopLeft(find.text('Search venues, Foxers and events'));
+      var previousX = -1.0;
+      for (final label in ['Venues', 'Foxers', 'Events', 'Gear', 'Services']) {
+        final chip = tester.getTopLeft(find.text(label).first);
+        expect(chip.dy, greaterThan(search.dy), reason: label);
+        expect(chip.dx, greaterThan(previousX), reason: label);
+        previousX = chip.dx;
+      }
+    });
+
+    testWidgets('tapping a kind opens Search on it, with a way back', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(router: routerFor()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Gear').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('SEARCH gear'), findsOneWidget);
+    });
   });
 
   group('photo-led occasions', () {
@@ -722,7 +810,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Or book just one thing'), findsOneWidget);
-    expect(find.text('Venues'), findsOneWidget);
+    // The quick pick under the search bar, and this row's own card.
+    expect(find.text('Venues'), findsNWidgets(2));
     expect(find.text('Photos'), findsOneWidget);
     expect(find.text('DJ'), findsOneWidget);
   });

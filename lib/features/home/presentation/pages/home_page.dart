@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
@@ -47,6 +48,9 @@ class HomePage extends ConsumerWidget {
     final last = ref.watch(lastOccasionProvider);
     final areaSource = ref.watch(areaProvider.select((a) => a.source));
     final unread = ref.watch(notificationInboxProvider).value?.unreadCount ?? 0;
+    final firstName = _firstName(
+      ref.watch(authControllerProvider.select((s) => s.user?.name)),
+    );
 
     // The start of today, not "now": the query is a provider key, and a key
     // that changes every build would make Home rebuild without end.
@@ -138,11 +142,27 @@ class HomePage extends ConsumerWidget {
                     : area.label ?? ticket?.city,
                 unread: unread,
               ),
+              // Who this is for; nothing when the name is not known.
+              if (firstName != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  l10n.homeGreeting(firstName),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.display(size: 26),
+                ),
+              ],
               // An upcoming booking, if there is one. Failing or empty means
               // no strip and no error.
               if (ticket != null) _NextNight(ticket: ticket),
               const SizedBox(height: 16),
               _HomeSearch(onTap: () => context.push(RouteNames.search)),
+              const SizedBox(height: 12),
+              // The kinds Search used to put in a tab bar, one tap away.
+              _QuickPicks(
+                onPick: (kind) =>
+                    unawaited(context.push(RouteNames.searchFor(kind.name))),
+              ),
               if (noBookings) ...[
                 const SizedBox(height: 16),
                 FirstEventChecklist(
@@ -237,6 +257,69 @@ class HomePage extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The first word of a name, or null when there is none to greet.
+String? _firstName(String? name) {
+  final first = name?.trim().split(RegExp(r'\s+')).firstOrNull;
+  return first == null || first.isEmpty ? null : first;
+}
+
+/// Venues, Foxers, Events, Gear and Services as chips under the search bar.
+class _QuickPicks extends StatelessWidget {
+  const _QuickPicks({required this.onPick});
+
+  final ValueChanged<CatalogKind> onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final picks = <(CatalogKind, IconData, String)>[
+      (CatalogKind.venues, Icons.location_city_rounded, l10n.searchVenues),
+      (CatalogKind.foxers, Icons.people_alt_outlined, l10n.searchFoxers),
+      (CatalogKind.events, Icons.celebration_outlined, l10n.searchEvents),
+      (CatalogKind.gear, Icons.speaker_group_outlined, l10n.searchGear),
+      (CatalogKind.services, Icons.room_service_outlined, l10n.searchServices),
+    ];
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: picks.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final (kind, icon, label) = picks[i];
+          return Material(
+            color: AppColors.surface,
+            shape: const StadiumBorder(
+              side: BorderSide(color: AppColors.border),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => onPick(kind),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, size: 18, color: AppColors.accent),
+                    const SizedBox(width: 6),
+                    Text(
+                      label,
+                      style: AppTypography.body(
+                        size: 13,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
