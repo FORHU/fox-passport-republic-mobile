@@ -2889,6 +2889,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookPaymentsSoon => 'Card payments in the app are coming soon.';
 
   @override
+  String get bookPaymentCancelled => 'Payment cancelled. You were not charged.';
+
+  @override
   String get bookFailed => 'We couldn\'t complete the booking. Try again.';
 
   @override

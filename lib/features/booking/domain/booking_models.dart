@@ -3,7 +3,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 
 export 'package:flutter_template/shared/payments/payments_repository.dart'
-    show PaymentsUnavailable;
+    show PaymentCancelled, PaymentsUnavailable;
 
 /// What the user has chosen so far in the venue booking flow.
 class BookingSelection extends Equatable {

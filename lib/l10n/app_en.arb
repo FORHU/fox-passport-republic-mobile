@@ -944,6 +944,7 @@
   "bookPayAmount": "Pay {amount}",
   "@bookPayAmount": {"placeholders": {"amount": {"type": "String"}}},
   "bookPaymentsSoon": "Card payments in the app are coming soon.",
+  "bookPaymentCancelled": "Payment cancelled. You were not charged.",
   "bookFailed": "We couldn't complete the booking. Try again.",
   "bookBookedTitle": "You're booked",
   "bookBookedSub": "Your ticket is in the Tickets tab.",

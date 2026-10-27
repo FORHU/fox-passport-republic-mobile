@@ -47,6 +47,8 @@ class _MatchRequestCardState extends ConsumerState<MatchRequestCard> {
       ref.invalidate(myMatchRequestsProvider);
     } on PaymentsUnavailable {
       if (mounted) showTopToast(context, l10n.bookPaymentsSoon);
+    } on PaymentCancelled {
+      if (mounted) showTopToast(context, l10n.bookPaymentCancelled);
     } on Object catch (e) {
       if (mounted) {
         showTopToast(context, e is AppException ? e.message : l10n.bookFailed);

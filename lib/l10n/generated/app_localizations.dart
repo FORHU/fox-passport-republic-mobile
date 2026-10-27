@@ -5206,6 +5206,12 @@ abstract class AppLocalizations {
   /// **'Card payments in the app are coming soon.'**
   String get bookPaymentsSoon;
 
+  /// No description provided for @bookPaymentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment cancelled. You were not charged.'**
+  String get bookPaymentCancelled;
+
   /// No description provided for @bookFailed.
   ///
   /// In en, this message translates to:
