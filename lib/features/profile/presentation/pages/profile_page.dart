@@ -143,6 +143,12 @@ class ProfilePage extends ConsumerWidget {
                   : () => context.push(RouteNames.profileEdit),
             ),
             const SizedBox(height: 12),
+            SecondaryButton(
+              label: l10n.profileVerify,
+              icon: Icons.verified_user_outlined,
+              onPressed: () => context.push(RouteNames.identity),
+            ),
+            const SizedBox(height: 12),
             TextButton.icon(
               style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
               icon: const Icon(Icons.logout_rounded, color: AppColors.error),

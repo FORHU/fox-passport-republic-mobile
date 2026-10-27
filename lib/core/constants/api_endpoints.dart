@@ -25,6 +25,10 @@ class ApiEndpoints {
   static const String changePassword = '/profile/change-password';
   static const String users = '/users';
 
+  /// The optional government-ID check (multipart on POST).
+  static const String identityVerification = '/identity-verification';
+  static const String identityMine = '/identity-verification/me';
+
   /// The people the signed-in user has blocked.
   static const String blocks = '/blocks';
   static String unblock(String userId) => '/blocks/$userId';

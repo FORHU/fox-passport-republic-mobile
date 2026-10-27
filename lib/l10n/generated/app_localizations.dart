@@ -7180,6 +7180,120 @@ abstract class AppLocalizations {
   /// **'Member since {date}'**
   String profileMemberSince(String date);
 
+  /// No description provided for @profileVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your identity'**
+  String get profileVerify;
+
+  /// No description provided for @identityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your identity'**
+  String get identityTitle;
+
+  /// No description provided for @identityLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your verification.'**
+  String get identityLoadFailed;
+
+  /// No description provided for @identityIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Send a photo of a government ID and an admin will review it. Approval adds a Verified badge to your profile. You can book without it.'**
+  String get identityIntro;
+
+  /// No description provided for @identityKind.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT ARE YOU SENDING?'**
+  String get identityKind;
+
+  /// No description provided for @identityTypePassport.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport'**
+  String get identityTypePassport;
+
+  /// No description provided for @identityTypeLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver\'s license'**
+  String get identityTypeLicense;
+
+  /// No description provided for @identityTypeNational.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get identityTypeNational;
+
+  /// No description provided for @identityTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get identityTypeOther;
+
+  /// No description provided for @identityIdPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of your ID'**
+  String get identityIdPhoto;
+
+  /// No description provided for @identitySelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie (optional)'**
+  String get identitySelfie;
+
+  /// No description provided for @identityChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'added'**
+  String get identityChosen;
+
+  /// No description provided for @identitySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get identitySubmit;
+
+  /// No description provided for @identitySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. We\'ll review it soon.'**
+  String get identitySent;
+
+  /// No description provided for @identityFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send your ID. Try again.'**
+  String get identityFailed;
+
+  /// No description provided for @identityVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Your identity is verified.'**
+  String get identityVerified;
+
+  /// No description provided for @identityPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ID is being reviewed. Sent {date}.'**
+  String identityPending(String date);
+
+  /// No description provided for @identityRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last submission was not approved. You can send another.'**
+  String get identityRejected;
+
+  /// No description provided for @identityRejectedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last submission was not approved: {reason}'**
+  String identityRejectedWhy(String reason);
+
   /// No description provided for @a11yDecrease.
   ///
   /// In en, this message translates to:

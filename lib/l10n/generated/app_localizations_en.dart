@@ -3973,6 +3973,69 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get profileVerify => 'Verify your identity';
+
+  @override
+  String get identityTitle => 'Verify your identity';
+
+  @override
+  String get identityLoadFailed => 'Could not load your verification.';
+
+  @override
+  String get identityIntro =>
+      'Optional. Send a photo of a government ID and an admin will review it. Approval adds a Verified badge to your profile. You can book without it.';
+
+  @override
+  String get identityKind => 'WHAT ARE YOU SENDING?';
+
+  @override
+  String get identityTypePassport => 'Passport';
+
+  @override
+  String get identityTypeLicense => 'Driver\'s license';
+
+  @override
+  String get identityTypeNational => 'National ID';
+
+  @override
+  String get identityTypeOther => 'Other';
+
+  @override
+  String get identityIdPhoto => 'Photo of your ID';
+
+  @override
+  String get identitySelfie => 'Selfie (optional)';
+
+  @override
+  String get identityChosen => 'added';
+
+  @override
+  String get identitySubmit => 'Send for review';
+
+  @override
+  String get identitySent => 'Sent. We\'ll review it soon.';
+
+  @override
+  String get identityFailed => 'Could not send your ID. Try again.';
+
+  @override
+  String get identityVerified => 'Your identity is verified.';
+
+  @override
+  String identityPending(String date) {
+    return 'Your ID is being reviewed. Sent $date.';
+  }
+
+  @override
+  String get identityRejected =>
+      'Your last submission was not approved. You can send another.';
+
+  @override
+  String identityRejectedWhy(String reason) {
+    return 'Your last submission was not approved: $reason';
+  }
+
+  @override
   String a11yDecrease(String thing) {
     return 'Decrease $thing';
   }
