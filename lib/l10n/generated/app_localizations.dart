@@ -3196,6 +3196,144 @@ abstract class AppLocalizations {
   /// **'Partners'**
   String get partnersTitle;
 
+  /// No description provided for @promotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotions'**
+  String get promotionsTitle;
+
+  /// No description provided for @promotionsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your promotions.'**
+  String get promotionsLoadFailed;
+
+  /// No description provided for @promotionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No promotions yet'**
+  String get promotionsEmpty;
+
+  /// No description provided for @promotionsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer a discount on a venue to draw more bookings.'**
+  String get promotionsEmptyBody;
+
+  /// No description provided for @promotionNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New promotion'**
+  String get promotionNew;
+
+  /// No description provided for @promotionVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get promotionVenue;
+
+  /// No description provided for @promotionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get promotionName;
+
+  /// No description provided for @promotionPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Percent off'**
+  String get promotionPercent;
+
+  /// No description provided for @promotionFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount off'**
+  String get promotionFixed;
+
+  /// No description provided for @promotionValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get promotionValue;
+
+  /// No description provided for @promotionAutoApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply automatically'**
+  String get promotionAutoApply;
+
+  /// No description provided for @promotionAutoApplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests get it at checkout without a code.'**
+  String get promotionAutoApplyHint;
+
+  /// No description provided for @promotionCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create promotion'**
+  String get promotionCreate;
+
+  /// No description provided for @promotionCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion created.'**
+  String get promotionCreated;
+
+  /// No description provided for @promotionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion removed.'**
+  String get promotionDeleted;
+
+  /// No description provided for @promotionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get promotionDelete;
+
+  /// No description provided for @promotionDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String promotionDeleteTitle(String name);
+
+  /// No description provided for @promotionDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests will no longer get this discount.'**
+  String get promotionDeleteBody;
+
+  /// No description provided for @promotionNoVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a venue first.'**
+  String get promotionNoVenue;
+
+  /// No description provided for @promotionActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Try again.'**
+  String get promotionActionFailed;
+
+  /// No description provided for @promotionPercentOff.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}% off'**
+  String promotionPercentOff(String value);
+
+  /// No description provided for @promotionAmountOff.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} off'**
+  String promotionAmountOff(String amount);
+
+  /// No description provided for @promotionAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'automatic'**
+  String get promotionAuto;
+
   /// No description provided for @partnersIntroMayor.
   ///
   /// In en, this message translates to:

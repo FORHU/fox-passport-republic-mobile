@@ -165,6 +165,10 @@ class ApiEndpoints {
   static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
 
+  // ── Promotions ──────────────────────────────────────────────────────────
+  static const String promotionsMine = '/promotions/mine';
+  static String promotionMine(String id) => '$promotionsMine/$id';
+
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';
   static const String reviewsCreate = '/reviews/create';

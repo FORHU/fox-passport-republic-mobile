@@ -46,6 +46,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_calend
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
@@ -499,6 +500,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     path: 'partners',
                     builder: (context, state) =>
                         const PartnersPage(side: PartnerSide.mayor),
+                  ),
+                  GoRoute(
+                    path: 'promotions',
+                    builder: (context, state) => const PromotionsPage(),
                   ),
                   GoRoute(
                     path: 'check-in',
