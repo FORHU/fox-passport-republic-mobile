@@ -116,6 +116,7 @@ class RouteNames {
   static const String spaceVenueEarnings = '/space/venue/earnings';
   static const String spaceVenueMore = '/space/venue/more';
   static const String spaceVenuePartners = '/space/venue/more/partners';
+  static const String spaceVenuePromotions = '/space/venue/more/promotions';
 
   /// Adding or editing a venue: full screen, outside the tabs, so it can be
   /// pushed from the Venues tab and from a venue's hub alike.

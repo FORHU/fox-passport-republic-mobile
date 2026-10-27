@@ -58,6 +58,12 @@ class VenueMorePage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           MoreRow(
+            icon: Icons.local_offer_outlined,
+            title: l10n.promotionsTitle,
+            onTap: () => context.push(RouteNames.spaceVenuePromotions),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
             icon: Icons.groups_outlined,
             title: l10n.teamTitle,
             onTap: () => context.push(RouteNames.spaceTeamVenues),

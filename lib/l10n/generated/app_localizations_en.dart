@@ -1757,6 +1757,83 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersTitle => 'Partners';
 
   @override
+  String get promotionsTitle => 'Promotions';
+
+  @override
+  String get promotionsLoadFailed => 'Could not load your promotions.';
+
+  @override
+  String get promotionsEmpty => 'No promotions yet';
+
+  @override
+  String get promotionsEmptyBody =>
+      'Offer a discount on a venue to draw more bookings.';
+
+  @override
+  String get promotionNew => 'New promotion';
+
+  @override
+  String get promotionVenue => 'Venue';
+
+  @override
+  String get promotionName => 'Name';
+
+  @override
+  String get promotionPercent => 'Percent off';
+
+  @override
+  String get promotionFixed => 'Amount off';
+
+  @override
+  String get promotionValue => 'Discount';
+
+  @override
+  String get promotionAutoApply => 'Apply automatically';
+
+  @override
+  String get promotionAutoApplyHint =>
+      'Guests get it at checkout without a code.';
+
+  @override
+  String get promotionCreate => 'Create promotion';
+
+  @override
+  String get promotionCreated => 'Promotion created.';
+
+  @override
+  String get promotionDeleted => 'Promotion removed.';
+
+  @override
+  String get promotionDelete => 'Remove';
+
+  @override
+  String promotionDeleteTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get promotionDeleteBody => 'Guests will no longer get this discount.';
+
+  @override
+  String get promotionNoVenue => 'Add a venue first.';
+
+  @override
+  String get promotionActionFailed => 'Something went wrong. Try again.';
+
+  @override
+  String promotionPercentOff(String value) {
+    return '$value% off';
+  }
+
+  @override
+  String promotionAmountOff(String amount) {
+    return '$amount off';
+  }
+
+  @override
+  String get promotionAuto => 'automatic';
+
+  @override
   String get partnersIntroMayor =>
       'Event Foxers who want to run events at your venues.';
 
