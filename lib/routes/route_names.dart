@@ -75,6 +75,9 @@ class RouteNames {
   /// Profile and Settings.
   static const String profileEdit = '/profile/edit';
 
+  /// The optional ID check and Verified badge. Pushed from Profile.
+  static const String identity = '/profile/identity';
+
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
 
