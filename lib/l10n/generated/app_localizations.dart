@@ -7651,7 +7651,7 @@ abstract class AppLocalizations {
   /// No description provided for @providerAddOnWeb.
   ///
   /// In en, this message translates to:
-  /// **'Add on the web'**
+  /// **'Add on web'**
   String get providerAddOnWeb;
 
   /// No description provided for @providerListingEdit.
