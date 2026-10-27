@@ -14,10 +14,13 @@ import 'package:go_router/go_router.dart';
 /// The venues (for a Mayor) or upcoming events (for an Event Foxer) the person
 /// can build a team for. Tapping one opens its team.
 class TeamPage extends ConsumerWidget {
-  const TeamPage({required this.events, super.key});
+  const TeamPage({required this.events, this.bids = false, super.key});
 
   /// Events when true; otherwise venues.
   final bool events;
+
+  /// Opens the bids on the event instead of its team.
+  final bool bids;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +30,7 @@ class TeamPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: SpaceAppBar(title: l10n.teamTitle),
+      appBar: SpaceAppBar(title: bids ? l10n.bidsTitle : l10n.teamTitle),
       body: targets.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.accent),
@@ -54,7 +57,7 @@ class TeamPage extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
               Text(
-                l10n.teamIntro,
+                bids ? l10n.bidsIntro : l10n.teamIntro,
                 style: AppTypography.body(),
               ),
               Padding(
@@ -70,7 +73,7 @@ class TeamPage extends ConsumerWidget {
                   style: AppTypography.body(color: AppColors.textMuted),
                 ),
               for (final target in rows) ...[
-                _TargetRow(target: target),
+                _TargetRow(target: target, bids: bids),
                 const SizedBox(height: 8),
               ],
             ],
@@ -82,15 +85,19 @@ class TeamPage extends ConsumerWidget {
 }
 
 class _TargetRow extends StatelessWidget {
-  const _TargetRow({required this.target});
+  const _TargetRow({required this.target, required this.bids});
 
   final TeamTarget target;
+  final bool bids;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: AppRadius.brMd,
-      onTap: () => context.push(RouteNames.spaceTeamDetail, extra: target),
+      onTap: () => context.push(
+        bids ? RouteNames.spaceBidDetail : RouteNames.spaceTeamDetail,
+        extra: target,
+      ),
       child: Container(
         constraints: const BoxConstraints(minHeight: 60),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

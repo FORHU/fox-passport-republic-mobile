@@ -7414,6 +7414,84 @@ abstract class AppLocalizations {
   /// **'Team'**
   String get teamTitle;
 
+  /// No description provided for @bidsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get bidsTitle;
+
+  /// No description provided for @bidsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxers who applied to supply your events. Accepting one adds them to the event.'**
+  String get bidsIntro;
+
+  /// No description provided for @bidsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No applications yet'**
+  String get bidsEmpty;
+
+  /// No description provided for @bidsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When a Foxer offers a service or gear for this event, it shows here.'**
+  String get bidsEmptyBody;
+
+  /// No description provided for @bidFor.
+  ///
+  /// In en, this message translates to:
+  /// **'For: {slot}'**
+  String bidFor(String slot);
+
+  /// No description provided for @bidAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get bidAccept;
+
+  /// No description provided for @bidReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get bidReject;
+
+  /// No description provided for @bidAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted. They are on the event.'**
+  String get bidAccepted;
+
+  /// No description provided for @bidRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined.'**
+  String get bidRejected;
+
+  /// No description provided for @bidActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not answer. Try again.'**
+  String get bidActionFailed;
+
+  /// No description provided for @bidStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get bidStatusAccepted;
+
+  /// No description provided for @bidStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get bidStatusRejected;
+
+  /// No description provided for @bidStatusWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get bidStatusWithdrawn;
+
   /// No description provided for @teamIntro.
   ///
   /// In en, this message translates to:

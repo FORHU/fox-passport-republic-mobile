@@ -4112,6 +4112,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamTitle => 'Team';
 
   @override
+  String get bidsTitle => 'Applications';
+
+  @override
+  String get bidsIntro =>
+      'Foxers who applied to supply your events. Accepting one adds them to the event.';
+
+  @override
+  String get bidsEmpty => 'No applications yet';
+
+  @override
+  String get bidsEmptyBody =>
+      'When a Foxer offers a service or gear for this event, it shows here.';
+
+  @override
+  String bidFor(String slot) {
+    return 'For: $slot';
+  }
+
+  @override
+  String get bidAccept => 'Accept';
+
+  @override
+  String get bidReject => 'Decline';
+
+  @override
+  String get bidAccepted => 'Accepted. They are on the event.';
+
+  @override
+  String get bidRejected => 'Declined.';
+
+  @override
+  String get bidActionFailed => 'Could not answer. Try again.';
+
+  @override
+  String get bidStatusAccepted => 'Accepted';
+
+  @override
+  String get bidStatusRejected => 'Declined';
+
+  @override
+  String get bidStatusWithdrawn => 'Withdrawn';
+
+  @override
   String get teamIntro =>
       'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.';
 

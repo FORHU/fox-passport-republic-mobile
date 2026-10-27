@@ -141,6 +141,11 @@ class RouteNames {
   static const String spaceTeamEvents = '/space/team/events';
   static const String spaceTeamDetail = '/space/team/detail';
 
+  /// The events that can have bids, and the bids on one. The second takes the
+  /// event as `extra`.
+  static const String spaceBidEvents = '/space/event/bids';
+  static const String spaceBidDetail = '/space/event/bids/detail';
+
   static const String spaceEventStudio = '/space/event/studio';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';
