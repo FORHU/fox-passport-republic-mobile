@@ -27,6 +27,7 @@ import 'package:flutter_template/features/onboarding/presentation/pages/onboardi
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
@@ -236,6 +237,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.profile,
         builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: RouteNames.people,
+        builder: (context, state) => const PeoplePage(),
       ),
       GoRoute(
         path: RouteNames.profileEdit,

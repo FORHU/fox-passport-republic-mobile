@@ -2638,6 +2638,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMessage => 'Message';
 
   @override
+  String get peopleTitle => 'People';
+
+  @override
+  String get peopleFollowers => 'Followers';
+
+  @override
+  String get peopleFollowing => 'Following';
+
+  @override
+  String get peopleRequests => 'Requests';
+
+  @override
+  String get peopleEmptyFollowers => 'No followers yet.';
+
+  @override
+  String get peopleEmptyFollowing => 'You are not following anyone yet.';
+
+  @override
+  String get peopleEmptyRequests => 'No follow requests.';
+
+  @override
+  String get peopleLoadFailed => 'Could not load this list.';
+
+  @override
+  String get peopleAccept => 'Accept';
+
+  @override
+  String get peopleDecline => 'Decline';
+
+  @override
+  String get peopleAnswerFailed => 'Could not answer that request. Try again.';
+
+  @override
+  String get profilePeople => 'Followers, following and requests';
+
+  @override
+  String get followAction => 'Follow';
+
+  @override
+  String get followRequested => 'Requested';
+
+  @override
+  String get followFollowing => 'Following';
+
+  @override
+  String followFollowers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count followers',
+      one: '1 follower',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followRequestSent => 'Follow request sent.';
+
+  @override
+  String get followFailed => 'Could not update your follow. Try again.';
+
+  @override
   String get foxerOffers => 'What they offer';
 
   @override

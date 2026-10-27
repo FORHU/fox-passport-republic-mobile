@@ -4786,6 +4786,114 @@ abstract class AppLocalizations {
   /// **'Message'**
   String get foxerMessage;
 
+  /// No description provided for @peopleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get peopleTitle;
+
+  /// No description provided for @peopleFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get peopleFollowers;
+
+  /// No description provided for @peopleFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get peopleFollowing;
+
+  /// No description provided for @peopleRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get peopleRequests;
+
+  /// No description provided for @peopleEmptyFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'No followers yet.'**
+  String get peopleEmptyFollowers;
+
+  /// No description provided for @peopleEmptyFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not following anyone yet.'**
+  String get peopleEmptyFollowing;
+
+  /// No description provided for @peopleEmptyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No follow requests.'**
+  String get peopleEmptyRequests;
+
+  /// No description provided for @peopleLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this list.'**
+  String get peopleLoadFailed;
+
+  /// No description provided for @peopleAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get peopleAccept;
+
+  /// No description provided for @peopleDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get peopleDecline;
+
+  /// No description provided for @peopleAnswerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not answer that request. Try again.'**
+  String get peopleAnswerFailed;
+
+  /// No description provided for @profilePeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers, following and requests'**
+  String get profilePeople;
+
+  /// No description provided for @followAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get followAction;
+
+  /// No description provided for @followRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get followRequested;
+
+  /// No description provided for @followFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get followFollowing;
+
+  /// No description provided for @followFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 follower} other{{count} followers}}'**
+  String followFollowers(int count);
+
+  /// No description provided for @followRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow request sent.'**
+  String get followRequestSent;
+
+  /// No description provided for @followFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update your follow. Try again.'**
+  String get followFailed;
+
   /// No description provided for @foxerOffers.
   ///
   /// In en, this message translates to:

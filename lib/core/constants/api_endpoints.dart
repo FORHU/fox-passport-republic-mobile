@@ -58,6 +58,17 @@ class ApiEndpoints {
   static const String eventRecommendations = '/event-templates/recommendations';
   static String eventBrowseById(String id) => '/event-templates/browse/$id';
 
+  // ── Following people
+  static const String follows = '/follows';
+  static String followTarget(String id) => '/follows/$id';
+  static const String followRequests = '/follows/requests';
+  static String followAccept(String id) => '/follows/$id/accept';
+  static String followDecline(String id) => '/follows/$id/decline';
+  static String followers(String id) => '/follows/$id/followers';
+  static String following(String id) => '/follows/$id/following';
+  static String followStatus(String id) => '/follows/$id/status';
+  static String followCounts(String id) => '/follows/$id/counts';
+
   // ── Event waitlist (keyed by the event template) ────────────────────────
   static const String waitlist = '/waitlist';
   static String waitlistEntry(String id) => '/waitlist/$id';

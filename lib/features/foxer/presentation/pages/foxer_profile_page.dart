@@ -11,6 +11,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/shared/foxers/foxer_profile.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
@@ -192,6 +193,11 @@ class _LoadedState extends ConsumerState<_Loaded> {
             ),
           ],
         ),
+        // A sample row is not a real account, so there is no one to follow.
+        if (!profile.isSample) ...[
+          const SizedBox(height: 12),
+          FollowButton(userId: profile.id),
+        ],
         if (profile.isSample) ...[
           const SizedBox(height: 8),
           Text(
