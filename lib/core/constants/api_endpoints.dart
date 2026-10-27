@@ -89,6 +89,16 @@ class ApiEndpoints {
       '/venues/${Uri.encodeComponent(id)}/appointments';
   static String eventTeam(String id) =>
       '/events/${Uri.encodeComponent(id)}/appointments';
+
+  // Bids on an event: service and gear applications, answered by the host.
+  static String serviceBidsForEvent(String eventId) =>
+      '/bids/service/event/${Uri.encodeComponent(eventId)}';
+  static String assetBidsForEvent(String eventId) =>
+      '/bids/asset/event/${Uri.encodeComponent(eventId)}';
+  static String bidAccept(String id, {required bool isService}) =>
+      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/accept';
+  static String bidReject(String id, {required bool isService}) =>
+      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/reject';
   static const String venueAffiliationApply = '/venue-affiliations/apply';
   static const String venueAffiliationInvite = '/venue-affiliations/invite';
   static String venueAffiliationApprove(String id) =>
@@ -164,16 +174,6 @@ class ApiEndpoints {
   static const String feedSaved = '/feed/saved';
   static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
-
-  // Bids on an event: service and gear applications, answered by the host.
-  static String serviceBidsForEvent(String eventId) =>
-      '/bids/service/event/${Uri.encodeComponent(eventId)}';
-  static String assetBidsForEvent(String eventId) =>
-      '/bids/asset/event/${Uri.encodeComponent(eventId)}';
-  static String bidAccept(String id, {required bool isService}) =>
-      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/accept';
-  static String bidReject(String id, {required bool isService}) =>
-      '/bids/${isService ? 'service' : 'asset'}/${Uri.encodeComponent(id)}/reject';
 
   // ── Reviews ─────────────────────────────────────────────────────────────
   static String reviewsOfListing(String id) => '/reviews/listing/$id';
