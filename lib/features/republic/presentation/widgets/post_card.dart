@@ -44,7 +44,7 @@ class AuthorAvatar extends StatelessWidget {
         height: size,
         child: author.imageUrl == null
             ? ColoredBox(
-                color: AppColors.surface,
+                color: AppColors.surfaceRaised,
                 child: Center(
                   child: Text(
                     name.characters.first.toUpperCase(),
@@ -260,30 +260,18 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               Expanded(
-                child: TextButton.icon(
-                  onPressed: onComments,
-                  icon: const Icon(
-                    Icons.chat_bubble_outline_rounded,
-                    color: AppColors.textMuted,
-                  ),
-                  label: Text(
-                    l10n.republicComments,
-                    style: AppTypography.body(color: AppColors.textMuted),
-                  ),
+                child: _ActionButton(
+                  icon: Icons.chat_bubble_outline_rounded,
+                  label: l10n.republicComments,
+                  onTap: onComments,
                 ),
               ),
               if (widget.onShare != null)
                 Expanded(
-                  child: TextButton.icon(
-                    onPressed: widget.onShare,
-                    icon: const Icon(
-                      Icons.share_outlined,
-                      color: AppColors.textMuted,
-                    ),
-                    label: Text(
-                      l10n.republicShare,
-                      style: AppTypography.body(color: AppColors.textMuted),
-                    ),
+                  child: _ActionButton(
+                    icon: Icons.share_outlined,
+                    label: l10n.republicShare,
+                    onTap: widget.onShare!,
                   ),
                 ),
             ],
@@ -337,6 +325,45 @@ class _Body extends StatelessWidget {
   }
 }
 
+/// Comments and Share: an icon and one line of text. The label shrinks to
+/// fit rather than wrapping, so three of them share a phone's width.
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: AppColors.textMuted),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                maxLines: 1,
+                style: AppTypography.body(color: AppColors.textMuted),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Like: a tap likes or takes the reaction back, a long press opens the six
 /// reactions. Once reacted it shows that reaction's emoji and name.
 class _LikeButton extends StatelessWidget {
@@ -366,21 +393,24 @@ class _LikeButton extends StatelessWidget {
               },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (reaction != null)
-                Text(reaction!.emoji, style: const TextStyle(fontSize: 18))
-              else
-                Icon(Icons.favorite_border_rounded, color: color),
-              const SizedBox(width: 8),
-              Text(
-                reaction == null
-                    ? l10n.republicLike
-                    : reactionLabel(l10n, reaction!),
-                style: AppTypography.body(color: color),
-              ),
-            ],
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (reaction != null)
+                  Text(reaction!.emoji, style: const TextStyle(fontSize: 18))
+                else
+                  Icon(Icons.favorite_border_rounded, color: color),
+                const SizedBox(width: 8),
+                Text(
+                  reaction == null
+                      ? l10n.republicLike
+                      : reactionLabel(l10n, reaction!),
+                  style: AppTypography.body(color: color),
+                ),
+              ],
+            ),
           ),
         ),
       ),

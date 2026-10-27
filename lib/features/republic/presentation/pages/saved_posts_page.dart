@@ -8,9 +8,11 @@ import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
 /// The posts this person saved, newest first. Unsaving one takes it off the
 /// list.
@@ -66,10 +68,26 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32),
-                  child: Text(
-                    l10n.republicSavedEmpty,
-                    textAlign: TextAlign.center,
-                    style: AppTypography.body(color: AppColors.textMuted),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.bookmark_border_rounded,
+                        size: 48,
+                        color: AppColors.textMuted,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.republicSavedEmpty,
+                        textAlign: TextAlign.center,
+                        style: AppTypography.body(color: AppColors.textMuted),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () => context.go(RouteNames.republic),
+                        child: Text(l10n.passportSavedAction),
+                      ),
+                    ],
                   ),
                 ),
               )
