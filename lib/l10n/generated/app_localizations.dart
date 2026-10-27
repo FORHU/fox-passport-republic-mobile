@@ -4618,6 +4618,102 @@ abstract class AppLocalizations {
   /// **'Cancel booking'**
   String get ticketCancel;
 
+  /// No description provided for @ticketRequestChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a change'**
+  String get ticketRequestChange;
+
+  /// No description provided for @editRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a change'**
+  String get editRequestTitle;
+
+  /// No description provided for @editRequestGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests'**
+  String get editRequestGuests;
+
+  /// No description provided for @editRequestDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the dates'**
+  String get editRequestDates;
+
+  /// No description provided for @editRequestReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Why the change? (optional)'**
+  String get editRequestReason;
+
+  /// No description provided for @editRequestSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get editRequestSend;
+
+  /// No description provided for @editRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent. The venue will answer soon.'**
+  String get editRequestSent;
+
+  /// No description provided for @editRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send that request. Try again.'**
+  String get editRequestFailed;
+
+  /// No description provided for @editRequestWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw request'**
+  String get editRequestWithdraw;
+
+  /// No description provided for @editRequestWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Request withdrawn.'**
+  String get editRequestWithdrawn;
+
+  /// No description provided for @editRequestPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the venue'**
+  String get editRequestPending;
+
+  /// No description provided for @editRequestApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved. Your booking has changed.'**
+  String get editRequestApplied;
+
+  /// No description provided for @editRequestPayOnWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved. Pay the difference on the web to confirm the change.'**
+  String get editRequestPayOnWeb;
+
+  /// No description provided for @editRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'The venue declined'**
+  String get editRequestDeclined;
+
+  /// No description provided for @editRequestWithdrawnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'You withdrew this request'**
+  String get editRequestWithdrawnStatus;
+
+  /// No description provided for @editRequestExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This request expired'**
+  String get editRequestExpired;
+
   /// No description provided for @cancelTitle.
   ///
   /// In en, this message translates to:
