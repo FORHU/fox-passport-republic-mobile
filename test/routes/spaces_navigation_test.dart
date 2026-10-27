@@ -412,8 +412,11 @@ void main() {
     await boot(tester, roles: const ['venueFoxer'], savedSpace: 'venue');
     expect(where(), RouteNames.spaceVenue);
 
-    // The button on the page names the space they are in.
-    await tester.tap(find.byIcon(Icons.expand_more_rounded));
+    // The top bar has no switcher; it is a row in More.
+    expect(find.byIcon(Icons.expand_more_rounded), findsNothing);
+    await tester.tap(find.text('More'));
+    await settle(tester);
+    await tester.tap(find.text('Switch space'));
     await settle(tester);
     expect(find.text('WORKING AS'), findsOneWidget);
     await tester.tap(find.text('Citizen'));

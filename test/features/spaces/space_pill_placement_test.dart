@@ -58,27 +58,16 @@ void main() {
   }
 
   group('the space pill', () {
-    testWidgets('leads the top bar of a tab for someone with two roles', (
+    testWidgets('is not in the top bar of a space, even with two roles', (
       tester,
     ) async {
       await pump(tester, roles: ['venueFoxer']);
-
-      expect(find.byType(SpaceSwitchButton), findsOneWidget);
-      final pill = tester.getTopLeft(find.byType(SpaceSwitchButton));
-      final title = tester.getTopLeft(find.text('Overview'));
-      // At the left of the bar, before the title.
-      expect(pill.dx, lessThan(title.dx));
-      expect(pill.dx, lessThan(40));
-    });
-
-    testWidgets('is not there for someone with a single role', (tester) async {
-      await pump(tester, roles: const []);
 
       expect(find.byType(SpaceSwitchButton), findsNothing);
       expect(find.text('Overview'), findsOneWidget);
     });
 
-    testWidgets('gives way to the back button on a page opened over a tab', (
+    testWidgets('is not in the top bar of a page opened over a tab', (
       tester,
     ) async {
       final navigator = await pump(tester, roles: ['venueFoxer']);
@@ -93,13 +82,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(BackButton), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.widgetWithText(AppBar, 'Team'),
-          matching: find.byType(SpaceSwitchButton),
-        ),
-        findsNothing,
-      );
+      expect(find.byType(SpaceSwitchButton), findsNothing);
     });
   });
 }

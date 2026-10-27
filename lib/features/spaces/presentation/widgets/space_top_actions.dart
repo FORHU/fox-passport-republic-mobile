@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:flutter_template/features/spaces/data/active_space.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -41,10 +39,9 @@ class SpaceTopActions extends ConsumerWidget {
   }
 }
 
-/// The top bar of a space's screens. On a tab (not a page pushed over one) it
-/// leads with the space pill, for someone who holds more than one role; a
-/// pushed page keeps its back button.
-class SpaceAppBar extends ConsumerWidget implements PreferredSizeWidget {
+/// The top bar of a space's screens. Switching space is not here: it lives on
+/// the Passport and in More, so the bar carries only the title and the photo.
+class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SpaceAppBar({required this.title, super.key});
 
   final String title;
@@ -53,17 +50,8 @@ class SpaceAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final canSwitch = ref.watch(availableSpacesProvider).length >= 2;
-    final showPill = canSwitch && !Navigator.canPop(context);
+  Widget build(BuildContext context) {
     return AppBar(
-      leadingWidth: showPill ? 136 : null,
-      leading: showPill
-          ? const Align(
-              alignment: Alignment.centerLeft,
-              child: SpaceSwitchButton(padding: EdgeInsets.only(left: 12)),
-            )
-          : null,
       title: Text(title, style: AppTypography.display(size: 18)),
       actions: const [SpaceTopActions()],
     );
