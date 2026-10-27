@@ -4786,6 +4786,42 @@ abstract class AppLocalizations {
   /// **'Message'**
   String get foxerMessage;
 
+  /// No description provided for @followAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get followAction;
+
+  /// No description provided for @followRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get followRequested;
+
+  /// No description provided for @followFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get followFollowing;
+
+  /// No description provided for @followFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 follower} other{{count} followers}}'**
+  String followFollowers(int count);
+
+  /// No description provided for @followRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow request sent.'**
+  String get followRequestSent;
+
+  /// No description provided for @followFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update your follow. Try again.'**
+  String get followFailed;
+
   /// No description provided for @foxerOffers.
   ///
   /// In en, this message translates to:
