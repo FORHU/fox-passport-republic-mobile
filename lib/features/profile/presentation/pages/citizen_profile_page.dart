@@ -101,95 +101,104 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
     final async = ref.watch(citizenProfileProvider(widget.userId));
     final me = ref.watch(currentUserIdProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.canvas,
-        foregroundColor: AppColors.textPrimary,
-        actions: [
-          if (async.value case final profile?) ...[
-            IconButton(
-              tooltip: l10n.citizenShare,
-              icon: const Icon(Icons.ios_share_rounded),
-              onPressed: () => unawaited(_share(profile)),
-            ),
-            if (profile.id != me)
-              PopupMenuButton<void>(
-                itemBuilder: (_) => [
-                  PopupMenuItem<void>(
-                    onTap: () => unawaited(
-                      fileReport(
-                        context,
-                        ref,
-                        target: ReportTarget.user,
-                        id: profile.id,
-                        title: l10n.reportUserTitle,
-                      ),
-                    ),
-                    child: Text(l10n.foxerMenuReport),
-                  ),
-                  PopupMenuItem<void>(
-                    onTap: () => unawaited(_block(profile)),
-                    child: Text(l10n.foxerMenuBlock),
-                  ),
-                ],
-              ),
-          ],
-        ],
+    final media = MediaQuery.of(context);
+    return MediaQuery(
+      // A phone set to a very large font would still overflow the cards, so
+      // the text here grows only a little.
+      data: media.copyWith(
+        textScaler: media.textScaler.clamp(maxScaleFactor: 1.1),
       ),
-      body: async.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
-        error: (_, __) => AppStateView(
-          kind: AppStateKind.error,
-          icon: Icons.person_off_outlined,
-          title: l10n.citizenNotFound,
-          message: l10n.citizenNotFoundBody,
-          actionLabel: l10n.retry,
-          onAction: () => ref.invalidate(citizenProfileProvider(widget.userId)),
-        ),
-        data: (profile) => RefreshIndicator(
-          color: AppColors.accent,
-          onRefresh: () async {
-            ref
-              ..invalidate(citizenProfileProvider(widget.userId))
-              ..invalidate(citizenCountsProvider(profile.id));
-            try {
-              await ref.read(citizenProfileProvider(widget.userId).future);
-            } on Object {
-              // The page shows its own error state with a retry.
-            }
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-            children: [
-              _Hero(
-                profile: profile,
-                isMe: profile.id == me,
-                onMessage: widget.onMessage == null
-                    ? null
-                    : () => unawaited(_message(profile)),
+      child: Scaffold(
+        backgroundColor: AppColors.canvas,
+        appBar: AppBar(
+          backgroundColor: AppColors.canvas,
+          foregroundColor: AppColors.textPrimary,
+          actions: [
+            if (async.value case final profile?) ...[
+              IconButton(
+                tooltip: l10n.citizenShare,
+                icon: const Icon(Icons.ios_share_rounded),
+                onPressed: () => unawaited(_share(profile)),
               ),
-              const SizedBox(height: 12),
-              _Stats(profile: profile),
-              const SizedBox(height: 16),
-              _TabBar(
-                profile: profile,
-                selected: _tab,
-                onSelect: (t) => setState(() => _tab = t),
-              ),
-              const SizedBox(height: 12),
-              switch (_tab) {
-                _Tab.stamps => _StampsTab(stamps: profile.stamps),
-                _Tab.badges => _BadgesTab(badges: profile.badges),
-                _Tab.activity =>
-                  widget.activityBuilder?.call(context, profile) ??
-                      _ActivityTab(profile: profile),
-                _Tab.offerings => _OfferingsTab(items: profile.offerings),
-              },
+              if (profile.id != me)
+                PopupMenuButton<void>(
+                  itemBuilder: (_) => [
+                    PopupMenuItem<void>(
+                      onTap: () => unawaited(
+                        fileReport(
+                          context,
+                          ref,
+                          target: ReportTarget.user,
+                          id: profile.id,
+                          title: l10n.reportUserTitle,
+                        ),
+                      ),
+                      child: Text(l10n.foxerMenuReport),
+                    ),
+                    PopupMenuItem<void>(
+                      onTap: () => unawaited(_block(profile)),
+                      child: Text(l10n.foxerMenuBlock),
+                    ),
+                  ],
+                ),
             ],
+          ],
+        ),
+        body: async.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.accent),
+          ),
+          error: (_, __) => AppStateView(
+            kind: AppStateKind.error,
+            icon: Icons.person_off_outlined,
+            title: l10n.citizenNotFound,
+            message: l10n.citizenNotFoundBody,
+            actionLabel: l10n.retry,
+            onAction: () =>
+                ref.invalidate(citizenProfileProvider(widget.userId)),
+          ),
+          data: (profile) => RefreshIndicator(
+            color: AppColors.accent,
+            onRefresh: () async {
+              ref
+                ..invalidate(citizenProfileProvider(widget.userId))
+                ..invalidate(citizenCountsProvider(profile.id));
+              try {
+                await ref.read(citizenProfileProvider(widget.userId).future);
+              } on Object {
+                // The page shows its own error state with a retry.
+              }
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+              children: [
+                _Hero(
+                  profile: profile,
+                  isMe: profile.id == me,
+                  onMessage: widget.onMessage == null
+                      ? null
+                      : () => unawaited(_message(profile)),
+                ),
+                const SizedBox(height: 12),
+                _Stats(profile: profile),
+                const SizedBox(height: 16),
+                _TabBar(
+                  profile: profile,
+                  selected: _tab,
+                  onSelect: (t) => setState(() => _tab = t),
+                ),
+                const SizedBox(height: 12),
+                switch (_tab) {
+                  _Tab.stamps => _StampsTab(stamps: profile.stamps),
+                  _Tab.badges => _BadgesTab(badges: profile.badges),
+                  _Tab.activity =>
+                    widget.activityBuilder?.call(context, profile) ??
+                        _ActivityTab(profile: profile),
+                  _Tab.offerings => _OfferingsTab(items: profile.offerings),
+                },
+              ],
+            ),
           ),
         ),
       ),
@@ -197,12 +206,19 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
   }
 }
 
+extension _Fit on BuildContext {
+  /// 1.0 on a 360 dp phone, smaller on a narrower one and a little larger on
+  /// a wide one, so the profile fits whatever screen it is on.
+  double get fit => (MediaQuery.sizeOf(this).width / 360).clamp(0.82, 1.15);
+}
+
 /// Captions and chips: the mono label at a smaller size, with less spacing
-/// between letters than the default, so they take less room.
-TextStyle _tiny({Color color = AppColors.textMuted}) =>
+/// between letters than the default, so they take less room. Follows the
+/// screen width.
+TextStyle _tiny(BuildContext context, {Color color = AppColors.textMuted}) =>
     AppTypography.label(color: color).copyWith(
-      fontSize: 9.5,
-      letterSpacing: 0.5,
+      fontSize: 9.5 * context.fit,
+      letterSpacing: 0.5 * context.fit,
     );
 
 Color _accentFor(CitizenProfile p) =>
@@ -246,8 +262,8 @@ class _Hero extends ConsumerWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: 64,
-                    height: 64,
+                    width: 64 * context.fit,
+                    height: 64 * context.fit,
                     padding: const EdgeInsets.all(2.5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
@@ -269,7 +285,7 @@ class _Hero extends ConsumerWidget {
                                       : profile.name.characters.first
                                           .toUpperCase(),
                                   style: AppTypography.display(
-                                    size: 24,
+                                    size: 24 * context.fit,
                                     color: accent,
                                   ),
                                 ),
@@ -277,8 +293,8 @@ class _Hero extends ConsumerWidget {
                             )
                           : NetworkImageBox(
                               url: profile.imageUrl!,
-                              width: 59,
-                              height: 59,
+                              width: 59 * context.fit,
+                              height: 59 * context.fit,
                             ),
                     ),
                   ),
@@ -304,6 +320,7 @@ class _Hero extends ConsumerWidget {
                       child: Text(
                         l10n.citizenLevelChip(profile.level),
                         style: _tiny(
+                          context,
                           color: profile.isPartner
                               ? AppColors.onAccent
                               : AppColors.accent,
@@ -325,12 +342,12 @@ class _Hero extends ConsumerWidget {
                       children: [
                         Text(
                           profile.name,
-                          style: AppTypography.display(size: 18),
+                          style: AppTypography.display(size: 18 * context.fit),
                         ),
                         if (profile.verified)
-                          const Icon(
+                          Icon(
                             Icons.verified_rounded,
-                            size: 16,
+                            size: 16 * context.fit,
                             color: AppColors.accent,
                           ),
                       ],
@@ -350,7 +367,7 @@ class _Hero extends ConsumerWidget {
                         child: Text(
                           '@${profile.username}',
                           style: AppTypography.body(
-                            size: 12,
+                            size: 12 * context.fit,
                             weight: FontWeight.w600,
                           ),
                         ),
@@ -458,7 +475,7 @@ class _Hero extends ConsumerWidget {
               Expanded(
                 child: Text(
                   l10n.citizenProgression,
-                  style: _tiny(),
+                  style: _tiny(context),
                 ),
               ),
               Text(
@@ -467,7 +484,7 @@ class _Hero extends ConsumerWidget {
                   profile.nextLevelXp,
                   (profile.progress * 100).round(),
                 ),
-                style: _tiny(color: AppColors.accent),
+                style: _tiny(context, color: AppColors.accent),
               ),
             ],
           ),
@@ -497,9 +514,9 @@ class _Meta extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.textMuted),
+          Icon(icon, size: 14 * context.fit, color: AppColors.textMuted),
           const SizedBox(width: 4),
-          Text(text, style: AppTypography.body(size: 11)),
+          Text(text, style: AppTypography.body(size: 11 * context.fit)),
         ],
       );
 }
@@ -516,9 +533,15 @@ class _Count extends StatelessWidget {
           children: [
             TextSpan(
               text: '$value ',
-              style: AppTypography.body(size: 12, weight: FontWeight.w800),
+              style: AppTypography.body(
+                size: 12 * context.fit,
+                weight: FontWeight.w800,
+              ),
             ),
-            TextSpan(text: label, style: AppTypography.body(size: 12)),
+            TextSpan(
+              text: label,
+              style: AppTypography.body(size: 12 * context.fit),
+            ),
           ],
         ),
       );
@@ -549,10 +572,10 @@ class _Chip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 11, color: color),
+              Icon(icon, size: 11 * context.fit, color: color),
               const SizedBox(width: 3),
             ],
-            Text(label, style: _tiny(color: color)),
+            Text(label, style: _tiny(context, color: color)),
           ],
         ),
       );
@@ -577,15 +600,18 @@ class _Stats extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Icon(icon, size: 15, color: color),
+                Icon(icon, size: 15 * context.fit, color: color),
                 const SizedBox(height: 2),
-                Text(value, style: AppTypography.display()),
+                Text(
+                  value,
+                  style: AppTypography.display(size: 16 * context.fit),
+                ),
                 Text(
                   label,
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: _tiny(),
+                  style: _tiny(context),
                 ),
               ],
             ),
@@ -674,7 +700,7 @@ class _TabBar extends StatelessWidget {
                   child: Text(
                     label,
                     style: AppTypography.body(
-                      size: 12,
+                      size: 12 * context.fit,
                       weight: FontWeight.w700,
                       color: tab == selected
                           ? AppColors.accent
@@ -1024,11 +1050,11 @@ class _ActivityTab extends StatelessWidget {
                         color: AppColors.textMuted,
                       ),
                       const SizedBox(width: 4),
-                      Text('${p.likes}', style: _tiny()),
+                      Text('${p.likes}', style: _tiny(context)),
                       const Spacer(),
                       Text(
                         l10n.citizenComments(p.comments),
-                        style: _tiny(),
+                        style: _tiny(context),
                       ),
                     ],
                   ),
