@@ -7006,6 +7006,12 @@ abstract class AppLocalizations {
   /// **'Add a bio'**
   String get citizenAddBio;
 
+  /// No description provided for @citizenLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open that link.'**
+  String get citizenLinkFailed;
+
   /// No description provided for @citizenLoadMore.
   ///
   /// In en, this message translates to:
@@ -7647,6 +7653,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bio'**
   String get profileBioLabel;
+
+  /// No description provided for @profileSocialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social links'**
+  String get profileSocialTitle;
+
+  /// No description provided for @profileSocialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on your profile. Paste a link or just your handle; leave one empty to remove it.'**
+  String get profileSocialHint;
 
   /// No description provided for @profilePrivateTitle.
   ///

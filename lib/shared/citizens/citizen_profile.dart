@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 
 String? _text(Object? v) =>
     v is String && v.trim().isNotEmpty ? v.trim() : null;
@@ -165,6 +166,7 @@ class CitizenProfile extends Equatable {
     required this.xp,
     this.username,
     this.bio,
+    this.socialLinks = const {},
     this.imageUrl,
     this.city,
     this.country,
@@ -219,6 +221,7 @@ class CitizenProfile extends Equatable {
       name: _text(json['name']) ?? '',
       username: _text(json['username']),
       bio: _text(json['bio']),
+      socialLinks: parseSocialLinks(json['socialLinks']),
       imageUrl: _text(json['imgId']),
       city: _text(json['city']),
       country: _text(json['country']),
@@ -253,6 +256,9 @@ class CitizenProfile extends Equatable {
 
   /// A few lines they wrote about themselves.
   final String? bio;
+
+  /// Their other accounts, by platform.
+  final Map<SocialPlatform, String> socialLinks;
   final String? imageUrl;
   final String? city;
   final String? country;
@@ -279,6 +285,7 @@ class CitizenProfile extends Equatable {
         xp: xp ?? this.xp,
         username: username,
         bio: bio,
+        socialLinks: socialLinks,
         imageUrl: imageUrl,
         city: city,
         country: country,

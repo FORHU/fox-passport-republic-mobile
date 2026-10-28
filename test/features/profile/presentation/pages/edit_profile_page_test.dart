@@ -13,6 +13,7 @@ import 'package:flutter_template/features/profile/domain/entities/profile_update
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
@@ -171,6 +172,55 @@ void main() {
 
     verify(
       () => repo.updateProfile(const ProfileUpdate(bio: 'Hi, I run gigs.')),
+    ).called(1);
+  });
+
+  testWidgets(
+      'social links are sent as the full set, and clearing one drops it', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          phone: '+639171234567',
+          socialLinks: {
+            SocialPlatform.instagram: 'https://instagram.com/ada',
+            SocialPlatform.tiktok: 'https://tiktok.com/@ada',
+          },
+        ),
+      ),
+    );
+    await _pump(tester, repo);
+
+    // What is stored fills the boxes.
+    expect(find.text('https://instagram.com/ada'), findsOneWidget);
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'YouTube'),
+      '@ada',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'TikTok'),
+      '',
+    );
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.updateProfile(
+        const ProfileUpdate(
+          socialLinks: {
+            'instagram': 'https://instagram.com/ada',
+            'youtube': '@ada',
+          },
+        ),
+      ),
     ).called(1);
   });
 

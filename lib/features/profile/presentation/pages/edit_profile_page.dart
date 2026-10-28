@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/widgets/app_input.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
@@ -34,6 +36,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _username = TextEditingController();
   final _phone = TextEditingController();
   final _bio = TextEditingController();
+  final Map<SocialPlatform, TextEditingController> _social = {
+    for (final p in SocialPlatform.values) p: TextEditingController(),
+  };
   bool _private = false;
   bool _saving = false;
   bool _uploading = false;
@@ -48,6 +53,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _username.text = profile?.username ?? user?.username ?? '';
     _phone.text = profile?.phone ?? '';
     _bio.text = profile?.bio ?? '';
+    for (final p in SocialPlatform.values) {
+      _social[p]!.text = profile?.socialLinks[p] ?? '';
+    }
     _private = profile?.isPrivate ?? false;
     _seeded = true;
   }
@@ -58,6 +66,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _username.dispose();
     _phone.dispose();
     _bio.dispose();
+    for (final c in _social.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -92,6 +103,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     final username = _username.text.trim();
     final phone = _phone.text.trim();
     final bio = _bio.text.trim();
+    final links = <String, String>{
+      for (final e in _social.entries)
+        if (e.value.text.trim().isNotEmpty) e.key.key: e.value.text.trim(),
+    };
+    final storedLinks = <String, String>{
+      for (final e in (profile?.socialLinks ?? const {}).entries)
+        e.key.key: e.value,
+    };
     final update = ProfileUpdate(
       name: name == (profile?.name ?? user?.name) ? null : name,
       username:
@@ -99,6 +118,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       phone: phone == (profile?.phone ?? '') ? null : phone,
       isPrivate: _private == (profile?.isPrivate ?? false) ? null : _private,
       bio: bio == (profile?.bio ?? '') ? null : bio,
+      socialLinks: mapEquals(links, storedLinks) ? null : links,
     );
     if (update.toJson().isEmpty) {
       router.pop();
@@ -208,6 +228,23 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               maxLength: 300,
             ),
             const SizedBox(height: 16),
+            const SizedBox(height: 4),
+            Text(
+              l10n.profileSocialTitle,
+              style: AppTypography.display(size: 15),
+            ),
+            const SizedBox(height: 2),
+            Text(l10n.profileSocialHint, style: AppTypography.body(size: 12)),
+            const SizedBox(height: 12),
+            for (final p in SocialPlatform.values) ...[
+              AppInput(
+                label: p.label,
+                controller: _social[p],
+                keyboardType: TextInputType.url,
+                prefixIcon: p.icon,
+              ),
+              const SizedBox(height: 12),
+            ],
             AppInput(
               label: l10n.profilePhoneLabel,
               controller: _phone,

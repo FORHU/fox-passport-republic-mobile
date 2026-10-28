@@ -7,6 +7,7 @@ import 'package:flutter_template/features/profile/presentation/pages/citizen_pro
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/follow/follow_repository.dart';
 import 'package:flutter_template/shared/follow/follow_status.dart';
 import 'package:flutter_template/shared/widgets/post_media.dart';
@@ -36,6 +37,13 @@ final _json = <String, dynamic>{
   'name': 'Rex Santos',
   'username': 'rex',
   'bio': 'I host live music nights in Manila.',
+  'socialLinks': {
+    'instagram': 'https://instagram.com/rex',
+    'website': 'https://rex.example.com/',
+    // Not an address we would show, and not a platform we know.
+    'tiktok': 'javascript:alert(1)',
+    'myspace': 'https://myspace.com/rex',
+  },
   'city': 'Manila',
   'country': 'Philippines',
   'roleType': ['eventFoxer'],
@@ -95,6 +103,11 @@ Future<void> _pump(
   Object? profile,
   MessageCitizen? onMessage,
 }) async {
+  // Tall enough for the whole profile, so every row is built.
+  tester.view
+    ..physicalSize = const Size(800, 1800)
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -131,6 +144,11 @@ void main() {
     expect(p.stamps.single.place, 'The Loft');
     expect(p.badges.single.rarity, 'rare');
     expect(p.postCount, 12);
+    // Only known platforms with an http(s) address are kept.
+    expect(p.socialLinks, {
+      SocialPlatform.instagram: 'https://instagram.com/rex',
+      SocialPlatform.website: 'https://rex.example.com/',
+    });
     expect(p.posts.single.mediaUrls, hasLength(3));
     expect(p.verified, isTrue);
     expect(p.specializations, ['live music']);
@@ -158,6 +176,10 @@ void main() {
     expect(find.text('400 / 800 XP (50%)'), findsNothing);
     expect(find.textContaining('XP'), findsNothing);
     expect(find.text('EVENT FOXER'), findsOneWidget);
+    // Their other accounts, as links under the bio.
+    expect(find.text('Instagram'), findsOneWidget);
+    expect(find.text('Website'), findsOneWidget);
+    expect(find.text('TikTok'), findsNothing);
     // The roles show; the categories they are tagged with do not.
     expect(find.text('live music'), findsNothing);
     expect(find.byIcon(Icons.verified_rounded), findsOneWidget);

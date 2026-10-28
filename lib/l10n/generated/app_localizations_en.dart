@@ -3875,6 +3875,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get citizenAddBio => 'Add a bio';
 
   @override
+  String get citizenLinkFailed => 'Could not open that link.';
+
+  @override
   String get citizenLoadMore => 'Load more';
 
   @override
@@ -4238,6 +4241,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileBioLabel => 'Bio';
+
+  @override
+  String get profileSocialTitle => 'Social links';
+
+  @override
+  String get profileSocialHint =>
+      'Shown on your profile. Paste a link or just your handle; leave one empty to remove it.';
 
   @override
   String get profilePrivateTitle => 'Private profile';

@@ -5,6 +5,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -131,6 +132,10 @@ class CitizenHero extends ConsumerWidget {
                 ),
               ),
             ),
+          ],
+          if (profile.socialLinks.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            CitizenSocialLinks(links: profile.socialLinks),
           ],
           const SizedBox(height: 14),
           Wrap(
