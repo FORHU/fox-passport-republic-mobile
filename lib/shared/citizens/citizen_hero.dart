@@ -150,19 +150,25 @@ class CitizenHero extends ConsumerWidget {
           ),
           if (counts != null) ...[
             const SizedBox(height: 10),
-            Wrap(
-              spacing: 16,
-              runSpacing: 4,
-              children: [
-                _Count(
-                  value: counts.followers,
-                  label: l10n.citizenFollowers,
-                ),
-                _Count(
-                  value: counts.following,
-                  label: l10n.citizenFollowing,
-                ),
-              ],
+            // On your own profile the counts open who follows you, who you
+            // follow and the requests waiting for you.
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: isMe ? () => context.push(RouteNames.people) : null,
+              child: Wrap(
+                spacing: 16,
+                runSpacing: 4,
+                children: [
+                  _Count(
+                    value: counts.followers,
+                    label: l10n.citizenFollowers,
+                  ),
+                  _Count(
+                    value: counts.following,
+                    label: l10n.citizenFollowing,
+                  ),
+                ],
+              ),
             ),
           ],
           if (profile.roles.isNotEmpty ||

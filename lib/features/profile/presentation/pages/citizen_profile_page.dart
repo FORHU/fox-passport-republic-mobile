@@ -38,7 +38,7 @@ class CitizenProfilePage extends ConsumerStatefulWidget {
     required this.userId,
     this.onMessage,
     this.activityBuilder,
-    this.ownerSection,
+    this.title,
     super.key,
   });
 
@@ -52,9 +52,9 @@ class CitizenProfilePage extends ConsumerStatefulWidget {
   final Widget Function(BuildContext context, CitizenProfile profile)?
       activityBuilder;
 
-  /// Shown under the profile card, and only on your own profile: your email,
-  /// followers, ID check and Sign out.
-  final Widget? ownerSection;
+  /// The top bar's title. Your own page says "Profile"; someone else's is
+  /// named by the card.
+  final String? title;
 
   @override
   ConsumerState<CitizenProfilePage> createState() => _CitizenProfilePageState();
@@ -99,10 +99,9 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
         appBar: AppBar(
           backgroundColor: AppColors.canvas,
           foregroundColor: AppColors.textPrimary,
-          // Your own page says what it is; someone else's is named by the card.
-          title: widget.ownerSection == null
+          title: widget.title == null
               ? null
-              : Text(l10n.profile, style: AppTypography.display(size: 18)),
+              : Text(widget.title!, style: AppTypography.display(size: 18)),
           actions: [
             if (async.value case final profile?) ...[
               IconButton(
@@ -138,7 +137,6 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
           userId: widget.userId,
           onMessage: widget.onMessage,
           activityBuilder: widget.activityBuilder,
-          ownerSection: widget.ownerSection,
         ),
       ),
     );
@@ -181,7 +179,6 @@ class CitizenProfileView extends ConsumerStatefulWidget {
     required this.userId,
     this.onMessage,
     this.activityBuilder,
-    this.ownerSection,
     this.extraTabs = const [],
     this.overrides,
     super.key,
@@ -191,7 +188,6 @@ class CitizenProfileView extends ConsumerStatefulWidget {
   final MessageCitizen? onMessage;
   final Widget Function(BuildContext context, CitizenProfile profile)?
       activityBuilder;
-  final Widget? ownerSection;
 
   /// Added after the usual tabs, on your own profile only.
   final List<CitizenExtraTab> extraTabs;
@@ -300,10 +296,6 @@ class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
                       ? null
                       : () => unawaited(_message(profile)),
                 ),
-                if (isMe && widget.ownerSection != null) ...[
-                  const SizedBox(height: 12),
-                  widget.ownerSection!,
-                ],
                 const SizedBox(height: 12),
                 CitizenStats(
                   profile: profile,

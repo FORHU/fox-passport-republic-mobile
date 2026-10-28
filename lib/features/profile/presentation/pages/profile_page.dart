@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
-import 'package:flutter_template/features/profile/presentation/widgets/profile_account_section.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -38,7 +37,7 @@ class ProfilePage extends ConsumerWidget {
     return CitizenProfilePage(
       userId: me,
       activityBuilder: activityBuilder,
-      ownerSection: const ProfileAccountSection(),
+      title: context.l10n.profile,
     );
   }
 }

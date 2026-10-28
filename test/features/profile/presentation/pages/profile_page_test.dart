@@ -84,7 +84,6 @@ void main() {
       );
 
       expect(find.text('Ada Lovelace'), findsOneWidget);
-      expect(find.text('ada@example.com'), findsOneWidget);
       expect(
         find.text('Building great things with Flutter.'),
         findsOneWidget,

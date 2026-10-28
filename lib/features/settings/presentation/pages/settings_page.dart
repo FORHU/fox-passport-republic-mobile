@@ -72,6 +72,18 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => context.push(RouteNames.profileEdit),
           ),
           const SizedBox(height: 8),
+          _Row(
+            icon: Icons.people_outline_rounded,
+            title: l10n.profilePeople,
+            onTap: () => context.push(RouteNames.people),
+          ),
+          const SizedBox(height: 8),
+          _Row(
+            icon: Icons.verified_user_outlined,
+            title: l10n.profileVerify,
+            onTap: () => context.push(RouteNames.identity),
+          ),
+          const SizedBox(height: 8),
           // Only for someone who holds a role to switch to.
           if (spaces.length > 1) ...[
             _Row(

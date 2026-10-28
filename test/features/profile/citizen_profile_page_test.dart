@@ -11,6 +11,7 @@ import 'package:flutter_template/shared/follow/follow_repository.dart';
 import 'package:flutter_template/shared/follow/follow_status.dart';
 import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
@@ -258,5 +259,61 @@ void main() {
     await _pump(tester, profile: {..._json, 'bio': null});
 
     expect(find.text('Add a bio'), findsNothing);
+  });
+
+  testWidgets('your follower counts open who follows you; theirs do not', (
+    tester,
+  ) async {
+    Future<void> open(String id) async {
+      // A fresh router each time, so each starts on the profile.
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const CitizenProfilePage(userId: 'x'),
+          ),
+          GoRoute(
+            path: '/profile/people',
+            builder: (_, __) => const Scaffold(body: Text('PEOPLE SCREEN')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          // Its own container, so the first profile is not kept.
+          key: UniqueKey(),
+          overrides: [
+            authControllerProvider.overrideWith(_Session.new),
+            followRepositoryProvider.overrideWithValue(_Follows()),
+            citizenProfileProvider.overrideWith(
+              (ref, _) async => CitizenProfile.tryParse({..._json, 'id': id})!,
+            ),
+            citizenCountsProvider.overrideWith(
+              (ref, _) async =>
+                  const CitizenFollowCounts(followers: 9, following: 4),
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    // Someone else's counts are just numbers.
+    await open('u1');
+    await tester.tap(find.textContaining('Followers'));
+    await tester.pumpAndSettle();
+    expect(find.text('PEOPLE SCREEN'), findsNothing);
+
+    // Yours open the people page.
+    await open('me');
+    await tester.tap(find.textContaining('Followers'));
+    await tester.pumpAndSettle();
+    expect(find.text('PEOPLE SCREEN'), findsOneWidget);
   });
 }

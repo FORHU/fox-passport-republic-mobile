@@ -31,7 +31,6 @@ import 'package:flutter_template/features/profile/presentation/pages/edit_profil
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
-import 'package:flutter_template/features/profile/presentation/widgets/profile_account_section.dart';
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
@@ -477,7 +476,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         userId: me,
                         activityBuilder: (context, profile) =>
                             ProfilePosts(authorId: profile.id),
-                        ownerSection: const ProfileAccountSection(),
                         overrides: summary == null
                             ? null
                             : CitizenOverrides(
