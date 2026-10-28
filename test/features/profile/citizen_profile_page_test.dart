@@ -34,6 +34,7 @@ final _json = <String, dynamic>{
   'id': 'u1',
   'name': 'Rex Santos',
   'username': 'rex',
+  'bio': 'I host live music nights in Manila.',
   'city': 'Manila',
   'country': 'Philippines',
   'roleType': ['eventFoxer'],
@@ -235,5 +236,27 @@ void main() {
 
     expect(find.text('Launch night · Mar 2, 2026'), findsOneWidget);
     expect(find.text('+50 XP'), findsNothing);
+  });
+
+  testWidgets('shows their bio, and invites you to add your own', (
+    tester,
+  ) async {
+    await _pump(tester, profile: _json);
+    expect(find.text('I host live music nights in Manila.'), findsOneWidget);
+    expect(find.text('Add a bio'), findsNothing);
+  });
+
+  testWidgets('your own profile without a bio offers Add a bio', (
+    tester,
+  ) async {
+    await _pump(tester, profile: {..._json, 'id': 'me', 'bio': null});
+
+    expect(find.text('Add a bio'), findsOneWidget);
+  });
+
+  testWidgets("someone else's empty bio shows nothing", (tester) async {
+    await _pump(tester, profile: {..._json, 'bio': null});
+
+    expect(find.text('Add a bio'), findsNothing);
   });
 }

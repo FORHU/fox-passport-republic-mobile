@@ -380,6 +380,23 @@ class _Hero extends ConsumerWidget {
               ),
             ],
           ),
+          if (profile.bio != null) ...[
+            const SizedBox(height: 12),
+            Text(profile.bio!, style: AppTypography.body(size: 13)),
+          ] else if (isMe) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => context.push(RouteNames.profileEdit),
+              child: Text(
+                l10n.citizenAddBio,
+                style: AppTypography.body(
+                  size: 12,
+                  color: AppColors.accent,
+                  weight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 14),
           Wrap(
             spacing: 14,

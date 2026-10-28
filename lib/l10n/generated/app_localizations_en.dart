@@ -3869,6 +3869,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get citizenNoPosts => 'No Republic posts yet';
 
   @override
+  String get citizenAddBio => 'Add a bio';
+
+  @override
   String get citizenLoadMore => 'Load more';
 
   @override
@@ -4229,6 +4232,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhoneLabel => 'Phone number';
+
+  @override
+  String get profileBioLabel => 'Bio';
 
   @override
   String get profilePrivateTitle => 'Private profile';

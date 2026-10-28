@@ -33,6 +33,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _name = TextEditingController();
   final _username = TextEditingController();
   final _phone = TextEditingController();
+  final _bio = TextEditingController();
   bool _private = false;
   bool _saving = false;
   bool _uploading = false;
@@ -46,6 +47,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _name.text = profile?.name ?? user?.name ?? '';
     _username.text = profile?.username ?? user?.username ?? '';
     _phone.text = profile?.phone ?? '';
+    _bio.text = profile?.bio ?? '';
     _private = profile?.isPrivate ?? false;
     _seeded = true;
   }
@@ -55,6 +57,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _name.dispose();
     _username.dispose();
     _phone.dispose();
+    _bio.dispose();
     super.dispose();
   }
 
@@ -88,12 +91,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     final name = _name.text.trim();
     final username = _username.text.trim();
     final phone = _phone.text.trim();
+    final bio = _bio.text.trim();
     final update = ProfileUpdate(
       name: name == (profile?.name ?? user?.name) ? null : name,
       username:
           username == (profile?.username ?? user?.username) ? null : username,
       phone: phone == (profile?.phone ?? '') ? null : phone,
       isPrivate: _private == (profile?.isPrivate ?? false) ? null : _private,
+      bio: bio == (profile?.bio ?? '') ? null : bio,
     );
     if (update.toJson().isEmpty) {
       router.pop();
@@ -192,6 +197,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               controller: _username,
               prefixIcon: Icons.alternate_email_rounded,
               validator: Validators.signupUsername,
+            ),
+            const SizedBox(height: 16),
+            AppInput(
+              label: l10n.profileBioLabel,
+              controller: _bio,
+              keyboardType: TextInputType.multiline,
+              prefixIcon: Icons.notes_rounded,
+              maxLines: 4,
+              maxLength: 300,
             ),
             const SizedBox(height: 16),
             AppInput(

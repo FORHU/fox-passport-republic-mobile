@@ -9,6 +9,7 @@ class ProfileUpdate extends Equatable {
     this.phone,
     this.imageUrl,
     this.isPrivate,
+    this.bio,
   });
 
   final String? name;
@@ -19,6 +20,9 @@ class ProfileUpdate extends Equatable {
   final String? imageUrl;
   final bool? isPrivate;
 
+  /// A few lines about them. An empty one clears it.
+  final String? bio;
+
   /// The request body.
   Map<String, Object> toJson() => {
         if (name != null) 'name': name!,
@@ -26,8 +30,9 @@ class ProfileUpdate extends Equatable {
         if (phone != null) 'phone': phone!,
         if (imageUrl != null) 'profileImage': imageUrl!,
         if (isPrivate != null) 'isPrivate': isPrivate!,
+        if (bio != null) 'bio': bio!,
       };
 
   @override
-  List<Object?> get props => [name, username, phone, imageUrl, isPrivate];
+  List<Object?> get props => [name, username, phone, imageUrl, isPrivate, bio];
 }

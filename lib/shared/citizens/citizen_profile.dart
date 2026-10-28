@@ -164,6 +164,7 @@ class CitizenProfile extends Equatable {
     required this.level,
     required this.xp,
     this.username,
+    this.bio,
     this.imageUrl,
     this.city,
     this.country,
@@ -217,6 +218,7 @@ class CitizenProfile extends Equatable {
       id: '${json['id']}',
       name: _text(json['name']) ?? '',
       username: _text(json['username']),
+      bio: _text(json['bio']),
       imageUrl: _text(json['imgId']),
       city: _text(json['city']),
       country: _text(json['country']),
@@ -248,6 +250,9 @@ class CitizenProfile extends Equatable {
   final String id;
   final String name;
   final String? username;
+
+  /// A few lines they wrote about themselves.
+  final String? bio;
   final String? imageUrl;
   final String? city;
   final String? country;

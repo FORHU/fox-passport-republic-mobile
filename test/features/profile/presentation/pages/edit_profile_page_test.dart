@@ -54,6 +54,11 @@ Future<ProviderContainer> _pump(
   _MockProfileRepository repo, {
   PhotoPicker? picker,
 }) async {
+  // Tall enough for the whole form, so the Save button is on screen.
+  tester.view
+    ..physicalSize = const Size(800, 1800)
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
   late ProviderContainer container;
   final router = GoRouter(
     routes: [
@@ -148,6 +153,25 @@ void main() {
 
     verify(() => repo.updateProfile(const ProfileUpdate(isPrivate: true)))
         .called(1);
+  });
+
+  testWidgets('a bio is sent, and clearing it sends an empty one', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    await _pump(tester, repo);
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Bio'),
+      'Hi, I run gigs.',
+    );
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.updateProfile(const ProfileUpdate(bio: 'Hi, I run gigs.')),
+    ).called(1);
   });
 
   testWidgets('with nothing changed it just goes back, no request', (

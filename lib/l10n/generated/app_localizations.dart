@@ -6994,6 +6994,12 @@ abstract class AppLocalizations {
   /// **'No Republic posts yet'**
   String get citizenNoPosts;
 
+  /// No description provided for @citizenAddBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bio'**
+  String get citizenAddBio;
+
   /// No description provided for @citizenLoadMore.
   ///
   /// In en, this message translates to:
@@ -7629,6 +7635,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number'**
   String get profilePhoneLabel;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get profileBioLabel;
 
   /// No description provided for @profilePrivateTitle.
   ///
