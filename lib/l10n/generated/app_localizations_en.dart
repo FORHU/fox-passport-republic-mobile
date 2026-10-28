@@ -3779,6 +3779,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMenuBlock => 'Block';
 
   @override
+  String get foxerMenuReport => 'Report';
+
+  @override
+  String get reportUserTitle => 'Report this Foxer';
+
+  @override
+  String get reportVenueTitle => 'Report this venue';
+
+  @override
+  String get reportFailed => 'Could not send the report. Try again.';
+
+  @override
+  String get venueReport => 'Report this venue';
+
+  @override
   String get republicActionFailed => 'That didn\'t work. Try again.';
 
   @override
