@@ -3,17 +3,18 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// The other social accounts a person can link from their profile. The key is
 /// what the API calls it.
 enum SocialPlatform {
-  instagram('instagram', 'Instagram', Icons.camera_alt_outlined),
-  facebook('facebook', 'Facebook', Icons.facebook),
-  tiktok('tiktok', 'TikTok', Icons.music_note_rounded),
-  x('x', 'X', Icons.alternate_email_rounded),
-  youtube('youtube', 'YouTube', Icons.play_circle_outline_rounded),
-  website('website', 'Website', Icons.language_rounded);
+  instagram('instagram', 'Instagram', FontAwesomeIcons.instagram),
+  facebook('facebook', 'Facebook', FontAwesomeIcons.facebook),
+  tiktok('tiktok', 'TikTok', FontAwesomeIcons.tiktok),
+  x('x', 'X', FontAwesomeIcons.xTwitter),
+  youtube('youtube', 'YouTube', FontAwesomeIcons.youtube),
+  website('website', 'Website', FontAwesomeIcons.globe);
 
   const SocialPlatform(this.key, this.label, this.icon);
 
@@ -21,7 +22,7 @@ enum SocialPlatform {
 
   /// A brand name, the same in every language.
   final String label;
-  final IconData icon;
+  final FaIconData icon;
 }
 
 /// The links the API sent, keyed by platform. Anything that is not a known
@@ -83,7 +84,7 @@ class CitizenSocialLinks extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  FaIcon(
                     entry.key.icon,
                     size: 13 * context.fit,
                     color: AppColors.textSecondary,

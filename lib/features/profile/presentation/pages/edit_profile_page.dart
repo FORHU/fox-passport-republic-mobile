@@ -19,6 +19,7 @@ import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 /// Edit the profile: photo, name, username, phone and whether it is private.
@@ -241,7 +242,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 label: p.label,
                 controller: _social[p],
                 keyboardType: TextInputType.url,
-                prefixIcon: p.icon,
+                prefix: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: FaIcon(p.icon, size: 18),
+                ),
               ),
               const SizedBox(height: 12),
             ],

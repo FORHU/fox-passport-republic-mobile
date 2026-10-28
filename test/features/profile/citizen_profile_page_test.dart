@@ -12,6 +12,7 @@ import 'package:flutter_template/shared/follow/follow_repository.dart';
 import 'package:flutter_template/shared/follow/follow_status.dart';
 import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -180,6 +181,15 @@ void main() {
     expect(find.text('Instagram'), findsOneWidget);
     expect(find.text('Website'), findsOneWidget);
     expect(find.text('TikTok'), findsNothing);
+    // With the brand's own logo, not a stand-in.
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is FaIcon &&
+            w.icon?.codePoint == FontAwesomeIcons.instagram.codePoint,
+      ),
+      findsOneWidget,
+    );
     // The roles show; the categories they are tagged with do not.
     expect(find.text('live music'), findsNothing);
     expect(find.byIcon(Icons.verified_rounded), findsOneWidget);
