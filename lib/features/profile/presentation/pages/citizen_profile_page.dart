@@ -41,6 +41,7 @@ class CitizenProfilePage extends ConsumerStatefulWidget {
     required this.userId,
     this.onMessage,
     this.activityBuilder,
+    this.ownerSection,
     super.key,
   });
 
@@ -53,6 +54,10 @@ class CitizenProfilePage extends ConsumerStatefulWidget {
   /// posts that came with the profile.
   final Widget Function(BuildContext context, CitizenProfile profile)?
       activityBuilder;
+
+  /// Shown under the profile card, and only on your own profile: your email,
+  /// followers, ID check and Sign out.
+  final Widget? ownerSection;
 
   @override
   ConsumerState<CitizenProfilePage> createState() => _CitizenProfilePageState();
@@ -113,6 +118,10 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
         appBar: AppBar(
           backgroundColor: AppColors.canvas,
           foregroundColor: AppColors.textPrimary,
+          // Your own page says what it is; someone else's is named by the card.
+          title: widget.ownerSection == null
+              ? null
+              : Text(l10n.profile, style: AppTypography.display(size: 18)),
           actions: [
             if (async.value case final profile?) ...[
               IconButton(
@@ -180,6 +189,10 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
                       ? null
                       : () => unawaited(_message(profile)),
                 ),
+                if (profile.id == me && widget.ownerSection != null) ...[
+                  const SizedBox(height: 12),
+                  widget.ownerSection!,
+                ],
                 const SizedBox(height: 12),
                 _Stats(profile: profile),
                 const SizedBox(height: 16),

@@ -242,7 +242,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // be pushed from outside it (the tab's page would be on the stack twice).
       GoRoute(
         path: RouteNames.profile,
-        builder: (context, state) => const ProfilePage(),
+        builder: (context, state) => ProfilePage(
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
+        ),
       ),
       GoRoute(
         path: RouteNames.people,

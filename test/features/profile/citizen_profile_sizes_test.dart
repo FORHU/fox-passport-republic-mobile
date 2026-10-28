@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
+import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
+import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
+import 'package:flutter_template/features/profile/presentation/widgets/profile_account_section.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
@@ -11,9 +15,12 @@ import 'package:flutter_template/shared/follow/follow_repository.dart';
 import 'package:flutter_template/shared/follow/follow_status.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
+
+class _MockProfiles extends Mock implements ProfileRepository {}
 
 class _Session extends AuthController {
   @override
@@ -101,4 +108,60 @@ void main() {
       expect(find.text('Follow'), findsOneWidget);
     });
   }
+
+  testWidgets(
+      'your own profile, with its account section, fits a narrow '
+      'phone with large text', (tester) async {
+    final profiles = _MockProfiles();
+    when(profiles.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'me',
+          name: 'Fox Partner Villanueva',
+          email: 'fox.partner.villanueva@example.com',
+          phone: '+639171234567',
+        ),
+      ),
+    );
+    tester.view
+      ..physicalSize = const Size(320, 800)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authControllerProvider.overrideWith(_Session.new),
+          profileRepositoryProvider.overrideWithValue(profiles),
+          citizenProfileProvider.overrideWith(
+            (ref, id) async => CitizenProfile.tryParse({
+              'id': 'me',
+              'name': 'Fox Partner Villanueva',
+              'bio': 'I host live music nights and pop-up markets in Manila.',
+              'roleType': ['venueFoxer', 'eventFoxer', 'investor'],
+            })!,
+          ),
+          citizenCountsProvider.overrideWith((ref, id) async => null),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.dark,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.5)),
+            child: child!,
+          ),
+          home: const CitizenProfilePage(
+            userId: 'me',
+            ownerSection: ProfileAccountSection(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Edit profile'), findsOneWidget);
+    expect(find.text('Sign out'), findsOneWidget);
+  });
 }

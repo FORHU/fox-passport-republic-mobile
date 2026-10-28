@@ -7,6 +7,8 @@ import 'package:flutter_template/features/profile/domain/entities/profile_entity
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/citizens/citizen_profile.dart';
+import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -31,6 +33,13 @@ class _Session extends AuthController {
   }
 }
 
+/// What the API sends for the public profile of the signed-in user.
+Map<String, dynamic> citizenJson = {
+  'id': 'u1',
+  'name': 'Ada',
+  'createdAt': '2025-03-14T00:00:00Z',
+};
+
 Future<ProviderContainer> _pump(
   WidgetTester tester,
   _MockProfileRepository repo,
@@ -42,6 +51,11 @@ Future<ProviderContainer> _pump(
       overrides: [
         authControllerProvider.overrideWith(_Session.new),
         profileRepositoryProvider.overrideWithValue(repo),
+        // The public page is the same one others see, loaded by id.
+        citizenProfileProvider.overrideWith(
+          (ref, id) async => CitizenProfile.tryParse(citizenJson)!,
+        ),
+        citizenCountsProvider.overrideWith((ref, id) async => null),
       ],
       child: Consumer(
         builder: (context, ref, _) {
@@ -66,6 +80,11 @@ void main() {
     repo = _MockProfileRepository();
     _Session.logoutSucceeds = true;
     _Session.logouts = 0;
+    citizenJson = {
+      'id': 'u1',
+      'name': 'Ada',
+      'createdAt': '2025-03-14T00:00:00Z',
+    };
     when(repo.getProfile).thenAnswer(
       (_) async => Right(
         ProfileEntity(
@@ -84,10 +103,11 @@ void main() {
 
       expect(find.text('Ada'), findsOneWidget);
       expect(find.text('ada@example.com'), findsOneWidget);
-      expect(find.text('Member since March 2025'), findsOneWidget);
+      expect(find.text('Citizen since 2025'), findsOneWidget);
     });
 
     testWidgets('shows the username and phone number too', (tester) async {
+      citizenJson = {...citizenJson, 'username': 'ada_l'};
       when(repo.getProfile).thenAnswer(
         (_) async => const Right(
           ProfileEntity(
