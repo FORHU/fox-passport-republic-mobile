@@ -10,7 +10,9 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_swit
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
+import 'package:flutter_template/shared/citizens/citizen_hero.dart';
+import 'package:flutter_template/shared/citizens/citizen_profile.dart';
+import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/segmented_pills.dart';
@@ -234,11 +236,7 @@ class _Body extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _IdCard(
-          summary: summary,
-          name: name,
-          onTap: () => context.push(RouteNames.profile),
-        ),
+        _ProfileHeader(summary: summary),
         const SizedBox(height: 24),
         _SectionHeader(
           title: l10n.passportStamps,
@@ -415,168 +413,64 @@ class _EarnTab extends StatelessWidget {
   }
 }
 
-/// Your ID card: the same photo, level, name and role chips as your profile,
-/// with your XP and the machine-readable line of a passport under them.
-class _IdCard extends ConsumerWidget {
-  const _IdCard({
-    required this.summary,
-    required this.name,
-    required this.onTap,
-  });
+/// The top of your Passport: the same profile card and counts others see when
+/// they open you, with your Passport XP and level, and a way in to your full
+/// profile.
+class _ProfileHeader extends ConsumerWidget {
+  const _ProfileHeader({required this.summary});
 
   final PassportSummary summary;
-  final String name;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final user = ref.watch(authControllerProvider).user;
-    final shownName = name.isEmpty ? '—' : name;
-    final username = user?.username ?? '';
-    final roles = user?.roleType ?? const <String>[];
-    final partner = roles.contains('investor');
+    if (user == null) return const SizedBox.shrink();
 
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: partner
-                  ? AppColors.warning.withValues(alpha: 0.35)
-                  : AppColors.border,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CitizenAvatar(
-                    name: name,
-                    level: summary.level,
-                    imageUrl: user?.imageUrl,
-                    partner: partner,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.passportRepublic.toUpperCase(),
-                          style: citizenTiny(context),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          shownName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.display(size: 18 * context.fit),
-                        ),
-                        if (username.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              '@$username',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTypography.body(
-                                size: 12 * context.fit,
-                                weight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (roles.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    for (final r in roles)
-                      CitizenChip(
-                        label: citizenRoleLabel(l10n, r),
-                        color: r == 'investor'
-                            ? AppColors.warning
-                            : AppColors.textSecondary,
-                      ),
-                  ],
-                ),
-              ],
-              const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: AppRadius.brPill,
-                child: LinearProgressIndicator(
-                  value: summary.progress,
-                  minHeight: 6,
-                  color: AppColors.accent,
-                  backgroundColor: AppColors.borderStrong,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      l10n.passportXp(summary.totalXp).toUpperCase(),
-                      style: citizenTiny(context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      l10n
-                          .passportNextLevel(
-                            summary.level + 1,
-                            summary.nextLevelXp,
-                          )
-                          .toUpperCase(),
-                      textAlign: TextAlign.end,
-                      style: citizenTiny(context),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Divider(color: AppColors.borderStrong, height: 1),
-              const SizedBox(height: 12),
-              Text(
-                _mrz(shownName, sample: summary.isSample),
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                style: citizenTiny(context, color: AppColors.textFaint),
-              ),
-            ],
+    // Until the public profile is in, the card shows what the session knows.
+    final loaded = ref.watch(citizenProfileProvider(user.id)).value;
+    final profile = (loaded ??
+            CitizenProfile(
+              id: user.id,
+              name: user.name,
+              username: user.username.isEmpty ? null : user.username,
+              imageUrl: user.imageUrl,
+              roles: user.roleType,
+              level: summary.level,
+              xp: summary.totalXp,
+            ))
+        .copyWith(level: summary.level, xp: summary.totalXp);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CitizenHero(
+          profile: profile,
+          isMe: true,
+          progress: summary.progress,
+          xpText: '${l10n.passportXp(summary.totalXp)} · '
+              '${l10n.passportNextLevel(
+            summary.level + 1,
+            summary.nextLevelXp,
+          )}',
+        ),
+        const SizedBox(height: 12),
+        CitizenStats(
+          profile: profile,
+          stampCount: summary.stamps.length,
+          badgeCount: summary.badges.where((b) => b.earned).length,
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => context.push(RouteNames.profile),
+            icon: const Icon(Icons.chevron_right_rounded, size: 18),
+            iconAlignment: IconAlignment.end,
+            label: Text(l10n.passportViewProfile),
           ),
         ),
-      ),
+      ],
     );
-  }
-
-  /// The machine-readable line of a passport: `P<FOX<CITIZEN<<NAME<<<<<`.
-  static String _mrz(String name, {required bool sample}) {
-    final body = sample
-        ? 'SAMPLE'
-        : name
-            .toUpperCase()
-            .replaceAll(RegExp('[^A-Z ]'), '')
-            .trim()
-            .replaceAll(RegExp(r'\s+'), '<');
-    final line = 'P<FOX<CITIZEN<<$body';
-    return line.padRight(34, '<').substring(0, math.max(34, line.length));
   }
 }
 

@@ -270,6 +270,29 @@ class CitizenProfile extends Equatable {
   final int postCount;
   final List<CitizenOffering> offerings;
 
+  /// The same profile with the level and XP the caller knows to be right,
+  /// such as the Passport's, which has the real level curve.
+  CitizenProfile copyWith({int? level, int? xp}) => CitizenProfile(
+        id: id,
+        name: name,
+        level: level ?? this.level,
+        xp: xp ?? this.xp,
+        username: username,
+        bio: bio,
+        imageUrl: imageUrl,
+        city: city,
+        country: country,
+        roles: roles,
+        specializations: specializations,
+        verified: verified,
+        joinedAt: joinedAt,
+        stamps: stamps,
+        badges: badges,
+        posts: posts,
+        postCount: postCount,
+        offerings: offerings,
+      );
+
   /// XP needed for the next level, as the web shows it.
   int get nextLevelXp => level * 200;
 

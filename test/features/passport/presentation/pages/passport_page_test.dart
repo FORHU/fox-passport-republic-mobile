@@ -9,6 +9,7 @@ import 'package:flutter_template/features/passport/presentation/pages/passport_p
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -42,9 +43,13 @@ void main() {
         overrides: [
           availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           storageServiceProvider.overrideWithValue(storage),
+          authControllerProvider.overrideWith(_Session.new),
           passportProvider.overrideWith(
             (ref) async => PassportSummary.sample(),
           ),
+          citizenProfileProvider
+              .overrideWith((ref, id) async => throw Exception('offline')),
+          citizenCountsProvider.overrideWith((ref, id) async => null),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -56,16 +61,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Passport'), findsOneWidget);
-    expect(find.text('REPUBLIC OF FOXERS'), findsOneWidget);
-    // The level is the chip on the photo, as on the profile.
+    // The same card and counts as the profile, with your Passport XP.
     expect(find.text('Level 1'), findsOneWidget);
-    expect(find.text('15 XP'), findsOneWidget);
-    expect(find.text('LEVEL 2 AT 50'), findsOneWidget);
-    // The Stamps tab pill and the Stamps section heading.
-    expect(find.text('Stamps'), findsNWidgets(2));
+    expect(find.text('15 XP · Level 2 at 50'), findsOneWidget);
+    expect(find.text('Edit profile'), findsOneWidget);
+    expect(find.text('View my profile'), findsOneWidget);
+    // The Stamps tab pill, the count tile and the Stamps section heading.
+    expect(find.text('Stamps'), findsNWidgets(3));
     expect(find.text('2 OF 8'), findsOneWidget);
     expect(find.text('DVO'), findsOneWidget);
-    expect(find.text('Badges'), findsOneWidget);
+    // The count tile and the Badges section heading.
+    expect(find.text('Badges'), findsNWidgets(2));
     expect(find.text('First night'), findsOneWidget);
     expect(find.text('Locked'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -90,6 +96,9 @@ void main() {
           passportProvider.overrideWith(
             (ref) async => PassportSummary.sample(),
           ),
+          citizenProfileProvider
+              .overrideWith((ref, id) async => throw Exception('offline')),
+          citizenCountsProvider.overrideWith((ref, id) async => null),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

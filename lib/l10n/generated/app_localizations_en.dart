@@ -1026,6 +1026,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportLeaderboard => 'Leaderboard';
 
   @override
+  String get passportViewProfile => 'View my profile';
+
+  @override
   String get passportLocked => 'Locked';
 
   @override

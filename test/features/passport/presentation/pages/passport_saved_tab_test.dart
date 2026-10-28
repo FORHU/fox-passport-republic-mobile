@@ -58,6 +58,6 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expect(find.text('SAVED SCREEN'), findsNothing);
-    expect(find.text('REPUBLIC OF FOXERS'), findsOneWidget);
+    expect(find.text('2 OF 8'), findsOneWidget);
   });
 }

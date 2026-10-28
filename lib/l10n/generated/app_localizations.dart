@@ -1990,6 +1990,12 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get passportLeaderboard;
 
+  /// No description provided for @passportViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View my profile'**
+  String get passportViewProfile;
+
   /// No description provided for @passportLocked.
   ///
   /// In en, this message translates to:

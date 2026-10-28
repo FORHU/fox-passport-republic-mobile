@@ -347,6 +347,7 @@
   "@passportStampsCount": {"placeholders": {"have": {"type": "int"}, "total": {"type": "int"}}},
   "passportBadges": "Badges",
   "passportLeaderboard": "Leaderboard",
+  "passportViewProfile": "View my profile",
   "passportLocked": "Locked",
   "bookStepCounter": "{current} of {total}",
   "@bookStepCounter": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
