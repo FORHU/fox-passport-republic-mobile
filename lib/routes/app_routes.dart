@@ -17,6 +17,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_template/features/occasion/presentation/pages/all_catego
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
@@ -244,6 +246,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.people,
         builder: (context, state) => const PeoplePage(),
+      ),
+      GoRoute(
+        path: RouteNames.citizenPattern,
+        builder: (context, state) => CitizenProfilePage(
+          userId: state.pathParameters['id']!,
+          onMessage: (context, profile) async {
+            final id = await ref
+                .read(messagesRepositoryProvider)
+                .startWithUser(profile.id);
+            if (context.mounted) await context.push<void>(RouteNames.chat(id));
+          },
+        ),
       ),
       GoRoute(
         path: RouteNames.profileEdit,

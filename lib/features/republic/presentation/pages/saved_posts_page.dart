@@ -112,6 +112,9 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
                       onLike: () => unawaited(actions.like(post.id)),
                       onComments: () => unawaited(actions.comments(post.id)),
                       onMore: () => unawaited(actions.menu(post)),
+                      onAuthor: () => unawaited(
+                        context.push(RouteNames.citizen(post.author.id)),
+                      ),
                       onReact: (r) => unawaited(actions.react(post.id, r)),
                       onReactions: () => unawaited(actions.reactions(post.id)),
                       myUserId: ref.read(authControllerProvider).user?.id,

@@ -3782,6 +3782,111 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMenuReport => 'Report';
 
   @override
+  String get citizenNotFound => 'Citizen profile not found';
+
+  @override
+  String get citizenNotFoundBody =>
+      'This citizen may not exist, has changed their handle, or their passport is private.';
+
+  @override
+  String get citizenShare => 'Share profile';
+
+  @override
+  String get citizenLinkCopied => 'Profile link copied.';
+
+  @override
+  String get citizenMessage => 'Message';
+
+  @override
+  String get citizenMessageFailed => 'Could not open the chat. Try again.';
+
+  @override
+  String get citizenPartner => 'Partner Foxer';
+
+  @override
+  String citizenLevelChip(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String citizenSince(String year) {
+    return 'Citizen since $year';
+  }
+
+  @override
+  String get citizenFollowers => 'Followers';
+
+  @override
+  String get citizenFollowing => 'Following';
+
+  @override
+  String get citizenProgression => 'Republic citizenship progression';
+
+  @override
+  String citizenXp(int xp, int next, int percent) {
+    return '$xp / $next XP ($percent%)';
+  }
+
+  @override
+  String get citizenStatLevel => 'Level';
+
+  @override
+  String get citizenStatStamps => 'Stamps';
+
+  @override
+  String get citizenStatBadges => 'Badges';
+
+  @override
+  String get citizenStatPosts => 'Posts';
+
+  @override
+  String get citizenTabStamps => 'Stamps';
+
+  @override
+  String get citizenTabBadges => 'Badges';
+
+  @override
+  String get citizenTabActivity => 'Activity';
+
+  @override
+  String get citizenTabOfferings => 'Offerings';
+
+  @override
+  String get citizenNoStamps => 'No venue stamps yet';
+
+  @override
+  String get citizenNoStampsBody =>
+      'Going to events at verified Republic venues earns collectible passport stamps.';
+
+  @override
+  String get citizenNoBadges => 'No badges earned yet';
+
+  @override
+  String get citizenNoBadgesBody =>
+      'Badges come from exploring venues, posting in the community and climbing levels.';
+
+  @override
+  String get citizenNoPosts => 'No Republic posts yet';
+
+  @override
+  String get citizenNoPostsBody =>
+      'This citizen has not shared anything in the Republic feed yet.';
+
+  @override
+  String citizenUnlocked(String date) {
+    return 'Unlocked $date';
+  }
+
+  @override
+  String get citizenVenues => 'Venues hosted';
+
+  @override
+  String get citizenServices => 'Talent and services';
+
+  @override
+  String get citizenGear => 'Equipment';
+
+  @override
   String get reportUserTitle => 'Report this Foxer';
 
   @override
