@@ -34,6 +34,7 @@ import 'package:flutter_template/features/profile/presentation/pages/profile_pag
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
@@ -251,6 +252,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.citizenPattern,
         builder: (context, state) => CitizenProfilePage(
           userId: state.pathParameters['id']!,
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
           onMessage: (context, profile) async {
             final id = await ref
                 .read(messagesRepositoryProvider)

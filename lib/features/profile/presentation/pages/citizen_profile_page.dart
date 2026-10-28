@@ -37,11 +37,22 @@ enum _Tab { stamps, badges, activity, offerings }
 /// photo, level, roles and a Follow button; the level bar; four counts; then
 /// tabs for stamps, badges, posts and what they list.
 class CitizenProfilePage extends ConsumerStatefulWidget {
-  const CitizenProfilePage({required this.userId, this.onMessage, super.key});
+  const CitizenProfilePage({
+    required this.userId,
+    this.onMessage,
+    this.activityBuilder,
+    super.key,
+  });
 
   /// The person's id or username.
   final String userId;
   final MessageCitizen? onMessage;
+
+  /// The Activity tab. The route passes the Republic feed of their posts, so
+  /// this page does not reach into the Republic. Without it the tab lists the
+  /// posts that came with the profile.
+  final Widget Function(BuildContext context, CitizenProfile profile)?
+      activityBuilder;
 
   @override
   ConsumerState<CitizenProfilePage> createState() => _CitizenProfilePageState();
@@ -173,7 +184,9 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
               switch (_tab) {
                 _Tab.stamps => _StampsTab(stamps: profile.stamps),
                 _Tab.badges => _BadgesTab(badges: profile.badges),
-                _Tab.activity => _ActivityTab(profile: profile),
+                _Tab.activity =>
+                  widget.activityBuilder?.call(context, profile) ??
+                      _ActivityTab(profile: profile),
                 _Tab.offerings => _OfferingsTab(items: profile.offerings),
               },
             ],
@@ -630,7 +643,7 @@ class _TabBar extends StatelessWidget {
     final tabs = <(_Tab, String)>[
       (_Tab.stamps, '${l10n.citizenTabStamps} (${profile.stamps.length})'),
       (_Tab.badges, '${l10n.citizenTabBadges} (${profile.badges.length})'),
-      (_Tab.activity, '${l10n.citizenTabActivity} (${profile.posts.length})'),
+      (_Tab.activity, '${l10n.citizenTabActivity} (${profile.postCount})'),
       if (profile.offerings.isNotEmpty)
         (_Tab.offerings, l10n.citizenTabOfferings),
     ];

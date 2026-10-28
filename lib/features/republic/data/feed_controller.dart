@@ -78,8 +78,11 @@ class FeedController extends AsyncNotifier<FeedState> {
   /// `community`, `marketplace`, `partners`, or null for every tab.
   final String? tab;
 
-  /// The saved list is not sorted or searched like the feed is.
-  bool get _plain => tab == RepublicRepository.savedTab;
+  /// The saved list and one person's posts are not sorted or searched like
+  /// the feed is.
+  bool get _plain =>
+      tab == RepublicRepository.savedTab ||
+      (tab?.startsWith(RepublicRepository.authorPrefix) ?? false);
 
   Future<FeedPage> _page({String? cursor}) {
     final top = !_plain && ref.read(feedSortProvider) == FeedSort.top;

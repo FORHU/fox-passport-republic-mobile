@@ -6994,6 +6994,12 @@ abstract class AppLocalizations {
   /// **'No Republic posts yet'**
   String get citizenNoPosts;
 
+  /// No description provided for @citizenLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get citizenLoadMore;
+
   /// No description provided for @citizenComments.
   ///
   /// In en, this message translates to:

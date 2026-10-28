@@ -173,7 +173,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Early Adopter'), findsOneWidget);
 
-    await tester.tap(find.text('Activity (1)'));
+    await tester.tap(find.text('Activity (12)'));
     // Photos keep pulsing while they load, so settle by time, not by idle.
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Hello Republic'), findsOneWidget);

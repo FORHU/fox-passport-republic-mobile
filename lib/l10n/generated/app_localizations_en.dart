@@ -3869,6 +3869,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get citizenNoPosts => 'No Republic posts yet';
 
   @override
+  String get citizenLoadMore => 'Load more';
+
+  @override
   String citizenComments(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
