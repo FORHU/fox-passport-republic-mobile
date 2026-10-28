@@ -4247,7 +4247,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSocialHint =>
-      'Shown on your profile. Paste a link or just your handle; leave one empty to remove it.';
+      'Shown on your profile, so people can find you elsewhere.';
+
+  @override
+  String get profileSocialAdd => 'Add social link';
+
+  @override
+  String get profileSocialRemove => 'Remove';
+
+  @override
+  String get profileSocialDone => 'Done';
+
+  @override
+  String get profileSocialHandleHint => '@yourname or a link';
+
+  @override
+  String get profileSocialWebsiteHint => 'https://your-site.com';
 
   @override
   String get profilePrivateTitle => 'Private profile';

@@ -10,7 +10,6 @@ class AppInput extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.prefixIcon,
-    this.prefix,
     this.maxLines = 1,
     this.maxLength,
   });
@@ -21,9 +20,6 @@ class AppInput extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final IconData? prefixIcon;
-
-  /// A widget in the icon's place, for an icon that is not a Material one.
-  final Widget? prefix;
 
   /// More than one for a box that takes a few lines, such as a bio.
   final int maxLines;
@@ -43,7 +39,7 @@ class AppInput extends StatelessWidget {
       maxLength: maxLength,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: prefix ?? (prefixIcon != null ? Icon(prefixIcon) : null),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
       ),
     );
   }

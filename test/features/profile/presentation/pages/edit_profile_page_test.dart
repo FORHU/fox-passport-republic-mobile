@@ -175,8 +175,7 @@ void main() {
     ).called(1);
   });
 
-  testWidgets(
-      'social links are sent as the full set, and clearing one drops it', (
+  testWidgets('add a social link, remove another, and save the full set', (
     tester,
   ) async {
     when(() => repo.updateProfile(any()))
@@ -198,17 +197,40 @@ void main() {
     );
     await _pump(tester, repo);
 
-    // What is stored fills the boxes.
-    expect(find.text('https://instagram.com/ada'), findsOneWidget);
+    // What is stored shows as chips, and only a button to add more.
+    expect(find.widgetWithText(InputChip, 'Instagram'), findsOneWidget);
+    expect(find.widgetWithText(InputChip, 'TikTok'), findsOneWidget);
+    expect(find.widgetWithText(InputChip, 'YouTube'), findsNothing);
 
+    // Add one: pick the platform, give a handle.
+    await tester.ensureVisible(find.text('Add social link'));
+    await tester.tap(find.text('Add social link'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ChoiceChip, 'YouTube'));
+    await tester.pumpAndSettle();
     await tester.enterText(
-      find.widgetWithText(TextFormField, 'YouTube'),
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(TextField),
+      ),
       '@ada',
     );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'TikTok'),
-      '',
+    // Done turns on once there is something in the box.
+    await tester.pump();
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'YouTube'), findsOneWidget);
+
+    // Remove another with its own x.
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(InputChip, 'TikTok'),
+        matching: find.byTooltip('Remove'),
+      ),
     );
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'TikTok'), findsNothing);
+
     await tester.tap(find.text('Save changes'));
     await tester.pumpAndSettle();
 
@@ -221,6 +243,41 @@ void main() {
           },
         ),
       ),
+    ).called(1);
+  });
+
+  testWidgets('tapping a link changes it, and the sheet can remove it', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          socialLinks: {SocialPlatform.instagram: 'https://instagram.com/ada'},
+        ),
+      ),
+    );
+    await _pump(tester, repo);
+
+    await tester.tap(find.widgetWithText(InputChip, 'Instagram'));
+    await tester.pumpAndSettle();
+    // The current link is in the box, and removing is offered.
+    expect(find.text('https://instagram.com/ada'), findsOneWidget);
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'Instagram'), findsNothing);
+
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    // None left: the empty set clears them all.
+    verify(
+      () => repo.updateProfile(const ProfileUpdate(socialLinks: {})),
     ).called(1);
   });
 

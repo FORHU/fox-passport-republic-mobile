@@ -7663,8 +7663,38 @@ abstract class AppLocalizations {
   /// No description provided for @profileSocialHint.
   ///
   /// In en, this message translates to:
-  /// **'Shown on your profile. Paste a link or just your handle; leave one empty to remove it.'**
+  /// **'Shown on your profile, so people can find you elsewhere.'**
   String get profileSocialHint;
+
+  /// No description provided for @profileSocialAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add social link'**
+  String get profileSocialAdd;
+
+  /// No description provided for @profileSocialRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get profileSocialRemove;
+
+  /// No description provided for @profileSocialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get profileSocialDone;
+
+  /// No description provided for @profileSocialHandleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'@yourname or a link'**
+  String get profileSocialHandleHint;
+
+  /// No description provided for @profileSocialWebsiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-site.com'**
+  String get profileSocialWebsiteHint;
 
   /// No description provided for @profilePrivateTitle.
   ///
