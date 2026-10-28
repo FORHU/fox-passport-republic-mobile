@@ -10,6 +10,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_swit
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/segmented_pills.dart';
@@ -414,7 +415,9 @@ class _EarnTab extends StatelessWidget {
   }
 }
 
-class _IdCard extends StatelessWidget {
+/// Your ID card: the same photo, level, name and role chips as your profile,
+/// with your XP and the machine-readable line of a passport under them.
+class _IdCard extends ConsumerWidget {
   const _IdCard({
     required this.summary,
     required this.name,
@@ -426,21 +429,29 @@ class _IdCard extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final user = ref.watch(authControllerProvider).user;
     final shownName = name.isEmpty ? '—' : name;
+    final username = user?.username ?? '';
+    final roles = user?.roleType ?? const <String>[];
+    final partner = roles.contains('investor');
 
     return Material(
       color: AppColors.surface,
-      borderRadius: AppRadius.brCard,
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
-        borderRadius: AppRadius.brCard,
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            borderRadius: AppRadius.brCard,
-            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: partner
+                  ? AppColors.warning.withValues(alpha: 0.35)
+                  : AppColors.border,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -448,18 +459,11 @@ class _IdCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 72,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceRaised,
-                      borderRadius: AppRadius.brMd,
-                    ),
-                    child: const Icon(
-                      Icons.person_outline_rounded,
-                      size: 32,
-                      color: AppColors.textFaint,
-                    ),
+                  CitizenAvatar(
+                    name: name,
+                    level: summary.level,
+                    imageUrl: user?.imageUrl,
+                    partner: partner,
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -468,28 +472,49 @@ class _IdCard extends StatelessWidget {
                       children: [
                         Text(
                           l10n.passportRepublic.toUpperCase(),
-                          style: AppTypography.label(),
+                          style: citizenTiny(context),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           shownName,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.display(size: 22),
+                          style: AppTypography.display(size: 18 * context.fit),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.passportCitizenLevel(summary.level),
-                          style: AppTypography.body(
-                            color: AppColors.accent,
-                            weight: FontWeight.w700,
+                        if (username.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              '@$username',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.body(
+                                size: 12 * context.fit,
+                                weight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
                 ],
               ),
+              if (roles.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final r in roles)
+                      CitizenChip(
+                        label: citizenRoleLabel(l10n, r),
+                        color: r == 'investor'
+                            ? AppColors.warning
+                            : AppColors.textSecondary,
+                      ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: AppRadius.brPill,
@@ -504,18 +529,24 @@ class _IdCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.passportXp(summary.totalXp).toUpperCase(),
-                    style: AppTypography.label(),
+                  Flexible(
+                    child: Text(
+                      l10n.passportXp(summary.totalXp).toUpperCase(),
+                      style: citizenTiny(context),
+                    ),
                   ),
-                  Text(
-                    l10n
-                        .passportNextLevel(
-                          summary.level + 1,
-                          summary.nextLevelXp,
-                        )
-                        .toUpperCase(),
-                    style: AppTypography.label(),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      l10n
+                          .passportNextLevel(
+                            summary.level + 1,
+                            summary.nextLevelXp,
+                          )
+                          .toUpperCase(),
+                      textAlign: TextAlign.end,
+                      style: citizenTiny(context),
+                    ),
                   ),
                 ],
               ),
@@ -526,7 +557,7 @@ class _IdCard extends StatelessWidget {
                 _mrz(shownName, sample: summary.isSample),
                 maxLines: 1,
                 overflow: TextOverflow.clip,
-                style: AppTypography.label(color: AppColors.textFaint),
+                style: citizenTiny(context, color: AppColors.textFaint),
               ),
             ],
           ),

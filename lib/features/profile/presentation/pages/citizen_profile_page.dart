@@ -11,6 +11,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/blocks/confirm_block.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
+import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
 import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/shared/reports/file_report.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -222,24 +223,6 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
   }
 }
 
-extension _Fit on BuildContext {
-  /// 1.0 on a 360 dp phone, smaller on a narrower one and a little larger on
-  /// a wide one, so the profile fits whatever screen it is on.
-  double get fit => (MediaQuery.sizeOf(this).width / 360).clamp(0.82, 1.15);
-}
-
-/// Captions and chips: the mono label at a smaller size, with less spacing
-/// between letters than the default, so they take less room. Follows the
-/// screen width.
-TextStyle _tiny(BuildContext context, {Color color = AppColors.textMuted}) =>
-    AppTypography.label(color: color).copyWith(
-      fontSize: 9.5 * context.fit,
-      letterSpacing: 0.5 * context.fit,
-    );
-
-Color _accentFor(CitizenProfile p) =>
-    p.isPartner ? AppColors.warning : AppColors.accent;
-
 class _Hero extends ConsumerWidget {
   const _Hero({required this.profile, required this.isMe, this.onMessage});
 
@@ -251,7 +234,6 @@ class _Hero extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final accent = _accentFor(profile);
     final counts = ref.watch(citizenCountsProvider(profile.id)).value;
     final place =
         [profile.city, profile.country].whereType<String>().join(', ');
@@ -274,77 +256,11 @@ class _Hero extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 64 * context.fit,
-                    height: 64 * context.fit,
-                    padding: const EdgeInsets.all(2.5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [accent, accent.withValues(alpha: 0.45)],
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15.5),
-                      child: profile.imageUrl == null
-                          ? ColoredBox(
-                              color: AppColors.surfaceRaised,
-                              child: Center(
-                                child: Text(
-                                  profile.name.isEmpty
-                                      ? '?'
-                                      : profile.name.characters.first
-                                          .toUpperCase(),
-                                  style: AppTypography.display(
-                                    size: 24 * context.fit,
-                                    color: accent,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : NetworkImageBox(
-                              url: profile.imageUrl!,
-                              width: 59 * context.fit,
-                              height: 59 * context.fit,
-                            ),
-                    ),
-                  ),
-                  Positioned(
-                    right: -6,
-                    bottom: -6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: profile.isPartner
-                            ? AppColors.warning
-                            : AppColors.canvas,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: profile.isPartner
-                              ? AppColors.warning
-                              : AppColors.accentTintBorder,
-                        ),
-                      ),
-                      child: Text(
-                        l10n.citizenLevelChip(profile.level),
-                        style: _tiny(
-                          context,
-                          color: profile.isPartner
-                              ? AppColors.onAccent
-                              : AppColors.accent,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              CitizenAvatar(
+                name: profile.name,
+                level: profile.level,
+                imageUrl: profile.imageUrl,
+                partner: profile.isPartner,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -371,7 +287,7 @@ class _Hero extends ConsumerWidget {
                     if (profile.isPartner)
                       Padding(
                         padding: const EdgeInsets.only(top: 6),
-                        child: _Chip(
+                        child: CitizenChip(
                           label: l10n.citizenPartner,
                           color: AppColors.warning,
                           icon: Icons.verified_outlined,
@@ -451,17 +367,14 @@ class _Hero extends ConsumerWidget {
               runSpacing: 6,
               children: [
                 for (final r in profile.roles)
-                  _Chip(
-                    label: (r == 'investor'
-                            ? l10n.citizenPartner
-                            : r.replaceAll('Foxer', ' Foxer'))
-                        .toUpperCase(),
+                  CitizenChip(
+                    label: citizenRoleLabel(l10n, r),
                     color: r == 'investor'
                         ? AppColors.warning
                         : AppColors.textSecondary,
                   ),
                 for (final s in profile.specializations)
-                  _Chip(label: s, color: AppColors.textMuted, soft: true),
+                  CitizenChip(label: s, color: AppColors.textMuted, soft: true),
               ],
             ),
           ],
@@ -511,7 +424,7 @@ class _Hero extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     l10n.citizenProgression,
-                    style: _tiny(context),
+                    style: citizenTiny(context),
                   ),
                 ),
                 Text(
@@ -520,7 +433,7 @@ class _Hero extends ConsumerWidget {
                     profile.nextLevelXp,
                     (profile.progress * 100).round(),
                   ),
-                  style: _tiny(context, color: AppColors.accent),
+                  style: citizenTiny(context, color: AppColors.accent),
                 ),
               ],
             ),
@@ -584,40 +497,6 @@ class _Count extends StatelessWidget {
       );
 }
 
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.label,
-    required this.color,
-    this.icon,
-    this.soft = false,
-  });
-
-  final String label;
-  final Color color;
-  final IconData? icon;
-  final bool soft;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: soft ? 0.08 : 0.12),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 11 * context.fit, color: color),
-              const SizedBox(width: 3),
-            ],
-            Text(label, style: _tiny(context, color: color)),
-          ],
-        ),
-      );
-}
-
 class _Stats extends StatelessWidget {
   const _Stats({required this.profile});
 
@@ -648,7 +527,7 @@ class _Stats extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: _tiny(context),
+                  style: citizenTiny(context),
                 ),
               ],
             ),
@@ -885,7 +764,7 @@ class _StampsTab extends StatelessWidget {
                   ),
                 ),
                 if (showXp)
-                  _Chip(label: '+${s.xp} XP', color: AppColors.accent),
+                  CitizenChip(label: '+${s.xp} XP', color: AppColors.accent),
               ],
             ),
           ),
@@ -952,7 +831,7 @@ class _BadgesTab extends StatelessWidget {
                             b.name,
                             style: AppTypography.body(weight: FontWeight.w700),
                           ),
-                          _Chip(
+                          CitizenChip(
                             label: b.rarity.toUpperCase(),
                             color: _rarityColor(b.rarity),
                           ),
@@ -1091,11 +970,11 @@ class _ActivityTab extends StatelessWidget {
                         color: AppColors.textMuted,
                       ),
                       const SizedBox(width: 4),
-                      Text('${p.likes}', style: _tiny(context)),
+                      Text('${p.likes}', style: citizenTiny(context)),
                       const Spacer(),
                       Text(
                         l10n.citizenComments(p.comments),
-                        style: _tiny(context),
+                        style: citizenTiny(context),
                       ),
                     ],
                   ),
