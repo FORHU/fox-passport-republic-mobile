@@ -106,6 +106,8 @@ class ApiEndpoints {
       '/events/${Uri.encodeComponent(id)}/appointments';
 
   // Bids on an event: service and gear applications, answered by the host.
+  static const String bidOpenSlots = '/bids/open-slots';
+  static const String bidServiceSubmit = '/bids/service';
   static String serviceBidsForEvent(String eventId) =>
       '/bids/service/event/${Uri.encodeComponent(eventId)}';
   static String assetBidsForEvent(String eventId) =>

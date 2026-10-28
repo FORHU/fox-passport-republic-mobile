@@ -24,6 +24,9 @@ enum ProviderKind {
   String get requests => '$root/more/requests';
   String get messages => '$root/more/messages';
 
+  /// Events looking for a service to apply to. Services only.
+  String get slots => '$root/more/slots';
+
   /// Where the web adds one.
   String get webAdd =>
       isGear ? '/creator-dashboard/assets' : '/creator-dashboard/services';

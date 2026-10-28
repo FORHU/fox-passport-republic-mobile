@@ -50,6 +50,14 @@ class ProviderMorePage extends ConsumerWidget {
             onTap: () => context.push(kind.requests),
           ),
           const SizedBox(height: 8),
+          if (!kind.isGear) ...[
+            MoreRow(
+              icon: Icons.event_available_outlined,
+              title: l10n.openSlotsTitle,
+              onTap: () => context.push(kind.slots),
+            ),
+            const SizedBox(height: 8),
+          ],
           MoreRow(
             icon: Icons.chat_bubble_outline_rounded,
             title: l10n.messages,
