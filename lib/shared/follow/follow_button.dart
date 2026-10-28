@@ -65,6 +65,7 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
     final followers = status.followers;
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
           height: 40,
@@ -72,6 +73,7 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
               ? OutlinedButton(
                   onPressed: _busy ? null : () => _toggle(status),
                   style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, 40),
                     side: const BorderSide(color: AppColors.borderStrong),
                     shape: RoundedRectangleBorder(borderRadius: AppRadius.brSm),
                   ),
@@ -80,6 +82,7 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
               : ElevatedButton(
                   onPressed: _busy ? null : () => _toggle(status),
                   style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(0, 40),
                     backgroundColor: AppColors.accent,
                     foregroundColor: AppColors.onAccent,
                     shape: RoundedRectangleBorder(borderRadius: AppRadius.brSm),
@@ -89,7 +92,14 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
         ),
         if (followers != null) ...[
           const SizedBox(width: 12),
-          Text(l10n.followFollowers(followers), style: AppTypography.body()),
+          Flexible(
+            child: Text(
+              l10n.followFollowers(followers),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.body(),
+            ),
+          ),
         ],
       ],
     );

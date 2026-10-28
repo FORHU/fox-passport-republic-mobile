@@ -354,13 +354,14 @@ class _Hero extends ConsumerWidget {
           ),
           if (counts != null) ...[
             const SizedBox(height: 10),
-            Row(
+            Wrap(
+              spacing: 16,
+              runSpacing: 4,
               children: [
                 _Count(
                   value: counts.followers,
                   label: l10n.citizenFollowers,
                 ),
-                const SizedBox(width: 16),
                 _Count(
                   value: counts.following,
                   label: l10n.citizenFollowing,
@@ -401,18 +402,22 @@ class _Hero extends ConsumerWidget {
               ),
             )
           else
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 FollowButton(userId: profile.id),
-                if (onMessage != null) ...[
-                  const SizedBox(width: 8),
+                if (onMessage != null)
                   ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 40),
+                    ),
                     icon:
                         const Icon(Icons.chat_bubble_outline_rounded, size: 18),
                     label: Text(l10n.citizenMessage),
                     onPressed: onMessage,
                   ),
-                ],
               ],
             ),
           const SizedBox(height: 16),
