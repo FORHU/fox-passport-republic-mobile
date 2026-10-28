@@ -171,8 +171,8 @@ class CitizenHero extends ConsumerWidget {
               ),
             ),
           ],
-          if (profile.roles.isNotEmpty ||
-              profile.specializations.isNotEmpty) ...[
+          // Only the roles: the categories they are tagged with read as noise.
+          if (profile.roles.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 6,
@@ -185,8 +185,6 @@ class CitizenHero extends ConsumerWidget {
                         ? AppColors.warning
                         : AppColors.textSecondary,
                   ),
-                for (final s in profile.specializations)
-                  CitizenChip(label: s, color: AppColors.textMuted, soft: true),
               ],
             ),
           ],

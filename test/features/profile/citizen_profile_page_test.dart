@@ -158,6 +158,8 @@ void main() {
     expect(find.text('400 / 800 XP (50%)'), findsNothing);
     expect(find.textContaining('XP'), findsNothing);
     expect(find.text('EVENT FOXER'), findsOneWidget);
+    // The roles show; the categories they are tagged with do not.
+    expect(find.text('live music'), findsNothing);
     expect(find.byIcon(Icons.verified_rounded), findsOneWidget);
     // Followers and following of the person.
     expect(find.textContaining('Followers'), findsWidgets);
