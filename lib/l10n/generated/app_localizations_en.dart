@@ -4229,6 +4229,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bidsTitle => 'Applications';
 
   @override
+  String get openSlotsTitle => 'Open event slots';
+
+  @override
+  String get openSlotsEmpty => 'No open slots right now';
+
+  @override
+  String get openSlotsEmptyBody => 'Events looking for a service show here.';
+
+  @override
+  String get openSlotsAnySlot => 'A service';
+
+  @override
+  String get openSlotsApply => 'Apply';
+
+  @override
+  String openSlotsApplyTo(String event) {
+    return 'Apply to $event';
+  }
+
+  @override
+  String get openSlotsService => 'Your service';
+
+  @override
+  String openSlotsPrice(String currency) {
+    return 'Your price ($currency)';
+  }
+
+  @override
+  String get openSlotsPitch => 'Tell them why you fit';
+
+  @override
+  String get openSlotsSend => 'Send application';
+
+  @override
+  String get openSlotsApplied => 'Application sent.';
+
+  @override
+  String get openSlotsNoService => 'List a service first.';
+
+  @override
+  String get openSlotsFailed => 'Could not send. Try again.';
+
+  @override
   String get bidsIntro =>
       'Foxers who applied to supply your events. Accepting one adds them to the event.';
 
