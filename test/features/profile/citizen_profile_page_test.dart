@@ -152,7 +152,9 @@ void main() {
     expect(find.text('@rex'), findsOneWidget);
     expect(find.text('Manila, Philippines'), findsOneWidget);
     expect(find.text('Level 4'), findsOneWidget);
-    expect(find.text('400 / 800 XP (50%)'), findsOneWidget);
+    // Someone else's XP is private; their level is not.
+    expect(find.text('400 / 800 XP (50%)'), findsNothing);
+    expect(find.textContaining('XP'), findsNothing);
     expect(find.text('EVENT FOXER'), findsOneWidget);
     expect(find.byIcon(Icons.verified_rounded), findsOneWidget);
     // Followers and following of the person.
@@ -212,5 +214,26 @@ void main() {
     await _pump(tester, profile: 'nothing');
 
     expect(find.text('Citizen profile not found'), findsOneWidget);
+  });
+
+  testWidgets('your own profile shows your XP and Edit profile', (
+    tester,
+  ) async {
+    await _pump(tester, profile: {..._json, 'id': 'me'});
+
+    expect(find.text('400 / 800 XP (50%)'), findsOneWidget);
+    // The Stamps tab is open first: what each stamp earned shows too.
+    expect(find.text('+50 XP'), findsOneWidget);
+    expect(find.text('Edit profile'), findsOneWidget);
+    expect(find.text('Follow'), findsNothing);
+  });
+
+  testWidgets("someone else's stamps do not show the XP they earned", (
+    tester,
+  ) async {
+    await _pump(tester, profile: _json);
+
+    expect(find.text('Launch night · Mar 2, 2026'), findsOneWidget);
+    expect(find.text('+50 XP'), findsNothing);
   });
 }

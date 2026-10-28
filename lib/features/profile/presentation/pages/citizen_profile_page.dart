@@ -190,7 +190,10 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
                 ),
                 const SizedBox(height: 12),
                 switch (_tab) {
-                  _Tab.stamps => _StampsTab(stamps: profile.stamps),
+                  _Tab.stamps => _StampsTab(
+                      stamps: profile.stamps,
+                      showXp: profile.id == me,
+                    ),
                   _Tab.badges => _BadgesTab(badges: profile.badges),
                   _Tab.activity =>
                     widget.activityBuilder?.call(context, profile) ??
@@ -467,37 +470,41 @@ class _Hero extends ConsumerWidget {
                   ),
               ],
             ),
-          const SizedBox(height: 16),
-          const Divider(height: 1),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.citizenProgression,
-                  style: _tiny(context),
+          // Experience points are private: only the owner sees them. Others
+          // still see the level.
+          if (isMe) ...[
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.citizenProgression,
+                    style: _tiny(context),
+                  ),
                 ),
-              ),
-              Text(
-                l10n.citizenXp(
-                  profile.xp,
-                  profile.nextLevelXp,
-                  (profile.progress * 100).round(),
+                Text(
+                  l10n.citizenXp(
+                    profile.xp,
+                    profile.nextLevelXp,
+                    (profile.progress * 100).round(),
+                  ),
+                  style: _tiny(context, color: AppColors.accent),
                 ),
-                style: _tiny(context, color: AppColors.accent),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: AppRadius.brPill,
-            child: LinearProgressIndicator(
-              value: profile.progress,
-              minHeight: 6,
-              backgroundColor: AppColors.surfaceRaised,
-              color: AppColors.accent,
+              ],
             ),
-          ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: AppRadius.brPill,
+              child: LinearProgressIndicator(
+                value: profile.progress,
+                minHeight: 6,
+                backgroundColor: AppColors.surfaceRaised,
+                color: AppColors.accent,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -770,9 +777,12 @@ class _Card extends StatelessWidget {
 }
 
 class _StampsTab extends StatelessWidget {
-  const _StampsTab({required this.stamps});
+  const _StampsTab({required this.stamps, required this.showXp});
 
   final List<CitizenStamp> stamps;
+
+  /// Earned XP is private to the owner.
+  final bool showXp;
 
   @override
   Widget build(BuildContext context) {
@@ -844,7 +854,8 @@ class _StampsTab extends StatelessWidget {
                     ],
                   ),
                 ),
-                _Chip(label: '+${s.xp} XP', color: AppColors.accent),
+                if (showXp)
+                  _Chip(label: '+${s.xp} XP', color: AppColors.accent),
               ],
             ),
           ),
