@@ -86,6 +86,7 @@ class CitizenPost extends Equatable {
     required this.likes,
     required this.comments,
     this.createdAt,
+    this.mediaUrls = const [],
   });
 
   static CitizenPost? tryParse(Object? row) {
@@ -96,6 +97,10 @@ class CitizenPost extends Equatable {
       likes: _int(row['likesCount']),
       comments: _int(row['commentsCount']),
       createdAt: _date(row['createdAt']),
+      mediaUrls: [
+        for (final u in row['mediaUrls'] as List? ?? const [])
+          if (_text(u) case final url?) url,
+      ],
     );
   }
 
@@ -105,8 +110,11 @@ class CitizenPost extends Equatable {
   final int comments;
   final DateTime? createdAt;
 
+  /// Photos and videos attached, in order.
+  final List<String> mediaUrls;
+
   @override
-  List<Object?> get props => [id, content, likes, comments];
+  List<Object?> get props => [id, content, likes, comments, mediaUrls];
 }
 
 /// What a citizen lists for booking: a venue, a service or gear.

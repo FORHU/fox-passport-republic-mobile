@@ -1273,6 +1273,8 @@
   "citizenNoBadges": "No badges earned yet",
   "citizenNoBadgesBody": "Badges come from exploring venues, posting in the community and climbing levels.",
   "citizenNoPosts": "No Republic posts yet",
+  "citizenComments": "{count, plural, =1{1 comment} other{{count} comments}}",
+  "@citizenComments": {"placeholders":{"count":{"type":"int"}}},
   "citizenNoPostsBody": "This citizen has not shared anything in the Republic feed yet.",
   "citizenUnlocked": "Unlocked {date}",
   "@citizenUnlocked": {"placeholders":{"date":{"type":"String"}}},

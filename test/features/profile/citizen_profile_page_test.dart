@@ -9,6 +9,7 @@ import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/follow/follow_repository.dart';
 import 'package:flutter_template/shared/follow/follow_status.dart';
+import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -74,6 +75,11 @@ final _json = <String, dynamic>{
       'likesCount': 3,
       'commentsCount': 1,
       'createdAt': '2026-05-01T00:00:00Z',
+      'mediaUrls': [
+        'https://img.test/a.jpg',
+        'https://img.test/b.jpg',
+        'https://img.test/clip.mp4',
+      ],
     },
   ],
   '_count': {'posts': 12},
@@ -123,6 +129,7 @@ void main() {
     expect(p.stamps.single.place, 'The Loft');
     expect(p.badges.single.rarity, 'rare');
     expect(p.postCount, 12);
+    expect(p.posts.single.mediaUrls, hasLength(3));
     expect(p.verified, isTrue);
     expect(p.specializations, ['live music']);
     expect(p.offerings.single.kind, 'venue');
@@ -167,8 +174,13 @@ void main() {
     expect(find.text('Early Adopter'), findsOneWidget);
 
     await tester.tap(find.text('Activity (1)'));
-    await tester.pumpAndSettle();
+    // Photos keep pulsing while they load, so settle by time, not by idle.
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Hello Republic'), findsOneWidget);
+    // Like the feed: the author's name heads the post and its photos show.
+    expect(find.text('Rex Santos'), findsWidgets);
+    expect(find.byType(PostMedia), findsOneWidget);
+    expect(find.text('1 comment'), findsOneWidget);
 
     await tester.tap(find.text('Offerings'));
     await tester.pumpAndSettle();

@@ -6994,6 +6994,12 @@ abstract class AppLocalizations {
   /// **'No Republic posts yet'**
   String get citizenNoPosts;
 
+  /// No description provided for @citizenComments.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 comment} other{{count} comments}}'**
+  String citizenComments(int count);
+
   /// No description provided for @citizenNoPostsBody.
   ///
   /// In en, this message translates to:

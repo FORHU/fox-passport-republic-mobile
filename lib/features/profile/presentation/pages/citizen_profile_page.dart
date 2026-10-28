@@ -14,7 +14,9 @@ import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/shared/reports/file_report.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
+import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -171,7 +173,7 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
               switch (_tab) {
                 _Tab.stamps => _StampsTab(stamps: profile.stamps),
                 _Tab.badges => _BadgesTab(badges: profile.badges),
-                _Tab.activity => _ActivityTab(posts: profile.posts),
+                _Tab.activity => _ActivityTab(profile: profile),
                 _Tab.offerings => _OfferingsTab(items: profile.offerings),
               },
             ],
@@ -914,14 +916,15 @@ class _BadgesTab extends StatelessWidget {
 }
 
 class _ActivityTab extends StatelessWidget {
-  const _ActivityTab({required this.posts});
+  const _ActivityTab({required this.profile});
 
-  final List<CitizenPost> posts;
+  final CitizenProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
+    final posts = profile.posts;
     if (posts.isEmpty) {
       return _Empty(
         icon: Icons.chat_bubble_outline_rounded,
@@ -929,47 +932,98 @@ class _ActivityTab extends StatelessWidget {
         body: l10n.citizenNoPostsBody,
       );
     }
+    final initial = profile.name.isEmpty
+        ? '?'
+        : profile.name.characters.first.toUpperCase();
+    // Like the feed: each post is a full-width card, photos edge to edge.
     return Column(
       children: [
         for (final p in posts) ...[
-          _Card(
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
+            ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (p.createdAt != null)
-                  Text(
-                    DateFormat.yMMMd(locale).format(p.createdAt!.toLocal()),
-                    style: AppTypography.label(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  child: Row(
+                    children: [
+                      AvatarImage(
+                        url: profile.imageUrl,
+                        radius: 18,
+                        fallback: Text(
+                          initial,
+                          style: AppTypography.display(
+                            size: 14,
+                            color: AppColors.accent,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.body(
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                            if (p.createdAt != null)
+                              Text(
+                                DateFormat.yMMMd(locale)
+                                    .format(p.createdAt!.toLocal()),
+                                style: AppTypography.body(
+                                  size: 11,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                ),
                 if (p.content.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 6),
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
                     child: Text(p.content, style: AppTypography.body()),
                   ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.favorite_border_rounded,
-                      size: 16,
-                      color: AppColors.textMuted,
-                    ),
-                    const SizedBox(width: 4),
-                    Text('${p.likes}', style: AppTypography.label()),
-                    const SizedBox(width: 14),
-                    const Icon(
-                      Icons.chat_bubble_outline_rounded,
-                      size: 16,
-                      color: AppColors.textMuted,
-                    ),
-                    const SizedBox(width: 4),
-                    Text('${p.comments}', style: AppTypography.label()),
-                  ],
+                if (p.mediaUrls.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  PostMedia(urls: p.mediaUrls),
+                ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.thumb_up_alt_outlined,
+                        size: 15,
+                        color: AppColors.textMuted,
+                      ),
+                      const SizedBox(width: 4),
+                      Text('${p.likes}', style: _tiny()),
+                      const Spacer(),
+                      Text(
+                        l10n.citizenComments(p.comments),
+                        style: _tiny(),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
         ],
       ],
     );
