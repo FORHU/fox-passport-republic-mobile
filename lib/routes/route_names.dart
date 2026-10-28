@@ -71,9 +71,15 @@ class RouteNames {
   static const String passport = '/passport';
   static const String profile = '/profile';
 
+  /// The optional ID check and Verified badge. Pushed from Profile.
+  static const String identity = '/profile/identity';
+
   /// Edit the profile: photo, name, username, phone, privacy. Pushed from
   /// Profile and Settings.
   static const String profileEdit = '/profile/edit';
+
+  /// Your followers, who you follow, and follow requests. Pushed from Profile.
+  static const String people = '/profile/people';
 
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
