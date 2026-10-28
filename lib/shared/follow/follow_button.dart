@@ -12,9 +12,21 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 /// Follow, Requested (a private account has not answered) or Following, with
 /// how many follow them. Tapping flips between following and not.
 class FollowButton extends ConsumerStatefulWidget {
-  const FollowButton({required this.userId, super.key});
+  const FollowButton({
+    required this.userId,
+    this.compact = false,
+    this.showCount = true,
+    super.key,
+  });
 
   final String userId;
+
+  /// A shorter button with smaller text, for a crowded header.
+  final bool compact;
+
+  /// Shows "N followers" beside the button. Off where the count is already on
+  /// the page.
+  final bool showCount;
 
   @override
   ConsumerState<FollowButton> createState() => _FollowButtonState();
@@ -62,18 +74,26 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
       FollowState.pending => l10n.followRequested,
       FollowState.following => l10n.followFollowing,
     };
-    final followers = status.followers;
+    final followers = widget.showCount ? status.followers : null;
+    final height = widget.compact ? 32.0 : 40.0;
+    final textStyle = widget.compact
+        ? AppTypography.display(size: 12)
+        : AppTypography.display(size: 14);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          height: 40,
+          height: height,
           child: following
               ? OutlinedButton(
                   onPressed: _busy ? null : () => _toggle(status),
                   style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(0, 40),
+                    minimumSize: Size(0, height),
+                    textStyle: textStyle,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.compact ? 14 : 16,
+                    ),
                     side: const BorderSide(color: AppColors.borderStrong),
                     shape: RoundedRectangleBorder(borderRadius: AppRadius.brSm),
                   ),
@@ -82,7 +102,11 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
               : ElevatedButton(
                   onPressed: _busy ? null : () => _toggle(status),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(0, 40),
+                    minimumSize: Size(0, height),
+                    textStyle: textStyle,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.compact ? 14 : 16,
+                    ),
                     backgroundColor: AppColors.accent,
                     foregroundColor: AppColors.onAccent,
                     shape: RoundedRectangleBorder(borderRadius: AppRadius.brSm),

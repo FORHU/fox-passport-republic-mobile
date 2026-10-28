@@ -182,6 +182,14 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
   }
 }
 
+/// Captions and chips: the mono label at a smaller size, with less spacing
+/// between letters than the default, so they take less room.
+TextStyle _tiny({Color color = AppColors.textMuted}) =>
+    AppTypography.label(color: color).copyWith(
+      fontSize: 9.5,
+      letterSpacing: 0.5,
+    );
+
 Color _accentFor(CitizenProfile p) =>
     p.isPartner ? AppColors.warning : AppColors.accent;
 
@@ -203,10 +211,10 @@ class _Hero extends ConsumerWidget {
     final since = profile.joinedAt?.year;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: profile.isPartner
               ? AppColors.warning.withValues(alpha: 0.35)
@@ -223,11 +231,11 @@ class _Hero extends ConsumerWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: 88,
-                    height: 88,
-                    padding: const EdgeInsets.all(3),
+                    width: 64,
+                    height: 64,
+                    padding: const EdgeInsets.all(2.5),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(18),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -235,7 +243,7 @@ class _Hero extends ConsumerWidget {
                       ),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(21),
+                      borderRadius: BorderRadius.circular(15.5),
                       child: profile.imageUrl == null
                           ? ColoredBox(
                               color: AppColors.surfaceRaised,
@@ -246,7 +254,7 @@ class _Hero extends ConsumerWidget {
                                       : profile.name.characters.first
                                           .toUpperCase(),
                                   style: AppTypography.display(
-                                    size: 32,
+                                    size: 24,
                                     color: accent,
                                   ),
                                 ),
@@ -254,24 +262,24 @@ class _Hero extends ConsumerWidget {
                             )
                           : NetworkImageBox(
                               url: profile.imageUrl!,
-                              width: 82,
-                              height: 82,
+                              width: 59,
+                              height: 59,
                             ),
                     ),
                   ),
                   Positioned(
-                    right: -8,
-                    bottom: -8,
+                    right: -6,
+                    bottom: -6,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
+                        horizontal: 6,
+                        vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: profile.isPartner
                             ? AppColors.warning
                             : AppColors.canvas,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: profile.isPartner
                               ? AppColors.warning
@@ -280,7 +288,7 @@ class _Hero extends ConsumerWidget {
                       ),
                       child: Text(
                         l10n.citizenLevelChip(profile.level),
-                        style: AppTypography.label(
+                        style: _tiny(
                           color: profile.isPartner
                               ? AppColors.onAccent
                               : AppColors.accent,
@@ -290,7 +298,7 @@ class _Hero extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,12 +310,12 @@ class _Hero extends ConsumerWidget {
                       children: [
                         Text(
                           profile.name,
-                          style: AppTypography.display(size: 22),
+                          style: AppTypography.display(size: 18),
                         ),
                         if (profile.verified)
                           const Icon(
                             Icons.verified_rounded,
-                            size: 18,
+                            size: 16,
                             color: AppColors.accent,
                           ),
                       ],
@@ -327,6 +335,7 @@ class _Hero extends ConsumerWidget {
                         child: Text(
                           '@${profile.username}',
                           style: AppTypography.body(
+                            size: 12,
                             weight: FontWeight.w600,
                           ),
                         ),
@@ -396,7 +405,7 @@ class _Hero extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                icon: const Icon(Icons.manage_accounts_outlined, size: 18),
+                icon: const Icon(Icons.manage_accounts_outlined, size: 16),
                 label: Text(l10n.profileEdit),
                 onPressed: () => context.push(RouteNames.profileEdit),
               ),
@@ -407,14 +416,20 @@ class _Hero extends ConsumerWidget {
               runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                FollowButton(userId: profile.id),
+                FollowButton(
+                  userId: profile.id,
+                  compact: true,
+                  showCount: false,
+                ),
                 if (onMessage != null)
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 40),
+                      minimumSize: const Size(0, 32),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      textStyle: AppTypography.display(size: 12),
                     ),
                     icon:
-                        const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+                        const Icon(Icons.chat_bubble_outline_rounded, size: 14),
                     label: Text(l10n.citizenMessage),
                     onPressed: onMessage,
                   ),
@@ -428,7 +443,7 @@ class _Hero extends ConsumerWidget {
               Expanded(
                 child: Text(
                   l10n.citizenProgression,
-                  style: AppTypography.label(),
+                  style: _tiny(),
                 ),
               ),
               Text(
@@ -437,7 +452,7 @@ class _Hero extends ConsumerWidget {
                   profile.nextLevelXp,
                   (profile.progress * 100).round(),
                 ),
-                style: AppTypography.label(color: AppColors.accent),
+                style: _tiny(color: AppColors.accent),
               ),
             ],
           ),
@@ -446,7 +461,7 @@ class _Hero extends ConsumerWidget {
             borderRadius: AppRadius.brPill,
             child: LinearProgressIndicator(
               value: profile.progress,
-              minHeight: 8,
+              minHeight: 6,
               backgroundColor: AppColors.surfaceRaised,
               color: AppColors.accent,
             ),
@@ -469,7 +484,7 @@ class _Meta extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: AppColors.textMuted),
           const SizedBox(width: 4),
-          Text(text, style: AppTypography.body(size: 12)),
+          Text(text, style: AppTypography.body(size: 11)),
         ],
       );
 }
@@ -486,9 +501,9 @@ class _Count extends StatelessWidget {
           children: [
             TextSpan(
               text: '$value ',
-              style: AppTypography.body(weight: FontWeight.w800),
+              style: AppTypography.body(size: 12, weight: FontWeight.w800),
             ),
-            TextSpan(text: label, style: AppTypography.body(size: 13)),
+            TextSpan(text: label, style: AppTypography.body(size: 12)),
           ],
         ),
       );
@@ -509,23 +524,20 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
         decoration: BoxDecoration(
           color: color.withValues(alpha: soft ? 0.08 : 0.12),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 13, color: color),
-              const SizedBox(width: 4),
+              Icon(icon, size: 11, color: color),
+              const SizedBox(width: 3),
             ],
-            Text(
-              label,
-              style: AppTypography.label(color: color),
-            ),
+            Text(label, style: _tiny(color: color)),
           ],
         ),
       );
@@ -542,23 +554,23 @@ class _Stats extends StatelessWidget {
     Widget tile(IconData icon, Color color, String label, String value) =>
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(color: AppColors.border),
             ),
             child: Column(
               children: [
-                Icon(icon, size: 18, color: color),
-                const SizedBox(height: 4),
-                Text(value, style: AppTypography.display(size: 20)),
+                Icon(icon, size: 15, color: color),
+                const SizedBox(height: 2),
+                Text(value, style: AppTypography.display()),
                 Text(
                   label,
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.label(),
+                  style: _tiny(),
                 ),
               ],
             ),
@@ -647,6 +659,7 @@ class _TabBar extends StatelessWidget {
                   child: Text(
                     label,
                     style: AppTypography.body(
+                      size: 12,
                       weight: FontWeight.w700,
                       color: tab == selected
                           ? AppColors.accent
