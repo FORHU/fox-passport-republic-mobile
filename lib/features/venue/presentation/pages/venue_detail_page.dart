@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/reports/file_report.dart';
 import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -233,6 +236,23 @@ class _Loaded extends ConsumerWidget {
                         _Fact(l10n.venueEntrance, venue.entrance!),
                     ],
                     if (!venue.isSample) ReviewsSection(listingId: venue.id),
+                    if (!venue.isSample)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          icon: const Icon(Icons.flag_outlined, size: 18),
+                          label: Text(l10n.venueReport),
+                          onPressed: () => unawaited(
+                            fileReport(
+                              context,
+                              ref,
+                              target: ReportTarget.venue,
+                              id: venue.id,
+                              title: l10n.reportVenueTitle,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
