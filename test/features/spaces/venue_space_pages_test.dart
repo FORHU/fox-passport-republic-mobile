@@ -16,6 +16,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_more_p
 import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
@@ -174,7 +175,17 @@ void main() {
       );
 
       expect(find.text('1 of 2'), findsOneWidget); // venues live
-      expect(find.text('2'), findsOneWidget); // bookings, next 30 days
+      // The calendar strip can show a day numbered 2, so look in the tile.
+      expect(
+        find.descendant(
+          of: find.ancestor(
+            of: find.text('Bookings, next 30 days'),
+            matching: find.byType(KpiTile),
+          ),
+          matching: find.text('2'),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('₱12,000'), findsOneWidget); // paid out
       expect(find.text('₱5,000'), findsOneWidget); // pending
     });
