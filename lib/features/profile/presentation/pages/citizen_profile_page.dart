@@ -30,8 +30,6 @@ typedef MessageCitizen = Future<void> Function(
   CitizenProfile profile,
 );
 
-enum _Tab { stamps, badges, activity, offerings }
-
 /// Someone's public profile, laid out as on the web: a hero card with their
 /// photo, level, roles and a Follow button; the level bar; four counts; then
 /// tabs for stamps, badges, posts and what they list.
@@ -63,8 +61,6 @@ class CitizenProfilePage extends ConsumerStatefulWidget {
 }
 
 class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
-  _Tab _tab = _Tab.stamps;
-
   Future<void> _share(CitizenProfile profile) async {
     final l10n = context.l10n;
     final base = AppConfig.instance.webAppUrl;
@@ -83,20 +79,6 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
       name: profile.name,
     );
     if (blocked && mounted) context.pop();
-  }
-
-  Future<void> _message(CitizenProfile profile) async {
-    final l10n = context.l10n;
-    try {
-      await widget.onMessage!(context, profile);
-    } on Object catch (e) {
-      if (mounted) {
-        showTopToast(
-          context,
-          e is AppException ? e.message : l10n.citizenMessageFailed,
-        );
-      }
-    }
   }
 
   @override
@@ -152,20 +134,148 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
             ],
           ],
         ),
-        body: async.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          ),
-          error: (_, __) => AppStateView(
-            kind: AppStateKind.error,
-            icon: Icons.person_off_outlined,
-            title: l10n.citizenNotFound,
-            message: l10n.citizenNotFoundBody,
-            actionLabel: l10n.retry,
-            onAction: () =>
-                ref.invalidate(citizenProfileProvider(widget.userId)),
-          ),
-          data: (profile) => RefreshIndicator(
+        body: CitizenProfileView(
+          userId: widget.userId,
+          onMessage: widget.onMessage,
+          activityBuilder: widget.activityBuilder,
+          ownerSection: widget.ownerSection,
+        ),
+      ),
+    );
+  }
+}
+
+/// A tab only you see on your own profile, such as your match requests.
+class CitizenExtraTab {
+  const CitizenExtraTab({required this.label, required this.builder});
+
+  final String label;
+  final WidgetBuilder builder;
+}
+
+/// Level, XP and counts the caller knows better than the public profile does.
+/// The Passport has the real level curve and the full stamp and badge lists.
+class CitizenOverrides {
+  const CitizenOverrides({
+    required this.level,
+    required this.xp,
+    required this.progress,
+    required this.xpText,
+    required this.stamps,
+    required this.badges,
+  });
+
+  final int level;
+  final int xp;
+  final double progress;
+  final String xpText;
+  final int stamps;
+  final int badges;
+}
+
+/// What is in a profile, without a page around it: the card, the counts and
+/// the tabs. The profile page puts it under a top bar; the Passport puts it
+/// under its own.
+class CitizenProfileView extends ConsumerStatefulWidget {
+  const CitizenProfileView({
+    required this.userId,
+    this.onMessage,
+    this.activityBuilder,
+    this.ownerSection,
+    this.extraTabs = const [],
+    this.overrides,
+    super.key,
+  });
+
+  final String userId;
+  final MessageCitizen? onMessage;
+  final Widget Function(BuildContext context, CitizenProfile profile)?
+      activityBuilder;
+  final Widget? ownerSection;
+
+  /// Added after the usual tabs, on your own profile only.
+  final List<CitizenExtraTab> extraTabs;
+  final CitizenOverrides? overrides;
+
+  @override
+  ConsumerState<CitizenProfileView> createState() => _CitizenProfileViewState();
+}
+
+class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
+  int _tab = 0;
+
+  Future<void> _message(CitizenProfile profile) async {
+    final l10n = context.l10n;
+    try {
+      await widget.onMessage!(context, profile);
+    } on Object catch (e) {
+      if (mounted) {
+        showTopToast(
+          context,
+          e is AppException ? e.message : l10n.citizenMessageFailed,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final async = ref.watch(citizenProfileProvider(widget.userId));
+    final me = ref.watch(currentUserIdProvider);
+    final media = MediaQuery.of(context);
+
+    return MediaQuery(
+      // A phone set to a very large font would still overflow the cards, so
+      // the text here grows only a little.
+      data: media.copyWith(
+        textScaler: media.textScaler.clamp(maxScaleFactor: 1.1),
+      ),
+      child: async.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.accent),
+        ),
+        error: (_, __) => AppStateView(
+          kind: AppStateKind.error,
+          icon: Icons.person_off_outlined,
+          title: l10n.citizenNotFound,
+          message: l10n.citizenNotFoundBody,
+          actionLabel: l10n.retry,
+          onAction: () => ref.invalidate(citizenProfileProvider(widget.userId)),
+        ),
+        data: (loaded) {
+          final o = widget.overrides;
+          final profile =
+              o == null ? loaded : loaded.copyWith(level: o.level, xp: o.xp);
+          final isMe = profile.id == me;
+          final stampCount = o?.stamps ?? profile.stamps.length;
+          final badgeCount = o?.badges ?? profile.badges.length;
+          final tabs = <(String, WidgetBuilder)>[
+            (
+              '${l10n.citizenTabStamps} ($stampCount)',
+              (_) => _StampsTab(stamps: profile.stamps, showXp: isMe),
+            ),
+            (
+              '${l10n.citizenTabBadges} ($badgeCount)',
+              (_) => _BadgesTab(badges: profile.badges),
+            ),
+            (
+              '${l10n.citizenTabActivity} (${profile.postCount})',
+              (c) =>
+                  widget.activityBuilder?.call(c, profile) ??
+                  _ActivityTab(profile: profile),
+            ),
+            if (profile.offerings.isNotEmpty)
+              (
+                l10n.citizenTabOfferings,
+                (_) => _OfferingsTab(items: profile.offerings),
+              ),
+            if (isMe)
+              for (final t in widget.extraTabs) (t.label, t.builder),
+          ];
+          final index = _tab.clamp(0, tabs.length - 1);
+
+          return RefreshIndicator(
             color: AppColors.accent,
             onRefresh: () async {
               ref
@@ -183,39 +293,35 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
               children: [
                 CitizenHero(
                   profile: profile,
-                  isMe: profile.id == me,
+                  isMe: isMe,
+                  progress: o?.progress,
+                  xpText: o?.xpText,
                   onMessage: widget.onMessage == null
                       ? null
                       : () => unawaited(_message(profile)),
                 ),
-                if (profile.id == me && widget.ownerSection != null) ...[
+                if (isMe && widget.ownerSection != null) ...[
                   const SizedBox(height: 12),
                   widget.ownerSection!,
                 ],
                 const SizedBox(height: 12),
-                CitizenStats(profile: profile),
+                CitizenStats(
+                  profile: profile,
+                  stampCount: o?.stamps,
+                  badgeCount: o?.badges,
+                ),
                 const SizedBox(height: 16),
                 _TabBar(
-                  profile: profile,
-                  selected: _tab,
-                  onSelect: (t) => setState(() => _tab = t),
+                  labels: [for (final t in tabs) t.$1],
+                  selected: index,
+                  onSelect: (i) => setState(() => _tab = i),
                 ),
                 const SizedBox(height: 12),
-                switch (_tab) {
-                  _Tab.stamps => _StampsTab(
-                      stamps: profile.stamps,
-                      showXp: profile.id == me,
-                    ),
-                  _Tab.badges => _BadgesTab(badges: profile.badges),
-                  _Tab.activity =>
-                    widget.activityBuilder?.call(context, profile) ??
-                        _ActivityTab(profile: profile),
-                  _Tab.offerings => _OfferingsTab(items: profile.offerings),
-                },
+                tabs[index].$2(context),
               ],
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -223,25 +329,17 @@ class _CitizenProfilePageState extends ConsumerState<CitizenProfilePage> {
 
 class _TabBar extends StatelessWidget {
   const _TabBar({
-    required this.profile,
+    required this.labels,
     required this.selected,
     required this.onSelect,
   });
 
-  final CitizenProfile profile;
-  final _Tab selected;
-  final ValueChanged<_Tab> onSelect;
+  final List<String> labels;
+  final int selected;
+  final ValueChanged<int> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final tabs = <(_Tab, String)>[
-      (_Tab.stamps, '${l10n.citizenTabStamps} (${profile.stamps.length})'),
-      (_Tab.badges, '${l10n.citizenTabBadges} (${profile.badges.length})'),
-      (_Tab.activity, '${l10n.citizenTabActivity} (${profile.postCount})'),
-      if (profile.offerings.isNotEmpty)
-        (_Tab.offerings, l10n.citizenTabOfferings),
-    ];
     return DecoratedBox(
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
@@ -250,16 +348,16 @@ class _TabBar extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            for (final (tab, label) in tabs)
+            for (var i = 0; i < labels.length; i++)
               InkWell(
-                onTap: () => onSelect(tab),
+                onTap: () => onSelect(i),
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
                   margin: const EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: tab == selected
+                        color: i == selected
                             ? AppColors.accent
                             : Colors.transparent,
                         width: 2,
@@ -267,11 +365,11 @@ class _TabBar extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    label,
+                    labels[i],
                     style: AppTypography.body(
                       size: 12 * context.fit,
                       weight: FontWeight.w700,
-                      color: tab == selected
+                      color: i == selected
                           ? AppColors.accent
                           : AppColors.textMuted,
                     ),

@@ -31,6 +31,7 @@ import 'package:flutter_template/features/profile/presentation/pages/edit_profil
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/profile/presentation/widgets/profile_account_section.dart';
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
@@ -463,7 +464,46 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.passport,
-                builder: (context, state) => const PassportPage(),
+                // Your Passport is your profile as others see it, with your
+                // Passport level and XP, and your match requests and the
+                // way to earn a role as two more tabs.
+                builder: (context, state) => PassportPage(
+                  bodyBuilder: (context, summary) => Consumer(
+                    builder: (context, ref, _) {
+                      final me = ref.watch(currentUserIdProvider);
+                      if (me == null) return const SizedBox.shrink();
+                      final l10n = context.l10n;
+                      return CitizenProfileView(
+                        userId: me,
+                        activityBuilder: (context, profile) =>
+                            ProfilePosts(authorId: profile.id),
+                        ownerSection: const ProfileAccountSection(),
+                        overrides: summary == null
+                            ? null
+                            : CitizenOverrides(
+                                level: summary.level,
+                                xp: summary.totalXp,
+                                progress: summary.progress,
+                                xpText: passportXpText(l10n, summary),
+                                stamps: summary.stamps.length,
+                                badges: summary.badges
+                                    .where((b) => b.earned)
+                                    .length,
+                              ),
+                        extraTabs: [
+                          CitizenExtraTab(
+                            label: l10n.passportTabMatches,
+                            builder: (_) => const PassportMatchesTab(),
+                          ),
+                          CitizenExtraTab(
+                            label: l10n.passportTabEarn,
+                            builder: (_) => const PassportEarnTab(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ],
           ),
