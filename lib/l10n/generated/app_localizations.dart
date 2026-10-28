@@ -7096,6 +7096,84 @@ abstract class AppLocalizations {
   /// **'Applications'**
   String get bidsTitle;
 
+  /// No description provided for @openSlotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open event slots'**
+  String get openSlotsTitle;
+
+  /// No description provided for @openSlotsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No open slots right now'**
+  String get openSlotsEmpty;
+
+  /// No description provided for @openSlotsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Events looking for a service show here.'**
+  String get openSlotsEmptyBody;
+
+  /// No description provided for @openSlotsAnySlot.
+  ///
+  /// In en, this message translates to:
+  /// **'A service'**
+  String get openSlotsAnySlot;
+
+  /// No description provided for @openSlotsApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get openSlotsApply;
+
+  /// No description provided for @openSlotsApplyTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to {event}'**
+  String openSlotsApplyTo(String event);
+
+  /// No description provided for @openSlotsService.
+  ///
+  /// In en, this message translates to:
+  /// **'Your service'**
+  String get openSlotsService;
+
+  /// No description provided for @openSlotsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your price ({currency})'**
+  String openSlotsPrice(String currency);
+
+  /// No description provided for @openSlotsPitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell them why you fit'**
+  String get openSlotsPitch;
+
+  /// No description provided for @openSlotsSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send application'**
+  String get openSlotsSend;
+
+  /// No description provided for @openSlotsApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent.'**
+  String get openSlotsApplied;
+
+  /// No description provided for @openSlotsNoService.
+  ///
+  /// In en, this message translates to:
+  /// **'List a service first.'**
+  String get openSlotsNoService;
+
+  /// No description provided for @openSlotsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Try again.'**
+  String get openSlotsFailed;
+
   /// No description provided for @bidsIntro.
   ///
   /// In en, this message translates to:

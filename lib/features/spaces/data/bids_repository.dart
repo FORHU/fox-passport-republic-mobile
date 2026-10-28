@@ -3,6 +3,7 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/domain/bid.dart';
+import 'package:flutter_template/features/spaces/domain/open_slot.dart';
 
 /// The applications to supply an event, as the host or an Organizer sees them.
 class BidsRepository {
@@ -31,6 +32,24 @@ class BidsRepository {
     return [...results[0], ...results[1]];
   }
 
+  /// Events that are looking for a service, with the spots still open.
+  Future<List<OpenSlotEvent>> openSlots() async {
+    final body = await _api.get(ApiEndpoints.bidOpenSlots);
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) {
+      throw const FormatException('Open slots response is not a list');
+    }
+    return [
+      for (final row in rows)
+        if (OpenSlotEvent.tryParse(row) case final e?) e,
+    ];
+  }
+
+  /// Applies for a spot with one of the person's own services.
+  Future<void> submitService(ServiceBidDraft draft) async {
+    await _api.post(ApiEndpoints.bidServiceSubmit, draft.toJson());
+  }
+
   Future<void> accept(Bid bid) =>
       _api.patch(ApiEndpoints.bidAccept(bid.id, isService: bid.isService));
 
@@ -46,4 +65,9 @@ final bidsRepositoryProvider = Provider<BidsRepository>(
 // ignore: specify_nonobvious_property_types
 final bidsProvider = FutureProvider.autoDispose.family<List<Bid>, String>(
   (ref, eventId) => ref.watch(bidsRepositoryProvider).forEvent(eventId),
+);
+
+final FutureProvider<List<OpenSlotEvent>> openSlotsProvider =
+    FutureProvider.autoDispose<List<OpenSlotEvent>>(
+  (ref) => ref.watch(bidsRepositoryProvider).openSlots(),
 );

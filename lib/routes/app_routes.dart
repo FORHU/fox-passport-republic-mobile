@@ -46,6 +46,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_bids_p
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/open_slots_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_more_page.dart';
@@ -652,6 +653,10 @@ StatefulShellRoute _providerShell(ProviderKind kind) {
               GoRoute(
                 path: 'requests',
                 builder: (context, state) => VenueRequestsPage(provider: kind),
+              ),
+              GoRoute(
+                path: 'slots',
+                builder: (context, state) => const OpenSlotsPage(),
               ),
               GoRoute(
                 path: 'messages',
