@@ -25,6 +25,10 @@ class ApiEndpoints {
   static const String changePassword = '/profile/change-password';
   static const String users = '/users';
 
+  /// The optional government-ID check (multipart on POST).
+  static const String identityVerification = '/identity-verification';
+  static const String identityMine = '/identity-verification/me';
+
   /// The people the signed-in user has blocked.
   static const String blocks = '/blocks';
   static String unblock(String userId) => '/blocks/$userId';
@@ -57,6 +61,11 @@ class ApiEndpoints {
   // ── Following people
   static const String follows = '/follows';
   static String followTarget(String id) => '/follows/$id';
+  static const String followRequests = '/follows/requests';
+  static String followAccept(String id) => '/follows/$id/accept';
+  static String followDecline(String id) => '/follows/$id/decline';
+  static String followers(String id) => '/follows/$id/followers';
+  static String following(String id) => '/follows/$id/following';
   static String followStatus(String id) => '/follows/$id/status';
   static String followCounts(String id) => '/follows/$id/counts';
 
