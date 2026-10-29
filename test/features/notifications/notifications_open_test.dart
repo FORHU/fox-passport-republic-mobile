@@ -139,6 +139,52 @@ void main() {
     });
   });
 
+  group('a Republic notification', () {
+    UserNotification note(String type, Map<String, Object?> metadata) =>
+        UserNotification.fromJson({
+          'id': 'n1',
+          'type': type,
+          'title': 'T',
+          'message': 'M',
+          'isRead': false,
+          'createdAt': '2026-10-19T09:00:00.000Z',
+          'metadata': metadata,
+        });
+
+    test('a reaction opens the post', () {
+      final n = note('feed:like', {'postId': 'p1', 'reactorId': 'u2'});
+      expect(n.link, '/republic?postId=p1');
+      expect(notificationRoute(n.link), '/republic/post/p1');
+    });
+
+    test('a comment or a mention in one opens the post and its comments', () {
+      final comment = note('feed:comment', {'postId': 'p1', 'commentId': 'c1'});
+      expect(
+        notificationRoute(comment.link),
+        '/republic/post/p1?comments=1',
+      );
+      final mention = note('feed:mention', {'postId': 'p1', 'commentId': 'c1'});
+      expect(
+        notificationRoute(mention.link),
+        '/republic/post/p1?comments=1',
+      );
+      // Mentioned in the post itself: no comment to look at.
+      expect(
+        notificationRoute(note('feed:mention', {'postId': 'p1'}).link),
+        '/republic/post/p1',
+      );
+    });
+
+    test('a link the server sends wins, and no post means no link', () {
+      expect(
+        note('feed:like', {'postId': 'p1', 'link': '/booking/b1'}).link,
+        '/booking/b1',
+      );
+      expect(note('feed:like', {'reactorId': 'u2'}).link, isNull);
+      expect(note('booking', {'postId': 'p1'}).link, isNull);
+    });
+  });
+
   group('NotificationsPage', () {
     testWidgets('tapping an unread chat notification marks it and opens it', (
       tester,

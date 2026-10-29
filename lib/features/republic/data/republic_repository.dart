@@ -25,6 +25,11 @@ class RepublicRepository {
   static const authorPrefix = 'author:';
   static String authorTab(String authorId) => '$authorPrefix$authorId';
 
+  /// Not a tab either: one post, read by its id. Passed as [feed]'s tab so a
+  /// single post gets the same actions as a post in the list.
+  static const _postPrefix = 'post:';
+  static String postTab(String postId) => '$_postPrefix$postId';
+
   /// One page of posts. [tab] is `community`, `marketplace` or `partners`;
   /// null is all of them.
   ///
@@ -34,6 +39,10 @@ class RepublicRepository {
     String? cursor,
     String? search,
   }) async {
+    if (tab != null && tab.startsWith(_postPrefix)) {
+      final one = await post(tab.substring(_postPrefix.length));
+      return FeedPage(posts: [if (one != null) one]);
+    }
     final author = tab != null && tab.startsWith(authorPrefix)
         ? tab.substring(authorPrefix.length)
         : null;

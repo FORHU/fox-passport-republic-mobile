@@ -25,7 +25,8 @@ class UserNotification extends Equatable {
       message: (json['message'] ?? '').toString(),
       createdAt: createdAt.toLocal(),
       isRead: json['isRead'] == true,
-      link: _linkOf(json['metadata']),
+      link: _linkOf(json['metadata']) ??
+          _postLinkOf(json['type'], json['metadata']),
       eventTemplateId: _waitlistTemplateOf(json['type'], json['metadata']),
     );
   }
@@ -53,6 +54,21 @@ class UserNotification extends Equatable {
 
   /// The `type` the API gives a waitlist notification.
   static const waitlistSpotType = 'waitlist_spot_available';
+
+  /// A Republic reaction, comment or mention names its post, not a link:
+  /// the post's own address, with its comments open for the ones about them.
+  static String? _postLinkOf(Object? type, Object? metadata) {
+    if (type is! String || !type.startsWith('feed:') || metadata is! Map) {
+      return null;
+    }
+    final postId = metadata['postId'];
+    if (postId is! String || postId.isEmpty) return null;
+    final about = type == 'feed:comment' || metadata['commentId'] != null;
+    return Uri(
+      path: '/republic',
+      queryParameters: {'postId': postId, if (about) 'comments': '1'},
+    ).toString();
+  }
 
   static String? _linkOf(Object? metadata) {
     final link = metadata is Map ? metadata['link'] : null;

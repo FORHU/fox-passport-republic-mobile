@@ -3621,6 +3621,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewPickStars => 'Choose a star rating.';
 
   @override
+  String get republicPostTitle => 'Post';
+
+  @override
+  String get republicPostGone => 'This post is not available';
+
+  @override
+  String get republicPostGoneBody =>
+      'It may have been deleted, or it is not shared with you.';
+
+  @override
   String get republicTitle => 'Republic';
 
   @override

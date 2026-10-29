@@ -6538,6 +6538,24 @@ abstract class AppLocalizations {
   /// **'Choose a star rating.'**
   String get reviewPickStars;
 
+  /// No description provided for @republicPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get republicPostTitle;
+
+  /// No description provided for @republicPostGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This post is not available'**
+  String get republicPostGone;
+
+  /// No description provided for @republicPostGoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have been deleted, or it is not shared with you.'**
+  String get republicPostGoneBody;
+
   /// No description provided for @republicTitle.
   ///
   /// In en, this message translates to:
