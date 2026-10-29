@@ -7,6 +7,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -209,9 +210,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
             ),
             Expanded(
               child: feed.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.accent),
-                ),
+                loading: () => const FeedSkeleton(),
                 error: (_, __) => AppStateView(
                   kind: AppStateKind.error,
                   title: l10n.apiLoadFailed,

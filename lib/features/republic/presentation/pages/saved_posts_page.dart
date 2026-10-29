@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -55,9 +56,7 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
       backgroundColor: AppColors.canvas,
       appBar: AppBar(title: Text(l10n.republicSavedTitle)),
       body: feed.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const FeedSkeleton(),
         error: (_, __) => AppStateView(
           kind: AppStateKind.error,
           title: l10n.apiLoadFailed,
