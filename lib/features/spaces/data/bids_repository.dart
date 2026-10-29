@@ -32,7 +32,7 @@ class BidsRepository {
     return [...results[0], ...results[1]];
   }
 
-  /// Events that are looking for a service, with the spots still open.
+  /// Events that are looking for a service or gear, with the spots still open.
   Future<List<OpenSlotEvent>> openSlots() async {
     final body = await _api.get(ApiEndpoints.bidOpenSlots);
     final rows = body is Map ? body['data'] : body;
@@ -45,9 +45,14 @@ class BidsRepository {
     ];
   }
 
-  /// Applies for a spot with one of the person's own services.
-  Future<void> submitService(ServiceBidDraft draft) async {
-    await _api.post(ApiEndpoints.bidServiceSubmit, draft.toJson());
+  /// Applies for a spot with one of the person's own services or gear.
+  Future<void> submit(BidDraft draft) async {
+    await _api.post(
+      draft.isGear
+          ? ApiEndpoints.bidAssetSubmit
+          : ApiEndpoints.bidServiceSubmit,
+      draft.toJson(),
+    );
   }
 
   Future<void> accept(Bid bid) =>

@@ -14,8 +14,8 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
-/// Events that are looking for a service, with a way to apply for a spot with
-/// one of the person's own services.
+/// Events that are looking for a service or gear, with a way to apply for a
+/// spot with one of the person's own services or gear.
 class OpenSlotsPage extends ConsumerWidget {
   const OpenSlotsPage({super.key});
 
@@ -28,23 +28,28 @@ class OpenSlotsPage extends ConsumerWidget {
     final l10n = context.l10n;
     final repo = ref.read(bidsRepositoryProvider);
     try {
-      final services = await ref.read(myServicesProvider.future);
+      final listings = await ref.read(
+        slot.isGear ? myAssetsProvider.future : myServicesProvider.future,
+      );
       if (!context.mounted) return;
-      if (services.isEmpty) {
-        showTopToast(context, l10n.openSlotsNoService);
+      if (listings.isEmpty) {
+        showTopToast(
+          context,
+          slot.isGear ? l10n.openSlotsNoGear : l10n.openSlotsNoService,
+        );
         return;
       }
-      final draft = await showModalBottomSheet<ServiceBidDraft>(
+      final draft = await showModalBottomSheet<BidDraft>(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
         showDragHandle: true,
         backgroundColor: AppColors.surface,
         builder: (_) =>
-            _ApplyForm(event: event, slot: slot, services: services),
+            _ApplyForm(event: event, slot: slot, listings: listings),
       );
       if (draft == null || !context.mounted) return;
-      await repo.submitService(draft);
+      await repo.submit(draft);
       if (context.mounted) showTopToast(context, l10n.openSlotsApplied);
     } on Object catch (e) {
       if (context.mounted) {
@@ -124,7 +129,10 @@ class OpenSlotsPage extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        s.description ?? l10n.openSlotsAnySlot,
+                                        s.description ??
+                                            (s.isGear
+                                                ? l10n.openSlotsAnyGear
+                                                : l10n.openSlotsAnySlot),
                                         style: AppTypography.body(),
                                       ),
                                       if (s.price > 0)
@@ -163,12 +171,14 @@ class _ApplyForm extends StatefulWidget {
   const _ApplyForm({
     required this.event,
     required this.slot,
-    required this.services,
+    required this.listings,
   });
 
   final OpenSlotEvent event;
   final OpenSlot slot;
-  final List<SpaceListing> services;
+
+  /// The person's own services, or their gear when the spot is for gear.
+  final List<SpaceListing> listings;
 
   @override
   State<_ApplyForm> createState() => _ApplyFormState();
@@ -179,7 +189,7 @@ class _ApplyFormState extends State<_ApplyForm> {
     text: widget.slot.price > 0 ? '${widget.slot.price}' : '',
   );
   final _message = TextEditingController();
-  late String _serviceId = widget.services.first.id;
+  late String _listingId = widget.listings.first.id;
 
   @override
   void dispose() {
@@ -213,13 +223,17 @@ class _ApplyFormState extends State<_ApplyForm> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              initialValue: _serviceId,
-              decoration: InputDecoration(labelText: l10n.openSlotsService),
+              initialValue: _listingId,
+              decoration: InputDecoration(
+                labelText: widget.slot.isGear
+                    ? l10n.openSlotsGear
+                    : l10n.openSlotsService,
+              ),
               items: [
-                for (final s in widget.services)
+                for (final s in widget.listings)
                   DropdownMenuItem(value: s.id, child: Text(s.name)),
               ],
-              onChanged: (id) => setState(() => _serviceId = id ?? _serviceId),
+              onChanged: (id) => setState(() => _listingId = id ?? _listingId),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -247,10 +261,11 @@ class _ApplyFormState extends State<_ApplyForm> {
               child: ElevatedButton(
                 onPressed: _valid
                     ? () => Navigator.of(context).pop(
-                          ServiceBidDraft(
+                          BidDraft(
                             eventId: widget.event.id,
                             slotId: widget.slot.id,
-                            serviceId: _serviceId,
+                            listingId: _listingId,
+                            isGear: widget.slot.isGear,
                             price: _amount!,
                             message: _message.text,
                           ),
