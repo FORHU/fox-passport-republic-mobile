@@ -132,12 +132,22 @@ class RepublicRepository {
     return id == null ? null : '$id';
   }
 
-  /// Uploads a photo and returns its public URL, to attach to a post.
-  Future<String> uploadMedia(PickedMedia photo) async {
+  /// Uploads a photo or a video and returns its public URL, to attach to a
+  /// post. A video gets time to send, and [onProgress] hears how far it is.
+  Future<String> uploadMedia(
+    PickedMedia photo, {
+    void Function(int sent, int total)? onProgress,
+  }) async {
     final form = FormData.fromMap({
       'file': MultipartFile.fromBytes(photo.bytes, filename: photo.name),
     });
-    final body = await _api.post(ApiEndpoints.uploadFile, form);
+    final body = photo.isVideo
+        ? await _api.upload(
+            ApiEndpoints.uploadFile,
+            form,
+            onProgress: onProgress,
+          )
+        : await _api.post(ApiEndpoints.uploadFile, form);
     final file = body is Map ? body['file'] : null;
     final url = (file is Map ? file['url'] : null) ??
         (body is Map ? body['url'] : null);

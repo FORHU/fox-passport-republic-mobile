@@ -60,8 +60,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsMarkAllRead => 'Mark all as read';
 
   @override
-  String get notificationsUpdateFailed =>
-      'We couldn\'t update your notifications. Try again.';
+  String get notificationsUpdateFailed => 'We couldn\'t update your notifications. Try again.';
 
   @override
   String get profile => 'Profile';
@@ -102,8 +101,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeroAnywhere => 'anywhere.';
 
   @override
-  String get homeHeroBody =>
-      'The venue, the gear and the crew for any night, in one booking.';
+  String get homeHeroBody => 'The venue, the gear and the crew for any night, in one booking.';
 
   @override
   String get homeSearchWhat => 'What';
@@ -175,8 +173,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome1Headline => 'Welcome to FoxPassport';
 
   @override
-  String get welcome1Body =>
-      'Plan, book and live unforgettable events — and meet the people who make them happen.';
+  String get welcome1Body => 'Plan, book and live unforgettable events — and meet the people who make them happen.';
 
   @override
   String get welcome1Button => 'Show me around';
@@ -188,8 +185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome2Headline => 'Discover experiences';
 
   @override
-  String get welcome2Body =>
-      'Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more.';
+  String get welcome2Body => 'Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more.';
 
   @override
   String get welcome2Button => 'Next';
@@ -201,8 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome3Headline => 'Book Foxers in one place';
 
   @override
-  String get welcome3Body =>
-      'Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely.';
+  String get welcome3Body => 'Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely.';
 
   @override
   String get welcome3Button => 'Next';
@@ -214,8 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome4Headline => 'Stamp your passport';
 
   @override
-  String get welcome4Body =>
-      'Every event you attend earns stamps, badges and levels on your digital FoxPassport.';
+  String get welcome4Body => 'Every event you attend earns stamps, badges and levels on your digital FoxPassport.';
 
   @override
   String get welcome4Button => 'Next';
@@ -227,8 +221,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome5Headline => 'Join the Republic';
 
   @override
-  String get welcome5Body =>
-      'Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans.';
+  String get welcome5Body => 'Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans.';
 
   @override
   String get welcome5Button => 'Next';
@@ -240,8 +233,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome6Headline => 'Ready when you are';
 
   @override
-  String get welcome6Body =>
-      'Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you\'re signed up.';
+  String get welcome6Body => 'Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you\'re signed up.';
 
   @override
   String get welcome6Button => 'Create a free account';
@@ -253,8 +245,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authAppleSoon => 'Sign in with Apple is coming soon.';
 
   @override
-  String get authSocialUnavailable =>
-      'Google and Facebook sign-in are available in the mobile app.';
+  String get authSocialUnavailable => 'Google and Facebook sign-in are available in the mobile app.';
 
   @override
   String get authUsername => 'Username';
@@ -272,12 +263,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerPrivacyLink => 'Privacy Policy';
 
   @override
-  String get registerTermsRequired =>
-      'Please accept the Terms of Service and Privacy Policy to continue';
+  String get registerTermsRequired => 'Please accept the Terms of Service and Privacy Policy to continue';
 
   @override
-  String get registerLegalUnavailable =>
-      'The Terms and Privacy Policy open on the FoxPassport web app, which is not configured yet.';
+  String get registerLegalUnavailable => 'The Terms and Privacy Policy open on the FoxPassport web app, which is not configured yet.';
 
   @override
   String get loginEyebrow => 'Welcome back';
@@ -362,8 +351,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetHeadline => 'Reset your password';
 
   @override
-  String get resetBody =>
-      'Enter the code from your email and choose a new password';
+  String get resetBody => 'Enter the code from your email and choose a new password';
 
   @override
   String get resetCodeHint => 'Reset code';
@@ -378,8 +366,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetButton => 'Update password';
 
   @override
-  String get onboardingWebNotConfigured =>
-      'This opens on the FoxPassport web app, which is not configured yet.';
+  String get onboardingWebNotConfigured => 'This opens on the FoxPassport web app, which is not configured yet.';
 
   @override
   String get onboardingFriend => 'Friend';
@@ -391,12 +378,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingBackAgain => 'Back again, ';
 
   @override
-  String get onboardingProfileSubtitleReturning =>
-      'Update your profile or continue to manage your roles.';
+  String get onboardingProfileSubtitleReturning => 'Update your profile or continue to manage your roles.';
 
   @override
-  String get onboardingProfileSubtitleNew =>
-      'Let\'s set up your profile first.';
+  String get onboardingProfileSubtitleNew => 'Let\'s set up your profile first.';
 
   @override
   String get onboardingDisplayName => 'Display Name';
@@ -408,8 +393,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingYourAddress => 'Your address';
 
   @override
-  String get onboardingAddressHelp =>
-      'Used to show you events, venues and Foxers near you.';
+  String get onboardingAddressHelp => 'Used to show you events, venues and Foxers near you.';
 
   @override
   String get onboardingCountry => 'Country';
@@ -491,29 +475,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingIntentTitle => 'What brings you here?';
 
   @override
-  String get onboardingIntentSubtitle =>
-      'Choose how you plan to use FoxPassport.';
+  String get onboardingIntentSubtitle => 'Choose how you plan to use FoxPassport.';
 
   @override
   String get onboardingIntentBookTitle => 'Book Events';
 
   @override
-  String get onboardingIntentBookBody =>
-      'Browse foxers, venues, and services to create your perfect event.';
+  String get onboardingIntentBookBody => 'Browse foxers, venues, and services to create your perfect event.';
 
   @override
   String get onboardingIntentFoxerTitle => 'Become a Foxer';
 
   @override
-  String get onboardingIntentFoxerBody =>
-      'Offer services, rent gear, list venues, or create events professionally.';
+  String get onboardingIntentFoxerBody => 'Offer services, rent gear, list venues, or create events professionally.';
 
   @override
   String get onboardingIntentBothTitle => 'Both';
 
   @override
-  String get onboardingIntentBothBody =>
-      'Book events and apply to become a Foxer in the ecosystem.';
+  String get onboardingIntentBothBody => 'Book events and apply to become a Foxer in the ecosystem.';
 
   @override
   String get onboardingRolesTitleHeld => 'Your roles';
@@ -525,16 +505,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingRolesTitleChoose => 'Choose your role';
 
   @override
-  String get onboardingRolesSubtitleHeld =>
-      'Active roles are shown below. Apply for additional roles anytime.';
+  String get onboardingRolesSubtitleHeld => 'Active roles are shown below. Apply for additional roles anytime.';
 
   @override
-  String get onboardingRolesSubtitlePending =>
-      'We\'re reviewing your application. You\'ll be notified once approved.';
+  String get onboardingRolesSubtitlePending => 'We\'re reviewing your application. You\'ll be notified once approved.';
 
   @override
-  String get onboardingRolesSubtitleChoose =>
-      'Select how you want to contribute. You can hold multiple roles over time.';
+  String get onboardingRolesSubtitleChoose => 'Select how you want to contribute. You can hold multiple roles over time.';
 
   @override
   String get onboardingFinishDashboard => 'Go to Dashboard';
@@ -572,8 +549,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingStatusRevision => 'NEEDS REVISION';
 
   @override
-  String get onboardingRevisionCaption =>
-      'One or more documents were flagged — tap to fix and resubmit.';
+  String get onboardingRevisionCaption => 'One or more documents were flagged — tap to fix and resubmit.';
 
   @override
   String get onboardingLearnApply => 'Learn more & apply';
@@ -593,8 +569,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingWhatYoullNeed => 'What you\'ll need to apply';
 
   @override
-  String get onboardingReviewNote =>
-      'Our team reviews every application. If a document needs fixing, we\'ll flag just that one so you can resubmit it.';
+  String get onboardingReviewNote => 'Our team reviews every application. If a document needs fixing, we\'ll flag just that one so you can resubmit it.';
 
   @override
   String get onboardingNotNow => 'Not now';
@@ -789,8 +764,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchEventPlanLikeThis => 'Plan something like this';
 
   @override
-  String get searchEventPlanHint =>
-      'This event is already booked. Start your own and see what you can book.';
+  String get searchEventPlanHint => 'This event is already booked. Start your own and see what you can book.';
 
   @override
   String get searchNew => 'New';
@@ -856,8 +830,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageRequestDeclined => 'Message request declined.';
 
   @override
-  String get messageActionUnavailable =>
-      'Start a conversation from a Foxer or venue profile.';
+  String get messageActionUnavailable => 'Start a conversation from a Foxer or venue profile.';
 
   @override
   String get messageVenueInbox => 'Venue inbox';
@@ -869,8 +842,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageRequestPending => 'Message request';
 
   @override
-  String get messageSearchUnavailable =>
-      'Search within conversations is not available yet.';
+  String get messageSearchUnavailable => 'Search within conversations is not available yet.';
 
   @override
   String get messageOnline => 'Online';
@@ -948,8 +920,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordUpdated => 'Password updated. Please log in.';
 
   @override
-  String get authAccountCreated =>
-      'Account created! Check your email for a code.';
+  String get authAccountCreated => 'Account created! Check your email for a code.';
 
   @override
   String get authEmailVerified => 'Email verified. You can now log in.';
@@ -1045,8 +1016,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get messageSampleFoxer =>
-      'This is a sample Foxer. Real Foxers show up here once there are some.';
+  String get messageSampleFoxer => 'This is a sample Foxer. Real Foxers show up here once there are some.';
 
   @override
   String get messageStartFailed => 'We couldn\'t open the chat. Try again.';
@@ -1097,8 +1067,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageAttachSoon => 'Sharing photos is coming soon';
 
   @override
-  String get messageOwnerSample =>
-      'This is a sample venue, so there is no owner to message.';
+  String get messageOwnerSample => 'This is a sample venue, so there is no owner to message.';
 
   @override
   String get messageDeletedConfirm => 'Delete this message?';
@@ -1145,22 +1114,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get areaGo => 'Show';
 
   @override
-  String get areaLocationDenied =>
-      'Location is off for this app. Turn it on in Settings to use it.';
+  String get areaLocationDenied => 'Location is off for this app. Turn it on in Settings to use it.';
 
   @override
   String get areaLocationOff => 'Turn on location services to use this.';
 
   @override
-  String get areaLocationFailed =>
-      'We couldn\'t find your location. Try again.';
+  String get areaLocationFailed => 'We couldn\'t find your location. Try again.';
 
   @override
   String get locGateTitle => 'See what is near you';
 
   @override
-  String get locGateBody =>
-      'Share your location and Fox Passport shows the venues and Foxers around you. We only use it while the app is open, and you can change it any time in Settings.';
+  String get locGateBody => 'Share your location and Fox Passport shows the venues and Foxers around you. We only use it while the app is open, and you can change it any time in Settings.';
 
   @override
   String get locGateAllow => 'Use my location';
@@ -1205,15 +1171,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsBlockedUsers => 'Blocked users';
 
   @override
-  String get settingsBlockedUsersHint =>
-      'People who can\'t send you a follow request';
+  String get settingsBlockedUsersHint => 'People who can\'t send you a follow request';
 
   @override
   String get settingsChangePassword => 'Change password';
 
   @override
-  String get settingsChangePasswordHint =>
-      'Use a new password to keep your account safe';
+  String get settingsChangePasswordHint => 'Use a new password to keep your account safe';
 
   @override
   String get settingsDeleteAccount => 'Delete account';
@@ -1243,8 +1207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spaceSwitchTitle => 'Switch space';
 
   @override
-  String get spaceSwitchHint =>
-      'You hold more than one role. Choose where to work.';
+  String get spaceSwitchHint => 'You hold more than one role. Choose where to work.';
 
   @override
   String spaceNowIn(String space) {
@@ -1390,8 +1353,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esPolicy => 'Cancellation policy';
 
   @override
-  String get esLocationHint =>
-      'Where the event takes place. Choosing a venue fills this in for you.';
+  String get esLocationHint => 'Where the event takes place. Choosing a venue fills this in for you.';
 
   @override
   String get esPhotosHint => 'Up to 5 photos. Five is recommended.';
@@ -1501,16 +1463,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get esToastOneVenue =>
-      'Only one venue can be in the package. Remove the existing venue first.';
+  String get esToastOneVenue => 'Only one venue can be in the package. Remove the existing venue first.';
 
   @override
-  String get esToastVenuePending =>
-      'Your affiliation with this venue is still pending approval.';
+  String get esToastVenuePending => 'Your affiliation with this venue is still pending approval.';
 
   @override
-  String get esToastVenueApply =>
-      'Apply to this venue first. You need an approved affiliation to host here.';
+  String get esToastVenueApply => 'Apply to this venue first. You need an approved affiliation to host here.';
 
   @override
   String get esReadyTitle => 'Event title';
@@ -1542,8 +1501,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get esNotDraft =>
-      'This event has already been sent for review, so you can only save changes.';
+  String get esNotDraft => 'This event has already been sent for review, so you can only save changes.';
 
   @override
   String get esSaveDraft => 'Save as draft';
@@ -1573,8 +1531,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esPhotoFailed => 'That photo didn\'t upload. Try again.';
 
   @override
-  String get esPartial =>
-      'Saved, but some items could not be added. Fix them and send it again.';
+  String get esPartial => 'Saved, but some items could not be added. Fix them and send it again.';
 
   @override
   String esProblemLine(String name, String reason) {
@@ -1766,8 +1723,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get promotionsEmpty => 'No promotions yet';
 
   @override
-  String get promotionsEmptyBody =>
-      'Offer a discount on a venue to draw more bookings.';
+  String get promotionsEmptyBody => 'Offer a discount on a venue to draw more bookings.';
 
   @override
   String get promotionNew => 'New promotion';
@@ -1791,8 +1747,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get promotionAutoApply => 'Apply automatically';
 
   @override
-  String get promotionAutoApplyHint =>
-      'Guests get it at checkout without a code.';
+  String get promotionAutoApplyHint => 'Guests get it at checkout without a code.';
 
   @override
   String get promotionCreate => 'Create promotion';
@@ -1834,8 +1789,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get promotionAuto => 'automatic';
 
   @override
-  String get partnersIntroMayor =>
-      'Event Foxers who want to run events at your venues.';
+  String get partnersIntroMayor => 'Event Foxers who want to run events at your venues.';
 
   @override
   String get partnersIntroEvent => 'The venues you can run your events at.';
@@ -1957,8 +1911,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersChooseVenue => 'Which venue?';
 
   @override
-  String get partnersInviteNoVenue =>
-      'You need a live venue to invite someone.';
+  String get partnersInviteNoVenue => 'You need a live venue to invite someone.';
 
   @override
   String partnersInviteConfirmTitle(String name) {
@@ -1997,8 +1950,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get partnersApplyConfirmBody =>
-      'The venue\'s Mayor will be asked to approve.';
+  String get partnersApplyConfirmBody => 'The venue\'s Mayor will be asked to approve.';
 
   @override
   String get partnersApplyAction => 'Apply';
@@ -2079,8 +2031,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioServiceArea => 'Service area';
 
   @override
-  String get studioServiceAreaHint =>
-      'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.';
+  String get studioServiceAreaHint => 'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.';
 
   @override
   String get studioRadius => 'Radius';
@@ -2207,8 +2158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioSavedDraft => 'Draft saved.';
 
   @override
-  String get studioSubmitted =>
-      'Sent for review. We\'ll tell you when it\'s live.';
+  String get studioSubmitted => 'Sent for review. We\'ll tell you when it\'s live.';
 
   @override
   String get studioSavedChanges => 'Changes saved.';
@@ -2217,27 +2167,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioSaveFailed => 'We couldn\'t save that. Try again.';
 
   @override
-  String get studioOverlapRefused =>
-      'Another venue already covers part of this area. Move the pin.';
+  String get studioOverlapRefused => 'Another venue already covers part of this area. Move the pin.';
 
   @override
-  String get studioLiveNote =>
-      'This venue is live. Your changes show to guests as soon as you save.';
+  String get studioLiveNote => 'This venue is live. Your changes show to guests as soon as you save.';
 
   @override
   String get studioUseMyLocation => 'Use my current location';
 
   @override
-  String get studioLocateDenied =>
-      'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.';
+  String get studioLocateDenied => 'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.';
 
   @override
-  String get studioLocateOff =>
-      'Turn on your phone\'s location, or tap the map instead.';
+  String get studioLocateOff => 'Turn on your phone\'s location, or tap the map instead.';
 
   @override
-  String get studioLocateFailed =>
-      'We couldn\'t find where you are. Tap the map instead.';
+  String get studioLocateFailed => 'We couldn\'t find where you are. Tap the map instead.';
 
   @override
   String studioPhotoFailedWhy(String reason) {
@@ -2245,8 +2190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get studioMapNeedsToken =>
-      'The map isn\'t available, so the pin can\'t be placed.';
+  String get studioMapNeedsToken => 'The map isn\'t available, so the pin can\'t be placed.';
 
   @override
   String get venueHubEdit => 'Edit details';
@@ -2279,8 +2223,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get earningsRecent => 'Recent payouts';
 
   @override
-  String get earningsNone =>
-      'No payouts yet. They appear after a guest is checked in.';
+  String get earningsNone => 'No payouts yet. They appear after a guest is checked in.';
 
   @override
   String get earningsSetup => 'Payout setup';
@@ -2298,8 +2241,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get earningsSetupFinish => 'Finish payout setup';
 
   @override
-  String get earningsSetupHint =>
-      'Opens on the web. It asks for your bank and identity details.';
+  String get earningsSetupHint => 'Opens on the web. It asks for your bank and identity details.';
 
   @override
   String get payoutPending => 'Pending';
@@ -2323,12 +2265,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestsTitle => 'Requests';
 
   @override
-  String get requestsIntro =>
-      'People adding your venue to their events. Confirm the ones you can host.';
+  String get requestsIntro => 'People adding your venue to their events. Confirm the ones you can host.';
 
   @override
-  String get requestsEmpty =>
-      'No requests yet. When someone adds your venue to their event, it shows up here.';
+  String get requestsEmpty => 'No requests yet. When someone adds your venue to their event, it shows up here.';
 
   @override
   String requestFrom(String name) {
@@ -2353,8 +2293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestDeclined => 'Request declined.';
 
   @override
-  String get requestActionFailed =>
-      'We couldn\'t update that request. Try again.';
+  String get requestActionFailed => 'We couldn\'t update that request. Try again.';
 
   @override
   String get requestDeclineTitle => 'Decline this request?';
@@ -2378,12 +2317,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestStatusCancelled => 'Cancelled';
 
   @override
-  String get listingsVenuesEmpty =>
-      'You haven\'t listed a venue yet. Add one on the web.';
+  String get listingsVenuesEmpty => 'You haven\'t listed a venue yet. Add one on the web.';
 
   @override
-  String get listingsEventsEmpty =>
-      'You haven\'t created an event yet. Tap New event to start one.';
+  String get listingsEventsEmpty => 'You haven\'t created an event yet. Tap New event to start one.';
 
   @override
   String get listingStatusDraft => 'Draft';
@@ -2404,8 +2341,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInTitle => 'Check-in';
 
   @override
-  String get checkInIntro =>
-      'Scan the QR on a guest\'s ticket, or type the code printed under it.';
+  String get checkInIntro => 'Scan the QR on a guest\'s ticket, or type the code printed under it.';
 
   @override
   String get checkInScan => 'Scan ticket';
@@ -2420,12 +2356,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInTorch => 'Light';
 
   @override
-  String get checkInCameraDenied =>
-      'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
+  String get checkInCameraDenied => 'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
 
   @override
-  String get checkInCameraFailed =>
-      'The camera isn\'t available. Type the code instead.';
+  String get checkInCameraFailed => 'The camera isn\'t available. Type the code instead.';
 
   @override
   String get checkInTypeInstead => 'Type the code';
@@ -2440,15 +2374,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInDone => 'Guest checked in.';
 
   @override
-  String get checkInFailed =>
-      'We couldn\'t check that guest in. Check the code and try again.';
+  String get checkInFailed => 'We couldn\'t check that guest in. Check the code and try again.';
 
   @override
   String get blockedTitle => 'Blocked users';
 
   @override
-  String get blockedBody =>
-      'Blocked people can\'t send you a new follow request. You can unblock anyone at any time.';
+  String get blockedBody => 'Blocked people can\'t send you a new follow request. You can unblock anyone at any time.';
 
   @override
   String get blockedEmpty => 'You haven\'t blocked anyone.';
@@ -2483,15 +2415,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordChanged => 'Your password was changed.';
 
   @override
-  String get passwordChangeFailed =>
-      'We couldn\'t change your password. Try again.';
+  String get passwordChangeFailed => 'We couldn\'t change your password. Try again.';
 
   @override
   String get deleteAccountTitle => 'Delete your account?';
 
   @override
-  String get deleteAccountBody =>
-      'This is permanent. All your data, including bookings, badges, stamps and listings, will be erased. Cancel any active bookings first.';
+  String get deleteAccountBody => 'This is permanent. All your data, including bookings, badges, stamps and listings, will be erased. Cancel any active bookings first.';
 
   @override
   String get deleteAccountPassword => 'Confirm your password';
@@ -2506,8 +2436,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountAction => 'Delete my account';
 
   @override
-  String get deleteAccountFailed =>
-      'We couldn\'t delete your account. Try again.';
+  String get deleteAccountFailed => 'We couldn\'t delete your account. Try again.';
 
   @override
   String get currencyTitle => 'Show prices in';
@@ -2568,8 +2497,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFull => 'This event is full.';
 
   @override
-  String get eventWaitlistFull =>
-      'This event is full. Join the waitlist and we\'ll tell you when a spot opens.';
+  String get eventWaitlistFull => 'This event is full. Join the waitlist and we\'ll tell you when a spot opens.';
 
   @override
   String eventWaitlistOn(int position, int total) {
@@ -2577,12 +2505,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get eventWaitlistOnNoPlace =>
-      'You\'re on the waitlist. We\'ll tell you when a spot opens.';
+  String get eventWaitlistOnNoPlace => 'You\'re on the waitlist. We\'ll tell you when a spot opens.';
 
   @override
-  String get eventWaitlistOpened =>
-      'A spot opened up. Book now before it fills again.';
+  String get eventWaitlistOpened => 'A spot opened up. Book now before it fills again.';
 
   @override
   String get eventWaitlistJoin => 'Join waitlist';
@@ -2600,8 +2526,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventWaitlistFailed => 'That didn\'t work. Try again.';
 
   @override
-  String get eventNotPriced =>
-      'This event has no price yet, so it cannot be booked.';
+  String get eventNotPriced => 'This event has no price yet, so it cannot be booked.';
 
   @override
   String get eventLoadFailed => 'We couldn\'t load this event.';
@@ -2663,8 +2588,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editRequestApplied => 'Approved. Your booking has changed.';
 
   @override
-  String get editRequestPayOnWeb =>
-      'Approved. Pay the difference on the web to confirm the change.';
+  String get editRequestPayOnWeb => 'Approved. Pay the difference on the web to confirm the change.';
 
   @override
   String get editRequestDeclined => 'The venue declined';
@@ -2706,12 +2630,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rolesTitle => 'Become a Foxer';
 
   @override
-  String get rolesIntro =>
-      'Hosts, venues, gear and talent keep FoxPassport running. Pick a role to see what it involves and apply.';
+  String get rolesIntro => 'Hosts, venues, gear and talent keep FoxPassport running. Pick a role to see what it involves and apply.';
 
   @override
-  String get rolesSettingsHint =>
-      'Host events, list a venue, offer gear or talent';
+  String get rolesSettingsHint => 'Host events, list a venue, offer gear or talent';
 
   @override
   String get rolesContinueOnWeb => 'Continue on the web';
@@ -2829,8 +2751,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerOffers => 'What they offer';
 
   @override
-  String get foxerNoOffers =>
-      'Nothing listed yet. Send a request and tell them what you need.';
+  String get foxerNoOffers => 'Nothing listed yet. Send a request and tell them what you need.';
 
   @override
   String get foxerSampleNote => 'Sample Foxer';
@@ -2894,8 +2815,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsRequests => 'Requests';
 
   @override
-  String get ticketsEmptyRequests =>
-      'No requests yet. Ask a Foxer to match you from their profile.';
+  String get ticketsEmptyRequests => 'No requests yet. Ask a Foxer to match you from their profile.';
 
   @override
   String get matchViewRequests => 'View my requests';
@@ -3463,8 +3383,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get occasionPlanner => 'Have a Foxer plan it';
 
   @override
-  String get occasionPlannerBody =>
-      'Tell a planner what you want and they handle the rest.';
+  String get occasionPlannerBody => 'Tell a planner what you want and they handle the rest.';
 
   @override
   String get occasionFindPlanner => 'Find a planner';
@@ -3669,6 +3588,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicCommentFailed => 'We couldn\'t post your comment.';
 
   @override
+  String get republicAddVideo => 'Add a video';
+
+  @override
+  String get republicRemoveVideo => 'Remove video';
+
+  @override
+  String get republicVideoTooLarge => 'That video is over 100 MB. Pick a shorter one.';
+
+  @override
+  String republicVideoSize(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String republicVideoUploading(int percent) {
+    return 'Uploading $percent%';
+  }
+
+  @override
   String get republicEdited => 'edited';
 
   @override
@@ -3761,8 +3699,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get blockBody =>
-      'You will no longer see each other\'s posts and they cannot message you. You can unblock them any time in Settings.';
+  String get blockBody => 'You will no longer see each other\'s posts and they cannot message you. You can unblock them any time in Settings.';
 
   @override
   String get blockConfirm => 'Block';
@@ -3800,8 +3737,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicSavedTitle => 'Saved posts';
 
   @override
-  String get republicSavedEmpty =>
-      'Nothing saved yet. Save a post from its menu.';
+  String get republicSavedEmpty => 'Nothing saved yet. Save a post from its menu.';
 
   @override
   String get republicReportTitle => 'Report this post';
@@ -3916,8 +3852,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get republicSendPostFailed =>
-      'We couldn\'t send that post. Try again.';
+  String get republicSendPostFailed => 'We couldn\'t send that post. Try again.';
 
   @override
   String get republicVerifiedStamp => 'Verified Venue Stamp';
@@ -3961,8 +3896,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicPartnerTitle => 'Official Partner Foxer opportunity';
 
   @override
-  String get republicPartnerBody =>
-      'Available for funding, package allocations and co-host production.';
+  String get republicPartnerBody => 'Available for funding, package allocations and co-host production.';
 
   @override
   String get republicContactPartner => 'Contact partner';
@@ -4080,8 +4014,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportSavedAction => 'Browse Republic';
 
   @override
-  String get passportEarnIntro =>
-      'Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.';
+  String get passportEarnIntro => 'Apply to become a Foxer — hosts, venues, gear and talent keep FoxPassport running.';
 
   @override
   String get passportEarnApply => 'Apply on web';
@@ -4090,8 +4023,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutConfirmTitle => 'Sign out?';
 
   @override
-  String get signOutConfirmBody =>
-      'You will need to log in again to use FoxPassport.';
+  String get signOutConfirmBody => 'You will need to log in again to use FoxPassport.';
 
   @override
   String get signOutStay => 'Stay signed in';
@@ -4115,8 +4047,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePrivateTitle => 'Private profile';
 
   @override
-  String get profilePrivateBody =>
-      'New followers must be approved by you. Your followers and following lists are hidden from everyone else.';
+  String get profilePrivateBody => 'New followers must be approved by you. Your followers and following lists are hidden from everyone else.';
 
   @override
   String get profileChangePhoto => 'Change photo';
@@ -4134,12 +4065,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileUpdated => 'Your profile was updated.';
 
   @override
-  String get profileUpdateFailed =>
-      'We couldn\'t update your profile. Try again.';
+  String get profileUpdateFailed => 'We couldn\'t update your profile. Try again.';
 
   @override
-  String get profileLoadFailed =>
-      'We couldn\'t load your full profile, so this shows what we have.';
+  String get profileLoadFailed => 'We couldn\'t load your full profile, so this shows what we have.';
 
   @override
   String get profileEmailLabel => 'Email';
@@ -4159,8 +4088,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get identityLoadFailed => 'Could not load your verification.';
 
   @override
-  String get identityIntro =>
-      'Optional. Send a photo of a government ID and an admin will review it. Approval adds a Verified badge to your profile. You can book without it.';
+  String get identityIntro => 'Optional. Send a photo of a government ID and an admin will review it. Approval adds a Verified badge to your profile. You can book without it.';
 
   @override
   String get identityKind => 'WHAT ARE YOU SENDING?';
@@ -4204,8 +4132,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get identityRejected =>
-      'Your last submission was not approved. You can send another.';
+  String get identityRejected => 'Your last submission was not approved. You can send another.';
 
   @override
   String identityRejectedWhy(String reason) {
@@ -4272,15 +4199,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSlotsFailed => 'Could not send. Try again.';
 
   @override
-  String get bidsIntro =>
-      'Foxers who applied to supply your events. Accepting one adds them to the event.';
+  String get bidsIntro => 'Foxers who applied to supply your events. Accepting one adds them to the event.';
 
   @override
   String get bidsEmpty => 'No applications yet';
 
   @override
-  String get bidsEmptyBody =>
-      'When a Foxer offers a service or gear for this event, it shows here.';
+  String get bidsEmptyBody => 'When a Foxer offers a service or gear for this event, it shows here.';
 
   @override
   String bidFor(String slot) {
@@ -4312,8 +4237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bidStatusWithdrawn => 'Withdrawn';
 
   @override
-  String get teamIntro =>
-      'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.';
+  String get teamIntro => 'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.';
 
   @override
   String get teamYourVenues => 'Your venues';
@@ -4331,8 +4255,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamAcceptsTitle => 'Accept requests from Organizers';
 
   @override
-  String get teamAcceptsBody =>
-      'Approved Organizers can ask to join. You decide on every request.';
+  String get teamAcceptsBody => 'Approved Organizers can ask to join. You decide on every request.';
 
   @override
   String get teamRequests => 'Requests to join';
@@ -4350,12 +4273,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamKindHelper => 'Check-in Helper';
 
   @override
-  String get teamHintOrganizer =>
-      'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.';
+  String get teamHintOrganizer => 'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.';
 
   @override
-  String get teamHintHelper =>
-      'Anyone, added straight away, who can only check guests in at the door.';
+  String get teamHintHelper => 'Anyone, added straight away, who can only check guests in at the door.';
 
   @override
   String get teamFieldOrganizer => 'Search by name or city, or type an email';
@@ -4373,8 +4294,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamSearching => 'Searching Organizers…';
 
   @override
-  String get teamNoMatches =>
-      'No approved Organizers match. You can still invite someone by email.';
+  String get teamNoMatches => 'No approved Organizers match. You can still invite someone by email.';
 
   @override
   String get teamInvite => 'Invite';
@@ -4539,27 +4459,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spacePerformer => 'Performer';
 
   @override
-  String get spacePerformerHint =>
-      'Your performances and the requests for them';
+  String get spacePerformerHint => 'Your performances and the requests for them';
 
   @override
   String get spaceTabPerformances => 'Performances';
 
   @override
-  String get requestsIntroGear =>
-      'People adding your gear to their events. Confirm the ones you can supply.';
+  String get requestsIntroGear => 'People adding your gear to their events. Confirm the ones you can supply.';
 
   @override
-  String get requestsEmptyGear =>
-      'No requests yet. When someone adds your gear to their event, it shows up here.';
+  String get requestsEmptyGear => 'No requests yet. When someone adds your gear to their event, it shows up here.';
 
   @override
-  String get requestsIntroServices =>
-      'People adding your services to their events. Confirm the ones you can do.';
+  String get requestsIntroServices => 'People adding your services to their events. Confirm the ones you can do.';
 
   @override
-  String get requestsEmptyServices =>
-      'No requests yet. When someone adds your service to their event, it shows up here.';
+  String get requestsEmptyServices => 'No requests yet. When someone adds your service to their event, it shows up here.';
 
   @override
   String get providerGear => 'Gear';

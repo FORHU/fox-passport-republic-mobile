@@ -41,6 +41,10 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
   ComposeType _type = ComposeType.story;
   PostVisibility _visibility = PostVisibility.public;
   final _photos = <PickedMedia>[];
+  PickedMedia? _video;
+
+  /// How much of the video has gone, 0 to 1, while it uploads.
+  double? _videoProgress;
   String? _venueId;
   bool _posting = false;
 
@@ -74,7 +78,7 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
 
   bool get _canPost =>
       !_posting &&
-      (_text.text.trim().isNotEmpty || _photos.isNotEmpty) &&
+      (_text.text.trim().isNotEmpty || _photos.isNotEmpty || _video != null) &&
       _pollValid &&
       (_type != ComposeType.venueSpotlight || _venueId != null);
 
@@ -125,6 +129,17 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
     setState(() => _photos.addAll(picked.take(room)));
   }
 
+  Future<void> _addVideo() async {
+    final l10n = context.l10n;
+    try {
+      final picked = await ref.read(mediaPickerProvider).pickVideo();
+      if (picked == null || !mounted) return;
+      setState(() => _video = picked);
+    } on MediaTooLarge {
+      if (mounted) showTopToast(context, l10n.republicVideoTooLarge);
+    }
+  }
+
   Future<void> _post() async {
     final l10n = context.l10n;
     if (!_canPost) return;
@@ -133,6 +148,20 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
       final urls = <String>[];
       for (final photo in _photos) {
         urls.add(await _repo.uploadMedia(photo));
+      }
+      final video = _video;
+      if (video != null) {
+        setState(() => _videoProgress = 0);
+        urls.add(
+          await _repo.uploadMedia(
+            video,
+            onProgress: (sent, total) {
+              if (mounted && total > 0) {
+                setState(() => _videoProgress = sent / total);
+              }
+            },
+          ),
+        );
       }
       final id = await _repo.createPost(
         NewPost(
@@ -148,7 +177,10 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
       if (mounted) Navigator.pop(context, id ?? '');
     } on Object catch (e) {
       if (mounted) {
-        setState(() => _posting = false);
+        setState(() {
+          _posting = false;
+          _videoProgress = null;
+        });
         showTopToast(
           context,
           e is AppException ? e.message : l10n.republicPostFailed,
@@ -426,8 +458,24 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
               ),
             ),
           ],
+          if (_video != null) ...[
+            const SizedBox(height: 8),
+            _VideoTile(
+              video: _video!,
+              progress: _videoProgress,
+              onRemove: _posting ? null : () => setState(() => _video = null),
+            ),
+          ],
           const SizedBox(height: 12),
           const Divider(color: AppColors.border),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _posting || _video != null ? null : _addVideo,
+              icon: const Icon(Icons.videocam_outlined),
+              label: Text(l10n.republicAddVideo),
+            ),
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
@@ -441,6 +489,83 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The video chosen for a post: its name and size, and how far it has got
+/// while it uploads.
+class _VideoTile extends StatelessWidget {
+  const _VideoTile({
+    required this.video,
+    required this.progress,
+    required this.onRemove,
+  });
+
+  final PickedMedia video;
+  final double? progress;
+  final VoidCallback? onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final mb = video.bytes.length / (1024 * 1024);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.play_circle_outline_rounded, size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      video.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(weight: FontWeight.w600),
+                    ),
+                    Text(
+                      progress == null
+                          ? l10n.republicVideoSize(mb.toStringAsFixed(1))
+                          : l10n.republicVideoUploading(
+                              (progress! * 100).round(),
+                            ),
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (onRemove != null)
+                IconButton(
+                  tooltip: l10n.republicRemoveVideo,
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+            ],
+          ),
+          if (progress != null) ...[
+            const SizedBox(height: 10),
+            LinearProgressIndicator(
+              value: progress,
+              color: AppColors.accent,
+              backgroundColor: AppColors.border,
+            ),
+          ],
         ],
       ),
     );
