@@ -54,6 +54,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_bids_p
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/listing_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/open_slots_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
@@ -294,6 +295,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             VenueStudioPage(venueId: state.pathParameters['venueId']),
       ),
+      for (final kind in ProviderKind.values) ...[
+        GoRoute(
+          path: kind.studio,
+          builder: (context, state) => ListingStudioPage(kind: kind),
+        ),
+        GoRoute(
+          path: '${kind.studio}/:id',
+          builder: (context, state) => ListingStudioPage(
+            kind: kind,
+            listingId: state.pathParameters['id'],
+          ),
+        ),
+      ],
       GoRoute(
         path: RouteNames.spaceTeamVenues,
         builder: (context, state) => const TeamPage(events: false),

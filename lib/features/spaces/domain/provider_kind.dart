@@ -27,14 +27,11 @@ enum ProviderKind {
   /// Events looking for a service to apply to. Services only.
   String get slots => '$root/more/slots';
 
-  /// Where the web adds one.
-  String get webAdd =>
-      isGear ? '/creator-dashboard/assets' : '/creator-dashboard/services';
+  /// The form that adds one.
+  String get studio => isGear ? '/listing/gear' : '/listing/service';
 
-  /// Where the web edits one.
-  String webEdit(String id) => isGear
-      ? '/creator-dashboard/assets/$id'
-      : '/creator-dashboard/services/$id/edit';
+  /// The form that edits one.
+  String studioFor(String id) => '$studio/${Uri.encodeComponent(id)}';
 
   /// The kind a space supplies; null for a space that is not a provider's.
   static ProviderKind? of(AppSpace space) {
