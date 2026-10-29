@@ -3685,6 +3685,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicCommentFailed => 'We couldn\'t post your comment.';
 
   @override
+  String get republicAddVideo => 'Add a video';
+
+  @override
+  String get republicRemoveVideo => 'Remove video';
+
+  @override
+  String get republicVideoTooLarge =>
+      'That video is over 100 MB. Pick a shorter one.';
+
+  @override
+  String republicVideoSize(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String republicVideoUploading(int percent) {
+    return 'Uploading $percent%';
+  }
+
+  @override
   String get republicEdited => 'edited';
 
   @override

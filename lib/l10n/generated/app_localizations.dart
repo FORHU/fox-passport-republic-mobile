@@ -6664,6 +6664,36 @@ abstract class AppLocalizations {
   /// **'We couldn\'t post your comment.'**
   String get republicCommentFailed;
 
+  /// No description provided for @republicAddVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a video'**
+  String get republicAddVideo;
+
+  /// No description provided for @republicRemoveVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove video'**
+  String get republicRemoveVideo;
+
+  /// No description provided for @republicVideoTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'That video is over 100 MB. Pick a shorter one.'**
+  String get republicVideoTooLarge;
+
+  /// No description provided for @republicVideoSize.
+  ///
+  /// In en, this message translates to:
+  /// **'{size} MB'**
+  String republicVideoSize(String size);
+
+  /// No description provided for @republicVideoUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading {percent}%'**
+  String republicVideoUploading(int percent);
+
   /// No description provided for @republicEdited.
   ///
   /// In en, this message translates to:

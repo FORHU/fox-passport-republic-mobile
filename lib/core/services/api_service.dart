@@ -90,6 +90,24 @@ class ApiService {
   Future<dynamic> post(String path, [Object? body]) =>
       _send(() => client.post<dynamic>(path, data: body));
 
+  /// Sends a file. A video takes far longer than the ten seconds an ordinary
+  /// call is given, so it gets [timeout] to send and to be answered, and
+  /// [onProgress] hears how much has gone.
+  Future<dynamic> upload(
+    String path,
+    FormData form, {
+    Duration timeout = const Duration(minutes: 10),
+    void Function(int sent, int total)? onProgress,
+  }) =>
+      _send(
+        () => client.post<dynamic>(
+          path,
+          data: form,
+          options: Options(sendTimeout: timeout, receiveTimeout: timeout),
+          onSendProgress: onProgress,
+        ),
+      );
+
   Future<dynamic> put(String path, [Object? body]) =>
       _send(() => client.put<dynamic>(path, data: body));
 

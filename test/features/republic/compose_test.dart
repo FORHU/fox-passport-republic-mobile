@@ -22,6 +22,9 @@ class _FakePicker implements MediaPicker {
   Future<List<PickedMedia>> pickMany(int limit) async => [
         PickedMedia(bytes: Uint8List(0), name: 'a.jpg'),
       ];
+
+  @override
+  Future<PickedMedia?> pickVideo() async => null;
 }
 
 class _Session extends AuthController {
