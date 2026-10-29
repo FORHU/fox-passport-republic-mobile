@@ -1026,6 +1026,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportLeaderboard => 'Leaderboard';
 
   @override
+  String get passportViewProfile => 'View my profile';
+
+  @override
   String get passportLocked => 'Locked';
 
   @override
@@ -3782,6 +3785,131 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMenuReport => 'Report';
 
   @override
+  String get citizenNotFound => 'Citizen profile not found';
+
+  @override
+  String get citizenNotFoundBody =>
+      'This citizen may not exist, has changed their handle, or their passport is private.';
+
+  @override
+  String get citizenShare => 'Share profile';
+
+  @override
+  String get citizenLinkCopied => 'Profile link copied.';
+
+  @override
+  String get citizenMessage => 'Message';
+
+  @override
+  String get citizenMessageFailed => 'Could not open the chat. Try again.';
+
+  @override
+  String get citizenPartner => 'Partner Foxer';
+
+  @override
+  String citizenLevelChip(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String citizenSince(String year) {
+    return 'Citizen since $year';
+  }
+
+  @override
+  String get citizenFollowers => 'Followers';
+
+  @override
+  String get citizenFollowing => 'Following';
+
+  @override
+  String get citizenProgression => 'Republic citizenship progression';
+
+  @override
+  String citizenXp(int xp, int next, int percent) {
+    return '$xp / $next XP ($percent%)';
+  }
+
+  @override
+  String get citizenStatLevel => 'Level';
+
+  @override
+  String get citizenStatStamps => 'Stamps';
+
+  @override
+  String get citizenStatBadges => 'Badges';
+
+  @override
+  String get citizenStatPosts => 'Posts';
+
+  @override
+  String get citizenTabStamps => 'Stamps';
+
+  @override
+  String get citizenTabBadges => 'Badges';
+
+  @override
+  String get citizenTabActivity => 'Activity';
+
+  @override
+  String get citizenTabOfferings => 'Offerings';
+
+  @override
+  String get citizenNoStamps => 'No venue stamps yet';
+
+  @override
+  String get citizenNoStampsBody =>
+      'Going to events at verified Republic venues earns collectible passport stamps.';
+
+  @override
+  String get citizenNoBadges => 'No badges earned yet';
+
+  @override
+  String get citizenNoBadgesBody =>
+      'Badges come from exploring venues, posting in the community and climbing levels.';
+
+  @override
+  String get citizenNoPosts => 'No Republic posts yet';
+
+  @override
+  String get citizenAddBio => 'Add a bio';
+
+  @override
+  String get citizenLinkFailed => 'Could not open that link.';
+
+  @override
+  String get citizenLoadMore => 'Load more';
+
+  @override
+  String citizenComments(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get citizenNoPostsBody =>
+      'This citizen has not shared anything in the Republic feed yet.';
+
+  @override
+  String citizenUnlocked(String date) {
+    return 'Unlocked $date';
+  }
+
+  @override
+  String get citizenVenues => 'Venues hosted';
+
+  @override
+  String get citizenServices => 'Talent and services';
+
+  @override
+  String get citizenGear => 'Equipment';
+
+  @override
   String get reportUserTitle => 'Report this Foxer';
 
   @override
@@ -4101,6 +4229,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhoneLabel => 'Phone number';
+
+  @override
+  String get profileBioLabel => 'Bio';
+
+  @override
+  String get profileSocialTitle => 'Social links';
+
+  @override
+  String get profileSocialHint =>
+      'Shown on your profile, so people can find you elsewhere.';
+
+  @override
+  String get profileSocialAdd => 'Add social link';
+
+  @override
+  String get profileSocialRemove => 'Remove';
+
+  @override
+  String get profileSocialDone => 'Done';
+
+  @override
+  String get profileSocialHandleHint => '@yourname or a link';
+
+  @override
+  String get profileSocialWebsiteHint => 'https://your-site.com';
 
   @override
   String get profilePrivateTitle => 'Private profile';

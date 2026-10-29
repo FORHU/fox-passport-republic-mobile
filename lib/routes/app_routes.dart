@@ -17,6 +17,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_template/features/occasion/presentation/pages/all_catego
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
@@ -32,6 +34,7 @@ import 'package:flutter_template/features/profile/presentation/pages/profile_pag
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
@@ -239,11 +242,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // be pushed from outside it (the tab's page would be on the stack twice).
       GoRoute(
         path: RouteNames.profile,
-        builder: (context, state) => const ProfilePage(),
+        builder: (context, state) => ProfilePage(
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
+        ),
       ),
       GoRoute(
         path: RouteNames.people,
         builder: (context, state) => const PeoplePage(),
+      ),
+      GoRoute(
+        path: RouteNames.citizenPattern,
+        builder: (context, state) => CitizenProfilePage(
+          userId: state.pathParameters['id']!,
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
+          onMessage: (context, profile) async {
+            final id = await ref
+                .read(messagesRepositoryProvider)
+                .startWithUser(profile.id);
+            if (context.mounted) await context.push<void>(RouteNames.chat(id));
+          },
+        ),
       ),
       GoRoute(
         path: RouteNames.profileEdit,
@@ -443,7 +463,45 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.passport,
-                builder: (context, state) => const PassportPage(),
+                // Your Passport is your profile as others see it, with your
+                // Passport level and XP, and your match requests and the
+                // way to earn a role as two more tabs.
+                builder: (context, state) => PassportPage(
+                  bodyBuilder: (context, summary) => Consumer(
+                    builder: (context, ref, _) {
+                      final me = ref.watch(currentUserIdProvider);
+                      if (me == null) return const SizedBox.shrink();
+                      final l10n = context.l10n;
+                      return CitizenProfileView(
+                        userId: me,
+                        activityBuilder: (context, profile) =>
+                            ProfilePosts(authorId: profile.id),
+                        overrides: summary == null
+                            ? null
+                            : CitizenOverrides(
+                                level: summary.level,
+                                xp: summary.totalXp,
+                                progress: summary.progress,
+                                xpText: passportXpText(l10n, summary),
+                                stamps: summary.stamps.length,
+                                badges: summary.badges
+                                    .where((b) => b.earned)
+                                    .length,
+                              ),
+                        extraTabs: [
+                          CitizenExtraTab(
+                            label: l10n.passportTabMatches,
+                            builder: (_) => const PassportMatchesTab(),
+                          ),
+                          CitizenExtraTab(
+                            label: l10n.passportTabEarn,
+                            builder: (_) => const PassportEarnTab(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ],
           ),

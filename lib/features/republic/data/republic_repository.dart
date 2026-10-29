@@ -21,6 +21,10 @@ class RepublicRepository {
   /// tab so one controller serves both.
   static const savedTab = 'saved';
 
+  /// A feed of one person's posts is a tab named `author:<id>`.
+  static const authorPrefix = 'author:';
+  static String authorTab(String authorId) => '$authorPrefix$authorId';
+
   /// One page of posts. [tab] is `community`, `marketplace` or `partners`;
   /// null is all of them.
   ///
@@ -30,11 +34,15 @@ class RepublicRepository {
     String? cursor,
     String? search,
   }) async {
+    final author = tab != null && tab.startsWith(authorPrefix)
+        ? tab.substring(authorPrefix.length)
+        : null;
     final body = await _api.get(
       tab == savedTab ? ApiEndpoints.feedSaved : ApiEndpoints.feed,
       query: {
         'limit': pageSize,
-        if (tab != null && tab != savedTab) 'tab': tab,
+        if (author != null) 'authorId': author,
+        if (tab != null && tab != savedTab && author == null) 'tab': tab,
         if (cursor != null) 'cursor': cursor,
         if (search != null && search.isNotEmpty) 'search': search,
       },

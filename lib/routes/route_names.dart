@@ -71,6 +71,12 @@ class RouteNames {
   static const String passport = '/passport';
   static const String profile = '/profile';
 
+  /// Someone's public profile, by id or username. Opened from a post's
+  /// author in the Republic.
+  static String citizen(String idOrUsername) =>
+      '/citizen/${Uri.encodeComponent(idOrUsername)}';
+  static const String citizenPattern = '/citizen/:id';
+
   /// The optional ID check and Verified badge. Pushed from Profile.
   static const String identity = '/profile/identity';
 

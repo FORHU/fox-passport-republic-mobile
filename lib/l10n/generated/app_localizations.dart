@@ -1990,6 +1990,12 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get passportLeaderboard;
 
+  /// No description provided for @passportViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View my profile'**
+  String get passportViewProfile;
+
   /// No description provided for @passportLocked.
   ///
   /// In en, this message translates to:
@@ -6838,6 +6844,216 @@ abstract class AppLocalizations {
   /// **'Report'**
   String get foxerMenuReport;
 
+  /// No description provided for @citizenNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen profile not found'**
+  String get citizenNotFound;
+
+  /// No description provided for @citizenNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This citizen may not exist, has changed their handle, or their passport is private.'**
+  String get citizenNotFoundBody;
+
+  /// No description provided for @citizenShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share profile'**
+  String get citizenShare;
+
+  /// No description provided for @citizenLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile link copied.'**
+  String get citizenLinkCopied;
+
+  /// No description provided for @citizenMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get citizenMessage;
+
+  /// No description provided for @citizenMessageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the chat. Try again.'**
+  String get citizenMessageFailed;
+
+  /// No description provided for @citizenPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner Foxer'**
+  String get citizenPartner;
+
+  /// No description provided for @citizenLevelChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String citizenLevelChip(int level);
+
+  /// No description provided for @citizenSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen since {year}'**
+  String citizenSince(String year);
+
+  /// No description provided for @citizenFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get citizenFollowers;
+
+  /// No description provided for @citizenFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get citizenFollowing;
+
+  /// No description provided for @citizenProgression.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic citizenship progression'**
+  String get citizenProgression;
+
+  /// No description provided for @citizenXp.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} / {next} XP ({percent}%)'**
+  String citizenXp(int xp, int next, int percent);
+
+  /// No description provided for @citizenStatLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get citizenStatLevel;
+
+  /// No description provided for @citizenStatStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get citizenStatStamps;
+
+  /// No description provided for @citizenStatBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get citizenStatBadges;
+
+  /// No description provided for @citizenStatPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get citizenStatPosts;
+
+  /// No description provided for @citizenTabStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get citizenTabStamps;
+
+  /// No description provided for @citizenTabBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get citizenTabBadges;
+
+  /// No description provided for @citizenTabActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get citizenTabActivity;
+
+  /// No description provided for @citizenTabOfferings.
+  ///
+  /// In en, this message translates to:
+  /// **'Offerings'**
+  String get citizenTabOfferings;
+
+  /// No description provided for @citizenNoStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'No venue stamps yet'**
+  String get citizenNoStamps;
+
+  /// No description provided for @citizenNoStampsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Going to events at verified Republic venues earns collectible passport stamps.'**
+  String get citizenNoStampsBody;
+
+  /// No description provided for @citizenNoBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges earned yet'**
+  String get citizenNoBadges;
+
+  /// No description provided for @citizenNoBadgesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges come from exploring venues, posting in the community and climbing levels.'**
+  String get citizenNoBadgesBody;
+
+  /// No description provided for @citizenNoPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No Republic posts yet'**
+  String get citizenNoPosts;
+
+  /// No description provided for @citizenAddBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bio'**
+  String get citizenAddBio;
+
+  /// No description provided for @citizenLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open that link.'**
+  String get citizenLinkFailed;
+
+  /// No description provided for @citizenLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get citizenLoadMore;
+
+  /// No description provided for @citizenComments.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 comment} other{{count} comments}}'**
+  String citizenComments(int count);
+
+  /// No description provided for @citizenNoPostsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This citizen has not shared anything in the Republic feed yet.'**
+  String get citizenNoPostsBody;
+
+  /// No description provided for @citizenUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked {date}'**
+  String citizenUnlocked(String date);
+
+  /// No description provided for @citizenVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues hosted'**
+  String get citizenVenues;
+
+  /// No description provided for @citizenServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent and services'**
+  String get citizenServices;
+
+  /// No description provided for @citizenGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get citizenGear;
+
   /// No description provided for @reportUserTitle.
   ///
   /// In en, this message translates to:
@@ -7413,6 +7629,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number'**
   String get profilePhoneLabel;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get profileBioLabel;
+
+  /// No description provided for @profileSocialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social links'**
+  String get profileSocialTitle;
+
+  /// No description provided for @profileSocialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on your profile, so people can find you elsewhere.'**
+  String get profileSocialHint;
+
+  /// No description provided for @profileSocialAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add social link'**
+  String get profileSocialAdd;
+
+  /// No description provided for @profileSocialRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get profileSocialRemove;
+
+  /// No description provided for @profileSocialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get profileSocialDone;
+
+  /// No description provided for @profileSocialHandleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'@yourname or a link'**
+  String get profileSocialHandleHint;
+
+  /// No description provided for @profileSocialWebsiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-site.com'**
+  String get profileSocialWebsiteHint;
 
   /// No description provided for @profilePrivateTitle.
   ///

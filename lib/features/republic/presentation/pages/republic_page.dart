@@ -278,6 +278,9 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                         onLike: () => unawaited(_actions.like(post.id)),
                         onComments: () => unawaited(_actions.comments(post.id)),
                         onMore: () => unawaited(_actions.menu(post)),
+                        onAuthor: () => unawaited(
+                          context.push(RouteNames.citizen(post.author.id)),
+                        ),
                         onReact: (r) => unawaited(_actions.react(post.id, r)),
                         onReactions: () =>
                             unawaited(_actions.reactions(post.id)),

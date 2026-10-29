@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/asset_url.dart';
-import 'package:flutter_template/features/republic/presentation/widgets/media_viewer.dart';
+import 'package:flutter_template/shared/widgets/media_viewer.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
