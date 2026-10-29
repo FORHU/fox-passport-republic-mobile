@@ -1,4 +1,5 @@
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 
 /// Data-layer extension of [ProfileEntity] that knows how to deserialize.
 class ProfileModel extends ProfileEntity {
@@ -11,6 +12,7 @@ class ProfileModel extends ProfileEntity {
     super.imageUrl,
     super.isPrivate,
     super.bio,
+    super.socialLinks,
     super.joinedAt,
   });
 
@@ -35,6 +37,7 @@ class ProfileModel extends ProfileEntity {
       imageUrl: text('imgId'),
       isPrivate: payload['isPrivate'] == true,
       bio: payload['bio'] as String?,
+      socialLinks: parseSocialLinks(payload['socialLinks']),
       joinedAt: (payload['createdAt'] ?? payload['joinedAt']) != null
           ? DateTime.tryParse(
               (payload['createdAt'] ?? payload['joinedAt']).toString(),

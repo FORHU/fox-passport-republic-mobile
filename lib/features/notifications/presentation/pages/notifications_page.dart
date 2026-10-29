@@ -133,7 +133,8 @@ class NotificationsPage extends ConsumerWidget {
     }
     if (route == null) return;
     // A chat is pushed over the tabs; any other target is a tab to switch to.
-    if (route.startsWith('${RouteNames.messages}/')) {
+    if (route.startsWith('${RouteNames.messages}/') ||
+        route.startsWith('${RouteNames.republic}/post/')) {
       unawaited(context.push(route));
     } else {
       context.go(route);

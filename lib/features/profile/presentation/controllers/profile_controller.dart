@@ -10,6 +10,7 @@ import 'package:flutter_template/features/profile/data/repositories/profile_repo
 import 'package:flutter_template/features/profile/domain/entities/profile_entity.dart';
 import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:flutter_template/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 
 // --- Dependency wiring (Riverpod providers) ---
 
@@ -70,6 +71,9 @@ class ProfileController extends Notifier<ProfileState> {
             username: update.username?.trim(),
             imageUrl: update.imageUrl,
           );
+      // The public page shows these too, so it loads them again.
+      final id = ref.read(currentUserIdProvider);
+      if (id != null) ref.invalidate(citizenProfileProvider(id));
       unawaited(fetchProfile());
       return null;
     });

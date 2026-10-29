@@ -4,10 +4,10 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
-import 'package:flutter_template/features/republic/presentation/widgets/post_media.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
+import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
@@ -70,6 +70,7 @@ class PostCard extends StatefulWidget {
     required this.onLike,
     required this.onComments,
     this.onMore,
+    this.onAuthor,
     this.onReact,
     this.onReactions,
     this.myUserId,
@@ -93,6 +94,9 @@ class PostCard extends StatefulWidget {
 
   /// Opens who reacted how, from the counts row.
   final VoidCallback? onReactions;
+
+  /// The author's photo or name was tapped: open their profile.
+  final VoidCallback? onAuthor;
 
   /// Who is looking, to mark their own poll vote.
   final String? myUserId;
@@ -163,27 +167,34 @@ class _PostCardState extends State<PostCard> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Row(
               children: [
-                AuthorAvatar(author: post.author),
+                GestureDetector(
+                  onTap: widget.onAuthor,
+                  child: AuthorAvatar(author: post.author),
+                ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post.author.name.isEmpty ? '—' : post.author.name,
-                        style: AppTypography.body(weight: FontWeight.w700),
-                      ),
-                      Text(
-                        [
-                          if (age.isNotEmpty) age,
-                          if (post.edited) l10n.republicEdited,
-                        ].join(' · '),
-                        style: AppTypography.body(
-                          size: 12,
-                          color: AppColors.textMuted,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: widget.onAuthor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.author.name.isEmpty ? '—' : post.author.name,
+                          style: AppTypography.body(weight: FontWeight.w700),
                         ),
-                      ),
-                    ],
+                        Text(
+                          [
+                            if (age.isNotEmpty) age,
+                            if (post.edited) l10n.republicEdited,
+                          ].join(' · '),
+                          style: AppTypography.body(
+                            size: 12,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 if (widget.onMore != null)

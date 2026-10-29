@@ -1026,6 +1026,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportLeaderboard => 'Leaderboard';
 
   @override
+  String get passportViewProfile => 'View my profile';
+
+  @override
   String get passportLocked => 'Locked';
 
   @override
@@ -3618,6 +3621,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewPickStars => 'Choose a star rating.';
 
   @override
+  String get republicPostTitle => 'Post';
+
+  @override
+  String get republicPostGone => 'This post is not available';
+
+  @override
+  String get republicPostGoneBody =>
+      'It may have been deleted, or it is not shared with you.';
+
+  @override
   String get republicTitle => 'Republic';
 
   @override
@@ -3782,6 +3795,131 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerMenuReport => 'Report';
 
   @override
+  String get citizenNotFound => 'Citizen profile not found';
+
+  @override
+  String get citizenNotFoundBody =>
+      'This citizen may not exist, has changed their handle, or their passport is private.';
+
+  @override
+  String get citizenShare => 'Share profile';
+
+  @override
+  String get citizenLinkCopied => 'Profile link copied.';
+
+  @override
+  String get citizenMessage => 'Message';
+
+  @override
+  String get citizenMessageFailed => 'Could not open the chat. Try again.';
+
+  @override
+  String get citizenPartner => 'Partner Foxer';
+
+  @override
+  String citizenLevelChip(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String citizenSince(String year) {
+    return 'Citizen since $year';
+  }
+
+  @override
+  String get citizenFollowers => 'Followers';
+
+  @override
+  String get citizenFollowing => 'Following';
+
+  @override
+  String get citizenProgression => 'Republic citizenship progression';
+
+  @override
+  String citizenXp(int xp, int next, int percent) {
+    return '$xp / $next XP ($percent%)';
+  }
+
+  @override
+  String get citizenStatLevel => 'Level';
+
+  @override
+  String get citizenStatStamps => 'Stamps';
+
+  @override
+  String get citizenStatBadges => 'Badges';
+
+  @override
+  String get citizenStatPosts => 'Posts';
+
+  @override
+  String get citizenTabStamps => 'Stamps';
+
+  @override
+  String get citizenTabBadges => 'Badges';
+
+  @override
+  String get citizenTabActivity => 'Activity';
+
+  @override
+  String get citizenTabOfferings => 'Offerings';
+
+  @override
+  String get citizenNoStamps => 'No venue stamps yet';
+
+  @override
+  String get citizenNoStampsBody =>
+      'Going to events at verified Republic venues earns collectible passport stamps.';
+
+  @override
+  String get citizenNoBadges => 'No badges earned yet';
+
+  @override
+  String get citizenNoBadgesBody =>
+      'Badges come from exploring venues, posting in the community and climbing levels.';
+
+  @override
+  String get citizenNoPosts => 'No Republic posts yet';
+
+  @override
+  String get citizenAddBio => 'Add a bio';
+
+  @override
+  String get citizenLinkFailed => 'Could not open that link.';
+
+  @override
+  String get citizenLoadMore => 'Load more';
+
+  @override
+  String citizenComments(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get citizenNoPostsBody =>
+      'This citizen has not shared anything in the Republic feed yet.';
+
+  @override
+  String citizenUnlocked(String date) {
+    return 'Unlocked $date';
+  }
+
+  @override
+  String get citizenVenues => 'Venues hosted';
+
+  @override
+  String get citizenServices => 'Talent and services';
+
+  @override
+  String get citizenGear => 'Equipment';
+
+  @override
   String get reportUserTitle => 'Report this Foxer';
 
   @override
@@ -3856,15 +3994,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get republicTabPartners => 'Partners';
-
-  @override
-  String get republicSortBy => 'Sort by';
-
-  @override
-  String get republicSortRecent => 'Recent';
-
-  @override
-  String get republicSortTop => 'Top posts';
 
   @override
   String get republicSearchHint => 'Search the Republic';
@@ -4110,6 +4239,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhoneLabel => 'Phone number';
+
+  @override
+  String get profileBioLabel => 'Bio';
+
+  @override
+  String get profileSocialTitle => 'Social links';
+
+  @override
+  String get profileSocialHint =>
+      'Shown on your profile, so people can find you elsewhere.';
+
+  @override
+  String get profileSocialAdd => 'Add social link';
+
+  @override
+  String get profileSocialRemove => 'Remove';
+
+  @override
+  String get profileSocialDone => 'Done';
+
+  @override
+  String get profileSocialHandleHint => '@yourname or a link';
+
+  @override
+  String get profileSocialWebsiteHint => 'https://your-site.com';
 
   @override
   String get profilePrivateTitle => 'Private profile';
@@ -4488,6 +4642,118 @@ class AppLocalizationsEn extends AppLocalizations {
   String studioStepOf(int n, int total) {
     return 'STEP $n OF $total';
   }
+
+  @override
+  String get roleApplyTitle => 'Apply';
+
+  @override
+  String get roleApplyAbout => 'About what you offer';
+
+  @override
+  String get roleApplyBusiness => 'Business or trade name';
+
+  @override
+  String get roleApplyServiceTypes => 'Services you offer';
+
+  @override
+  String get roleApplyPerformerTypes => 'What you perform';
+
+  @override
+  String get roleApplyGearTypes => 'Gear you rent out';
+
+  @override
+  String get roleApplyCommaHint => 'Separate with commas';
+
+  @override
+  String get roleApplyExperience => 'Years of experience';
+
+  @override
+  String get roleApplyPortfolio => 'Links to your work';
+
+  @override
+  String get roleApplySpecializations => 'Specializations (up to 3)';
+
+  @override
+  String get roleApplyIds => 'Documents';
+
+  @override
+  String get roleApplyIdsHint =>
+      'An admin checks these. They are kept private.';
+
+  @override
+  String get roleApplyNbiNumber => 'NBI clearance ID number';
+
+  @override
+  String get roleApplyTin => 'TIN number (optional)';
+
+  @override
+  String get roleApplyDocId => 'Primary valid ID';
+
+  @override
+  String get roleApplyDocNbi => 'NBI clearance';
+
+  @override
+  String get roleApplyDocTin => 'TIN ID or certificate';
+
+  @override
+  String get roleApplyDocBir => 'BIR 2303 or permit';
+
+  @override
+  String get roleApplyDocSelfie => 'Verification selfie';
+
+  @override
+  String get roleApplyChoose => 'Choose';
+
+  @override
+  String get roleApplyChange => 'Change';
+
+  @override
+  String get roleApplyRemoveDoc => 'Remove';
+
+  @override
+  String get roleApplySubmit => 'Send application';
+
+  @override
+  String get roleApplySent => 'Application sent. We will let you know.';
+
+  @override
+  String get roleApplyFailed => 'Could not send. Try again.';
+
+  @override
+  String get roleSpecDesign => 'Design';
+
+  @override
+  String get roleSpecCatering => 'Catering';
+
+  @override
+  String get roleSpecStaff => 'Service staff';
+
+  @override
+  String get roleSpecPhotography => 'Photography';
+
+  @override
+  String get roleSpecVideography => 'Videography';
+
+  @override
+  String get roleSpecDj => 'DJ';
+
+  @override
+  String get roleSpecLiveBand => 'Live band';
+
+  @override
+  String get roleSpecMc => 'MC';
+
+  @override
+  String get roleSpecFurniture => 'Furniture';
+
+  @override
+  String get roleSpecSound => 'Sound system';
+
+  @override
+  String get roleSpecDecorations => 'Decorations';
+
+  @override
+  String get roleSpecOther => 'Other';
 
   @override
   String get studioCover => 'Cover';

@@ -150,6 +150,9 @@ class OpenSlotsPage extends ConsumerWidget {
                                   ),
                                 ),
                                 OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    minimumSize: const Size(0, 40),
+                                  ),
                                   onPressed: () => _apply(context, ref, e, s),
                                   child: Text(l10n.openSlotsApply),
                                 ),

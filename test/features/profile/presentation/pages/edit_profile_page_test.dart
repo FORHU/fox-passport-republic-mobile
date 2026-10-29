@@ -13,6 +13,7 @@ import 'package:flutter_template/features/profile/domain/entities/profile_update
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
@@ -54,6 +55,11 @@ Future<ProviderContainer> _pump(
   _MockProfileRepository repo, {
   PhotoPicker? picker,
 }) async {
+  // Tall enough for the whole form, so the Save button is on screen.
+  tester.view
+    ..physicalSize = const Size(800, 1800)
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
   late ProviderContainer container;
   final router = GoRouter(
     routes: [
@@ -148,6 +154,131 @@ void main() {
 
     verify(() => repo.updateProfile(const ProfileUpdate(isPrivate: true)))
         .called(1);
+  });
+
+  testWidgets('a bio is sent, and clearing it sends an empty one', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    await _pump(tester, repo);
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Bio'),
+      'Hi, I run gigs.',
+    );
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.updateProfile(const ProfileUpdate(bio: 'Hi, I run gigs.')),
+    ).called(1);
+  });
+
+  testWidgets('add a social link, remove another, and save the full set', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          phone: '+639171234567',
+          socialLinks: {
+            SocialPlatform.instagram: 'https://instagram.com/ada',
+            SocialPlatform.tiktok: 'https://tiktok.com/@ada',
+          },
+        ),
+      ),
+    );
+    await _pump(tester, repo);
+
+    // What is stored shows as chips, and only a button to add more.
+    expect(find.widgetWithText(InputChip, 'Instagram'), findsOneWidget);
+    expect(find.widgetWithText(InputChip, 'TikTok'), findsOneWidget);
+    expect(find.widgetWithText(InputChip, 'YouTube'), findsNothing);
+
+    // Add one: pick the platform, give a handle.
+    await tester.ensureVisible(find.text('Add social link'));
+    await tester.tap(find.text('Add social link'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ChoiceChip, 'YouTube'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(TextField),
+      ),
+      '@ada',
+    );
+    // Done turns on once there is something in the box.
+    await tester.pump();
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'YouTube'), findsOneWidget);
+
+    // Remove another with its own x.
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(InputChip, 'TikTok'),
+        matching: find.byTooltip('Remove'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'TikTok'), findsNothing);
+
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.updateProfile(
+        const ProfileUpdate(
+          socialLinks: {
+            'instagram': 'https://instagram.com/ada',
+            'youtube': '@ada',
+          },
+        ),
+      ),
+    ).called(1);
+  });
+
+  testWidgets('tapping a link changes it, and the sheet can remove it', (
+    tester,
+  ) async {
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          socialLinks: {SocialPlatform.instagram: 'https://instagram.com/ada'},
+        ),
+      ),
+    );
+    await _pump(tester, repo);
+
+    await tester.tap(find.widgetWithText(InputChip, 'Instagram'));
+    await tester.pumpAndSettle();
+    // The current link is in the box, and removing is offered.
+    expect(find.text('https://instagram.com/ada'), findsOneWidget);
+    await tester.tap(find.text('Remove'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(InputChip, 'Instagram'), findsNothing);
+
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    // None left: the empty set clears them all.
+    verify(
+      () => repo.updateProfile(const ProfileUpdate(socialLinks: {})),
+    ).called(1);
   });
 
   testWidgets('with nothing changed it just goes back, no request', (

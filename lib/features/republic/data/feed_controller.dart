@@ -6,22 +6,6 @@ import 'package:flutter_template/features/republic/data/republic_repository.dart
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 
-/// How the feed is ordered.
-enum FeedSort { recent, top }
-
-class FeedSortNotifier extends Notifier<FeedSort> {
-  @override
-  FeedSort build() => FeedSort.recent;
-
-  // A method, not a setter: Notifier state is changed through calls.
-  // ignore: use_setters_to_change_properties
-  void choose(FeedSort sort) => state = sort;
-}
-
-/// The order every feed tab is read in. Changing it reloads them.
-final feedSortProvider =
-    NotifierProvider<FeedSortNotifier, FeedSort>(FeedSortNotifier.new);
-
 class FeedSearchNotifier extends Notifier<String> {
   @override
   String build() => '';
@@ -78,28 +62,25 @@ class FeedController extends AsyncNotifier<FeedState> {
   /// `community`, `marketplace`, `partners`, or null for every tab.
   final String? tab;
 
-  /// The saved list is not sorted or searched like the feed is.
-  bool get _plain => tab == RepublicRepository.savedTab;
+  /// The saved list and one person's posts are not searched like the feed
+  /// is.
+  bool get _plain =>
+      tab == RepublicRepository.savedTab ||
+      (tab?.startsWith(RepublicRepository.authorPrefix) ?? false);
 
   Future<FeedPage> _page({String? cursor}) {
-    final top = !_plain && ref.read(feedSortProvider) == FeedSort.top;
     final search = _plain ? null : ref.read(feedSearchProvider);
     return ref.read(republicRepositoryProvider).feed(
           tab: tab,
           cursor: cursor,
-          top: top,
           search: search,
         );
   }
 
   @override
   Future<FeedState> build() async {
-    // Watched, so choosing a sort or a search reloads the list.
-    if (!_plain) {
-      ref
-        ..watch(feedSortProvider)
-        ..watch(feedSearchProvider);
-    }
+    // Watched, so a search reloads the list.
+    if (!_plain) ref.watch(feedSearchProvider);
     final page = await _page();
     return FeedState(posts: page.posts, nextCursor: page.nextCursor);
   }

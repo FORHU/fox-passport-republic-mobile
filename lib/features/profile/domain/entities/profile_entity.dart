@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/shared/citizens/social_links.dart';
 
 /// Extended profile info beyond the auth session's user record: fetched
 /// separately from `GET /profile`, since not every backend returns bio, phone
@@ -13,6 +14,7 @@ class ProfileEntity extends Equatable {
     this.imageUrl,
     this.isPrivate = false,
     this.bio,
+    this.socialLinks = const {},
     this.joinedAt,
   });
 
@@ -28,6 +30,9 @@ class ProfileEntity extends Equatable {
   /// A private profile: other people cannot send a follow request freely.
   final bool isPrivate;
   final String? bio;
+
+  /// Links to their other accounts, by platform.
+  final Map<SocialPlatform, String> socialLinks;
   final DateTime? joinedAt;
 
   @override
@@ -40,6 +45,7 @@ class ProfileEntity extends Equatable {
         imageUrl,
         isPrivate,
         bio,
+        socialLinks,
         joinedAt,
       ];
 }

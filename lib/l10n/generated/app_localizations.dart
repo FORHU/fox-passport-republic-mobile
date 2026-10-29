@@ -1990,6 +1990,12 @@ abstract class AppLocalizations {
   /// **'Leaderboard'**
   String get passportLeaderboard;
 
+  /// No description provided for @passportViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View my profile'**
+  String get passportViewProfile;
+
   /// No description provided for @passportLocked.
   ///
   /// In en, this message translates to:
@@ -6532,6 +6538,24 @@ abstract class AppLocalizations {
   /// **'Choose a star rating.'**
   String get reviewPickStars;
 
+  /// No description provided for @republicPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get republicPostTitle;
+
+  /// No description provided for @republicPostGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This post is not available'**
+  String get republicPostGone;
+
+  /// No description provided for @republicPostGoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have been deleted, or it is not shared with you.'**
+  String get republicPostGoneBody;
+
   /// No description provided for @republicTitle.
   ///
   /// In en, this message translates to:
@@ -6838,6 +6862,216 @@ abstract class AppLocalizations {
   /// **'Report'**
   String get foxerMenuReport;
 
+  /// No description provided for @citizenNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen profile not found'**
+  String get citizenNotFound;
+
+  /// No description provided for @citizenNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This citizen may not exist, has changed their handle, or their passport is private.'**
+  String get citizenNotFoundBody;
+
+  /// No description provided for @citizenShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share profile'**
+  String get citizenShare;
+
+  /// No description provided for @citizenLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile link copied.'**
+  String get citizenLinkCopied;
+
+  /// No description provided for @citizenMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get citizenMessage;
+
+  /// No description provided for @citizenMessageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the chat. Try again.'**
+  String get citizenMessageFailed;
+
+  /// No description provided for @citizenPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner Foxer'**
+  String get citizenPartner;
+
+  /// No description provided for @citizenLevelChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String citizenLevelChip(int level);
+
+  /// No description provided for @citizenSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen since {year}'**
+  String citizenSince(String year);
+
+  /// No description provided for @citizenFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get citizenFollowers;
+
+  /// No description provided for @citizenFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get citizenFollowing;
+
+  /// No description provided for @citizenProgression.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic citizenship progression'**
+  String get citizenProgression;
+
+  /// No description provided for @citizenXp.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} / {next} XP ({percent}%)'**
+  String citizenXp(int xp, int next, int percent);
+
+  /// No description provided for @citizenStatLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get citizenStatLevel;
+
+  /// No description provided for @citizenStatStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get citizenStatStamps;
+
+  /// No description provided for @citizenStatBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get citizenStatBadges;
+
+  /// No description provided for @citizenStatPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get citizenStatPosts;
+
+  /// No description provided for @citizenTabStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamps'**
+  String get citizenTabStamps;
+
+  /// No description provided for @citizenTabBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges'**
+  String get citizenTabBadges;
+
+  /// No description provided for @citizenTabActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get citizenTabActivity;
+
+  /// No description provided for @citizenTabOfferings.
+  ///
+  /// In en, this message translates to:
+  /// **'Offerings'**
+  String get citizenTabOfferings;
+
+  /// No description provided for @citizenNoStamps.
+  ///
+  /// In en, this message translates to:
+  /// **'No venue stamps yet'**
+  String get citizenNoStamps;
+
+  /// No description provided for @citizenNoStampsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Going to events at verified Republic venues earns collectible passport stamps.'**
+  String get citizenNoStampsBody;
+
+  /// No description provided for @citizenNoBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges earned yet'**
+  String get citizenNoBadges;
+
+  /// No description provided for @citizenNoBadgesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges come from exploring venues, posting in the community and climbing levels.'**
+  String get citizenNoBadgesBody;
+
+  /// No description provided for @citizenNoPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No Republic posts yet'**
+  String get citizenNoPosts;
+
+  /// No description provided for @citizenAddBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bio'**
+  String get citizenAddBio;
+
+  /// No description provided for @citizenLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open that link.'**
+  String get citizenLinkFailed;
+
+  /// No description provided for @citizenLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get citizenLoadMore;
+
+  /// No description provided for @citizenComments.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 comment} other{{count} comments}}'**
+  String citizenComments(int count);
+
+  /// No description provided for @citizenNoPostsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This citizen has not shared anything in the Republic feed yet.'**
+  String get citizenNoPostsBody;
+
+  /// No description provided for @citizenUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked {date}'**
+  String citizenUnlocked(String date);
+
+  /// No description provided for @citizenVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues hosted'**
+  String get citizenVenues;
+
+  /// No description provided for @citizenServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent and services'**
+  String get citizenServices;
+
+  /// No description provided for @citizenGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get citizenGear;
+
   /// No description provided for @reportUserTitle.
   ///
   /// In en, this message translates to:
@@ -6987,24 +7221,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Partners'**
   String get republicTabPartners;
-
-  /// No description provided for @republicSortBy.
-  ///
-  /// In en, this message translates to:
-  /// **'Sort by'**
-  String get republicSortBy;
-
-  /// No description provided for @republicSortRecent.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent'**
-  String get republicSortRecent;
-
-  /// No description provided for @republicSortTop.
-  ///
-  /// In en, this message translates to:
-  /// **'Top posts'**
-  String get republicSortTop;
 
   /// No description provided for @republicSearchHint.
   ///
@@ -7431,6 +7647,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number'**
   String get profilePhoneLabel;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get profileBioLabel;
+
+  /// No description provided for @profileSocialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Social links'**
+  String get profileSocialTitle;
+
+  /// No description provided for @profileSocialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on your profile, so people can find you elsewhere.'**
+  String get profileSocialHint;
+
+  /// No description provided for @profileSocialAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add social link'**
+  String get profileSocialAdd;
+
+  /// No description provided for @profileSocialRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get profileSocialRemove;
+
+  /// No description provided for @profileSocialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get profileSocialDone;
+
+  /// No description provided for @profileSocialHandleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'@yourname or a link'**
+  String get profileSocialHandleHint;
+
+  /// No description provided for @profileSocialWebsiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://your-site.com'**
+  String get profileSocialWebsiteHint;
 
   /// No description provided for @profilePrivateTitle.
   ///
@@ -8103,6 +8367,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'STEP {n} OF {total}'**
   String studioStepOf(int n, int total);
+
+  /// No description provided for @roleApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get roleApplyTitle;
+
+  /// No description provided for @roleApplyAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About what you offer'**
+  String get roleApplyAbout;
+
+  /// No description provided for @roleApplyBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business or trade name'**
+  String get roleApplyBusiness;
+
+  /// No description provided for @roleApplyServiceTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Services you offer'**
+  String get roleApplyServiceTypes;
+
+  /// No description provided for @roleApplyPerformerTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'What you perform'**
+  String get roleApplyPerformerTypes;
+
+  /// No description provided for @roleApplyGearTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear you rent out'**
+  String get roleApplyGearTypes;
+
+  /// No description provided for @roleApplyCommaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate with commas'**
+  String get roleApplyCommaHint;
+
+  /// No description provided for @roleApplyExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Years of experience'**
+  String get roleApplyExperience;
+
+  /// No description provided for @roleApplyPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Links to your work'**
+  String get roleApplyPortfolio;
+
+  /// No description provided for @roleApplySpecializations.
+  ///
+  /// In en, this message translates to:
+  /// **'Specializations (up to 3)'**
+  String get roleApplySpecializations;
+
+  /// No description provided for @roleApplyIds.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get roleApplyIds;
+
+  /// No description provided for @roleApplyIdsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An admin checks these. They are kept private.'**
+  String get roleApplyIdsHint;
+
+  /// No description provided for @roleApplyNbiNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'NBI clearance ID number'**
+  String get roleApplyNbiNumber;
+
+  /// No description provided for @roleApplyTin.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN number (optional)'**
+  String get roleApplyTin;
+
+  /// No description provided for @roleApplyDocId.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary valid ID'**
+  String get roleApplyDocId;
+
+  /// No description provided for @roleApplyDocNbi.
+  ///
+  /// In en, this message translates to:
+  /// **'NBI clearance'**
+  String get roleApplyDocNbi;
+
+  /// No description provided for @roleApplyDocTin.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN ID or certificate'**
+  String get roleApplyDocTin;
+
+  /// No description provided for @roleApplyDocBir.
+  ///
+  /// In en, this message translates to:
+  /// **'BIR 2303 or permit'**
+  String get roleApplyDocBir;
+
+  /// No description provided for @roleApplyDocSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification selfie'**
+  String get roleApplyDocSelfie;
+
+  /// No description provided for @roleApplyChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get roleApplyChoose;
+
+  /// No description provided for @roleApplyChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get roleApplyChange;
+
+  /// No description provided for @roleApplyRemoveDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get roleApplyRemoveDoc;
+
+  /// No description provided for @roleApplySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send application'**
+  String get roleApplySubmit;
+
+  /// No description provided for @roleApplySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent. We will let you know.'**
+  String get roleApplySent;
+
+  /// No description provided for @roleApplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Try again.'**
+  String get roleApplyFailed;
+
+  /// No description provided for @roleSpecDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get roleSpecDesign;
+
+  /// No description provided for @roleSpecCatering.
+  ///
+  /// In en, this message translates to:
+  /// **'Catering'**
+  String get roleSpecCatering;
+
+  /// No description provided for @roleSpecStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Service staff'**
+  String get roleSpecStaff;
+
+  /// No description provided for @roleSpecPhotography.
+  ///
+  /// In en, this message translates to:
+  /// **'Photography'**
+  String get roleSpecPhotography;
+
+  /// No description provided for @roleSpecVideography.
+  ///
+  /// In en, this message translates to:
+  /// **'Videography'**
+  String get roleSpecVideography;
+
+  /// No description provided for @roleSpecDj.
+  ///
+  /// In en, this message translates to:
+  /// **'DJ'**
+  String get roleSpecDj;
+
+  /// No description provided for @roleSpecLiveBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Live band'**
+  String get roleSpecLiveBand;
+
+  /// No description provided for @roleSpecMc.
+  ///
+  /// In en, this message translates to:
+  /// **'MC'**
+  String get roleSpecMc;
+
+  /// No description provided for @roleSpecFurniture.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get roleSpecFurniture;
+
+  /// No description provided for @roleSpecSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound system'**
+  String get roleSpecSound;
+
+  /// No description provided for @roleSpecDecorations.
+  ///
+  /// In en, this message translates to:
+  /// **'Decorations'**
+  String get roleSpecDecorations;
+
+  /// No description provided for @roleSpecOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get roleSpecOther;
 
   /// No description provided for @studioCover.
   ///

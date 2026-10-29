@@ -13,6 +13,8 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/routes/app_routes.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/citizens/citizen_profile.dart';
+import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -42,6 +44,12 @@ void main() {
         authControllerProvider.overrideWith(_Session.new),
         // No live chat socket: it would keep reconnecting for ever.
         realtimeServiceProvider.overrideWithValue(null),
+        // The profile page loads the public profile by id.
+        citizenProfileProvider.overrideWith(
+          (ref, id) async =>
+              CitizenProfile.tryParse({'id': id, 'name': 'Ada'})!,
+        ),
+        citizenCountsProvider.overrideWith((ref, id) async => null),
       ],
     );
     addTearDown(container.dispose);

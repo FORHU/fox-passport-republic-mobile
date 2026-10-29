@@ -58,4 +58,30 @@ void main() {
       }
     });
   }
+
+  testWidgets('tapping the author opens their profile', (tester) async {
+    var opened = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: PostCard(
+              post: _post,
+              onLike: () {},
+              onComments: () {},
+              onAuthor: () => opened++,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Maria'));
+    await tester.tap(find.byType(AuthorAvatar));
+
+    expect(opened, 2);
+  });
 }

@@ -71,6 +71,12 @@ class RouteNames {
   static const String passport = '/passport';
   static const String profile = '/profile';
 
+  /// Someone's public profile, by id or username. Opened from a post's
+  /// author in the Republic.
+  static String citizen(String idOrUsername) =>
+      '/citizen/${Uri.encodeComponent(idOrUsername)}';
+  static const String citizenPattern = '/citizen/:id';
+
   /// The optional ID check and Verified badge. Pushed from Profile.
   static const String identity = '/profile/identity';
 
@@ -83,6 +89,10 @@ class RouteNames {
 
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
+
+  /// Applying for a role from the phone: `/roles/apply/<roleType>`.
+  static String roleApply(String roleType) =>
+      '/roles/apply/${Uri.encodeComponent(roleType)}';
 
   /// Become a Foxer: the roles to apply for and where each stands.
   static const String roles = '/roles';
@@ -107,6 +117,13 @@ class RouteNames {
 
   /// The posts saved from the Republic. Pushed from its header.
   static const String republicSaved = '/republic/saved';
+
+  /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
+  /// comments open at once.
+  static String republicPost(String id, {bool comments = false}) => Uri(
+        path: '/republic/post/${Uri.encodeComponent(id)}',
+        queryParameters: comments ? {'comments': '1'} : null,
+      ).toString();
 
   /// Writing a post. Pushed from the Republic.
   static const String republicCompose = '/republic/compose';

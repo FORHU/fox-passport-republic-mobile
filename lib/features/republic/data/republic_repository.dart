@@ -21,24 +21,38 @@ class RepublicRepository {
   /// tab so one controller serves both.
   static const savedTab = 'saved';
 
+  /// A feed of one person's posts is a tab named `author:<id>`.
+  static const authorPrefix = 'author:';
+  static String authorTab(String authorId) => '$authorPrefix$authorId';
+
+  /// Not a tab either: one post, read by its id. Passed as [feed]'s tab so a
+  /// single post gets the same actions as a post in the list.
+  static const _postPrefix = 'post:';
+  static String postTab(String postId) => '$_postPrefix$postId';
+
   /// One page of posts. [tab] is `community`, `marketplace` or `partners`;
   /// null is all of them.
   ///
-  /// [top] sorts by what is popular instead of newest; [search] keeps
-  /// posts that mention the words (a `#tag` works too).
+  /// [search] keeps posts that mention the words (a `#tag` works too).
   Future<FeedPage> feed({
     String? tab,
     String? cursor,
-    bool top = false,
     String? search,
   }) async {
+    if (tab != null && tab.startsWith(_postPrefix)) {
+      final one = await post(tab.substring(_postPrefix.length));
+      return FeedPage(posts: [if (one != null) one]);
+    }
+    final author = tab != null && tab.startsWith(authorPrefix)
+        ? tab.substring(authorPrefix.length)
+        : null;
     final body = await _api.get(
       tab == savedTab ? ApiEndpoints.feedSaved : ApiEndpoints.feed,
       query: {
         'limit': pageSize,
-        if (tab != null && tab != savedTab) 'tab': tab,
+        if (author != null) 'authorId': author,
+        if (tab != null && tab != savedTab && author == null) 'tab': tab,
         if (cursor != null) 'cursor': cursor,
-        if (top) 'mode': 'top',
         if (search != null && search.isNotEmpty) 'search': search,
       },
     );
