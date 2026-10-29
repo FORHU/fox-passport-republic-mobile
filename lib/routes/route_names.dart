@@ -90,6 +90,10 @@ class RouteNames {
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
 
+  /// Applying for a role from the phone: `/roles/apply/<roleType>`.
+  static String roleApply(String roleType) =>
+      '/roles/apply/${Uri.encodeComponent(roleType)}';
+
   /// Become a Foxer: the roles to apply for and where each stands.
   static const String roles = '/roles';
 

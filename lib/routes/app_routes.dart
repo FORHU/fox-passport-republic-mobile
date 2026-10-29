@@ -35,6 +35,8 @@ import 'package:flutter_template/features/republic/presentation/pages/compose_po
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
+import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
@@ -272,6 +274,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.identity,
         builder: (context, state) => const IdentityPage(),
+      ),
+      GoRoute(
+        path: '/roles/apply/:roleType',
+        redirect: (context, state) =>
+            appliesInApp.contains(state.pathParameters['roleType'])
+                ? null
+                : RouteNames.roles,
+        builder: (context, state) =>
+            RoleApplicationPage(roleType: state.pathParameters['roleType']!),
       ),
       GoRoute(
         path: RouteNames.spaceVenueStudio,

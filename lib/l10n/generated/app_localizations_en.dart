@@ -4634,6 +4634,118 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get roleApplyTitle => 'Apply';
+
+  @override
+  String get roleApplyAbout => 'About what you offer';
+
+  @override
+  String get roleApplyBusiness => 'Business or trade name';
+
+  @override
+  String get roleApplyServiceTypes => 'Services you offer';
+
+  @override
+  String get roleApplyPerformerTypes => 'What you perform';
+
+  @override
+  String get roleApplyGearTypes => 'Gear you rent out';
+
+  @override
+  String get roleApplyCommaHint => 'Separate with commas';
+
+  @override
+  String get roleApplyExperience => 'Years of experience';
+
+  @override
+  String get roleApplyPortfolio => 'Links to your work';
+
+  @override
+  String get roleApplySpecializations => 'Specializations (up to 3)';
+
+  @override
+  String get roleApplyIds => 'Documents';
+
+  @override
+  String get roleApplyIdsHint =>
+      'An admin checks these. They are kept private.';
+
+  @override
+  String get roleApplyNbiNumber => 'NBI clearance ID number';
+
+  @override
+  String get roleApplyTin => 'TIN number (optional)';
+
+  @override
+  String get roleApplyDocId => 'Primary valid ID';
+
+  @override
+  String get roleApplyDocNbi => 'NBI clearance';
+
+  @override
+  String get roleApplyDocTin => 'TIN ID or certificate';
+
+  @override
+  String get roleApplyDocBir => 'BIR 2303 or permit';
+
+  @override
+  String get roleApplyDocSelfie => 'Verification selfie';
+
+  @override
+  String get roleApplyChoose => 'Choose';
+
+  @override
+  String get roleApplyChange => 'Change';
+
+  @override
+  String get roleApplyRemoveDoc => 'Remove';
+
+  @override
+  String get roleApplySubmit => 'Send application';
+
+  @override
+  String get roleApplySent => 'Application sent. We will let you know.';
+
+  @override
+  String get roleApplyFailed => 'Could not send. Try again.';
+
+  @override
+  String get roleSpecDesign => 'Design';
+
+  @override
+  String get roleSpecCatering => 'Catering';
+
+  @override
+  String get roleSpecStaff => 'Service staff';
+
+  @override
+  String get roleSpecPhotography => 'Photography';
+
+  @override
+  String get roleSpecVideography => 'Videography';
+
+  @override
+  String get roleSpecDj => 'DJ';
+
+  @override
+  String get roleSpecLiveBand => 'Live band';
+
+  @override
+  String get roleSpecMc => 'MC';
+
+  @override
+  String get roleSpecFurniture => 'Furniture';
+
+  @override
+  String get roleSpecSound => 'Sound system';
+
+  @override
+  String get roleSpecDecorations => 'Decorations';
+
+  @override
+  String get roleSpecOther => 'Other';
+
+  @override
   String get studioCover => 'Cover';
 
   @override
