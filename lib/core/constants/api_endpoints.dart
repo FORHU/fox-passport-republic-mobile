@@ -43,6 +43,7 @@ class ApiEndpoints {
 
   // ── Roles & locations (onboarding) ──────────────────────────────────────
   static const String roleRequestsMine = '/role-requests/my';
+  static const String roleRequestsApply = '/role-requests/apply';
   static const String locationCountries = '/locations/countries';
   static String locationStates(String countryCode) =>
       '/locations/countries/$countryCode/states';

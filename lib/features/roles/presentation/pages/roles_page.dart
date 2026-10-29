@@ -1,18 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/roles/role_request.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
 /// Become a Foxer: the roles a citizen can apply for, where each application
-/// stands, and a way into the application form (which asks for identity
-/// documents, so it is completed on the web).
+/// stands, and a way into the application form: on the phone for the
+/// provider roles, on the web for the rest.
 class RolesPage extends ConsumerWidget {
   const RolesPage({super.key});
 
@@ -76,6 +81,11 @@ class RolesPage extends ConsumerWidget {
       builder: (_) => _RoleSheet(role: role),
     );
     if (proceed != true || !context.mounted) return;
+    // The roles with a form on the phone open it; the rest apply on the web.
+    if (appliesInApp.contains(role.roleType)) {
+      unawaited(context.push(RouteNames.roleApply(role.roleType)));
+      return;
+    }
     final opened = await openWebApp(role.href);
     if (!opened && context.mounted) {
       showTopToast(context, context.l10n.onboardingWebNotConfigured);

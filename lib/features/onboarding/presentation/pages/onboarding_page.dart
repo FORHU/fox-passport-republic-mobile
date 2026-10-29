@@ -15,6 +15,9 @@ import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
 
+// The roles that apply from the phone (`features/roles` owns the form).
+const _appliesInApp = {'serviceFoxer', 'performerFoxer', 'gearFoxer'};
+
 /// FoxPassport onboarding — the web app's `/onboarding` flow on a phone:
 /// **Profile → Interests → Roles**, in the web's dark / lime look.
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -56,6 +59,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   Future<void> _openRole(RoleCatalogEntry role) async {
     final proceed = await showRoleDetailsSheet(context, role);
     if (!proceed || !mounted) return;
+    // The roles with a form on the phone open it; the rest apply on the web.
+    if (_appliesInApp.contains(role.roleType)) {
+      await context.push(RouteNames.roleApply(role.roleType));
+      return;
+    }
     await _openOnWeb(role.href);
   }
 

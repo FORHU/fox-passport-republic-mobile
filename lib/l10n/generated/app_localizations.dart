@@ -8350,6 +8350,228 @@ abstract class AppLocalizations {
   /// **'STEP {n} OF {total}'**
   String studioStepOf(int n, int total);
 
+  /// No description provided for @roleApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get roleApplyTitle;
+
+  /// No description provided for @roleApplyAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About what you offer'**
+  String get roleApplyAbout;
+
+  /// No description provided for @roleApplyBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business or trade name'**
+  String get roleApplyBusiness;
+
+  /// No description provided for @roleApplyServiceTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Services you offer'**
+  String get roleApplyServiceTypes;
+
+  /// No description provided for @roleApplyPerformerTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'What you perform'**
+  String get roleApplyPerformerTypes;
+
+  /// No description provided for @roleApplyGearTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear you rent out'**
+  String get roleApplyGearTypes;
+
+  /// No description provided for @roleApplyCommaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate with commas'**
+  String get roleApplyCommaHint;
+
+  /// No description provided for @roleApplyExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Years of experience'**
+  String get roleApplyExperience;
+
+  /// No description provided for @roleApplyPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Links to your work'**
+  String get roleApplyPortfolio;
+
+  /// No description provided for @roleApplySpecializations.
+  ///
+  /// In en, this message translates to:
+  /// **'Specializations (up to 3)'**
+  String get roleApplySpecializations;
+
+  /// No description provided for @roleApplyIds.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get roleApplyIds;
+
+  /// No description provided for @roleApplyIdsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An admin checks these. They are kept private.'**
+  String get roleApplyIdsHint;
+
+  /// No description provided for @roleApplyNbiNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'NBI clearance ID number'**
+  String get roleApplyNbiNumber;
+
+  /// No description provided for @roleApplyTin.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN number (optional)'**
+  String get roleApplyTin;
+
+  /// No description provided for @roleApplyDocId.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary valid ID'**
+  String get roleApplyDocId;
+
+  /// No description provided for @roleApplyDocNbi.
+  ///
+  /// In en, this message translates to:
+  /// **'NBI clearance'**
+  String get roleApplyDocNbi;
+
+  /// No description provided for @roleApplyDocTin.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN ID or certificate'**
+  String get roleApplyDocTin;
+
+  /// No description provided for @roleApplyDocBir.
+  ///
+  /// In en, this message translates to:
+  /// **'BIR 2303 or permit'**
+  String get roleApplyDocBir;
+
+  /// No description provided for @roleApplyDocSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification selfie'**
+  String get roleApplyDocSelfie;
+
+  /// No description provided for @roleApplyChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get roleApplyChoose;
+
+  /// No description provided for @roleApplyChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get roleApplyChange;
+
+  /// No description provided for @roleApplyRemoveDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get roleApplyRemoveDoc;
+
+  /// No description provided for @roleApplySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send application'**
+  String get roleApplySubmit;
+
+  /// No description provided for @roleApplySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent. We will let you know.'**
+  String get roleApplySent;
+
+  /// No description provided for @roleApplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Try again.'**
+  String get roleApplyFailed;
+
+  /// No description provided for @roleSpecDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get roleSpecDesign;
+
+  /// No description provided for @roleSpecCatering.
+  ///
+  /// In en, this message translates to:
+  /// **'Catering'**
+  String get roleSpecCatering;
+
+  /// No description provided for @roleSpecStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Service staff'**
+  String get roleSpecStaff;
+
+  /// No description provided for @roleSpecPhotography.
+  ///
+  /// In en, this message translates to:
+  /// **'Photography'**
+  String get roleSpecPhotography;
+
+  /// No description provided for @roleSpecVideography.
+  ///
+  /// In en, this message translates to:
+  /// **'Videography'**
+  String get roleSpecVideography;
+
+  /// No description provided for @roleSpecDj.
+  ///
+  /// In en, this message translates to:
+  /// **'DJ'**
+  String get roleSpecDj;
+
+  /// No description provided for @roleSpecLiveBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Live band'**
+  String get roleSpecLiveBand;
+
+  /// No description provided for @roleSpecMc.
+  ///
+  /// In en, this message translates to:
+  /// **'MC'**
+  String get roleSpecMc;
+
+  /// No description provided for @roleSpecFurniture.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get roleSpecFurniture;
+
+  /// No description provided for @roleSpecSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound system'**
+  String get roleSpecSound;
+
+  /// No description provided for @roleSpecDecorations.
+  ///
+  /// In en, this message translates to:
+  /// **'Decorations'**
+  String get roleSpecDecorations;
+
+  /// No description provided for @roleSpecOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get roleSpecOther;
+
   /// No description provided for @studioCover.
   ///
   /// In en, this message translates to:
