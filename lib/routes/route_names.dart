@@ -114,6 +114,13 @@ class RouteNames {
   /// The posts saved from the Republic. Pushed from its header.
   static const String republicSaved = '/republic/saved';
 
+  /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
+  /// comments open at once.
+  static String republicPost(String id, {bool comments = false}) => Uri(
+        path: '/republic/post/${Uri.encodeComponent(id)}',
+        queryParameters: comments ? {'comments': '1'} : null,
+      ).toString();
+
   /// Writing a post. Pushed from the Republic.
   static const String republicCompose = '/republic/compose';
 

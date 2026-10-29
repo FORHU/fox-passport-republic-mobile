@@ -32,6 +32,7 @@ import 'package:flutter_template/features/profile/presentation/pages/identity_pa
 import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
@@ -352,6 +353,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.republicCompose,
         builder: (context, state) => const ComposePostPage(),
+      ),
+      GoRoute(
+        path: '/republic/post/:id',
+        builder: (context, state) => PostPage(
+          postId: state.pathParameters['id']!,
+          openComments: state.uri.queryParameters['comments'] == '1',
+        ),
       ),
       GoRoute(
         path: RouteNames.republicSaved,
