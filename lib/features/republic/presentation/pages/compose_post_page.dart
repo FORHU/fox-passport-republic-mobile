@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/republic/data/compose_draft.dart';
 import 'package:flutter_template/features/republic/data/media_picker.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/new_post.dart';
@@ -48,8 +50,53 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
   List<MentionCandidate> _candidates = const [];
   Timer? _mentionTimer;
 
+  ComposeDraftStore? _store;
+  Timer? _draftTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    final userId = ref.read(authControllerProvider).user?.id;
+    if (userId == null) return;
+    try {
+      _store = ComposeDraftStore(ref.read(sharedPreferencesProvider), userId);
+    } on Object {
+      return; // No storage: the composer works, it just keeps no draft.
+    }
+    final draft = _store!.read();
+    if (draft == null) return;
+    _text.text = draft.text;
+    for (var i = 0; i < _options.length && i < draft.options.length; i++) {
+      _options[i].text = draft.options[i];
+    }
+    if (draft.poll) _type = ComposeType.poll;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) showTopToast(context, context.l10n.republicDraftRestored);
+    });
+  }
+
+  ComposeDraft get _draft => ComposeDraft(
+        text: _text.text,
+        options: [for (final o in _options) o.text],
+        poll: _type == ComposeType.poll,
+      );
+
+  /// Keeps what is typed a moment after the typing stops.
+  void _keepDraft() {
+    _draftTimer?.cancel();
+    _draftTimer = Timer(
+      const Duration(milliseconds: 500),
+      () => unawaited(_store?.write(_draft) ?? Future<void>.value()),
+    );
+  }
+
   @override
   void dispose() {
+    // Leaving mid-sentence: keep it now, not after the pause.
+    if (_draftTimer?.isActive ?? false) {
+      _draftTimer!.cancel();
+      unawaited(_store?.write(_draft) ?? Future<void>.value());
+    }
     _mentionTimer?.cancel();
     _text.dispose();
     for (final o in _options) {
@@ -79,6 +126,7 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
       (_type != ComposeType.venueSpotlight || _venueId != null);
 
   void _onChanged(String value) {
+    _keepDraft();
     final cursor = _text.selection.baseOffset;
     final before = cursor < 0 ? value : value.substring(0, cursor);
     final query = mentionQueryAt(before);
@@ -144,6 +192,7 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
           pollOptions: _pollOptions,
         ),
       );
+      await _store?.clear();
       // The new post's id, or empty when the answer had none.
       if (mounted) Navigator.pop(context, id ?? '');
     } on Object catch (e) {
@@ -280,8 +329,12 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
                   ChoiceChip(
                     label: Text(_typeLabel(l10n, t)),
                     selected: _type == t,
-                    onSelected:
-                        _posting ? null : (_) => setState(() => _type = t),
+                    onSelected: _posting
+                        ? null
+                        : (_) {
+                            setState(() => _type = t);
+                            _keepDraft();
+                          },
                   ),
               ],
             ),
@@ -358,7 +411,10 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
                           maxLength,
                         }) =>
                             null,
-                        onChanged: (_) => setState(() {}),
+                        onChanged: (_) {
+                          setState(() {});
+                          _keepDraft();
+                        },
                         decoration: InputDecoration(
                           hintText: l10n.republicPollOption(i + 1),
                         ),
