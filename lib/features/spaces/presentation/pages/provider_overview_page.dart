@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
@@ -14,7 +13,6 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_swit
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -29,12 +27,6 @@ class ProviderOverviewPage extends ConsumerWidget {
 
   /// Gear or services: what this space is for.
   final ProviderKind kind;
-
-  Future<void> _addOnWeb(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp(kind.webAdd);
-    if (!opened && context.mounted) showTopToast(context, message);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -123,8 +115,8 @@ class ProviderOverviewPage extends ConsumerWidget {
                   Expanded(
                     child: QuickActionTile(
                       icon: Icons.add_circle_outline_rounded,
-                      label: l10n.providerAddOnWeb,
-                      onTap: () => unawaited(_addOnWeb(context)),
+                      label: l10n.providerAdd,
+                      onTap: () => unawaited(context.push(kind.studio)),
                     ),
                   ),
                 ],

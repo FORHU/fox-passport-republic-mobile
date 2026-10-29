@@ -4577,10 +4577,132 @@ class AppLocalizationsEn extends AppLocalizations {
   String get providerEmptyServices => 'You have no services listed yet.';
 
   @override
-  String get providerAddOnWeb => 'Add on web';
+  String get providerAdd => 'Add';
 
   @override
-  String get providerListingEdit => 'Edit on the web';
+  String get providerListingEdit => 'Edit';
+
+  @override
+  String get listingTitleNewService => 'Add a service';
+
+  @override
+  String get listingTitleNewGear => 'Add gear';
+
+  @override
+  String get listingTitleEdit => 'Edit listing';
+
+  @override
+  String get listingLiveNote =>
+      'This listing is live. Your changes show to guests as soon as you save.';
+
+  @override
+  String get listingCategory => 'Category';
+
+  @override
+  String get listingName => 'Name';
+
+  @override
+  String get listingDescription => 'Description';
+
+  @override
+  String get listingTravel => 'I will travel to the event';
+
+  @override
+  String get listingPriceTitle => 'Price';
+
+  @override
+  String listingPrice(String currency) {
+    return 'Price ($currency)';
+  }
+
+  @override
+  String get listingBilling => 'Charged';
+
+  @override
+  String get listingQuantity => 'How many do you have?';
+
+  @override
+  String get listingCondition => 'Condition';
+
+  @override
+  String get listingWhere => 'Where';
+
+  @override
+  String get listingWhereGearHint =>
+      'Optional for gear. It helps people nearby find it.';
+
+  @override
+  String get listingPhotosLocked =>
+      'Photos cannot be changed after the listing is saved.';
+
+  @override
+  String get listingCatDesign => 'Design';
+
+  @override
+  String get listingCatCatering => 'Catering';
+
+  @override
+  String get listingCatStaff => 'Service staff';
+
+  @override
+  String get listingCatPhotography => 'Photography';
+
+  @override
+  String get listingCatVideography => 'Videography';
+
+  @override
+  String get listingCatDj => 'DJ';
+
+  @override
+  String get listingCatLiveBand => 'Live band';
+
+  @override
+  String get listingCatMc => 'MC';
+
+  @override
+  String get listingCatFurniture => 'Furniture';
+
+  @override
+  String get listingCatSound => 'Sound system';
+
+  @override
+  String get listingCatDecorations => 'Decorations';
+
+  @override
+  String get listingCatEquipment => 'Equipment';
+
+  @override
+  String get listingCatOther => 'Other';
+
+  @override
+  String get listingRateHourly => 'Per hour';
+
+  @override
+  String get listingRateDaily => 'Per day';
+
+  @override
+  String get listingRateWeekly => 'Per week';
+
+  @override
+  String get listingRateMonthly => 'Per month';
+
+  @override
+  String get listingRateYearly => 'Per year';
+
+  @override
+  String get listingRateOneTime => 'One time';
+
+  @override
+  String get listingConditionNew => 'New';
+
+  @override
+  String get listingConditionGood => 'Good';
+
+  @override
+  String get listingConditionFair => 'Fair';
+
+  @override
+  String get listingConditionRefurbished => 'Refurbished';
 
   @override
   String get providerListingView => 'View public page';

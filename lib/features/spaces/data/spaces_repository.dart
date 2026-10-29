@@ -7,7 +7,9 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/listing_draft.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -235,6 +237,57 @@ class SpacesRepository {
   }) async {
     final status = live ? null : (submit ? 'pending' : 'draft');
     await _api.put(ApiEndpoints.venueById(id), draft.toJson(status: status));
+  }
+
+  /// A service or a piece of gear as saved, to edit, with whether it is live.
+  Future<({ListingDraft draft, String status})> listingDetail(
+    ProviderKind kind,
+    String id,
+  ) async {
+    final base = kind.isGear ? ApiEndpoints.assets : ApiEndpoints.services;
+    final body = await _api.get('$base/${Uri.encodeComponent(id)}');
+    final row = body is Map ? body[kind.isGear ? 'asset' : 'service'] : null;
+    if (row is! Map) throw const FormatException('Listing response is bad');
+    final json = row.cast<String, dynamic>();
+    return (
+      draft: ListingDraft.fromJson(json),
+      status: json['status'] is String ? json['status'] as String : '',
+    );
+  }
+
+  /// Saves a new service or piece of gear and returns its id. [submit] sends
+  /// it for review; otherwise it stays a draft.
+  Future<String> createListing(
+    ProviderKind kind,
+    ListingDraft draft, {
+    required bool submit,
+  }) async {
+    final path = kind.isGear ? ApiEndpoints.assets : ApiEndpoints.services;
+    final body = await _api.post(
+      '$path/create',
+      draft.toJson(kind, status: submit ? 'pending' : 'draft'),
+    );
+    final row = body is Map ? body[kind.isGear ? 'asset' : 'service'] : null;
+    final id = row is Map ? row['id'] : null;
+    if (id is! String) throw const FormatException('No id for the new listing');
+    return id;
+  }
+
+  /// Saves changes. A live listing is sent without a status so it stays live.
+  /// Photos are not sent: the API cannot change them after creating.
+  Future<void> updateListing(
+    ProviderKind kind,
+    String id,
+    ListingDraft draft, {
+    required bool live,
+    required bool submit,
+  }) async {
+    final base = kind.isGear ? ApiEndpoints.assets : ApiEndpoints.services;
+    final status = live ? null : (submit ? 'pending' : 'draft');
+    await _api.put(
+      '$base/${Uri.encodeComponent(id)}',
+      draft.toJson(kind, status: status, withPhotos: false),
+    );
   }
 
   /// Uploads a photo and returns the id the venue needs, with its url.

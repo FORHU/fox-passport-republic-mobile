@@ -27,7 +27,7 @@ void main() {
       ),
     );
 
-    expect(l10n.providerAddOnWeb.length, lessThanOrEqualTo(11));
+    expect(l10n.providerAdd.length, lessThanOrEqualTo(11));
     expect(l10n.requestsTitle.length, lessThanOrEqualTo(11));
   });
 }

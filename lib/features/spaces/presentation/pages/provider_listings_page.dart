@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
@@ -13,9 +12,9 @@ import 'package:flutter_template/features/spaces/presentation/widgets/listing_fi
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
-import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
 /// What a provider lists: gear in the Gear space, services (and performances)
 /// in the Services space.
@@ -40,16 +39,8 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
     super.dispose();
   }
 
-  Future<void> _openOnWeb(String path) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp(path);
-    if (!opened && mounted) showTopToast(context, message);
-  }
-
-  /// Adding and editing a listing is done on the web for now.
   Future<void> _showActions(SpaceListing listing) async {
     final l10n = context.l10n;
-    final path = widget.kind.webEdit(listing.id);
     final edit = await showModalBottomSheet<bool>(
       context: context,
       backgroundColor: AppColors.surface,
@@ -74,7 +65,9 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
         ),
       ),
     );
-    if (edit ?? false) await _openOnWeb(path);
+    if ((edit ?? false) && mounted) {
+      unawaited(context.push(widget.kind.studioFor(listing.id)));
+    }
   }
 
   @override
@@ -91,11 +84,11 @@ class _ProviderListingsPageState extends ConsumerState<ProviderListingsPage> {
         title: listingsLabel(l10n, widget.kind, roles: roles),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => unawaited(_openOnWeb(widget.kind.webAdd)),
+        onPressed: () => unawaited(context.push(widget.kind.studio)),
         backgroundColor: AppColors.accent,
         foregroundColor: AppColors.onAccent,
         icon: const Icon(Icons.add_rounded),
-        label: Text(l10n.providerAddOnWeb),
+        label: Text(l10n.providerAdd),
       ),
       body: Column(
         children: [

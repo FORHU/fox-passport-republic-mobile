@@ -8260,17 +8260,251 @@ abstract class AppLocalizations {
   /// **'You have no services listed yet.'**
   String get providerEmptyServices;
 
-  /// No description provided for @providerAddOnWeb.
+  /// No description provided for @providerAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add on web'**
-  String get providerAddOnWeb;
+  /// **'Add'**
+  String get providerAdd;
 
   /// No description provided for @providerListingEdit.
   ///
   /// In en, this message translates to:
-  /// **'Edit on the web'**
+  /// **'Edit'**
   String get providerListingEdit;
+
+  /// No description provided for @listingTitleNewService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a service'**
+  String get listingTitleNewService;
+
+  /// No description provided for @listingTitleNewGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Add gear'**
+  String get listingTitleNewGear;
+
+  /// No description provided for @listingTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit listing'**
+  String get listingTitleEdit;
+
+  /// No description provided for @listingLiveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is live. Your changes show to guests as soon as you save.'**
+  String get listingLiveNote;
+
+  /// No description provided for @listingCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get listingCategory;
+
+  /// No description provided for @listingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get listingName;
+
+  /// No description provided for @listingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get listingDescription;
+
+  /// No description provided for @listingTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'I will travel to the event'**
+  String get listingTravel;
+
+  /// No description provided for @listingPriceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get listingPriceTitle;
+
+  /// No description provided for @listingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price ({currency})'**
+  String listingPrice(String currency);
+
+  /// No description provided for @listingBilling.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get listingBilling;
+
+  /// No description provided for @listingQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'How many do you have?'**
+  String get listingQuantity;
+
+  /// No description provided for @listingCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'Condition'**
+  String get listingCondition;
+
+  /// No description provided for @listingWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get listingWhere;
+
+  /// No description provided for @listingWhereGearHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional for gear. It helps people nearby find it.'**
+  String get listingWhereGearHint;
+
+  /// No description provided for @listingPhotosLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos cannot be changed after the listing is saved.'**
+  String get listingPhotosLocked;
+
+  /// No description provided for @listingCatDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get listingCatDesign;
+
+  /// No description provided for @listingCatCatering.
+  ///
+  /// In en, this message translates to:
+  /// **'Catering'**
+  String get listingCatCatering;
+
+  /// No description provided for @listingCatStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Service staff'**
+  String get listingCatStaff;
+
+  /// No description provided for @listingCatPhotography.
+  ///
+  /// In en, this message translates to:
+  /// **'Photography'**
+  String get listingCatPhotography;
+
+  /// No description provided for @listingCatVideography.
+  ///
+  /// In en, this message translates to:
+  /// **'Videography'**
+  String get listingCatVideography;
+
+  /// No description provided for @listingCatDj.
+  ///
+  /// In en, this message translates to:
+  /// **'DJ'**
+  String get listingCatDj;
+
+  /// No description provided for @listingCatLiveBand.
+  ///
+  /// In en, this message translates to:
+  /// **'Live band'**
+  String get listingCatLiveBand;
+
+  /// No description provided for @listingCatMc.
+  ///
+  /// In en, this message translates to:
+  /// **'MC'**
+  String get listingCatMc;
+
+  /// No description provided for @listingCatFurniture.
+  ///
+  /// In en, this message translates to:
+  /// **'Furniture'**
+  String get listingCatFurniture;
+
+  /// No description provided for @listingCatSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound system'**
+  String get listingCatSound;
+
+  /// No description provided for @listingCatDecorations.
+  ///
+  /// In en, this message translates to:
+  /// **'Decorations'**
+  String get listingCatDecorations;
+
+  /// No description provided for @listingCatEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get listingCatEquipment;
+
+  /// No description provided for @listingCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get listingCatOther;
+
+  /// No description provided for @listingRateHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per hour'**
+  String get listingRateHourly;
+
+  /// No description provided for @listingRateDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Per day'**
+  String get listingRateDaily;
+
+  /// No description provided for @listingRateWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per week'**
+  String get listingRateWeekly;
+
+  /// No description provided for @listingRateMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per month'**
+  String get listingRateMonthly;
+
+  /// No description provided for @listingRateYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Per year'**
+  String get listingRateYearly;
+
+  /// No description provided for @listingRateOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One time'**
+  String get listingRateOneTime;
+
+  /// No description provided for @listingConditionNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get listingConditionNew;
+
+  /// No description provided for @listingConditionGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get listingConditionGood;
+
+  /// No description provided for @listingConditionFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get listingConditionFair;
+
+  /// No description provided for @listingConditionRefurbished.
+  ///
+  /// In en, this message translates to:
+  /// **'Refurbished'**
+  String get listingConditionRefurbished;
 
   /// No description provided for @providerListingView.
   ///
