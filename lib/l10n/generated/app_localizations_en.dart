@@ -4241,6 +4241,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSlotsAnySlot => 'A service';
 
   @override
+  String get openSlotsAnyGear => 'Gear';
+
+  @override
+  String get openSlotsGear => 'Your gear';
+
+  @override
+  String get openSlotsNoGear => 'List some gear first.';
+
+  @override
   String get openSlotsApply => 'Apply';
 
   @override

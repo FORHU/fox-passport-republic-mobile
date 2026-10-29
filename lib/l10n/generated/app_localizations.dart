@@ -7660,6 +7660,24 @@ abstract class AppLocalizations {
   /// **'A service'**
   String get openSlotsAnySlot;
 
+  /// No description provided for @openSlotsAnyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get openSlotsAnyGear;
+
+  /// No description provided for @openSlotsGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear'**
+  String get openSlotsGear;
+
+  /// No description provided for @openSlotsNoGear.
+  ///
+  /// In en, this message translates to:
+  /// **'List some gear first.'**
+  String get openSlotsNoGear;
+
   /// No description provided for @openSlotsApply.
   ///
   /// In en, this message translates to:

@@ -26,7 +26,7 @@ class _FakeBids extends BidsRepository {
   Future<List<OpenSlotEvent>> openSlots() async => events;
 
   @override
-  Future<void> submitService(ServiceBidDraft draft) async {
+  Future<void> submit(BidDraft draft) async {
     if (refuses) throw const ServerException('You must be a Talent Foxer');
     sent.add(draft.toJson());
   }
@@ -48,12 +48,29 @@ const _event = OpenSlotEvent(
 );
 
 const _service = SpaceListing(id: 'srv1', name: 'Acoustic set', status: 'ok');
+const _gear = SpaceListing(id: 'a1', name: 'PA speakers', status: 'ok');
+
+const _gearSlot = OpenSlot(
+  id: 'g1',
+  price: 0,
+  currency: 'PHP',
+  description: 'Speakers',
+  isGear: true,
+  quantity: 4,
+);
+
+const _gearEvent = OpenSlotEvent(
+  id: 'e2',
+  name: 'Gear night',
+  slots: [_gearSlot],
+);
 
 Future<_FakeBids> _pump(
   WidgetTester tester,
   List<OpenSlotEvent> events, {
   bool refuses = false,
   List<SpaceListing> services = const [_service],
+  List<SpaceListing> gear = const [_gear],
 }) async {
   final repo = _FakeBids(events, refuses: refuses);
   await tester.pumpWidget(
@@ -61,6 +78,7 @@ Future<_FakeBids> _pump(
       overrides: [
         bidsRepositoryProvider.overrideWithValue(repo),
         myServicesProvider.overrideWith((ref) async => services),
+        myAssetsProvider.overrideWith((ref) async => gear),
         moneyFormatterProvider
             .overrideWithValue(const MoneyFormatter(currency: 'PHP')),
       ],
@@ -108,10 +126,10 @@ void main() {
   });
 
   test('the draft names the spot, the service and the price', () {
-    const draft = ServiceBidDraft(
+    const draft = BidDraft(
       eventId: 'e1',
       slotId: 's1',
-      serviceId: 'srv1',
+      listingId: 'srv1',
       price: 2800,
       message: '  Ten years  ',
     );
@@ -122,6 +140,69 @@ void main() {
       'proposedPrice': 2800,
       'message': 'Ten years',
     });
+  });
+
+  test('reads the gear an event still needs, and skips what is matched', () {
+    final event = OpenSlotEvent.tryParse({
+      'id': 'e1',
+      'name': 'Gear night',
+      'template': {
+        'templateServices': [<String, Object>{}],
+        'templateAssets': [
+          {'id': 'g1', 'description': 'Speakers', 'quantity': 4},
+          {'id': 'g2', 'matched': true},
+        ],
+      },
+    });
+    expect(event?.slots.map((s) => s.id), ['g1']);
+    expect(event?.slots.single.isGear, isTrue);
+    expect(event?.slots.single.quantity, 4);
+  });
+
+  test('a gear draft names the gear spot and the gear', () {
+    const draft = BidDraft(
+      eventId: 'e2',
+      slotId: 'g1',
+      listingId: 'a1',
+      price: 500,
+      isGear: true,
+    );
+    expect(draft.toJson(), {
+      'eventId': 'e2',
+      'eventTemplateAssetId': 'g1',
+      'proposedAssetId': 'a1',
+      'proposedPrice': 500,
+    });
+  });
+
+  testWidgets('applies to a gear spot with your own gear', (
+    tester,
+  ) async {
+    final repo = await _pump(tester, [_gearEvent]);
+
+    await tester.tap(find.text('Apply'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your gear'), findsOneWidget);
+    expect(find.text('PA speakers'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '500');
+    await tester.pump();
+    await tester.tap(find.text('Send application'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    expect(repo.sent.single['proposedAssetId'], 'a1');
+    expect(repo.sent.single['eventTemplateAssetId'], 'g1');
+  });
+
+  testWidgets('asks for gear first when there is none', (tester) async {
+    final repo = await _pump(tester, [_gearEvent], gear: const []);
+
+    await tester.tap(find.text('Apply'));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('List some gear first.'), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    expect(repo.sent, isEmpty);
   });
 
   testWidgets('lists events with their open spots', (tester) async {
