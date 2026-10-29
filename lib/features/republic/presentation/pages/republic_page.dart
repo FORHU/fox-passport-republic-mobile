@@ -132,7 +132,6 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final feed = ref.watch(feedControllerProvider(_tab));
-    final sort = ref.watch(feedSortProvider);
     final term = ref.watch(feedSearchProvider);
 
     return Scaffold(
@@ -164,24 +163,6 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       style: AppTypography.display(size: 26),
                     ),
                   ),
-                  PopupMenuButton<FeedSort>(
-                    tooltip: l10n.republicSortBy,
-                    initialValue: sort,
-                    onSelected: ref.read(feedSortProvider.notifier).choose,
-                    icon: const Icon(Icons.swap_vert_rounded, size: 28),
-                    itemBuilder: (_) => [
-                      CheckedPopupMenuItem(
-                        value: FeedSort.recent,
-                        checked: sort == FeedSort.recent,
-                        child: Text(l10n.republicSortRecent),
-                      ),
-                      CheckedPopupMenuItem(
-                        value: FeedSort.top,
-                        checked: sort == FeedSort.top,
-                        child: Text(l10n.republicSortTop),
-                      ),
-                    ],
-                  ),
                   IconButton(
                     tooltip: l10n.republicSearchHint,
                     onPressed: () {
@@ -190,11 +171,12 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       }
                       setState(() => _searching = !_searching);
                     },
+                    // The same magnifier open or shut: it lights up while the
+                    // search field is showing.
                     icon: Icon(
-                      _searching
-                          ? Icons.search_off_rounded
-                          : Icons.search_rounded,
+                      Icons.search_rounded,
                       size: 28,
+                      color: _searching ? AppColors.accent : null,
                     ),
                   ),
                 ],

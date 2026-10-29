@@ -24,12 +24,10 @@ class RepublicRepository {
   /// One page of posts. [tab] is `community`, `marketplace` or `partners`;
   /// null is all of them.
   ///
-  /// [top] sorts by what is popular instead of newest; [search] keeps
-  /// posts that mention the words (a `#tag` works too).
+  /// [search] keeps posts that mention the words (a `#tag` works too).
   Future<FeedPage> feed({
     String? tab,
     String? cursor,
-    bool top = false,
     String? search,
   }) async {
     final body = await _api.get(
@@ -38,7 +36,6 @@ class RepublicRepository {
         'limit': pageSize,
         if (tab != null && tab != savedTab) 'tab': tab,
         if (cursor != null) 'cursor': cursor,
-        if (top) 'mode': 'top',
         if (search != null && search.isNotEmpty) 'search': search,
       },
     );

@@ -58,21 +58,18 @@ void main() {
   }
 
   group('the request', () {
-    test('Partners asks for its tab; no mode or search by default', () async {
+    test('Partners asks for its tab; no search by default', () async {
       await RepublicRepository(api).feed(tab: 'partners');
 
       final q = lastQuery();
       expect(q['tab'], 'partners');
-      expect(q.containsKey('mode'), isFalse);
       expect(q.containsKey('search'), isFalse);
     });
 
-    test('Top posts and a search are sent along', () async {
-      await RepublicRepository(api).feed(top: true, search: '#bonfire');
+    test('a search is sent along', () async {
+      await RepublicRepository(api).feed(search: '#bonfire');
 
-      final q = lastQuery();
-      expect(q['mode'], 'top');
-      expect(q['search'], '#bonfire');
+      expect(lastQuery()['search'], '#bonfire');
     });
 
     test('an empty search is not sent', () async {
@@ -83,18 +80,6 @@ void main() {
   });
 
   group('the list', () {
-    test('choosing Top reloads the feed with the new order', () async {
-      final sub = container.listen(feedControllerProvider(null), (_, __) {});
-      addTearDown(sub.close);
-      await container.read(feedControllerProvider(null).future);
-      clearInteractions(api);
-
-      container.read(feedSortProvider.notifier).choose(FeedSort.top);
-      await container.read(feedControllerProvider(null).future);
-
-      expect(lastQuery()['mode'], 'top');
-    });
-
     test('a search reloads it, and the next page keeps the search', () async {
       when(() => api.get(any(), query: any(named: 'query'))).thenAnswer(
         (_) async => {
@@ -116,8 +101,7 @@ void main() {
       expect(q['cursor'], 'c2');
     });
 
-    test('Saved is neither sorted nor searched', () async {
-      container.read(feedSortProvider.notifier).choose(FeedSort.top);
+    test('Saved is not searched', () async {
       container.read(feedSearchProvider.notifier).set('x');
       const tab = RepublicRepository.savedTab;
       final sub = container.listen(feedControllerProvider(tab), (_, __) {});
@@ -125,9 +109,7 @@ void main() {
 
       await container.read(feedControllerProvider(tab).future);
 
-      final q = lastQuery();
-      expect(q.containsKey('mode'), isFalse);
-      expect(q.containsKey('search'), isFalse);
+      expect(lastQuery().containsKey('search'), isFalse);
     });
   });
 
@@ -151,14 +133,13 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('there are four tabs and a sort', (tester) async {
+    testWidgets('there are four tabs and no sort', (tester) async {
       await pumpPage(tester);
 
       for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
         expect(find.text(label), findsOneWidget, reason: label);
       }
-      // The sort is an icon beside search, not a row of its own.
-      expect(find.byIcon(Icons.swap_vert_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.swap_vert_rounded), findsNothing);
       expect(find.text('Recent'), findsNothing);
     });
 
@@ -211,21 +192,19 @@ void main() {
       expect(lastQuery()['tab'], 'partners');
     });
 
-    testWidgets('choosing Top posts reads the feed that way', (tester) async {
+    testWidgets('the search icon stays a magnifier while the field shows', (
+      tester,
+    ) async {
       await pumpPage(tester);
-      clearInteractions(api);
 
-      await tester.tap(find.byIcon(Icons.swap_vert_rounded));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Top posts'));
+      await tester.tap(find.byIcon(Icons.search_rounded));
       await tester.pumpAndSettle();
 
-      expect(lastQuery()['mode'], 'top');
-
-      // The menu ticks the order in use.
-      await tester.tap(find.byIcon(Icons.swap_vert_rounded));
-      await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.done), findsOneWidget);
+      // The field has its own clear button; the header does not add a
+      // second, crossed-out icon.
+      expect(find.byIcon(Icons.search_off_rounded), findsNothing);
+      expect(find.byIcon(Icons.close_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.search_rounded), findsWidgets);
     });
 
     testWidgets('searching asks for the words, and an empty answer says so', (

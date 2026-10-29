@@ -6988,24 +6988,6 @@ abstract class AppLocalizations {
   /// **'Partners'**
   String get republicTabPartners;
 
-  /// No description provided for @republicSortBy.
-  ///
-  /// In en, this message translates to:
-  /// **'Sort by'**
-  String get republicSortBy;
-
-  /// No description provided for @republicSortRecent.
-  ///
-  /// In en, this message translates to:
-  /// **'Recent'**
-  String get republicSortRecent;
-
-  /// No description provided for @republicSortTop.
-  ///
-  /// In en, this message translates to:
-  /// **'Top posts'**
-  String get republicSortTop;
-
   /// No description provided for @republicSearchHint.
   ///
   /// In en, this message translates to:

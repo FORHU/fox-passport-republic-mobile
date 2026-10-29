@@ -3858,15 +3858,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicTabPartners => 'Partners';
 
   @override
-  String get republicSortBy => 'Sort by';
-
-  @override
-  String get republicSortRecent => 'Recent';
-
-  @override
-  String get republicSortTop => 'Top posts';
-
-  @override
   String get republicSearchHint => 'Search the Republic';
 
   @override
