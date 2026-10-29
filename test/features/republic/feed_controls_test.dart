@@ -157,7 +157,19 @@ void main() {
       for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
         expect(find.text(label), findsOneWidget, reason: label);
       }
-      expect(find.text('Recent'), findsOneWidget);
+      // The sort is an icon beside search, not a row of its own.
+      expect(find.byIcon(Icons.swap_vert_rounded), findsOneWidget);
+      expect(find.text('Recent'), findsNothing);
+    });
+
+    testWidgets('the four tabs are the same size', (tester) async {
+      await pumpPage(tester);
+
+      final sizes = {
+        for (final label in ['All', 'Community', 'Marketplace', 'Partners'])
+          tester.widget<Text>(find.text(label)).style?.fontSize,
+      };
+      expect(sizes, hasLength(1));
     });
 
     testWidgets('the header is just search; Saved lives in the Passport', (
@@ -203,13 +215,17 @@ void main() {
       await pumpPage(tester);
       clearInteractions(api);
 
-      await tester.tap(find.text('Recent'));
+      await tester.tap(find.byIcon(Icons.swap_vert_rounded));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Top posts'));
       await tester.pumpAndSettle();
 
       expect(lastQuery()['mode'], 'top');
-      expect(find.text('Top posts'), findsOneWidget);
+
+      // The menu ticks the order in use.
+      await tester.tap(find.byIcon(Icons.swap_vert_rounded));
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.done), findsOneWidget);
     });
 
     testWidgets('searching asks for the words, and an empty answer says so', (

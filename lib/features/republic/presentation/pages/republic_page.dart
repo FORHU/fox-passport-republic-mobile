@@ -164,6 +164,24 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                       style: AppTypography.display(size: 26),
                     ),
                   ),
+                  PopupMenuButton<FeedSort>(
+                    tooltip: l10n.republicSortBy,
+                    initialValue: sort,
+                    onSelected: ref.read(feedSortProvider.notifier).choose,
+                    icon: const Icon(Icons.swap_vert_rounded, size: 28),
+                    itemBuilder: (_) => [
+                      CheckedPopupMenuItem(
+                        value: FeedSort.recent,
+                        checked: sort == FeedSort.recent,
+                        child: Text(l10n.republicSortRecent),
+                      ),
+                      CheckedPopupMenuItem(
+                        value: FeedSort.top,
+                        checked: sort == FeedSort.top,
+                        child: Text(l10n.republicSortTop),
+                      ),
+                    ],
+                  ),
                   IconButton(
                     tooltip: l10n.republicSearchHint,
                     onPressed: () {
@@ -206,49 +224,6 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
               selected: _tab,
               label: _tabLabel,
               onSelect: (t) => setState(() => _tab = t),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  PopupMenuButton<FeedSort>(
-                    tooltip: l10n.republicSortBy,
-                    initialValue: sort,
-                    onSelected: ref.read(feedSortProvider.notifier).choose,
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                        value: FeedSort.recent,
-                        child: Text(l10n.republicSortRecent),
-                      ),
-                      PopupMenuItem(
-                        value: FeedSort.top,
-                        child: Text(l10n.republicSortTop),
-                      ),
-                    ],
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.swap_vert_rounded,
-                          size: 18,
-                          color: AppColors.textMuted,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          sort == FeedSort.top
-                              ? l10n.republicSortTop
-                              : l10n.republicSortRecent,
-                          style: AppTypography.body(
-                            size: 13,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
             Expanded(
               child: feed.when(
@@ -362,50 +337,57 @@ class _FeedTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.border)),
-      ),
-      child: Row(
-        children: [
-          for (final t in tabs)
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: t == selected,
-                child: InkWell(
-                  onTap: () => onSelect(t),
-                  child: Container(
-                    height: 44,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          width: 3,
-                          color: t == selected
-                              ? AppColors.accent
-                              : Colors.transparent,
+    // Large text would make one long label shrink alone, so the tabs hold
+    // to a size where all four fit side by side.
+    final scaler = MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.15);
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: scaler),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.border)),
+        ),
+        child: Row(
+          children: [
+            for (final t in tabs)
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  selected: t == selected,
+                  child: InkWell(
+                    onTap: () => onSelect(t),
+                    child: Container(
+                      height: 44,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 3,
+                            color: t == selected
+                                ? AppColors.accent
+                                : Colors.transparent,
+                          ),
                         ),
                       ),
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label(t),
-                        style: AppTypography.body(
-                          weight: FontWeight.w700,
-                          color: t == selected
-                              ? AppColors.accent
-                              : AppColors.textMuted,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          label(t),
+                          style: AppTypography.body(
+                            size: 13,
+                            weight: FontWeight.w700,
+                            color: t == selected
+                                ? AppColors.accent
+                                : AppColors.textMuted,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
