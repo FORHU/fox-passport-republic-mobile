@@ -6574,6 +6574,12 @@ abstract class AppLocalizations {
   /// **'Post'**
   String get republicPost;
 
+  /// No description provided for @republicDraftRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft restored'**
+  String get republicDraftRestored;
+
   /// No description provided for @republicCompose.
   ///
   /// In en, this message translates to:

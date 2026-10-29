@@ -3639,6 +3639,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicPost => 'Post';
 
   @override
+  String get republicDraftRestored => 'Draft restored';
+
+  @override
   String get republicCompose => 'New post';
 
   @override
