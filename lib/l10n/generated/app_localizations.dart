@@ -364,18 +364,6 @@ abstract class AppLocalizations {
   /// **'Welcome to FoxPassport'**
   String get welcomeCarouselLabel;
 
-  /// No description provided for @welcomePause.
-  ///
-  /// In en, this message translates to:
-  /// **'Pause'**
-  String get welcomePause;
-
-  /// No description provided for @welcomePlay.
-  ///
-  /// In en, this message translates to:
-  /// **'Play'**
-  String get welcomePlay;
-
   /// No description provided for @welcomeCreateAccount.
   ///
   /// In en, this message translates to:

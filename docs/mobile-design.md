@@ -141,25 +141,26 @@ Layout, top to bottom, full screen on `canvas`:
    button (goes to Register) and `Already have an account? Log in` (goes to
    Log in). There is no Skip, Next or Back button.
 4. **Over the stage:** three story bars (3px, lime while a scene plays, full
-   once seen) and a pause button (36px glass circle, 48px tap target).
+   once seen). There is no pause or play button.
 
 Behaviour:
 
-- Each scene plays for 6.5 s, then the next fades in (0.5 s). The last scene
-  stays; it does not loop.
+- Each scene plays for 6.5 s, then the next fades in (0.5 s). After the last
+  scene the reel starts again from the first, and keeps looping until the user
+  signs up or logs in. Going on from the last scene by hand also wraps to the
+  first; going back from the first does nothing.
 - Tap the left third of the stage to go back and anywhere else to go on. Swipe
   (more than 40px) or use the arrow keys to move.
-- Pause stops everything on the stage: with the pause
-  button, with a finger held down (after 220 ms; lifting it carries on from the
-  same spot, and letting go after a hold is not a tap), and when the app goes to
-  the background (it stays paused on return).
-- The pause button is labelled Pause or Play for screen readers.
+- Everything on the stage stops while a finger is held down (after 220 ms;
+  lifting it carries on from the same spot, and letting go after a hold is not a
+  tap) and while the app is in the background or its page is hidden (it carries
+  on when the app comes back).
 - Each scene zooms from 1.06 to 1 while it plays. The headline lines snap up
   one after the other.
 - Reduced motion (`MediaQuery.disableAnimations`): still frames, no
-  auto-advance, no looping effects, no pause button (nothing moves to pause).
-- Screen reader on (`MediaQuery.accessibleNavigation`): no auto-advance and no
-  pause button, so the content does not change while it is being read. The
+  auto-advance and no looping effects.
+- Screen reader on (`MediaQuery.accessibleNavigation`): no auto-advance, so the
+  content does not change while it is being read. The
   words are a live region.
 
 | # | Scene | Eyebrow | Headline | Body |

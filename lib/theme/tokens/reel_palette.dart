@@ -20,13 +20,10 @@ class ReelPalette {
   static const passportMid = Color(0xFF0A0F1F);
   static const passportDeep = Color(0xFF05070F);
 
-  /// The pill under the board and the pause button: dark glass with a light
-  /// edge.
+  /// The pill under the board: dark glass with a light edge.
   static const pillText = Color(0xFFCFE6FF);
   static const pillFill = Color(0x99060A18);
   static const pillEdge = Color(0x1FFFFFFF);
-  static const glassFill = Color(0x8C06080E);
-  static const glassEdge = Color(0x33FFFFFF);
 
   // ── 1 · The things you hold ──────────────────────────────────────────────
 

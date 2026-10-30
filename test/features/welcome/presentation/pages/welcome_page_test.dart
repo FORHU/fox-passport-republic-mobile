@@ -98,14 +98,20 @@ void main() {
     expect(find.text('TICKETS AND'), findsOneWidget);
     expect(find.text('STAMPS'), findsOneWidget);
 
-    // On the last scene a tap on goes nowhere.
-    await tester.tapAt(right);
-    await tester.pumpAndSettle();
-    expect(find.text('TICKETS AND'), findsOneWidget);
-
     await tester.tapAt(left);
     await tester.pumpAndSettle();
     expect(find.text("WHAT'S ON"), findsOneWidget);
+
+    // On from the last scene starts again; back from the first stays put.
+    await tester.tapAt(middle);
+    await tester.pumpAndSettle();
+    await tester.tapAt(right);
+    await tester.pumpAndSettle();
+    expect(find.text('PLAN ANY'), findsOneWidget);
+
+    await tester.tapAt(left);
+    await tester.pumpAndSettle();
+    expect(find.text('PLAN ANY'), findsOneWidget);
   });
 
   testWidgets('swipe left goes on and swipe right goes back', (tester) async {
@@ -229,7 +235,7 @@ void main() {
     });
   });
 
-  testWidgets('the board turns over while it plays and holds when paused', (
+  testWidgets('the board turns over while it plays and holds under a finger', (
     tester,
   ) async {
     await boot(tester, reduceMotion: false);
@@ -252,11 +258,12 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
     expect(board(), isNot(first));
 
-    await tester.tap(find.byIcon(Icons.pause));
-    await tester.pump();
-    final paused = board();
+    final finger = await tester.startGesture(middle);
+    await tester.pump(const Duration(milliseconds: 300));
+    final held = board();
     await tester.pump(const Duration(seconds: 5));
-    expect(board(), paused);
+    expect(board(), held);
+    await finger.up();
   });
 
   testWidgets('the pile of things scales up to fill a tall phone', (
@@ -298,7 +305,9 @@ void main() {
     expect(find.text('LOG IN TO YOUR ACCOUNT'), findsOneWidget);
   });
 
-  testWidgets('plays on its own and waits on the last scene', (tester) async {
+  testWidgets('plays on its own and starts again after the last scene', (
+    tester,
+  ) async {
     await boot(tester, reduceMotion: false);
     expect(find.text('PLAN ANY'), findsOneWidget);
 
@@ -307,9 +316,11 @@ void main() {
       expect(find.text(headline), findsOneWidget);
     }
 
-    // It does not loop back: the last scene stays.
-    await tester.pump(const Duration(seconds: 20));
-    expect(find.text('TICKETS AND'), findsOneWidget);
+    // It loops: after the last scene comes the first, and on it goes.
+    await playScene(tester);
+    expect(find.text('PLAN ANY'), findsOneWidget);
+    await playScene(tester);
+    expect(find.text("WHAT'S ON"), findsOneWidget);
     expect(find.text('Create a free account'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -360,48 +371,35 @@ void main() {
     expect(find.text('PLAN ANY'), findsOneWidget);
   });
 
-  testWidgets('the pause button stops the reel and play starts it again', (
-    tester,
-  ) async {
-    await boot(tester, reduceMotion: false);
-
-    await tester.tap(find.byIcon(Icons.pause));
-    await tester.pump();
-    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
-
-    await tester.pump(const Duration(seconds: 20));
-    expect(find.text('PLAN ANY'), findsOneWidget);
-
-    await tester.tap(find.byIcon(Icons.play_arrow));
-    await tester.pump();
-    await playScene(tester);
-    expect(find.text("WHAT'S ON"), findsOneWidget);
-    expect(find.byIcon(Icons.pause), findsOneWidget);
-  });
-
-  testWidgets('the story bars and pause button sit at the top of the screen', (
+  testWidgets('the story bars sit at the top, with no pause button', (
     tester,
   ) async {
     await boot(tester, reduceMotion: false);
 
     // Regression: they once floated in the middle of the screen.
-    final pause = tester.getTopLeft(find.byIcon(Icons.pause));
-    expect(pause.dy, lessThan(80));
+    final bars = find.byType(FractionallySizedBox);
+    expect(bars, findsNWidgets(3));
+    expect(tester.getTopLeft(bars.first).dy, lessThan(80));
+    expect(find.byIcon(Icons.pause), findsNothing);
+    expect(find.byIcon(Icons.play_arrow), findsNothing);
     expect(tester.view.physicalSize.height, greaterThan(400));
   });
 
-  testWidgets('going to the background pauses the reel', (tester) async {
+  testWidgets('going to the background pauses the reel until it is back', (
+    tester,
+  ) async {
     await boot(tester, reduceMotion: false);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
     await tester.pump();
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-    await tester.pump();
-
-    // Back in the app it is still paused, with a play button to carry on.
     await tester.pump(const Duration(seconds: 20));
     expect(find.text('PLAN ANY'), findsOneWidget);
-    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+
+    // Back in the app it carries on by itself; there is no play button.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await playScene(tester);
+    expect(find.text("WHAT'S ON"), findsOneWidget);
   });
 
   testWidgets('losing focus briefly does not pause the reel', (tester) async {
@@ -413,7 +411,6 @@ void main() {
     await tester.pump();
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
-    expect(find.byIcon(Icons.pause), findsOneWidget);
 
     await playScene(tester);
     expect(find.text("WHAT'S ON"), findsOneWidget);
@@ -425,7 +422,6 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
     await tester.pump();
 
-    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
     await tester.pump(const Duration(seconds: 20));
     expect(find.text('PLAN ANY'), findsOneWidget);
   });
@@ -437,8 +433,6 @@ void main() {
 
     await tester.pump(const Duration(seconds: 20));
     expect(find.text('PLAN ANY'), findsOneWidget);
-    // Nothing plays, so there is nothing to pause.
-    expect(find.byIcon(Icons.pause), findsNothing);
 
     // It still moves on by hand.
     await tester.tapAt(right);
@@ -446,14 +440,13 @@ void main() {
     expect(find.text("WHAT'S ON"), findsOneWidget);
   });
 
-  testWidgets('with reduced motion it shows still frames and no pause', (
+  testWidgets('with reduced motion it shows still frames', (
     tester,
   ) async {
     await boot(tester);
 
     await tester.pump(const Duration(seconds: 20));
     expect(find.text('PLAN ANY'), findsOneWidget);
-    expect(find.byIcon(Icons.pause), findsNothing);
   });
 
   testWidgets('lays out on a small phone without overflow', (tester) async {

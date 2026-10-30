@@ -148,12 +148,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeCarouselLabel => 'Welcome to FoxPassport';
 
   @override
-  String get welcomePause => 'Pause';
-
-  @override
-  String get welcomePlay => 'Play';
-
-  @override
   String get welcomeCreateAccount => 'Create a free account';
 
   @override

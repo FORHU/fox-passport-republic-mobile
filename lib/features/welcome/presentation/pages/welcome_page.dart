@@ -10,18 +10,17 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/reel_palette.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
 /// First-launch welcome reel, shown once before sign-in
 /// (`docs/mobile-design.md` §4).
 ///
-/// Three scenes play on their own above a still panel with the words. Tap
-/// (left third back, anywhere else on), swipe or use the arrow keys to move,
-/// hold or press the pause button to pause. Creating an account and logging
-/// in are on screen the whole time. It is not the Profile → Interests → Roles
-/// flow, which needs a signed-in user and runs after sign-in.
+/// Three scenes play on their own, round and round, above a still panel with
+/// the words. Tap (left third back, anywhere else on), swipe or use the arrow
+/// keys to move, and hold a finger down to pause. Creating an account and
+/// logging in are on screen the whole time. It is not the Profile → Interests
+/// → Roles flow, which needs a signed-in user and runs after sign-in.
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
 
@@ -62,8 +61,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   /// changing under it.
   bool _screenReader = false;
 
-  /// The user paused with the button, or the app went to the background.
-  bool _userPaused = false;
+  /// The app is in the background or its page is hidden.
+  bool _away = false;
 
   Timer? _holdTimer;
 
@@ -74,15 +73,13 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   bool _ignoreTap = false;
   double _dragged = 0;
 
-  /// Everything moving on the stage stops: paused, or a finger held down.
-  bool get _frozen => _userPaused || _holding;
-
-  bool get _isLast => _index == _sceneCount - 1;
+  /// Everything moving on the stage stops: away, or a finger held down.
+  bool get _frozen => _away || _holding;
 
   /// Nothing moves on its own with reduced motion or a screen reader.
   bool get _still => _reduceMotion || _screenReader;
 
-  bool get _playing => !_still && !_userPaused;
+  bool get _playing => !_still && !_away;
 
   @override
   void initState() {
@@ -112,14 +109,18 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Leaving the app (hidden or in the background) pauses the reel; coming
-    // back leaves it paused, so the user sees where they were and presses
-    // play. A brief `inactive` does not: on the web that fires whenever the
-    // window loses focus (clicking into DevTools, another window), and on a
-    // phone for a system dialog, and the reel would stall for no reason.
+    // Leaving the app (hidden or in the background) pauses the reel and
+    // coming back carries on from the same spot. A brief `inactive` does not:
+    // on the web that fires whenever the window loses focus (clicking into
+    // DevTools, another window), and on a phone for a system dialog, and the
+    // reel would stall for no reason.
     final left =
         state == AppLifecycleState.hidden || state == AppLifecycleState.paused;
-    if (left && !_userPaused) _setPaused(true);
+    if (left) {
+      _setAway(true);
+    } else if (state == AppLifecycleState.resumed) {
+      _setAway(false);
+    }
   }
 
   @override
@@ -131,31 +132,32 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
     super.dispose();
   }
 
-  /// Each scene moves on by itself, except the last, which waits for a choice.
+  /// Each scene moves on by itself; after the last one it starts again.
   void _onProgress(AnimationStatus status) {
-    if (status == AnimationStatus.completed && !_isLast && _playing) {
+    if (status == AnimationStatus.completed && _playing) {
       _go(_index + 1);
     }
   }
 
   void _go(int scene) {
-    final next = scene.clamp(0, _sceneCount - 1);
-    // Going on from the last scene, or back from the first, does nothing.
+    // Going on from the last scene starts again; back from the first does
+    // nothing.
+    final next = scene >= _sceneCount ? 0 : scene.clamp(0, _sceneCount - 1);
     if (next == _index) return;
     setState(() => _index = next);
     if (_still) {
       _progress.value = 1;
-    } else if (_userPaused) {
+    } else if (_away) {
       _progress.value = 0;
     } else {
       _progress.forward(from: 0);
     }
   }
 
-  void _setPaused(bool paused) {
-    if (_userPaused == paused) return;
-    setState(() => _userPaused = paused);
-    if (paused) {
+  void _setAway(bool away) {
+    if (_away == away) return;
+    setState(() => _away = away);
+    if (away) {
       _progress.stop();
     } else {
       _resume();
@@ -288,16 +290,11 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 4, 0),
-                    child: _TopRow(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: _StoryBars(
                       progress: _progress,
                       index: _index,
                       total: _sceneCount,
-                      paused: _userPaused,
-                      showPause: !_still,
-                      pauseLabel: l10n.welcomePause,
-                      playLabel: l10n.welcomePlay,
-                      onTogglePause: () => _setPaused(!_userPaused),
                     ),
                   ),
                 ),
@@ -326,7 +323,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   /// The words of every scene stacked, so the panel keeps the height of the
   /// tallest one; only the current one shows.
   Widget _words(List<_Copy> copy) => Semantics(
-        liveRegion: _userPaused || _screenReader,
+        liveRegion: _still,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 22),
           child: Align(
@@ -374,84 +371,34 @@ class _Copy {
   final String body;
 }
 
-/// Story bars and the pause button.
-class _TopRow extends StatelessWidget {
-  const _TopRow({
+/// One bar per scene: full once seen, filling while it plays.
+class _StoryBars extends StatelessWidget {
+  const _StoryBars({
     required this.progress,
     required this.index,
     required this.total,
-    required this.paused,
-    required this.showPause,
-    required this.pauseLabel,
-    required this.playLabel,
-    required this.onTogglePause,
   });
 
   final Animation<double> progress;
   final int index;
   final int total;
-  final bool paused;
-  final bool showPause;
-  final String pauseLabel;
-  final String playLabel;
-  final VoidCallback onTogglePause;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              for (var i = 0; i < total; i++)
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: i == total - 1 ? 0 : 4),
-                    child: _Bar(progress: progress, scene: i, current: index),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        // Nothing moves by itself with reduced motion or a screen reader, so
-        // there is nothing to pause. The space stays so the bars keep their
-        // width.
-        SizedBox(
-          width: 48,
-          height: 48,
-          child: showPause
-              ? Semantics(
-                  button: true,
-                  toggled: paused,
-                  label: paused ? playLabel : pauseLabel,
-                  excludeSemantics: true,
-                  onTap: onTogglePause,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: onTogglePause,
-                    child: Center(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ReelPalette.glassFill,
-                          border: Border.all(color: ReelPalette.glassEdge),
-                        ),
-                        child: SizedBox(
-                          width: 36,
-                          height: 36,
-                          child: Icon(
-                            paused ? Icons.play_arrow : Icons.pause,
-                            size: 20,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : null,
-        ),
-      ],
+    // As tall as the row was with the pause button, so the bars stay put.
+    return SizedBox(
+      height: 48,
+      child: Row(
+        children: [
+          for (var i = 0; i < total; i++)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: i == total - 1 ? 0 : 4),
+                child: _Bar(progress: progress, scene: i, current: index),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
