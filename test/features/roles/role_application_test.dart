@@ -133,10 +133,52 @@ void main() {
       expect(RoleApplicationDraft.digits('1234567890123', 9), '123456789');
     });
 
-    test('only the provider roles apply from the phone', () {
+    test('a venue is sent its name, contact, address and categories', () {
+      final venue = RoleApplicationDraft(
+        roleType: 'venueFoxer',
+        businessName: ' The Neon Lounge ',
+        contactNumber: ' 0917 000 0000 ',
+        address: ' 123 Makati Ave ',
+        tinNumber: '123',
+        specializations: const ['hotel', 'garden'],
+        documents: _allDocuments(),
+      );
+      expect(venue.toData(), {
+        'businessName': 'The Neon Lounge',
+        'contactNumber': '0917 000 0000',
+        'address': '123 Makati Ave',
+        'tinNumber': '123',
+        'specializations': ['hotel', 'garden'],
+      });
+      expect(
+        venue.copyWith(description: ' Rooftop ').toData()['description'],
+        'Rooftop',
+      );
+      expect(specializationOptions('venueFoxer'), contains('beach_resort'));
+    });
+
+    test('a venue needs a name, contact, address, TIN and every document', () {
+      final venue = RoleApplicationDraft(
+        roleType: 'venueFoxer',
+        businessName: 'Lounge',
+        contactNumber: '1',
+        address: 'Makati',
+        tinNumber: '1',
+        documents: _allDocuments(),
+      );
+      // No services, experience or NBI number are asked of a venue.
+      expect(venue.isComplete, isTrue);
+      expect(venue.copyWith(businessName: ' ').isComplete, isFalse);
+      expect(venue.copyWith(contactNumber: '').isComplete, isFalse);
+      expect(venue.copyWith(address: '').isComplete, isFalse);
+      expect(venue.copyWith(tinNumber: '').isComplete, isFalse);
+      expect(venue.copyWith(documents: const {}).isComplete, isFalse);
+    });
+
+    test('the provider roles and the venue apply from the phone', () {
       expect(
         appliesInApp,
-        {'serviceFoxer', 'performerFoxer', 'gearFoxer'},
+        {'serviceFoxer', 'performerFoxer', 'gearFoxer', 'venueFoxer'},
       );
       expect(RouteNames.roleApply('gearFoxer'), '/roles/apply/gearFoxer');
     });
@@ -243,6 +285,27 @@ void main() {
       expect(find.text('Years of experience'), findsOneWidget);
       expect(find.text('NBI clearance ID number'), findsOneWidget);
       expect(find.text('Business or trade name'), findsNothing);
+    });
+
+    testWidgets('a venue asks for contact and address, not services', (
+      tester,
+    ) async {
+      await open(tester, 'venueFoxer');
+
+      expect(find.text('Venue Foxer'), findsOneWidget);
+      expect(find.text('Business or venue name'), findsOneWidget);
+      expect(find.text('Contact number'), findsOneWidget);
+      expect(find.text('Complete address'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('TIN number'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('TIN number'), findsOneWidget);
+      expect(find.text('Hotel'), findsOneWidget);
+      expect(find.text('Years of experience'), findsNothing);
+      expect(find.text('NBI clearance ID number'), findsNothing);
+      expect(find.text('Services you offer'), findsNothing);
     });
 
     testWidgets('Send waits until it is complete', (tester) async {
