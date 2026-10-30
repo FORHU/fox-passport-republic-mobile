@@ -4743,6 +4743,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyFailed => 'Could not send. Try again.';
 
   @override
+  String get roleApplyVenueName => 'Business or venue name';
+
+  @override
+  String get roleApplyContact => 'Contact number';
+
+  @override
+  String get roleApplyAddress => 'Complete address';
+
+  @override
+  String get roleApplyDescription => 'About your venues (optional)';
+
+  @override
+  String get roleApplyTinRequired => 'TIN number';
+
+  @override
+  String get roleSpecIndoor => 'Indoor';
+
+  @override
+  String get roleSpecOutdoor => 'Outdoor';
+
+  @override
+  String get roleSpecHotel => 'Hotel';
+
+  @override
+  String get roleSpecBeachResort => 'Beach resort';
+
+  @override
+  String get roleSpecGarden => 'Garden';
+
+  @override
+  String get roleSpecMix => 'Mixed';
+
+  @override
   String get roleSpecDesign => 'Design';
 
   @override

@@ -8554,6 +8554,72 @@ abstract class AppLocalizations {
   /// **'Could not send. Try again.'**
   String get roleApplyFailed;
 
+  /// No description provided for @roleApplyVenueName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business or venue name'**
+  String get roleApplyVenueName;
+
+  /// No description provided for @roleApplyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact number'**
+  String get roleApplyContact;
+
+  /// No description provided for @roleApplyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete address'**
+  String get roleApplyAddress;
+
+  /// No description provided for @roleApplyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'About your venues (optional)'**
+  String get roleApplyDescription;
+
+  /// No description provided for @roleApplyTinRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN number'**
+  String get roleApplyTinRequired;
+
+  /// No description provided for @roleSpecIndoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Indoor'**
+  String get roleSpecIndoor;
+
+  /// No description provided for @roleSpecOutdoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdoor'**
+  String get roleSpecOutdoor;
+
+  /// No description provided for @roleSpecHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get roleSpecHotel;
+
+  /// No description provided for @roleSpecBeachResort.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach resort'**
+  String get roleSpecBeachResort;
+
+  /// No description provided for @roleSpecGarden.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden'**
+  String get roleSpecGarden;
+
+  /// No description provided for @roleSpecMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get roleSpecMix;
+
   /// No description provided for @roleSpecDesign.
   ///
   /// In en, this message translates to:
