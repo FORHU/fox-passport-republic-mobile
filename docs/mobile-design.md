@@ -117,45 +117,84 @@ label 11. Nothing below 11.
 
 ---
 
-## 4. Welcome carousel (new, shown before sign-in)
+## 4. Welcome reel (new, shown before sign-in)
 
-Mockup: `docs/mockups/onboarding-auth.html` (left phone).
+Design: the "Onboarding UX Pass" artifact, version 10.
+`docs/mockups/onboarding-auth.html` (left phone) is the older six-slide
+carousel it replaces.
 
-This is the phone version of the web's `WelcomeGuide.tsx`. It is **not** the
-existing `OnboardingPage` (Profile → Interests → Roles), which runs after
-sign-in and stays as it is.
+A self-playing, story-style welcome in three scenes: plan, discover, go and
+collect. It is **not** the existing `OnboardingPage` (Profile → Interests →
+Roles), which runs after sign-in and stays as it is.
 
-Flow: first launch → Welcome carousel → Register (or Log in) → verify email →
-existing `OnboardingPage` → Home. Show the carousel once; store a "welcome
-seen" flag next to the existing onboarding-seen flag.
+Flow: first launch → Welcome reel → Register (or Log in) → verify email →
+existing `OnboardingPage` → Home. Show the reel once; store a "welcome seen"
+flag next to the existing onboarding-seen flag.
 
 Layout, top to bottom, full screen on `canvas`:
 
-1. Row: counter `1 / 6` (label style, muted) on the left, `Skip` on the right
-   (hidden on the last slide; jumps to the last slide).
-2. Vertically centred block: 72px icon tile (radius 20, `accentTintBg` fill,
-   `accentTintBorder` border, lime icon) → lime eyebrow label → hero headline →
-   body in `textSecondary`.
-3. Page dots: 6px grey dots, the active one is an 18px lime bar.
-4. Primary button, then a muted `Back` link (hidden on slide 1).
+1. **Stage:** the scene, taking the space above the words, with a 70px fade
+   into the panel below it. All the motion is here.
+2. **Words:** a still panel on `canvas`: lime eyebrow label, a two-line hero
+   headline (Archivo 900, 32, upper-case) and the body in `textSecondary`.
+3. **Pinned footer, on every scene:** the primary `Create a free account`
+   button (goes to Register) and `Already have an account? Log in` (goes to
+   Log in). There is no Skip, Next or Back button.
+4. **Over the stage:** three story bars (3px, lime while a scene plays, full
+   once seen). There is no pause or play button.
 
-Swipe left / right also changes slide.
+Behaviour:
 
-Slides (copy is the web's, keep it verbatim):
+- Each scene plays for 6.5 s, then the next fades in (0.5 s). After the last
+  scene the reel starts again from the first, and keeps looping until the user
+  signs up or logs in. Going on from the last scene by hand also wraps to the
+  first; going back from the first does nothing.
+- Tap the left third of the stage to go back and anywhere else to go on. Swipe
+  (more than 40px) or use the arrow keys to move.
+- Everything on the stage stops while a finger is held down (after 220 ms;
+  lifting it carries on from the same spot, and letting go after a hold is not a
+  tap) and while the app is in the background or its page is hidden (it carries
+  on when the app comes back).
+- Each scene zooms from 1.06 to 1 while it plays. The headline lines snap up
+  one after the other.
+- Reduced motion (`MediaQuery.disableAnimations`): still frames, no
+  auto-advance and no looping effects.
+- Screen reader on (`MediaQuery.accessibleNavigation`): no auto-advance, so the
+  content does not change while it is being read. The
+  words are a live region.
 
-| # | Eyebrow | Headline | Body | Button |
+| # | Scene | Eyebrow | Headline | Body |
 |---|---|---|---|---|
-| 1 | FoxPassport | Welcome to FoxPassport | Plan, book and live unforgettable events — and meet the people who make them happen. | Show me around |
-| 2 | Explore | Discover experiences | Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more. | Next |
-| 3 | Foxers | Book Foxers in one place | Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely. | Next |
-| 4 | Passport | Stamp your passport | Every event you attend earns stamps, badges and levels on your digital FoxPassport. | Next |
-| 5 | Republic | Join the Republic | Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans. | Next |
-| 6 | Get started | Ready when you are | Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you're signed up. | Create a free account |
+| 1 | Any occasion: a pile of things you would hold for one, each lifting in turn: a birthday sticker ("Kai turns 30"), a wedding invitation (Ana & Leo, 15·11·2026, Lisbon), a conference speaker badge on its lanyard and a VIP wristband | FoxPassport | Plan any / occasion | Weddings, birthdays, corporate nights and nights out: book the venue, the gear and the crew in one app. |
+| 2 | Near you: a split-flap departure board, "What's on · Tonight" with the phone's local time, five rows of city, event and status (Live, Few left, Tonight, Sat, Sun). Rows flip one at a time to other cities around the world and back, and a "Every Foxer is verified" pill sits below | Explore | What's on / near you | Tokyo, Paris, New York or your own city: events this week and venues free on your date, wherever you are. |
+| 3 | Your passport: a passport visa page (security pattern, microtext, page number, fox watermark) with three worn ink stamps (Tokyo, Paris, New York) and, over it, a thermal ticket for a garden wedding that works offline | Your passport | Tickets and / stamps | Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer. |
 
-Slide 1 uses the fox logo in the tile (the paw in the mockup is a placeholder).
-Slide 3 shows the five role chips in their role colours under the body.
-Slide 6's button goes to Register; add a muted "I already have an account" link
-to Log in.
+All three scenes are drawn in code (`reel_scenes.dart`), with no video, image
+or map assets and no network, and each is scaled up or down to fill the stage
+above the fade (no wider than 440px), so it is not left small on a tall phone.
+The welcome reel does not use the globe.
+
+One 24 s loop drives all the motion on the stage (the props lifting, the board
+flipping, the stamps settling). Each frame is worked out from where the loop
+is, so pausing freezes it exactly and the loop ends where it began. The board
+turns one row every 2.4 s, its letters flipping a few milliseconds apart. With
+reduced motion everything sits on its first frame. Scenery colours that are not
+brand colours live in `lib/theme/tokens/reel_palette.dart`; the invitation
+names use `AppTypography.script` (Cormorant Garamond italic).
+
+Text on the scenes is labels only: names, cities, events and stamp codes. It
+carries no counts of events, people or cities, which would be made-up numbers.
+The board rows, the invitation and the ticket ("Garden Wedding", Sun 15 Nov,
+16:00, Lisbon) are illustrations, not real listings or bookings.
+
+Claims to check before launch: that tickets work offline at the door, that
+venues can be filtered to those free on a date, and that the cities named are
+where FoxPassport has listings. Slide 3's line should also say what stamps unlock
+once the team decides that (an open decision, §9).
+
+**Exception to §2:** this reel keeps a few soft glows, gradients and textures
+(the board's glow, the paper grain, the worn stamp ink) that the rest of the
+app does not use. They sit only in the welcome stage, never behind the words.
 
 ---
 
