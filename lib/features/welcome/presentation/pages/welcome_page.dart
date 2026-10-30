@@ -1,21 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/welcome/presentation/widgets/reel_scenes.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
-import 'package:flutter_template/shared/widgets/rotating_globe/rotating_globe.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/reel_palette.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// First-launch welcome carousel, shown once before sign-in
-/// (`docs/mobile-design.md` §4 · mockup `docs/mockups/onboarding-auth.html`).
+/// First-launch welcome reel, shown once before sign-in
+/// (`docs/mobile-design.md` §4).
 ///
-/// This is the phone version of the web's `WelcomeGuide`. It is not the
-/// Profile → Interests → Roles flow, which needs a signed-in user and runs
-/// after sign-in.
+/// Three scenes play on their own above a still panel with the words. Tap
+/// (left third back, anywhere else on), swipe or use the arrow keys to move,
+/// hold or press the pause button to pause. Creating an account and logging
+/// in are on screen the whole time. It is not the Profile → Interests → Roles
+/// flow, which needs a signed-in user and runs after sign-in.
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
 
@@ -23,436 +29,682 @@ class WelcomePage extends ConsumerStatefulWidget {
   ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends ConsumerState<WelcomePage> {
-  static const _slideCount = 6;
-  static const _slideDuration = Duration(milliseconds: 280);
+class _WelcomePageState extends ConsumerState<WelcomePage>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
+  static const int _sceneCount = ReelScene.sceneCount;
 
-  final _controller = PageController();
+  // Long enough to read the copy before the scene moves on.
+  static const _sceneDuration = Duration(milliseconds: 6500);
+  static const _fade = Duration(milliseconds: 500);
+
+  /// How long a finger must stay down before the scene pauses.
+  static const _holdDelay = Duration(milliseconds: 220);
+
+  /// A tap in the left third goes back; anywhere else goes on.
+  static const _backZone = 0.35;
+
+  /// How far a swipe has to travel to count.
+  static const _swipeDistance = 40.0;
+
+  /// 0 to 1 over the current scene: the story bar and the slow zoom.
+  late final AnimationController _progress;
+
+  /// Loops forever and drives the scenes' ambient motion.
+  late final AnimationController _ambient;
+
   int _index = 0;
+  bool _started = false;
 
-  bool get _isFirst => _index == 0;
-  bool get _isLast => _index == _slideCount - 1;
+  /// Reduced motion: still frames, nothing moves on its own.
+  bool _reduceMotion = false;
+
+  /// A screen reader is on, which would otherwise read content that keeps
+  /// changing under it.
+  bool _screenReader = false;
+
+  /// The user paused with the button, or the app went to the background.
+  bool _userPaused = false;
+
+  Timer? _holdTimer;
+
+  /// A finger has been held down long enough to freeze the scene.
+  bool _holding = false;
+
+  /// Set when a hold begins: the tap that ends it is not a navigation.
+  bool _ignoreTap = false;
+  double _dragged = 0;
+
+  /// Everything moving on the stage stops: paused, or a finger held down.
+  bool get _frozen => _userPaused || _holding;
+
+  bool get _isLast => _index == _sceneCount - 1;
+
+  /// Nothing moves on its own with reduced motion or a screen reader.
+  bool get _still => _reduceMotion || _screenReader;
+
+  bool get _playing => !_still && !_userPaused;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _progress = AnimationController(vsync: this, duration: _sceneDuration)
+      ..addStatusListener(_onProgress);
+    _ambient = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 24),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduceMotion = MediaQuery.disableAnimationsOf(context);
+    _screenReader = MediaQuery.accessibleNavigationOf(context);
+    _syncAmbient();
+    if (_still) {
+      _progress.value = 1;
+    } else if (!_started) {
+      _progress.forward();
+    }
+    _started = true;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Leaving the app (hidden or in the background) pauses the reel; coming
+    // back leaves it paused, so the user sees where they were and presses
+    // play. A brief `inactive` does not: on the web that fires whenever the
+    // window loses focus (clicking into DevTools, another window), and on a
+    // phone for a system dialog, and the reel would stall for no reason.
+    final left =
+        state == AppLifecycleState.hidden || state == AppLifecycleState.paused;
+    if (left && !_userPaused) _setPaused(true);
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _holdTimer?.cancel();
+    _progress.dispose();
+    _ambient.dispose();
     super.dispose();
   }
 
-  Future<void> _goTo(int page) => _controller.animateToPage(
-        page,
-        duration: _slideDuration,
-        curve: Curves.easeOutCubic,
-      );
+  /// Each scene moves on by itself, except the last, which waits for a choice.
+  void _onProgress(AnimationStatus status) {
+    if (status == AnimationStatus.completed && !_isLast && _playing) {
+      _go(_index + 1);
+    }
+  }
 
-  /// Leaving the carousel marks it seen, so it is never shown again.
+  void _go(int scene) {
+    final next = scene.clamp(0, _sceneCount - 1);
+    // Going on from the last scene, or back from the first, does nothing.
+    if (next == _index) return;
+    setState(() => _index = next);
+    if (_still) {
+      _progress.value = 1;
+    } else if (_userPaused) {
+      _progress.value = 0;
+    } else {
+      _progress.forward(from: 0);
+    }
+  }
+
+  void _setPaused(bool paused) {
+    if (_userPaused == paused) return;
+    setState(() => _userPaused = paused);
+    if (paused) {
+      _progress.stop();
+    } else {
+      _resume();
+    }
+    _syncAmbient();
+  }
+
+  /// The stage's looping motion runs unless motion is reduced or the reel is
+  /// frozen (the globe is told separately, through [ReelScene.frozen]).
+  void _syncAmbient() {
+    if (_reduceMotion || _frozen) {
+      _ambient.stop();
+    } else if (!_ambient.isAnimating) {
+      _ambient.repeat();
+    }
+  }
+
+  void _resume() {
+    if (_playing && !_progress.isCompleted && !_progress.isAnimating) {
+      _progress.forward();
+    }
+  }
+
+  /// A finger that stays down pauses the scene, like a story; lifting it
+  /// carries on from the same spot. A quick tap never pauses.
+  void _onPointerDown(PointerDownEvent _) {
+    _ignoreTap = false;
+    _dragged = 0;
+    _holdTimer?.cancel();
+    _holdTimer = Timer(_holdDelay, () {
+      _ignoreTap = true;
+      setState(() => _holding = true);
+      if (_playing) _progress.stop();
+      _syncAmbient();
+    });
+  }
+
+  void _onPointerUp(PointerEvent _) {
+    _holdTimer?.cancel();
+    if (!_holding) return;
+    setState(() => _holding = false);
+    _resume();
+    _syncAmbient();
+  }
+
+  void _onTap(TapUpDetails details, double width) {
+    // Letting go after a hold only resumes; it is not a tap.
+    if (_ignoreTap) return;
+    _go(details.localPosition.dx < width * _backZone ? _index - 1 : _index + 1);
+  }
+
+  void _onSwipeEnd() {
+    if (_dragged.abs() > _swipeDistance) _go(_index + (_dragged < 0 ? 1 : -1));
+    _dragged = 0;
+  }
+
+  KeyEventResult _onKey(FocusNode _, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      _go(_index + 1);
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      _go(_index - 1);
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  /// Leaving the reel marks it seen, so it is never shown again.
   Future<void> _finish(String route) async {
     await ref.read(storageServiceProvider).setWelcomeSeen();
     if (mounted) context.go(route);
   }
 
-  void _onPrimary() =>
-      _isLast ? _finish(RouteNames.register) : _goTo(_index + 1);
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final slides = _slides(l10n);
+    final copy = _copy(l10n);
+    final width = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      body: Stack(
-        children: [
-          _backdrop(),
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 440),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _TopRow(
-                        index: _index,
-                        total: _slideCount,
-                        skipLabel: l10n.welcomeSkip,
-                        showSkip: !_isLast,
-                        onSkip: () => _goTo(_slideCount - 1),
-                      ),
-                      Expanded(
-                        child: PageView.builder(
-                          controller: _controller,
-                          itemCount: slides.length,
-                          onPageChanged: (i) => setState(() => _index = i),
-                          itemBuilder: (_, i) => _SlideView(slide: slides[i]),
-                        ),
-                      ),
-                      _Dots(count: _slideCount, active: _index),
-                      const SizedBox(height: 20),
-                      PrimaryButton(
-                        label: slides[_index].button,
-                        icon: Icons.arrow_forward_rounded,
-                        onPressed: _onPrimary,
-                      ),
-                      const SizedBox(height: 8),
-                      // Fixed height so the button does not jump
-                      // between slides.
-                      SizedBox(
-                        height: 48,
-                        // Links are Flexible so a long translation shrinks
-                        // (with an ellipsis) instead of overflowing a narrow
-                        // phone.
-                        child: Row(
-                          mainAxisAlignment: (!_isFirst && _isLast)
-                              ? MainAxisAlignment.spaceBetween
-                              : MainAxisAlignment.center,
+      body: Focus(
+        autofocus: true,
+        onKeyEvent: _onKey,
+        child: Semantics(
+          container: true,
+          label: l10n.welcomeCarouselLabel,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Column(
+                children: [
+                  // Stage and words: taps, swipes and holds land here, and the
+                  // buttons below keep their own taps.
+                  Expanded(
+                    child: Listener(
+                      behavior: HitTestBehavior.translucent,
+                      onPointerDown: _onPointerDown,
+                      onPointerUp: _onPointerUp,
+                      onPointerCancel: _onPointerUp,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTapUp: (d) => _onTap(d, width),
+                        onHorizontalDragUpdate: (d) => _dragged += d.delta.dx,
+                        onHorizontalDragEnd: (_) => _onSwipeEnd(),
+                        child: Column(
                           children: [
-                            if (!_isFirst)
-                              Flexible(
-                                child: _MutedLink(
-                                  label: l10n.welcomeBackAction,
-                                  onTap: () => _goTo(_index - 1),
-                                ),
-                              ),
-                            if (_isLast)
-                              Flexible(
-                                flex: 2,
-                                child: _MutedLink(
-                                  label: l10n.welcomeHaveAccount,
-                                  onTap: () => _finish(RouteNames.login),
-                                ),
-                              ),
+                            Expanded(child: _stage(l10n)),
+                            _words(copy),
                           ],
                         ),
                       ),
-                    ],
+                    ),
+                  ),
+                  _Footer(
+                    createLabel: l10n.welcomeCreateAccount,
+                    promptLabel: l10n.welcomeHaveAccountPrompt,
+                    logInLabel: l10n.welcomeLogIn,
+                    onCreate: () => _finish(RouteNames.register),
+                    onLogIn: () => _finish(RouteNames.login),
+                  ),
+                ],
+              ),
+              SafeArea(
+                // Top aligned: the stack gives this a tight, full-screen size,
+                // which would otherwise centre the bars vertically.
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 4, 0),
+                    child: _TopRow(
+                      progress: _progress,
+                      index: _index,
+                      total: _sceneCount,
+                      paused: _userPaused,
+                      showPause: !_still,
+                      pauseLabel: l10n.welcomePause,
+                      playLabel: l10n.welcomePlay,
+                      onTogglePause: () => _setPaused(!_userPaused),
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The scene, fading as it changes, with a slow zoom while it plays. Each
+  /// scene carries its own fade into the words panel below.
+  Widget _stage(AppLocalizations l10n) => AnimatedSwitcher(
+        duration: _fade,
+        child: ScaleTransition(
+          key: ValueKey(_index),
+          scale: Tween<double>(
+            begin: 1.06,
+            end: 1,
+          ).chain(CurveTween(curve: Curves.easeOut)).animate(_progress),
+          child: ReelScene(
+            index: _index,
+            ambient: _ambient,
+            frozen: _frozen,
+            l10n: l10n,
+          ),
+        ),
+      );
+
+  /// The words of every scene stacked, so the panel keeps the height of the
+  /// tallest one; only the current one shows.
+  Widget _words(List<_Copy> copy) => Semantics(
+        liveRegion: _userPaused || _screenReader,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Stack(
+                children: [
+                  for (var i = 0; i < copy.length; i++)
+                    AnimatedOpacity(
+                      opacity: i == _index ? 1 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: IgnorePointer(
+                        child: ExcludeSemantics(
+                          excluding: i != _index,
+                          child: _SceneCopy(
+                            key: ValueKey(i == _index ? 'on$i' : 'off$i'),
+                            copy: copy[i],
+                            reduceMotion: _reduceMotion,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
 
-  /// Slide 1's backdrop: the hero's night-lights globe, edge to edge, fading
-  /// into the canvas behind the text. Removed (with a fade) once the user
-  /// moves on, so no web view keeps rendering off-screen.
-  Widget _backdrop() {
-    return Positioned.fill(
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: _isFirst
-            ? const _GlobeBackdrop(key: ValueKey('globe'))
-            : const SizedBox.expand(key: ValueKey('none')),
-      ),
-    );
-  }
-
-  /// Copy is the web's `WelcomeGuide`, verbatim (spec §4).
-  List<_Slide> _slides(AppLocalizations l10n) => [
-        _Slide(
-          icon: null, // slide 1 shows the spinning globe
-          eyebrow: l10n.welcome1Eyebrow,
-          headline: l10n.welcome1Headline,
-          body: l10n.welcome1Body,
-          button: l10n.welcome1Button,
-        ),
-        _Slide(
-          icon: Icons.explore_outlined,
-          eyebrow: l10n.welcome2Eyebrow,
-          headline: l10n.welcome2Headline,
-          body: l10n.welcome2Body,
-          button: l10n.welcome2Button,
-        ),
-        _Slide(
-          icon: Icons.handshake_outlined,
-          eyebrow: l10n.welcome3Eyebrow,
-          headline: l10n.welcome3Headline,
-          body: l10n.welcome3Body,
-          button: l10n.welcome3Button,
-          chips: [
-            _RoleChip(l10n.welcomeRoleEvent, AppColors.roleEvent),
-            _RoleChip(l10n.welcomeRoleVenue, AppColors.roleVenue),
-            _RoleChip(l10n.welcomeRoleGear, AppColors.roleGear),
-            _RoleChip(l10n.welcomeRoleTalent, AppColors.roleTalent),
-            _RoleChip(l10n.welcomeRolePerformer, AppColors.rolePerformer),
-          ],
-        ),
-        _Slide(
-          icon: Icons.workspace_premium_outlined,
-          eyebrow: l10n.welcome4Eyebrow,
-          headline: l10n.welcome4Headline,
-          body: l10n.welcome4Body,
-          button: l10n.welcome4Button,
-        ),
-        _Slide(
-          icon: Icons.groups_outlined,
-          eyebrow: l10n.welcome5Eyebrow,
-          headline: l10n.welcome5Headline,
-          body: l10n.welcome5Body,
-          button: l10n.welcome5Button,
-        ),
-        _Slide(
-          icon: Icons.rocket_launch_outlined,
-          eyebrow: l10n.welcome6Eyebrow,
-          headline: l10n.welcome6Headline,
-          body: l10n.welcome6Body,
-          button: l10n.welcome6Button,
-        ),
+  List<_Copy> _copy(AppLocalizations l10n) => [
+        _Copy(l10n.welcome1Eyebrow, l10n.welcome1Headline, l10n.welcome1Body),
+        _Copy(l10n.welcome2Eyebrow, l10n.welcome2Headline, l10n.welcome2Body),
+        _Copy(l10n.welcome3Eyebrow, l10n.welcome3Headline, l10n.welcome3Body),
       ];
 }
 
-class _Slide {
-  const _Slide({
-    required this.icon,
-    required this.eyebrow,
-    required this.headline,
-    required this.body,
-    required this.button,
-    this.chips = const [],
-  });
+class _Copy {
+  const _Copy(this.eyebrow, this.headline, this.body);
 
-  final IconData? icon;
   final String eyebrow;
+
+  /// Lines separated by a newline; each one snaps in on its own.
   final String headline;
   final String body;
-  final String button;
-  final List<_RoleChip> chips;
 }
 
-class _RoleChip {
-  const _RoleChip(this.label, this.color);
-
-  final String label;
-  final Color color;
-}
-
+/// Story bars and the pause button.
 class _TopRow extends StatelessWidget {
   const _TopRow({
+    required this.progress,
     required this.index,
     required this.total,
-    required this.skipLabel,
-    required this.showSkip,
-    required this.onSkip,
+    required this.paused,
+    required this.showPause,
+    required this.pauseLabel,
+    required this.playLabel,
+    required this.onTogglePause,
   });
 
+  final Animation<double> progress;
   final int index;
   final int total;
-  final String skipLabel;
-  final bool showSkip;
-  final VoidCallback onSkip;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '${index + 1} / $total',
-            style: AppTypography.label(),
-          ),
-          // Hidden (not removed) on the last slide so the row keeps its size.
-          Visibility(
-            visible: showSkip,
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            child: _MutedLink(label: skipLabel, onTap: onSkip),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MutedLink extends StatelessWidget {
-  const _MutedLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-        child: Center(
-          widthFactor: 1,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.body(color: AppColors.textMuted),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SlideView extends StatelessWidget {
-  const _SlideView({required this.slide});
-
-  final _Slide slide;
-
-  @override
-  Widget build(BuildContext context) {
-    // Centred when it fits; scrolls on a short screen or with large text
-    // instead of overflowing.
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: _content(),
-        ),
-      ),
-    );
-  }
-
-  Widget _content() {
-    // Slide 1 sits low, under the globe behind it; the others are centred.
-    final overGlobe = slide.icon == null;
-    return Column(
-      mainAxisAlignment:
-          overGlobe ? MainAxisAlignment.end : MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!overGlobe)
-          Container(
-            width: 72,
-            height: 72,
-            margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
-              color: AppColors.accentTintBg,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.accentTintBorder),
-            ),
-            alignment: Alignment.center,
-            child: Icon(slide.icon, size: 32, color: AppColors.accent),
-          ),
-        Text(
-          slide.eyebrow.toUpperCase(),
-          style: AppTypography.label(color: AppColors.accent),
-        ),
-        const SizedBox(height: 10),
-        Semantics(
-          header: true,
-          child: Text(
-            slide.headline.toUpperCase(),
-            style: AppTypography.hero(),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(slide.body, style: AppTypography.body(size: 15)),
-        if (slide.chips.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [for (final c in slide.chips) _Chip(chip: c)],
-          ),
-        ],
-        // Keep the copy clear of the page dots when it sits at the bottom.
-        if (overGlobe) const SizedBox(height: 28),
-      ],
-    );
-  }
-}
-
-/// Pill with a 1px border and text in the role's colour. Never a button.
-class _Chip extends StatelessWidget {
-  const _Chip({required this.chip});
-
-  final _RoleChip chip;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: chip.color),
-      ),
-      child: Text(
-        chip.label,
-        style: AppTypography.body(
-          size: 12,
-          color: chip.color,
-        ),
-      ),
-    );
-  }
-}
-
-class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.active});
-
-  final int count;
-  final int active;
+  final bool paused;
+  final bool showPause;
+  final String pauseLabel;
+  final String playLabel;
+  final VoidCallback onTogglePause;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        for (var i = 0; i < count; i++)
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            margin: const EdgeInsets.only(right: 6),
-            width: i == active ? 18 : 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: i == active ? AppColors.accent : AppColors.borderStrong,
-              borderRadius: BorderRadius.circular(999),
-            ),
+        Expanded(
+          child: Row(
+            children: [
+              for (var i = 0; i < total; i++)
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: i == total - 1 ? 0 : 4),
+                    child: _Bar(progress: progress, scene: i, current: index),
+                  ),
+                ),
+            ],
           ),
+        ),
+        // Nothing moves by itself with reduced motion or a screen reader, so
+        // there is nothing to pause. The space stays so the bars keep their
+        // width.
+        SizedBox(
+          width: 48,
+          height: 48,
+          child: showPause
+              ? Semantics(
+                  button: true,
+                  toggled: paused,
+                  label: paused ? playLabel : pauseLabel,
+                  excludeSemantics: true,
+                  onTap: onTogglePause,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: onTogglePause,
+                    child: Center(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: ReelPalette.glassFill,
+                          border: Border.all(color: ReelPalette.glassEdge),
+                        ),
+                        child: SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Icon(
+                            paused ? Icons.play_arrow : Icons.pause,
+                            size: 20,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : null,
+        ),
       ],
     );
   }
 }
 
-/// The globe behind slide 1, with a scrim so the copy reads over it.
-class _GlobeBackdrop extends StatelessWidget {
-  const _GlobeBackdrop({super.key});
+class _Bar extends StatelessWidget {
+  const _Bar({
+    required this.progress,
+    required this.scene,
+    required this.current,
+  });
 
-  /// Space kept clear of globe at the bottom for the copy and the button.
-  static const double _textInset = 380;
+  final Animation<double> progress;
+  final int scene;
+  final int current;
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
-      fit: StackFit.expand,
-      children: [
-        RotatingGlobe(bottomInset: _textInset),
-        // The same legibility scrim the Home hero uses.
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: _textInset + 60,
-          child: IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [AppColors.canvasClear, AppColors.canvas],
-                  stops: [0, 0.6],
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (_, __) {
+        final value = scene < current
+            ? 1.0
+            : scene == current
+                ? progress.value
+                : 0.0;
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: SizedBox(
+            height: 3,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ColoredBox(
+                  color: AppColors.textPrimary.withValues(alpha: 0.25),
                 ),
-              ),
+                FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: value,
+                  child: const ColoredBox(color: AppColors.accent),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// The scene's words: eyebrow, a two-line headline that snaps in line by
+/// line, and the body.
+class _SceneCopy extends StatelessWidget {
+  const _SceneCopy({
+    required this.copy,
+    required this.reduceMotion,
+    super.key,
+  });
+
+  final _Copy copy;
+  final bool reduceMotion;
+
+  @override
+  Widget build(BuildContext context) {
+    final lines = copy.headline.split('\n');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          copy.eyebrow.toUpperCase(),
+          style: AppTypography.label(color: AppColors.accent),
+        ),
+        const SizedBox(height: 8),
+        Semantics(
+          header: true,
+          label: lines.join(' '),
+          excludeSemantics: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < lines.length; i++)
+                _Rise(
+                  delay: 60.0 * i,
+                  reduceMotion: reduceMotion,
+                  // Scales down instead of wrapping on a narrow phone.
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      lines[i].toUpperCase(),
+                      maxLines: 1,
+                      style: AppTypography.hero(size: 32),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          copy.body,
+          style: AppTypography.body(),
+        ),
+      ],
+    );
+  }
+}
+
+/// Sends a headline line up out of a mask after [delay] milliseconds. Shows it
+/// straight away when motion is reduced.
+class _Rise extends StatefulWidget {
+  const _Rise({
+    required this.child,
+    required this.reduceMotion,
+    this.delay = 0,
+  });
+
+  final Widget child;
+  final bool reduceMotion;
+  final double delay;
+
+  @override
+  State<_Rise> createState() => _RiseState();
+}
+
+class _RiseState extends State<_Rise> with SingleTickerProviderStateMixin {
+  static const _run = 450;
+
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: Duration(milliseconds: (widget.delay + _run).round()),
+  );
+  late final Animation<double> _t = CurvedAnimation(
+    parent: _c,
+    curve: Interval(
+      widget.delay / (widget.delay + _run),
+      1,
+      curve: Curves.easeOutCubic,
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.reduceMotion) {
+      _c.value = 1;
+    } else {
+      _c.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _t,
+      child: widget.child,
+      builder: (_, child) => ClipRect(
+        child: FractionalTranslation(
+          translation: Offset(0, 1.05 * (1 - _t.value)),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Create an account and log in, on every scene.
+class _Footer extends StatelessWidget {
+  const _Footer({
+    required this.createLabel,
+    required this.promptLabel,
+    required this.logInLabel,
+    required this.onCreate,
+    required this.onLogIn,
+  });
+
+  final String createLabel;
+  final String promptLabel;
+  final String logInLabel;
+  final VoidCallback onCreate;
+  final VoidCallback onLogIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(22, 14, 22, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PrimaryButton(label: createLabel, onPressed: onCreate),
+                const SizedBox(height: 4),
+                Center(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        promptLabel,
+                        style: AppTypography.body(
+                          size: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: onLogIn,
+                        borderRadius: BorderRadius.circular(8),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: 48,
+                            minWidth: 48,
+                          ),
+                          child: Center(
+                            widthFactor: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
+                              child: Text(
+                                logInLabel,
+                                style: AppTypography.body(
+                                  size: 13,
+                                  color: AppColors.accent,
+                                  weight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

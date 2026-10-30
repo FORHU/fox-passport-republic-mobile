@@ -26,10 +26,14 @@ Future<void> _boot(WidgetTester tester, Map<String, Object> prefsValues) async {
 void main() {
   testWidgets('first launch shows the welcome carousel before login',
       (tester) async {
+    // The reel loops forever, so show still frames to let the app settle.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     await _boot(tester, {});
 
-    expect(find.text('WELCOME TO FOXPASSPORT'), findsOneWidget);
-    expect(find.text('Show me around'), findsOneWidget);
+    expect(find.text('PLAN ANY'), findsOneWidget);
+    expect(find.text('Create a free account'), findsOneWidget);
     expect(find.text('LOG IN TO YOUR ACCOUNT'), findsNothing);
   });
 

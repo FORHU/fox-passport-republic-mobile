@@ -358,53 +358,41 @@ abstract class AppLocalizations {
   /// **'Other'**
   String get homeEventOther;
 
-  /// No description provided for @welcomeSkip.
+  /// No description provided for @welcomeCarouselLabel.
   ///
   /// In en, this message translates to:
-  /// **'Skip'**
-  String get welcomeSkip;
+  /// **'Welcome to FoxPassport'**
+  String get welcomeCarouselLabel;
 
-  /// No description provided for @welcomeBackAction.
+  /// No description provided for @welcomePause.
   ///
   /// In en, this message translates to:
-  /// **'Back'**
-  String get welcomeBackAction;
+  /// **'Pause'**
+  String get welcomePause;
 
-  /// No description provided for @welcomeHaveAccount.
+  /// No description provided for @welcomePlay.
   ///
   /// In en, this message translates to:
-  /// **'I already have an account'**
-  String get welcomeHaveAccount;
+  /// **'Play'**
+  String get welcomePlay;
 
-  /// No description provided for @welcomeRoleEvent.
+  /// No description provided for @welcomeCreateAccount.
   ///
   /// In en, this message translates to:
-  /// **'Event'**
-  String get welcomeRoleEvent;
+  /// **'Create a free account'**
+  String get welcomeCreateAccount;
 
-  /// No description provided for @welcomeRoleVenue.
+  /// No description provided for @welcomeHaveAccountPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Venue'**
-  String get welcomeRoleVenue;
+  /// **'Already have an account?'**
+  String get welcomeHaveAccountPrompt;
 
-  /// No description provided for @welcomeRoleGear.
+  /// No description provided for @welcomeLogIn.
   ///
   /// In en, this message translates to:
-  /// **'Gear'**
-  String get welcomeRoleGear;
-
-  /// No description provided for @welcomeRoleTalent.
-  ///
-  /// In en, this message translates to:
-  /// **'Talent'**
-  String get welcomeRoleTalent;
-
-  /// No description provided for @welcomeRolePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get welcomeRolePerformer;
+  /// **'Log in'**
+  String get welcomeLogIn;
 
   /// No description provided for @welcome1Eyebrow.
   ///
@@ -415,20 +403,14 @@ abstract class AppLocalizations {
   /// No description provided for @welcome1Headline.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to FoxPassport'**
+  /// **'Plan any\noccasion'**
   String get welcome1Headline;
 
   /// No description provided for @welcome1Body.
   ///
   /// In en, this message translates to:
-  /// **'Plan, book and live unforgettable events — and meet the people who make them happen.'**
+  /// **'Weddings, birthdays, corporate nights and nights out: book the venue, the gear and the crew in one app.'**
   String get welcome1Body;
-
-  /// No description provided for @welcome1Button.
-  ///
-  /// In en, this message translates to:
-  /// **'Show me around'**
-  String get welcome1Button;
 
   /// No description provided for @welcome2Eyebrow.
   ///
@@ -439,116 +421,200 @@ abstract class AppLocalizations {
   /// No description provided for @welcome2Headline.
   ///
   /// In en, this message translates to:
-  /// **'Discover experiences'**
+  /// **'What\'s on\nnear you'**
   String get welcome2Headline;
 
   /// No description provided for @welcome2Body.
   ///
   /// In en, this message translates to:
-  /// **'Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more.'**
+  /// **'Events this week, and venues free on your date, from Metro Manila to Cebu and Davao.'**
   String get welcome2Body;
-
-  /// No description provided for @welcome2Button.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get welcome2Button;
 
   /// No description provided for @welcome3Eyebrow.
   ///
   /// In en, this message translates to:
-  /// **'Foxers'**
+  /// **'Your passport'**
   String get welcome3Eyebrow;
 
   /// No description provided for @welcome3Headline.
   ///
   /// In en, this message translates to:
-  /// **'Book Foxers in one place'**
+  /// **'Tickets and\nstamps'**
   String get welcome3Headline;
 
   /// No description provided for @welcome3Body.
   ///
   /// In en, this message translates to:
-  /// **'Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely.'**
+  /// **'Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer.'**
   String get welcome3Body;
 
-  /// No description provided for @welcome3Button.
+  /// No description provided for @welcomeOccasionWedding.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
-  String get welcome3Button;
+  /// **'Wedding'**
+  String get welcomeOccasionWedding;
 
-  /// No description provided for @welcome4Eyebrow.
+  /// No description provided for @welcomeOccasionWeddingBook.
   ///
   /// In en, this message translates to:
-  /// **'Passport'**
-  String get welcome4Eyebrow;
+  /// **'Venue · Catering'**
+  String get welcomeOccasionWeddingBook;
 
-  /// No description provided for @welcome4Headline.
+  /// No description provided for @welcomeOccasionBirthday.
   ///
   /// In en, this message translates to:
-  /// **'Stamp your passport'**
-  String get welcome4Headline;
+  /// **'Birthday'**
+  String get welcomeOccasionBirthday;
 
-  /// No description provided for @welcome4Body.
+  /// No description provided for @welcomeOccasionBirthdayBook.
   ///
   /// In en, this message translates to:
-  /// **'Every event you attend earns stamps, badges and levels on your digital FoxPassport.'**
-  String get welcome4Body;
+  /// **'Venue · Sound'**
+  String get welcomeOccasionBirthdayBook;
 
-  /// No description provided for @welcome4Button.
+  /// No description provided for @welcomeOccasionCorporate.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
-  String get welcome4Button;
+  /// **'Corporate'**
+  String get welcomeOccasionCorporate;
 
-  /// No description provided for @welcome5Eyebrow.
+  /// No description provided for @welcomeOccasionCorporateBook.
   ///
   /// In en, this message translates to:
-  /// **'Republic'**
-  String get welcome5Eyebrow;
+  /// **'Hall · Catering'**
+  String get welcomeOccasionCorporateBook;
 
-  /// No description provided for @welcome5Headline.
+  /// No description provided for @welcomeOccasionNightOut.
   ///
   /// In en, this message translates to:
-  /// **'Join the Republic'**
-  String get welcome5Headline;
+  /// **'Night out'**
+  String get welcomeOccasionNightOut;
 
-  /// No description provided for @welcome5Body.
+  /// No description provided for @welcomeOccasionNightOutBook.
   ///
   /// In en, this message translates to:
-  /// **'Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans.'**
-  String get welcome5Body;
+  /// **'Rooftop · DJ'**
+  String get welcomeOccasionNightOutBook;
 
-  /// No description provided for @welcome5Button.
+  /// No description provided for @welcomeVerified.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
-  String get welcome5Button;
+  /// **'Every Foxer is verified'**
+  String get welcomeVerified;
 
-  /// No description provided for @welcome6Eyebrow.
+  /// No description provided for @welcomeCityBaguio.
   ///
   /// In en, this message translates to:
-  /// **'Get started'**
-  String get welcome6Eyebrow;
+  /// **'Baguio'**
+  String get welcomeCityBaguio;
 
-  /// No description provided for @welcome6Headline.
+  /// No description provided for @welcomeCityManila.
   ///
   /// In en, this message translates to:
-  /// **'Ready when you are'**
-  String get welcome6Headline;
+  /// **'Metro Manila'**
+  String get welcomeCityManila;
 
-  /// No description provided for @welcome6Body.
+  /// No description provided for @welcomeCityCebu.
   ///
   /// In en, this message translates to:
-  /// **'Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you\'re signed up.'**
-  String get welcome6Body;
+  /// **'Cebu'**
+  String get welcomeCityCebu;
 
-  /// No description provided for @welcome6Button.
+  /// No description provided for @welcomeCityDavao.
   ///
   /// In en, this message translates to:
-  /// **'Create a free account'**
-  String get welcome6Button;
+  /// **'Davao'**
+  String get welcomeCityDavao;
+
+  /// No description provided for @welcomeCityClark.
+  ///
+  /// In en, this message translates to:
+  /// **'Clark'**
+  String get welcomeCityClark;
+
+  /// No description provided for @welcomeRegionLuzon.
+  ///
+  /// In en, this message translates to:
+  /// **'Luzon'**
+  String get welcomeRegionLuzon;
+
+  /// No description provided for @welcomeRegionVisayas.
+  ///
+  /// In en, this message translates to:
+  /// **'Visayas'**
+  String get welcomeRegionVisayas;
+
+  /// No description provided for @welcomeRegionMindanao.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindanao'**
+  String get welcomeRegionMindanao;
+
+  /// No description provided for @welcomePassportHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic of Foxers · Passport'**
+  String get welcomePassportHeader;
+
+  /// No description provided for @welcomeTicketConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get welcomeTicketConfirmed;
+
+  /// No description provided for @welcomeTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden Wedding'**
+  String get welcomeTicketTitle;
+
+  /// No description provided for @welcomeTicketWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat 15 Nov · 4:00 PM'**
+  String get welcomeTicketWhen;
+
+  /// No description provided for @welcomeTicketOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Works\noffline'**
+  String get welcomeTicketOffline;
+
+  /// No description provided for @welcomeStamp1Code.
+  ///
+  /// In en, this message translates to:
+  /// **'TAG'**
+  String get welcomeStamp1Code;
+
+  /// No description provided for @welcomeStamp1Month.
+  ///
+  /// In en, this message translates to:
+  /// **'OCT'**
+  String get welcomeStamp1Month;
+
+  /// No description provided for @welcomeStamp2Code.
+  ///
+  /// In en, this message translates to:
+  /// **'MNL'**
+  String get welcomeStamp2Code;
+
+  /// No description provided for @welcomeStamp2Month.
+  ///
+  /// In en, this message translates to:
+  /// **'SEP'**
+  String get welcomeStamp2Month;
+
+  /// No description provided for @welcomeStamp3Code.
+  ///
+  /// In en, this message translates to:
+  /// **'CEB'**
+  String get welcomeStamp3Code;
+
+  /// No description provided for @welcomeStamp3Month.
+  ///
+  /// In en, this message translates to:
+  /// **'AUG'**
+  String get welcomeStamp3Month;
 
   /// No description provided for @authContinueWithApple.
   ///
