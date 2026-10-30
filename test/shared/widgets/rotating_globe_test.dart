@@ -26,85 +26,6 @@ void main() {
       expect(html, contains('interactive: cfg.interactive'));
     });
 
-    test('keeps the web hero look unless asked for the neon one', () {
-      final standard = buildGlobeHtml(token: 'pk.test');
-      final neon = buildGlobeHtml(token: 'pk.test', look: GlobeLook.neon);
-
-      expect(standard, contains('"look":"standard"'));
-      expect(neon, contains('"look":"neon"'));
-      // Both pages carry the same script; only the config tells them apart.
-      expect(neon, contains("addLayer({ id: 'graticule'"));
-      expect(neon, contains("cfg.look === 'neon'"));
-    });
-
-    test('colours a pin from the stop, in 0xRRGGBB', () {
-      final html = buildGlobeHtml(
-        token: 'pk.test',
-        look: GlobeLook.neon,
-        stops: const [
-          GlobeStop(
-            city: 'Manila',
-            lat: 14.6,
-            lng: 121,
-            eventCount: 0,
-            rgb: 0x00D2FF,
-          ),
-        ],
-      );
-
-      // 0x00D2FF is 54015.
-      expect(html, contains('"rgb":54015'));
-      expect(html, contains("'circle-color': ['get', 'color']"));
-    });
-
-    test('lets the host freeze it and says when the map has drawn', () {
-      final html = buildGlobeHtml(token: 'pk.test');
-
-      // Pause and resume reach the page without reloading it...
-      expect(html, contains('window.foxSetRunning'));
-      expect(html, contains("m.fox === 'run'"));
-      expect(html, contains('if (running && cfg.spin && !touched)'));
-      // ...and the page reports back on a phone and on Flutter web.
-      expect(html, contains("map.once('load'"));
-      expect(html, contains("window.FoxGlobe.postMessage('ready')"));
-      expect(html, contains("JSON.stringify({ fox: 'ready' })"));
-    });
-
-    test('the neon look draws routes from the first stop and names pins', () {
-      final html = buildGlobeHtml(token: 'pk.test', look: GlobeLook.neon);
-
-      expect(html, contains("id: 'routes'"));
-      expect(html, contains('var hub = cfg.stops[0];'));
-      expect(html, contains("id: 'stop-label'"));
-    });
-
-    test('turns at the speed it is given and flows the route dashes', () {
-      final html = buildGlobeHtml(
-        token: 'pk.test',
-        look: GlobeLook.neon,
-        degreesPerSecond: 2,
-      );
-
-      expect(html, contains('"speed":2.0'));
-      expect(html, contains('"spin":true'));
-      expect(html, contains("'line-dasharray', DASHES[step]"));
-      // Nothing in the page sways the globe by itself any more.
-      expect(html, isNot(contains('drift')));
-    });
-
-    test('keeps the pins pulsing unless animation is off', () {
-      expect(buildGlobeHtml(token: 'pk.test'), contains('"animate":true'));
-      expect(
-        buildGlobeHtml(token: 'pk.test', animate: false),
-        contains('"animate":false'),
-      );
-      // Not turning is a separate choice from not pulsing.
-      expect(
-        buildGlobeHtml(token: 'pk.test', spin: false),
-        allOf(contains('"spin":false'), contains('"animate":true')),
-      );
-    });
-
     test('is still when spin is off (reduced motion)', () {
       final html = buildGlobeHtml(token: 'pk.test', spin: false);
 
@@ -145,28 +66,6 @@ void main() {
 
       expect(find.byIcon(Icons.public_rounded), findsOneWidget);
       expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('shows the still picture instead of the placeholder when given',
-        (tester) async {
-      AppConfig.instance = const AppConfig.dev(); // mapboxToken is empty
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            backgroundColor: AppColors.canvas,
-            body: SizedBox(
-              width: 200,
-              height: 200,
-              child: RotatingGlobe(still: Text('a still picture')),
-            ),
-          ),
-        ),
-      );
-
-      // No token, so a slow or missing map is never a blank space.
-      expect(find.text('a still picture'), findsOneWidget);
-      expect(find.byIcon(Icons.public_rounded), findsNothing);
     });
 
     testWidgets('is labelled for screen readers and ignores touches',

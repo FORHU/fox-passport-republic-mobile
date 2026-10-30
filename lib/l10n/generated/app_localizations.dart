@@ -427,7 +427,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcome2Body.
   ///
   /// In en, this message translates to:
-  /// **'Events this week, and venues free on your date, from Metro Manila to Cebu and Davao.'**
+  /// **'Tokyo, Paris, New York or your own city: events this week and venues free on your date, wherever you are.'**
   String get welcome2Body;
 
   /// No description provided for @welcome3Eyebrow.
@@ -448,53 +448,77 @@ abstract class AppLocalizations {
   /// **'Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer.'**
   String get welcome3Body;
 
-  /// No description provided for @welcomeOccasionWedding.
+  /// No description provided for @welcomeArtBirthdayName.
   ///
   /// In en, this message translates to:
-  /// **'Wedding'**
-  String get welcomeOccasionWedding;
+  /// **'Kai turns'**
+  String get welcomeArtBirthdayName;
 
-  /// No description provided for @welcomeOccasionWeddingBook.
+  /// No description provided for @welcomeArtBirthdayAge.
   ///
   /// In en, this message translates to:
-  /// **'Venue · Catering'**
-  String get welcomeOccasionWeddingBook;
+  /// **'30'**
+  String get welcomeArtBirthdayAge;
 
-  /// No description provided for @welcomeOccasionBirthday.
+  /// No description provided for @welcomeArtBirthdayWhen.
   ///
   /// In en, this message translates to:
-  /// **'Birthday'**
-  String get welcomeOccasionBirthday;
+  /// **'Sat · 8 PM'**
+  String get welcomeArtBirthdayWhen;
 
-  /// No description provided for @welcomeOccasionBirthdayBook.
+  /// No description provided for @welcomeArtWeddingFamilies.
   ///
   /// In en, this message translates to:
-  /// **'Venue · Sound'**
-  String get welcomeOccasionBirthdayBook;
+  /// **'Together with\ntheir families'**
+  String get welcomeArtWeddingFamilies;
 
-  /// No description provided for @welcomeOccasionCorporate.
+  /// No description provided for @welcomeArtWeddingFirst.
   ///
   /// In en, this message translates to:
-  /// **'Corporate'**
-  String get welcomeOccasionCorporate;
+  /// **'Ana'**
+  String get welcomeArtWeddingFirst;
 
-  /// No description provided for @welcomeOccasionCorporateBook.
+  /// No description provided for @welcomeArtWeddingSecond.
   ///
   /// In en, this message translates to:
-  /// **'Hall · Catering'**
-  String get welcomeOccasionCorporateBook;
+  /// **'Leo'**
+  String get welcomeArtWeddingSecond;
 
-  /// No description provided for @welcomeOccasionNightOut.
+  /// No description provided for @welcomeArtWeddingDate.
   ///
   /// In en, this message translates to:
-  /// **'Night out'**
-  String get welcomeOccasionNightOut;
+  /// **'15 · 11 · 2026'**
+  String get welcomeArtWeddingDate;
 
-  /// No description provided for @welcomeOccasionNightOutBook.
+  /// No description provided for @welcomeArtWeddingPlace.
   ///
   /// In en, this message translates to:
-  /// **'Rooftop · DJ'**
-  String get welcomeOccasionNightOutBook;
+  /// **'Lisbon'**
+  String get welcomeArtWeddingPlace;
+
+  /// No description provided for @welcomeArtBadgeEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'FoxCon \'26'**
+  String get welcomeArtBadgeEvent;
+
+  /// No description provided for @welcomeArtBadgeRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker'**
+  String get welcomeArtBadgeRole;
+
+  /// No description provided for @welcomeArtBadgeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Rae Cruz'**
+  String get welcomeArtBadgeName;
+
+  /// No description provided for @welcomeArtWristband.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP · Rooftop · 08.11'**
+  String get welcomeArtWristband;
 
   /// No description provided for @welcomeVerified.
   ///
@@ -502,65 +526,269 @@ abstract class AppLocalizations {
   /// **'Every Foxer is verified'**
   String get welcomeVerified;
 
-  /// No description provided for @welcomeCityBaguio.
+  /// No description provided for @welcomeBoardTitle.
   ///
   /// In en, this message translates to:
-  /// **'Baguio'**
-  String get welcomeCityBaguio;
+  /// **'What\'s on'**
+  String get welcomeBoardTitle;
 
-  /// No description provided for @welcomeCityManila.
+  /// No description provided for @welcomeBoardWhen.
   ///
   /// In en, this message translates to:
-  /// **'Metro Manila'**
-  String get welcomeCityManila;
+  /// **'Tonight'**
+  String get welcomeBoardWhen;
 
-  /// No description provided for @welcomeCityCebu.
+  /// No description provided for @welcomeBoardLocalTime.
   ///
   /// In en, this message translates to:
-  /// **'Cebu'**
-  String get welcomeCityCebu;
+  /// **'Local {time}'**
+  String welcomeBoardLocalTime(String time);
 
-  /// No description provided for @welcomeCityDavao.
+  /// No description provided for @welcomeBoardColCity.
   ///
   /// In en, this message translates to:
-  /// **'Davao'**
-  String get welcomeCityDavao;
+  /// **'City'**
+  String get welcomeBoardColCity;
 
-  /// No description provided for @welcomeCityClark.
+  /// No description provided for @welcomeBoardColEvent.
   ///
   /// In en, this message translates to:
-  /// **'Clark'**
-  String get welcomeCityClark;
+  /// **'Event'**
+  String get welcomeBoardColEvent;
 
-  /// No description provided for @welcomeRegionLuzon.
+  /// No description provided for @welcomeBoardColStatus.
   ///
   /// In en, this message translates to:
-  /// **'Luzon'**
-  String get welcomeRegionLuzon;
+  /// **'Status'**
+  String get welcomeBoardColStatus;
 
-  /// No description provided for @welcomeRegionVisayas.
+  /// No description provided for @welcomeBoardLive.
   ///
   /// In en, this message translates to:
-  /// **'Visayas'**
-  String get welcomeRegionVisayas;
+  /// **'Live'**
+  String get welcomeBoardLive;
 
-  /// No description provided for @welcomeRegionMindanao.
+  /// No description provided for @welcomeBoardFewLeft.
   ///
   /// In en, this message translates to:
-  /// **'Mindanao'**
-  String get welcomeRegionMindanao;
+  /// **'Few left'**
+  String get welcomeBoardFewLeft;
+
+  /// No description provided for @welcomeBoardTonight.
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight'**
+  String get welcomeBoardTonight;
+
+  /// No description provided for @welcomeBoardSat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get welcomeBoardSat;
+
+  /// No description provided for @welcomeBoardSun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get welcomeBoardSun;
+
+  /// No description provided for @welcomeBoardCity1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokyo'**
+  String get welcomeBoardCity1;
+
+  /// No description provided for @welcomeBoardEvent1.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz night'**
+  String get welcomeBoardEvent1;
+
+  /// No description provided for @welcomeBoardCity2.
+  ///
+  /// In en, this message translates to:
+  /// **'Paris'**
+  String get welcomeBoardCity2;
+
+  /// No description provided for @welcomeBoardEvent2.
+  ///
+  /// In en, this message translates to:
+  /// **'Gala dinner'**
+  String get welcomeBoardEvent2;
+
+  /// No description provided for @welcomeBoardCity3.
+  ///
+  /// In en, this message translates to:
+  /// **'New York'**
+  String get welcomeBoardCity3;
+
+  /// No description provided for @welcomeBoardEvent3.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooftop DJ'**
+  String get welcomeBoardEvent3;
+
+  /// No description provided for @welcomeBoardCity4.
+  ///
+  /// In en, this message translates to:
+  /// **'Malé'**
+  String get welcomeBoardCity4;
+
+  /// No description provided for @welcomeBoardEvent4.
+  ///
+  /// In en, this message translates to:
+  /// **'Beach party'**
+  String get welcomeBoardEvent4;
+
+  /// No description provided for @welcomeBoardCity5.
+  ///
+  /// In en, this message translates to:
+  /// **'Manila'**
+  String get welcomeBoardCity5;
+
+  /// No description provided for @welcomeBoardEvent5.
+  ///
+  /// In en, this message translates to:
+  /// **'Food market'**
+  String get welcomeBoardEvent5;
+
+  /// No description provided for @welcomeBoardCity6.
+  ///
+  /// In en, this message translates to:
+  /// **'Lisbon'**
+  String get welcomeBoardCity6;
+
+  /// No description provided for @welcomeBoardEvent6.
+  ///
+  /// In en, this message translates to:
+  /// **'Fado night'**
+  String get welcomeBoardEvent6;
+
+  /// No description provided for @welcomeBoardCity7.
+  ///
+  /// In en, this message translates to:
+  /// **'Seoul'**
+  String get welcomeBoardCity7;
+
+  /// No description provided for @welcomeBoardEvent7.
+  ///
+  /// In en, this message translates to:
+  /// **'K-pop live'**
+  String get welcomeBoardEvent7;
+
+  /// No description provided for @welcomeBoardCity8.
+  ///
+  /// In en, this message translates to:
+  /// **'Berlin'**
+  String get welcomeBoardCity8;
+
+  /// No description provided for @welcomeBoardEvent8.
+  ///
+  /// In en, this message translates to:
+  /// **'Techno set'**
+  String get welcomeBoardEvent8;
+
+  /// No description provided for @welcomeBoardCity9.
+  ///
+  /// In en, this message translates to:
+  /// **'Sydney'**
+  String get welcomeBoardCity9;
+
+  /// No description provided for @welcomeBoardEvent9.
+  ///
+  /// In en, this message translates to:
+  /// **'Harbour gig'**
+  String get welcomeBoardEvent9;
+
+  /// No description provided for @welcomeBoardCity10.
+  ///
+  /// In en, this message translates to:
+  /// **'Rio'**
+  String get welcomeBoardCity10;
+
+  /// No description provided for @welcomeBoardEvent10.
+  ///
+  /// In en, this message translates to:
+  /// **'Samba night'**
+  String get welcomeBoardEvent10;
 
   /// No description provided for @welcomePassportHeader.
   ///
   /// In en, this message translates to:
-  /// **'Republic of Foxers · Passport'**
+  /// **'Visas · Stamps'**
   String get welcomePassportHeader;
 
-  /// No description provided for @welcomeTicketConfirmed.
+  /// No description provided for @welcomePassportMicro.
   ///
   /// In en, this message translates to:
-  /// **'Confirmed'**
-  String get welcomeTicketConfirmed;
+  /// **'Republic of Foxers'**
+  String get welcomePassportMicro;
+
+  /// No description provided for @welcomeStamp1Code.
+  ///
+  /// In en, this message translates to:
+  /// **'TYO'**
+  String get welcomeStamp1Code;
+
+  /// No description provided for @welcomeStamp1Ring.
+  ///
+  /// In en, this message translates to:
+  /// **'Republic of Foxers ★ Tokyo ★ Entry ★'**
+  String get welcomeStamp1Ring;
+
+  /// No description provided for @welcomeStamp1Date.
+  ///
+  /// In en, this message translates to:
+  /// **'14 Oct 2026'**
+  String get welcomeStamp1Date;
+
+  /// No description provided for @welcomeStamp2Code.
+  ///
+  /// In en, this message translates to:
+  /// **'Paris'**
+  String get welcomeStamp2Code;
+
+  /// No description provided for @welcomeStamp2Kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry →'**
+  String get welcomeStamp2Kind;
+
+  /// No description provided for @welcomeStamp2Date.
+  ///
+  /// In en, this message translates to:
+  /// **'CDG · 06 Sep 2026'**
+  String get welcomeStamp2Date;
+
+  /// No description provided for @welcomeStamp3Code.
+  ///
+  /// In en, this message translates to:
+  /// **'NYC'**
+  String get welcomeStamp3Code;
+
+  /// No description provided for @welcomeStamp3Kind.
+  ///
+  /// In en, this message translates to:
+  /// **'★ Arrived ★'**
+  String get welcomeStamp3Kind;
+
+  /// No description provided for @welcomeStamp3Date.
+  ///
+  /// In en, this message translates to:
+  /// **'21 Aug 2026'**
+  String get welcomeStamp3Date;
+
+  /// No description provided for @welcomeTicketBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'FoxPassport'**
+  String get welcomeTicketBrand;
+
+  /// No description provided for @welcomeTicketAdmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Admit 1'**
+  String get welcomeTicketAdmit;
 
   /// No description provided for @welcomeTicketTitle.
   ///
@@ -571,50 +799,14 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTicketWhen.
   ///
   /// In en, this message translates to:
-  /// **'Sat 15 Nov · 4:00 PM'**
+  /// **'Sun 15 Nov · 16:00 · Lisbon'**
   String get welcomeTicketWhen;
 
   /// No description provided for @welcomeTicketOffline.
   ///
   /// In en, this message translates to:
-  /// **'Works\noffline'**
+  /// **'Works offline'**
   String get welcomeTicketOffline;
-
-  /// No description provided for @welcomeStamp1Code.
-  ///
-  /// In en, this message translates to:
-  /// **'TAG'**
-  String get welcomeStamp1Code;
-
-  /// No description provided for @welcomeStamp1Month.
-  ///
-  /// In en, this message translates to:
-  /// **'OCT'**
-  String get welcomeStamp1Month;
-
-  /// No description provided for @welcomeStamp2Code.
-  ///
-  /// In en, this message translates to:
-  /// **'MNL'**
-  String get welcomeStamp2Code;
-
-  /// No description provided for @welcomeStamp2Month.
-  ///
-  /// In en, this message translates to:
-  /// **'SEP'**
-  String get welcomeStamp2Month;
-
-  /// No description provided for @welcomeStamp3Code.
-  ///
-  /// In en, this message translates to:
-  /// **'CEB'**
-  String get welcomeStamp3Code;
-
-  /// No description provided for @welcomeStamp3Month.
-  ///
-  /// In en, this message translates to:
-  /// **'AUG'**
-  String get welcomeStamp3Month;
 
   /// No description provided for @authContinueWithApple.
   ///

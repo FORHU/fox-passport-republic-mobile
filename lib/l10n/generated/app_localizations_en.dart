@@ -180,7 +180,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcome2Body =>
-      'Events this week, and venues free on your date, from Metro Manila to Cebu and Davao.';
+      'Tokyo, Paris, New York or your own city: events this week and venues free on your date, wherever you are.';
 
   @override
   String get welcome3Eyebrow => 'Your passport';
@@ -193,88 +193,186 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer.';
 
   @override
-  String get welcomeOccasionWedding => 'Wedding';
+  String get welcomeArtBirthdayName => 'Kai turns';
 
   @override
-  String get welcomeOccasionWeddingBook => 'Venue · Catering';
+  String get welcomeArtBirthdayAge => '30';
 
   @override
-  String get welcomeOccasionBirthday => 'Birthday';
+  String get welcomeArtBirthdayWhen => 'Sat · 8 PM';
 
   @override
-  String get welcomeOccasionBirthdayBook => 'Venue · Sound';
+  String get welcomeArtWeddingFamilies => 'Together with\ntheir families';
 
   @override
-  String get welcomeOccasionCorporate => 'Corporate';
+  String get welcomeArtWeddingFirst => 'Ana';
 
   @override
-  String get welcomeOccasionCorporateBook => 'Hall · Catering';
+  String get welcomeArtWeddingSecond => 'Leo';
 
   @override
-  String get welcomeOccasionNightOut => 'Night out';
+  String get welcomeArtWeddingDate => '15 · 11 · 2026';
 
   @override
-  String get welcomeOccasionNightOutBook => 'Rooftop · DJ';
+  String get welcomeArtWeddingPlace => 'Lisbon';
+
+  @override
+  String get welcomeArtBadgeEvent => 'FoxCon \'26';
+
+  @override
+  String get welcomeArtBadgeRole => 'Speaker';
+
+  @override
+  String get welcomeArtBadgeName => 'Rae Cruz';
+
+  @override
+  String get welcomeArtWristband => 'VIP · Rooftop · 08.11';
 
   @override
   String get welcomeVerified => 'Every Foxer is verified';
 
   @override
-  String get welcomeCityBaguio => 'Baguio';
+  String get welcomeBoardTitle => 'What\'s on';
 
   @override
-  String get welcomeCityManila => 'Metro Manila';
+  String get welcomeBoardWhen => 'Tonight';
 
   @override
-  String get welcomeCityCebu => 'Cebu';
+  String welcomeBoardLocalTime(String time) {
+    return 'Local $time';
+  }
 
   @override
-  String get welcomeCityDavao => 'Davao';
+  String get welcomeBoardColCity => 'City';
 
   @override
-  String get welcomeCityClark => 'Clark';
+  String get welcomeBoardColEvent => 'Event';
 
   @override
-  String get welcomeRegionLuzon => 'Luzon';
+  String get welcomeBoardColStatus => 'Status';
 
   @override
-  String get welcomeRegionVisayas => 'Visayas';
+  String get welcomeBoardLive => 'Live';
 
   @override
-  String get welcomeRegionMindanao => 'Mindanao';
+  String get welcomeBoardFewLeft => 'Few left';
 
   @override
-  String get welcomePassportHeader => 'Republic of Foxers · Passport';
+  String get welcomeBoardTonight => 'Tonight';
 
   @override
-  String get welcomeTicketConfirmed => 'Confirmed';
+  String get welcomeBoardSat => 'Sat';
+
+  @override
+  String get welcomeBoardSun => 'Sun';
+
+  @override
+  String get welcomeBoardCity1 => 'Tokyo';
+
+  @override
+  String get welcomeBoardEvent1 => 'Jazz night';
+
+  @override
+  String get welcomeBoardCity2 => 'Paris';
+
+  @override
+  String get welcomeBoardEvent2 => 'Gala dinner';
+
+  @override
+  String get welcomeBoardCity3 => 'New York';
+
+  @override
+  String get welcomeBoardEvent3 => 'Rooftop DJ';
+
+  @override
+  String get welcomeBoardCity4 => 'Malé';
+
+  @override
+  String get welcomeBoardEvent4 => 'Beach party';
+
+  @override
+  String get welcomeBoardCity5 => 'Manila';
+
+  @override
+  String get welcomeBoardEvent5 => 'Food market';
+
+  @override
+  String get welcomeBoardCity6 => 'Lisbon';
+
+  @override
+  String get welcomeBoardEvent6 => 'Fado night';
+
+  @override
+  String get welcomeBoardCity7 => 'Seoul';
+
+  @override
+  String get welcomeBoardEvent7 => 'K-pop live';
+
+  @override
+  String get welcomeBoardCity8 => 'Berlin';
+
+  @override
+  String get welcomeBoardEvent8 => 'Techno set';
+
+  @override
+  String get welcomeBoardCity9 => 'Sydney';
+
+  @override
+  String get welcomeBoardEvent9 => 'Harbour gig';
+
+  @override
+  String get welcomeBoardCity10 => 'Rio';
+
+  @override
+  String get welcomeBoardEvent10 => 'Samba night';
+
+  @override
+  String get welcomePassportHeader => 'Visas · Stamps';
+
+  @override
+  String get welcomePassportMicro => 'Republic of Foxers';
+
+  @override
+  String get welcomeStamp1Code => 'TYO';
+
+  @override
+  String get welcomeStamp1Ring => 'Republic of Foxers ★ Tokyo ★ Entry ★';
+
+  @override
+  String get welcomeStamp1Date => '14 Oct 2026';
+
+  @override
+  String get welcomeStamp2Code => 'Paris';
+
+  @override
+  String get welcomeStamp2Kind => 'Entry →';
+
+  @override
+  String get welcomeStamp2Date => 'CDG · 06 Sep 2026';
+
+  @override
+  String get welcomeStamp3Code => 'NYC';
+
+  @override
+  String get welcomeStamp3Kind => '★ Arrived ★';
+
+  @override
+  String get welcomeStamp3Date => '21 Aug 2026';
+
+  @override
+  String get welcomeTicketBrand => 'FoxPassport';
+
+  @override
+  String get welcomeTicketAdmit => 'Admit 1';
 
   @override
   String get welcomeTicketTitle => 'Garden Wedding';
 
   @override
-  String get welcomeTicketWhen => 'Sat 15 Nov · 4:00 PM';
+  String get welcomeTicketWhen => 'Sun 15 Nov · 16:00 · Lisbon';
 
   @override
-  String get welcomeTicketOffline => 'Works\noffline';
-
-  @override
-  String get welcomeStamp1Code => 'TAG';
-
-  @override
-  String get welcomeStamp1Month => 'OCT';
-
-  @override
-  String get welcomeStamp2Code => 'MNL';
-
-  @override
-  String get welcomeStamp2Month => 'SEP';
-
-  @override
-  String get welcomeStamp3Code => 'CEB';
-
-  @override
-  String get welcomeStamp3Month => 'AUG';
+  String get welcomeTicketOffline => 'Works offline';
 
   @override
   String get authContinueWithApple => 'Continue with Apple';

@@ -68,6 +68,20 @@ class AppTypography {
         color: color,
       );
 
+  /// Cormorant Garamond 600 italic: the script on a printed invitation. Only
+  /// for illustrations (the welcome reel's wedding invitation), never for UI.
+  static TextStyle script({
+    double size = 27,
+    Color color = AppColors.textPrimary,
+  }) =>
+      GoogleFonts.cormorantGaramond(
+        fontSize: size,
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+        height: 0.92,
+        color: color,
+      );
+
   /// Plus Jakarta Sans 500 body.
   static TextStyle body({
     double size = 14,

@@ -164,7 +164,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   }
 
   /// The stage's looping motion runs unless motion is reduced or the reel is
-  /// frozen (the globe is told separately, through [ReelScene.frozen]).
+  /// frozen. The board's flips and the props' lifts run off it, so they stop
+  /// with it.
   void _syncAmbient() {
     if (_reduceMotion || _frozen) {
       _ambient.stop();
@@ -318,12 +319,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
             begin: 1.06,
             end: 1,
           ).chain(CurveTween(curve: Curves.easeOut)).animate(_progress),
-          child: ReelScene(
-            index: _index,
-            ambient: _ambient,
-            frozen: _frozen,
-            l10n: l10n,
-          ),
+          child: ReelScene(index: _index, ambient: _ambient, l10n: l10n),
         ),
       );
 

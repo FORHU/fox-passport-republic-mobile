@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/shared/widgets/rotating_globe/globe_html.dart';
@@ -8,7 +6,7 @@ import 'package:flutter_template/shared/widgets/rotating_globe/globe_view_io.dar
 import 'package:flutter_template/theme/tokens/colors.dart';
 
 export 'package:flutter_template/shared/widgets/rotating_globe/globe_html.dart'
-    show GlobeLook, GlobeStop;
+    show GlobeStop;
 
 /// The web landing's hero globe, for the phone: a Mapbox globe with NASA city
 /// lights, a dusk sky with stars, event pins and callout cards, turning at
@@ -36,11 +34,6 @@ class RotatingGlobe extends StatelessWidget {
     this.startLat = 14,
     this.startLng = 121,
     this.zoom,
-    this.look = GlobeLook.standard,
-    this.spin = true,
-    this.degreesPerSecond = 5,
-    this.paused = false,
-    this.still,
     this.onStopTap,
     super.key,
   });
@@ -72,27 +65,6 @@ class RotatingGlobe extends StatelessWidget {
   final double startLng;
   final double? zoom;
 
-  /// How the globe is painted: the web hero's dusk look, or the neon one.
-  final GlobeLook look;
-
-  /// Whether the globe turns. Off, it stays on [startLat] / [startLng]. Reduced
-  /// motion turns it off whatever this says.
-  final bool spin;
-
-  /// How fast the globe turns, in degrees of longitude a second. 5 is the web
-  /// hero's speed.
-  final double degreesPerSecond;
-
-  /// Freezes the globe's motion (turning and pulsing pins) and resumes it,
-  /// without reloading the map.
-  final bool paused;
-
-  /// A picture shown over the live globe until it has drawn, then faded out.
-  /// It is also what shows when there is no Mapbox token or
-  /// the platform can't host a web view, so a slow or missing map never leaves
-  /// a blank space. Null shows a flat placeholder in those cases.
-  final Widget? still;
-
   /// Called with the city of a pin the person tapped (interactive only).
   final ValueChanged<String>? onStopTap;
 
@@ -107,38 +79,25 @@ class RotatingGlobe extends StatelessWidget {
     final token = AppConfig.instance.mapboxToken;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    Widget live(VoidCallback? onReady) => buildGlobeView(
-          buildGlobeHtml(
-            token: token,
-            background: _hex(background),
-            spin: spin && !reduceMotion,
-            animate: !reduceMotion,
-            degreesPerSecond: degreesPerSecond,
-            bottomInset: bottomInset,
-            nightLights: nightLights,
-            stops: stops,
-            maxCards: maxCards,
+    final child = (token.isEmpty || !globePlatformSupported)
+        ? _GlobePlaceholder(background: background, bottomInset: bottomInset)
+        : buildGlobeView(
+            buildGlobeHtml(
+              token: token,
+              background: _hex(background),
+              spin: !reduceMotion,
+              bottomInset: bottomInset,
+              nightLights: nightLights,
+              stops: stops,
+              maxCards: maxCards,
+              interactive: interactive,
+              startLat: startLat,
+              startLng: startLng,
+              zoom: zoom,
+            ),
             interactive: interactive,
-            startLat: startLat,
-            startLng: startLng,
-            zoom: zoom,
-            look: look,
-          ),
-          interactive: interactive,
-          paused: paused,
-          onPinTap: onStopTap,
-          onReady: onReady,
-        );
-
-    final Widget child;
-    if (token.isEmpty || !globePlatformSupported) {
-      child = still ??
-          _GlobePlaceholder(background: background, bottomInset: bottomInset);
-    } else if (still != null) {
-      child = _Reveal(still: still!, live: live);
-    } else {
-      child = live(null);
-    }
+            onPinTap: onStopTap,
+          );
 
     final framed = ColoredBox(color: background, child: child);
 
@@ -155,66 +114,6 @@ class RotatingGlobe extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Shows [still] over the live globe until the live globe says it has drawn,
-/// then fades [still] out.
-class _Reveal extends StatefulWidget {
-  const _Reveal({required this.still, required this.live});
-
-  final Widget still;
-  final Widget Function(VoidCallback onReady) live;
-
-  @override
-  State<_Reveal> createState() => _RevealState();
-}
-
-class _RevealState extends State<_Reveal> {
-  static const _fade = Duration(milliseconds: 600);
-
-  bool _ready = false;
-
-  /// The still is dropped once it has faded out over the live globe, so it is
-  /// not painted for nothing.
-  bool _stillGone = false;
-  Timer? _drop;
-
-  void _markReady() {
-    if (!mounted || _ready) return;
-    setState(() => _ready = true);
-    _drop = Timer(_fade, () {
-      if (mounted) setState(() => _stillGone = true);
-    });
-  }
-
-  @override
-  void dispose() {
-    _drop?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // The live globe is underneath and fully opaque from the start: a platform
-    // view that is not painted (opacity 0) is never created, so it would never
-    // load and never say it is ready. The still picture sits on top of it and
-    // fades out once it has. The live globe is the first child, so dropping the
-    // still later does not rebuild it.
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        widget.live(_markReady),
-        if (!_stillGone)
-          IgnorePointer(
-            child: AnimatedOpacity(
-              opacity: _ready ? 0 : 1,
-              duration: _fade,
-              child: widget.still,
-            ),
-          ),
-      ],
     );
   }
 }

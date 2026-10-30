@@ -119,7 +119,7 @@ label 11. Nothing below 11.
 
 ## 4. Welcome reel (new, shown before sign-in)
 
-Design: the "Onboarding UX Pass" cut of the welcome reel, round 2.
+Design: the "Onboarding UX Pass" artifact, version 10.
 `docs/mockups/onboarding-auth.html` (left phone) is the older six-slide
 carousel it replaces.
 
@@ -149,7 +149,7 @@ Behaviour:
   stays; it does not loop.
 - Tap the left third of the stage to go back and anywhere else to go on. Swipe
   (more than 40px) or use the arrow keys to move.
-- Pause stops everything on the stage, the globe included: with the pause
+- Pause stops everything on the stage: with the pause
   button, with a finger held down (after 220 ms; lifting it carries on from the
   same spot, and letting go after a hold is not a tap), and when the app goes to
   the background (it stays paused on return).
@@ -164,39 +164,36 @@ Behaviour:
 
 | # | Scene | Eyebrow | Headline | Body |
 |---|---|---|---|---|
-| 1 | Any occasion: four occasion tiles (wedding, birthday, corporate, night out) in their occasion colours, each lighting up in turn, with what you would book for it | FoxPassport | Plan any / occasion | Weddings, birthdays, corporate nights and nights out: book the venue, the gear and the crew in one app. |
-| 2 | Near you: the Mapbox globe held on the Philippines, with city lights, a lime pin and name on Metro Manila, Baguio, Clark, Cebu and Davao, routes from Metro Manila, the islands with a glowing coast, the island-group and sea names, and a "Every Foxer is verified" pill | Explore | What's on / near you | Events this week, and venues free on your date, from Metro Manila to Cebu and Davao. |
-| 3 | Your passport: a passport page with three stamps and, over it, a ticket that works offline | Your passport | Tickets and / stamps | Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer. |
+| 1 | Any occasion: a pile of things you would hold for one, each lifting in turn: a birthday sticker ("Kai turns 30"), a wedding invitation (Ana & Leo, 15·11·2026, Lisbon), a conference speaker badge on its lanyard and a VIP wristband | FoxPassport | Plan any / occasion | Weddings, birthdays, corporate nights and nights out: book the venue, the gear and the crew in one app. |
+| 2 | Near you: a split-flap departure board, "What's on · Tonight" with the phone's local time, five rows of city, event and status (Live, Few left, Tonight, Sat, Sun). Rows flip one at a time to other cities around the world and back, and a "Every Foxer is verified" pill sits below | Explore | What's on / near you | Tokyo, Paris, New York or your own city: events this week and venues free on your date, wherever you are. |
+| 3 | Your passport: a passport visa page (security pattern, microtext, page number, fox watermark) with three worn ink stamps (Tokyo, Paris, New York) and, over it, a thermal ticket for a garden wedding that works offline | Your passport | Tickets and / stamps | Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer. |
 
-Scenes 1 and 3 are drawn in code, with no video or image assets, and each is scaled up or down to fill the stage above the fade (no wider than 440px), so it is not left small on a tall phone. Scene 2 is the
-Home hero's Mapbox globe (`RotatingGlobe`) in its `GlobeLook.neon` look, zoomed
-on the Philippines (zoom 3.5, 12.5°N) and turning slowly, 2° of longitude a
-second, from 129°E so that it passes over the islands (122.5°E) during the
-scene; with the pins pulsing and the route dashes flowing, so it needs
-`MAPBOX_ACCESS_TOKEN`. With reduced motion it does not turn and sits on 122.5°E. It takes no input, so taps, swipes and holds still reach
-the reel. Until it has drawn (and whenever there is no token or no web view), a
-still night-view of the same area, drawn in code (the real coastlines of the
-Philippines and Taiwan from Natural Earth, a faint grid, the five cities at their
-real latitude and longitude, and the Luzon, Visayas and Mindanao names), shows
-instead (`ReelNightMap`), so a slow first launch never leaves a blank slide; its cities
-ping and its routes flow too. The live globe sits underneath from the start at
-full opacity (a platform view that is not painted is never created, so it would
-never load) and the still fades out over it once it has drawn, then is dropped. Scenery colours that are not brand colours live in
-`lib/theme/tokens/reel_palette.dart`.
+All three scenes are drawn in code (`reel_scenes.dart`), with no video, image
+or map assets and no network, and each is scaled up or down to fill the stage
+above the fade (no wider than 440px), so it is not left small on a tall phone.
+The welcome reel does not use the globe.
 
-Text on the scenes is labels only: place names, tile names and stamp codes. It
+One 24 s loop drives all the motion on the stage (the props lifting, the board
+flipping, the stamps settling). Each frame is worked out from where the loop
+is, so pausing freezes it exactly and the loop ends where it began. The board
+turns one row every 2.4 s, its letters flipping a few milliseconds apart. With
+reduced motion everything sits on its first frame. Scenery colours that are not
+brand colours live in `lib/theme/tokens/reel_palette.dart`; the invitation
+names use `AppTypography.script` (Cormorant Garamond italic).
+
+Text on the scenes is labels only: names, cities, events and stamp codes. It
 carries no counts of events, people or cities, which would be made-up numbers.
-The ticket ("Garden Wedding", a date, a code) is an illustration, not a real
-booking.
+The board rows, the invitation and the ticket ("Garden Wedding", Sun 15 Nov,
+16:00, Lisbon) are illustrations, not real listings or bookings.
 
 Claims to check before launch: that tickets work offline at the door, that
 venues can be filtered to those free on a date, and that the cities named are
 where FoxPassport has listings. Slide 3's line should also say what stamps unlock
 once the team decides that (an open decision, §9).
 
-**Exception to §2:** this reel keeps a few soft glows and gradients (the
-globe's rim and halos, the lit tiles, the ticket glow) that the rest of the app
-does not use. They sit only in the welcome stage, never behind the words.
+**Exception to §2:** this reel keeps a few soft glows, gradients and textures
+(the board's glow, the paper grain, the worn stamp ink) that the rest of the
+app does not use. They sit only in the welcome stage, never behind the words.
 
 ---
 

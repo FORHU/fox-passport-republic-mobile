@@ -10,17 +10,6 @@ final String _jsLessThan = '${String.fromCharCode(0x5c)}u003c';
 /// change how the globe looks or behaves underneath the app.
 const mapboxGlVersion = '3.9.0';
 
-/// How the globe is painted.
-enum GlobeLook {
-  /// The web hero's dusk sky and grey land, with the NASA city lights.
-  standard,
-
-  /// A navy sphere with a cyan edge glow, faint graticule lines, pulsing
-  /// pins named on the map, and dashed routes from the first stop to the
-  /// others (the welcome reel's globe).
-  neon,
-}
-
 /// One place on the globe: a pin, and (for the busiest few) a callout card.
 class GlobeStop {
   const GlobeStop({
@@ -30,7 +19,6 @@ class GlobeStop {
     required this.eventCount,
     this.title = '',
     this.imageUrl,
-    this.rgb,
   });
 
   final String city;
@@ -44,9 +32,6 @@ class GlobeStop {
   final String title;
   final String? imageUrl;
 
-  /// The pin's colour as `0xRRGGBB` (the neon look); lime when null.
-  final int? rgb;
-
   Map<String, Object?> toJson() => {
         'city': city,
         'lat': lat,
@@ -54,7 +39,6 @@ class GlobeStop {
         'count': eventCount,
         'title': title,
         'img': imageUrl,
-        'rgb': rgb,
       };
 }
 
@@ -72,12 +56,7 @@ class GlobeStop {
 /// - [bottomInset] reserves that many CSS px at the bottom (for text laid over
 ///   the globe) and centres the globe in what is left above it.
 /// - [stops] are the pins; the first [maxCards] also get a callout card.
-/// - [spin] false stops the globe turning; [animate] false also stills the
-///   pulsing pins (reduced-motion users get both off).
-/// - The page tells its host when the map has drawn (the `FoxGlobe` channel on
-///   a phone, a `{fox: 'ready'}` message on Flutter web), and obeys
-///   `foxSetRunning(false / true)` (or a `{fox: 'run', on}` message) to freeze
-///   and resume its motion without reloading.
+/// - [spin] false draws a still globe (reduced-motion users).
 String buildGlobeHtml({
   required String token,
   String background = '#02040A',
@@ -91,8 +70,6 @@ String buildGlobeHtml({
   int maxCards = 2,
   bool interactive = false,
   double? zoom,
-  GlobeLook look = GlobeLook.standard,
-  bool animate = true,
 }) {
   // JSON-encode every interpolated value so nothing can break out of the
   // script, whatever the token, colour or event names contain.
@@ -108,8 +85,6 @@ String buildGlobeHtml({
     'maxCards': maxCards,
     'interactive': interactive,
     'zoom': zoom,
-    'look': look.name,
-    'animate': animate,
     'stops': [for (final s in stops) s.toJson()],
   }).replaceAll('<', _jsLessThan);
 
@@ -180,83 +155,18 @@ String buildGlobeHtml({
     } catch (e) { /* a layer the style doesn't have is simply skipped */ }
   }
 
-  var neon = cfg.look === 'neon';
-
-  // A pin's colour: the stop's own (0xRRGGBB), else the web's lime.
-  function pinColor(rgb) {
-    return rgb == null ? '#CCFF00' : '#' + ('000000' + rgb.toString(16)).slice(-6);
-  }
-
-  // Latitude and longitude lines every 30 degrees, for the neon look.
-  function graticule() {
-    var lines = [], lat, lng, pts;
-    for (lng = -180; lng < 180; lng += 30) {
-      pts = [];
-      for (lat = -80; lat <= 80; lat += 4) pts.push([lng, lat]);
-      lines.push({ type: 'Feature', properties: {},
-                   geometry: { type: 'LineString', coordinates: pts } });
-    }
-    for (lat = -60; lat <= 60; lat += 30) {
-      pts = [];
-      for (lng = -180; lng <= 180; lng += 4) pts.push([lng, lat]);
-      lines.push({ type: 'Feature', properties: {},
-                   geometry: { type: 'LineString', coordinates: pts } });
-    }
-    return { type: 'FeatureCollection', features: lines };
-  }
-
   map.on('style.load', function () {
-    if (neon) {
-      // A navy sphere with a cyan glow along its edge and no stars.
-      map.setFog({
-        color: 'rgb(6,12,30)',
-        'high-color': 'rgb(0,120,160)',
-        'horizon-blend': 0.22,
-        'space-color': cfg.background,
-        'star-intensity': 0
-      });
-      // Land a shade lighter than the sea, so the islands read.
-      paint('land', 'background-color', '#111c40');
-      paint('water', 'fill-color', '#060a1c');
-      paint('national-park', 'fill-color', '#111c40');
-      paint('landuse', 'fill-color', '#0f1b42');
-      // Keep the names of countries, provinces and seas, softly; hide the
-      // rest (roads, shops and the like), which would only add noise.
-      var all = (map.getStyle() || {}).layers || [];
-      for (var j = 0; j < all.length; j++) {
-        if (all[j].type !== 'symbol') continue;
-        if (/^(country-label|state-label|water-point-label|natural-point-label)/.test(all[j].id)) {
-          paint(all[j].id, 'text-color', '#8ca7cf');
-          paint(all[j].id, 'text-halo-color', '#050914');
-          paint(all[j].id, 'text-halo-width', 1.2);
-        } else {
-          map.setLayoutProperty(all[j].id, 'visibility', 'none');
-        }
-      }
-      // A thin glowing coastline around every island.
-      try {
-        map.addLayer({ id: 'coast', type: 'line', source: 'composite',
-          'source-layer': 'water', paint: {
-            'line-color': '#6fd8ff', 'line-opacity': 0.4,
-            'line-width': ['interpolate', ['linear'], ['zoom'], 1, 0.5, 5, 1.2]
-          } });
-      } catch (e) { /* a style without the water layer simply has no coast */ }
-      map.addSource('graticule', { type: 'geojson', data: graticule() });
-      map.addLayer({ id: 'graticule', type: 'line', source: 'graticule',
-        paint: { 'line-color': 'rgba(159,216,255,0.1)', 'line-width': 1 } });
-    } else {
-      map.setFog({
-        color: 'rgb(22,32,44)',
-        'high-color': 'rgb(2,4,10)',
-        'horizon-blend': 0.12,
-        'space-color': cfg.background,
-        'star-intensity': 0.35
-      });
-      paint('land', 'background-color', '#222d3c');
-      paint('water', 'fill-color', '#0a101a');
-      paint('national-park', 'fill-color', '#14251d');
-      paint('landuse', 'fill-color', '#233044');
-    }
+    map.setFog({
+      color: 'rgb(22,32,44)',
+      'high-color': 'rgb(2,4,10)',
+      'horizon-blend': 0.12,
+      'space-color': cfg.background,
+      'star-intensity': 0.35
+    });
+    paint('land', 'background-color', '#222d3c');
+    paint('water', 'fill-color', '#0a101a');
+    paint('national-park', 'fill-color', '#14251d');
+    paint('landuse', 'fill-color', '#233044');
 
     if (cfg.night) {
       // NASA's static VIIRS composite: geographic night-light patterns.
@@ -284,48 +194,18 @@ String buildGlobeHtml({
 
     // Event pins: a soft halo and a lime dot, like the web.
     var features = cfg.stops.map(function (s) {
-      return { type: 'Feature',
-               properties: { name: s.city, color: pinColor(s.rgb) },
+      return { type: 'Feature', properties: { name: s.city },
                geometry: { type: 'Point', coordinates: [s.lng, s.lat] } };
     });
     map.addSource('stops', { type: 'geojson',
       data: { type: 'FeatureCollection', features: features } });
     map.addLayer({ id: 'stop-halo', type: 'circle', source: 'stops', paint: {
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 8, 5, 14],
-      'circle-color': ['get', 'color'],
-      'circle-opacity': neon ? 0.6 : 0.16 } });
+      'circle-color': '#CCFF00', 'circle-opacity': 0.16 } });
     map.addLayer({ id: 'stop-dot', type: 'circle', source: 'stops', paint: {
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 1, 2.6, 5, 5],
-      'circle-color': ['get', 'color'],
-      'circle-stroke-color': neon ? ['get', 'color'] : '#fff',
-      'circle-stroke-width': neon ? 0 : 1.2,
-      'circle-blur': neon ? 0.4 : 0 } });
-    if (neon) {
-      // Dashed routes from the first stop (the hub) to each of the others.
-      if (cfg.stops.length > 1) {
-        var hub = cfg.stops[0];
-        map.addSource('routes', { type: 'geojson', data: {
-          type: 'FeatureCollection',
-          features: cfg.stops.slice(1).map(function (s) {
-            return { type: 'Feature', properties: {}, geometry: {
-              type: 'LineString',
-              coordinates: [[hub.lng, hub.lat], [s.lng, s.lat]] } };
-          }) } });
-        map.addLayer({ id: 'routes', type: 'line', source: 'routes', paint: {
-          'line-color': '#CCFF00', 'line-opacity': 0.5,
-          'line-width': 1.2, 'line-dasharray': [3, 4] } }, 'stop-halo');
-      }
-      // The place names, drawn here because the base labels are hidden.
-      map.addLayer({ id: 'stop-label', type: 'symbol', source: 'stops',
-        layout: {
-          'text-field': ['get', 'name'],
-          'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-          'text-size': 10, 'text-letter-spacing': 0.1,
-          'text-transform': 'uppercase', 'text-anchor': 'left',
-          'text-offset': [0.9, 0], 'text-allow-overlap': true },
-        paint: { 'text-color': '#cfe6ff', 'text-halo-color': '#050914',
-                 'text-halo-width': 1.5 } });
-    }
+      'circle-color': '#CCFF00', 'circle-stroke-color': '#fff',
+      'circle-stroke-width': 1.2 } });
 
     // A tap near a pin reports its city to the host: the WebView's FoxPin
     // channel on a phone, postMessage to the parent page on Flutter web.
@@ -422,64 +302,18 @@ String buildGlobeHtml({
     });
   }
 
-  // The host can freeze and resume the motion (pause, or a finger held down)
-  // without reloading the page.
-  var running = true;
-  window.foxSetRunning = function (on) { running = !!on; };
-  window.addEventListener('message', function (e) {
-    try {
-      var m = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-      if (m && m.fox === 'run') window.foxSetRunning(m.on);
-    } catch (err) { /* some other page's message */ }
-  });
-
-  // Tell the host once the map has drawn, so it can swap its still picture
-  // for this globe.
-  map.once('load', function () {
-    if (window.FoxGlobe && window.FoxGlobe.postMessage) {
-      window.FoxGlobe.postMessage('ready');
-    } else {
-      window.parent.postMessage(JSON.stringify({ fox: 'ready' }), '*');
-    }
-  });
-
-  // Route dashes flow along their lines: Mapbox cannot animate a dash offset,
-  // so step through the dash patterns that shift it.
-  var DASHES = [
-    [0, 4, 3], [0.5, 4, 2.5], [1, 4, 2], [1.5, 4, 1.5], [2, 4, 1],
-    [2.5, 4, 0.5], [3, 4, 0], [0, 0.5, 3, 3.5], [0, 1, 3, 3],
-    [0, 1.5, 3, 2.5], [0, 2, 3, 2], [0, 2.5, 3, 1.5], [0, 3, 3, 1],
-    [0, 3.5, 3, 0.5]
-  ];
-  var dashStep = -1;
-
   var last = performance.now();
   function tick(now) {
     var dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     if (document.visibilityState === 'visible') {
-      if (running && cfg.spin && !touched) {
+      if (cfg.spin && !touched) {
         var c = map.getCenter();
         // Eastward spin, like the web: the view's longitude decreases.
         c.lng -= dt * cfg.speed;
         map.jumpTo({ center: c });
       }
       updateCards();
-      if (neon && running && cfg.animate && map.getLayer('routes')) {
-        var step = Math.floor(now / 60) % DASHES.length;
-        if (step !== dashStep) {
-          dashStep = step;
-          map.setPaintProperty('routes', 'line-dasharray', DASHES[step]);
-        }
-      }
-      if (neon && running && cfg.animate && map.getLayer('stop-halo')) {
-        // Each pin's halo opens up and fades, over 2.4 seconds.
-        var p = (now / 2400) % 1;
-        map.setPaintProperty('stop-halo', 'circle-radius',
-          ['interpolate', ['linear'], ['zoom'],
-           1, 6 + 14 * p, 5, 10 + 22 * p]);
-        map.setPaintProperty('stop-halo', 'circle-opacity', 0.6 * (1 - p));
-      }
     }
     requestAnimationFrame(tick);
   }
