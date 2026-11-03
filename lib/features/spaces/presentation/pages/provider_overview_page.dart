@@ -8,6 +8,9 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
@@ -39,6 +42,8 @@ class ProviderOverviewPage extends ConsumerWidget {
     final requests = ref.watch(requestsSource);
     final items = ref.watch(listingsSource);
     final payouts = ref.watch(payoutsProvider);
+    final stripe = ref.watch(stripeStatusProvider);
+    final roles = ref.watch(heldRolesProvider);
 
     final all = requests.asData?.value ?? const <VenueRequest>[];
     final waiting = [
@@ -64,11 +69,45 @@ class ProviderOverviewPage extends ConsumerWidget {
     String dash(AsyncValue<Object?> value, String Function() shown) =>
         value.hasValue ? shown() : '—';
 
+    // Who this space is for, and what they do first. Both follow the roles
+    // held: a Performer who is not also a Talent sees the Performer wording.
+    final performerOnly = !kind.isGear &&
+        roles.contains('performerFoxer') &&
+        !roles.contains('serviceFoxer');
+    final roleLabel = kind.isGear
+        ? l10n.overviewRoleGear
+        : performerOnly
+            ? l10n.overviewRolePerformer
+            : l10n.overviewRoleTalent;
+    final roleColor = kind.isGear
+        ? AppColors.roleGear
+        : performerOnly
+            ? AppColors.rolePerformer
+            : AppColors.roleTalent;
+    final firstSteps = [
+      FirstStep(
+        label: kind.isGear
+            ? l10n.firstStepGear
+            : performerOnly
+                ? l10n.firstStepPerformance
+                : l10n.firstStepService,
+        done: listings.isNotEmpty,
+        onTap: () => unawaited(context.push(kind.studio)),
+      ),
+      FirstStep(
+        label: l10n.firstStepPayout,
+        done: stripe.asData?.value.onboardingComplete ?? false,
+        onTap: () => context.go(kind.earnings),
+      ),
+    ];
+    final stepsLoaded = items.hasValue && stripe.hasValue;
+
     Future<void> refresh() async {
       ref
         ..invalidate(requestsSource)
         ..invalidate(listingsSource)
-        ..invalidate(payoutsProvider);
+        ..invalidate(payoutsProvider)
+        ..invalidate(stripeStatusProvider);
       try {
         await ref.read(requestsSource.future);
       } on Object {
@@ -87,6 +126,12 @@ class ProviderOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
+            OverviewGreeting(roleLabel: roleLabel, roleColor: roleColor),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              FirstStepsCard(steps: firstSteps),
+              const SizedBox(height: 10),
+            ],
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,8 +196,19 @@ class ProviderOverviewPage extends ConsumerWidget {
                 style: AppTypography.body(color: AppColors.textMuted),
               )
             else
-              for (final request in ahead.take(4)) ...[
-                _JobTile(request: request, locale: locale),
+              for (final (i, request) in ahead.take(4).indexed) ...[
+                // The first is led by a photo of what is supplied.
+                if (i == 0)
+                  FeaturedPhotoCard(
+                    dayLabel: DateFormat('EEE d MMM', locale)
+                        .format(request.startAt!)
+                        .toUpperCase(),
+                    title: request.venueName,
+                    subtitle: request.eventName,
+                    imageUrl: request.imageUrl,
+                  )
+                else
+                  _JobTile(request: request, locale: locale),
                 const SizedBox(height: 8),
               ],
             HomeSectionHeader(title: l10n.overviewNumbers),

@@ -214,6 +214,7 @@ void main() {
       WidgetTester tester,
       Widget home, {
       List<String> roles = const ['gearFoxer'],
+      StripeStatus stripe = const StripeStatus(),
     }) async {
       tester.view
         ..physicalSize = const Size(390, 1800)
@@ -232,6 +233,7 @@ void main() {
             myAssetsProvider.overrideWith((ref) async => assets),
             myServicesProvider.overrideWith((ref) async => services),
             payoutsProvider.overrideWith((ref) async => const PayoutSummary()),
+            stripeStatusProvider.overrideWith((ref) async => stripe),
           ],
           child: MaterialApp(
             theme: AppTheme.dark,
@@ -244,6 +246,76 @@ void main() {
       await tester.pump();
       await tester.pump();
     }
+
+    testWidgets('the gear overview names the role and the first steps', (
+      tester,
+    ) async {
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
+
+      expect(find.text('Gear Foxer'), findsOneWidget);
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('0 of 2 steps done'), findsOneWidget);
+      expect(find.text('List your first item'), findsOneWidget);
+      expect(find.text('Connect your payout account'), findsOneWidget);
+    });
+
+    testWidgets('a talent sees the service wording', (tester) async {
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.services),
+        roles: const ['serviceFoxer'],
+      );
+
+      expect(find.text('Talent Foxer'), findsOneWidget);
+      expect(find.text('List your first service'), findsOneWidget);
+    });
+
+    testWidgets('a performer without the talent role sees performer wording', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.services),
+        roles: const ['performerFoxer'],
+      );
+
+      expect(find.text('Performer Foxer'), findsOneWidget);
+      expect(find.text('List your first performance'), findsOneWidget);
+    });
+
+    testWidgets('first steps tick off from the listings and payouts', (
+      tester,
+    ) async {
+      assets = const [SpaceListing(id: 'g1', name: 'PA', status: 'available')];
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.gear),
+        stripe: const StripeStatus(onboardingComplete: true),
+      );
+
+      // Both done, so the card is gone.
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('the next job is led by what is supplied', (tester) async {
+      final day = DateTime.now().add(const Duration(days: 4));
+      requests = [
+        VenueRequest.tryParse(
+          _row(
+            'j1',
+            'asset',
+            status: 'approved',
+            name: 'PA system',
+            startAt: day.toIso8601String(),
+          ),
+          kind: RequestKind.asset,
+        )!,
+      ];
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
+
+      expect(find.text('PA system'), findsOneWidget);
+      expect(find.text('Launch Night'), findsOneWidget);
+    });
 
     testWidgets('the overview says all is clear when nothing waits', (
       tester,

@@ -3406,6 +3406,42 @@ abstract class AppLocalizations {
   /// **'Venue Foxer'**
   String get overviewRoleVenue;
 
+  /// No description provided for @overviewRoleGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear Foxer'**
+  String get overviewRoleGear;
+
+  /// No description provided for @overviewRoleTalent.
+  ///
+  /// In en, this message translates to:
+  /// **'Talent Foxer'**
+  String get overviewRoleTalent;
+
+  /// No description provided for @overviewRolePerformer.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer Foxer'**
+  String get overviewRolePerformer;
+
+  /// No description provided for @firstStepGear.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first item'**
+  String get firstStepGear;
+
+  /// No description provided for @firstStepService.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first service'**
+  String get firstStepService;
+
+  /// No description provided for @firstStepPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first performance'**
+  String get firstStepPerformance;
+
   /// No description provided for @firstStepsTitle.
   ///
   /// In en, this message translates to:
