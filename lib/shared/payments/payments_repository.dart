@@ -3,41 +3,19 @@ import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/shared/payments/payment_gateway.dart';
+import 'package:flutter_template/shared/payments/stripe_payment_gateway.dart';
 
-/// Card payments are not available in this build.
-class PaymentsUnavailable implements Exception {
-  const PaymentsUnavailable();
-}
+// Callers reach the gateway types through here.
+export 'package:flutter_template/shared/payments/payment_gateway.dart';
 
-/// Takes a card payment for a booking.
-///
-/// The real implementation is Stripe's payment sheet, which is not in the app
-/// yet. Swap this provider when it is.
-abstract class PaymentGateway {
-  /// Returns the payment intent id once the payment has gone through.
-  Future<String> pay({
-    required String? clientSecret,
-    required num amount,
-    required String currency,
-  });
-}
-
-/// Succeeds only when the app runs against the mock backend, so nothing is
-/// ever reported as paid that was not.
-class StubPaymentGateway implements PaymentGateway {
-  @override
-  Future<String> pay({
-    required String? clientSecret,
-    required num amount,
-    required String currency,
-  }) async {
-    if (AppConfig.instance.useMock) return 'pi_mock';
-    throw const PaymentsUnavailable();
-  }
-}
-
-final paymentGatewayProvider =
-    Provider<PaymentGateway>((ref) => StubPaymentGateway());
+final paymentGatewayProvider = Provider<PaymentGateway>((ref) {
+  final key = AppConfig.instance.stripePublishableKey;
+  // Real card payments need Stripe's publishable key; without one (or against
+  // the mock backend) the stub says so rather than pretend.
+  if (key.isEmpty || AppConfig.instance.useMock) return StubPaymentGateway();
+  return StripePaymentGateway(merchantName: AppConfig.instance.appName);
+});
 
 /// Pays for a booking that exists: creates the payment intent, runs it
 /// through the [PaymentGateway] and confirms the booking.

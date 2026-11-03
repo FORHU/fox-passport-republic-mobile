@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -25,6 +27,7 @@ Widget _app({String? segment, List<CalendarEntry> entries = const []}) {
   return ProviderScope(
     retry: (_, __) => null,
     overrides: [
+      availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
       upcomingTicketsProvider.overrideWith((ref) async => [Ticket.sample()]),
       pastTicketsProvider.overrideWith((ref) async => <Ticket>[]),
       myMatchRequestsProvider.overrideWith(

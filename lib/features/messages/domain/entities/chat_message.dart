@@ -10,6 +10,7 @@ class ChatMessage {
     this.replyToContent,
     this.reactions = const [],
     this.isRead = false,
+    this.sharedPost,
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
@@ -50,6 +51,7 @@ class ChatMessage {
           json['replyToContent'] as String? ?? replyTo['content'] as String?,
       reactions: reactions,
       isRead: json['readAt'] != null,
+      sharedPost: SharedPost.tryParse(json['sharedPost']),
     );
   }
 
@@ -63,6 +65,37 @@ class ChatMessage {
   final String? replyToContent;
   final List<MessageReaction> reactions;
   final bool isRead;
+
+  /// A Republic post that was sent in this message.
+  final SharedPost? sharedPost;
+}
+
+/// Just enough of a Republic post to show it as a card in a chat.
+class SharedPost {
+  const SharedPost({
+    required this.id,
+    required this.authorName,
+    required this.content,
+    this.imageUrl,
+  });
+
+  static SharedPost? tryParse(Object? value) {
+    if (value is! Map || value['id'] == null) return null;
+    final author = value['author'];
+    final media = value['mediaUrls'];
+    final first = media is List && media.isNotEmpty ? media.first : null;
+    return SharedPost(
+      id: '${value['id']}',
+      authorName: author is Map ? '${author['name'] ?? ''}'.trim() : '',
+      content: '${value['content'] ?? ''}'.trim(),
+      imageUrl: first is String && first.isNotEmpty ? first : null,
+    );
+  }
+
+  final String id;
+  final String authorName;
+  final String content;
+  final String? imageUrl;
 }
 
 class MessageReaction {

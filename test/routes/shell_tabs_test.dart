@@ -4,6 +4,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/routes/app_routes.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,13 +22,37 @@ void main() {
     addTearDown(container.dispose);
 
     final router = container.read(goRouterProvider);
-    final shell =
-        router.configuration.routes.whereType<StatefulShellRoute>().single;
-    final roots = [
-      for (final branch in shell.branches)
-        (branch.routes.first as GoRoute).path,
-    ];
+    // The Citizen tabs come first, then Venue, Event, Gear and Services.
+    final shells =
+        router.configuration.routes.whereType<StatefulShellRoute>().toList();
+    List<String> rootsOf(StatefulShellRoute shell) => [
+          for (final branch in shell.branches)
+            (branch.routes.first as GoRoute).path,
+        ];
 
-    expect(roots, RouteNames.shellTabs);
+    expect(shells, hasLength(5));
+    expect(rootsOf(shells[0]), RouteNames.shellTabs);
+    expect(rootsOf(shells[1]), [
+      RouteNames.spaceVenue,
+      RouteNames.spaceVenueVenues,
+      RouteNames.spaceVenueCalendar,
+      RouteNames.spaceVenueEarnings,
+      RouteNames.spaceVenueMore,
+    ]);
+    expect(rootsOf(shells[2]), [
+      RouteNames.spaceEvent,
+      RouteNames.spaceEventCalendar,
+      RouteNames.spaceEventCheckIn,
+      RouteNames.spaceEventMessages,
+    ]);
+    for (final (i, kind) in ProviderKind.values.indexed) {
+      expect(rootsOf(shells[3 + i]), [
+        kind.root,
+        kind.listings,
+        kind.calendar,
+        kind.earnings,
+        kind.more,
+      ]);
+    }
   });
 }

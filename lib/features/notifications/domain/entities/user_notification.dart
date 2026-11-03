@@ -9,6 +9,7 @@ class UserNotification extends Equatable {
     required this.createdAt,
     required this.isRead,
     this.link,
+    this.eventTemplateId,
   });
 
   factory UserNotification.fromJson(Map<String, dynamic> json) {
@@ -24,7 +25,9 @@ class UserNotification extends Equatable {
       message: (json['message'] ?? '').toString(),
       createdAt: createdAt.toLocal(),
       isRead: json['isRead'] == true,
-      link: _linkOf(json['metadata']),
+      link: _linkOf(json['metadata']) ??
+          _postLinkOf(json['type'], json['metadata']),
+      eventTemplateId: _waitlistTemplateOf(json['type'], json['metadata']),
     );
   }
 
@@ -39,6 +42,34 @@ class UserNotification extends Equatable {
   /// `/booking/<id>` or `/messages?conversationId=<id>`; null when it has none.
   final String? link;
 
+  /// The event a "a spot opened up" notification is about
+  /// (`metadata.templateId`); null for every other kind.
+  final String? eventTemplateId;
+
+  static String? _waitlistTemplateOf(Object? type, Object? metadata) {
+    if (type != waitlistSpotType || metadata is! Map) return null;
+    final id = metadata['templateId'];
+    return id is String && id.isNotEmpty ? id : null;
+  }
+
+  /// The `type` the API gives a waitlist notification.
+  static const waitlistSpotType = 'waitlist_spot_available';
+
+  /// A Republic reaction, comment or mention names its post, not a link:
+  /// the post's own address, with its comments open for the ones about them.
+  static String? _postLinkOf(Object? type, Object? metadata) {
+    if (type is! String || !type.startsWith('feed:') || metadata is! Map) {
+      return null;
+    }
+    final postId = metadata['postId'];
+    if (postId is! String || postId.isEmpty) return null;
+    final about = type == 'feed:comment' || metadata['commentId'] != null;
+    return Uri(
+      path: '/republic',
+      queryParameters: {'postId': postId, if (about) 'comments': '1'},
+    ).toString();
+  }
+
   static String? _linkOf(Object? metadata) {
     final link = metadata is Map ? metadata['link'] : null;
     return link is String && link.isNotEmpty ? link : null;
@@ -46,5 +77,5 @@ class UserNotification extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, type, title, message, createdAt, isRead, link];
+      [id, type, title, message, createdAt, isRead, link, eventTemplateId];
 }

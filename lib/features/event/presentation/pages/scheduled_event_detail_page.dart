@@ -11,6 +11,7 @@ import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
+import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -81,7 +82,8 @@ class _ScheduledEventDetailPageState
             false;
     final date = _item.eventStartAt == null
         ? '—'
-        : DateFormat('EEEE d MMMM y · jm', locale).format(_item.eventStartAt!);
+        : '${DateFormat.yMMMMEEEEd(locale).format(_item.eventStartAt!)} · '
+            '${DateFormat.jm(locale).format(_item.eventStartAt!)}';
     final price = catalogPriceLabel(
       l10n,
       _item,
@@ -116,14 +118,16 @@ class _ScheduledEventDetailPageState
           ],
           const SizedBox(height: 24),
           _EventFact(label: l10n.searchEventDate, value: date),
-          if (_item.city != null && _item.city!.isNotEmpty)
-            _EventFact(label: l10n.searchEventLocation, value: _item.city!),
           if (_item.capacity != null)
             _EventFact(
               label: l10n.searchEventGuests,
               value: l10n.guestsCount(_item.capacity!),
             ),
           _EventFact(label: l10n.searchEventPrice, value: price ?? '—'),
+          LocationCard(
+            title: l10n.whereYoullBe,
+            place: _item.city ?? '',
+          ),
         ],
       ),
       bottomNavigationBar: SafeArea(

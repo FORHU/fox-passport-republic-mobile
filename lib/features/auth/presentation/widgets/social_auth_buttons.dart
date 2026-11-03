@@ -10,17 +10,18 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// Social sign-in is not being launched yet, so the three buttons are shown
-/// (the design is kept) but disabled. Flip this to turn Google and Facebook
-/// back on; Apple additionally needs API support that isn't built.
-const bool kSocialSignInEnabled = false;
+/// Google and Facebook sign-in are on (Google verified on a device 21 Oct;
+/// Facebook still needs its native config, see `FACEBOOK_NATIVE`). Set false
+/// to show the buttons disabled.
+const bool kSocialSignInEnabled = true;
 
 /// The "OR" divider and the three stacked secondary buttons from
 /// `docs/mockups/onboarding-auth.html`: Apple, Google, Facebook.
 ///
 /// While [kSocialSignInEnabled] is false they render disabled and do nothing.
 /// When it is true, Google / Facebook sign in on Android and iOS (and explain
-/// themselves in a browser tab), and Apple says it is coming soon.
+/// themselves in a browser tab). Apple is always disabled: there is no Apple
+/// sign-in on the API yet.
 class SocialAuthButtons extends ConsumerWidget {
   const SocialAuthButtons({super.key});
 
@@ -69,8 +70,7 @@ class SocialAuthButtons extends ConsumerWidget {
         SecondaryButton(
           label: l10n.authContinueWithApple,
           icon: Icons.apple,
-          onPressed:
-              loading ? null : () => showTopToast(context, l10n.authAppleSoon),
+          onPressed: null,
         ),
         const SizedBox(height: 10),
         SecondaryButton(

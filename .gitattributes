@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# The isolation check is a bash script comparing plain-text lists: keep both LF
+# so a Windows checkout does not add carriage returns that break the comparison.
+tools/*.sh text eol=lf
+tools/feature_isolation_baseline/*.txt text eol=lf

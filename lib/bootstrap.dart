@@ -1,11 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_template/app.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// Gives Stripe its publishable key so the payment sheet can open. Skipped
+/// without a key, and on the web, where the sheet is not available.
+Future<void> _startStripe(String key) async {
+  if (key.isEmpty || kIsWeb) return;
+  Stripe.publishableKey = key;
+  await Stripe.instance.applySettings();
+}
 
 /// Shared startup used by every entry point. Pins the chosen [config], does
 /// async init (SharedPreferences, dotenv), then runs the app. Keep environment-
@@ -25,6 +35,8 @@ Future<void> bootstrap(AppConfig config, {String? dotEnvFile}) async {
   } else {
     AppConfig.instance = config;
   }
+
+  await _startStripe(AppConfig.instance.stripePublishableKey);
 
   final prefs = await SharedPreferences.getInstance();
 

@@ -10,6 +10,8 @@ import 'package:flutter_template/features/messages/domain/entities/chat_message.
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,6 +74,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           currentUserIdProvider.overrideWithValue(null),
           conversationsProvider.overrideWith(
             (ref) async => [_conversation()],
@@ -94,6 +97,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           currentUserIdProvider.overrideWithValue(null),
           conversationsProvider.overrideWith(
             (ref) async => [_conversation(), _conversation(group: true)],
@@ -132,6 +136,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           storageServiceProvider.overrideWithValue(storage),
           realtimeServiceProvider.overrideWithValue(null),
           authControllerProvider.overrideWith(_TestAuthController.new),
@@ -217,6 +222,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
           storageServiceProvider.overrideWithValue(storage),
           realtimeServiceProvider.overrideWithValue(null),
           messagesRepositoryProvider.overrideWithValue(MessagesRepository(api)),

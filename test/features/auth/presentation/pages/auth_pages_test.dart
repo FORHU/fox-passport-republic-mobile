@@ -100,19 +100,16 @@ void main() {
     expect(find.byType(FoxLogo), findsOneWidget);
   });
 
-  testWidgets('the social buttons are shown but disabled', (tester) async {
+  testWidgets('Google and Facebook are enabled, Apple is not', (tester) async {
     await pump(tester, const LoginPage(), size: large);
 
-    for (final label in [
-      'Continue with Apple',
-      'Continue with Google',
-      'Continue with Facebook',
-    ]) {
-      final button = tester.widget<SecondaryButton>(
-        find.widgetWithText(SecondaryButton, label),
-      );
-      expect(button.onPressed, isNull, reason: '$label should be disabled');
-    }
+    SecondaryButton button(String label) => tester.widget<SecondaryButton>(
+          find.widgetWithText(SecondaryButton, label),
+        );
+
+    expect(button('Continue with Apple').onPressed, isNull);
+    expect(button('Continue with Google').onPressed, isNotNull);
+    expect(button('Continue with Facebook').onPressed, isNotNull);
   });
 
   testWidgets('the form sits clear of the bottom edge, not pushed to it',

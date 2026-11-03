@@ -53,7 +53,7 @@ class RouteNames {
   /// order, because the tab index is the branch index.
   static const List<String> shellTabs = [
     home,
-    search,
+    republic,
     tickets,
     messages,
     passport,
@@ -71,8 +71,28 @@ class RouteNames {
   static const String passport = '/passport';
   static const String profile = '/profile';
 
+  /// Someone's public profile, by id or username. Opened from a post's
+  /// author in the Republic.
+  static String citizen(String idOrUsername) =>
+      '/citizen/${Uri.encodeComponent(idOrUsername)}';
+  static const String citizenPattern = '/citizen/:id';
+
+  /// The optional ID check and Verified badge. Pushed from Profile.
+  static const String identity = '/profile/identity';
+
+  /// Edit the profile: photo, name, username, phone, privacy. Pushed from
+  /// Profile and Settings.
+  static const String profileEdit = '/profile/edit';
+
+  /// Your followers, who you follow, and follow requests. Pushed from Profile.
+  static const String people = '/profile/people';
+
   /// Asked once after sign-in, before Home: use the device location?
   static const String location = '/location';
+
+  /// Applying for a role from the phone: `/roles/apply/<roleType>`.
+  static String roleApply(String roleType) =>
+      '/roles/apply/${Uri.encodeComponent(roleType)}';
 
   /// Become a Foxer: the roles to apply for and where each stands.
   static const String roles = '/roles';
@@ -80,14 +100,81 @@ class RouteNames {
   /// Settings: location, account, sign out. Pushed from Passport.
   static const String settings = '/settings';
 
+  /// Change the password. Pushed from Settings.
+  static const String changePassword = '/settings/password';
+
+  /// The people you blocked, with a way to unblock. Pushed from Settings.
+  static const String blockedUsers = '/settings/blocked';
+
   /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.
   static const String foxer = '/foxer';
 
   /// Match request to a Foxer. Takes the Foxer's catalog row as `extra`.
   static const String match = '/match';
 
-  /// The Republic: the community feed.
+  /// The Republic: the community feed. The second bottom-nav tab.
   static const String republic = '/republic';
+
+  /// The posts saved from the Republic. Pushed from its header.
+  static const String republicSaved = '/republic/saved';
+
+  /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
+  /// comments open at once.
+  static String republicPost(String id, {bool comments = false}) => Uri(
+        path: '/republic/post/${Uri.encodeComponent(id)}',
+        queryParameters: comments ? {'comments': '1'} : null,
+      ).toString();
+
+  /// Writing a post. Pushed from the Republic.
+  static const String republicCompose = '/republic/compose';
+
+  /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:
+  /// Overview, Venues, Calendar, Earnings and More.
+  static const String spaceVenue = '/space/venue';
+  static const String spaceVenueVenues = '/space/venue/venues';
+
+  /// One of their venues: what they can do with it.
+  static String spaceVenueHub(String venueId) => '$spaceVenueVenues/$venueId';
+  static const String spaceVenueCalendar = '/space/venue/calendar';
+  static const String spaceVenueEarnings = '/space/venue/earnings';
+  static const String spaceVenueMore = '/space/venue/more';
+  static const String spaceVenuePartners = '/space/venue/more/partners';
+  static const String spaceVenuePromotions = '/space/venue/more/promotions';
+
+  /// Adding or editing a venue: full screen, outside the tabs, so it can be
+  /// pushed from the Venues tab and from a venue's hub alike.
+  static const String spaceVenueStudio = '/space/venue/studio';
+  static String spaceVenueStudioEdit(String venueId) =>
+      '$spaceVenueStudio/$venueId';
+
+  /// Opened from More: requests for their venues, check-in and messages.
+  static const String spaceVenueRequests = '/space/venue/more/requests';
+  static const String spaceVenueCheckIn = '/space/venue/more/check-in';
+  static const String spaceVenueMessages = '/space/venue/more/messages';
+
+  /// The Event space, for an EventFoxer: their events, check-in and messages.
+  static const String spaceEvent = '/space/event';
+  static const String spaceEventCalendar = '/space/event/calendar';
+
+  /// Creating or editing an event: full screen, outside the tabs.
+  /// The team of a venue or event: Organizers and Check-in Helpers. The list
+  /// of what can have a team is one per space; the team itself takes the
+  /// venue or event as `extra`.
+  static const String spaceTeamVenues = '/space/team/venues';
+  static const String spaceTeamEvents = '/space/team/events';
+  static const String spaceTeamDetail = '/space/team/detail';
+
+  /// The events that can have bids, and the bids on one. The second takes the
+  /// event as `extra`.
+  static const String spaceBidEvents = '/space/event/bids';
+  static const String spaceBidDetail = '/space/event/bids/detail';
+
+  static const String spaceEventStudio = '/space/event/studio';
+  static String spaceEventStudioEdit(String eventId) =>
+      '$spaceEventStudio/$eventId';
+  static const String spaceEventCheckIn = '/space/event/check-in';
+  static const String spaceEventPartners = '/space/event/partners';
+  static const String spaceEventMessages = '/space/event/messages';
 
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.

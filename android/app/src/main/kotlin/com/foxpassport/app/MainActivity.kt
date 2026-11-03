@@ -1,5 +1,6 @@
 package com.foxpassport.app
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// Stripe's payment sheet needs the support fragment manager.
+class MainActivity : FlutterFragmentActivity()

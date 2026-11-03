@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
-import 'package:flutter_template/core/utils/asset_url.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -198,14 +198,10 @@ class _FoxerTile extends StatelessWidget {
     return ListTile(
       enabled: enabled,
       onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: AppColors.surfaceRaised,
-        backgroundImage: foxer.imageUrl == null
-            ? null
-            : NetworkImage(resolveAssetUrl(foxer.imageUrl!)),
-        child: foxer.imageUrl == null
-            ? Text(initial, style: AppTypography.display())
-            : null,
+      leading: AvatarImage(
+        url: foxer.imageUrl,
+        radius: 20,
+        fallback: Text(initial, style: AppTypography.display()),
       ),
       title: Row(
         children: [

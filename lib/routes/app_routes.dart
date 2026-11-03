@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/verify_email_page.dart';
+import 'package:flutter_template/features/blocks/presentation/pages/blocked_users_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/booking_flow_page.dart';
 import 'package:flutter_template/features/booking/presentation/pages/item_booking_page.dart';
 import 'package:flutter_template/features/event/presentation/pages/event_detail_page.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
+import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/features/messages/domain/entities/conversation.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_chat_page.dart';
 import 'package:flutter_template/features/messages/presentation/pages/messages_page.dart';
@@ -23,11 +26,52 @@ import 'package:flutter_template/features/occasion/presentation/pages/all_catego
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
+import 'package:flutter_template/features/profile/presentation/pages/people_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/profile_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/compose_post_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
+import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
+import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
+import 'package:flutter_template/features/spaces/domain/team_models.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_bids_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/listing_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/open_slots_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_detail_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/team_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
@@ -119,6 +163,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       if (goingToLogin || goingToRegister || at == RouteNames.welcome) {
         return RouteNames.home;
       }
+
+      // A space needs the role that opens it.
+      final roles = ref.read(heldRolesProvider);
+      final inSpace = AppSpace.forPath(at);
+      if (inSpace != null && !inSpace.isAvailableTo(roles)) {
+        return RouteNames.home;
+      }
+      // Opening the app, or landing on Home, goes to the space they were last
+      // working in. Switching back to Citizen saves Citizen first, so this
+      // does not pull them out again.
+      if (at == RouteNames.home) {
+        final active = ref.read(activeSpaceProvider);
+        if (active != AppSpace.citizen) return active.root;
+      }
       return null;
     },
     routes: [
@@ -175,6 +233,118 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.settings,
         builder: (context, state) => const SettingsPage(),
       ),
+      GoRoute(
+        path: RouteNames.changePassword,
+        builder: (context, state) => const ChangePasswordPage(),
+      ),
+      GoRoute(
+        path: RouteNames.blockedUsers,
+        builder: (context, state) => const BlockedUsersPage(),
+      ),
+      // Profile is opened from both Passport and Settings, so it is a screen
+      // of its own, not part of the Passport tab: a route inside a tab cannot
+      // be pushed from outside it (the tab's page would be on the stack twice).
+      GoRoute(
+        path: RouteNames.profile,
+        builder: (context, state) => ProfilePage(
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.people,
+        builder: (context, state) => const PeoplePage(),
+      ),
+      GoRoute(
+        path: RouteNames.citizenPattern,
+        builder: (context, state) => CitizenProfilePage(
+          userId: state.pathParameters['id']!,
+          activityBuilder: (context, profile) =>
+              ProfilePosts(authorId: profile.id),
+          onMessage: (context, profile) async {
+            final id = await ref
+                .read(messagesRepositoryProvider)
+                .startWithUser(profile.id);
+            if (context.mounted) await context.push<void>(RouteNames.chat(id));
+          },
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.profileEdit,
+        builder: (context, state) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: RouteNames.identity,
+        builder: (context, state) => const IdentityPage(),
+      ),
+      GoRoute(
+        path: '/roles/apply/:roleType',
+        redirect: (context, state) =>
+            appliesInApp.contains(state.pathParameters['roleType'])
+                ? null
+                : RouteNames.roles,
+        builder: (context, state) =>
+            RoleApplicationPage(roleType: state.pathParameters['roleType']!),
+      ),
+      GoRoute(
+        path: RouteNames.spaceVenueStudio,
+        builder: (context, state) => const VenueStudioPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.spaceVenueStudio}/:venueId',
+        builder: (context, state) =>
+            VenueStudioPage(venueId: state.pathParameters['venueId']),
+      ),
+      for (final kind in ProviderKind.values) ...[
+        GoRoute(
+          path: kind.studio,
+          builder: (context, state) => ListingStudioPage(kind: kind),
+        ),
+        GoRoute(
+          path: '${kind.studio}/:id',
+          builder: (context, state) => ListingStudioPage(
+            kind: kind,
+            listingId: state.pathParameters['id'],
+          ),
+        ),
+      ],
+      GoRoute(
+        path: RouteNames.spaceTeamVenues,
+        builder: (context, state) => const TeamPage(events: false),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamEvents,
+        builder: (context, state) => const TeamPage(events: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceBidEvents,
+        builder: (context, state) => const TeamPage(events: true, bids: true),
+      ),
+      GoRoute(
+        path: RouteNames.spaceBidDetail,
+        redirect: (context, state) =>
+            state.extra is TeamTarget ? null : RouteNames.spaceEvent,
+        builder: (context, state) =>
+            EventBidsPage(event: state.extra! as TeamTarget),
+      ),
+      GoRoute(
+        path: RouteNames.spaceTeamDetail,
+        // Opened with the venue or event as `extra`; without it (a restored
+        // link) there is nothing to show, so go back to the list.
+        redirect: (context, state) =>
+            state.extra is TeamTarget ? null : RouteNames.spaceVenue,
+        builder: (context, state) =>
+            TeamDetailPage(target: state.extra! as TeamTarget),
+      ),
+      GoRoute(
+        path: RouteNames.spaceEventStudio,
+        builder: (context, state) => const EventStudioPage(),
+      ),
+      GoRoute(
+        path: '${RouteNames.spaceEventStudio}/:eventId',
+        builder: (context, state) =>
+            EventStudioPage(eventId: state.pathParameters['eventId']),
+      ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.
       GoRoute(
@@ -206,8 +376,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: RouteNames.republic,
-        builder: (context, state) => const RepublicPage(),
+        path: RouteNames.republicCompose,
+        builder: (context, state) => const ComposePostPage(),
+      ),
+      GoRoute(
+        path: '/republic/post/:id',
+        builder: (context, state) => PostPage(
+          postId: state.pathParameters['id']!,
+          openComments: state.uri.queryParameters['comments'] == '1',
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.republicSaved,
+        builder: (context, state) => const SavedPostsPage(),
       ),
       GoRoute(
         path: RouteNames.itemBooking,
@@ -267,10 +448,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.notifications,
                 builder: (context, state) => const NotificationsPage(),
               ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
+              // Search lives under Home: it is opened from Home's search bar.
               GoRoute(
                 path: RouteNames.search,
                 builder: (context, state) => SearchPage(
@@ -285,6 +463,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     state.uri.queryParameters['date'] ?? '',
                   ),
                 ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.republic,
+                builder: (context, state) => const RepublicPage(),
               ),
             ],
           ),
@@ -310,11 +496,277 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.passport,
-                builder: (context, state) => const PassportPage(),
+                // Your Passport is your profile as others see it, with your
+                // Passport level and XP, and your match requests and the
+                // way to earn a role as two more tabs.
+                builder: (context, state) => PassportPage(
+                  bodyBuilder: (context, summary) => Consumer(
+                    builder: (context, ref, _) {
+                      final me = ref.watch(currentUserIdProvider);
+                      if (me == null) return const SizedBox.shrink();
+                      final l10n = context.l10n;
+                      return CitizenProfileView(
+                        userId: me,
+                        activityBuilder: (context, profile) =>
+                            ProfilePosts(authorId: profile.id),
+                        overrides: summary == null
+                            ? null
+                            : CitizenOverrides(
+                                level: summary.level,
+                                xp: summary.totalXp,
+                                progress: summary.progress,
+                                xpText: passportXpText(l10n, summary),
+                                stamps: summary.stamps.length,
+                                badges: summary.badges
+                                    .where((b) => b.earned)
+                                    .length,
+                              ),
+                        extraTabs: [
+                          CitizenExtraTab(
+                            label: l10n.passportTabMatches,
+                            builder: (_) => const PassportMatchesTab(),
+                          ),
+                          CitizenExtraTab(
+                            label: l10n.passportTabEarn,
+                            builder: (_) => const PassportEarnTab(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Venue space: its own tabs and bottom bar.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of requests waiting for a reply, on the Overview tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.venueItems(
+              context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.mayor)),
+              waiting: ref.watch(venueRequestsProvider).maybeWhen(
+                    data: (list) => list.where((r) => r.needsReply).length,
+                    orElse: () => 0,
+                  ),
+            ),
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenue,
+                builder: (context, state) => const VenueOverviewPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueVenues,
+                builder: (context, state) => const VenuesPage(),
+                routes: [
+                  GoRoute(
+                    path: ':venueId',
+                    builder: (context, state) => VenueHubPage(
+                      venueId: state.pathParameters['venueId']!,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueCalendar,
+                builder: (context, state) => VenueCalendarPage(
+                  venueId: state.uri.queryParameters['venue'],
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueEarnings,
+                builder: (context, state) => const EarningsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceVenueMore,
+                builder: (context, state) => const VenueMorePage(),
+                routes: [
+                  GoRoute(
+                    path: 'requests',
+                    builder: (context, state) => const VenueRequestsPage(),
+                  ),
+                  GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.mayor),
+                  ),
+                  GoRoute(
+                    path: 'promotions',
+                    builder: (context, state) => const PromotionsPage(),
+                  ),
+                  GoRoute(
+                    path: 'check-in',
+                    builder: (context, state) => const CheckInPage(),
+                  ),
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) =>
+                        const MessagesPage(showBack: true),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Event space.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of partnerships waiting for an answer, on the Events tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.eventItems(
+              context,
+              partnersWaiting:
+                  ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer)),
+            ),
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEvent,
+                builder: (context, state) => const EventsPage(),
+                routes: [
+                  GoRoute(
+                    path: 'partners',
+                    builder: (context, state) =>
+                        const PartnersPage(side: PartnerSide.eventFoxer),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventCalendar,
+                builder: (context, state) => const EventCalendarPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventCheckIn,
+                builder: (context, state) => const CheckInPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventMessages,
+                builder: (context, state) => const MessagesPage(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Gear and Services spaces share their screens.
+      for (final kind in ProviderKind.values) _providerShell(kind),
+    ],
+  );
+});
+
+/// The shell of a provider's space: Overview, Listings, Calendar, Earnings and
+/// More, for what [kind] supplies.
+StatefulShellRoute _providerShell(ProviderKind kind) {
+  return StatefulShellRoute.indexedStack(
+    builder: (context, state, navigationShell) => Consumer(
+      // A count of requests waiting for a reply, on the Overview tab.
+      builder: (context, ref, _) => SpaceLayout(
+        navigationShell: navigationShell,
+        items: SpaceLayout.providerItems(
+          context,
+          listings: listingsLabel(
+            context.l10n,
+            kind,
+            roles: ref.watch(heldRolesProvider),
+          ),
+          waiting: ref.watch(supplyRequestsProvider(kind.request)).maybeWhen(
+                data: (list) => list.where((r) => r.needsReply).length,
+                orElse: () => 0,
+              ),
+        ),
+      ),
+    ),
+    branches: [
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.root,
+            builder: (context, state) => ProviderOverviewPage(kind: kind),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.listings,
+            builder: (context, state) => ProviderListingsPage(kind: kind),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.calendar,
+            builder: (context, state) => const EventCalendarPage(),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.earnings,
+            builder: (context, state) => const EarningsPage(),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: kind.more,
+            builder: (context, state) => ProviderMorePage(kind: kind),
+            routes: [
+              GoRoute(
+                path: 'requests',
+                builder: (context, state) => VenueRequestsPage(provider: kind),
               ),
               GoRoute(
-                path: RouteNames.profile,
-                builder: (context, state) => const ProfilePage(),
+                path: 'slots',
+                builder: (context, state) => const OpenSlotsPage(),
+              ),
+              GoRoute(
+                path: 'messages',
+                builder: (context, state) => const MessagesPage(showBack: true),
               ),
             ],
           ),
@@ -322,4 +774,4 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
-});
+}

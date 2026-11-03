@@ -31,8 +31,8 @@ GoRouter _router() => GoRouter(
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  path: '/search',
-                  builder: (_, __) => const _Tab('search'),
+                  path: '/republic',
+                  builder: (_, __) => const _Tab('republic'),
                 ),
               ],
             ),
@@ -110,15 +110,15 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('field-home')), 'draft one');
-    router.go('/search');
+    router.go('/republic');
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('field-search')), 'sky hall');
+    await tester.enterText(find.byKey(const Key('field-republic')), 'sky hall');
 
     router.go('/');
     await tester.pumpAndSettle();
     expect(find.text('draft one'), findsOneWidget);
 
-    router.go('/search');
+    router.go('/republic');
     await tester.pumpAndSettle();
     expect(find.text('sky hall'), findsOneWidget);
   });
@@ -135,7 +135,7 @@ void main() {
     expect(find.text('NOTIFICATIONS'), findsOneWidget);
 
     // Through the bottom bar, as a user would.
-    await tester.tap(find.text('Search'));
+    await tester.tap(find.text('Republic'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
@@ -169,7 +169,7 @@ void main() {
 
     for (final label in [
       'Home',
-      'Search',
+      'Republic',
       'Bookings',
       'Messages',
       'Passport',

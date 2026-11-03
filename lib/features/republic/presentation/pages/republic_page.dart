@@ -2,13 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
-import 'package:flutter_template/features/republic/presentation/widgets/comments_sheet.dart';
+import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -26,10 +28,12 @@ class RepublicPage extends ConsumerStatefulWidget {
 
 class _RepublicPageState extends ConsumerState<RepublicPage> {
   // Tab ids as the API names them; null is everything.
-  static const _tabs = <String?>[null, 'community', 'marketplace'];
+  static const _tabs = <String?>[null, 'community', 'marketplace', 'partners'];
 
   String? _tab;
   final _scroll = ScrollController();
+  final _search = TextEditingController();
+  bool _searching = false;
 
   @override
   void initState() {
@@ -40,6 +44,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   @override
   void dispose() {
     _scroll.dispose();
+    _search.dispose();
     super.dispose();
   }
 
@@ -57,51 +62,60 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     return false;
   }
 
-  Future<void> _like(String postId) async {
-    if (!_signedIn()) return;
-    final ok = await ref
-        .read(feedControllerProvider(_tab).notifier)
-        .toggleLike(postId);
-    if (!ok && mounted) showTopToast(context, context.l10n.republicLikeFailed);
+  PostActions get _actions => PostActions(context, ref, _tab);
+
+  void _applySearch(String term) {
+    ref.read(feedSearchProvider.notifier).set(term);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
   }
 
-  Future<void> _comments(String postId) async {
-    final added = await showCommentsSheet(
-      context,
-      postId: postId,
-      signedIn: ref.read(authControllerProvider).user != null,
-    );
-    if (added > 0) {
-      for (var i = 0; i < added; i++) {
-        ref.read(feedControllerProvider(_tab).notifier).commentAdded(postId);
-      }
-    }
+  void _clearSearch() {
+    _search.clear();
+    _applySearch('');
+  }
+
+  /// A tapped `#tag` searches for it.
+  void _searchFor(String tag) {
+    _search.text = tag;
+    setState(() => _searching = true);
+    _applySearch(tag);
   }
 
   Future<void> _compose() async {
     if (!_signedIn()) return;
-    final l10n = context.l10n;
-    final text = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.surface,
-      builder: (_) => const _ComposeSheet(),
-    );
-    if (text == null || text.trim().isEmpty || !mounted) return;
+    final id = await context.push<String>(RouteNames.republicCompose);
+    if (id == null || !mounted) return;
+    showTopToast(context, context.l10n.republicPosted);
+    final repo = ref.read(republicRepositoryProvider);
+    Post? post;
     try {
-      await ref.read(republicRepositoryProvider).createPost(text);
-      if (!mounted) return;
-      showTopToast(context, l10n.republicPosted);
+      post = id.isEmpty ? null : await repo.post(id);
+    } on Object {
+      post = null;
+    }
+    if (!mounted) return;
+    if (post == null) {
+      // Not read back: a fresh list will have it, wherever it sorts.
       await ref.read(feedControllerProvider(_tab).notifier).refresh();
-    } on Object catch (e) {
-      if (mounted) {
-        showTopToast(
-          context,
-          e is AppException ? e.message : l10n.republicPostFailed,
-        );
-      }
+      return;
+    }
+    // The post may belong to a tab other than the open one: open its tab.
+    if (_tab != null && _tab != post.tab) {
+      setState(() => _tab = post!.tab);
+      // Let the page start watching the new tab's list first: read before
+      // that, it would be built, dropped and built again.
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+    await ref.read(feedControllerProvider(_tab).future);
+    if (!mounted) return;
+    ref.read(feedControllerProvider(_tab).notifier).addFirst(post);
+    if (_scroll.hasClients) {
+      _scroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -110,6 +124,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     return switch (tab) {
       'community' => l10n.republicTabCommunity,
       'marketplace' => l10n.republicTabMarketplace,
+      'partners' => l10n.republicTabPartners,
       _ => l10n.republicTabAll,
     };
   }
@@ -118,92 +133,134 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final feed = ref.watch(feedControllerProvider(_tab));
+    final term = ref.watch(feedSearchProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _compose,
-        backgroundColor: AppColors.accent,
-        foregroundColor: AppColors.onAccent,
-        icon: const Icon(Icons.edit_outlined),
-        label: Text(l10n.republicPost),
-      ),
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 0),
+              padding: EdgeInsets.fromLTRB(
+                Navigator.canPop(context) ? 8 : 16,
+                8,
+                16,
+                0,
+              ),
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
+                  // A tab now; the arrow only shows if it was pushed.
+                  if (Navigator.canPop(context))
+                    IconButton(
+                      tooltip:
+                          MaterialLocalizations.of(context).backButtonTooltip,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                    ),
                   Expanded(
                     child: Text(
                       l10n.republicTitle,
-                      style: AppTypography.display(size: 24),
+                      style: AppTypography.display(size: 26),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.republicSearchHint,
+                    onPressed: () {
+                      if (_searching && _search.text.isNotEmpty) {
+                        _clearSearch();
+                      }
+                      setState(() => _searching = !_searching);
+                    },
+                    // The same magnifier open or shut: it lights up while the
+                    // search field is showing.
+                    icon: Icon(
+                      Icons.search_rounded,
+                      size: 28,
+                      color: _searching ? AppColors.accent : null,
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 52,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  for (final t in _tabs)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Center(
-                        child: ChoiceChip(
-                          label: Text(_tabLabel(t)),
-                          selected: _tab == t,
-                          onSelected: (_) => setState(() => _tab = t),
-                        ),
-                      ),
+            if (_searching)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: TextField(
+                  controller: _search,
+                  autofocus: true,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: _applySearch,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    hintText: l10n.republicSearchHint,
+                    suffixIcon: IconButton(
+                      tooltip: l10n.republicClearSearch,
+                      onPressed: _clearSearch,
+                      icon: const Icon(Icons.close_rounded),
                     ),
-                ],
+                  ),
+                ),
               ),
+            _FeedTabs(
+              tabs: _tabs,
+              selected: _tab,
+              label: _tabLabel,
+              onSelect: (t) => setState(() => _tab = t),
             ),
             Expanded(
               child: feed.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.accent),
-                ),
+                loading: () => const FeedSkeleton(),
                 error: (_, __) => AppStateView(
                   kind: AppStateKind.error,
                   title: l10n.apiLoadFailed,
                   actionLabel: l10n.retry,
                   onAction: () => ref.invalidate(feedControllerProvider(_tab)),
                 ),
-                data: (state) => state.posts.isEmpty
-                    ? Center(
-                        child: Text(
-                          l10n.republicEmpty,
-                          textAlign: TextAlign.center,
-                          style: AppTypography.body(color: AppColors.textMuted),
-                        ),
-                      )
-                    : RefreshIndicator(
-                        color: AppColors.accent,
-                        onRefresh: () => ref
-                            .read(feedControllerProvider(_tab).notifier)
-                            .refresh(),
-                        child: ListView.separated(
-                          controller: _scroll,
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                          itemCount: state.posts.length + 1,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 14),
-                          itemBuilder: (context, i) {
-                            if (i == state.posts.length) {
-                              return _Footer(
+                data: (state) => RefreshIndicator(
+                  color: AppColors.accent,
+                  onRefresh: () =>
+                      ref.read(feedControllerProvider(_tab).notifier).refresh(),
+                  // The composer is the first row, then the posts, each one
+                  // full width and split by a thick rule, like a feed.
+                  child: ListView.separated(
+                    controller: _scroll,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 24),
+                    itemCount: state.posts.length + 2,
+                    separatorBuilder: (_, __) => const Divider(
+                      height: 8,
+                      thickness: 8,
+                      color: AppColors.surface,
+                    ),
+                    itemBuilder: (context, i) {
+                      if (i == 0) {
+                        return _ComposerRow(onTap: _compose);
+                      }
+                      if (i == state.posts.length + 1) {
+                        return state.posts.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      term.isEmpty
+                                          ? l10n.republicEmpty
+                                          : l10n.republicSearchEmpty(term),
+                                      textAlign: TextAlign.center,
+                                      style: AppTypography.body(
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                    if (term.isNotEmpty)
+                                      TextButton(
+                                        onPressed: _clearSearch,
+                                        child: Text(l10n.republicClearSearch),
+                                      ),
+                                  ],
+                                ),
+                              )
+                            : _Footer(
                                 state: state,
                                 onRetry: () => unawaited(
                                   ref
@@ -213,18 +270,143 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                                       .loadMore(),
                                 ),
                               );
-                            }
-                            final post = state.posts[i];
-                            return PostCard(
-                              post: post,
-                              onLike: () => unawaited(_like(post.id)),
-                              onComments: () => unawaited(_comments(post.id)),
-                            );
-                          },
+                      }
+                      final post = state.posts[i - 1];
+                      return PostCard(
+                        post: post,
+                        onLike: () => unawaited(_actions.like(post.id)),
+                        onComments: () => unawaited(_actions.comments(post.id)),
+                        onMore: () => unawaited(_actions.menu(post)),
+                        onAuthor: () => unawaited(
+                          context.push(RouteNames.citizen(post.author.id)),
                         ),
-                      ),
+                        onReact: (r) => unawaited(_actions.react(post.id, r)),
+                        onReactions: () =>
+                            unawaited(_actions.reactions(post.id)),
+                        myUserId: ref.read(authControllerProvider).user?.id,
+                        onVote: (o) => unawaited(_actions.vote(post.id, o)),
+                        onOpenListing: () => _actions.openListing(post),
+                        onMessage: () =>
+                            unawaited(_actions.messageAuthor(post)),
+                        onShare: () => unawaited(_actions.share(post)),
+                        onHashtag: _searchFor,
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The feed's sections as text across the full width, the open one in the
+/// accent colour with a line under it. Fixed rather than scrolling, so every
+/// section is in sight.
+class _FeedTabs extends StatelessWidget {
+  const _FeedTabs({
+    required this.tabs,
+    required this.selected,
+    required this.label,
+    required this.onSelect,
+  });
+
+  final List<String?> tabs;
+  final String? selected;
+  final String Function(String?) label;
+  final ValueChanged<String?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    // Large text would make one long label shrink alone, so the tabs hold
+    // to a size where all four fit side by side.
+    final scaler = MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.15);
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: scaler),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.border)),
+        ),
+        child: Row(
+          children: [
+            for (final t in tabs)
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  selected: t == selected,
+                  child: InkWell(
+                    onTap: () => onSelect(t),
+                    child: Container(
+                      height: 44,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 3,
+                            color: t == selected
+                                ? AppColors.accent
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          label(t),
+                          style: AppTypography.body(
+                            size: 13,
+                            weight: FontWeight.w700,
+                            color: t == selected
+                                ? AppColors.accent
+                                : AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "What's on your mind?": your photo and a field that opens the composer.
+class _ComposerRow extends ConsumerWidget {
+  const _ComposerRow({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authControllerProvider).user;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: Row(
+          children: [
+            AuthorAvatar(
+              author: PostAuthor(
+                id: user?.id ?? '',
+                name: user?.name ?? '',
+                imageUrl: user?.imageUrl,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.l10n.republicComposePrompt,
+                style: AppTypography.body(color: AppColors.textMuted),
+              ),
+            ),
+            const Icon(Icons.image_outlined, color: AppColors.textMuted),
           ],
         ),
       ),
@@ -259,61 +441,5 @@ class _Footer extends StatelessWidget {
       );
     }
     return const SizedBox(height: 8);
-  }
-}
-
-class _ComposeSheet extends StatefulWidget {
-  const _ComposeSheet();
-
-  @override
-  State<_ComposeSheet> createState() => _ComposeSheetState();
-}
-
-class _ComposeSheetState extends State<_ComposeSheet> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        0,
-        20,
-        20 + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.republicCompose, style: AppTypography.display(size: 20)),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            maxLines: 5,
-            maxLength: 5000,
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(hintText: l10n.republicComposeHint),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _controller.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.pop(context, _controller.text),
-              child: Text(l10n.republicPost),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

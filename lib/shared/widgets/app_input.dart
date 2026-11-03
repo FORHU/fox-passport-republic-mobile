@@ -10,6 +10,8 @@ class AppInput extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.prefixIcon,
+    this.maxLines = 1,
+    this.maxLength,
   });
 
   final String label;
@@ -19,6 +21,12 @@ class AppInput extends StatelessWidget {
   final TextInputType? keyboardType;
   final IconData? prefixIcon;
 
+  /// More than one for a box that takes a few lines, such as a bio.
+  final int maxLines;
+
+  /// Stops typing at this many characters and shows a counter.
+  final int? maxLength;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -26,6 +34,9 @@ class AppInput extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      maxLines: obscureText ? 1 : maxLines,
+      minLines: obscureText || maxLines == 1 ? 1 : 2,
+      maxLength: maxLength,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,

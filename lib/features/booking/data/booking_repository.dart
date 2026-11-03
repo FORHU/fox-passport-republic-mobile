@@ -9,7 +9,11 @@ import 'package:flutter_template/shared/payments/payments_repository.dart';
 
 // Tests and the booking page reach the gateway through here.
 export 'package:flutter_template/shared/payments/payments_repository.dart'
-    show PaymentGateway, PaymentsUnavailable, StubPaymentGateway;
+    show
+        PaymentCancelled,
+        PaymentGateway,
+        PaymentsUnavailable,
+        StubPaymentGateway;
 
 /// Venue booking: availability, price, the booking itself and its payment.
 class BookingRepository {

@@ -145,106 +145,228 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEventOther => 'Other';
 
   @override
-  String get welcomeSkip => 'Skip';
+  String get welcomeCarouselLabel => 'Welcome to FoxPassport';
 
   @override
-  String get welcomeBackAction => 'Back';
+  String get welcomeCreateAccount => 'Create a free account';
 
   @override
-  String get welcomeHaveAccount => 'I already have an account';
+  String get welcomeHaveAccountPrompt => 'Already have an account?';
 
   @override
-  String get welcomeRoleEvent => 'Event';
-
-  @override
-  String get welcomeRoleVenue => 'Venue';
-
-  @override
-  String get welcomeRoleGear => 'Gear';
-
-  @override
-  String get welcomeRoleTalent => 'Talent';
-
-  @override
-  String get welcomeRolePerformer => 'Performer';
+  String get welcomeLogIn => 'Log in';
 
   @override
   String get welcome1Eyebrow => 'FoxPassport';
 
   @override
-  String get welcome1Headline => 'Welcome to FoxPassport';
+  String get welcome1Headline => 'Plan any\noccasion';
 
   @override
   String get welcome1Body =>
-      'Plan, book and live unforgettable events — and meet the people who make them happen.';
-
-  @override
-  String get welcome1Button => 'Show me around';
+      'Weddings, birthdays, corporate nights and nights out: book the venue, the gear and the crew in one app.';
 
   @override
   String get welcome2Eyebrow => 'Explore';
 
   @override
-  String get welcome2Headline => 'Discover experiences';
+  String get welcome2Headline => 'What\'s on\nnear you';
 
   @override
   String get welcome2Body =>
-      'Browse trending events, venues, gear and talent near you. Filter by vibe — birthdays, weddings, corporate nights and more.';
+      'Tokyo, Paris, New York or your own city: events this week and venues free on your date, wherever you are.';
 
   @override
-  String get welcome2Button => 'Next';
+  String get welcome3Eyebrow => 'Your passport';
 
   @override
-  String get welcome3Eyebrow => 'Foxers';
-
-  @override
-  String get welcome3Headline => 'Book Foxers in one place';
+  String get welcome3Headline => 'Tickets and\nstamps';
 
   @override
   String get welcome3Body =>
-      'Foxers are the verified pros behind every event. See their real availability, book them directly and pay securely.';
+      'Your ticket works offline at the door, and every event adds a stamp. Want to earn? Apply as a Foxer.';
 
   @override
-  String get welcome3Button => 'Next';
+  String get welcomeArtBirthdayName => 'Kai turns';
 
   @override
-  String get welcome4Eyebrow => 'Passport';
+  String get welcomeArtBirthdayAge => '30';
 
   @override
-  String get welcome4Headline => 'Stamp your passport';
+  String get welcomeArtBirthdayWhen => 'Sat · 8 PM';
 
   @override
-  String get welcome4Body =>
-      'Every event you attend earns stamps, badges and levels on your digital FoxPassport.';
+  String get welcomeArtWeddingFamilies => 'Together with\ntheir families';
 
   @override
-  String get welcome4Button => 'Next';
+  String get welcomeArtWeddingFirst => 'Ana';
 
   @override
-  String get welcome5Eyebrow => 'Republic';
+  String get welcomeArtWeddingSecond => 'Leo';
 
   @override
-  String get welcome5Headline => 'Join the Republic';
+  String get welcomeArtWeddingDate => '15 · 11 · 2026';
 
   @override
-  String get welcome5Body =>
-      'Follow friends, post to the feed, chat with hosts and match with Foxers who fit your plans.';
+  String get welcomeArtWeddingPlace => 'Lisbon';
 
   @override
-  String get welcome5Button => 'Next';
+  String get welcomeArtBadgeEvent => 'FoxCon \'26';
 
   @override
-  String get welcome6Eyebrow => 'Get started';
+  String get welcomeArtBadgeRole => 'Speaker';
 
   @override
-  String get welcome6Headline => 'Ready when you are';
+  String get welcomeArtBadgeName => 'Rae Cruz';
 
   @override
-  String get welcome6Body =>
-      'Create a free account to book and earn stamps. Want to earn instead? Apply as a Foxer once you\'re signed up.';
+  String get welcomeArtWristband => 'VIP · Rooftop · 08.11';
 
   @override
-  String get welcome6Button => 'Create a free account';
+  String get welcomeVerified => 'Every Foxer is verified';
+
+  @override
+  String get welcomeBoardTitle => 'What\'s on';
+
+  @override
+  String get welcomeBoardWhen => 'Tonight';
+
+  @override
+  String welcomeBoardLocalTime(String time) {
+    return 'Local $time';
+  }
+
+  @override
+  String get welcomeBoardColCity => 'City';
+
+  @override
+  String get welcomeBoardColEvent => 'Event';
+
+  @override
+  String get welcomeBoardColStatus => 'Status';
+
+  @override
+  String get welcomeBoardLive => 'Live';
+
+  @override
+  String get welcomeBoardFewLeft => 'Few left';
+
+  @override
+  String get welcomeBoardTonight => 'Tonight';
+
+  @override
+  String get welcomeBoardSat => 'Sat';
+
+  @override
+  String get welcomeBoardSun => 'Sun';
+
+  @override
+  String get welcomeBoardCity1 => 'Tokyo';
+
+  @override
+  String get welcomeBoardEvent1 => 'Jazz night';
+
+  @override
+  String get welcomeBoardCity2 => 'Paris';
+
+  @override
+  String get welcomeBoardEvent2 => 'Gala dinner';
+
+  @override
+  String get welcomeBoardCity3 => 'New York';
+
+  @override
+  String get welcomeBoardEvent3 => 'Rooftop DJ';
+
+  @override
+  String get welcomeBoardCity4 => 'Malé';
+
+  @override
+  String get welcomeBoardEvent4 => 'Beach party';
+
+  @override
+  String get welcomeBoardCity5 => 'Manila';
+
+  @override
+  String get welcomeBoardEvent5 => 'Food market';
+
+  @override
+  String get welcomeBoardCity6 => 'Lisbon';
+
+  @override
+  String get welcomeBoardEvent6 => 'Fado night';
+
+  @override
+  String get welcomeBoardCity7 => 'Seoul';
+
+  @override
+  String get welcomeBoardEvent7 => 'K-pop live';
+
+  @override
+  String get welcomeBoardCity8 => 'Berlin';
+
+  @override
+  String get welcomeBoardEvent8 => 'Techno set';
+
+  @override
+  String get welcomeBoardCity9 => 'Sydney';
+
+  @override
+  String get welcomeBoardEvent9 => 'Harbour gig';
+
+  @override
+  String get welcomeBoardCity10 => 'Rio';
+
+  @override
+  String get welcomeBoardEvent10 => 'Samba night';
+
+  @override
+  String get welcomePassportHeader => 'Visas · Stamps';
+
+  @override
+  String get welcomePassportMicro => 'Republic of Foxers';
+
+  @override
+  String get welcomeStamp1Code => 'TYO';
+
+  @override
+  String get welcomeStamp1Ring => 'Republic of Foxers ★ Tokyo ★ Entry ★';
+
+  @override
+  String get welcomeStamp1Date => '14 Oct 2026';
+
+  @override
+  String get welcomeStamp2Code => 'Paris';
+
+  @override
+  String get welcomeStamp2Kind => 'Entry →';
+
+  @override
+  String get welcomeStamp2Date => 'CDG · 06 Sep 2026';
+
+  @override
+  String get welcomeStamp3Code => 'NYC';
+
+  @override
+  String get welcomeStamp3Kind => '★ Arrived ★';
+
+  @override
+  String get welcomeStamp3Date => '21 Aug 2026';
+
+  @override
+  String get welcomeTicketBrand => 'FoxPassport';
+
+  @override
+  String get welcomeTicketAdmit => 'Admit 1';
+
+  @override
+  String get welcomeTicketTitle => 'Garden Wedding';
+
+  @override
+  String get welcomeTicketWhen => 'Sun 15 Nov · 16:00 · Lisbon';
+
+  @override
+  String get welcomeTicketOffline => 'Works offline';
 
   @override
   String get authContinueWithApple => 'Continue with Apple';
@@ -906,6 +1028,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonMap => 'The map is coming soon';
 
   @override
+  String get whereYoullBe => 'Where you\'ll be';
+
+  @override
+  String get locationAfterBooking => 'Exact location provided after booking';
+
+  @override
   String get comingSoonWallet => 'Wallet passes are coming soon';
 
   @override
@@ -1018,6 +1146,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportLeaderboard => 'Leaderboard';
+
+  @override
+  String get passportViewProfile => 'View my profile';
 
   @override
   String get passportLocked => 'Locked';
@@ -1187,6 +1318,1323 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsCurrency => 'Currency';
 
   @override
+  String get settingsPreferences => 'Preferences';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsEditProfile => 'Edit profile';
+
+  @override
+  String get settingsBlockedUsers => 'Blocked users';
+
+  @override
+  String get settingsBlockedUsersHint =>
+      'People who can\'t send you a follow request';
+
+  @override
+  String get settingsChangePassword => 'Change password';
+
+  @override
+  String get settingsChangePasswordHint =>
+      'Use a new password to keep your account safe';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountHint => 'Permanently remove your account';
+
+  @override
+  String get spaceCitizen => 'Citizen';
+
+  @override
+  String get spaceVenue => 'Venue';
+
+  @override
+  String get spaceEvent => 'Event';
+
+  @override
+  String get spaceCitizenHint => 'Browse, plan and book';
+
+  @override
+  String get spaceVenueHint => 'Your venues and the requests for them';
+
+  @override
+  String get spaceEventHint => 'Your events and guest check-in';
+
+  @override
+  String get spaceSwitchTitle => 'Switch space';
+
+  @override
+  String get spaceSwitchHint =>
+      'You hold more than one role. Choose where to work.';
+
+  @override
+  String spaceNowIn(String space) {
+    return 'Now in $space';
+  }
+
+  @override
+  String get spaceManageOnWeb => 'Manage on the web';
+
+  @override
+  String get spaceTabRequests => 'Requests';
+
+  @override
+  String get spaceTabVenues => 'Venues';
+
+  @override
+  String get spaceTabEvents => 'Events';
+
+  @override
+  String get spaceTabCheckIn => 'Check-in';
+
+  @override
+  String get spaceTabOverview => 'Overview';
+
+  @override
+  String get spaceTabCalendar => 'Calendar';
+
+  @override
+  String get spaceTabEarnings => 'Earnings';
+
+  @override
+  String get spaceTabMore => 'More';
+
+  @override
+  String get venueKpiLive => 'Venues live';
+
+  @override
+  String venueKpiLiveValue(int live, int total) {
+    return '$live of $total';
+  }
+
+  @override
+  String get venueKpiUpcoming => 'Bookings, next 30 days';
+
+  @override
+  String get venueKpiPaid => 'Paid out';
+
+  @override
+  String get venueKpiPending => 'Pending payouts';
+
+  @override
+  String get venueNeedsReply => 'Needs your reply';
+
+  @override
+  String get venueSeeAll => 'See all';
+
+  @override
+  String get venueNothingWaiting => 'Nothing is waiting for you.';
+
+  @override
+  String get venueComingUp => 'Coming up at your venues';
+
+  @override
+  String get venueNothingUpcoming => 'No bookings in the next 30 days.';
+
+  @override
+  String get venueQuickActions => 'Quick actions';
+
+  @override
+  String get venueQuickCheckIn => 'Check in a guest';
+
+  @override
+  String get venueQuickCloseDay => 'Close a day';
+
+  @override
+  String get venueQuickAddVenue => 'Add a venue';
+
+  @override
+  String get venueAddVenue => 'Add venue';
+
+  @override
+  String get esTitleNew => 'New event';
+
+  @override
+  String get esTitleEdit => 'Edit event';
+
+  @override
+  String get esStepBasics => 'Basics';
+
+  @override
+  String get esStepLocation => 'Location';
+
+  @override
+  String get esStepPhotos => 'Photos';
+
+  @override
+  String get esStepPackage => 'Package';
+
+  @override
+  String get esStepReview => 'Review';
+
+  @override
+  String get esTitle => 'Event title';
+
+  @override
+  String get esCategory => 'Category';
+
+  @override
+  String get esCatCorporate => 'Corporate';
+
+  @override
+  String get esCatBirthday => 'Birthday';
+
+  @override
+  String get esCatWedding => 'Wedding';
+
+  @override
+  String get esCatSocial => 'Social';
+
+  @override
+  String get esCatOther => 'Other';
+
+  @override
+  String get esCatOtherHint => 'Please specify the event category';
+
+  @override
+  String get esDescription => 'Description';
+
+  @override
+  String esWordCount(int count) {
+    return '$count / 500 words';
+  }
+
+  @override
+  String esWordsToGo(int count) {
+    return '$count more to reach 100';
+  }
+
+  @override
+  String get esAttendees => 'Max attendees';
+
+  @override
+  String get esPolicy => 'Cancellation policy';
+
+  @override
+  String get esLocationHint =>
+      'Where the event takes place. Choosing a venue fills this in for you.';
+
+  @override
+  String get esPhotosHint => 'Up to 5 photos. Five is recommended.';
+
+  @override
+  String get esPackageTitle => 'Core package';
+
+  @override
+  String get esPackageHint => 'The venue and everything your event includes.';
+
+  @override
+  String get esVenueSlot => 'Venue';
+
+  @override
+  String get esNoVenue => 'No venue yet';
+
+  @override
+  String get esChooseVenue => 'Choose a venue';
+
+  @override
+  String get esAdd => 'Add to package';
+
+  @override
+  String get esPackageEmpty => 'Nothing else added yet.';
+
+  @override
+  String esEditItem(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get esAgreedPrice => 'Agreed price';
+
+  @override
+  String esListed(String price) {
+    return 'Listed: $price';
+  }
+
+  @override
+  String get esOptional => 'Optional';
+
+  @override
+  String get esRemove => 'Remove from package';
+
+  @override
+  String get esDone => 'Done';
+
+  @override
+  String get esCostVenue => 'Venue';
+
+  @override
+  String get esCostTalent => 'Talent';
+
+  @override
+  String get esCostServices => 'Services and equipment';
+
+  @override
+  String get esCostTotal => 'Package cost';
+
+  @override
+  String get esMargin => 'Margin';
+
+  @override
+  String get esSuggested => 'Suggested price';
+
+  @override
+  String get esPickVenues => 'Venues';
+
+  @override
+  String get esPickTalent => 'Talent';
+
+  @override
+  String get esPickServices => 'Services';
+
+  @override
+  String get esPickEquipment => 'Equipment';
+
+  @override
+  String get esPickSearch => 'Search';
+
+  @override
+  String get esPickNone => 'Nothing found.';
+
+  @override
+  String get esPickMore => 'Load more';
+
+  @override
+  String get esAdded => 'Added';
+
+  @override
+  String get esAccessApproved => 'Approved';
+
+  @override
+  String get esAccessPending => 'Pending';
+
+  @override
+  String get esAccessApply => 'Apply first';
+
+  @override
+  String esToastAdded(String name) {
+    return 'Added $name to your package';
+  }
+
+  @override
+  String esToastDuplicate(String name) {
+    return '$name is already in your package';
+  }
+
+  @override
+  String get esToastOneVenue =>
+      'Only one venue can be in the package. Remove the existing venue first.';
+
+  @override
+  String get esToastVenuePending =>
+      'Your affiliation with this venue is still pending approval.';
+
+  @override
+  String get esToastVenueApply =>
+      'Apply to this venue first. You need an approved affiliation to host here.';
+
+  @override
+  String get esReadyTitle => 'Event title';
+
+  @override
+  String get esReadyCategory => 'Category selected';
+
+  @override
+  String get esReadyOther => 'Say what kind of event it is';
+
+  @override
+  String get esReadyVenue => 'Approved venue attached';
+
+  @override
+  String get esReadyGallery => '5 photos';
+
+  @override
+  String get esReadyDescription => '100+ word description';
+
+  @override
+  String get esRequired => 'Required';
+
+  @override
+  String get esRecommended => 'Recommended';
+
+  @override
+  String esScore(int pct) {
+    return '$pct% ready';
+  }
+
+  @override
+  String get esNotDraft =>
+      'This event has already been sent for review, so you can only save changes.';
+
+  @override
+  String get esSaveDraft => 'Save as draft';
+
+  @override
+  String get esSubmit => 'Send for review';
+
+  @override
+  String get esSaveChanges => 'Save changes';
+
+  @override
+  String get esSavedDraft => 'Draft saved.';
+
+  @override
+  String get esSubmitted => 'Sent for review.';
+
+  @override
+  String get esSavedChanges => 'Changes saved.';
+
+  @override
+  String get esNeedsTitle => 'Add an event title before saving.';
+
+  @override
+  String get esSaveFailed => 'We couldn\'t save that. Try again.';
+
+  @override
+  String get esPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get esPartial =>
+      'Saved, but some items could not be added. Fix them and send it again.';
+
+  @override
+  String esProblemLine(String name, String reason) {
+    return '$name: $reason';
+  }
+
+  @override
+  String get esEditEvent => 'Edit event';
+
+  @override
+  String get esViewPublic => 'View public page';
+
+  @override
+  String get eventsSearchHint => 'Search your events';
+
+  @override
+  String eventsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsCountOf(int shown, int total) {
+    return '$shown of $total events';
+  }
+
+  @override
+  String get eventsNoMatch => 'No events match.';
+
+  @override
+  String eventsInvitesWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venue invitations are waiting',
+      one: '1 venue invitation is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events are in review',
+      one: '1 event is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events were declined',
+      one: '1 event was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String eventsDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get eventsNewOnWeb => 'New event';
+
+  @override
+  String get overviewAttention => 'Needs your attention';
+
+  @override
+  String get overviewAllClear => 'You\'re all caught up.';
+
+  @override
+  String overviewPartnersWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partner applications are waiting',
+      one: '1 partner application is waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesInReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues are in review',
+      one: '1 venue is in review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDeclined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues were declined',
+      one: '1 venue was declined',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overviewVenuesDrafts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count drafts to finish',
+      one: '1 draft to finish',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get overviewTodayAhead => 'Today and coming up';
+
+  @override
+  String get overviewToday => 'Today';
+
+  @override
+  String get overviewNumbers => 'Numbers';
+
+  @override
+  String calendarAllVenuesCount(int count) {
+    return 'All venues ($count)';
+  }
+
+  @override
+  String get calendarShowAllVenues => 'Show all venues';
+
+  @override
+  String get venuesSearchHint => 'Search by name or city';
+
+  @override
+  String get venuesSearchClear => 'Clear search';
+
+  @override
+  String venuesFilterAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String venuesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues',
+      one: '1 venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String venuesCountOf(int shown, int total) {
+    return '$shown of $total venues';
+  }
+
+  @override
+  String get venuesNoMatch => 'No venues match.';
+
+  @override
+  String get partnersTitle => 'Partners';
+
+  @override
+  String get promotionsTitle => 'Promotions';
+
+  @override
+  String get promotionsLoadFailed => 'Could not load your promotions.';
+
+  @override
+  String get promotionsEmpty => 'No promotions yet';
+
+  @override
+  String get promotionsEmptyBody =>
+      'Offer a discount on a venue to draw more bookings.';
+
+  @override
+  String get promotionNew => 'New promotion';
+
+  @override
+  String get promotionVenue => 'Venue';
+
+  @override
+  String get promotionName => 'Name';
+
+  @override
+  String get promotionPercent => 'Percent off';
+
+  @override
+  String get promotionFixed => 'Amount off';
+
+  @override
+  String get promotionValue => 'Discount';
+
+  @override
+  String get promotionAutoApply => 'Apply automatically';
+
+  @override
+  String get promotionAutoApplyHint =>
+      'Guests get it at checkout without a code.';
+
+  @override
+  String get promotionCreate => 'Create promotion';
+
+  @override
+  String get promotionCreated => 'Promotion created.';
+
+  @override
+  String get promotionDeleted => 'Promotion removed.';
+
+  @override
+  String get promotionDelete => 'Remove';
+
+  @override
+  String promotionDeleteTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get promotionDeleteBody => 'Guests will no longer get this discount.';
+
+  @override
+  String get promotionNoVenue => 'Add a venue first.';
+
+  @override
+  String get promotionActionFailed => 'Something went wrong. Try again.';
+
+  @override
+  String promotionPercentOff(String value) {
+    return '$value% off';
+  }
+
+  @override
+  String promotionAmountOff(String amount) {
+    return '$amount off';
+  }
+
+  @override
+  String get promotionAuto => 'automatic';
+
+  @override
+  String get partnersIntroMayor =>
+      'Event Foxers who want to run events at your venues.';
+
+  @override
+  String get partnersIntroEvent => 'The venues you can run your events at.';
+
+  @override
+  String get partnersNeedsAnswer => 'Needs your answer';
+
+  @override
+  String get partnersWaitingForThem => 'Waiting for them';
+
+  @override
+  String get partnersActive => 'Active';
+
+  @override
+  String get partnersPast => 'Past';
+
+  @override
+  String get partnersEmpty => 'No partners yet.';
+
+  @override
+  String partnersApplied(String name, String venue) {
+    return '$name applied to host at $venue';
+  }
+
+  @override
+  String partnersYouInvited(String name, String venue) {
+    return 'You invited $name to host at $venue';
+  }
+
+  @override
+  String partnersInvitedYou(String venue) {
+    return '$venue invited you to host events there';
+  }
+
+  @override
+  String partnersYouApplied(String venue) {
+    return 'You applied to host at $venue';
+  }
+
+  @override
+  String partnersActiveAt(String name, String venue) {
+    return '$name at $venue';
+  }
+
+  @override
+  String partnersAgreedPrice(String price) {
+    return 'Agreed price: $price';
+  }
+
+  @override
+  String get partnersApprove => 'Approve';
+
+  @override
+  String get partnersAccept => 'Accept';
+
+  @override
+  String get partnersReject => 'Reject';
+
+  @override
+  String get partnersDecline => 'Decline';
+
+  @override
+  String get partnersWithdraw => 'Withdraw';
+
+  @override
+  String get partnersRevoke => 'End partnership';
+
+  @override
+  String get partnersRevokeTitle => 'End this partnership?';
+
+  @override
+  String partnersRevokeBody(String name, String venue) {
+    return '$name will no longer be partnered with $venue.';
+  }
+
+  @override
+  String get partnersRejectTitle => 'Say no to this?';
+
+  @override
+  String get partnersRejectBody => 'They will be told you said no.';
+
+  @override
+  String get partnersApproved => 'Done. They\'ve been told.';
+
+  @override
+  String get partnersRejected => 'Declined. They\'ve been told.';
+
+  @override
+  String get partnersWithdrawn => 'Withdrawn.';
+
+  @override
+  String get partnersRevoked => 'Partnership ended.';
+
+  @override
+  String get partnersActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String get partnersStatusRejected => 'Declined';
+
+  @override
+  String get partnersStatusRevoked => 'Ended';
+
+  @override
+  String get partnersOpenRow => 'Venue partners';
+
+  @override
+  String get partnersInvite => 'Invite an Event Foxer';
+
+  @override
+  String get partnersInviteTitle => 'Choose an Event Foxer';
+
+  @override
+  String get partnersInviteHint => 'Search Event Foxers';
+
+  @override
+  String get partnersInviteNone => 'No Event Foxers found.';
+
+  @override
+  String get partnersChooseVenue => 'Which venue?';
+
+  @override
+  String get partnersInviteNoVenue =>
+      'You need a live venue to invite someone.';
+
+  @override
+  String partnersInviteConfirmTitle(String name) {
+    return 'Invite $name?';
+  }
+
+  @override
+  String partnersInviteConfirmBody(String venue) {
+    return 'They\'ll be asked to host events at $venue.';
+  }
+
+  @override
+  String get partnersInviteAction => 'Invite';
+
+  @override
+  String get partnersInviteSent => 'Invitation sent.';
+
+  @override
+  String get partnersApply => 'Apply to a venue';
+
+  @override
+  String get partnersApplyTitle => 'Choose a venue';
+
+  @override
+  String get partnersSearchHint => 'Search venues';
+
+  @override
+  String get partnersApplyNone => 'No venues found.';
+
+  @override
+  String get partnersAlready => 'Already on your list';
+
+  @override
+  String partnersApplyConfirmTitle(String venue) {
+    return 'Apply to $venue?';
+  }
+
+  @override
+  String get partnersApplyConfirmBody =>
+      'The venue\'s Mayor will be asked to approve.';
+
+  @override
+  String get partnersApplyAction => 'Apply';
+
+  @override
+  String get partnersApplySent => 'Applied. The Mayor has been told.';
+
+  @override
+  String get studioTitleNew => 'New venue';
+
+  @override
+  String get studioTitleEdit => 'Edit venue';
+
+  @override
+  String get studioStepBasics => 'Basics';
+
+  @override
+  String get studioStepLocation => 'Location';
+
+  @override
+  String get studioStepPhotos => 'Photos';
+
+  @override
+  String get studioStepDetails => 'What\'s included';
+
+  @override
+  String get studioStepPricing => 'Pricing';
+
+  @override
+  String get studioStepReview => 'Review';
+
+  @override
+  String get studioName => 'Venue name';
+
+  @override
+  String get studioDescription => 'Describe your venue';
+
+  @override
+  String get studioCapacity => 'Capacity (guests)';
+
+  @override
+  String get studioCategory => 'Type of venue';
+
+  @override
+  String get studioCategoryIndoor => 'Indoor';
+
+  @override
+  String get studioCategoryOutdoor => 'Outdoor';
+
+  @override
+  String get studioCategoryHotel => 'Hotel';
+
+  @override
+  String get studioCategoryBeachResort => 'Beach resort';
+
+  @override
+  String get studioCategoryGarden => 'Garden';
+
+  @override
+  String get studioCategoryMix => 'Indoor and outdoor';
+
+  @override
+  String get studioCategoryOther => 'Other';
+
+  @override
+  String get studioAddress => 'Street address';
+
+  @override
+  String get studioCity => 'City';
+
+  @override
+  String get studioState => 'State or province';
+
+  @override
+  String get studioCountry => 'Country';
+
+  @override
+  String get studioServiceArea => 'Service area';
+
+  @override
+  String get studioServiceAreaHint =>
+      'Tap the map to drop a pin where your venue is, then set how far around it your area reaches.';
+
+  @override
+  String get studioRadius => 'Radius';
+
+  @override
+  String studioRadiusValue(int meters) {
+    return '$meters m';
+  }
+
+  @override
+  String studioOverlap(String names) {
+    return 'This area overlaps $names. Move the pin or shrink the radius.';
+  }
+
+  @override
+  String get studioNoPin => 'No pin yet';
+
+  @override
+  String get studioPhotosHint => 'Add 1 to 5 photos. The first is the cover.';
+
+  @override
+  String get studioAddPhoto => 'Add photo';
+
+  @override
+  String get studioPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get studioIncluded => 'What guests get';
+
+  @override
+  String get studioSpaceType => 'Spaces';
+
+  @override
+  String get studioAmenities => 'Amenities';
+
+  @override
+  String get studioTechAv => 'Tech and AV';
+
+  @override
+  String get studioStaffing => 'Staffing';
+
+  @override
+  String get studioPolicies => 'House rules';
+
+  @override
+  String get studioAddCustom => 'Add your own';
+
+  @override
+  String get studioPrice => 'Price';
+
+  @override
+  String get studioBillingRate => 'Charged';
+
+  @override
+  String get studioRateHourly => 'Hourly';
+
+  @override
+  String get studioRateDaily => 'Daily';
+
+  @override
+  String get studioRateWeekly => 'Weekly';
+
+  @override
+  String get studioRateMonthly => 'Monthly';
+
+  @override
+  String get studioRateYearly => 'Yearly';
+
+  @override
+  String get studioRateOneTime => 'One time';
+
+  @override
+  String get studioExtraGuest => 'Extra guest fee (optional)';
+
+  @override
+  String get studioCancellation => 'Cancellation policy';
+
+  @override
+  String get studioReviewReady => 'Ready to send for review';
+
+  @override
+  String get studioReviewMissing => 'Still to fill in';
+
+  @override
+  String get studioMissingName => 'Venue name';
+
+  @override
+  String get studioMissingCategory => 'Type of venue';
+
+  @override
+  String get studioMissingDescription => 'Description';
+
+  @override
+  String get studioMissingCapacity => 'Capacity';
+
+  @override
+  String get studioMissingAddress => 'Address, city and country';
+
+  @override
+  String get studioMissingLocation => 'A pin on the map';
+
+  @override
+  String get studioMissingPhotos => 'At least one photo';
+
+  @override
+  String get studioMissingPrice => 'A price';
+
+  @override
+  String get studioNext => 'Next';
+
+  @override
+  String get studioBack => 'Back';
+
+  @override
+  String get studioSaveDraft => 'Save as draft';
+
+  @override
+  String get studioSubmit => 'Send for review';
+
+  @override
+  String get studioSaveChanges => 'Save changes';
+
+  @override
+  String get studioSavedDraft => 'Draft saved.';
+
+  @override
+  String get studioSubmitted =>
+      'Sent for review. We\'ll tell you when it\'s live.';
+
+  @override
+  String get studioSavedChanges => 'Changes saved.';
+
+  @override
+  String get studioSaveFailed => 'We couldn\'t save that. Try again.';
+
+  @override
+  String get studioOverlapRefused =>
+      'Another venue already covers part of this area. Move the pin.';
+
+  @override
+  String get studioLiveNote =>
+      'This venue is live. Your changes show to guests as soon as you save.';
+
+  @override
+  String get studioUseMyLocation => 'Use my current location';
+
+  @override
+  String get studioLocateDenied =>
+      'Location is off for this app. Allow it in your phone\'s settings, or tap the map instead.';
+
+  @override
+  String get studioLocateOff =>
+      'Turn on your phone\'s location, or tap the map instead.';
+
+  @override
+  String get studioLocateFailed =>
+      'We couldn\'t find where you are. Tap the map instead.';
+
+  @override
+  String studioPhotoFailedWhy(String reason) {
+    return 'That photo didn\'t upload: $reason';
+  }
+
+  @override
+  String get studioMapNeedsToken =>
+      'The map isn\'t available, so the pin can\'t be placed.';
+
+  @override
+  String get venueHubEdit => 'Edit details';
+
+  @override
+  String get venueHubEditHint => 'Name, photos, location, pricing';
+
+  @override
+  String get venueHubAvailability => 'Availability';
+
+  @override
+  String get venueHubAvailabilityHint => 'See bookings and close days';
+
+  @override
+  String get venueHubPublic => 'View public page';
+
+  @override
+  String get venueHubPublicHint => 'How guests see it';
+
+  @override
+  String get earningsTitle => 'Earnings';
+
+  @override
+  String get earningsPending => 'Pending';
+
+  @override
+  String get earningsPaid => 'Paid out';
+
+  @override
+  String get earningsRecent => 'Recent payouts';
+
+  @override
+  String get earningsNone =>
+      'No payouts yet. They appear after a guest is checked in.';
+
+  @override
+  String get earningsSetup => 'Payout setup';
+
+  @override
+  String get earningsSetupReady => 'Payouts are on';
+
+  @override
+  String get earningsSetupReadyHint => 'You\'ll be paid to your bank account.';
+
+  @override
+  String get earningsSetupStart => 'Set up payouts';
+
+  @override
+  String get earningsSetupFinish => 'Finish payout setup';
+
+  @override
+  String get earningsSetupHint =>
+      'Opens on the web. It asks for your bank and identity details.';
+
+  @override
+  String get payoutPending => 'Pending';
+
+  @override
+  String get payoutPaid => 'Paid';
+
+  @override
+  String get payoutFailed => 'Failed';
+
+  @override
+  String get payoutSourceVenue => 'Venue booking';
+
+  @override
+  String get payoutSourceOther => 'Other';
+
+  @override
+  String get moreTitle => 'More';
+
+  @override
+  String get requestsTitle => 'Requests';
+
+  @override
+  String get requestsIntro =>
+      'People adding your venue to their events. Confirm the ones you can host.';
+
+  @override
+  String get requestsEmpty =>
+      'No requests yet. When someone adds your venue to their event, it shows up here.';
+
+  @override
+  String requestFrom(String name) {
+    return 'From $name';
+  }
+
+  @override
+  String requestReplyBy(String date) {
+    return 'Reply by $date';
+  }
+
+  @override
+  String get requestAccept => 'Accept';
+
+  @override
+  String get requestDecline => 'Decline';
+
+  @override
+  String get requestAccepted => 'Request accepted.';
+
+  @override
+  String get requestDeclined => 'Request declined.';
+
+  @override
+  String get requestActionFailed =>
+      'We couldn\'t update that request. Try again.';
+
+  @override
+  String get requestDeclineTitle => 'Decline this request?';
+
+  @override
+  String get requestDeclineBody => 'They\'ll be told you can\'t host it.';
+
+  @override
+  String get requestStatusAwaiting => 'Needs your reply';
+
+  @override
+  String get requestStatusPending => 'Pending';
+
+  @override
+  String get requestStatusApproved => 'Accepted';
+
+  @override
+  String get requestStatusRejected => 'Declined';
+
+  @override
+  String get requestStatusCancelled => 'Cancelled';
+
+  @override
+  String get listingsVenuesEmpty =>
+      'You haven\'t listed a venue yet. Add one on the web.';
+
+  @override
+  String get listingsEventsEmpty =>
+      'You haven\'t created an event yet. Tap New event to start one.';
+
+  @override
+  String get listingStatusDraft => 'Draft';
+
+  @override
+  String get listingStatusPending => 'In review';
+
+  @override
+  String get listingStatusLive => 'Live';
+
+  @override
+  String get listingStatusRejected => 'Rejected';
+
+  @override
+  String get listingStatusArchived => 'Archived';
+
+  @override
+  String get checkInTitle => 'Check-in';
+
+  @override
+  String get checkInIntro =>
+      'Scan the QR on a guest\'s ticket, or type the code printed under it.';
+
+  @override
+  String get checkInScan => 'Scan ticket';
+
+  @override
+  String get checkInScanTitle => 'Scan a ticket';
+
+  @override
+  String get checkInScanHint => 'Point the camera at the QR on the ticket.';
+
+  @override
+  String get checkInTorch => 'Light';
+
+  @override
+  String get checkInCameraDenied =>
+      'Camera access is off. Allow it in your phone\'s settings, or type the code instead.';
+
+  @override
+  String get checkInCameraFailed =>
+      'The camera isn\'t available. Type the code instead.';
+
+  @override
+  String get checkInTypeInstead => 'Type the code';
+
+  @override
+  String get checkInCodeLabel => 'Ticket code';
+
+  @override
+  String get checkInAction => 'Check in guest';
+
+  @override
+  String get checkInDone => 'Guest checked in.';
+
+  @override
+  String get checkInFailed =>
+      'We couldn\'t check that guest in. Check the code and try again.';
+
+  @override
+  String get blockedTitle => 'Blocked users';
+
+  @override
+  String get blockedBody =>
+      'Blocked people can\'t send you a new follow request. You can unblock anyone at any time.';
+
+  @override
+  String get blockedEmpty => 'You haven\'t blocked anyone.';
+
+  @override
+  String get blockedUnblock => 'Unblock';
+
+  @override
+  String blockedUnblocked(String name) {
+    return '$name was unblocked.';
+  }
+
+  @override
+  String get blockedUnblockFailed => 'We couldn\'t unblock them. Try again.';
+
+  @override
+  String get passwordTitle => 'Change password';
+
+  @override
+  String get passwordCurrent => 'Current password';
+
+  @override
+  String get passwordNew => 'New password';
+
+  @override
+  String get passwordConfirm => 'Confirm new password';
+
+  @override
+  String get passwordSave => 'Update password';
+
+  @override
+  String get passwordChanged => 'Your password was changed.';
+
+  @override
+  String get passwordChangeFailed =>
+      'We couldn\'t change your password. Try again.';
+
+  @override
+  String get deleteAccountTitle => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'This is permanent. All your data, including bookings, badges, stamps and listings, will be erased. Cancel any active bookings first.';
+
+  @override
+  String get deleteAccountPassword => 'Confirm your password';
+
+  @override
+  String get deleteAccountType => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountMismatch => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountAction => 'Delete my account';
+
+  @override
+  String get deleteAccountFailed =>
+      'We couldn\'t delete your account. Try again.';
+
+  @override
   String get currencyTitle => 'Show prices in';
 
   @override
@@ -1245,6 +2693,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventFull => 'This event is full.';
 
   @override
+  String get eventWaitlistFull =>
+      'This event is full. Join the waitlist and we\'ll tell you when a spot opens.';
+
+  @override
+  String eventWaitlistOn(int position, int total) {
+    return 'You\'re number $position of $total on the waitlist. We\'ll tell you when a spot opens.';
+  }
+
+  @override
+  String get eventWaitlistOnNoPlace =>
+      'You\'re on the waitlist. We\'ll tell you when a spot opens.';
+
+  @override
+  String get eventWaitlistOpened =>
+      'A spot opened up. Book now before it fills again.';
+
+  @override
+  String get eventWaitlistJoin => 'Join waitlist';
+
+  @override
+  String get eventWaitlistLeave => 'Leave waitlist';
+
+  @override
+  String get eventWaitlistJoined => 'You\'re on the waitlist.';
+
+  @override
+  String get eventWaitlistLeft => 'You left the waitlist.';
+
+  @override
+  String get eventWaitlistFailed => 'That didn\'t work. Try again.';
+
+  @override
   String get eventNotPriced =>
       'This event has no price yet, so it cannot be booked.';
 
@@ -1270,6 +2750,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketCancel => 'Cancel booking';
+
+  @override
+  String get ticketRequestChange => 'Request a change';
+
+  @override
+  String get editRequestTitle => 'Request a change';
+
+  @override
+  String get editRequestGuests => 'Guests';
+
+  @override
+  String get editRequestDates => 'Change the dates';
+
+  @override
+  String get editRequestReason => 'Why the change? (optional)';
+
+  @override
+  String get editRequestSend => 'Send request';
+
+  @override
+  String get editRequestSent => 'Request sent. The venue will answer soon.';
+
+  @override
+  String get editRequestFailed => 'Could not send that request. Try again.';
+
+  @override
+  String get editRequestWithdraw => 'Withdraw request';
+
+  @override
+  String get editRequestWithdrawn => 'Request withdrawn.';
+
+  @override
+  String get editRequestPending => 'Waiting for the venue';
+
+  @override
+  String get editRequestApplied => 'Approved. Your booking has changed.';
+
+  @override
+  String get editRequestPayOnWeb =>
+      'Approved. Pay the difference on the web to confirm the change.';
+
+  @override
+  String get editRequestDeclined => 'The venue declined';
+
+  @override
+  String get editRequestWithdrawnStatus => 'You withdrew this request';
+
+  @override
+  String get editRequestExpired => 'This request expired';
 
   @override
   String get cancelTitle => 'Cancel this booking?';
@@ -1358,6 +2887,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foxerMessage => 'Message';
+
+  @override
+  String get peopleTitle => 'People';
+
+  @override
+  String get peopleFollowers => 'Followers';
+
+  @override
+  String get peopleFollowing => 'Following';
+
+  @override
+  String get peopleRequests => 'Requests';
+
+  @override
+  String get peopleEmptyFollowers => 'No followers yet.';
+
+  @override
+  String get peopleEmptyFollowing => 'You are not following anyone yet.';
+
+  @override
+  String get peopleEmptyRequests => 'No follow requests.';
+
+  @override
+  String get peopleLoadFailed => 'Could not load this list.';
+
+  @override
+  String get peopleAccept => 'Accept';
+
+  @override
+  String get peopleDecline => 'Decline';
+
+  @override
+  String get peopleAnswerFailed => 'Could not answer that request. Try again.';
+
+  @override
+  String get profilePeople => 'Followers, following and requests';
+
+  @override
+  String get followAction => 'Follow';
+
+  @override
+  String get followRequested => 'Requested';
+
+  @override
+  String get followFollowing => 'Following';
+
+  @override
+  String followFollowers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count followers',
+      one: '1 follower',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get followRequestSent => 'Follow request sent.';
+
+  @override
+  String get followFailed => 'Could not update your follow. Try again.';
 
   @override
   String get foxerOffers => 'What they offer';
@@ -1585,6 +3176,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookPaymentsSoon => 'Card payments in the app are coming soon.';
 
   @override
+  String get bookPaymentCancelled => 'Payment cancelled. You were not charged.';
+
+  @override
   String get bookFailed => 'We couldn\'t complete the booking. Try again.';
 
   @override
@@ -1745,6 +3339,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarManageOnWeb => 'Manage this on the web.';
 
   @override
+  String get calendarHoldAwaiting => 'Needs your reply';
+
+  @override
+  String get calendarHoldHeld => 'Held';
+
+  @override
+  String get calendarHoldConfirmed => 'Confirmed';
+
+  @override
+  String get calendarBlocked => 'Blocked';
+
+  @override
+  String get calendarAllVenues => 'All venues';
+
+  @override
+  String get calendarDayManage => 'Open or close this day';
+
+  @override
+  String calendarDayManageTitle(String date) {
+    return 'Open or close $date';
+  }
+
+  @override
+  String get calendarDayOpen => 'Open';
+
+  @override
+  String get calendarDayClosed => 'Closed';
+
+  @override
+  String get calendarDayBooked => 'Booked, so it can\'t be closed';
+
+  @override
+  String get calendarDayFailed => 'We couldn\'t update that day. Try again.';
+
+  @override
+  String get calendarOpenDay => 'Open this day';
+
+  @override
   String get bookings => 'Bookings';
 
   @override
@@ -1757,7 +3389,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePlanning => 'What are you planning?';
 
   @override
+  String homeGreeting(String name) {
+    return 'Hi, $name';
+  }
+
+  @override
   String get homePlanNew => 'Plan something new';
+
+  @override
+  String get homeSearchHint => 'Search venues, Foxers and events';
+
+  @override
+  String get homeStartPlanning => 'Start planning';
+
+  @override
+  String homePackagesTitle(String occasion) {
+    return 'Popular $occasion packages';
+  }
+
+  @override
+  String homePackagesTitleIn(String occasion, String city) {
+    return 'Popular $occasion packages in $city';
+  }
+
+  @override
+  String packageFromPrice(String price) {
+    return 'From $price';
+  }
+
+  @override
+  String get homeVenuesTitle => 'Venues to browse';
+
+  @override
+  String homeVenuesTitleIn(String city) {
+    return 'Venues in $city';
+  }
+
+  @override
+  String get homeGearTitle => 'Gear to rent';
+
+  @override
+  String get homeServicesTitle => 'Services to add';
+
+  @override
+  String get homeFoxersTitle => 'Foxers to plan with';
+
+  @override
+  String get homeRepublicTitle => 'From the Republic';
+
+  @override
+  String get homeChecklistTitle => 'Plan your first event';
+
+  @override
+  String homeChecklistProgress(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get homeChecklistStep1 => 'Pick what you\'re planning';
+
+  @override
+  String get homeChecklistStep2 => 'Choose a package or venue';
+
+  @override
+  String get homeChecklistStep3 => 'Book it and get your ticket';
+
+  @override
+  String get homeChecklistStart => 'Start';
+
+  @override
+  String get homeChecklistContinue => 'Continue';
+
+  @override
+  String get homeComingUp => 'Coming up';
+
+  @override
+  String homeComingUpElsewhere(String city) {
+    return 'Nothing in $city yet, so here is what is on elsewhere.';
+  }
+
+  @override
+  String get homeContinuePlanning => 'Continue planning';
 
   @override
   String get homeBookOne => 'Or book just one thing';
@@ -2031,6 +3743,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewPickStars => 'Choose a star rating.';
 
   @override
+  String get republicPostTitle => 'Post';
+
+  @override
+  String get republicPostGone => 'This post is not available';
+
+  @override
+  String get republicPostGoneBody =>
+      'It may have been deleted, or it is not shared with you.';
+
+  @override
   String get republicTitle => 'Republic';
 
   @override
@@ -2050,6 +3772,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get republicPost => 'Post';
+
+  @override
+  String get republicDraftRestored => 'Draft restored';
 
   @override
   String get republicCompose => 'New post';
@@ -2082,6 +3807,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicCommentFailed => 'We couldn\'t post your comment.';
 
   @override
+  String get republicAddVideo => 'Add a video';
+
+  @override
+  String get republicRemoveVideo => 'Remove video';
+
+  @override
+  String get republicVideoTooLarge =>
+      'That video is over 100 MB. Pick a shorter one.';
+
+  @override
+  String republicVideoSize(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String republicVideoUploading(int percent) {
+    return 'Uploading $percent%';
+  }
+
+  @override
   String get republicEdited => 'edited';
 
   @override
@@ -2095,6 +3840,491 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String republicHoursAgo(int count) {
     return '${count}h';
+  }
+
+  @override
+  String get republicMore => 'More';
+
+  @override
+  String get republicSeeMore => 'See more';
+
+  @override
+  String get republicSeeLess => 'See less';
+
+  @override
+  String get republicMenuCopyLink => 'Copy link';
+
+  @override
+  String get republicMenuSave => 'Save post';
+
+  @override
+  String get republicMenuUnsave => 'Unsave';
+
+  @override
+  String get republicMenuEdit => 'Edit post';
+
+  @override
+  String get republicMenuDelete => 'Delete post';
+
+  @override
+  String get republicMenuHide => 'Hide post';
+
+  @override
+  String get republicMenuReport => 'Report post';
+
+  @override
+  String get republicLinkCopied => 'Link copied';
+
+  @override
+  String get republicSaved => 'Saved';
+
+  @override
+  String get republicUnsaved => 'Removed from saved';
+
+  @override
+  String get republicHidden => 'Post hidden';
+
+  @override
+  String get republicDeleted => 'Post deleted';
+
+  @override
+  String get republicEditTitle => 'Edit post';
+
+  @override
+  String get republicEditSave => 'Save';
+
+  @override
+  String get republicUpdated => 'Post updated';
+
+  @override
+  String get republicDeleteTitle => 'Delete this post?';
+
+  @override
+  String get republicDeleteBody => 'This cannot be undone.';
+
+  @override
+  String get republicDeleteConfirm => 'Delete';
+
+  @override
+  String get republicCancel => 'Cancel';
+
+  @override
+  String republicMenuBlock(String name) {
+    return 'Block $name';
+  }
+
+  @override
+  String blockTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockBody =>
+      'You will no longer see each other\'s posts and they cannot message you. You can unblock them any time in Settings.';
+
+  @override
+  String get blockConfirm => 'Block';
+
+  @override
+  String blockDone(String name) {
+    return '$name is blocked.';
+  }
+
+  @override
+  String get blockFailed => 'Could not block them. Try again.';
+
+  @override
+  String get foxerMenuBlock => 'Block';
+
+  @override
+  String get foxerMenuReport => 'Report';
+
+  @override
+  String get citizenNotFound => 'Citizen profile not found';
+
+  @override
+  String get citizenNotFoundBody =>
+      'This citizen may not exist, has changed their handle, or their passport is private.';
+
+  @override
+  String get citizenShare => 'Share profile';
+
+  @override
+  String get citizenLinkCopied => 'Profile link copied.';
+
+  @override
+  String get citizenMessage => 'Message';
+
+  @override
+  String get citizenMessageFailed => 'Could not open the chat. Try again.';
+
+  @override
+  String get citizenPartner => 'Partner Foxer';
+
+  @override
+  String citizenLevelChip(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String citizenSince(String year) {
+    return 'Citizen since $year';
+  }
+
+  @override
+  String get citizenFollowers => 'Followers';
+
+  @override
+  String get citizenFollowing => 'Following';
+
+  @override
+  String get citizenProgression => 'Republic citizenship progression';
+
+  @override
+  String citizenXp(int xp, int next, int percent) {
+    return '$xp / $next XP ($percent%)';
+  }
+
+  @override
+  String get citizenStatLevel => 'Level';
+
+  @override
+  String get citizenStatStamps => 'Stamps';
+
+  @override
+  String get citizenStatBadges => 'Badges';
+
+  @override
+  String get citizenStatPosts => 'Posts';
+
+  @override
+  String get citizenTabStamps => 'Stamps';
+
+  @override
+  String get citizenTabBadges => 'Badges';
+
+  @override
+  String get citizenTabActivity => 'Activity';
+
+  @override
+  String get citizenTabOfferings => 'Offerings';
+
+  @override
+  String get citizenNoStamps => 'No venue stamps yet';
+
+  @override
+  String get citizenNoStampsBody =>
+      'Going to events at verified Republic venues earns collectible passport stamps.';
+
+  @override
+  String get citizenNoBadges => 'No badges earned yet';
+
+  @override
+  String get citizenNoBadgesBody =>
+      'Badges come from exploring venues, posting in the community and climbing levels.';
+
+  @override
+  String get citizenNoPosts => 'No Republic posts yet';
+
+  @override
+  String get citizenAddBio => 'Add a bio';
+
+  @override
+  String get citizenLinkFailed => 'Could not open that link.';
+
+  @override
+  String get citizenLoadMore => 'Load more';
+
+  @override
+  String citizenComments(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get citizenNoPostsBody =>
+      'This citizen has not shared anything in the Republic feed yet.';
+
+  @override
+  String citizenUnlocked(String date) {
+    return 'Unlocked $date';
+  }
+
+  @override
+  String get citizenVenues => 'Venues hosted';
+
+  @override
+  String get citizenServices => 'Talent and services';
+
+  @override
+  String get citizenGear => 'Equipment';
+
+  @override
+  String get reportUserTitle => 'Report this Foxer';
+
+  @override
+  String get reportVenueTitle => 'Report this venue';
+
+  @override
+  String get reportFailed => 'Could not send the report. Try again.';
+
+  @override
+  String get venueReport => 'Report this venue';
+
+  @override
+  String get republicActionFailed => 'That didn\'t work. Try again.';
+
+  @override
+  String get republicSavedTitle => 'Saved posts';
+
+  @override
+  String get republicSavedEmpty =>
+      'Nothing saved yet. Save a post from its menu.';
+
+  @override
+  String get republicReportTitle => 'Report this post';
+
+  @override
+  String get republicReported => 'Thanks, we\'ll take a look.';
+
+  @override
+  String get republicReasonSpam => 'Spam';
+
+  @override
+  String get republicReasonHarassment => 'Harassment or bullying';
+
+  @override
+  String get republicReasonHate => 'Hate speech';
+
+  @override
+  String get republicReasonNudity => 'Nudity or sexual content';
+
+  @override
+  String get republicReasonViolence => 'Violence or dangerous content';
+
+  @override
+  String get republicReasonMisinfo => 'Misinformation';
+
+  @override
+  String get republicReasonOther => 'Something else';
+
+  @override
+  String get republicComposePrompt => 'What\'s on your mind?';
+
+  @override
+  String get republicLike => 'Like';
+
+  @override
+  String get republicReactLove => 'Love';
+
+  @override
+  String get republicReactHaha => 'Haha';
+
+  @override
+  String get republicReactWow => 'Wow';
+
+  @override
+  String get republicReactSad => 'Sad';
+
+  @override
+  String get republicReactAngry => 'Angry';
+
+  @override
+  String get republicReactions => 'Reactions';
+
+  @override
+  String get republicTabPartners => 'Partners';
+
+  @override
+  String get republicSearchHint => 'Search the Republic';
+
+  @override
+  String republicSearchEmpty(String query) {
+    return 'No posts match “$query”.';
+  }
+
+  @override
+  String get republicClearSearch => 'Clear search';
+
+  @override
+  String get republicShare => 'Share';
+
+  @override
+  String get republicRepost => 'Repost';
+
+  @override
+  String get republicRepostTitle => 'Repost to your feed';
+
+  @override
+  String get republicRepostHint => 'Say something about this…';
+
+  @override
+  String get republicReposted => 'Reposted to your feed.';
+
+  @override
+  String get republicSendInMessage => 'Send in message';
+
+  @override
+  String get republicSendPostTitle => 'Send post';
+
+  @override
+  String get republicSendSearch => 'Search your chats';
+
+  @override
+  String get republicSendCaptionHint => 'Add a message…';
+
+  @override
+  String get republicSendNoChats => 'No chats to send to. Start a chat first.';
+
+  @override
+  String get republicPostSent => 'Post sent.';
+
+  @override
+  String republicPostSentMany(int count) {
+    return 'Post sent to $count chats.';
+  }
+
+  @override
+  String get republicSendPostFailed =>
+      'We couldn\'t send that post. Try again.';
+
+  @override
+  String get republicVerifiedStamp => 'Verified Venue Stamp';
+
+  @override
+  String get republicVerifiedBooking => 'Verified booking';
+
+  @override
+  String republicVotesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count votes',
+      one: '1 vote',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get republicVoteFailed => 'Your vote didn\'t go through.';
+
+  @override
+  String get republicPinned => 'Featured in Republic';
+
+  @override
+  String get republicBookVenue => 'Book venue';
+
+  @override
+  String get republicRentGear => 'Rent gear';
+
+  @override
+  String get republicBookService => 'Book service';
+
+  @override
+  String get republicGetTickets => 'Get tickets';
+
+  @override
+  String get republicMessage => 'Message';
+
+  @override
+  String get republicPartnerTitle => 'Official Partner Foxer opportunity';
+
+  @override
+  String get republicPartnerBody =>
+      'Available for funding, package allocations and co-host production.';
+
+  @override
+  String get republicContactPartner => 'Contact partner';
+
+  @override
+  String get republicSharedPost => 'Shared a post';
+
+  @override
+  String get republicTypeStory => 'Story';
+
+  @override
+  String get republicTypePoll => 'Poll';
+
+  @override
+  String get republicTypeVenue => 'Spotlight venue';
+
+  @override
+  String get republicVisibility => 'Who can see this';
+
+  @override
+  String get republicVisibilityPublic => 'Public';
+
+  @override
+  String get republicVisibilityFollowers => 'Followers';
+
+  @override
+  String get republicVisibilityOnlyMe => 'Only me';
+
+  @override
+  String get republicPosting => 'Posting…';
+
+  @override
+  String get republicPollHint => 'Ask the Republic a question…';
+
+  @override
+  String republicPollOption(int n) {
+    return 'Option $n';
+  }
+
+  @override
+  String get republicAddOption => 'Add option';
+
+  @override
+  String get republicAddPhotos => 'Add photos';
+
+  @override
+  String republicPhotoCount(int count, int max) {
+    return '$count of $max photos';
+  }
+
+  @override
+  String get republicChooseVenue => 'Choose a venue';
+
+  @override
+  String get republicNoVenues => 'You don\'t have a venue to spotlight yet.';
+
+  @override
+  String get republicReply => 'Reply';
+
+  @override
+  String republicReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get republicEditingComment => 'Editing your comment';
+
+  @override
+  String get republicEditComment => 'Edit';
+
+  @override
+  String get republicDeleteComment => 'Delete comment';
+
+  @override
+  String get republicDeleteCommentTitle => 'Delete this comment?';
+
+  @override
+  String get republicNoReactions => 'No reactions yet.';
+
+  @override
+  String republicCommentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comments',
+      one: '1 comment',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2144,20 +4374,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutFailed => 'We couldn\'t sign you out. Try again.';
 
   @override
-  String get profileEditName => 'Edit name';
+  String get profileEdit => 'Edit profile';
 
   @override
   String get profileNameLabel => 'Name';
 
   @override
-  String get profileSave => 'Save';
+  String get profileUsernameLabel => 'Username';
 
   @override
-  String get profileNameUpdated => 'Your name was updated.';
+  String get profilePhoneLabel => 'Phone number';
 
   @override
-  String get profileNameUpdateFailed =>
-      'We couldn\'t update your name. Try again.';
+  String get profileBioLabel => 'Bio';
+
+  @override
+  String get profileSocialTitle => 'Social links';
+
+  @override
+  String get profileSocialHint =>
+      'Shown on your profile, so people can find you elsewhere.';
+
+  @override
+  String get profileSocialAdd => 'Add social link';
+
+  @override
+  String get profileSocialRemove => 'Remove';
+
+  @override
+  String get profileSocialDone => 'Done';
+
+  @override
+  String get profileSocialHandleHint => '@yourname or a link';
+
+  @override
+  String get profileSocialWebsiteHint => 'https://your-site.com';
+
+  @override
+  String get profilePrivateTitle => 'Private profile';
+
+  @override
+  String get profilePrivateBody =>
+      'New followers must be approved by you. Your followers and following lists are hidden from everyone else.';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profilePhotoUpdated => 'Your photo was updated.';
+
+  @override
+  String get profilePhotoFailed => 'We couldn\'t update your photo. Try again.';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileUpdated => 'Your profile was updated.';
+
+  @override
+  String get profileUpdateFailed =>
+      'We couldn\'t update your profile. Try again.';
 
   @override
   String get profileLoadFailed =>
@@ -2172,6 +4449,69 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get profileVerify => 'Verify your identity';
+
+  @override
+  String get identityTitle => 'Verify your identity';
+
+  @override
+  String get identityLoadFailed => 'Could not load your verification.';
+
+  @override
+  String get identityIntro =>
+      'Optional. Send a photo of a government ID and an admin will review it. Approval adds a Verified badge to your profile. You can book without it.';
+
+  @override
+  String get identityKind => 'WHAT ARE YOU SENDING?';
+
+  @override
+  String get identityTypePassport => 'Passport';
+
+  @override
+  String get identityTypeLicense => 'Driver\'s license';
+
+  @override
+  String get identityTypeNational => 'National ID';
+
+  @override
+  String get identityTypeOther => 'Other';
+
+  @override
+  String get identityIdPhoto => 'Photo of your ID';
+
+  @override
+  String get identitySelfie => 'Selfie (optional)';
+
+  @override
+  String get identityChosen => 'added';
+
+  @override
+  String get identitySubmit => 'Send for review';
+
+  @override
+  String get identitySent => 'Sent. We\'ll review it soon.';
+
+  @override
+  String get identityFailed => 'Could not send your ID. Try again.';
+
+  @override
+  String get identityVerified => 'Your identity is verified.';
+
+  @override
+  String identityPending(String date) {
+    return 'Your ID is being reviewed. Sent $date.';
+  }
+
+  @override
+  String get identityRejected =>
+      'Your last submission was not approved. You can send another.';
+
+  @override
+  String identityRejectedWhy(String reason) {
+    return 'Your last submission was not approved: $reason';
+  }
+
+  @override
   String a11yDecrease(String thing) {
     return 'Decrease $thing';
   }
@@ -2179,5 +4519,672 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String a11yIncrease(String thing) {
     return 'Increase $thing';
+  }
+
+  @override
+  String get teamTitle => 'Team';
+
+  @override
+  String get bidsTitle => 'Applications';
+
+  @override
+  String get openSlotsTitle => 'Open event slots';
+
+  @override
+  String get openSlotsEmpty => 'No open slots right now';
+
+  @override
+  String get openSlotsEmptyBody => 'Events looking for a service show here.';
+
+  @override
+  String get openSlotsAnySlot => 'A service';
+
+  @override
+  String get openSlotsAnyGear => 'Gear';
+
+  @override
+  String get openSlotsGear => 'Your gear';
+
+  @override
+  String get openSlotsNoGear => 'List some gear first.';
+
+  @override
+  String get openSlotsApply => 'Apply';
+
+  @override
+  String openSlotsApplyTo(String event) {
+    return 'Apply to $event';
+  }
+
+  @override
+  String get openSlotsService => 'Your service';
+
+  @override
+  String openSlotsPrice(String currency) {
+    return 'Your price ($currency)';
+  }
+
+  @override
+  String get openSlotsPitch => 'Tell them why you fit';
+
+  @override
+  String get openSlotsSend => 'Send application';
+
+  @override
+  String get openSlotsApplied => 'Application sent.';
+
+  @override
+  String get openSlotsNoService => 'List a service first.';
+
+  @override
+  String get openSlotsFailed => 'Could not send. Try again.';
+
+  @override
+  String get bidsIntro =>
+      'Foxers who applied to supply your events. Accepting one adds them to the event.';
+
+  @override
+  String get bidsEmpty => 'No applications yet';
+
+  @override
+  String get bidsEmptyBody =>
+      'When a Foxer offers a service or gear for this event, it shows here.';
+
+  @override
+  String bidFor(String slot) {
+    return 'For: $slot';
+  }
+
+  @override
+  String get bidAccept => 'Accept';
+
+  @override
+  String get bidReject => 'Decline';
+
+  @override
+  String get bidAccepted => 'Accepted. They are on the event.';
+
+  @override
+  String get bidRejected => 'Declined.';
+
+  @override
+  String get bidActionFailed => 'Could not answer. Try again.';
+
+  @override
+  String get bidStatusAccepted => 'Accepted';
+
+  @override
+  String get bidStatusRejected => 'Declined';
+
+  @override
+  String get bidStatusWithdrawn => 'Withdrawn';
+
+  @override
+  String get teamIntro =>
+      'Add Organizers and Check-in Helpers to what you run. Prices, payouts, refunds and the team itself stay with you.';
+
+  @override
+  String get teamYourVenues => 'Your venues';
+
+  @override
+  String get teamYourEvents => 'Your upcoming events';
+
+  @override
+  String get teamNoVenues => 'You have no venues yet.';
+
+  @override
+  String get teamNoEvents => 'You have no upcoming events.';
+
+  @override
+  String get teamAcceptsTitle => 'Accept requests from Organizers';
+
+  @override
+  String get teamAcceptsBody =>
+      'Approved Organizers can ask to join. You decide on every request.';
+
+  @override
+  String get teamRequests => 'Requests to join';
+
+  @override
+  String get teamAccept => 'Accept';
+
+  @override
+  String get teamDecline => 'Decline';
+
+  @override
+  String get teamKindOrganizer => 'Organizer';
+
+  @override
+  String get teamKindHelper => 'Check-in Helper';
+
+  @override
+  String get teamHintOrganizer =>
+      'An approved Organizer who helps you run this. Find them by name or city, or type their email. They must accept, and the invitation expires after 14 days.';
+
+  @override
+  String get teamHintHelper =>
+      'Anyone, added straight away, who can only check guests in at the door.';
+
+  @override
+  String get teamFieldOrganizer => 'Search by name or city, or type an email';
+
+  @override
+  String get teamFieldHelper => 'Their email address';
+
+  @override
+  String get teamSendInvite => 'Send invitation';
+
+  @override
+  String get teamAddHelper => 'Add helper';
+
+  @override
+  String get teamSearching => 'Searching Organizers…';
+
+  @override
+  String get teamNoMatches =>
+      'No approved Organizers match. You can still invite someone by email.';
+
+  @override
+  String get teamInvite => 'Invite';
+
+  @override
+  String get teamOnTeamAlready => 'On the team';
+
+  @override
+  String teamLevel(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String get teamOnTheTeam => 'On the team';
+
+  @override
+  String get teamWaiting => 'Waiting for an answer';
+
+  @override
+  String teamSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String teamExpires(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String get teamEmpty => 'No one else yet. Only you can run this.';
+
+  @override
+  String get teamLoadFailed => 'Couldn\'t load your team.';
+
+  @override
+  String get teamRemove => 'Remove';
+
+  @override
+  String get teamWithdraw => 'Withdraw';
+
+  @override
+  String teamRemoveTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get teamRemoveBody => 'They will no longer be on this team.';
+
+  @override
+  String teamWithdrawTitle(String name) {
+    return 'Withdraw the invitation to $name?';
+  }
+
+  @override
+  String get teamWithdrawBody => 'They will no longer be able to accept it.';
+
+  @override
+  String teamPast(int count) {
+    return 'Past ($count)';
+  }
+
+  @override
+  String get teamPastExpired => 'Invitation expired';
+
+  @override
+  String get teamPastDeclined => 'Declined';
+
+  @override
+  String get teamPastFinished => 'Event over';
+
+  @override
+  String get teamPastLeft => 'Left';
+
+  @override
+  String get teamPastRevoked => 'Organizer role removed';
+
+  @override
+  String get teamPastRemoved => 'Removed';
+
+  @override
+  String get teamInvited => 'Invitation sent';
+
+  @override
+  String get teamHelperAdded => 'Helper added';
+
+  @override
+  String get teamRemoved => 'Removed from the team';
+
+  @override
+  String get teamWithdrawn => 'Invitation withdrawn';
+
+  @override
+  String get teamRequestAccepted => 'Request accepted';
+
+  @override
+  String get teamRequestDeclined => 'Request declined';
+
+  @override
+  String get teamActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String studioStepOf(int n, int total) {
+    return 'STEP $n OF $total';
+  }
+
+  @override
+  String get roleApplyTitle => 'Apply';
+
+  @override
+  String get roleApplyAbout => 'About what you offer';
+
+  @override
+  String get roleApplyBusiness => 'Business or trade name';
+
+  @override
+  String get roleApplyServiceTypes => 'Services you offer';
+
+  @override
+  String get roleApplyPerformerTypes => 'What you perform';
+
+  @override
+  String get roleApplyGearTypes => 'Gear you rent out';
+
+  @override
+  String get roleApplyCommaHint => 'Separate with commas';
+
+  @override
+  String get roleApplyExperience => 'Years of experience';
+
+  @override
+  String get roleApplyPortfolio => 'Links to your work';
+
+  @override
+  String get roleApplySpecializations => 'Specializations (up to 3)';
+
+  @override
+  String get roleApplyIds => 'Documents';
+
+  @override
+  String get roleApplyIdsHint =>
+      'An admin checks these. They are kept private.';
+
+  @override
+  String get roleApplyNbiNumber => 'NBI clearance ID number';
+
+  @override
+  String get roleApplyTin => 'TIN number (optional)';
+
+  @override
+  String get roleApplyDocId => 'Primary valid ID';
+
+  @override
+  String get roleApplyDocNbi => 'NBI clearance';
+
+  @override
+  String get roleApplyDocTin => 'TIN ID or certificate';
+
+  @override
+  String get roleApplyDocBir => 'BIR 2303 or permit';
+
+  @override
+  String get roleApplyDocSelfie => 'Verification selfie';
+
+  @override
+  String get roleApplyChoose => 'Choose';
+
+  @override
+  String get roleApplyChange => 'Change';
+
+  @override
+  String get roleApplyRemoveDoc => 'Remove';
+
+  @override
+  String get roleApplySubmit => 'Send application';
+
+  @override
+  String get roleApplySent => 'Application sent. We will let you know.';
+
+  @override
+  String get roleApplyFailed => 'Could not send. Try again.';
+
+  @override
+  String get roleApplyVenueName => 'Business or venue name';
+
+  @override
+  String get roleApplyContact => 'Contact number';
+
+  @override
+  String get roleApplyAddress => 'Complete address';
+
+  @override
+  String get roleApplyDescription => 'About your venues (optional)';
+
+  @override
+  String get roleApplyTinRequired => 'TIN number';
+
+  @override
+  String get roleSpecIndoor => 'Indoor';
+
+  @override
+  String get roleSpecOutdoor => 'Outdoor';
+
+  @override
+  String get roleSpecHotel => 'Hotel';
+
+  @override
+  String get roleSpecBeachResort => 'Beach resort';
+
+  @override
+  String get roleSpecGarden => 'Garden';
+
+  @override
+  String get roleSpecMix => 'Mixed';
+
+  @override
+  String get roleSpecDesign => 'Design';
+
+  @override
+  String get roleSpecCatering => 'Catering';
+
+  @override
+  String get roleSpecStaff => 'Service staff';
+
+  @override
+  String get roleSpecPhotography => 'Photography';
+
+  @override
+  String get roleSpecVideography => 'Videography';
+
+  @override
+  String get roleSpecDj => 'DJ';
+
+  @override
+  String get roleSpecLiveBand => 'Live band';
+
+  @override
+  String get roleSpecMc => 'MC';
+
+  @override
+  String get roleSpecFurniture => 'Furniture';
+
+  @override
+  String get roleSpecSound => 'Sound system';
+
+  @override
+  String get roleSpecDecorations => 'Decorations';
+
+  @override
+  String get roleSpecOther => 'Other';
+
+  @override
+  String get studioCover => 'Cover';
+
+  @override
+  String studioPhotoCount(int n, int max) {
+    return '$n of $max photos';
+  }
+
+  @override
+  String get esCardDetails => 'Details';
+
+  @override
+  String get esCardGuests => 'Guests and policy';
+
+  @override
+  String get esAddTalent => 'Talent';
+
+  @override
+  String get esAddServices => 'Services';
+
+  @override
+  String get esAddEquipment => 'Equipment';
+
+  @override
+  String get esAddHint => 'Add to your package';
+
+  @override
+  String get esYourPrice => 'Price to sell at';
+
+  @override
+  String get esPackageItems => 'What is included';
+
+  @override
+  String get spaceWorkingAs => 'Working as';
+
+  @override
+  String get spaceCurrent => 'Current';
+
+  @override
+  String spaceSwitched(String space) {
+    return 'Now in the $space space';
+  }
+
+  @override
+  String get spaceGear => 'Gear';
+
+  @override
+  String get spaceGearHint => 'Your gear and the requests for it';
+
+  @override
+  String get spaceServices => 'Services';
+
+  @override
+  String get spaceServicesHint => 'Your services and the requests for them';
+
+  @override
+  String get spacePerformer => 'Performer';
+
+  @override
+  String get spacePerformerHint =>
+      'Your performances and the requests for them';
+
+  @override
+  String get spaceTabPerformances => 'Performances';
+
+  @override
+  String get requestsIntroGear =>
+      'People adding your gear to their events. Confirm the ones you can supply.';
+
+  @override
+  String get requestsEmptyGear =>
+      'No requests yet. When someone adds your gear to their event, it shows up here.';
+
+  @override
+  String get requestsIntroServices =>
+      'People adding your services to their events. Confirm the ones you can do.';
+
+  @override
+  String get requestsEmptyServices =>
+      'No requests yet. When someone adds your service to their event, it shows up here.';
+
+  @override
+  String get providerGear => 'Gear';
+
+  @override
+  String get providerServices => 'Services';
+
+  @override
+  String get providerSearchHint => 'Search your listings';
+
+  @override
+  String get providerEmptyGear => 'You have no gear listed yet.';
+
+  @override
+  String get providerEmptyServices => 'You have no services listed yet.';
+
+  @override
+  String get providerAdd => 'Add';
+
+  @override
+  String get providerListingEdit => 'Edit';
+
+  @override
+  String get listingTitleNewService => 'Add a service';
+
+  @override
+  String get listingTitleNewGear => 'Add gear';
+
+  @override
+  String get listingTitleEdit => 'Edit listing';
+
+  @override
+  String get listingLiveNote =>
+      'This listing is live. Your changes show to guests as soon as you save.';
+
+  @override
+  String get listingCategory => 'Category';
+
+  @override
+  String get listingName => 'Name';
+
+  @override
+  String get listingDescription => 'Description';
+
+  @override
+  String get listingTravel => 'I will travel to the event';
+
+  @override
+  String get listingPriceTitle => 'Price';
+
+  @override
+  String listingPrice(String currency) {
+    return 'Price ($currency)';
+  }
+
+  @override
+  String get listingBilling => 'Charged';
+
+  @override
+  String get listingQuantity => 'How many do you have?';
+
+  @override
+  String get listingCondition => 'Condition';
+
+  @override
+  String get listingWhere => 'Where';
+
+  @override
+  String get listingWhereGearHint =>
+      'Optional for gear. It helps people nearby find it.';
+
+  @override
+  String get listingPhotosLocked =>
+      'Photos cannot be changed after the listing is saved.';
+
+  @override
+  String get listingCatDesign => 'Design';
+
+  @override
+  String get listingCatCatering => 'Catering';
+
+  @override
+  String get listingCatStaff => 'Service staff';
+
+  @override
+  String get listingCatPhotography => 'Photography';
+
+  @override
+  String get listingCatVideography => 'Videography';
+
+  @override
+  String get listingCatDj => 'DJ';
+
+  @override
+  String get listingCatLiveBand => 'Live band';
+
+  @override
+  String get listingCatMc => 'MC';
+
+  @override
+  String get listingCatFurniture => 'Furniture';
+
+  @override
+  String get listingCatSound => 'Sound system';
+
+  @override
+  String get listingCatDecorations => 'Decorations';
+
+  @override
+  String get listingCatEquipment => 'Equipment';
+
+  @override
+  String get listingCatOther => 'Other';
+
+  @override
+  String get listingRateHourly => 'Per hour';
+
+  @override
+  String get listingRateDaily => 'Per day';
+
+  @override
+  String get listingRateWeekly => 'Per week';
+
+  @override
+  String get listingRateMonthly => 'Per month';
+
+  @override
+  String get listingRateYearly => 'Per year';
+
+  @override
+  String get listingRateOneTime => 'One time';
+
+  @override
+  String get listingConditionNew => 'New';
+
+  @override
+  String get listingConditionGood => 'Good';
+
+  @override
+  String get listingConditionFair => 'Fair';
+
+  @override
+  String get listingConditionRefurbished => 'Refurbished';
+
+  @override
+  String get providerListingView => 'View public page';
+
+  @override
+  String get providerStatLive => 'Listings live';
+
+  @override
+  String get providerStatJobs => 'Jobs, next 30 days';
+
+  @override
+  String get providerComingUp => 'Confirmed and coming up';
+
+  @override
+  String get providerNothingComing => 'Nothing confirmed yet.';
+
+  @override
+  String providerRequestsWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests need your reply',
+      one: '1 request needs your reply',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ticketsOfflineNote(String when) {
+    return 'No connection. Showing the tickets saved $when.';
   }
 }

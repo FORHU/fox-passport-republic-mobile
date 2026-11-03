@@ -13,6 +13,8 @@ class VenueDetail extends Equatable {
     this.city,
     this.state,
     this.country,
+    this.lat,
+    this.lng,
     this.capacity,
     this.recommendedCapacity,
     this.price,
@@ -63,6 +65,8 @@ class VenueDetail extends Equatable {
       city: text('city'),
       state: text('state'),
       country: text('country'),
+      lat: number(json['lat'])?.toDouble(),
+      lng: number(json['lng'])?.toDouble(),
       capacity: number(json['capacity'])?.toInt(),
       recommendedCapacity: number(json['recommendedCapacity'])?.toInt(),
       price: number(json['price']),
@@ -115,6 +119,10 @@ class VenueDetail extends Equatable {
   final String? city;
   final String? state;
   final String? country;
+
+  /// The venue's pin, when the owner has set one.
+  final double? lat;
+  final double? lng;
   final int? capacity;
   final int? recommendedCapacity;
   final num? price;
@@ -152,6 +160,8 @@ class VenueDetail extends Equatable {
         city,
         state,
         country,
+        lat,
+        lng,
         capacity,
         recommendedCapacity,
         price,

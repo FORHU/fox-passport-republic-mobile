@@ -166,7 +166,11 @@ void main() {
 
 /// Records every booking it creates and never completes a payment.
 class _FailingPayRepository extends BookingRepository {
-  _FailingPayRepository() : super(_MockApi(), StubPaymentGateway());
+  _FailingPayRepository({this.failure = const PaymentsUnavailable()})
+      : super(_MockApi(), StubPaymentGateway());
+
+  /// What paying throws: no card payments, or a sheet that was closed.
+  final Exception failure;
 
   final created = <BookingSelection>[];
 
@@ -198,14 +202,16 @@ class _FailingPayRepository extends BookingRepository {
   }
 
   @override
-  Future<void> pay(BookingReceipt booking) async =>
-      throw const PaymentsUnavailable();
+  Future<void> pay(BookingReceipt booking) async => throw failure;
 }
 
 void stalePaymentTests() {
-  Future<_FailingPayRepository> reachPayStep(WidgetTester tester) async {
+  Future<_FailingPayRepository> reachPayStep(
+    WidgetTester tester, {
+    Exception failure = const PaymentsUnavailable(),
+  }) async {
     _bigScreen(tester);
-    final repo = _FailingPayRepository();
+    final repo = _FailingPayRepository(failure: failure);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [bookingRepositoryProvider.overrideWithValue(repo)],
@@ -230,6 +236,25 @@ void stalePaymentTests() {
     await tester.pumpAndSettle();
     return repo;
   }
+
+  testWidgets('closing the payment sheet says nothing was charged, no error',
+      (tester) async {
+    await reachPayStep(tester, failure: const PaymentCancelled());
+
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Payment cancelled. You were not charged.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Card payments in the app are coming soon.'),
+      findsNothing,
+    );
+    // Still on the pay step, ready to try again.
+    expect(find.textContaining('Pay ₱'), findsOneWidget);
+  });
 
   testWidgets('retrying a failed payment reuses the same booking', (
     tester,

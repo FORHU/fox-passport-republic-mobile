@@ -1,28 +1,53 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/shared/tickets/cancel_quote.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
+import 'package:flutter_template/shared/tickets/tickets_cache.dart';
 
 /// The signed-in user's bookings, as [Ticket]s.
 class TicketsRepository {
-  TicketsRepository(this._api, this._userId);
+  TicketsRepository(this._api, this._userId, [this._cache]);
 
   final ApiService _api;
   final String? _userId;
 
+  /// Where upcoming tickets are kept for when there is no signal.
+  final TicketsCache? _cache;
+
   /// Upcoming bookings, soonest first. Demo tickets are only shown when
   /// mock mode is explicitly enabled.
+  ///
+  /// Each answer from the server is saved. With no connection, or while the
+  /// server is down, the saved tickets are returned instead (marked with when
+  /// they were saved), so a code can still be shown at the door. Any other
+  /// failure, such as being signed out, is not hidden.
   Future<List<Ticket>> upcoming() async {
-    final body = await _api.get(ApiEndpoints.bookingsUpcoming);
-    final tickets = _parse(body);
+    final List<Ticket> tickets;
+    try {
+      final body = await _api.get(ApiEndpoints.bookingsUpcoming);
+      tickets = _parse(body);
+    } on AppException catch (e) {
+      final saved = _cannotReach(e) ? _cache?.read() : null;
+      if (saved == null) rethrow;
+      return saved;
+    }
     if (tickets.isEmpty && AppConfig.instance.useMock) {
       return [Ticket.sample()];
     }
+    await _cache?.save(tickets);
     return tickets;
   }
+
+  /// The server could not be reached, or is failing: the saved copy is better
+  /// than nothing. A refusal (signed out, not allowed) is not.
+  static bool _cannotReach(AppException e) =>
+      e is NetworkException ||
+      (e is ServerException && (e.statusCode ?? 0) >= 500);
 
   /// Bookings that have ended or been closed out, newest first.
   Future<List<Ticket>> past() async {
@@ -67,7 +92,11 @@ class TicketsRepository {
 
 final ticketsRepositoryProvider = Provider<TicketsRepository>((ref) {
   final userId = ref.watch(authControllerProvider.select((s) => s.user?.id));
-  return TicketsRepository(ref.watch(apiServiceProvider), userId);
+  return TicketsRepository(
+    ref.watch(apiServiceProvider),
+    userId,
+    TicketsCache(ref.watch(storageServiceProvider), userId),
+  );
 });
 
 final FutureProvider<List<Ticket>> upcomingTicketsProvider =

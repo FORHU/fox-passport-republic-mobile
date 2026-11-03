@@ -8,10 +8,14 @@ import 'package:flutter_template/features/foxer/data/foxer_repository.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/blocks/confirm_block.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/shared/foxers/foxer_profile.dart';
+import 'package:flutter_template/shared/reports/file_report.dart';
+import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -27,6 +31,33 @@ class FoxerProfilePage extends ConsumerWidget {
   /// The row that was tapped; it names the Foxer while the rest loads.
   final CatalogItem item;
 
+  Future<void> _block(
+    BuildContext context,
+    WidgetRef ref,
+    FoxerProfile profile,
+  ) async {
+    final blocked = await confirmBlock(
+      context,
+      ref,
+      userId: profile.id,
+      name: profile.name,
+    );
+    if (blocked && context.mounted) context.pop();
+  }
+
+  Future<void> _report(
+    BuildContext context,
+    WidgetRef ref,
+    FoxerProfile profile,
+  ) =>
+      fileReport(
+        context,
+        ref,
+        target: ReportTarget.user,
+        id: profile.id,
+        title: context.l10n.reportUserTitle,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -38,6 +69,23 @@ class FoxerProfilePage extends ConsumerWidget {
         backgroundColor: AppColors.canvas,
         foregroundColor: AppColors.textPrimary,
         title: Text(item.title, style: AppTypography.display()),
+        actions: [
+          // A sample row is not a real account, so there is no one to report or
+          // block.
+          if (async.value case final profile? when !profile.isSample)
+            PopupMenuButton<void>(
+              itemBuilder: (_) => [
+                PopupMenuItem<void>(
+                  onTap: () => unawaited(_report(context, ref, profile)),
+                  child: Text(l10n.foxerMenuReport),
+                ),
+                PopupMenuItem<void>(
+                  onTap: () => unawaited(_block(context, ref, profile)),
+                  child: Text(l10n.foxerMenuBlock),
+                ),
+              ],
+            ),
+        ],
       ),
       body: async.when(
         loading: () => const Center(
@@ -131,15 +179,10 @@ class _LoadedState extends ConsumerState<_Loaded> {
       children: [
         Row(
           children: [
-            CircleAvatar(
+            AvatarImage(
+              url: profile.imageUrl,
               radius: 36,
-              backgroundColor: AppColors.surfaceRaised,
-              backgroundImage: profile.imageUrl == null
-                  ? null
-                  : NetworkImage(profile.imageUrl!),
-              child: profile.imageUrl == null
-                  ? Text(initial, style: AppTypography.display(size: 28))
-                  : null,
+              fallback: Text(initial, style: AppTypography.display(size: 28)),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -196,6 +239,11 @@ class _LoadedState extends ConsumerState<_Loaded> {
             ),
           ],
         ),
+        // A sample row is not a real account, so there is no one to follow.
+        if (!profile.isSample) ...[
+          const SizedBox(height: 12),
+          FollowButton(userId: profile.id),
+        ],
         if (profile.isSample) ...[
           const SizedBox(height: 8),
           Text(

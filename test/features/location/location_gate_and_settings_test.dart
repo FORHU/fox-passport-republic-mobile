@@ -166,7 +166,18 @@ void main() {
     expect(find.text('Where you are'), findsOneWidget);
     expect(find.text('Baguio'), findsOneWidget);
     expect(find.text('Mia'), findsOneWidget);
+    expect(find.text('Edit profile'), findsOneWidget);
+    // What the profile used to hold: your followers and the ID check.
+    expect(find.text('Followers, following and requests'), findsOneWidget);
+    expect(find.text('Verify your identity'), findsOneWidget);
+    expect(find.text('Blocked users'), findsOneWidget);
+
+    // Security and sign out are further down the list.
+    await tester.scrollUntilVisible(find.text('Sign out'), 200);
+    expect(find.text('Change password'), findsOneWidget);
+    expect(find.text('Delete account'), findsOneWidget);
     expect(find.text('Sign out'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Where you are'), -200);
 
     await tester.tap(find.text('Where you are'));
     await tester.pumpAndSettle();
@@ -178,6 +189,11 @@ void main() {
   testWidgets('settings lets the user pick the currency prices show in', (
     tester,
   ) async {
+    // Tall enough for the whole list, so every row is built.
+    tester.view
+      ..physicalSize = const Size(800, 1800)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

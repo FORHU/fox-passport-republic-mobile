@@ -44,6 +44,9 @@ These principles are enforced across all features:
   session/identity state (the authenticated `UserEntity`). Other features may
   import `auth`; `auth` must not import any other feature. No other
   feature-to-feature imports are allowed.
+- Imports that predate the check are listed per feature in
+  `tools/feature_isolation_baseline/`; CI fails on any import not in its list,
+  so the lists can only shrink. Run `tools/check_feature_isolation.sh` locally.
 
 ### 2.5 API Access Control
 - All network access must go through `ApiService`

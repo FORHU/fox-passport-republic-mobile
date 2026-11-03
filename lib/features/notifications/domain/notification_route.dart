@@ -12,6 +12,7 @@ import 'package:flutter_template/routes/route_names.dart';
 /// | `/messages`, `/messages?userId=<id>` | Messages |
 /// | `/user/passport` | Passport |
 /// | `/calendar` | Bookings, on the Calendar switch |
+/// | `/republic?postId=<id>` | that post, with its comments when `&comments=1` |
 String? notificationRoute(String? link) {
   if (link == null || link.isEmpty) return null;
   final uri = Uri.tryParse(link);
@@ -31,6 +32,14 @@ String? notificationRoute(String? link) {
       return segments.length == 2 && segments[1] == 'passport'
           ? RouteNames.passport
           : null;
+    case 'republic':
+      final postId = uri.queryParameters['postId'];
+      return postId == null || postId.isEmpty
+          ? RouteNames.republic
+          : RouteNames.republicPost(
+              postId,
+              comments: uri.queryParameters['comments'] == '1',
+            );
     case 'calendar':
       return RouteNames.ticketsCalendar;
     default:

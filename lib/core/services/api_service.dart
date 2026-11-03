@@ -8,6 +8,7 @@ import 'package:flutter_template/core/services/adapter_config/adapter_config.dar
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
 import 'package:flutter_template/core/services/interceptors/mock_interceptor.dart';
+import 'package:flutter_template/core/services/interceptors/redacting_log_interceptor.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/logger.dart';
 
@@ -74,11 +75,9 @@ class ApiService {
       ),
     );
 
-    // 3. Verbose request/response logging (dev only).
+    // 3. Request/response logging (dev only), with secrets redacted.
     if (AppConfig.instance.enableLogging) {
-      client.interceptors.add(
-        LogInterceptor(requestBody: true, responseBody: true),
-      );
+      client.interceptors.add(RedactingLogInterceptor(appLogger.d));
     }
   }
 
@@ -90,6 +89,24 @@ class ApiService {
 
   Future<dynamic> post(String path, [Object? body]) =>
       _send(() => client.post<dynamic>(path, data: body));
+
+  /// Sends a file. A video takes far longer than the ten seconds an ordinary
+  /// call is given, so it gets [timeout] to send and to be answered, and
+  /// [onProgress] hears how much has gone.
+  Future<dynamic> upload(
+    String path,
+    FormData form, {
+    Duration timeout = const Duration(minutes: 10),
+    void Function(int sent, int total)? onProgress,
+  }) =>
+      _send(
+        () => client.post<dynamic>(
+          path,
+          data: form,
+          options: Options(sendTimeout: timeout, receiveTimeout: timeout),
+          onSendProgress: onProgress,
+        ),
+      );
 
   Future<dynamic> put(String path, [Object? body]) =>
       _send(() => client.put<dynamic>(path, data: body));

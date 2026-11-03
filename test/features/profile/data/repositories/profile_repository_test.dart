@@ -3,6 +3,7 @@ import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:flutter_template/features/profile/data/models/profile_model.dart';
 import 'package:flutter_template/features/profile/data/repositories/profile_repository.dart';
+import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -12,6 +13,8 @@ class MockProfileRemoteDataSource extends Mock
 void main() {
   late MockProfileRemoteDataSource mockRemote;
   late ProfileRepositoryImpl repository;
+
+  setUpAll(() => registerFallbackValue(const ProfileUpdate()));
 
   setUp(() {
     mockRemote = MockProfileRemoteDataSource();
@@ -93,23 +96,25 @@ void main() {
     });
   });
 
-  group('ProfileRepositoryImpl.updateName', () {
-    test('sends the name and returns Right on success', () async {
-      when(() => mockRemote.updateName('Ada')).thenAnswer((_) async {});
+  group('ProfileRepositoryImpl.updateProfile', () {
+    const update = ProfileUpdate(name: 'Ada');
 
-      final result = await repository.updateName('Ada');
+    test('sends the change and returns Right on success', () async {
+      when(() => mockRemote.updateProfile(update)).thenAnswer((_) async {});
+
+      final result = await repository.updateProfile(update);
 
       expect(result.isRight(), isTrue);
-      verify(() => mockRemote.updateName('Ada')).called(1);
+      verify(() => mockRemote.updateProfile(update)).called(1);
     });
 
     test('maps a refusal from the API to ServerFailure with its message',
         () async {
       when(
-        () => mockRemote.updateName(any()),
+        () => mockRemote.updateProfile(any()),
       ).thenThrow(const ServerException('Name is taken'));
 
-      final result = await repository.updateName('Ada');
+      final result = await repository.updateProfile(update);
 
       final failure = result.getLeft().toNullable();
       expect(failure, isA<ServerFailure>());
@@ -118,12 +123,117 @@ void main() {
 
     test('maps a lost connection to NetworkFailure', () async {
       when(
-        () => mockRemote.updateName(any()),
+        () => mockRemote.updateProfile(any()),
       ).thenThrow(const NetworkException('offline'));
 
-      final result = await repository.updateName('Ada');
+      final result = await repository.updateProfile(update);
 
       expect(result.getLeft().toNullable(), isA<NetworkFailure>());
+    });
+  });
+
+  group('ProfileRepositoryImpl.changePassword', () {
+    test('sends both passwords and returns Right on success', () async {
+      when(
+        () => mockRemote.changePassword(
+          currentPassword: 'old',
+          newPassword: 'new',
+        ),
+      ).thenAnswer((_) async {});
+
+      final result = await repository.changePassword(
+        currentPassword: 'old',
+        newPassword: 'new',
+      );
+
+      expect(result.isRight(), isTrue);
+    });
+
+    test('says why the API refused, such as a wrong current password',
+        () async {
+      when(
+        () => mockRemote.changePassword(
+          currentPassword: any(named: 'currentPassword'),
+          newPassword: any(named: 'newPassword'),
+        ),
+      ).thenThrow(const ServerException('Current password is incorrect'));
+
+      final result = await repository.changePassword(
+        currentPassword: 'wrong',
+        newPassword: 'new',
+      );
+
+      expect(
+        result.getLeft().toNullable()?.message,
+        'Current password is incorrect',
+      );
+    });
+  });
+
+  group('ProfileRepositoryImpl.deleteAccount', () {
+    test('returns Right once the account is deleted', () async {
+      when(() => mockRemote.deleteAccount('pw')).thenAnswer((_) async {});
+
+      final result = await repository.deleteAccount('pw');
+
+      expect(result.isRight(), isTrue);
+      verify(() => mockRemote.deleteAccount('pw')).called(1);
+    });
+
+    test('keeps the failure when the password is wrong', () async {
+      when(
+        () => mockRemote.deleteAccount(any()),
+      ).thenThrow(const ServerException('Invalid password'));
+
+      final result = await repository.deleteAccount('nope');
+
+      expect(result.getLeft().toNullable()?.message, 'Invalid password');
+    });
+  });
+
+  group('ProfileUpdate', () {
+    test('sends only the fields that are set, under the API names', () {
+      const update = ProfileUpdate(
+        name: 'Ada',
+        imageUrl: 'https://x.test/a.png',
+        isPrivate: true,
+      );
+
+      expect(update.toJson(), {
+        'name': 'Ada',
+        'profileImage': 'https://x.test/a.png',
+        'isPrivate': true,
+      });
+      expect(const ProfileUpdate().toJson(), isEmpty);
+    });
+  });
+
+  group('ProfileModel', () {
+    test('reads the username, phone, photo and privacy', () {
+      final p = ProfileModel.fromJson(const {
+        'data': {
+          'id': 'u1',
+          'name': 'Ada',
+          'email': 'ada@example.com',
+          'username': 'ada_l',
+          'phone': '+639171234567',
+          'imgId': 'https://x.test/a.png',
+          'isPrivate': true,
+        },
+      });
+
+      expect(p.username, 'ada_l');
+      expect(p.phone, '+639171234567');
+      expect(p.imageUrl, 'https://x.test/a.png');
+      expect(p.isPrivate, isTrue);
+    });
+
+    test('leaves out what the API did not send', () {
+      final p = ProfileModel.fromJson(const {'id': 'u1', 'email': 'a@b.co'});
+
+      expect(p.phone, isNull);
+      expect(p.imageUrl, isNull);
+      expect(p.isPrivate, isFalse);
     });
   });
 }

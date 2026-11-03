@@ -212,15 +212,34 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: _SearchField(
-                    controller: _controller,
-                    hint: l10n.searchHint,
-                    onChanged: _onQuery,
-                    onFilters: _openFilters,
-                    filtersLabel: l10n.searchFilters,
-                    showFilters: _kind == CatalogKind.events ||
-                        _kind == CatalogKind.venues,
+                  padding: EdgeInsets.fromLTRB(
+                    Navigator.canPop(context) ? 4 : 16,
+                    12,
+                    16,
+                    0,
+                  ),
+                  // Search is opened from Home, so it can go back there.
+                  child: Row(
+                    children: [
+                      if (Navigator.canPop(context))
+                        IconButton(
+                          tooltip: MaterialLocalizations.of(context)
+                              .backButtonTooltip,
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back_rounded),
+                        ),
+                      Expanded(
+                        child: _SearchField(
+                          controller: _controller,
+                          hint: l10n.searchHint,
+                          onChanged: _onQuery,
+                          onFilters: _openFilters,
+                          filtersLabel: l10n.searchFilters,
+                          showFilters: _kind == CatalogKind.events ||
+                              _kind == CatalogKind.venues,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -260,16 +279,16 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 if (_isPeopleGroup(_kind))
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                    child: Row(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        for (final k in _peopleKinds) ...[
+                        for (final k in _peopleKinds)
                           _ScopeChip(
                             label: _scopeLabel(l10n, k),
                             selected: _kind == k,
                             onTap: () => setState(() => _kind = k),
                           ),
-                          const SizedBox(width: 8),
-                        ],
                       ],
                     ),
                   ),
@@ -628,6 +647,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ],
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _sortBy,
               decoration: InputDecoration(labelText: l10n.searchSortBy),
               items: [

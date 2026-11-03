@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/reviews/presentation/widgets/write_review_sheet.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/cancel_sheet.dart';
+import 'package:flutter_template/features/tickets/presentation/widgets/edit_request_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -33,6 +34,10 @@ class TicketCard extends ConsumerWidget {
       !ticket.isSample &&
       (ticket.status == 'pending' || ticket.status == 'confirmed') &&
       ticket.startAt.isAfter(DateTime.now());
+
+  /// A live venue booking (not an event package) can ask for another date or
+  /// head count. The API decides whether this particular booking allows it.
+  bool get _canRequestChange => _canCancel && ticket.templateId == null;
 
   /// The door scans a confirmed booking that has not finished. A pending one
   /// is not valid yet, and a cancelled or past one must not look like it is.
@@ -183,6 +188,12 @@ class TicketCard extends ConsumerWidget {
             style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
             icon: const Icon(Icons.replay_rounded),
             label: Text(l10n.ticketBookAgain),
+          ),
+        if (_canRequestChange)
+          TextButton(
+            onPressed: () => unawaited(showEditRequestSheet(context, ticket)),
+            style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
+            child: Text(l10n.ticketRequestChange),
           ),
         if (_canCancel)
           TextButton(

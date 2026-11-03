@@ -4,17 +4,13 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
+import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/plan_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/catalog/catalog_item.dart';
-import 'package:flutter_template/shared/catalog/catalog_labels.dart'
-    show catalogPriceLabel;
 import 'package:flutter_template/shared/categories/category_summary.dart';
-import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
-import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/occasion_colors.dart';
@@ -154,7 +150,7 @@ class _OccasionPageState extends ConsumerState<OccasionPage> {
                           style: AppTypography.display(size: 18),
                         ),
                         const SizedBox(height: 12),
-                        _PackagesRow(items: items),
+                        PackagesRow(items: items),
                       ],
               ),
               const SizedBox(height: 24),
@@ -265,75 +261,6 @@ class _PlanChip extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _PackagesRow extends ConsumerWidget {
-  const _PackagesRow({required this.items});
-
-  final List<CatalogItem> items;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final locale = Localizations.localeOf(context).toString();
-    final formatter = ref.watch(moneyFormatterProvider);
-    return SizedBox(
-      height: 212,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) {
-          final item = items[i];
-          final price = (item.price ?? 0) > 0
-              ? catalogPriceLabel(
-                  l10n,
-                  item,
-                  locale: locale,
-                  formatter: formatter,
-                )
-              : null;
-          return InkWell(
-            borderRadius: AppRadius.brMd,
-            onTap: () => context.push(RouteNames.eventDetail, extra: item),
-            child: SizedBox(
-              width: 200,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: PhotoBox(
-                      url: item.imageUrl,
-                      height: 128,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    item.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.display(size: 15),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    price ?? l10n.occasionAskPrice,
-                    style: AppTypography.body(
-                      size: 13,
-                      color: price == null
-                          ? AppColors.textMuted
-                          : AppColors.textPrimary,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
