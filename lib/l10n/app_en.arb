@@ -1801,5 +1801,7 @@
   "@earningsChange": {"placeholders":{"percent":{"type":"int"}}},
   "earningsLastWeeks": "Last {weeks} weeks",
   "@earningsLastWeeks": {"placeholders":{"weeks":{"type":"int"}}},
-  "@firstStepsNext": {"placeholders":{"step":{"type":"String"}}}
+  "@firstStepsNext": {"placeholders":{"step":{"type":"String"}}},
+  "eventKpiLive": "Events live",
+  "overviewMyEvents": "My events"
 }
