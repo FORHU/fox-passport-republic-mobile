@@ -1777,5 +1777,17 @@
   "tourMessagesTitle": "Messages",
   "tourMessagesBody": "Talk with your guests and partners.",
   "tourStepOf": "{n} of {total}",
-  "@tourStepOf": {"placeholders":{"n":{"type":"int"},"total":{"type":"int"}}}
+  "@tourStepOf": {"placeholders":{"n":{"type":"int"},"total":{"type":"int"}}},
+  "earningsTotal": "Total earnings",
+  "earningsChartLater": "Your earnings will chart here after your first payouts",
+  "overviewMyVenues": "My venues",
+  "venueViewAll": "View all",
+  "firstStepsNext": "Next: {step}",
+  "earningsPendingAmount": "{amount} pending",
+  "@earningsPendingAmount": {"placeholders":{"amount":{"type":"String"}}},
+  "earningsChange": "{percent}% vs last month",
+  "@earningsChange": {"placeholders":{"percent":{"type":"int"}}},
+  "earningsLastWeeks": "Last {weeks} weeks",
+  "@earningsLastWeeks": {"placeholders":{"weeks":{"type":"int"}}},
+  "@firstStepsNext": {"placeholders":{"step":{"type":"String"}}}
 }

@@ -6,11 +6,14 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/widgets/venue_hold_chip.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
@@ -145,41 +148,25 @@ class VenueOverviewPage extends ConsumerWidget {
               roleLabel: l10n.overviewRoleVenue,
               roleColor: AppColors.roleVenue,
             ),
-            if (stepsLoaded) ...[
-              const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps),
-              const SizedBox(height: 10),
-            ],
-            // What the person does most, within reach of the thumb.
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.qr_code_scanner_rounded,
-                      label: l10n.venueQuickCheckIn,
-                      onTap: () => context.go(RouteNames.spaceVenueCheckIn),
-                    ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.go(RouteNames.spaceVenueCalendar),
+                    icon: const Icon(Icons.calendar_month_outlined),
+                    label: Text(l10n.spaceTabCalendar),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.event_busy_outlined,
-                      label: l10n.venueQuickCloseDay,
-                      onTap: () => context.go(RouteNames.spaceVenueCalendar),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => context.push(RouteNames.spaceVenueStudio),
+                    icon: const Icon(Icons.add_business_outlined),
+                    label: Text(l10n.venueQuickAddVenue),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.add_business_outlined,
-                      label: l10n.venueQuickAddVenue,
-                      onTap: () => context.push(RouteNames.spaceVenueStudio),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             HomeSectionHeader(
               title: l10n.overviewAttention,
@@ -228,6 +215,11 @@ class VenueOverviewPage extends ConsumerWidget {
                 text: l10n.overviewVenuesDrafts(drafts),
                 onTap: () => context.go(RouteNames.spaceVenueVenues),
               ),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              const SizedBox(height: 10),
+            ],
             HomeSectionHeader(
               title: l10n.overviewTodayAhead,
               action: ahead.isEmpty ? null : l10n.venueSeeAll,
@@ -256,6 +248,26 @@ class VenueOverviewPage extends ConsumerWidget {
                 const SizedBox(height: 8),
               ],
             HomeSectionHeader(title: l10n.overviewNumbers),
+            payouts.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (p) => EarningsCard(
+                paid:
+                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
+                pending: money.format(
+                  p.totals.pending,
+                  kBaseCurrency,
+                  locale: locale,
+                ),
+                change: monthChange(p.rows, DateTime.now()),
+                // A chart of nearly nothing says nothing.
+                weeks: p.rows.length < 3
+                    ? null
+                    : weeklyPaid(p.rows, DateTime.now()),
+                onTap: () => context.go(RouteNames.spaceVenueEarnings),
+              ),
+            ),
+            const SizedBox(height: 10),
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -284,43 +296,26 @@ class VenueOverviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPaid,
-                      onTap: () => context.go(RouteNames.spaceVenueEarnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.paid,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPending,
-                      onTap: () => context.go(RouteNames.spaceVenueEarnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.pending,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            if (myVenues.isNotEmpty) ...[
+              HomeSectionHeader(
+                title: l10n.overviewMyVenues,
+                action: l10n.venueViewAll,
+                onAction: () => context.go(RouteNames.spaceVenueVenues),
               ),
-            ),
+              for (final venue in myVenues.take(2)) ...[
+                GestureDetector(
+                  onTap: () => context.push(RouteNames.spaceVenueHub(venue.id)),
+                  child: FeaturedPhotoCard(
+                    dayLabel: (listingStatusLabel(l10n, venue.status) ?? '')
+                        .toUpperCase(),
+                    title: venue.name,
+                    subtitle: venue.city,
+                    imageUrl: venue.imageUrl,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ],
           ],
         ),
       ),
