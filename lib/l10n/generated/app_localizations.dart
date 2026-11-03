@@ -2146,6 +2146,12 @@ abstract class AppLocalizations {
   /// **'Guests'**
   String get ticketGuests;
 
+  /// No description provided for @ticketQrPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your QR appears once this booking is confirmed'**
+  String get ticketQrPending;
+
   /// No description provided for @ticketAddToWallet.
   ///
   /// In en, this message translates to:

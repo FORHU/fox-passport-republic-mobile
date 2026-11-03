@@ -370,6 +370,7 @@
   "ticketDate": "Date",
   "ticketDoors": "Doors",
   "ticketGuests": "Guests",
+  "ticketQrPending": "Your QR appears once this booking is confirmed",
   "ticketAddToWallet": "Add to wallet",
   "ticketDirections": "Directions",
   "ticketStatusConfirmed": "Confirmed",
