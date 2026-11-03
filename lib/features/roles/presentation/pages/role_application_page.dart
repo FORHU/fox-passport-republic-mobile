@@ -103,7 +103,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(description: v)),
                   ),
-                ] else if (d.isEvent) ...[
+                ] else if (d.isEvent || d.isOrganizer) ...[
                   _Field(
                     label: l10n.roleApplyBio,
                     value: d.bio,
@@ -149,7 +149,10 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(types: v)),
                   ),
-                if (!d.isGear && !d.isVenue && !d.isEvent) ...[
+                if (!d.isGear &&
+                    !d.isVenue &&
+                    !d.isEvent &&
+                    !d.isOrganizer) ...[
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -180,7 +183,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!d.isGear && !d.isVenue && !d.isEvent)
+                if (!d.isGear && !d.isVenue && !d.isEvent && !d.isOrganizer)
                   _Field(
                     label: l10n.roleApplyNbiNumber,
                     value: d.nbiNumber,
@@ -192,7 +195,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                       ),
                     ),
                   ),
-                if (!d.isEvent)
+                if (!d.isEvent && !d.isOrganizer)
                   _Field(
                     label: d.isVenue
                         ? l10n.roleApplyTinRequired
@@ -206,7 +209,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                       ),
                     ),
                   ),
-                for (final slot in KycDocument.values)
+                for (final slot in d.requiredDocuments)
                   _DocumentRow(
                     label: _documentLabel(l10n, slot),
                     photo: d.documents[slot],
@@ -255,6 +258,7 @@ String _documentLabel(AppLocalizations l10n, KycDocument slot) =>
       KycDocument.tinId => l10n.roleApplyDocTin,
       KycDocument.birPermit => l10n.roleApplyDocBir,
       KycDocument.selfie => l10n.roleApplyDocSelfie,
+      KycDocument.backgroundClearance => l10n.roleApplyDocClearance,
     };
 
 String specializationLabel(AppLocalizations l10n, String code) =>

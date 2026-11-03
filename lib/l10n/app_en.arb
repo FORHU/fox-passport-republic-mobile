@@ -1631,6 +1631,7 @@
   "roleApplyDocTin": "TIN ID or certificate",
   "roleApplyDocBir": "BIR 2303 or permit",
   "roleApplyDocSelfie": "Verification selfie",
+  "roleApplyDocClearance": "Police or background clearance",
   "roleApplyChoose": "Choose",
   "roleApplyChange": "Change",
   "roleApplyRemoveDoc": "Remove",
