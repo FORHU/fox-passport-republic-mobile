@@ -9549,6 +9549,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No connection. Showing the tickets saved {when}.'**
   String ticketsOfflineNote(String when);
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tourSkip;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tourNext;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get tourDone;
+
+  /// No description provided for @tourTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the tour'**
+  String get tourTake;
+
+  /// No description provided for @tourWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, Foxer'**
+  String get tourWelcomeTitle;
+
+  /// No description provided for @tourWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick look at what is in your space. It takes under a minute.'**
+  String get tourWelcomeBody;
+
+  /// No description provided for @tourOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Overview'**
+  String get tourOverviewTitle;
+
+  /// No description provided for @tourOverviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What needs you now, what is coming up and your numbers, in one scroll.'**
+  String get tourOverviewBody;
+
+  /// No description provided for @tourFirstStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get tourFirstStepsTitle;
+
+  /// No description provided for @tourFirstStepsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first steps. Each one ticks itself off, and the list goes away once you have a live listing or a booking.'**
+  String get tourFirstStepsBody;
+
+  /// No description provided for @tourVenuesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venues'**
+  String get tourVenuesTitle;
+
+  /// No description provided for @tourVenuesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add venues with photos and prices. A venue goes live once it has been reviewed.'**
+  String get tourVenuesBody;
+
+  /// No description provided for @tourEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your events'**
+  String get tourEventsTitle;
+
+  /// No description provided for @tourEventsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Build an event, then publish it. Open a card to edit it or see where it stands.'**
+  String get tourEventsBody;
+
+  /// No description provided for @tourGearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear'**
+  String get tourGearTitle;
+
+  /// No description provided for @tourGearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'List the gear you rent out, with a daily rate and how many you have.'**
+  String get tourGearBody;
+
+  /// No description provided for @tourListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your listings'**
+  String get tourListingsTitle;
+
+  /// No description provided for @tourListingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'List what you offer, with packages and prices.'**
+  String get tourListingsBody;
+
+  /// No description provided for @tourCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get tourCalendarTitle;
+
+  /// No description provided for @tourCalendarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bookings by date, so you can spot clashes and close the days you are not free.'**
+  String get tourCalendarBody;
+
+  /// No description provided for @tourEarningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get tourEarningsTitle;
+
+  /// No description provided for @tourEarningsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What you have been paid and what is on its way. Connect your payout account here.'**
+  String get tourEarningsBody;
+
+  /// No description provided for @tourMoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get tourMoreTitle;
+
+  /// No description provided for @tourMoreBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests, messages, your team, check in and the rest.'**
+  String get tourMoreBody;
+
+  /// No description provided for @tourCheckInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get tourCheckInTitle;
+
+  /// No description provided for @tourCheckInBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a guest QR code at the door.'**
+  String get tourCheckInBody;
+
+  /// No description provided for @tourMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get tourMessagesTitle;
+
+  /// No description provided for @tourMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk with your guests and partners.'**
+  String get tourMessagesBody;
+
+  /// No description provided for @tourStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of {total}'**
+  String tourStepOf(int n, int total);
 }
 
 class _AppLocalizationsDelegate

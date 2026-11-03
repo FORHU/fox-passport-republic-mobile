@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
@@ -114,6 +115,8 @@ class _EventsPageState extends ConsumerState<EventsPage> {
     final invites = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
     final partners = ref.watch(partnersProvider);
     final stripe = ref.watch(stripeStatusProvider);
+    final isNew =
+        ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -197,7 +200,7 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                         roleLabel: l10n.overviewRoleEvent,
                         roleColor: AppColors.roleEvent,
                       ),
-                      if (partners.hasValue && stripe.hasValue) ...[
+                      if (isNew && partners.hasValue && stripe.hasValue) ...[
                         const SizedBox(height: 10),
                         FirstStepsCard(steps: firstSteps),
                         const SizedBox(height: 10),
