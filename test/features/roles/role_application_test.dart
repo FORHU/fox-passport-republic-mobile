@@ -175,10 +175,77 @@ void main() {
       expect(venue.copyWith(documents: const {}).isComplete, isFalse);
     });
 
-    test('the provider roles and the venue apply from the phone', () {
+    test('an event application is sent the way the web sends it', () {
+      final event = RoleApplicationDraft(
+        roleType: 'eventFoxer',
+        bio: ' Ten years of weddings ',
+        city: ' Makati ',
+        state: 'Metro Manila',
+        country: 'Philippines',
+        experience: '10',
+        specializations: const ['wedding', 'corporate'],
+        documents: _allDocuments(),
+      );
+      expect(event.toData(), {
+        'bio': 'Ten years of weddings',
+        'location': 'Makati, Metro Manila, Philippines',
+        'experience': '10',
+        'specializations': ['wedding', 'corporate'],
+      });
+      // Experience is optional and left out when blank; a blank state is
+      // skipped in the location.
+      final bare = event.copyWith(experience: '', state: '');
+      expect(bare.toData().containsKey('experience'), isFalse);
+      expect(bare.toData()['location'], 'Makati, Philippines');
+      expect(specializationOptions('eventFoxer'), contains('birthday'));
+    });
+
+    test('an event needs a bio, a city, a country and every document', () {
+      final event = RoleApplicationDraft(
+        roleType: 'eventFoxer',
+        bio: 'Planner',
+        city: 'Cebu',
+        country: 'Philippines',
+        documents: _allDocuments(),
+      );
+      // No services, NBI number or TIN are asked of an event application.
+      expect(event.isComplete, isTrue);
+      expect(event.copyWith(bio: ' ').isComplete, isFalse);
+      expect(event.copyWith(city: '').isComplete, isFalse);
+      expect(event.copyWith(country: '').isComplete, isFalse);
+      expect(event.copyWith(documents: const {}).isComplete, isFalse);
+    });
+
+    test('the portfolio file is optional and goes under its own name', () {
+      final event = RoleApplicationDraft(
+        roleType: 'eventFoxer',
+        documents: _allDocuments(),
+      );
+      expect(
+        event.toForm().files.map((f) => f.key),
+        isNot(contains('portfolioFile')),
+      );
+      final withPortfolio = event.copyWith(portfolioFile: _photo('cv.jpg'));
+      expect(
+        withPortfolio.toForm().files.map((f) => f.key),
+        contains('portfolioFile'),
+      );
+      expect(
+        withPortfolio.copyWith(clearPortfolioFile: true).portfolioFile,
+        isNull,
+      );
+    });
+
+    test('the provider roles, venue and event apply from the phone', () {
       expect(
         appliesInApp,
-        {'serviceFoxer', 'performerFoxer', 'gearFoxer', 'venueFoxer'},
+        {
+          'serviceFoxer',
+          'performerFoxer',
+          'gearFoxer',
+          'venueFoxer',
+          'eventFoxer',
+        },
       );
       expect(RouteNames.roleApply('gearFoxer'), '/roles/apply/gearFoxer');
     });
@@ -306,6 +373,28 @@ void main() {
       expect(find.text('Years of experience'), findsNothing);
       expect(find.text('NBI clearance ID number'), findsNothing);
       expect(find.text('Services you offer'), findsNothing);
+    });
+
+    testWidgets('an event asks for a bio and a place, not services', (
+      tester,
+    ) async {
+      await open(tester, 'eventFoxer');
+
+      expect(find.text('Event Foxer'), findsOneWidget);
+      expect(find.text('About you and your event experience'), findsOneWidget);
+      expect(find.text('Country'), findsOneWidget);
+      expect(find.text('City'), findsOneWidget);
+      expect(find.text('Wedding'), findsOneWidget);
+      expect(find.text('Services you offer'), findsNothing);
+      expect(find.text('Links to your work'), findsNothing);
+      expect(find.text('NBI clearance ID number'), findsNothing);
+      await tester.scrollUntilVisible(
+        find.text('Portfolio or resume (optional)'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Portfolio or resume (optional)'), findsOneWidget);
+      expect(find.text('TIN number (optional)'), findsNothing);
     });
 
     testWidgets('Send waits until it is complete', (tester) async {

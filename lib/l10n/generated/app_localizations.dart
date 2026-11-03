@@ -8860,6 +8860,42 @@ abstract class AppLocalizations {
   /// **'Could not send. Try again.'**
   String get roleApplyFailed;
 
+  /// No description provided for @roleApplyBio.
+  ///
+  /// In en, this message translates to:
+  /// **'About you and your event experience'**
+  String get roleApplyBio;
+
+  /// No description provided for @roleApplyPortfolioFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio or resume (optional)'**
+  String get roleApplyPortfolioFile;
+
+  /// No description provided for @roleSpecCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get roleSpecCorporate;
+
+  /// No description provided for @roleSpecBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get roleSpecBirthday;
+
+  /// No description provided for @roleSpecWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get roleSpecWedding;
+
+  /// No description provided for @roleSpecSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get roleSpecSocial;
+
   /// No description provided for @roleApplyVenueName.
   ///
   /// In en, this message translates to:

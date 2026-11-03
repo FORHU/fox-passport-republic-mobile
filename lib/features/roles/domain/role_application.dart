@@ -4,13 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
-/// The roles that apply from the phone. The others (event, organizer,
-/// investor) still apply on the web.
+/// The roles that apply from the phone. The others (organizer, investor)
+/// still apply on the web.
 const appliesInApp = <String>{
   'serviceFoxer',
   'performerFoxer',
   'gearFoxer',
   'venueFoxer',
+  'eventFoxer',
 };
 
 /// The documents a Foxer application asks for. [field] is the name the API
@@ -27,8 +28,8 @@ enum KycDocument {
   final String field;
 }
 
-/// What a person fills in to apply as a Talent, Performer, Gear or Venue
-/// Foxer.
+/// What a person fills in to apply as a Talent, Performer, Gear, Venue or
+/// Event Foxer.
 class RoleApplicationDraft extends Equatable {
   const RoleApplicationDraft({
     required this.roleType,
@@ -36,6 +37,11 @@ class RoleApplicationDraft extends Equatable {
     this.contactNumber = '',
     this.address = '',
     this.description = '',
+    this.bio = '',
+    this.country = '',
+    this.state = '',
+    this.city = '',
+    this.portfolioFile,
     this.types = '',
     this.portfolio = '',
     this.experience = '',
@@ -56,6 +62,15 @@ class RoleApplicationDraft extends Equatable {
   final String address;
   final String description;
 
+  /// Event only: their background, and the base location they work from.
+  final String bio;
+  final String country;
+  final String state;
+  final String city;
+
+  /// Event only, optional: a portfolio or resume.
+  final PickedPhoto? portfolioFile;
+
   /// What they offer, as the person typed it, separated by commas: the kinds
   /// of service, performance or gear.
   final String types;
@@ -74,6 +89,13 @@ class RoleApplicationDraft extends Equatable {
 
   bool get isGear => roleType == 'gearFoxer';
   bool get isVenue => roleType == 'venueFoxer';
+  bool get isEvent => roleType == 'eventFoxer';
+
+  /// "City, State, Country", as the web sends it, leaving out what is blank.
+  String get location => [city, state, country]
+      .map((p) => p.trim())
+      .where((p) => p.isNotEmpty)
+      .join(', ');
 
   static const maxSpecializations = 3;
 
@@ -96,15 +118,19 @@ class RoleApplicationDraft extends Equatable {
   /// What the API asks for before it takes the application. It also wants the
   /// documents, as the web does.
   bool get isComplete =>
-      (isVenue
-          ? businessName.trim().isNotEmpty &&
-              contactNumber.trim().isNotEmpty &&
-              address.trim().isNotEmpty &&
-              tinNumber.isNotEmpty
-          : split(types).isNotEmpty &&
-              (isGear
-                  ? businessName.trim().isNotEmpty
-                  : years != null && nbiNumber.isNotEmpty)) &&
+      (isEvent
+          ? bio.trim().isNotEmpty &&
+              city.trim().isNotEmpty &&
+              country.trim().isNotEmpty
+          : isVenue
+              ? businessName.trim().isNotEmpty &&
+                  contactNumber.trim().isNotEmpty &&
+                  address.trim().isNotEmpty &&
+                  tinNumber.isNotEmpty
+              : split(types).isNotEmpty &&
+                  (isGear
+                      ? businessName.trim().isNotEmpty
+                      : years != null && nbiNumber.isNotEmpty)) &&
       KycDocument.values.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({
@@ -112,6 +138,12 @@ class RoleApplicationDraft extends Equatable {
     String? contactNumber,
     String? address,
     String? description,
+    String? bio,
+    String? country,
+    String? state,
+    String? city,
+    PickedPhoto? portfolioFile,
+    bool clearPortfolioFile = false,
     String? types,
     String? portfolio,
     String? experience,
@@ -126,6 +158,12 @@ class RoleApplicationDraft extends Equatable {
         contactNumber: contactNumber ?? this.contactNumber,
         address: address ?? this.address,
         description: description ?? this.description,
+        bio: bio ?? this.bio,
+        country: country ?? this.country,
+        state: state ?? this.state,
+        city: city ?? this.city,
+        portfolioFile:
+            clearPortfolioFile ? null : portfolioFile ?? this.portfolioFile,
         types: types ?? this.types,
         portfolio: portfolio ?? this.portfolio,
         experience: experience ?? this.experience,
@@ -142,6 +180,10 @@ class RoleApplicationDraft extends Equatable {
           'contactNumber': contactNumber.trim(),
           'address': address.trim(),
           if (description.trim().isNotEmpty) 'description': description.trim(),
+        } else if (isEvent) ...{
+          'bio': bio.trim(),
+          'location': location,
+          if (experience.trim().isNotEmpty) 'experience': experience.trim(),
         } else if (isGear) ...{
           'businessName': businessName.trim(),
           'assetTypes': split(types),
@@ -168,6 +210,11 @@ class RoleApplicationDraft extends Equatable {
             e.value.bytes,
             filename: e.value.name,
           ),
+        if (portfolioFile != null)
+          'portfolioFile': MultipartFile.fromBytes(
+            portfolioFile!.bytes,
+            filename: portfolioFile!.name,
+          ),
       });
 
   @override
@@ -177,6 +224,11 @@ class RoleApplicationDraft extends Equatable {
         contactNumber,
         address,
         description,
+        bio,
+        country,
+        state,
+        city,
+        portfolioFile?.name,
         types,
         portfolio,
         experience,
@@ -190,6 +242,13 @@ class RoleApplicationDraft extends Equatable {
 /// The categories a role can declare as specializations, as the API names
 /// them, in the web's order.
 List<String> specializationOptions(String roleType) => switch (roleType) {
+      'eventFoxer' => const [
+          'corporate',
+          'birthday',
+          'wedding',
+          'social',
+          'other',
+        ],
       'venueFoxer' => const [
           'indoor',
           'outdoor',

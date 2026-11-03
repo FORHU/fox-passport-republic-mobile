@@ -21,6 +21,7 @@ const _appliesInApp = {
   'performerFoxer',
   'gearFoxer',
   'venueFoxer',
+  'eventFoxer',
 };
 
 /// FoxPassport onboarding — the web app's `/onboarding` flow on a phone:

@@ -4903,6 +4903,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyFailed => 'Could not send. Try again.';
 
   @override
+  String get roleApplyBio => 'About you and your event experience';
+
+  @override
+  String get roleApplyPortfolioFile => 'Portfolio or resume (optional)';
+
+  @override
+  String get roleSpecCorporate => 'Corporate';
+
+  @override
+  String get roleSpecBirthday => 'Birthday';
+
+  @override
+  String get roleSpecWedding => 'Wedding';
+
+  @override
+  String get roleSpecSocial => 'Social';
+
+  @override
   String get roleApplyVenueName => 'Business or venue name';
 
   @override
