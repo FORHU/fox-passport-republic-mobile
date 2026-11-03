@@ -94,6 +94,11 @@ class RouteNames {
   static String roleApply(String roleType) =>
       '/roles/apply/${Uri.encodeComponent(roleType)}';
 
+  /// Fixing the documents an admin flagged on an application:
+  /// `/roles/resubmit/<requestId>`.
+  static String roleResubmit(String requestId) =>
+      '/roles/resubmit/${Uri.encodeComponent(requestId)}';
+
   /// Become a Foxer: the roles to apply for and where each stands.
   static const String roles = '/roles';
 

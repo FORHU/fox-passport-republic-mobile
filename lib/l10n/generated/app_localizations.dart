@@ -8890,6 +8890,60 @@ abstract class AppLocalizations {
   /// **'Police or background clearance'**
   String get roleApplyDocClearance;
 
+  /// No description provided for @roleResubmitHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix your application'**
+  String get roleResubmitHeading;
+
+  /// No description provided for @roleResubmitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix your {role} application'**
+  String roleResubmitTitle(String role);
+
+  /// No description provided for @roleResubmitIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the documents below were flagged. Everything else you sent stays as it is.'**
+  String get roleResubmitIntro;
+
+  /// No description provided for @roleResubmitNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewer note'**
+  String get roleResubmitNote;
+
+  /// No description provided for @roleResubmitSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send documents'**
+  String get roleResubmitSend;
+
+  /// No description provided for @roleResubmitSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents sent. Your application is back in review.'**
+  String get roleResubmitSent;
+
+  /// No description provided for @roleResubmitNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to fix here'**
+  String get roleResubmitNothing;
+
+  /// No description provided for @roleResubmitNothingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This application no longer needs changes, or could not be found.'**
+  String get roleResubmitNothingBody;
+
+  /// No description provided for @roleResubmitBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get roleResubmitBack;
+
   /// No description provided for @roleApplyChoose.
   ///
   /// In en, this message translates to:
