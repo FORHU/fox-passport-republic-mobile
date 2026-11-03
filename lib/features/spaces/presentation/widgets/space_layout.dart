@@ -73,7 +73,9 @@ class SpaceLayout extends ConsumerStatefulWidget {
     ];
   }
 
-  /// The Event space: Events, Calendar, Check-in, Messages.
+  /// The Event space, the same five as the others: Overview, Events,
+  /// Calendar, Earnings and More. [partnersWaiting] is how many venue
+  /// partnerships need an answer, shown on More.
   static List<NavBarItem> eventItems(
     BuildContext context, {
     int partnersWaiting = 0,
@@ -81,10 +83,14 @@ class SpaceLayout extends ConsumerStatefulWidget {
     final l10n = context.l10n;
     return [
       NavBarItem(
+        label: l10n.spaceTabOverview,
+        icon: Icons.dashboard_outlined,
+        activeIcon: Icons.dashboard_rounded,
+      ),
+      NavBarItem(
         label: l10n.spaceTabEvents,
         icon: Icons.celebration_outlined,
         activeIcon: Icons.celebration_rounded,
-        badgeLabel: _badge(partnersWaiting),
       ),
       NavBarItem(
         label: l10n.spaceTabCalendar,
@@ -92,14 +98,15 @@ class SpaceLayout extends ConsumerStatefulWidget {
         activeIcon: Icons.calendar_month_rounded,
       ),
       NavBarItem(
-        label: l10n.spaceTabCheckIn,
-        icon: Icons.qr_code_scanner_rounded,
-        activeIcon: Icons.qr_code_scanner_rounded,
+        label: l10n.spaceTabEarnings,
+        icon: Icons.account_balance_wallet_outlined,
+        activeIcon: Icons.account_balance_wallet_rounded,
       ),
       NavBarItem(
-        label: l10n.messages,
-        icon: Icons.chat_bubble_outline_rounded,
-        activeIcon: Icons.chat_bubble_rounded,
+        label: l10n.spaceTabMore,
+        icon: Icons.menu_rounded,
+        activeIcon: Icons.menu_rounded,
+        badgeLabel: _badge(partnersWaiting),
       ),
     ];
   }
