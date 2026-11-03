@@ -160,6 +160,51 @@ void main() {
   }
 
   group('Overview', () {
+    testWidgets('greets the person and names the role', (tester) async {
+      await pump(tester, const VenueOverviewPage());
+
+      // Morning, afternoon or evening, by the first name only.
+      expect(find.textContaining(', Ada'), findsOneWidget);
+      expect(find.text('Venue Foxer'), findsOneWidget);
+      // They also hold the Event role.
+      expect(find.text('+1'), findsOneWidget);
+    });
+
+    testWidgets('a new Foxer is shown their first steps', (tester) async {
+      await pump(tester, const VenueOverviewPage());
+
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('0 of 3 steps done'), findsOneWidget);
+      expect(find.text('List your first venue'), findsOneWidget);
+      expect(find.text('Connect your payout account'), findsOneWidget);
+      expect(find.text('Approve an Event Foxer'), findsOneWidget);
+    });
+
+    testWidgets('first steps tick themselves off from real data', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_sky],
+        stripe: const StripeStatus(onboardingComplete: true),
+      );
+
+      expect(find.text('2 of 3 steps done'), findsOneWidget);
+    });
+
+    testWidgets('the next booking is led by its venue', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_sky],
+        calendar: [_booking('Wedding', VenueHold.confirmed)],
+      );
+
+      expect(find.text('Wedding'), findsOneWidget);
+      expect(find.textContaining('Sky Hall ·'), findsOneWidget);
+    });
+
     testWidgets('shows the numbers that matter', (tester) async {
       await pump(
         tester,
