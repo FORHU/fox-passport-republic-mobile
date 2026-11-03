@@ -8,12 +8,15 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
+import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -41,6 +44,7 @@ class VenueOverviewPage extends ConsumerWidget {
       ..invalidate(venueRequestsProvider)
       ..invalidate(myVenuesProvider)
       ..invalidate(payoutsProvider)
+      ..invalidate(stripeStatusProvider)
       ..invalidate(partnersProvider)
       ..invalidate(venueCalendarProvider(range));
     try {
@@ -64,6 +68,7 @@ class VenueOverviewPage extends ConsumerWidget {
     final partners = ref.watch(partnersProvider);
     final partnersWaiting =
         ref.watch(partnersWaitingProvider(PartnerSide.mayor));
+    final stripe = ref.watch(stripeStatusProvider);
 
     final waiting = [
       ...?requests.asData?.value.where((r) => r.needsReply),
@@ -97,6 +102,30 @@ class VenueOverviewPage extends ConsumerWidget {
     String dash(AsyncValue<Object?> value, String Function() shown) =>
         value.hasValue ? shown() : '—';
 
+    // The first steps tick themselves off from real data, and show only once
+    // everything they read has loaded.
+    final firstSteps = [
+      FirstStep(
+        label: l10n.firstStepVenue,
+        done: myVenues.isNotEmpty,
+        onTap: () => context.push(RouteNames.spaceVenueStudio),
+      ),
+      FirstStep(
+        label: l10n.firstStepPayout,
+        done: stripe.asData?.value.onboardingComplete ?? false,
+        onTap: () => context.go(RouteNames.spaceVenueEarnings),
+      ),
+      FirstStep(
+        label: l10n.firstStepPartner,
+        done: partners.asData?.value.asMayor.any(
+              (p) => p.status == PartnerStatus.approved,
+            ) ??
+            false,
+        onTap: () => context.push(RouteNames.spaceVenuePartners),
+      ),
+    ];
+    final stepsLoaded = venues.hasValue && partners.hasValue && stripe.hasValue;
+
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
@@ -108,6 +137,15 @@ class VenueOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
+            OverviewGreeting(
+              roleLabel: l10n.overviewRoleVenue,
+              roleColor: AppColors.roleVenue,
+            ),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              FirstStepsCard(steps: firstSteps),
+              const SizedBox(height: 10),
+            ],
             // What the person does most, within reach of the thumb.
             IntrinsicHeight(
               child: Row(
@@ -197,8 +235,19 @@ class VenueOverviewPage extends ConsumerWidget {
                 style: AppTypography.body(color: AppColors.textMuted),
               )
             else
-              for (final entry in ahead.take(4)) ...[
-                _UpcomingTile(entry: entry, locale: locale),
+              for (final (i, entry) in ahead.take(4).indexed) ...[
+                // The first is led by a photo of its venue.
+                if (i == 0)
+                  _FeaturedBookingCard(
+                    entry: entry,
+                    locale: locale,
+                    imageUrl: myVenues
+                        .where((v) => v.id == entry.venueId)
+                        .firstOrNull
+                        ?.imageUrl,
+                  )
+                else
+                  _UpcomingTile(entry: entry, locale: locale),
                 const SizedBox(height: 8),
               ],
             HomeSectionHeader(title: l10n.overviewNumbers),
@@ -269,6 +318,104 @@ class VenueOverviewPage extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The next booking, led by a photo of its venue (a placeholder when the
+/// venue has none): its day, what it is, where and when it starts.
+class _FeaturedBookingCard extends StatelessWidget {
+  const _FeaturedBookingCard({
+    required this.entry,
+    required this.locale,
+    required this.imageUrl,
+  });
+
+  final CalendarEntry entry;
+  final String locale;
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final hold = entry.hold;
+    final now = DateTime.now();
+    final isToday = entry.start.year == now.year &&
+        entry.start.month == now.month &&
+        entry.start.day == now.day;
+    final day = isToday
+        ? context.l10n.overviewToday.toUpperCase()
+        : DateFormat.MMMd(locale).format(entry.start).toUpperCase();
+    final where = entry.venueName;
+    final when = DateFormat.jm(locale).format(entry.start);
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brCard,
+        border: Border.all(
+          color: isToday ? AppColors.accent : AppColors.border,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              PhotoBox(
+                url: imageUrl,
+                width: double.infinity,
+                height: 140,
+                radius: 0,
+              ),
+              Positioned(
+                left: 12,
+                top: 12,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.canvas,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  child: Text(
+                    day,
+                    style: AppTypography.label(
+                      color: isToday ? AppColors.accent : AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              if (hold != null)
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: VenueHoldChip(hold: hold),
+                ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.display(),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  where == null || where.isEmpty ? when : '$where · $when',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.body(size: 13),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

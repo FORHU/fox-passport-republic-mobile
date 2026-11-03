@@ -3376,6 +3376,66 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 draft to finish} other{{count} drafts to finish}}'**
   String overviewVenuesDrafts(int count);
 
+  /// No description provided for @overviewGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning, {name}'**
+  String overviewGreetingMorning(String name);
+
+  /// No description provided for @overviewGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name}'**
+  String overviewGreetingAfternoon(String name);
+
+  /// No description provided for @overviewGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name}'**
+  String overviewGreetingEvening(String name);
+
+  /// No description provided for @overviewGreetingNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get overviewGreetingNoName;
+
+  /// No description provided for @overviewRoleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue Foxer'**
+  String get overviewRoleVenue;
+
+  /// No description provided for @firstStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get firstStepsTitle;
+
+  /// No description provided for @firstStepsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} steps done'**
+  String firstStepsDone(int done, int total);
+
+  /// No description provided for @firstStepVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first venue'**
+  String get firstStepVenue;
+
+  /// No description provided for @firstStepPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your payout account'**
+  String get firstStepPayout;
+
+  /// No description provided for @firstStepPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve an Event Foxer'**
+  String get firstStepPartner;
+
   /// No description provided for @overviewTodayAhead.
   ///
   /// In en, this message translates to:

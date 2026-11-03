@@ -1832,6 +1832,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String overviewGreetingMorning(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String overviewGreetingAfternoon(String name) {
+    return 'Good afternoon, $name';
+  }
+
+  @override
+  String overviewGreetingEvening(String name) {
+    return 'Good evening, $name';
+  }
+
+  @override
+  String get overviewGreetingNoName => 'Welcome back';
+
+  @override
+  String get overviewRoleVenue => 'Venue Foxer';
+
+  @override
+  String get firstStepsTitle => 'Getting started';
+
+  @override
+  String firstStepsDone(int done, int total) {
+    return '$done of $total steps done';
+  }
+
+  @override
+  String get firstStepVenue => 'List your first venue';
+
+  @override
+  String get firstStepPayout => 'Connect your payout account';
+
+  @override
+  String get firstStepPartner => 'Approve an Event Foxer';
+
+  @override
   String get overviewTodayAhead => 'Today and coming up';
 
   @override
