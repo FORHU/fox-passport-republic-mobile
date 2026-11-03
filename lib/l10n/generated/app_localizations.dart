@@ -8878,6 +8878,12 @@ abstract class AppLocalizations {
   /// **'Verification selfie'**
   String get roleApplyDocSelfie;
 
+  /// No description provided for @roleApplyDocClearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Police or background clearance'**
+  String get roleApplyDocClearance;
+
   /// No description provided for @roleApplyChoose.
   ///
   /// In en, this message translates to:

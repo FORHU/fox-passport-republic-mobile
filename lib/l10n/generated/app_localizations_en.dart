@@ -4912,6 +4912,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDocSelfie => 'Verification selfie';
 
   @override
+  String get roleApplyDocClearance => 'Police or background clearance';
+
+  @override
   String get roleApplyChoose => 'Choose';
 
   @override
