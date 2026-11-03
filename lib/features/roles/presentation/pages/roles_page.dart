@@ -47,7 +47,12 @@ class RolesPage extends ConsumerWidget {
               _RoleCard(
                 role: role,
                 status: _statusOf(role, held, requests.value ?? const []),
-                onTap: () => _open(context, role),
+                onTap: () => _tap(
+                  context,
+                  role,
+                  held,
+                  requests.value ?? const [],
+                ),
               ),
               const SizedBox(height: 10),
             ],
@@ -68,6 +73,24 @@ class RolesPage extends ConsumerWidget {
     if (mine.any((r) => r.needsRevision)) return _RoleStatus.revision;
     if (mine.any((r) => r.isPending)) return _RoleStatus.review;
     return _RoleStatus.none;
+  }
+
+  /// An application an admin sent back opens its fix screen; any other role
+  /// opens its details.
+  void _tap(
+    BuildContext context,
+    RoleCatalogEntry role,
+    List<String> held,
+    List<RoleRequestSummary> requests,
+  ) {
+    final sentBack = requests
+        .where((r) => r.roleType == role.roleType && r.needsRevision)
+        .firstOrNull;
+    if (sentBack != null && !held.contains(role.roleType)) {
+      unawaited(context.push(RouteNames.roleResubmit(sentBack.id)));
+    } else {
+      unawaited(_open(context, role));
+    }
   }
 
   Future<void> _open(BuildContext context, RoleCatalogEntry role) async {

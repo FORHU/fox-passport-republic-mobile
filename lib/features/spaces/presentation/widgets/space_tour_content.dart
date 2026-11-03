@@ -40,59 +40,37 @@ List<List<TourStep>> spaceTourSteps(
     body: l10n.tourOverviewBody,
   );
 
-  return switch (space) {
-    NewFoxerSpace.event => [
-        [
-          welcome(),
-          TourStep(
-            icon: Icons.celebration_outlined,
-            title: l10n.tourEventsTitle,
-            body: l10n.tourEventsBody,
-          ),
-          firstSteps,
-        ],
-        [calendar],
-        [
-          TourStep(
-            icon: Icons.qr_code_scanner_rounded,
-            title: l10n.tourCheckInTitle,
-            body: l10n.tourCheckInBody,
-          ),
-        ],
-        [
-          TourStep(
-            icon: Icons.chat_bubble_outline_rounded,
-            title: l10n.tourMessagesTitle,
-            body: l10n.tourMessagesBody,
-          ),
-        ],
-      ],
-    _ => [
-        [welcome(), overview, firstSteps],
-        [
-          switch (space) {
-            NewFoxerSpace.venue => TourStep(
-                icon: Icons.storefront_outlined,
-                title: l10n.tourVenuesTitle,
-                body: l10n.tourVenuesBody,
-              ),
-            NewFoxerSpace.gear => TourStep(
-                icon: Icons.inventory_2_outlined,
-                title: l10n.tourGearTitle,
-                body: l10n.tourGearBody,
-              ),
-            _ => TourStep(
-                icon: Icons.inventory_2_outlined,
-                title: l10n.tourListingsTitle,
-                body: l10n.tourListingsBody,
-              ),
-          },
-        ],
-        [calendar],
-        [earnings],
-        [more],
-      ],
+  // Every space has the same five tabs: Overview, its own listings, Calendar,
+  // Earnings and More.
+  final listings = switch (space) {
+    NewFoxerSpace.venue => TourStep(
+        icon: Icons.storefront_outlined,
+        title: l10n.tourVenuesTitle,
+        body: l10n.tourVenuesBody,
+      ),
+    NewFoxerSpace.event => TourStep(
+        icon: Icons.celebration_outlined,
+        title: l10n.tourEventsTitle,
+        body: l10n.tourEventsBody,
+      ),
+    NewFoxerSpace.gear => TourStep(
+        icon: Icons.inventory_2_outlined,
+        title: l10n.tourGearTitle,
+        body: l10n.tourGearBody,
+      ),
+    NewFoxerSpace.services => TourStep(
+        icon: Icons.inventory_2_outlined,
+        title: l10n.tourListingsTitle,
+        body: l10n.tourListingsBody,
+      ),
   };
+  return [
+    [welcome(), overview, firstSteps],
+    [listings],
+    [calendar],
+    [earnings],
+    [more],
+  ];
 }
 
 /// Plays the whole tour of [space] again, every tab in order, from a More

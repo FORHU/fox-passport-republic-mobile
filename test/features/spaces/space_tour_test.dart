@@ -126,7 +126,7 @@ void main() {
       expect(spaceTourSteps(l10n, NewFoxerSpace.venue), hasLength(5));
       expect(spaceTourSteps(l10n, NewFoxerSpace.gear), hasLength(5));
       expect(spaceTourSteps(l10n, NewFoxerSpace.services), hasLength(5));
-      expect(spaceTourSteps(l10n, NewFoxerSpace.event), hasLength(4));
+      expect(spaceTourSteps(l10n, NewFoxerSpace.event), hasLength(5));
     });
   });
 }

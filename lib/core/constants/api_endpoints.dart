@@ -44,6 +44,8 @@ class ApiEndpoints {
   // ── Roles & locations (onboarding) ──────────────────────────────────────
   static const String roleRequestsMine = '/role-requests/my';
   static const String roleRequestsApply = '/role-requests/apply';
+  static String roleRequestResubmit(String id) =>
+      '/role-requests/$id/resubmit-documents';
   static const String locationCountries = '/locations/countries';
   static String locationStates(String countryCode) =>
       '/locations/countries/$countryCode/states';
@@ -235,6 +237,9 @@ class ApiEndpoints {
   static const String conversationsInbox = '/conversations/inbox';
   static const String socketTicket = '/auth/socket-ticket';
   static const String uploadFile = '/files/upload-direct';
+
+  /// An identity document, kept private; answers with its file id.
+  static const String uploadPrivate = '/files/upload-private';
   static const String venueBoundaries = '/venues/boundaries';
   static const String cancellationPolicies = '/cancellation-policies';
   static const String fxRates = '/fx/rates';
