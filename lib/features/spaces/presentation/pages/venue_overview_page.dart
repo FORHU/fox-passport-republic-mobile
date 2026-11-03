@@ -144,10 +144,7 @@ class VenueOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            OverviewGreeting(
-              roleLabel: l10n.overviewRoleVenue,
-              roleColor: AppColors.roleVenue,
-            ),
+            const OverviewGreeting(),
             const SizedBox(height: 4),
             Row(
               children: [

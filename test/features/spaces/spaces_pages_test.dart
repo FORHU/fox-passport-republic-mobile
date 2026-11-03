@@ -253,7 +253,7 @@ void main() {
           .thenAnswer((_) async => {'data': <String, Object>{}});
       await pump(tester, const EventOverviewPage());
 
-      expect(find.text('Event Foxer'), findsOneWidget);
+      expect(find.text('Event Foxer'), findsNothing);
       expect(find.text('Getting started'), findsOneWidget);
       expect(find.text('0 of 3 steps done'), findsOneWidget);
       expect(find.text('Get approved to host at a venue'), findsOneWidget);

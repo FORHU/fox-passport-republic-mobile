@@ -160,14 +160,12 @@ void main() {
   }
 
   group('Overview', () {
-    testWidgets('greets the person and names the role', (tester) async {
+    testWidgets('greets the person without a role chip', (tester) async {
       await pump(tester, const VenueOverviewPage());
 
       // Morning, afternoon or evening, by the first name only.
       expect(find.textContaining(', Ada'), findsOneWidget);
-      expect(find.text('Venue Foxer'), findsOneWidget);
-      // They also hold the Event role.
-      expect(find.text('+1'), findsOneWidget);
+      expect(find.text('Venue Foxer'), findsNothing);
     });
 
     testWidgets('a new Foxer is shown their first steps', (tester) async {

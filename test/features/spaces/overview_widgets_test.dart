@@ -6,7 +6,6 @@ import 'package:flutter_template/features/spaces/presentation/widgets/first_step
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/theme/app_theme.dart';
-import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Session extends AuthController {
@@ -140,52 +139,28 @@ void main() {
   });
 
   group('OverviewGreeting', () {
-    testWidgets('names the role, and counts the others held', (tester) async {
+    testWidgets('greets by first name and shows no role chip', (tester) async {
       await tester.pumpWidget(
         _app(
-          const OverviewGreeting(
-            roleLabel: 'Venue Foxer',
-            roleColor: AppColors.roleVenue,
-          ),
+          const OverviewGreeting(),
           roles: const ['venueFoxer', 'eventFoxer'],
           name: 'Ada Lovelace',
         ),
       );
       await tester.pump();
 
-      expect(find.text('Venue Foxer'), findsOneWidget);
-      expect(find.text('+1'), findsOneWidget);
       // The greeting uses the first name only (morning, afternoon or evening).
       expect(find.textContaining(', Ada'), findsOneWidget);
       expect(find.textContaining('Lovelace'), findsNothing);
+      expect(find.text('Venue Foxer'), findsNothing);
+      expect(find.textContaining('+'), findsNothing);
     });
 
     testWidgets('has nothing to name when there is no name', (tester) async {
-      await tester.pumpWidget(
-        _app(
-          const OverviewGreeting(
-            roleLabel: 'Venue Foxer',
-            roleColor: AppColors.roleVenue,
-          ),
-        ),
-      );
+      await tester.pumpWidget(_app(const OverviewGreeting()));
       await tester.pump();
 
       expect(find.text('Welcome back'), findsOneWidget);
-    });
-
-    testWidgets('shows no count for a single role', (tester) async {
-      await tester.pumpWidget(
-        _app(
-          const OverviewGreeting(
-            roleLabel: 'Venue Foxer',
-            roleColor: AppColors.roleVenue,
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.textContaining('+'), findsNothing);
     });
   });
 }

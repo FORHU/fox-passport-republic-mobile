@@ -247,12 +247,11 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('the gear overview names the role and the first steps', (
+    testWidgets('the gear overview shows the first steps', (
       tester,
     ) async {
       await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
 
-      expect(find.text('Gear Foxer'), findsOneWidget);
       expect(find.text('Getting started'), findsOneWidget);
       expect(find.text('0 of 2 steps done'), findsOneWidget);
       expect(find.text('List your first item'), findsOneWidget);
@@ -266,7 +265,6 @@ void main() {
         roles: const ['serviceFoxer'],
       );
 
-      expect(find.text('Talent Foxer'), findsOneWidget);
       expect(find.text('List your first service'), findsOneWidget);
     });
 
@@ -279,7 +277,6 @@ void main() {
         roles: const ['performerFoxer'],
       );
 
-      expect(find.text('Performer Foxer'), findsOneWidget);
       expect(find.text('List your first performance'), findsOneWidget);
     });
 

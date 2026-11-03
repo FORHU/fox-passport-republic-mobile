@@ -84,16 +84,6 @@ class ProviderOverviewPage extends ConsumerWidget {
     final performerOnly = !kind.isGear &&
         roles.contains('performerFoxer') &&
         !roles.contains('serviceFoxer');
-    final roleLabel = kind.isGear
-        ? l10n.overviewRoleGear
-        : performerOnly
-            ? l10n.overviewRolePerformer
-            : l10n.overviewRoleTalent;
-    final roleColor = kind.isGear
-        ? AppColors.roleGear
-        : performerOnly
-            ? AppColors.rolePerformer
-            : AppColors.roleTalent;
     final firstSteps = [
       FirstStep(
         label: kind.isGear
@@ -136,7 +126,7 @@ class ProviderOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            OverviewGreeting(roleLabel: roleLabel, roleColor: roleColor),
+            const OverviewGreeting(),
             if (stepsLoaded) ...[
               const SizedBox(height: 10),
               FirstStepsCard(steps: firstSteps),

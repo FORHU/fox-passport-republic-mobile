@@ -108,10 +108,7 @@ class EventOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            OverviewGreeting(
-              roleLabel: l10n.overviewRoleEvent,
-              roleColor: AppColors.roleEvent,
-            ),
+            const OverviewGreeting(),
             const SizedBox(height: 4),
             Row(
               children: [
@@ -175,8 +172,11 @@ class EventOverviewPage extends ConsumerWidget {
               data: (p) => EarningsCard(
                 paid:
                     money.format(p.totals.paid, kBaseCurrency, locale: locale),
-                pending: money.format(p.totals.pending, kBaseCurrency,
-                    locale: locale,),
+                pending: money.format(
+                  p.totals.pending,
+                  kBaseCurrency,
+                  locale: locale,
+                ),
                 change: monthChange(p.rows, DateTime.now()),
                 weeks: p.rows.length < 3
                     ? null
