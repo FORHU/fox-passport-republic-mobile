@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
@@ -16,7 +17,6 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
-import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -238,10 +238,11 @@ class VenueOverviewPage extends ConsumerWidget {
               for (final (i, entry) in ahead.take(4).indexed) ...[
                 // The first is led by a photo of its venue.
                 if (i == 0)
-                  _FeaturedBookingCard(
-                    entry: entry,
-                    locale: locale,
-                    imageUrl: myVenues
+                  _featuredBooking(
+                    context,
+                    entry,
+                    locale,
+                    myVenues
                         .where((v) => v.id == entry.venueId)
                         .firstOrNull
                         ?.imageUrl,
@@ -323,102 +324,30 @@ class VenueOverviewPage extends ConsumerWidget {
   }
 }
 
-/// The next booking, led by a photo of its venue (a placeholder when the
-/// venue has none): its day, what it is, where and when it starts.
-class _FeaturedBookingCard extends StatelessWidget {
-  const _FeaturedBookingCard({
-    required this.entry,
-    required this.locale,
-    required this.imageUrl,
-  });
-
-  final CalendarEntry entry;
-  final String locale;
-  final String? imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    final hold = entry.hold;
-    final now = DateTime.now();
-    final isToday = entry.start.year == now.year &&
-        entry.start.month == now.month &&
-        entry.start.day == now.day;
-    final day = isToday
+/// The next booking as a photo card: its day, what it is, where and when.
+Widget _featuredBooking(
+  BuildContext context,
+  CalendarEntry entry,
+  String locale,
+  String? imageUrl,
+) {
+  final now = DateTime.now();
+  final isToday = entry.start.year == now.year &&
+      entry.start.month == now.month &&
+      entry.start.day == now.day;
+  final where = entry.venueName;
+  final when = DateFormat.jm(locale).format(entry.start);
+  final hold = entry.hold;
+  return FeaturedPhotoCard(
+    dayLabel: isToday
         ? context.l10n.overviewToday.toUpperCase()
-        : DateFormat.MMMd(locale).format(entry.start).toUpperCase();
-    final where = entry.venueName;
-    final when = DateFormat.jm(locale).format(entry.start);
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.brCard,
-        border: Border.all(
-          color: isToday ? AppColors.accent : AppColors.border,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              PhotoBox(
-                url: imageUrl,
-                width: double.infinity,
-                height: 140,
-                radius: 0,
-              ),
-              Positioned(
-                left: 12,
-                top: 12,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.canvas,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                  ),
-                  child: Text(
-                    day,
-                    style: AppTypography.label(
-                      color: isToday ? AppColors.accent : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-              if (hold != null)
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: VenueHoldChip(hold: hold),
-                ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.display(),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  where == null || where.isEmpty ? when : '$where · $when',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.body(size: 13),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        : DateFormat.MMMd(locale).format(entry.start).toUpperCase(),
+    title: entry.title,
+    subtitle: where == null || where.isEmpty ? when : '$where · $when',
+    imageUrl: imageUrl,
+    highlight: isToday,
+    statusChip: hold == null ? null : VenueHoldChip(hold: hold),
+  );
 }
 
 /// A booking: its day (or "Today"), what it is and when it starts.

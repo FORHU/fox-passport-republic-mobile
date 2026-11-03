@@ -1853,6 +1853,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewRoleVenue => 'Venue Foxer';
 
   @override
+  String get overviewRoleGear => 'Gear Foxer';
+
+  @override
+  String get overviewRoleTalent => 'Talent Foxer';
+
+  @override
+  String get overviewRolePerformer => 'Performer Foxer';
+
+  @override
+  String get firstStepGear => 'List your first item';
+
+  @override
+  String get firstStepService => 'List your first service';
+
+  @override
+  String get firstStepPerformance => 'List your first performance';
+
+  @override
   String get firstStepsTitle => 'Getting started';
 
   @override
