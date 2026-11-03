@@ -16,7 +16,12 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
 
 // The roles that apply from the phone (`features/roles` owns the form).
-const _appliesInApp = {'serviceFoxer', 'performerFoxer', 'gearFoxer'};
+const _appliesInApp = {
+  'serviceFoxer',
+  'performerFoxer',
+  'gearFoxer',
+  'venueFoxer',
+};
 
 /// FoxPassport onboarding — the web app's `/onboarding` flow on a phone:
 /// **Profile → Interests → Roles**, in the web's dark / lime look.

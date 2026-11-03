@@ -73,25 +73,49 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (d.isGear)
+                if (d.isGear || d.isVenue)
                   _Field(
-                    label: l10n.roleApplyBusiness,
+                    label: d.isVenue
+                        ? l10n.roleApplyVenueName
+                        : l10n.roleApplyBusiness,
                     value: d.businessName,
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(businessName: v)),
                   ),
-                _Field(
-                  label: switch (widget.roleType) {
-                    'gearFoxer' => l10n.roleApplyGearTypes,
-                    'performerFoxer' => l10n.roleApplyPerformerTypes,
-                    _ => l10n.roleApplyServiceTypes,
-                  },
-                  hint: l10n.roleApplyCommaHint,
-                  value: d.types,
-                  onChanged: (v) =>
-                      controller.edit((x) => x.copyWith(types: v)),
-                ),
-                if (!d.isGear) ...[
+                if (d.isVenue) ...[
+                  _Field(
+                    label: l10n.roleApplyContact,
+                    value: d.contactNumber,
+                    phone: true,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(contactNumber: v)),
+                  ),
+                  _Field(
+                    label: l10n.roleApplyAddress,
+                    value: d.address,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(address: v)),
+                  ),
+                  _Field(
+                    label: l10n.roleApplyDescription,
+                    value: d.description,
+                    lines: 3,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(description: v)),
+                  ),
+                ] else
+                  _Field(
+                    label: switch (widget.roleType) {
+                      'gearFoxer' => l10n.roleApplyGearTypes,
+                      'performerFoxer' => l10n.roleApplyPerformerTypes,
+                      _ => l10n.roleApplyServiceTypes,
+                    },
+                    hint: l10n.roleApplyCommaHint,
+                    value: d.types,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(types: v)),
+                  ),
+                if (!d.isGear && !d.isVenue) ...[
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -122,7 +146,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!d.isGear)
+                if (!d.isGear && !d.isVenue)
                   _Field(
                     label: l10n.roleApplyNbiNumber,
                     value: d.nbiNumber,
@@ -135,7 +159,8 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     ),
                   ),
                 _Field(
-                  label: l10n.roleApplyTin,
+                  label:
+                      d.isVenue ? l10n.roleApplyTinRequired : l10n.roleApplyTin,
                   value: d.tinNumber,
                   number: true,
                   formatters: [LengthLimitingTextInputFormatter(9)],
@@ -189,6 +214,12 @@ String _documentLabel(AppLocalizations l10n, KycDocument slot) =>
 
 String specializationLabel(AppLocalizations l10n, String code) =>
     switch (code) {
+      'indoor' => l10n.roleSpecIndoor,
+      'outdoor' => l10n.roleSpecOutdoor,
+      'hotel' => l10n.roleSpecHotel,
+      'beach_resort' => l10n.roleSpecBeachResort,
+      'garden' => l10n.roleSpecGarden,
+      'mix' => l10n.roleSpecMix,
       'design' => l10n.roleSpecDesign,
       'catering' => l10n.roleSpecCatering,
       'service_staff' => l10n.roleSpecStaff,
@@ -245,6 +276,8 @@ class _Field extends StatefulWidget {
     required this.onChanged,
     this.hint,
     this.number = false,
+    this.phone = false,
+    this.lines = 1,
     this.formatters = const [],
   });
 
@@ -252,6 +285,8 @@ class _Field extends StatefulWidget {
   final String? hint;
   final String value;
   final bool number;
+  final bool phone;
+  final int lines;
   final List<TextInputFormatter> formatters;
   final ValueChanged<String> onChanged;
 
@@ -274,7 +309,13 @@ class _FieldState extends State<_Field> {
         child: TextField(
           controller: _controller,
           inputFormatters: widget.formatters,
-          keyboardType: widget.number ? TextInputType.number : null,
+          keyboardType: widget.number
+              ? TextInputType.number
+              : widget.phone
+                  ? TextInputType.phone
+                  : null,
+          minLines: widget.lines,
+          maxLines: widget.lines,
           decoration: InputDecoration(
             labelText: widget.label,
             helperText: widget.hint,
