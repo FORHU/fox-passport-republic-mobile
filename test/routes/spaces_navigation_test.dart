@@ -16,6 +16,7 @@ import 'package:flutter_template/features/messages/presentation/pages/messages_p
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
@@ -224,15 +225,15 @@ void main() {
     await finish(tester);
   });
 
-  testWidgets('the Event space has Events, Calendar, Check-in and Messages', (
+  testWidgets('the Event space has the same five tabs as the others', (
     tester,
   ) async {
     await boot(tester, roles: const ['eventFoxer']);
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
-    for (final tab in ['Events', 'Calendar', 'Check-in', 'Messages']) {
-      expect(find.text(tab), findsWidgets);
+    for (final tab in ['Overview', 'Events', 'Calendar', 'Earnings', 'More']) {
+      expect(find.text(tab), findsWidgets, reason: tab);
     }
 
     await tester.tap(find.text('Calendar'));
@@ -240,9 +241,56 @@ void main() {
     expect(where(), RouteNames.spaceEventCalendar);
     expect(find.byType(EventCalendarPage), findsOneWidget);
 
+    await tester.tap(find.text('Earnings'));
+    await settle(tester);
+    expect(where(), RouteNames.spaceEventEarnings);
+    await finish(tester);
+  });
+
+  testWidgets('Check-in and Messages are in the Event More tab', (
+    tester,
+  ) async {
+    await boot(tester, roles: const ['eventFoxer']);
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('More'));
+    await settle(tester);
+    expect(where(), RouteNames.spaceEventMore);
+    expect(find.text('Messages'), findsWidgets);
+
     await tester.tap(find.text('Check-in'));
     await settle(tester);
-    expect(where(), RouteNames.spaceEventCheckIn);
+    expect(find.byType(CheckInPage), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('a status row on the Overview opens the Events tab on it', (
+    tester,
+  ) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [
+        myEventsProvider.overrideWith(
+          (ref) async => const [
+            SpaceListing(id: 'e1', name: 'Ada Birthday', status: 'draft'),
+          ],
+        ),
+      ],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('1 draft to finish'));
+    await settle(tester);
+
+    expect(where(), RouteNames.spaceEventList);
+    expect(
+      router.routerDelegate.currentConfiguration.uri.queryParameters['group'],
+      'draft',
+    );
+    expect(find.text('Ada Birthday'), findsOneWidget);
     await finish(tester);
   });
 
@@ -260,7 +308,7 @@ void main() {
         ),
       ],
     );
-    router.go(RouteNames.spaceEvent);
+    router.go(RouteNames.spaceEventList);
     await settle(tester);
 
     // The first steps sit above the events, so the event is below.
@@ -298,7 +346,7 @@ void main() {
         ),
       ],
     );
-    router.go(RouteNames.spaceEvent);
+    router.go(RouteNames.spaceEventList);
     await settle(tester);
 
     // The first steps sit above the events, so the event is below.
@@ -457,7 +505,7 @@ void main() {
     expect(prefs.getString('active_space_u1'), 'event');
     // The switch fades through and says where they are now.
     expect(find.text('Now in the Event space'), findsOneWidget);
-    for (final tab in ['Events', 'Check-in', 'Messages']) {
+    for (final tab in ['Overview', 'Events', 'Earnings', 'More']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
     await finish(tester);

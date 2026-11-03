@@ -154,7 +154,10 @@ class RouteNames {
 
   /// The Event space, for an EventFoxer: their events, check-in and messages.
   static const String spaceEvent = '/space/event';
+  static const String spaceEventList = '/space/event/events';
   static const String spaceEventCalendar = '/space/event/calendar';
+  static const String spaceEventEarnings = '/space/event/earnings';
+  static const String spaceEventMore = '/space/event/more';
 
   /// Creating or editing an event: full screen, outside the tabs.
   /// The team of a venue or event: Organizers and Check-in Helpers. The list
@@ -172,9 +175,9 @@ class RouteNames {
   static const String spaceEventStudio = '/space/event/studio';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';
-  static const String spaceEventCheckIn = '/space/event/check-in';
+  static const String spaceEventCheckIn = '/space/event/more/check-in';
   static const String spaceEventPartners = '/space/event/partners';
-  static const String spaceEventMessages = '/space/event/messages';
+  static const String spaceEventMessages = '/space/event/more/messages';
 
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.
