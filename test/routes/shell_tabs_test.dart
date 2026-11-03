@@ -41,9 +41,10 @@ void main() {
     ]);
     expect(rootsOf(shells[2]), [
       RouteNames.spaceEvent,
+      RouteNames.spaceEventList,
       RouteNames.spaceEventCalendar,
-      RouteNames.spaceEventCheckIn,
-      RouteNames.spaceEventMessages,
+      RouteNames.spaceEventEarnings,
+      RouteNames.spaceEventMore,
     ]);
     for (final (i, kind) in ProviderKind.values.indexed) {
       expect(rootsOf(shells[3 + i]), [

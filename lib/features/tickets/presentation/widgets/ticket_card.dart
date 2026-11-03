@@ -45,6 +45,13 @@ class TicketCard extends ConsumerWidget {
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
 
+  /// A live booking still waiting to be confirmed has no QR yet; this says
+  /// when it will, so the ticket does not look like it is missing one.
+  bool get _showPendingQr =>
+      !ticket.isSample &&
+      ticket.status == 'pending' &&
+      ticket.endAt.isAfter(DateTime.now());
+
   /// A finished or cancelled booking that came from an event package can be
   /// booked again; a live one cannot (it is already booked).
   bool get _canRebook =>
@@ -140,12 +147,15 @@ class TicketCard extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
             child: Column(
               children: [
-                if (_showQr) _Qr(ticket: ticket),
+                if (_showQr)
+                  _Qr(ticket: ticket)
+                else if (_showPendingQr)
+                  const _PendingQr(),
                 // Without a QR the code stays as a reference, except on a
                 // cancelled booking, where it is no longer good for anything.
                 if (ticket.ticketCode != null &&
                     (_showQr || ticket.status != 'cancelled')) ...[
-                  if (_showQr) const SizedBox(height: 10),
+                  if (_showQr || _showPendingQr) const SizedBox(height: 10),
                   Text(
                     ticket.ticketCode!,
                     style: AppTypography.label(color: AppColors.textSecondary),
@@ -261,6 +271,40 @@ class _Fact extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTypography.display(size: 15),
+        ),
+      ],
+    );
+  }
+}
+
+/// Where the QR will be once the booking is confirmed.
+class _PendingQr extends StatelessWidget {
+  const _PendingQr();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 148,
+          height: 148,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceRaised,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: const Icon(
+            Icons.qr_code_2_rounded,
+            size: 72,
+            color: AppColors.textFaint,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          context.l10n.ticketQrPending,
+          textAlign: TextAlign.center,
+          style: AppTypography.body(size: 13),
         ),
       ],
     );
