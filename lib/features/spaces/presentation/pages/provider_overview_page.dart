@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
@@ -44,6 +45,15 @@ class ProviderOverviewPage extends ConsumerWidget {
     final payouts = ref.watch(payoutsProvider);
     final stripe = ref.watch(stripeStatusProvider);
     final roles = ref.watch(heldRolesProvider);
+    final isNew = ref
+            .watch(
+              newFoxerProvider(
+                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+              ),
+            )
+            .asData
+            ?.value ??
+        false;
 
     final all = requests.asData?.value ?? const <VenueRequest>[];
     final waiting = [
@@ -100,7 +110,7 @@ class ProviderOverviewPage extends ConsumerWidget {
         onTap: () => context.go(kind.earnings),
       ),
     ];
-    final stepsLoaded = items.hasValue && stripe.hasValue;
+    final stepsLoaded = isNew && items.hasValue && stripe.hasValue;
 
     Future<void> refresh() async {
       ref

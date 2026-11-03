@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/widgets/venue_hold_chip.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
@@ -69,6 +70,8 @@ class VenueOverviewPage extends ConsumerWidget {
     final partnersWaiting =
         ref.watch(partnersWaitingProvider(PartnerSide.mayor));
     final stripe = ref.watch(stripeStatusProvider);
+    final isNew =
+        ref.watch(newFoxerProvider(NewFoxerSpace.venue)).asData?.value ?? false;
 
     final waiting = [
       ...?requests.asData?.value.where((r) => r.needsReply),
@@ -124,7 +127,8 @@ class VenueOverviewPage extends ConsumerWidget {
         onTap: () => context.push(RouteNames.spaceVenuePartners),
       ),
     ];
-    final stepsLoaded = venues.hasValue && partners.hasValue && stripe.hasValue;
+    final stepsLoaded =
+        isNew && venues.hasValue && partners.hasValue && stripe.hasValue;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,

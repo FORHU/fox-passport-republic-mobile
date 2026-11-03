@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -38,6 +39,8 @@ class EventOverviewPage extends ConsumerWidget {
     final invites = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
     final partners = ref.watch(partnersProvider);
     final stripe = ref.watch(stripeStatusProvider);
+    final isNew =
+        ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
 
     final all = events.asData?.value ?? const [];
     int inGroup(String group) => all.where((e) => e.group == group).length;
@@ -73,7 +76,8 @@ class EventOverviewPage extends ConsumerWidget {
         onTap: () => unawaited(_setUpPayouts(context)),
       ),
     ];
-    final stepsLoaded = events.hasValue && partners.hasValue && stripe.hasValue;
+    final stepsLoaded =
+        isNew && events.hasValue && partners.hasValue && stripe.hasValue;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,

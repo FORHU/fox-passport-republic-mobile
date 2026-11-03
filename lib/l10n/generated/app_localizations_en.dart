@@ -5309,4 +5309,103 @@ class AppLocalizationsEn extends AppLocalizations {
   String ticketsOfflineNote(String when) {
     return 'No connection. Showing the tickets saved $when.';
   }
+
+  @override
+  String get tourSkip => 'Skip';
+
+  @override
+  String get tourNext => 'Next';
+
+  @override
+  String get tourDone => 'Got it';
+
+  @override
+  String get tourTake => 'Take the tour';
+
+  @override
+  String get tourWelcomeTitle => 'Welcome, Foxer';
+
+  @override
+  String get tourWelcomeBody =>
+      'A quick look at what is in your space. It takes under a minute.';
+
+  @override
+  String get tourOverviewTitle => 'Your Overview';
+
+  @override
+  String get tourOverviewBody =>
+      'What needs you now, what is coming up and your numbers, in one scroll.';
+
+  @override
+  String get tourFirstStepsTitle => 'Getting started';
+
+  @override
+  String get tourFirstStepsBody =>
+      'Your first steps. Each one ticks itself off, and the list goes away once you have a live listing or a booking.';
+
+  @override
+  String get tourVenuesTitle => 'Your venues';
+
+  @override
+  String get tourVenuesBody =>
+      'Add venues with photos and prices. A venue goes live once it has been reviewed.';
+
+  @override
+  String get tourEventsTitle => 'Your events';
+
+  @override
+  String get tourEventsBody =>
+      'Build an event, then publish it. Open a card to edit it or see where it stands.';
+
+  @override
+  String get tourGearTitle => 'Your gear';
+
+  @override
+  String get tourGearBody =>
+      'List the gear you rent out, with a daily rate and how many you have.';
+
+  @override
+  String get tourListingsTitle => 'Your listings';
+
+  @override
+  String get tourListingsBody =>
+      'List what you offer, with packages and prices.';
+
+  @override
+  String get tourCalendarTitle => 'Calendar';
+
+  @override
+  String get tourCalendarBody =>
+      'Your bookings by date, so you can spot clashes and close the days you are not free.';
+
+  @override
+  String get tourEarningsTitle => 'Earnings';
+
+  @override
+  String get tourEarningsBody =>
+      'What you have been paid and what is on its way. Connect your payout account here.';
+
+  @override
+  String get tourMoreTitle => 'More';
+
+  @override
+  String get tourMoreBody =>
+      'Requests, messages, your team, check in and the rest.';
+
+  @override
+  String get tourCheckInTitle => 'Check in';
+
+  @override
+  String get tourCheckInBody => 'Scan a guest QR code at the door.';
+
+  @override
+  String get tourMessagesTitle => 'Messages';
+
+  @override
+  String get tourMessagesBody => 'Talk with your guests and partners.';
+
+  @override
+  String tourStepOf(int n, int total) {
+    return '$n of $total';
+  }
 }

@@ -186,11 +186,31 @@ void main() {
       await pump(
         tester,
         const VenueOverviewPage(),
-        venues: const [_sky],
+        venues: const [_barn],
         stripe: const StripeStatus(onboardingComplete: true),
       );
 
       expect(find.text('2 of 3 steps done'), findsOneWidget);
+    });
+
+    testWidgets('an established Foxer is not shown first steps', (
+      tester,
+    ) async {
+      // A live venue: they are past getting started, even with steps open.
+      await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
+
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('earning money also ends getting started', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_barn],
+        payouts: const PayoutSummary(totals: PayoutTotals(pending: 500)),
+      );
+
+      expect(find.text('Getting started'), findsNothing);
     });
 
     testWidgets('the next booking is led by its venue', (tester) async {

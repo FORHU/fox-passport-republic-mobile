@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -75,6 +79,14 @@ class EventMorePage extends ConsumerWidget {
             icon: Icons.settings_outlined,
             title: l10n.settingsTitle,
             onTap: () => context.push(RouteNames.settings),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.tour_outlined,
+            title: l10n.tourTake,
+            onTap: () => unawaited(
+              replaySpaceTour(context, l10n, NewFoxerSpace.event),
+            ),
           ),
           const SizedBox(height: 8),
           MoreRow(

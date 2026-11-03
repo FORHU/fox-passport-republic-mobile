@@ -233,6 +233,15 @@ void main() {
           'data': {'asVenueMayor': <Object>[], 'asEventFoxer': invites},
         },
       );
+      // Nothing earned yet, which is what makes a Foxer new.
+      when(
+        () => api.get(ApiEndpoints.payoutsMe, query: any(named: 'query')),
+      ).thenAnswer(
+        (_) async => {
+          'data': <Object>[],
+          'totals': {'pending': 0, 'paid': 0},
+        },
+      );
     }
 
     testWidgets('a new Event Foxer is greeted and shown their first steps', (
@@ -255,7 +264,7 @@ void main() {
     testWidgets('first steps tick off from the events and payouts', (
       tester,
     ) async {
-      api_(events: [event('e1', 'Bonfire Night', 'published')]);
+      api_(events: [event('e1', 'Bonfire Night', 'pending')]);
       when(() => api.get(ApiEndpoints.stripeStatus)).thenAnswer(
         (_) async => {
           'data': {

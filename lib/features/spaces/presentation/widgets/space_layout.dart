@@ -1,21 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The shell of a space (Venue or Event): its screens, one navigator each, and
 /// its own bottom bar. The order of [items] is the order of the shell's
 /// branches in `app_routes.dart`.
-class SpaceLayout extends StatelessWidget {
+class SpaceLayout extends ConsumerStatefulWidget {
   const SpaceLayout({
     required this.navigationShell,
     required this.items,
+    this.tourSpace,
     super.key,
   });
 
   final StatefulNavigationShell navigationShell;
   final List<NavBarItem> items;
+
+  /// The space whose first-time tour runs on each tab the first time a new
+  /// Foxer opens it; null for no tour.
+  final NewFoxerSpace? tourSpace;
 
   static String? _badge(int count) =>
       count == 0 ? null : (count > 99 ? '99+' : '$count');
@@ -138,7 +151,61 @@ class SpaceLayout extends StatelessWidget {
   }
 
   @override
+  ConsumerState<SpaceLayout> createState() => _SpaceLayoutState();
+}
+
+class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
+  /// Tabs already looked at in this session, so a tour is offered once.
+  final _visited = <int>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _offerTour();
+  }
+
+  @override
+  void didUpdateWidget(SpaceLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _offerTour();
+  }
+
+  String _key(int tab) => 'spaceTourSeen.${widget.tourSpace!.name}.$tab';
+
+  /// Shows the tour of the tab now open, once, and only to a new Foxer.
+  void _offerTour() {
+    final space = widget.tourSpace;
+    final tab = widget.navigationShell.currentIndex;
+    if (space == null || !_visited.add(tab)) return;
+    unawaited(_runTour(space, tab));
+  }
+
+  Future<void> _runTour(NewFoxerSpace space, int tab) async {
+    final SharedPreferences prefs;
+    try {
+      prefs = ref.read(sharedPreferencesProvider);
+    } on Object {
+      return;
+    }
+    if (prefs.getBool(_key(tab)) ?? false) return;
+    final isNew = await ref.read(newFoxerProvider(space).future);
+    if (!isNew || !mounted) return;
+    // Another tab may have been opened while this was loading.
+    if (widget.navigationShell.currentIndex != tab) {
+      _visited.remove(tab);
+      return;
+    }
+    final steps = spaceTourSteps(context.l10n, space);
+    if (tab >= steps.length) return;
+    await prefs.setBool(_key(tab), true);
+    if (!mounted) return;
+    await showSpaceTour(context, steps[tab]);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final navigationShell = widget.navigationShell;
+    final items = widget.items;
     final currentIndex = navigationShell.currentIndex;
     return Scaffold(
       backgroundColor: AppColors.canvas,

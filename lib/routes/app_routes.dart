@@ -44,6 +44,7 @@ import 'package:flutter_template/features/search/presentation/pages/search_page.
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
@@ -554,6 +555,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           // A count of requests waiting for a reply, on the Overview tab.
           builder: (context, ref, _) => SpaceLayout(
             navigationShell: navigationShell,
+            tourSpace: NewFoxerSpace.venue,
             items: SpaceLayout.venueItems(
               context,
               partnersWaiting:
@@ -648,6 +650,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           // A count of partnerships waiting for an answer, on the More tab.
           builder: (context, ref, _) => SpaceLayout(
             navigationShell: navigationShell,
+            tourSpace: NewFoxerSpace.event,
             items: SpaceLayout.eventItems(
               context,
               partnersWaiting:
@@ -732,6 +735,7 @@ StatefulShellRoute _providerShell(ProviderKind kind) {
       // A count of requests waiting for a reply, on the Overview tab.
       builder: (context, ref, _) => SpaceLayout(
         navigationShell: navigationShell,
+        tourSpace: kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
         items: SpaceLayout.providerItems(
           context,
           listings: listingsLabel(
