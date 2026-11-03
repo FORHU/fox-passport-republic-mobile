@@ -103,6 +103,40 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(description: v)),
                   ),
+                ] else if (d.isEvent) ...[
+                  _Field(
+                    label: l10n.roleApplyBio,
+                    value: d.bio,
+                    lines: 4,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(bio: v)),
+                  ),
+                  _Field(
+                    label: l10n.onboardingCountry,
+                    value: d.country,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(country: v)),
+                  ),
+                  _Field(
+                    label: l10n.onboardingStateProvince,
+                    value: d.state,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(state: v)),
+                  ),
+                  _Field(
+                    label: l10n.onboardingCity,
+                    value: d.city,
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(city: v)),
+                  ),
+                  _Field(
+                    label: l10n.roleApplyExperience,
+                    value: d.experience,
+                    number: true,
+                    formatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (v) =>
+                        controller.edit((x) => x.copyWith(experience: v)),
+                  ),
                 ] else
                   _Field(
                     label: switch (widget.roleType) {
@@ -115,7 +149,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(types: v)),
                   ),
-                if (!d.isGear && !d.isVenue) ...[
+                if (!d.isGear && !d.isVenue && !d.isEvent) ...[
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -146,7 +180,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!d.isGear && !d.isVenue)
+                if (!d.isGear && !d.isVenue && !d.isEvent)
                   _Field(
                     label: l10n.roleApplyNbiNumber,
                     value: d.nbiNumber,
@@ -158,24 +192,35 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                       ),
                     ),
                   ),
-                _Field(
-                  label:
-                      d.isVenue ? l10n.roleApplyTinRequired : l10n.roleApplyTin,
-                  value: d.tinNumber,
-                  number: true,
-                  formatters: [LengthLimitingTextInputFormatter(9)],
-                  onChanged: (v) => controller.edit(
-                    (x) => x.copyWith(
-                      tinNumber: RoleApplicationDraft.digits(v, 9),
+                if (!d.isEvent)
+                  _Field(
+                    label: d.isVenue
+                        ? l10n.roleApplyTinRequired
+                        : l10n.roleApplyTin,
+                    value: d.tinNumber,
+                    number: true,
+                    formatters: [LengthLimitingTextInputFormatter(9)],
+                    onChanged: (v) => controller.edit(
+                      (x) => x.copyWith(
+                        tinNumber: RoleApplicationDraft.digits(v, 9),
+                      ),
                     ),
                   ),
-                ),
                 for (final slot in KycDocument.values)
                   _DocumentRow(
                     label: _documentLabel(l10n, slot),
                     photo: d.documents[slot],
                     onPicked: (p) => controller.setDocument(slot, p),
                     onRemove: () => controller.removeDocument(slot),
+                  ),
+                if (d.isEvent)
+                  _DocumentRow(
+                    label: l10n.roleApplyPortfolioFile,
+                    photo: d.portfolioFile,
+                    onPicked: (p) =>
+                        controller.edit((x) => x.copyWith(portfolioFile: p)),
+                    onRemove: () => controller
+                        .edit((x) => x.copyWith(clearPortfolioFile: true)),
                   ),
               ],
             ),
@@ -214,6 +259,10 @@ String _documentLabel(AppLocalizations l10n, KycDocument slot) =>
 
 String specializationLabel(AppLocalizations l10n, String code) =>
     switch (code) {
+      'corporate' => l10n.roleSpecCorporate,
+      'birthday' => l10n.roleSpecBirthday,
+      'wedding' => l10n.roleSpecWedding,
+      'social' => l10n.roleSpecSocial,
       'indoor' => l10n.roleSpecIndoor,
       'outdoor' => l10n.roleSpecOutdoor,
       'hotel' => l10n.roleSpecHotel,
