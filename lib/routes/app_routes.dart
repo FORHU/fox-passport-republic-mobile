@@ -52,6 +52,8 @@ import 'package:flutter_template/features/spaces/presentation/pages/check_in_pag
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_bids_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/listing_studio_page.dart';
@@ -637,7 +639,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // The Event space.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => Consumer(
-          // A count of partnerships waiting for an answer, on the Events tab.
+          // A count of partnerships waiting for an answer, on the More tab.
           builder: (context, ref, _) => SpaceLayout(
             navigationShell: navigationShell,
             items: SpaceLayout.eventItems(
@@ -652,7 +654,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.spaceEvent,
-                builder: (context, state) => const EventsPage(),
+                builder: (context, state) => const EventOverviewPage(),
                 routes: [
                   GoRoute(
                     path: 'partners',
@@ -660,6 +662,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         const PartnersPage(side: PartnerSide.eventFoxer),
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventList,
+                builder: (context, state) => EventsPage(
+                  initialGroup: state.uri.queryParameters['group'],
+                ),
               ),
             ],
           ),
@@ -674,16 +686,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.spaceEventCheckIn,
-                builder: (context, state) => const CheckInPage(),
+                path: RouteNames.spaceEventEarnings,
+                builder: (context, state) => const EarningsPage(),
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.spaceEventMessages,
-                builder: (context, state) => const MessagesPage(),
+                path: RouteNames.spaceEventMore,
+                builder: (context, state) => const EventMorePage(),
+                routes: [
+                  GoRoute(
+                    path: 'check-in',
+                    builder: (context, state) => const CheckInPage(),
+                  ),
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) =>
+                        const MessagesPage(showBack: true),
+                  ),
+                ],
               ),
             ],
           ),
