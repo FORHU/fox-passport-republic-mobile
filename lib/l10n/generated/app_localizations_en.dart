@@ -1095,6 +1095,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketGuests => 'Guests';
 
   @override
+  String get ticketQrPending =>
+      'Your QR appears once this booking is confirmed';
+
+  @override
   String get ticketAddToWallet => 'Add to wallet';
 
   @override
