@@ -4915,6 +4915,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDocClearance => 'Police or background clearance';
 
   @override
+  String get roleResubmitHeading => 'Fix your application';
+
+  @override
+  String roleResubmitTitle(String role) {
+    return 'Fix your $role application';
+  }
+
+  @override
+  String get roleResubmitIntro =>
+      'Only the documents below were flagged. Everything else you sent stays as it is.';
+
+  @override
+  String get roleResubmitNote => 'Reviewer note';
+
+  @override
+  String get roleResubmitSend => 'Send documents';
+
+  @override
+  String get roleResubmitSent =>
+      'Documents sent. Your application is back in review.';
+
+  @override
+  String get roleResubmitNothing => 'Nothing to fix here';
+
+  @override
+  String get roleResubmitNothingBody =>
+      'This application no longer needs changes, or could not be found.';
+
+  @override
+  String get roleResubmitBack => 'Go back';
+
+  @override
   String get roleApplyChoose => 'Choose';
 
   @override
