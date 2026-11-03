@@ -263,6 +263,12 @@ void main() {
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
+    // The first steps sit above the events, so the event is below.
+    await tester.scrollUntilVisible(
+      find.text('Ada Birthday'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
     // A menu offers what can be done with it.
@@ -295,6 +301,12 @@ void main() {
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
+    // The first steps sit above the events, so the event is below.
+    await tester.scrollUntilVisible(
+      find.text('Ada Birthday'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
     await tester.tap(find.text('Edit event'));

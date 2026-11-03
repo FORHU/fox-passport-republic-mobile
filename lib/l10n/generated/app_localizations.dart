@@ -3406,6 +3406,24 @@ abstract class AppLocalizations {
   /// **'Venue Foxer'**
   String get overviewRoleVenue;
 
+  /// No description provided for @overviewRoleEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Foxer'**
+  String get overviewRoleEvent;
+
+  /// No description provided for @firstStepHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Get approved to host at a venue'**
+  String get firstStepHost;
+
+  /// No description provided for @firstStepEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your first event'**
+  String get firstStepEvent;
+
   /// No description provided for @overviewRoleGear.
   ///
   /// In en, this message translates to:

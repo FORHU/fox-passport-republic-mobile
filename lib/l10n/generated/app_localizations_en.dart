@@ -1853,6 +1853,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewRoleVenue => 'Venue Foxer';
 
   @override
+  String get overviewRoleEvent => 'Event Foxer';
+
+  @override
+  String get firstStepHost => 'Get approved to host at a venue';
+
+  @override
+  String get firstStepEvent => 'Build your first event';
+
+  @override
   String get overviewRoleGear => 'Gear Foxer';
 
   @override

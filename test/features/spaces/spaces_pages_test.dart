@@ -234,6 +234,41 @@ void main() {
       );
     }
 
+    testWidgets('a new Event Foxer is greeted and shown their first steps', (
+      tester,
+    ) async {
+      api_();
+      // No payout account yet.
+      when(() => api.get(ApiEndpoints.stripeStatus))
+          .thenAnswer((_) async => {'data': <String, Object>{}});
+      await pump(tester, const EventsPage());
+
+      expect(find.text('Event Foxer'), findsOneWidget);
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('0 of 3 steps done'), findsOneWidget);
+      expect(find.text('Get approved to host at a venue'), findsOneWidget);
+      expect(find.text('Build your first event'), findsOneWidget);
+      expect(find.text('Connect your payout account'), findsOneWidget);
+    });
+
+    testWidgets('first steps tick off from the events and payouts', (
+      tester,
+    ) async {
+      api_(events: [event('e1', 'Bonfire Night', 'published')]);
+      when(() => api.get(ApiEndpoints.stripeStatus)).thenAnswer(
+        (_) async => {
+          'data': {
+            'hasStripeAccount': true,
+            'stripeOnboardingComplete': true,
+          },
+        },
+      );
+      await pump(tester, const EventsPage());
+
+      // An event and payouts are done; no venue has approved them yet.
+      expect(find.text('2 of 3 steps done'), findsOneWidget);
+    });
+
     testWidgets('lists your events with their town and status', (
       tester,
     ) async {
@@ -248,6 +283,12 @@ void main() {
       expect(find.text('Bonfire Night'), findsOneWidget);
       expect(find.text('Baguio'), findsOneWidget);
       expect(find.text('Live'), findsOneWidget);
+      // The first steps sit above the events, so the second one is below.
+      await tester.scrollUntilVisible(
+        find.text('Garden Party'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Garden Party'), findsOneWidget);
       expect(find.text('2 events'), findsOneWidget);
     });
