@@ -78,6 +78,14 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => context.push(RouteNames.people),
           ),
           const SizedBox(height: 8),
+          // Everything saved, newest first, with the posts to like, comment
+          // on and share.
+          _Row(
+            icon: Icons.bookmark_border_rounded,
+            title: l10n.republicSavedTitle,
+            onTap: () => context.push(RouteNames.republicSaved),
+          ),
+          const SizedBox(height: 8),
           _Row(
             icon: Icons.verified_user_outlined,
             title: l10n.profileVerify,

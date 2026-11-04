@@ -14,10 +14,10 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
 /// Passport: your profile, as others see it, under a top bar that holds the
-/// things only you have: the space switcher, Saved posts and Settings. The
-/// profile itself is passed in by the route, so this feature does not reach
-/// into Profile. It is given your [PassportSummary] once that has loaded, for
-/// your real level and XP.
+/// things only you have: the space switcher and Settings (Saved posts is a
+/// row there). The profile itself is passed in by the route, so this feature
+/// does not reach into Profile. It is given your [PassportSummary] once that
+/// has loaded, for your real level and XP.
 class PassportPage extends ConsumerWidget {
   const PassportPage({required this.bodyBuilder, super.key});
 
@@ -50,14 +50,6 @@ class PassportPage extends ConsumerWidget {
                   const SpaceSwitchButton(
                     compact: true,
                     padding: EdgeInsets.only(right: 4),
-                  ),
-                  // Saved is a screen of its own: everything saved, newest
-                  // first, with the posts to like, comment on and share.
-                  IconButton(
-                    tooltip: l10n.passportTabSaved,
-                    onPressed: () =>
-                        context.push<void>(RouteNames.republicSaved).ignore(),
-                    icon: const Icon(Icons.bookmark_border_rounded),
                   ),
                   IconButton(
                     tooltip: l10n.settingsTitle,
