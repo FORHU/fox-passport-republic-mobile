@@ -44,12 +44,6 @@ class OrganizerMorePage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           MoreRow(
-            icon: Icons.settings_outlined,
-            title: l10n.settingsTitle,
-            onTap: () => context.push(RouteNames.settings),
-          ),
-          const SizedBox(height: 8),
-          MoreRow(
             icon: Icons.open_in_new_rounded,
             title: l10n.spaceManageOnWeb,
             onTap: () => unawaited(_openWeb(context)),
