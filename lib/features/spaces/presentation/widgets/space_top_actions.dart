@@ -91,7 +91,11 @@ class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The title sits at the left, in line with the content below it, so the
+    // bar has no empty stretch there.
     return AppBar(
+      centerTitle: false,
+      titleSpacing: 16,
       title: Text(title, style: AppTypography.display(size: 18)),
       actions: const [SpaceTopActions()],
     );
