@@ -3406,18 +3406,6 @@ abstract class AppLocalizations {
   /// **'Welcome back'**
   String get overviewGreetingNoName;
 
-  /// No description provided for @overviewRoleVenue.
-  ///
-  /// In en, this message translates to:
-  /// **'Venue Foxer'**
-  String get overviewRoleVenue;
-
-  /// No description provided for @overviewRoleEvent.
-  ///
-  /// In en, this message translates to:
-  /// **'Event Foxer'**
-  String get overviewRoleEvent;
-
   /// No description provided for @firstStepHost.
   ///
   /// In en, this message translates to:
@@ -3429,24 +3417,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build your first event'**
   String get firstStepEvent;
-
-  /// No description provided for @overviewRoleGear.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear Foxer'**
-  String get overviewRoleGear;
-
-  /// No description provided for @overviewRoleTalent.
-  ///
-  /// In en, this message translates to:
-  /// **'Talent Foxer'**
-  String get overviewRoleTalent;
-
-  /// No description provided for @overviewRolePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer Foxer'**
-  String get overviewRolePerformer;
 
   /// No description provided for @firstStepGear.
   ///

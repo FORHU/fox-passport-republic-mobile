@@ -1854,25 +1854,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewGreetingNoName => 'Welcome back';
 
   @override
-  String get overviewRoleVenue => 'Venue Foxer';
-
-  @override
-  String get overviewRoleEvent => 'Event Foxer';
-
-  @override
   String get firstStepHost => 'Get approved to host at a venue';
 
   @override
   String get firstStepEvent => 'Build your first event';
-
-  @override
-  String get overviewRoleGear => 'Gear Foxer';
-
-  @override
-  String get overviewRoleTalent => 'Talent Foxer';
-
-  @override
-  String get overviewRolePerformer => 'Performer Foxer';
 
   @override
   String get firstStepGear => 'List your first item';
