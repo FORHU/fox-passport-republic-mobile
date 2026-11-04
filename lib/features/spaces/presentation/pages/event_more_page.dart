@@ -30,6 +30,8 @@ class EventMorePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final isNew =
+        ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
     final invites = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
 
     return Scaffold(
@@ -75,20 +77,16 @@ class EventMorePage extends ConsumerWidget {
             onTap: () => showSpaceSheet(context),
           ),
           const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.settings_outlined,
-            title: l10n.settingsTitle,
-            onTap: () => context.push(RouteNames.settings),
-          ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.tour_outlined,
-            title: l10n.tourTake,
-            onTap: () => unawaited(
-              replaySpaceTour(context, l10n, NewFoxerSpace.event),
+          if (isNew) ...[
+            MoreRow(
+              icon: Icons.tour_outlined,
+              title: l10n.tourTake,
+              onTap: () => unawaited(
+                replaySpaceTour(context, l10n, NewFoxerSpace.event),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
+          ],
           MoreRow(
             icon: Icons.open_in_new_rounded,
             title: l10n.spaceManageOnWeb,
