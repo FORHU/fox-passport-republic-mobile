@@ -6910,6 +6910,42 @@ abstract class AppLocalizations {
   /// **'Republic'**
   String get republicTitle;
 
+  /// No description provided for @republicVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get republicVideos;
+
+  /// No description provided for @republicVideosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos yet'**
+  String get republicVideosEmpty;
+
+  /// No description provided for @republicVideosEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos people post in the Republic show up here.'**
+  String get republicVideosEmptyHint;
+
+  /// No description provided for @republicVideoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This video could not play.'**
+  String get republicVideoFailed;
+
+  /// No description provided for @republicVideoSoundOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn sound on'**
+  String get republicVideoSoundOn;
+
+  /// No description provided for @republicVideoSoundOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn sound off'**
+  String get republicVideoSoundOff;
+
   /// No description provided for @republicRowBody.
   ///
   /// In en, this message translates to:

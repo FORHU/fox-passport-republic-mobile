@@ -35,6 +35,7 @@ import 'package:flutter_template/features/republic/presentation/pages/compose_po
 import 'package:flutter_template/features/republic/presentation/pages/post_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/videos_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
@@ -402,6 +403,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.republicSaved,
         builder: (context, state) => const SavedPostsPage(),
+      ),
+      GoRoute(
+        path: RouteNames.republicVideos,
+        builder: (context, state) => const VideosPage(),
       ),
       GoRoute(
         path: RouteNames.itemBooking,

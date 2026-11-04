@@ -165,6 +165,13 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                     ),
                   ),
                   IconButton(
+                    tooltip: l10n.republicVideos,
+                    onPressed: () =>
+                        unawaited(context.push(RouteNames.republicVideos)),
+                    icon:
+                        const Icon(Icons.play_circle_outline_rounded, size: 28),
+                  ),
+                  IconButton(
                     tooltip: l10n.republicSearchHint,
                     onPressed: () {
                       if (_searching && _search.text.isNotEmpty) {

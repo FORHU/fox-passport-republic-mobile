@@ -123,6 +123,9 @@ class RouteNames {
   /// The posts saved from the Republic. Pushed from its header.
   static const String republicSaved = '/republic/saved';
 
+  /// The Republic's videos, one to a screen.
+  static const String republicVideos = '/republic/videos';
+
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.
   static String republicPost(String id, {bool comments = false}) => Uri(

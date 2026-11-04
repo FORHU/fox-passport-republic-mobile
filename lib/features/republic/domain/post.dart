@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_template/features/republic/domain/post_extras.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/widgets/post_media.dart'
+    show isVideoUrl;
 
 String? _text(Object? v) =>
     v is String && v.trim().isNotEmpty ? v.trim() : null;
@@ -87,6 +89,22 @@ class Post extends Equatable {
   final int commentsCount;
   final ReactionType? myReaction;
   bool get isLikedByMe => myReaction != null;
+
+  /// The first video the post carries, or null.
+  String? get videoUrl => mediaUrls.where(isVideoUrl).firstOrNull;
+
+  /// The poster the server keeps beside a video it has optimized: the same
+  /// key with .jpg. Other videos have none.
+  String? get posterUrl {
+    final url = videoUrl;
+    // Only the server's own optimized files have a poster beside them.
+    final clean = url?.split('?').first;
+    if (url == null || clean == null || !clean.toLowerCase().endsWith('.mp4')) {
+      return null;
+    }
+    return '${clean.substring(0, clean.length - 4)}.jpg';
+  }
+
   final bool edited;
   final bool isSavedByMe;
 
