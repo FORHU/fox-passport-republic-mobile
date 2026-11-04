@@ -19,6 +19,8 @@ import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
@@ -245,6 +247,35 @@ void main() {
     await tester.tap(find.text('Earnings'));
     await settle(tester);
     expect(where(), RouteNames.spaceEventEarnings);
+    await finish(tester);
+  });
+
+  testWidgets('an Organizer has a space with five tabs', (tester) async {
+    await boot(
+      tester,
+      roles: const ['organizer'],
+      overrides: [
+        myAppointmentsProvider.overrideWith((ref) async => const []),
+      ],
+    );
+    router.go(RouteNames.spaceOrganizer);
+    await settle(tester);
+
+    for (final tab in [
+      'Overview',
+      'Calendar',
+      'Check-in',
+      'Messages',
+      'More',
+    ]) {
+      expect(find.text(tab), findsWidgets, reason: tab);
+    }
+    expect(find.byType(OrganizerOverviewPage), findsOneWidget);
+
+    await tester.tap(find.text('More').last);
+    await settle(tester);
+    expect(where(), RouteNames.spaceOrganizerMore);
+    expect(find.byType(OrganizerMorePage), findsOneWidget);
     await finish(tester);
   });
 
