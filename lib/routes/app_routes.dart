@@ -406,7 +406,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.republicVideos,
-        builder: (context, state) => const VideosPage(),
+        builder: (context, state) => VideosPage(
+          tab: state.uri.queryParameters['tab'],
+          initialPostId: state.uri.queryParameters['post'],
+        ),
       ),
       GoRoute(
         path: RouteNames.itemBooking,

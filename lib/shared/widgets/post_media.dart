@@ -18,15 +18,22 @@ bool isVideoUrl(String url) {
 /// two side by side, three with a big one, four or more in a grid with "+N" on
 /// the last. A photo opens full screen; a video opens in the player app.
 class PostMedia extends StatelessWidget {
-  const PostMedia({required this.urls, super.key});
+  const PostMedia({required this.urls, this.onVideo, super.key});
 
   final List<String> urls;
+
+  /// A video was tapped. Without it the video opens in the player app.
+  final ValueChanged<String>? onVideo;
 
   static const _gap = 2.0;
 
   Future<void> _open(BuildContext context, int index) async {
     final url = urls[index];
     if (isVideoUrl(url)) {
+      if (onVideo != null) {
+        onVideo!(url);
+        return;
+      }
       final uri = Uri.tryParse(resolveAssetUrl(url));
       if (uri != null) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);

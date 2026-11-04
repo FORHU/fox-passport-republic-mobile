@@ -126,6 +126,19 @@ class RouteNames {
   /// The Republic's videos, one to a screen.
   static const String republicVideos = '/republic/videos';
 
+  /// The videos opened at one of them, from the feed [tab] it was in (null is
+  /// the whole Republic).
+  static String republicVideosAt({String? tab, String? postId}) {
+    final query = {
+      if (tab != null) 'tab': tab,
+      if (postId != null) 'post': postId,
+    };
+    return Uri(
+      path: republicVideos,
+      queryParameters: query.isEmpty ? null : query,
+    ).toString();
+  }
+
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.
   static String republicPost(String id, {bool comments = false}) => Uri(

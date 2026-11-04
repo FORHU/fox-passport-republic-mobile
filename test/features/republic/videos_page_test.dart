@@ -96,6 +96,7 @@ void main() {
     WidgetTester tester,
     List<Map<String, dynamic>> posts, {
     String? nextCursor,
+    String? initialPostId,
   }) async {
     when(() => api.get(any(), query: any(named: 'query'))).thenAnswer(
       (_) async => {'data': posts, 'nextCursor': nextCursor},
@@ -117,7 +118,7 @@ void main() {
           theme: AppTheme.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const VideosPage(),
+          home: VideosPage(initialPostId: initialPostId),
         ),
       ),
     );
@@ -198,6 +199,27 @@ void main() {
       expect(find.text('Dee'), findsOneWidget);
       expect(second.playing, isTrue);
       expect(first.playing, isFalse);
+    });
+
+    testWidgets('opens at the video it was asked for, and plays that one', (
+      tester,
+    ) async {
+      await open(tester, feed, initialPostId: '4');
+
+      expect(find.text('Dee'), findsOneWidget);
+      expect(find.text('Second clip'), findsOneWidget);
+      expect(players['https://cdn.test/b.mp4']!.playing, isTrue);
+      // The one it skipped is not playing.
+      expect(players['https://cdn.test/a.mp4']?.playing ?? false, isFalse);
+    });
+
+    testWidgets('opens at the first when the video is not in the feed', (
+      tester,
+    ) async {
+      await open(tester, feed, initialPostId: 'gone');
+
+      expect(find.text('Ada'), findsOneWidget);
+      expect(players['https://cdn.test/a.mp4']!.playing, isTrue);
     });
 
     testWidgets('lets go of a video that is two screens behind', (

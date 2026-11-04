@@ -10,6 +10,7 @@ import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/videos_shelf.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -119,6 +120,13 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     }
   }
 
+  /// Opens the full-screen videos from the open tab, at one post if given.
+  void _openVideos({String? postId}) {
+    unawaited(
+      context.push(RouteNames.republicVideosAt(tab: _tab, postId: postId)),
+    );
+  }
+
   String _tabLabel(String? tab) {
     final l10n = context.l10n;
     return switch (tab) {
@@ -166,8 +174,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                   ),
                   IconButton(
                     tooltip: l10n.republicVideos,
-                    onPressed: () =>
-                        unawaited(context.push(RouteNames.republicVideos)),
+                    onPressed: _openVideos,
                     icon:
                         const Icon(Icons.play_circle_outline_rounded, size: 28),
                   ),
@@ -242,7 +249,19 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                     ),
                     itemBuilder: (context, i) {
                       if (i == 0) {
-                        return _ComposerRow(onTap: _compose);
+                        return Column(
+                          children: [
+                            _ComposerRow(onTap: _compose),
+                            // Videos right under the composer, but not while
+                            // searching: the words are what is wanted then.
+                            if (term.isEmpty)
+                              VideosShelf(
+                                posts: state.posts,
+                                onOpen: (p) => _openVideos(postId: p.id),
+                                onSeeAll: _openVideos,
+                              ),
+                          ],
+                        );
                       }
                       if (i == state.posts.length + 1) {
                         return state.posts.isEmpty
@@ -297,6 +316,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                             unawaited(_actions.messageAuthor(post)),
                         onShare: () => unawaited(_actions.share(post)),
                         onHashtag: _searchFor,
+                        onOpenVideo: () => _openVideos(postId: post.id),
                       );
                     },
                   ),

@@ -20,7 +20,14 @@ import 'package:video_player/video_player.dart';
 /// the phone. The one on screen plays (muted at first, looping); the next and
 /// the last are got ready so a swipe does not wait.
 class VideosPage extends ConsumerStatefulWidget {
-  const VideosPage({super.key});
+  const VideosPage({this.tab, this.initialPostId, super.key});
+
+  /// The feed the videos come from (null is the whole Republic), so what is
+  /// opened from a tab is what that tab lists.
+  final String? tab;
+
+  /// The video to open at; the first one when null or not in the feed.
+  final String? initialPostId;
 
   @override
   ConsumerState<VideosPage> createState() => _VideosPageState();
@@ -28,7 +35,7 @@ class VideosPage extends ConsumerStatefulWidget {
 
 class _VideosPageState extends ConsumerState<VideosPage>
     with WidgetsBindingObserver {
-  final _pages = PageController();
+  PageController _pages = PageController();
 
   /// The players that are ready or getting ready, by post id: the video on
   /// screen and the ones either side of it.
@@ -36,6 +43,7 @@ class _VideosPageState extends ConsumerState<VideosPage>
   final _failed = <String>{};
 
   int _index = 0;
+  bool _openedAtPost = false;
   bool _muted = true;
   bool _userPaused = false;
   bool _appActive = true;
@@ -137,12 +145,14 @@ class _VideosPageState extends ConsumerState<VideosPage>
       _userPaused = false;
     });
     _sync(_videos);
-    final feed = ref.read(feedControllerProvider(null)).value;
+    final feed = ref.read(feedControllerProvider(widget.tab)).value;
     if (feed != null &&
         feed.hasMore &&
         !feed.loadingMore &&
         index >= _videos.length - 3) {
-      unawaited(ref.read(feedControllerProvider(null).notifier).loadMore());
+      unawaited(
+        ref.read(feedControllerProvider(widget.tab).notifier).loadMore(),
+      );
     }
   }
 
@@ -161,7 +171,7 @@ class _VideosPageState extends ConsumerState<VideosPage>
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final feed = ref.watch(feedControllerProvider(null));
+    final feed = ref.watch(feedControllerProvider(widget.tab));
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -174,7 +184,7 @@ class _VideosPageState extends ConsumerState<VideosPage>
             kind: AppStateKind.error,
             title: l10n.apiLoadFailed,
             actionLabel: l10n.retry,
-            onAction: () => ref.invalidate(feedControllerProvider(null)),
+            onAction: () => ref.invalidate(feedControllerProvider(widget.tab)),
           ),
         ),
         data: (state) {
@@ -185,6 +195,16 @@ class _VideosPageState extends ConsumerState<VideosPage>
           _videos = videos;
           if (_index >= videos.length && videos.isNotEmpty) {
             _index = videos.length - 1;
+          }
+          // Opened from a post or a tile: start on that video.
+          if (!_openedAtPost && videos.isNotEmpty) {
+            _openedAtPost = true;
+            final at = videos.indexWhere((p) => p.id == widget.initialPostId);
+            if (at > 0) {
+              _index = at;
+              _pages.dispose();
+              _pages = PageController(initialPage: at);
+            }
           }
 
           // The feed's pages hold few videos: ask for more until there is one
@@ -197,7 +217,9 @@ class _VideosPageState extends ConsumerState<VideosPage>
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!mounted) return;
               unawaited(
-                ref.read(feedControllerProvider(null).notifier).loadMore(),
+                ref
+                    .read(feedControllerProvider(widget.tab).notifier)
+                    .loadMore(),
               );
             });
           }
@@ -240,7 +262,7 @@ class _VideosPageState extends ConsumerState<VideosPage>
                 paused: _userPaused && i == _index,
                 onTap: _togglePause,
                 onMute: _toggleMute,
-                actions: PostActions(context, ref, null),
+                actions: PostActions(context, ref, widget.tab),
               );
             },
           );

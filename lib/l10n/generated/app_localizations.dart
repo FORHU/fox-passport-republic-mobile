@@ -6916,6 +6916,12 @@ abstract class AppLocalizations {
   /// **'Videos'**
   String get republicVideos;
 
+  /// No description provided for @republicVideosSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get republicVideosSeeAll;
+
   /// No description provided for @republicVideosEmpty.
   ///
   /// In en, this message translates to:
