@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
-import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -71,9 +72,16 @@ class ProviderMorePage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           MoreRow(
-            icon: Icons.settings_outlined,
-            title: l10n.settingsTitle,
-            onTap: () => context.push(RouteNames.settings),
+            icon: Icons.tour_outlined,
+            title: l10n.tourTake,
+            onTap: () => unawaited(
+              restartSpaceTour(
+                ref,
+                context,
+                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+                kind.root,
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           MoreRow(

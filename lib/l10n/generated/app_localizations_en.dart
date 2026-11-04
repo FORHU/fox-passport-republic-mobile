@@ -1095,6 +1095,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketGuests => 'Guests';
 
   @override
+  String get ticketQrPending =>
+      'Your QR appears once this booking is confirmed';
+
+  @override
   String get ticketAddToWallet => 'Add to wallet';
 
   @override
@@ -1392,7 +1396,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spaceTabCheckIn => 'Check-in';
 
   @override
-  String get spaceTabOverview => 'Overview';
+  String get spaceTabOverview => 'Dashboard';
 
   @override
   String get spaceTabCalendar => 'Calendar';
@@ -1830,6 +1834,56 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String overviewGreetingMorning(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String overviewGreetingAfternoon(String name) {
+    return 'Good afternoon, $name';
+  }
+
+  @override
+  String overviewGreetingEvening(String name) {
+    return 'Good evening, $name';
+  }
+
+  @override
+  String get overviewGreetingNoName => 'Welcome back';
+
+  @override
+  String get firstStepHost => 'Get approved to host at a venue';
+
+  @override
+  String get firstStepEvent => 'Build your first event';
+
+  @override
+  String get firstStepGear => 'List your first item';
+
+  @override
+  String get firstStepService => 'List your first service';
+
+  @override
+  String get firstStepPerformance => 'List your first performance';
+
+  @override
+  String get firstStepsTitle => 'Getting started';
+
+  @override
+  String firstStepsDone(int done, int total) {
+    return '$done of $total steps done';
+  }
+
+  @override
+  String get firstStepVenue => 'List your first venue';
+
+  @override
+  String get firstStepPayout => 'Connect your payout account';
+
+  @override
+  String get firstStepPartner => 'Approve an Event Foxer';
 
   @override
   String get overviewTodayAhead => 'Today and coming up';
@@ -4847,6 +4901,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDocSelfie => 'Verification selfie';
 
   @override
+  String get roleApplyDocClearance => 'Police or background clearance';
+
+  @override
+  String get roleResubmitHeading => 'Fix your application';
+
+  @override
+  String roleResubmitTitle(String role) {
+    return 'Fix your $role application';
+  }
+
+  @override
+  String get roleResubmitIntro =>
+      'Only the documents below were flagged. Everything else you sent stays as it is.';
+
+  @override
+  String get roleResubmitNote => 'Reviewer note';
+
+  @override
+  String get roleResubmitSend => 'Send documents';
+
+  @override
+  String get roleResubmitSent =>
+      'Documents sent. Your application is back in review.';
+
+  @override
+  String get roleResubmitNothing => 'Nothing to fix here';
+
+  @override
+  String get roleResubmitNothingBody =>
+      'This application no longer needs changes, or could not be found.';
+
+  @override
+  String get roleResubmitBack => 'Go back';
+
+  @override
   String get roleApplyChoose => 'Choose';
 
   @override
@@ -4863,6 +4952,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleApplyFailed => 'Could not send. Try again.';
+
+  @override
+  String get roleApplyBio => 'About you and your event experience';
+
+  @override
+  String get roleApplyPortfolioFile => 'Portfolio or resume (optional)';
+
+  @override
+  String get roleSpecCorporate => 'Corporate';
+
+  @override
+  String get roleSpecBirthday => 'Birthday';
+
+  @override
+  String get roleSpecWedding => 'Wedding';
+
+  @override
+  String get roleSpecSocial => 'Social';
 
   @override
   String get roleApplyVenueName => 'Business or venue name';
@@ -5187,4 +5294,217 @@ class AppLocalizationsEn extends AppLocalizations {
   String ticketsOfflineNote(String when) {
     return 'No connection. Showing the tickets saved $when.';
   }
+
+  @override
+  String get tourSkip => 'Skip';
+
+  @override
+  String get tourNext => 'Next';
+
+  @override
+  String get tourDone => 'Got it';
+
+  @override
+  String get tourTake => 'Take the tour';
+
+  @override
+  String get tourWelcomeTitle => 'Welcome, Foxer';
+
+  @override
+  String get tourWelcomeBody =>
+      'A quick look at what is in your space. It takes under a minute.';
+
+  @override
+  String get tourFirstStepsTitle => 'Getting started';
+
+  @override
+  String get tourFirstStepsBody =>
+      'Your first steps. Each one ticks itself off, and the list goes away once you have a live listing or a booking.';
+
+  @override
+  String get tourVenuesTitle => 'Your venues';
+
+  @override
+  String get tourVenuesBody =>
+      'Add venues with photos and prices. A venue goes live once it has been reviewed.';
+
+  @override
+  String get tourEventsTitle => 'Your events';
+
+  @override
+  String get tourEventsBody =>
+      'Build an event, then publish it. Open a card to edit it or see where it stands.';
+
+  @override
+  String get tourGearTitle => 'Your gear';
+
+  @override
+  String get tourGearBody =>
+      'List the gear you rent out, with a daily rate and how many you have.';
+
+  @override
+  String get tourListingsTitle => 'Your listings';
+
+  @override
+  String get tourListingsBody =>
+      'List what you offer, with packages and prices.';
+
+  @override
+  String get tourCalendarTitle => 'Calendar';
+
+  @override
+  String get tourCalendarBody =>
+      'Your bookings by date, so you can spot clashes and close the days you are not free.';
+
+  @override
+  String get tourEarningsTitle => 'Earnings';
+
+  @override
+  String get tourEarningsBody =>
+      'What you have been paid and what is on its way. Connect your payout account here.';
+
+  @override
+  String get tourMoreTitle => 'More';
+
+  @override
+  String get tourMoreBody =>
+      'Requests, messages, your team, check in and the rest.';
+
+  @override
+  String get tourCheckInTitle => 'Check in';
+
+  @override
+  String get tourCheckInBody => 'Scan a guest QR code at the door.';
+
+  @override
+  String get tourMessagesTitle => 'Messages';
+
+  @override
+  String get tourMessagesBody => 'Talk with your guests and partners.';
+
+  @override
+  String tourStepOf(int n, int total) {
+    return '$n of $total';
+  }
+
+  @override
+  String get earningsTotal => 'Total earnings';
+
+  @override
+  String get earningsChartLater =>
+      'Your earnings will chart here after your first payouts';
+
+  @override
+  String get overviewMyVenues => 'My venues';
+
+  @override
+  String get venueViewAll => 'View all';
+
+  @override
+  String firstStepsNext(String step) {
+    return 'Next: $step';
+  }
+
+  @override
+  String earningsPendingAmount(String amount) {
+    return '$amount pending';
+  }
+
+  @override
+  String earningsChange(int percent) {
+    return '$percent% vs last month';
+  }
+
+  @override
+  String earningsLastWeeks(int weeks) {
+    return 'Last $weeks weeks';
+  }
+
+  @override
+  String get eventKpiLive => 'Events live';
+
+  @override
+  String get overviewMyEvents => 'My events';
+
+  @override
+  String get spaceOrganizer => 'Organizer';
+
+  @override
+  String get spaceOrganizerHint => 'The venues and events you help run';
+
+  @override
+  String get organizerInvitations => 'Invitations';
+
+  @override
+  String get organizerRoleOrganizer => 'Organizer';
+
+  @override
+  String get organizerRoleHelper => 'Check-in helper';
+
+  @override
+  String get organizerNextUp => 'Next up';
+
+  @override
+  String get organizerYouOrganize => 'You organize';
+
+  @override
+  String get organizerOrganizing => 'Organizing';
+
+  @override
+  String get organizerNothingNext => 'Nothing coming up yet.';
+
+  @override
+  String get organizerNoTeams =>
+      'The teams you join show up here once you accept an invitation.';
+
+  @override
+  String get organizerNoInvitations => 'No invitations right now.';
+
+  @override
+  String get organizerAnswerFailed =>
+      'We couldn\'t send your answer. Try again.';
+
+  @override
+  String organizerInvitedBy(String name) {
+    return 'Invited by $name';
+  }
+
+  @override
+  String get providerAddGear => 'Add gear';
+
+  @override
+  String get providerAddService => 'Add service';
+
+  @override
+  String get providerAddPerformance => 'Add performance';
+
+  @override
+  String get overviewMyGear => 'My gear';
+
+  @override
+  String get overviewMyServices => 'My services';
+
+  @override
+  String get overviewMyPerformances => 'My performances';
+
+  @override
+  String get tourActionsTitle => 'Your shortcuts';
+
+  @override
+  String get tourActionsBody =>
+      'Open your calendar, or add something new, from here.';
+
+  @override
+  String get tourNeedsTitle => 'Needs you';
+
+  @override
+  String get tourNeedsBody =>
+      'Requests and invitations waiting for your answer come first, so nothing is missed.';
+
+  @override
+  String get tourEarningsCardTitle => 'Your earnings';
+
+  @override
+  String get tourEarningsCardBody =>
+      'What you have been paid, how it changed since last month, and the last eight weeks.';
 }

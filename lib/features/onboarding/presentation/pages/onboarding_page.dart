@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
@@ -21,6 +23,8 @@ const _appliesInApp = {
   'performerFoxer',
   'gearFoxer',
   'venueFoxer',
+  'eventFoxer',
+  'organizer',
 };
 
 /// FoxPassport onboarding — the web app's `/onboarding` flow on a phone:
@@ -141,8 +145,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                             key: const ValueKey('roles'),
                             state: state,
                             onRole: _openRole,
-                            onRevision: (id) =>
-                                _openOnWeb('/foxer/resubmit/$id'),
+                            onRevision: (id) => unawaited(
+                              context.push(RouteNames.roleResubmit(id)),
+                            ),
                             onBack: controller.backFromRoles,
                             onFinish: () => state.hasHeldRoles
                                 ? _openOnWeb('/creator-dashboard')

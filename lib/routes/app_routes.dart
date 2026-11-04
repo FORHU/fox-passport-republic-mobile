@@ -38,13 +38,16 @@ import 'package:flutter_template/features/republic/presentation/pages/saved_post
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
+import 'package:flutter_template/features/roles/presentation/pages/role_resubmit_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/settings_page.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/appointment_models.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
@@ -52,10 +55,15 @@ import 'package:flutter_template/features/spaces/presentation/pages/check_in_pag
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_bids_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/listing_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/open_slots_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_invitations_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
@@ -285,6 +293,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 : RouteNames.roles,
         builder: (context, state) =>
             RoleApplicationPage(roleType: state.pathParameters['roleType']!),
+      ),
+      GoRoute(
+        path: '/roles/resubmit/:id',
+        builder: (context, state) =>
+            RoleResubmitPage(requestId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: RouteNames.spaceVenueStudio,
@@ -546,6 +559,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           // A count of requests waiting for a reply, on the Overview tab.
           builder: (context, ref, _) => SpaceLayout(
             navigationShell: navigationShell,
+            tourSpace: NewFoxerSpace.venue,
             items: SpaceLayout.venueItems(
               context,
               partnersWaiting:
@@ -637,9 +651,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // The Event space.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => Consumer(
-          // A count of partnerships waiting for an answer, on the Events tab.
+          // A count of partnerships waiting for an answer, on the More tab.
           builder: (context, ref, _) => SpaceLayout(
             navigationShell: navigationShell,
+            tourSpace: NewFoxerSpace.event,
             items: SpaceLayout.eventItems(
               context,
               partnersWaiting:
@@ -652,7 +667,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.spaceEvent,
-                builder: (context, state) => const EventsPage(),
+                builder: (context, state) => const EventOverviewPage(),
                 routes: [
                   GoRoute(
                     path: 'partners',
@@ -660,6 +675,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         const PartnersPage(side: PartnerSide.eventFoxer),
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventList,
+                builder: (context, state) => EventsPage(
+                  initialGroup: state.uri.queryParameters['group'],
+                ),
               ),
             ],
           ),
@@ -674,7 +699,77 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.spaceEventCheckIn,
+                path: RouteNames.spaceEventEarnings,
+                builder: (context, state) => const EarningsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceEventMore,
+                builder: (context, state) => const EventMorePage(),
+                routes: [
+                  GoRoute(
+                    path: 'check-in',
+                    builder: (context, state) => const CheckInPage(),
+                  ),
+                  GoRoute(
+                    path: 'messages',
+                    builder: (context, state) =>
+                        const MessagesPage(showBack: true),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Organizer space: the teams they help run.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of invitations waiting for an answer, on the Overview tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.organizerItems(
+              context,
+              invitations: ref.watch(myAppointmentsProvider).maybeWhen(
+                    data: (list) => list
+                        .where((a) => a.state == AppointmentState.invited)
+                        .length,
+                    orElse: () => 0,
+                  ),
+            ),
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizer,
+                builder: (context, state) => const OrganizerOverviewPage(),
+                routes: [
+                  GoRoute(
+                    path: 'invitations',
+                    builder: (context, state) =>
+                        const OrganizerInvitationsPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerCalendar,
+                builder: (context, state) => const EventCalendarPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerCheckIn,
                 builder: (context, state) => const CheckInPage(),
               ),
             ],
@@ -682,8 +777,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.spaceEventMessages,
+                path: RouteNames.spaceOrganizerMessages,
                 builder: (context, state) => const MessagesPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerMore,
+                builder: (context, state) => const OrganizerMorePage(),
               ),
             ],
           ),
@@ -703,6 +806,7 @@ StatefulShellRoute _providerShell(ProviderKind kind) {
       // A count of requests waiting for a reply, on the Overview tab.
       builder: (context, ref, _) => SpaceLayout(
         navigationShell: navigationShell,
+        tourSpace: kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
         items: SpaceLayout.providerItems(
           context,
           listings: listingsLabel(

@@ -8,6 +8,7 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/event_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -232,7 +233,51 @@ void main() {
           'data': {'asVenueMayor': <Object>[], 'asEventFoxer': invites},
         },
       );
+      // Nothing earned yet, which is what makes a Foxer new.
+      when(
+        () => api.get(ApiEndpoints.payoutsMe, query: any(named: 'query')),
+      ).thenAnswer(
+        (_) async => {
+          'data': <Object>[],
+          'totals': {'pending': 0, 'paid': 0},
+        },
+      );
     }
+
+    testWidgets('a new Event Foxer is greeted and shown their first steps', (
+      tester,
+    ) async {
+      api_();
+      // No payout account yet.
+      when(() => api.get(ApiEndpoints.stripeStatus))
+          .thenAnswer((_) async => {'data': <String, Object>{}});
+      await pump(tester, const EventOverviewPage());
+
+      expect(find.text('Event Foxer'), findsNothing);
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('0 of 3 steps done'), findsOneWidget);
+      expect(find.text('Get approved to host at a venue'), findsOneWidget);
+      expect(find.text('Build your first event'), findsOneWidget);
+      expect(find.text('Connect your payout account'), findsOneWidget);
+    });
+
+    testWidgets('first steps tick off from the events and payouts', (
+      tester,
+    ) async {
+      api_(events: [event('e1', 'Bonfire Night', 'pending')]);
+      when(() => api.get(ApiEndpoints.stripeStatus)).thenAnswer(
+        (_) async => {
+          'data': {
+            'hasStripeAccount': true,
+            'stripeOnboardingComplete': true,
+          },
+        },
+      );
+      await pump(tester, const EventOverviewPage());
+
+      // An event and payouts are done; no venue has approved them yet.
+      expect(find.text('2 of 3 steps done'), findsOneWidget);
+    });
 
     testWidgets('lists your events with their town and status', (
       tester,
@@ -248,24 +293,70 @@ void main() {
       expect(find.text('Bonfire Night'), findsOneWidget);
       expect(find.text('Baguio'), findsOneWidget);
       expect(find.text('Live'), findsOneWidget);
+      // The first steps sit above the events, so the second one is below.
+      await tester.scrollUntilVisible(
+        find.text('Garden Party'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Garden Party'), findsOneWidget);
       expect(find.text('2 events'), findsOneWidget);
     });
 
-    testWidgets('puts the quick actions first', (tester) async {
+    testWidgets('puts the buttons first, then what needs the person', (
+      tester,
+    ) async {
       api_(events: [event('e1', 'Bonfire Night', 'published')]);
-      await pump(tester, const EventsPage());
+      await pump(tester, const EventOverviewPage());
 
-      final actions = tester.getTopLeft(find.text('Check in a guest')).dy;
+      final actions = tester.getTopLeft(find.text('New event')).dy;
       final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
       expect(actions, lessThan(attention));
-      expect(find.text('Venue partners'), findsOneWidget);
-      expect(find.text('New event'), findsOneWidget);
+      expect(find.text('Calendar'), findsWidgets);
+    });
+
+    testWidgets('shows events live and in review, and My events', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          event('e1', 'Live One', 'published', city: 'Baguio'),
+          event('e2', 'Waiting One', 'pending'),
+          event('e3', 'Draft One', 'draft'),
+        ],
+      );
+      await pump(tester, const EventOverviewPage());
+      await tester.scrollUntilVisible(
+        find.text('MY EVENTS'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
+      await tester.pumpAndSettle();
+
+      expect(find.text('1 of 3'), findsOneWidget);
+      expect(find.text('Live One'), findsOneWidget);
+      expect(find.text('Waiting One'), findsOneWidget);
+      // Two at most.
+      expect(find.text('Draft One'), findsNothing);
+    });
+
+    testWidgets('shows the earnings card with its total', (tester) async {
+      api_(events: [event('e1', 'Bonfire Night', 'published')]);
+      await pump(tester, const EventOverviewPage());
+      await tester.scrollUntilVisible(
+        find.text('Total earnings'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.textContaining('chart here'), findsOneWidget);
     });
 
     testWidgets('says when all is clear', (tester) async {
       api_(events: [event('e1', 'Bonfire Night', 'published')]);
-      await pump(tester, const EventsPage());
+      await pump(tester, const EventOverviewPage());
 
       expect(find.text("You're all caught up."), findsOneWidget);
     });
@@ -277,12 +368,10 @@ void main() {
         events: [event('e1', 'Bonfire Night', 'published')],
         invites: [invite('a'), invite('b')],
       );
-      await pump(tester, const EventsPage());
+      await pump(tester, const EventOverviewPage());
 
       expect(find.text('2 venue invitations are waiting'), findsOneWidget);
       expect(find.text("You're all caught up."), findsNothing);
-      // The Venue partners shortcut carries the count.
-      expect(find.text('2'), findsOneWidget);
     });
 
     testWidgets('says how many events are in review, declined or drafts', (
@@ -296,26 +385,21 @@ void main() {
           event('e4', 'Draft One', 'draft'),
         ],
       );
-      await pump(tester, const EventsPage());
+      await pump(tester, const EventOverviewPage());
 
       expect(find.text('1 event is in review'), findsOneWidget);
       expect(find.text('1 event was declined'), findsOneWidget);
       expect(find.text('1 draft to finish'), findsOneWidget);
     });
 
-    testWidgets('tapping a status row shows just those events', (
-      tester,
-    ) async {
+    testWidgets('opens on one status group when asked to', (tester) async {
       api_(
         events: [
           event('e1', 'Live One', 'published'),
           event('e2', 'Draft One', 'draft'),
         ],
       );
-      await pump(tester, const EventsPage());
-
-      await tester.tap(find.text('1 draft to finish'));
-      await tester.pumpAndSettle();
+      await pump(tester, const EventsPage(initialGroup: 'draft'));
 
       expect(find.text('Draft One'), findsOneWidget);
       expect(find.text('Live One'), findsNothing);

@@ -22,7 +22,8 @@ void main() {
     addTearDown(container.dispose);
 
     final router = container.read(goRouterProvider);
-    // The Citizen tabs come first, then Venue, Event, Gear and Services.
+    // The Citizen tabs come first, then Venue, Event, Organizer, Gear and
+    // Services.
     final shells =
         router.configuration.routes.whereType<StatefulShellRoute>().toList();
     List<String> rootsOf(StatefulShellRoute shell) => [
@@ -30,7 +31,7 @@ void main() {
             (branch.routes.first as GoRoute).path,
         ];
 
-    expect(shells, hasLength(5));
+    expect(shells, hasLength(6));
     expect(rootsOf(shells[0]), RouteNames.shellTabs);
     expect(rootsOf(shells[1]), [
       RouteNames.spaceVenue,
@@ -41,12 +42,20 @@ void main() {
     ]);
     expect(rootsOf(shells[2]), [
       RouteNames.spaceEvent,
+      RouteNames.spaceEventList,
       RouteNames.spaceEventCalendar,
-      RouteNames.spaceEventCheckIn,
-      RouteNames.spaceEventMessages,
+      RouteNames.spaceEventEarnings,
+      RouteNames.spaceEventMore,
+    ]);
+    expect(rootsOf(shells[3]), [
+      RouteNames.spaceOrganizer,
+      RouteNames.spaceOrganizerCalendar,
+      RouteNames.spaceOrganizerCheckIn,
+      RouteNames.spaceOrganizerMessages,
+      RouteNames.spaceOrganizerMore,
     ]);
     for (final (i, kind) in ProviderKind.values.indexed) {
-      expect(rootsOf(shells[3 + i]), [
+      expect(rootsOf(shells[4 + i]), [
         kind.root,
         kind.listings,
         kind.calendar,

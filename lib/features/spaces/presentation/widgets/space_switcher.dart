@@ -34,6 +34,7 @@ String spaceLabel(
       AppSpace.gear => l10n.spaceGear,
       AppSpace.services =>
         _performerOnly(roles) ? l10n.spacePerformer : l10n.spaceServices,
+      AppSpace.organizer => l10n.spaceOrganizer,
     };
 
 String spaceHint(
@@ -49,6 +50,7 @@ String spaceHint(
       AppSpace.services => _performerOnly(roles)
           ? l10n.spacePerformerHint
           : l10n.spaceServicesHint,
+      AppSpace.organizer => l10n.spaceOrganizerHint,
     };
 
 /// What a provider's Listings tab is called: Gear, Services or Performances.
@@ -71,6 +73,7 @@ Color spaceColor(AppSpace space) => switch (space) {
       AppSpace.event => AppColors.roleEvent,
       AppSpace.gear => AppColors.roleGear,
       AppSpace.services => AppColors.roleTalent,
+      AppSpace.organizer => AppColors.roleOrganizer,
     };
 
 /// Lets someone who holds a role choose where to work: Citizen, or the Venue

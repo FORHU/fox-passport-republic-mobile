@@ -44,6 +44,8 @@ class ApiEndpoints {
   // ── Roles & locations (onboarding) ──────────────────────────────────────
   static const String roleRequestsMine = '/role-requests/my';
   static const String roleRequestsApply = '/role-requests/apply';
+  static String roleRequestResubmit(String id) =>
+      '/role-requests/$id/resubmit-documents';
   static const String locationCountries = '/locations/countries';
   static String locationStates(String countryCode) =>
       '/locations/countries/$countryCode/states';
@@ -101,6 +103,11 @@ class ApiEndpoints {
   /// or event: Organizers and Check-in Helpers.
   static const String organizerEvents = '/events';
   static const String organizerSearch = '/appointments/organizers';
+
+  /// The invitations and teams of the signed-in person, and answering one.
+  static const String appointmentsMine = '/appointments/mine';
+  static String appointmentAnswer(String id, {required bool accept}) =>
+      '/appointments/${Uri.encodeComponent(id)}/${accept ? 'accept' : 'decline'}';
   static String venueTeam(String id) =>
       '/venues/${Uri.encodeComponent(id)}/appointments';
   static String eventTeam(String id) =>
@@ -235,6 +242,9 @@ class ApiEndpoints {
   static const String conversationsInbox = '/conversations/inbox';
   static const String socketTicket = '/auth/socket-ticket';
   static const String uploadFile = '/files/upload-direct';
+
+  /// An identity document, kept private; answers with its file id.
+  static const String uploadPrivate = '/files/upload-private';
   static const String venueBoundaries = '/venues/boundaries';
   static const String cancellationPolicies = '/cancellation-policies';
   static const String fxRates = '/fx/rates';

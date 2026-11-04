@@ -2146,6 +2146,12 @@ abstract class AppLocalizations {
   /// **'Guests'**
   String get ticketGuests;
 
+  /// No description provided for @ticketQrPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your QR appears once this booking is confirmed'**
+  String get ticketQrPending;
+
   /// No description provided for @ticketAddToWallet.
   ///
   /// In en, this message translates to:
@@ -2695,7 +2701,7 @@ abstract class AppLocalizations {
   /// No description provided for @spaceTabOverview.
   ///
   /// In en, this message translates to:
-  /// **'Overview'**
+  /// **'Dashboard'**
   String get spaceTabOverview;
 
   /// No description provided for @spaceTabCalendar.
@@ -3375,6 +3381,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 draft to finish} other{{count} drafts to finish}}'**
   String overviewVenuesDrafts(int count);
+
+  /// No description provided for @overviewGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning, {name}'**
+  String overviewGreetingMorning(String name);
+
+  /// No description provided for @overviewGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name}'**
+  String overviewGreetingAfternoon(String name);
+
+  /// No description provided for @overviewGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name}'**
+  String overviewGreetingEvening(String name);
+
+  /// No description provided for @overviewGreetingNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get overviewGreetingNoName;
+
+  /// No description provided for @firstStepHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Get approved to host at a venue'**
+  String get firstStepHost;
+
+  /// No description provided for @firstStepEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your first event'**
+  String get firstStepEvent;
+
+  /// No description provided for @firstStepGear.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first item'**
+  String get firstStepGear;
+
+  /// No description provided for @firstStepService.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first service'**
+  String get firstStepService;
+
+  /// No description provided for @firstStepPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first performance'**
+  String get firstStepPerformance;
+
+  /// No description provided for @firstStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get firstStepsTitle;
+
+  /// No description provided for @firstStepsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} steps done'**
+  String firstStepsDone(int done, int total);
+
+  /// No description provided for @firstStepVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'List your first venue'**
+  String get firstStepVenue;
+
+  /// No description provided for @firstStepPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your payout account'**
+  String get firstStepPayout;
+
+  /// No description provided for @firstStepPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve an Event Foxer'**
+  String get firstStepPartner;
 
   /// No description provided for @overviewTodayAhead.
   ///
@@ -8764,6 +8854,66 @@ abstract class AppLocalizations {
   /// **'Verification selfie'**
   String get roleApplyDocSelfie;
 
+  /// No description provided for @roleApplyDocClearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Police or background clearance'**
+  String get roleApplyDocClearance;
+
+  /// No description provided for @roleResubmitHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix your application'**
+  String get roleResubmitHeading;
+
+  /// No description provided for @roleResubmitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix your {role} application'**
+  String roleResubmitTitle(String role);
+
+  /// No description provided for @roleResubmitIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the documents below were flagged. Everything else you sent stays as it is.'**
+  String get roleResubmitIntro;
+
+  /// No description provided for @roleResubmitNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewer note'**
+  String get roleResubmitNote;
+
+  /// No description provided for @roleResubmitSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send documents'**
+  String get roleResubmitSend;
+
+  /// No description provided for @roleResubmitSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents sent. Your application is back in review.'**
+  String get roleResubmitSent;
+
+  /// No description provided for @roleResubmitNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to fix here'**
+  String get roleResubmitNothing;
+
+  /// No description provided for @roleResubmitNothingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This application no longer needs changes, or could not be found.'**
+  String get roleResubmitNothingBody;
+
+  /// No description provided for @roleResubmitBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get roleResubmitBack;
+
   /// No description provided for @roleApplyChoose.
   ///
   /// In en, this message translates to:
@@ -8799,6 +8949,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not send. Try again.'**
   String get roleApplyFailed;
+
+  /// No description provided for @roleApplyBio.
+  ///
+  /// In en, this message translates to:
+  /// **'About you and your event experience'**
+  String get roleApplyBio;
+
+  /// No description provided for @roleApplyPortfolioFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio or resume (optional)'**
+  String get roleApplyPortfolioFile;
+
+  /// No description provided for @roleSpecCorporate.
+  ///
+  /// In en, this message translates to:
+  /// **'Corporate'**
+  String get roleSpecCorporate;
+
+  /// No description provided for @roleSpecBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get roleSpecBirthday;
+
+  /// No description provided for @roleSpecWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get roleSpecWedding;
+
+  /// No description provided for @roleSpecSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get roleSpecSocial;
 
   /// No description provided for @roleApplyVenueName.
   ///
@@ -9399,6 +9585,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No connection. Showing the tickets saved {when}.'**
   String ticketsOfflineNote(String when);
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tourSkip;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tourNext;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get tourDone;
+
+  /// No description provided for @tourTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the tour'**
+  String get tourTake;
+
+  /// No description provided for @tourWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, Foxer'**
+  String get tourWelcomeTitle;
+
+  /// No description provided for @tourWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick look at what is in your space. It takes under a minute.'**
+  String get tourWelcomeBody;
+
+  /// No description provided for @tourFirstStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get tourFirstStepsTitle;
+
+  /// No description provided for @tourFirstStepsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first steps. Each one ticks itself off, and the list goes away once you have a live listing or a booking.'**
+  String get tourFirstStepsBody;
+
+  /// No description provided for @tourVenuesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venues'**
+  String get tourVenuesTitle;
+
+  /// No description provided for @tourVenuesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add venues with photos and prices. A venue goes live once it has been reviewed.'**
+  String get tourVenuesBody;
+
+  /// No description provided for @tourEventsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your events'**
+  String get tourEventsTitle;
+
+  /// No description provided for @tourEventsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Build an event, then publish it. Open a card to edit it or see where it stands.'**
+  String get tourEventsBody;
+
+  /// No description provided for @tourGearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your gear'**
+  String get tourGearTitle;
+
+  /// No description provided for @tourGearBody.
+  ///
+  /// In en, this message translates to:
+  /// **'List the gear you rent out, with a daily rate and how many you have.'**
+  String get tourGearBody;
+
+  /// No description provided for @tourListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your listings'**
+  String get tourListingsTitle;
+
+  /// No description provided for @tourListingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'List what you offer, with packages and prices.'**
+  String get tourListingsBody;
+
+  /// No description provided for @tourCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get tourCalendarTitle;
+
+  /// No description provided for @tourCalendarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bookings by date, so you can spot clashes and close the days you are not free.'**
+  String get tourCalendarBody;
+
+  /// No description provided for @tourEarningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get tourEarningsTitle;
+
+  /// No description provided for @tourEarningsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What you have been paid and what is on its way. Connect your payout account here.'**
+  String get tourEarningsBody;
+
+  /// No description provided for @tourMoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get tourMoreTitle;
+
+  /// No description provided for @tourMoreBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests, messages, your team, check in and the rest.'**
+  String get tourMoreBody;
+
+  /// No description provided for @tourCheckInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get tourCheckInTitle;
+
+  /// No description provided for @tourCheckInBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a guest QR code at the door.'**
+  String get tourCheckInBody;
+
+  /// No description provided for @tourMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get tourMessagesTitle;
+
+  /// No description provided for @tourMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk with your guests and partners.'**
+  String get tourMessagesBody;
+
+  /// No description provided for @tourStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} of {total}'**
+  String tourStepOf(int n, int total);
+
+  /// No description provided for @earningsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total earnings'**
+  String get earningsTotal;
+
+  /// No description provided for @earningsChartLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Your earnings will chart here after your first payouts'**
+  String get earningsChartLater;
+
+  /// No description provided for @overviewMyVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'My venues'**
+  String get overviewMyVenues;
+
+  /// No description provided for @venueViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get venueViewAll;
+
+  /// No description provided for @firstStepsNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String firstStepsNext(String step);
+
+  /// No description provided for @earningsPendingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} pending'**
+  String earningsPendingAmount(String amount);
+
+  /// No description provided for @earningsChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% vs last month'**
+  String earningsChange(int percent);
+
+  /// No description provided for @earningsLastWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {weeks} weeks'**
+  String earningsLastWeeks(int weeks);
+
+  /// No description provided for @eventKpiLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Events live'**
+  String get eventKpiLive;
+
+  /// No description provided for @overviewMyEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'My events'**
+  String get overviewMyEvents;
+
+  /// No description provided for @spaceOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get spaceOrganizer;
+
+  /// No description provided for @spaceOrganizerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The venues and events you help run'**
+  String get spaceOrganizerHint;
+
+  /// No description provided for @organizerInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitations'**
+  String get organizerInvitations;
+
+  /// No description provided for @organizerRoleOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get organizerRoleOrganizer;
+
+  /// No description provided for @organizerRoleHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in helper'**
+  String get organizerRoleHelper;
+
+  /// No description provided for @organizerNextUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Next up'**
+  String get organizerNextUp;
+
+  /// No description provided for @organizerYouOrganize.
+  ///
+  /// In en, this message translates to:
+  /// **'You organize'**
+  String get organizerYouOrganize;
+
+  /// No description provided for @organizerOrganizing.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizing'**
+  String get organizerOrganizing;
+
+  /// No description provided for @organizerNothingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up yet.'**
+  String get organizerNothingNext;
+
+  /// No description provided for @organizerNoTeams.
+  ///
+  /// In en, this message translates to:
+  /// **'The teams you join show up here once you accept an invitation.'**
+  String get organizerNoTeams;
+
+  /// No description provided for @organizerNoInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No invitations right now.'**
+  String get organizerNoInvitations;
+
+  /// No description provided for @organizerAnswerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send your answer. Try again.'**
+  String get organizerAnswerFailed;
+
+  /// No description provided for @organizerInvitedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited by {name}'**
+  String organizerInvitedBy(String name);
+
+  /// No description provided for @providerAddGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Add gear'**
+  String get providerAddGear;
+
+  /// No description provided for @providerAddService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add service'**
+  String get providerAddService;
+
+  /// No description provided for @providerAddPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Add performance'**
+  String get providerAddPerformance;
+
+  /// No description provided for @overviewMyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'My gear'**
+  String get overviewMyGear;
+
+  /// No description provided for @overviewMyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'My services'**
+  String get overviewMyServices;
+
+  /// No description provided for @overviewMyPerformances.
+  ///
+  /// In en, this message translates to:
+  /// **'My performances'**
+  String get overviewMyPerformances;
+
+  /// No description provided for @tourActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your shortcuts'**
+  String get tourActionsTitle;
+
+  /// No description provided for @tourActionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your calendar, or add something new, from here.'**
+  String get tourActionsBody;
+
+  /// No description provided for @tourNeedsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs you'**
+  String get tourNeedsTitle;
+
+  /// No description provided for @tourNeedsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests and invitations waiting for your answer come first, so nothing is missed.'**
+  String get tourNeedsBody;
+
+  /// No description provided for @tourEarningsCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your earnings'**
+  String get tourEarningsCardTitle;
+
+  /// No description provided for @tourEarningsCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What you have been paid, how it changed since last month, and the last eight weeks.'**
+  String get tourEarningsCardBody;
 }
 
 class _AppLocalizationsDelegate

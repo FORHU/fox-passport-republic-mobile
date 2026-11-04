@@ -1,0 +1,100 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/core/utils/web_app_launcher.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
+import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
+import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/widgets/top_toast.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:go_router/go_router.dart';
+
+/// The Event space's More tab: the things that are not a tab of their own,
+/// laid out like the Venue space's.
+class EventMorePage extends ConsumerWidget {
+  const EventMorePage({super.key});
+
+  Future<void> _openWeb(BuildContext context) async {
+    final message = context.l10n.onboardingWebNotConfigured;
+    final opened = await openWebApp('/creator-dashboard');
+    if (!opened && context.mounted) showTopToast(context, message);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final invites = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
+
+    return Scaffold(
+      backgroundColor: AppColors.canvas,
+      appBar: SpaceAppBar(title: l10n.moreTitle),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          MoreRow(
+            icon: Icons.qr_code_scanner_rounded,
+            title: l10n.spaceTabCheckIn,
+            onTap: () => context.push(RouteNames.spaceEventCheckIn),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.chat_bubble_outline_rounded,
+            title: l10n.messages,
+            onTap: () => context.push(RouteNames.spaceEventMessages),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.handshake_outlined,
+            title: l10n.partnersOpenRow,
+            badge: invites == 0 ? null : '$invites',
+            onTap: () => context.push(RouteNames.spaceEventPartners),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.groups_outlined,
+            title: l10n.teamTitle,
+            onTap: () => context.push(RouteNames.spaceTeamEvents),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.how_to_reg_outlined,
+            title: l10n.bidsTitle,
+            onTap: () => context.push(RouteNames.spaceBidEvents),
+          ),
+          const SizedBox(height: 24),
+          MoreRow(
+            icon: Icons.swap_horiz_rounded,
+            title: l10n.spaceSwitchTitle,
+            onTap: () => showSpaceSheet(context),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.tour_outlined,
+            title: l10n.tourTake,
+            onTap: () => unawaited(
+              restartSpaceTour(
+                ref,
+                context,
+                NewFoxerSpace.event,
+                RouteNames.spaceEvent,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.open_in_new_rounded,
+            title: l10n.spaceManageOnWeb,
+            onTap: () => _openWeb(context),
+          ),
+        ],
+      ),
+    );
+  }
+}

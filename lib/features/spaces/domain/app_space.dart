@@ -26,6 +26,12 @@ enum AppSpace {
     root: '/space/services',
     icon: Icons.design_services_outlined,
     requiredRoles: ['serviceFoxer', 'performerFoxer'],
+  ),
+  // An Organizer helps run other people's venues and events.
+  organizer(
+    root: '/space/organizer',
+    icon: Icons.groups_outlined,
+    requiredRoles: ['organizer'],
   );
 
   const AppSpace({

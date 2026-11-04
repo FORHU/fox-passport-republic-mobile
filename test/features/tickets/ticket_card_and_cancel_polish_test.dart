@@ -89,6 +89,40 @@ void main() {
       }
     });
 
+    testWidgets('a live pending booking shows where the QR will be', (
+      tester,
+    ) async {
+      _bigScreen(tester);
+      await tester.pumpWidget(_card(_ticket(status: 'pending')));
+      await tester.pump();
+
+      const note = 'Your QR appears once this booking is confirmed';
+      expect(find.text(note), findsOneWidget);
+      // The code stays under it, as a reference.
+      expect(find.text('FXP-1234'), findsOneWidget);
+      expect(find.byType(QrImageView), findsNothing);
+    });
+
+    testWidgets('only a live pending booking has the placeholder', (
+      tester,
+    ) async {
+      _bigScreen(tester);
+      for (final ticket in [
+        _ticket(),
+        _ticket(status: 'cancelled'),
+        _ticket(status: 'completed'),
+        _ticket(status: 'pending', startsIn: const Duration(days: -2)),
+      ]) {
+        await tester.pumpWidget(_card(ticket));
+        await tester.pump();
+        expect(
+          find.text('Your QR appears once this booking is confirmed'),
+          findsNothing,
+          reason: ticket.status,
+        );
+      }
+    });
+
     testWidgets('a cancelled booking does not show its code either', (
       tester,
     ) async {

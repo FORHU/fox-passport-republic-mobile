@@ -16,8 +16,11 @@ import 'package:flutter_template/features/messages/presentation/pages/messages_p
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_studio_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
@@ -53,6 +56,7 @@ void main() {
     required List<String> roles,
     String? savedSpace,
     List<Override> overrides = const [],
+    bool seenTours = true,
   }) async {
     AppConfig.instance = const AppConfig.dev();
     SharedPreferences.setMockInitialValues({
@@ -60,6 +64,11 @@ void main() {
       'onboarding_seen': true,
       'location_prompt_seen': true,
       if (savedSpace != null) 'active_space_u1': savedSpace,
+      // The first-time tour has been seen, so it does not cover the screen.
+      if (seenTours)
+        for (final space in ['venue', 'event', 'gear', 'services'])
+          for (var tab = 0; tab < 5; tab++)
+            'spaceTourSeen.u1.$space.$tab': true,
     });
     prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(
@@ -118,7 +127,7 @@ void main() {
     await settle(tester);
 
     expect(where(), RouteNames.spaceVenue);
-    for (final tab in ['Overview', 'Venues', 'Calendar', 'Earnings', 'More']) {
+    for (final tab in ['Dashboard', 'Venues', 'Calendar', 'Earnings', 'More']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
     // The Citizen bar is not there.
@@ -137,7 +146,7 @@ void main() {
       ('Calendar', RouteNames.spaceVenueCalendar),
       ('Earnings', RouteNames.spaceVenueEarnings),
       ('More', RouteNames.spaceVenueMore),
-      ('Overview', RouteNames.spaceVenue),
+      ('Dashboard', RouteNames.spaceVenue),
     ]) {
       await tester.tap(find.text(label).last);
       await settle(tester);
@@ -224,25 +233,136 @@ void main() {
     await finish(tester);
   });
 
-  testWidgets('the Event space has Events, Calendar, Check-in and Messages', (
+  testWidgets('the Event space has the same five tabs as the others', (
     tester,
   ) async {
     await boot(tester, roles: const ['eventFoxer']);
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
-    for (final tab in ['Events', 'Calendar', 'Check-in', 'Messages']) {
-      expect(find.text(tab), findsWidgets);
+    for (final tab in ['Dashboard', 'Events', 'Calendar', 'Earnings', 'More']) {
+      expect(find.text(tab), findsWidgets, reason: tab);
     }
 
-    await tester.tap(find.text('Calendar'));
+    // The dashboard has a Calendar button too; the bar's is the last.
+    await tester.tap(find.text('Calendar').last);
     await settle(tester);
     expect(where(), RouteNames.spaceEventCalendar);
     expect(find.byType(EventCalendarPage), findsOneWidget);
 
+    await tester.tap(find.text('Earnings'));
+    await settle(tester);
+    expect(where(), RouteNames.spaceEventEarnings);
+    await finish(tester);
+  });
+
+  testWidgets('an Organizer has a space with five tabs', (tester) async {
+    await boot(
+      tester,
+      roles: const ['organizer'],
+      overrides: [
+        myAppointmentsProvider.overrideWith((ref) async => const []),
+      ],
+    );
+    router.go(RouteNames.spaceOrganizer);
+    await settle(tester);
+
+    for (final tab in [
+      'Dashboard',
+      'Calendar',
+      'Check-in',
+      'Messages',
+      'More',
+    ]) {
+      expect(find.text(tab), findsWidgets, reason: tab);
+    }
+    expect(find.byType(OrganizerOverviewPage), findsOneWidget);
+
+    await tester.tap(find.text('More').last);
+    await settle(tester);
+    expect(where(), RouteNames.spaceOrganizerMore);
+    expect(find.byType(OrganizerMorePage), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('the tour shows once on the dashboard, then not again', (
+    tester,
+  ) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      seenTours: false,
+      overrides: [
+        myEventsProvider.overrideWith((ref) async => const []),
+        payoutsProvider.overrideWith((ref) async => const PayoutSummary()),
+      ],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+    // The screen loads what it shows before the tour points at it.
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    expect(find.text('Welcome, Foxer'), findsOneWidget);
+    await tester.tap(find.text('Skip'));
+    await settle(tester);
+    expect(find.text('Welcome, Foxer'), findsNothing);
+    expect(prefs.getBool('spaceTourSeen.u1.event.0'), isTrue);
+
+    // Away and back: it has been seen, so it stays away.
+    await tester.tap(find.text('Calendar').last);
+    await settle(tester);
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pump(const Duration(milliseconds: 700));
+    // The Calendar tab's own card shows once.
+    expect(find.text('Calendar'), findsWidgets);
+    await finish(tester);
+  });
+
+  testWidgets('Check-in and Messages are in the Event More tab', (
+    tester,
+  ) async {
+    await boot(tester, roles: const ['eventFoxer']);
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('More'));
+    await settle(tester);
+    expect(where(), RouteNames.spaceEventMore);
+    expect(find.text('Messages'), findsWidgets);
+
     await tester.tap(find.text('Check-in'));
     await settle(tester);
-    expect(where(), RouteNames.spaceEventCheckIn);
+    expect(find.byType(CheckInPage), findsOneWidget);
+    await finish(tester);
+  });
+
+  testWidgets('a status row on the Overview opens the Events tab on it', (
+    tester,
+  ) async {
+    await boot(
+      tester,
+      roles: const ['eventFoxer'],
+      overrides: [
+        myEventsProvider.overrideWith(
+          (ref) async => const [
+            SpaceListing(id: 'e1', name: 'Ada Birthday', status: 'draft'),
+          ],
+        ),
+      ],
+    );
+    router.go(RouteNames.spaceEvent);
+    await settle(tester);
+
+    await tester.tap(find.text('1 draft to finish'));
+    await settle(tester);
+
+    expect(where(), RouteNames.spaceEventList);
+    expect(
+      router.routerDelegate.currentConfiguration.uri.queryParameters['group'],
+      'draft',
+    );
+    expect(find.text('Ada Birthday'), findsOneWidget);
     await finish(tester);
   });
 
@@ -260,9 +380,15 @@ void main() {
         ),
       ],
     );
-    router.go(RouteNames.spaceEvent);
+    router.go(RouteNames.spaceEventList);
     await settle(tester);
 
+    // The first steps sit above the events, so the event is below.
+    await tester.scrollUntilVisible(
+      find.text('Ada Birthday'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
     // A menu offers what can be done with it.
@@ -292,9 +418,15 @@ void main() {
         ),
       ],
     );
-    router.go(RouteNames.spaceEvent);
+    router.go(RouteNames.spaceEventList);
     await settle(tester);
 
+    // The first steps sit above the events, so the event is below.
+    await tester.scrollUntilVisible(
+      find.text('Ada Birthday'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Ada Birthday'));
     await settle(tester);
     await tester.tap(find.text('Edit event'));
@@ -368,13 +500,15 @@ void main() {
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
+    await tester.tap(find.text('More'));
+    await settle(tester);
     await tester.tap(find.text('Venue partners'));
     await settle(tester);
     expect(find.byType(PartnersPage), findsOneWidget);
 
     router.pop();
     await settle(tester);
-    expect(where(), RouteNames.spaceEvent);
+    expect(where(), RouteNames.spaceEventMore);
     await finish(tester);
   });
 
@@ -412,11 +546,8 @@ void main() {
     await boot(tester, roles: const ['venueFoxer'], savedSpace: 'venue');
     expect(where(), RouteNames.spaceVenue);
 
-    // The top bar has no switcher; it is a row in More.
-    expect(find.byIcon(Icons.expand_more_rounded), findsNothing);
-    await tester.tap(find.text('More'));
-    await settle(tester);
-    await tester.tap(find.text('Switch space'));
+    // The switcher is in the top bar, one tap from anywhere in the space.
+    await tester.tap(find.byTooltip('Switch space'));
     await settle(tester);
     expect(find.text('WORKING AS'), findsOneWidget);
     await tester.tap(find.text('Citizen'));
@@ -445,7 +576,7 @@ void main() {
     expect(prefs.getString('active_space_u1'), 'event');
     // The switch fades through and says where they are now.
     expect(find.text('Now in the Event space'), findsOneWidget);
-    for (final tab in ['Events', 'Check-in', 'Messages']) {
+    for (final tab in ['Dashboard', 'Events', 'Earnings', 'More']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
     await finish(tester);

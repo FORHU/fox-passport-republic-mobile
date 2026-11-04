@@ -4,12 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/calendar/presentation/widgets/venue_hold_chip.dart';
+import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
@@ -41,6 +49,7 @@ class VenueOverviewPage extends ConsumerWidget {
       ..invalidate(venueRequestsProvider)
       ..invalidate(myVenuesProvider)
       ..invalidate(payoutsProvider)
+      ..invalidate(stripeStatusProvider)
       ..invalidate(partnersProvider)
       ..invalidate(venueCalendarProvider(range));
     try {
@@ -64,6 +73,9 @@ class VenueOverviewPage extends ConsumerWidget {
     final partners = ref.watch(partnersProvider);
     final partnersWaiting =
         ref.watch(partnersWaitingProvider(PartnerSide.mayor));
+    final stripe = ref.watch(stripeStatusProvider);
+    final isNew =
+        ref.watch(newFoxerProvider(NewFoxerSpace.venue)).asData?.value ?? false;
 
     final waiting = [
       ...?requests.asData?.value.where((r) => r.needsReply),
@@ -97,6 +109,31 @@ class VenueOverviewPage extends ConsumerWidget {
     String dash(AsyncValue<Object?> value, String Function() shown) =>
         value.hasValue ? shown() : '—';
 
+    // The first steps tick themselves off from real data, and show only once
+    // everything they read has loaded.
+    final firstSteps = [
+      FirstStep(
+        label: l10n.firstStepVenue,
+        done: myVenues.isNotEmpty,
+        onTap: () => context.push(RouteNames.spaceVenueStudio),
+      ),
+      FirstStep(
+        label: l10n.firstStepPayout,
+        done: stripe.asData?.value.onboardingComplete ?? false,
+        onTap: () => context.go(RouteNames.spaceVenueEarnings),
+      ),
+      FirstStep(
+        label: l10n.firstStepPartner,
+        done: partners.asData?.value.asMayor.any(
+              (p) => p.status == PartnerStatus.approved,
+            ) ??
+            false,
+        onTap: () => context.push(RouteNames.spaceVenuePartners),
+      ),
+    ];
+    final stepsLoaded =
+        isNew && venues.hasValue && partners.hasValue && stripe.hasValue;
+
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
@@ -108,84 +145,100 @@ class VenueOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            // What the person does most, within reach of the thumb.
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            const OverviewGreeting(),
+            const SizedBox(height: 4),
+            tourTarget(
+              'dash-actions',
+              Row(
                 children: [
                   Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.qr_code_scanner_rounded,
-                      label: l10n.venueQuickCheckIn,
-                      onTap: () => context.go(RouteNames.spaceVenueCheckIn),
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          context.go(RouteNames.spaceVenueCalendar),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      label: Text(l10n.spaceTabCalendar),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.event_busy_outlined,
-                      label: l10n.venueQuickCloseDay,
-                      onTap: () => context.go(RouteNames.spaceVenueCalendar),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.add_business_outlined,
-                      label: l10n.venueQuickAddVenue,
-                      onTap: () => context.push(RouteNames.spaceVenueStudio),
+                    child: FilledButton.icon(
+                      onPressed: () =>
+                          context.push(RouteNames.spaceVenueStudio),
+                      icon: const Icon(Icons.add_business_outlined),
+                      label: Text(l10n.venueQuickAddVenue),
                     ),
                   ),
                 ],
               ),
             ),
-            HomeSectionHeader(
-              title: l10n.overviewAttention,
-              action: waiting.isEmpty ? null : l10n.venueSeeAll,
-              onAction: () => context.go(RouteNames.spaceVenueRequests),
+            tourTarget(
+              'dash-needs',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeSectionHeader(
+                    title: l10n.overviewAttention,
+                    action: waiting.isEmpty ? null : l10n.venueSeeAll,
+                    onAction: () => context.go(RouteNames.spaceVenueRequests),
+                  ),
+                  if (loaded && !somethingToDo)
+                    AllClearCard(text: l10n.overviewAllClear),
+                  for (final request in waiting.take(3)) ...[
+                    VenueRequestCard(
+                      request: request,
+                      onAccept: () => unawaited(
+                        answerVenueRequest(context, ref, request, accept: true),
+                      ),
+                      onDecline: () => unawaited(
+                        answerVenueRequest(
+                          context,
+                          ref,
+                          request,
+                          accept: false,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  if (partnersWaiting > 0)
+                    AttentionRow(
+                      icon: Icons.handshake_outlined,
+                      color: AppColors.warning,
+                      text: l10n.overviewPartnersWaiting(partnersWaiting),
+                      onTap: () => context.push(RouteNames.spaceVenuePartners),
+                    ),
+                  if (declined > 0)
+                    AttentionRow(
+                      icon: Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      text: l10n.overviewVenuesDeclined(declined),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                  if (inReview > 0)
+                    AttentionRow(
+                      icon: Icons.hourglass_top_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.overviewVenuesInReview(inReview),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                  if (drafts > 0)
+                    AttentionRow(
+                      icon: Icons.edit_note_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.overviewVenuesDrafts(drafts),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                ],
+              ),
             ),
-            if (loaded && !somethingToDo)
-              AllClearCard(text: l10n.overviewAllClear),
-            for (final request in waiting.take(3)) ...[
-              VenueRequestCard(
-                request: request,
-                onAccept: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: true),
-                ),
-                onDecline: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: false),
-                ),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              tourTarget(
+                'dash-steps',
+                FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
               ),
               const SizedBox(height: 10),
             ],
-            if (partnersWaiting > 0)
-              AttentionRow(
-                icon: Icons.handshake_outlined,
-                color: AppColors.warning,
-                text: l10n.overviewPartnersWaiting(partnersWaiting),
-                onTap: () => context.push(RouteNames.spaceVenuePartners),
-              ),
-            if (declined > 0)
-              AttentionRow(
-                icon: Icons.error_outline_rounded,
-                color: AppColors.error,
-                text: l10n.overviewVenuesDeclined(declined),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
-            if (inReview > 0)
-              AttentionRow(
-                icon: Icons.hourglass_top_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.overviewVenuesInReview(inReview),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
-            if (drafts > 0)
-              AttentionRow(
-                icon: Icons.edit_note_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.overviewVenuesDrafts(drafts),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
             HomeSectionHeader(
               title: l10n.overviewTodayAhead,
               action: ahead.isEmpty ? null : l10n.venueSeeAll,
@@ -197,11 +250,49 @@ class VenueOverviewPage extends ConsumerWidget {
                 style: AppTypography.body(color: AppColors.textMuted),
               )
             else
-              for (final entry in ahead.take(4)) ...[
-                _UpcomingTile(entry: entry, locale: locale),
+              for (final (i, entry) in ahead.take(4).indexed) ...[
+                // The first is led by a photo of its venue.
+                if (i == 0)
+                  _featuredBooking(
+                    context,
+                    entry,
+                    locale,
+                    myVenues
+                        .where((v) => v.id == entry.venueId)
+                        .firstOrNull
+                        ?.imageUrl,
+                  )
+                else
+                  _UpcomingTile(entry: entry, locale: locale),
                 const SizedBox(height: 8),
               ],
             HomeSectionHeader(title: l10n.overviewNumbers),
+            payouts.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (p) => tourTarget(
+                'dash-earnings',
+                EarningsCard(
+                  paid: money.format(
+                    p.totals.paid,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  pending: money.format(
+                    p.totals.pending,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  change: monthChange(p.rows, DateTime.now()),
+                  // A chart of nearly nothing says nothing.
+                  weeks: p.rows.length < 3
+                      ? null
+                      : weeklyPaid(p.rows, DateTime.now()),
+                  onTap: () => context.go(RouteNames.spaceVenueEarnings),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -230,48 +321,57 @@ class VenueOverviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPaid,
-                      onTap: () => context.go(RouteNames.spaceVenueEarnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.paid,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPending,
-                      onTap: () => context.go(RouteNames.spaceVenueEarnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.pending,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            if (myVenues.isNotEmpty) ...[
+              HomeSectionHeader(
+                title: l10n.overviewMyVenues,
+                action: l10n.venueViewAll,
+                onAction: () => context.go(RouteNames.spaceVenueVenues),
               ),
-            ),
+              for (final venue in myVenues.take(2)) ...[
+                GestureDetector(
+                  onTap: () => context.push(RouteNames.spaceVenueHub(venue.id)),
+                  child: FeaturedPhotoCard(
+                    dayLabel: (listingStatusLabel(l10n, venue.status) ?? '')
+                        .toUpperCase(),
+                    title: venue.name,
+                    subtitle: venue.city,
+                    imageUrl: venue.imageUrl,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ],
           ],
         ),
       ),
     );
   }
+}
+
+/// The next booking as a photo card: its day, what it is, where and when.
+Widget _featuredBooking(
+  BuildContext context,
+  CalendarEntry entry,
+  String locale,
+  String? imageUrl,
+) {
+  final now = DateTime.now();
+  final isToday = entry.start.year == now.year &&
+      entry.start.month == now.month &&
+      entry.start.day == now.day;
+  final where = entry.venueName;
+  final when = DateFormat.jm(locale).format(entry.start);
+  final hold = entry.hold;
+  return FeaturedPhotoCard(
+    dayLabel: isToday
+        ? context.l10n.overviewToday.toUpperCase()
+        : DateFormat.MMMd(locale).format(entry.start).toUpperCase(),
+    title: entry.title,
+    subtitle: where == null || where.isEmpty ? when : '$where · $when',
+    imageUrl: imageUrl,
+    highlight: isToday,
+    statusChip: hold == null ? null : VenueHoldChip(hold: hold),
+  );
 }
 
 /// A booking: its day (or "Today"), what it is and when it starts.

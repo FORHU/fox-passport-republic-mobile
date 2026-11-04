@@ -160,6 +160,69 @@ void main() {
   }
 
   group('Overview', () {
+    testWidgets('greets the person without a role chip', (tester) async {
+      await pump(tester, const VenueOverviewPage());
+
+      // Morning, afternoon or evening, by the first name only.
+      expect(find.textContaining(', Ada'), findsOneWidget);
+      expect(find.text('Venue Foxer'), findsNothing);
+    });
+
+    testWidgets('a new Foxer is shown their first steps', (tester) async {
+      await pump(tester, const VenueOverviewPage());
+
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('0 of 3 steps done'), findsOneWidget);
+      expect(find.text('List your first venue'), findsOneWidget);
+      expect(find.text('Connect your payout account'), findsOneWidget);
+      expect(find.text('Approve an Event Foxer'), findsOneWidget);
+    });
+
+    testWidgets('first steps tick themselves off from real data', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_barn],
+        stripe: const StripeStatus(onboardingComplete: true),
+      );
+
+      expect(find.text('2 of 3 steps done'), findsOneWidget);
+    });
+
+    testWidgets('an established Foxer is not shown first steps', (
+      tester,
+    ) async {
+      // A live venue: they are past getting started, even with steps open.
+      await pump(tester, const VenueOverviewPage(), venues: const [_sky]);
+
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('earning money also ends getting started', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_barn],
+        payouts: const PayoutSummary(totals: PayoutTotals(pending: 500)),
+      );
+
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('the next booking is led by its venue', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_sky],
+        calendar: [_booking('Wedding', VenueHold.confirmed)],
+      );
+
+      expect(find.text('Wedding'), findsOneWidget);
+      expect(find.textContaining('Sky Hall ·'), findsOneWidget);
+    });
+
     testWidgets('shows the numbers that matter', (tester) async {
       await pump(
         tester,
@@ -187,7 +250,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('₱12,000'), findsOneWidget); // paid out
-      expect(find.text('₱5,000'), findsOneWidget); // pending
+      expect(find.text('₱5,000 pending'), findsOneWidget);
     });
 
     testWidgets('puts a request that needs a reply on top, to answer there', (
@@ -375,12 +438,12 @@ void main() {
       });
     });
 
-    testWidgets('puts the quick actions first, above what needs the person', (
+    testWidgets('puts the buttons first, then what needs the person', (
       tester,
     ) async {
       await pump(tester, const VenueOverviewPage());
 
-      final actions = tester.getTopLeft(find.text('Check in a guest')).dy;
+      final actions = tester.getTopLeft(find.text('Add a venue')).dy;
       final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
       final numbers = tester.getTopLeft(find.text('NUMBERS')).dy;
       expect(actions, lessThan(attention));
@@ -402,7 +465,7 @@ void main() {
         payouts: const PayoutSummary(totals: PayoutTotals(pending: 5000)),
       );
 
-      await tester.tap(find.text('Pending payouts'));
+      await tester.tap(find.text('Total earnings'));
       await tester.pumpAndSettle();
       expect(find.text('AT ${RouteNames.spaceVenueEarnings}'), findsOneWidget);
     });
@@ -434,9 +497,6 @@ void main() {
       // other, however their labels wrap.
       for (final pair in [
         ('Venues live', 'Bookings, next 30 days'),
-        ('Paid out', 'Pending payouts'),
-        ('Check in a guest', 'Close a day'),
-        ('Close a day', 'Add a venue'),
       ]) {
         expect(
           tester.getTopLeft(tile(pair.$1)).dy,
@@ -449,12 +509,103 @@ void main() {
       }
     });
 
-    testWidgets('the quick actions go where they say', (tester) async {
+    testWidgets('the Calendar button opens the calendar', (tester) async {
       await pump(tester, const VenueOverviewPage());
 
-      await tester.tap(find.text('Check in a guest'));
+      await tester.tap(find.text('Calendar').first);
       await tester.pumpAndSettle();
-      expect(find.text('AT ${RouteNames.spaceVenueCheckIn}'), findsOneWidget);
+      expect(find.text('AT ${RouteNames.spaceVenueCalendar}'), findsOneWidget);
+    });
+
+    PayoutRow paid(int daysAgo, num amount) => PayoutRow(
+          id: 'p$daysAgo',
+          amount: amount,
+          status: 'paid',
+          source: 'event_venue_transaction',
+          paidAt: DateTime.now().subtract(Duration(days: daysAgo)),
+        );
+
+    testWidgets('charts the weeks once there are three payouts', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_sky],
+        payouts: PayoutSummary(
+          totals: const PayoutTotals(paid: 9000),
+          rows: [paid(1, 3000), paid(8, 3000), paid(15, 3000)],
+        ),
+      );
+      await tester.scrollUntilVisible(
+        find.text('Total earnings'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Last 8 weeks'), findsOneWidget);
+      expect(find.textContaining('chart here'), findsNothing);
+    });
+
+    testWidgets('a new Foxer is told when the chart will appear', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        payouts: PayoutSummary(
+          totals: const PayoutTotals(paid: 3000),
+          rows: [paid(1, 3000)],
+        ),
+      );
+      await tester.scrollUntilVisible(
+        find.text('Total earnings'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.textContaining('chart here'), findsOneWidget);
+      expect(find.text('Last 8 weeks'), findsNothing);
+    });
+
+    testWidgets('shows My venues as photo cards, two at most', (tester) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [
+          _sky,
+          _barn,
+          SpaceListing(id: 'v3', name: 'Harbour', status: 'draft'),
+        ],
+      );
+      await tester.scrollUntilVisible(
+        find.text('MY VENUES'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sky Hall'), findsOneWidget);
+      expect(find.text('Old Barn'), findsOneWidget);
+      expect(find.text('Harbour'), findsNothing);
+      await tester.tap(find.text('View all'));
+      await tester.pumpAndSettle();
+      expect(find.text('AT ${RouteNames.spaceVenueVenues}'), findsOneWidget);
+    });
+
+    testWidgets('getting started is one line once a step is done', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueOverviewPage(),
+        venues: const [_barn],
+      );
+
+      expect(find.text('1 of 3 steps done'), findsOneWidget);
+      expect(find.text('Next: Connect your payout account'), findsOneWidget);
+      // The other steps are not listed.
+      expect(find.text('Approve an Event Foxer'), findsNothing);
     });
   });
 
@@ -759,11 +910,24 @@ void main() {
         'Check-in',
         'Messages',
         'Switch space',
-        'Settings',
         'Manage on the web',
       ]) {
         expect(find.text(row), findsOneWidget, reason: row);
       }
+      // The photo in the corner opens Settings, so it has no row here.
+      expect(find.text('Settings'), findsNothing);
+    });
+
+    testWidgets('always offers the tour again', (tester) async {
+      await pump(tester, const VenueMorePage(), venues: const [_sky]);
+
+      expect(find.text('Take the tour'), findsOneWidget);
+    });
+
+    testWidgets('has the space switcher in the top bar too', (tester) async {
+      await pump(tester, const VenueMorePage());
+
+      expect(find.byTooltip('Switch space'), findsOneWidget);
     });
 
     testWidgets('shows how many requests need a reply', (tester) async {
