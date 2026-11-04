@@ -294,6 +294,68 @@ void main() {
       expect(find.text('Getting started'), findsNothing);
     });
 
+    testWidgets('has Calendar and a role-named add button at the top', (
+      tester,
+    ) async {
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
+
+      expect(find.text('Calendar'), findsOneWidget);
+      expect(find.text('Add gear'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Add gear')).dy,
+        lessThan(tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy),
+      );
+    });
+
+    testWidgets('names the add button for a talent', (tester) async {
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.services),
+        roles: const ['serviceFoxer'],
+      );
+
+      expect(find.text('Add service'), findsOneWidget);
+    });
+
+    testWidgets('names the add button for a performer', (tester) async {
+      await pump(
+        tester,
+        const ProviderOverviewPage(kind: ProviderKind.services),
+        roles: const ['performerFoxer'],
+      );
+
+      expect(find.text('Add performance'), findsOneWidget);
+    });
+
+    testWidgets('shows the earnings card and My gear, two cards at most', (
+      tester,
+    ) async {
+      assets = const [
+        SpaceListing(id: 'g1', name: 'PA system', status: 'available'),
+        SpaceListing(id: 'g2', name: 'Stage lights', status: 'pending'),
+        SpaceListing(id: 'g3', name: 'Fog machine', status: 'draft'),
+      ];
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -900));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Total earnings'), findsOneWidget);
+      expect(find.text('MY GEAR'), findsOneWidget);
+      expect(find.text('PA system'), findsOneWidget);
+      expect(find.text('Stage lights'), findsOneWidget);
+      expect(find.text('Fog machine'), findsNothing);
+    });
+
+    testWidgets('getting started is one line once a step is done', (
+      tester,
+    ) async {
+      assets = const [SpaceListing(id: 'g1', name: 'PA', status: 'pending')];
+      await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
+
+      expect(find.text('1 of 2 steps done'), findsOneWidget);
+      expect(find.text('Next: Connect your payout account'), findsOneWidget);
+    });
+
     testWidgets('the next job is led by what is supplied', (tester) async {
       final day = DateTime.now().add(const Duration(days: 4));
       requests = [
