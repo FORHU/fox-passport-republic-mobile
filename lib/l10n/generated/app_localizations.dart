@@ -9789,6 +9789,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} of {total}'**
   String tourStepOf(int n, int total);
+
+  /// No description provided for @earningsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total earnings'**
+  String get earningsTotal;
+
+  /// No description provided for @earningsChartLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Your earnings will chart here after your first payouts'**
+  String get earningsChartLater;
+
+  /// No description provided for @overviewMyVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'My venues'**
+  String get overviewMyVenues;
+
+  /// No description provided for @venueViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get venueViewAll;
+
+  /// No description provided for @firstStepsNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String firstStepsNext(String step);
+
+  /// No description provided for @earningsPendingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} pending'**
+  String earningsPendingAmount(String amount);
+
+  /// No description provided for @earningsChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% vs last month'**
+  String earningsChange(int percent);
+
+  /// No description provided for @earningsLastWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {weeks} weeks'**
+  String earningsLastWeeks(int weeks);
 }
 
 class _AppLocalizationsDelegate

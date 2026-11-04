@@ -176,7 +176,7 @@ class SpacesRepository {
   }
 
   /// Totals and the latest payouts.
-  Future<PayoutSummary> payouts({int limit = 10}) async {
+  Future<PayoutSummary> payouts({int limit = 60}) async {
     final body = await _api.get(
       ApiEndpoints.payoutsMe,
       query: {'limit': limit},

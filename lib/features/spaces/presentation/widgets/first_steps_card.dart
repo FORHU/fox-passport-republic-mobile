@@ -21,9 +21,16 @@ class FirstStep {
 /// they are. Each step ticks itself off from real data, and the whole card
 /// disappears once every step is done.
 class FirstStepsCard extends StatelessWidget {
-  const FirstStepsCard({required this.steps, super.key});
+  const FirstStepsCard({
+    required this.steps,
+    this.collapseWhenStarted = false,
+    super.key,
+  });
 
   final List<FirstStep> steps;
+
+  /// Shrinks to one line, with the next step, once any step is done.
+  final bool collapseWhenStarted;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +38,14 @@ class FirstStepsCard extends StatelessWidget {
     if (steps.isEmpty || done == steps.length) return const SizedBox.shrink();
     final l10n = context.l10n;
     final next = steps.indexWhere((s) => !s.done);
+
+    if (collapseWhenStarted && done > 0) {
+      return _OneLine(
+        done: done,
+        total: steps.length,
+        next: steps[next],
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -74,6 +89,69 @@ class FirstStepsCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// The getting-started card once it is under way: how far along, and the
+/// next step, which opens when tapped.
+class _OneLine extends StatelessWidget {
+  const _OneLine({
+    required this.done,
+    required this.total,
+    required this.next,
+  });
+
+  final int done;
+  final int total;
+  final FirstStep next;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Material(
+      color: AppColors.surface,
+      borderRadius: AppRadius.brCard,
+      child: InkWell(
+        borderRadius: AppRadius.brCard,
+        onTap: next.onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.brCard,
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              ProgressRing(value: done / total, size: 40),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.firstStepsDone(done, total),
+                      style: AppTypography.body(size: 13),
+                    ),
+                    Text(
+                      l10n.firstStepsNext(next.label),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.display(size: 15),
+                    ),
+                  ],
+                ),
+              ),
+              if (next.onTap != null)
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.textMuted,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

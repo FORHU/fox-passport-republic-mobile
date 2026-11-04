@@ -5408,4 +5408,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String tourStepOf(int n, int total) {
     return '$n of $total';
   }
+
+  @override
+  String get earningsTotal => 'Total earnings';
+
+  @override
+  String get earningsChartLater =>
+      'Your earnings will chart here after your first payouts';
+
+  @override
+  String get overviewMyVenues => 'My venues';
+
+  @override
+  String get venueViewAll => 'View all';
+
+  @override
+  String firstStepsNext(String step) {
+    return 'Next: $step';
+  }
+
+  @override
+  String earningsPendingAmount(String amount) {
+    return '$amount pending';
+  }
+
+  @override
+  String earningsChange(int percent) {
+    return '$percent% vs last month';
+  }
+
+  @override
+  String earningsLastWeeks(int weeks) {
+    return 'Last $weeks weeks';
+  }
 }
