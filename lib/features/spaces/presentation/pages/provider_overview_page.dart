@@ -215,8 +215,11 @@ class ProviderOverviewPage extends ConsumerWidget {
               data: (p) => EarningsCard(
                 paid:
                     money.format(p.totals.paid, kBaseCurrency, locale: locale),
-                pending: money.format(p.totals.pending, kBaseCurrency,
-                    locale: locale,),
+                pending: money.format(
+                  p.totals.pending,
+                  kBaseCurrency,
+                  locale: locale,
+                ),
                 change: monthChange(p.rows, DateTime.now()),
                 weeks: p.rows.length < 3
                     ? null
