@@ -11,7 +11,6 @@ import 'package:flutter_template/features/spaces/presentation/widgets/more_row.d
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -31,6 +30,12 @@ class ProviderMorePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final isNew = ref
+            .watch(newFoxerProvider(
+                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,),)
+            .asData
+            ?.value ??
+        false;
     final waiting = ref
             .watch(supplyRequestsProvider(kind.request))
             .asData
@@ -72,24 +77,20 @@ class ProviderMorePage extends ConsumerWidget {
             onTap: () => unawaited(showSpaceSheet(context)),
           ),
           const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.settings_outlined,
-            title: l10n.settingsTitle,
-            onTap: () => context.push(RouteNames.settings),
-          ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.tour_outlined,
-            title: l10n.tourTake,
-            onTap: () => unawaited(
-              replaySpaceTour(
-                context,
-                l10n,
-                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+          if (isNew) ...[
+            MoreRow(
+              icon: Icons.tour_outlined,
+              title: l10n.tourTake,
+              onTap: () => unawaited(
+                replaySpaceTour(
+                  context,
+                  l10n,
+                  kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
+          ],
           MoreRow(
             icon: Icons.open_in_new_rounded,
             title: l10n.spaceManageOnWeb,
