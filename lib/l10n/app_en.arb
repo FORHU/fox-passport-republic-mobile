@@ -1803,5 +1803,11 @@
   "@earningsLastWeeks": {"placeholders":{"weeks":{"type":"int"}}},
   "@firstStepsNext": {"placeholders":{"step":{"type":"String"}}},
   "eventKpiLive": "Events live",
-  "overviewMyEvents": "My events"
+  "overviewMyEvents": "My events",
+  "providerAddGear": "Add gear",
+  "providerAddService": "Add service",
+  "providerAddPerformance": "Add performance",
+  "overviewMyGear": "My gear",
+  "overviewMyServices": "My services",
+  "overviewMyPerformances": "My performances"
 }
