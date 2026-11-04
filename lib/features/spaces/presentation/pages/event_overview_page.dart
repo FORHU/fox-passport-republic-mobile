@@ -6,13 +6,18 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/currency/currency.dart';
+import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:go_router/go_router.dart';
@@ -39,6 +44,9 @@ class EventOverviewPage extends ConsumerWidget {
     final invites = ref.watch(partnersWaitingProvider(PartnerSide.eventFoxer));
     final partners = ref.watch(partnersProvider);
     final stripe = ref.watch(stripeStatusProvider);
+    final payouts = ref.watch(payoutsProvider);
+    final money = ref.watch(moneyFormatterProvider);
+    final locale = Localizations.localeOf(context).toString();
     final isNew =
         ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
 
@@ -100,59 +108,26 @@ class EventOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            OverviewGreeting(
-              roleLabel: l10n.overviewRoleEvent,
-              roleColor: AppColors.roleEvent,
-            ),
-            if (stepsLoaded) ...[
-              const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps),
-              const SizedBox(height: 10),
-            ],
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.qr_code_scanner_rounded,
-                      label: l10n.venueQuickCheckIn,
-                      onTap: () => context.push(RouteNames.spaceEventCheckIn),
-                    ),
+            const OverviewGreeting(),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.go(RouteNames.spaceEventCalendar),
+                    icon: const Icon(Icons.calendar_month_outlined),
+                    label: Text(l10n.spaceTabCalendar),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.handshake_outlined,
-                      label: l10n.partnersOpenRow,
-                      badge: invites,
-                      onTap: () => context.push(RouteNames.spaceEventPartners),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => context.push(RouteNames.spaceEventStudio),
+                    icon: const Icon(Icons.add_circle_outline_rounded),
+                    label: Text(l10n.eventsNewOnWeb),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.groups_outlined,
-                      label: l10n.teamTitle,
-                      onTap: () => context.push(RouteNames.spaceTeamEvents),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.add_circle_outline_rounded,
-                      label: l10n.eventsNewOnWeb,
-                      onTap: () => context.push(RouteNames.spaceEventStudio),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            MoreRow(
-              icon: Icons.how_to_reg_outlined,
-              title: l10n.bidsTitle,
-              onTap: () => context.push(RouteNames.spaceBidEvents),
+                ),
+              ],
             ),
             HomeSectionHeader(title: l10n.overviewAttention),
             if (partners.hasValue && events.hasValue && !somethingToDo)
@@ -185,6 +160,77 @@ class EventOverviewPage extends ConsumerWidget {
                 text: l10n.eventsDrafts(drafts),
                 onTap: () => showGroup('draft'),
               ),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              const SizedBox(height: 10),
+            ],
+            HomeSectionHeader(title: l10n.overviewNumbers),
+            payouts.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (p) => EarningsCard(
+                paid:
+                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
+                pending: money.format(
+                  p.totals.pending,
+                  kBaseCurrency,
+                  locale: locale,
+                ),
+                change: monthChange(p.rows, DateTime.now()),
+                weeks: p.rows.length < 3
+                    ? null
+                    : weeklyPaid(p.rows, DateTime.now()),
+                onTap: () => context.go(RouteNames.spaceEventEarnings),
+              ),
+            ),
+            const SizedBox(height: 10),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: KpiTile(
+                      label: l10n.eventKpiLive,
+                      onTap: () => context.go(RouteNames.spaceEventList),
+                      value: events.hasValue
+                          ? l10n.venueKpiLiveValue(inGroup('live'), all.length)
+                          : '—',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: KpiTile(
+                      label: l10n.listingStatusPending,
+                      onTap: () => showGroup('pending'),
+                      value: events.hasValue ? '$inReview' : '—',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (all.isNotEmpty) ...[
+              HomeSectionHeader(
+                title: l10n.overviewMyEvents,
+                action: l10n.venueViewAll,
+                onAction: () => context.go(RouteNames.spaceEventList),
+              ),
+              for (final event in all.take(2)) ...[
+                GestureDetector(
+                  onTap: () => context.push(
+                    RouteNames.spaceEventStudioEdit(event.id),
+                  ),
+                  child: FeaturedPhotoCard(
+                    dayLabel: (listingStatusLabel(l10n, event.status) ?? '')
+                        .toUpperCase(),
+                    title: event.name,
+                    subtitle: event.city,
+                    imageUrl: event.imageUrl,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ],
           ],
         ),
       ),

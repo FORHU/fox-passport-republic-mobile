@@ -9837,6 +9837,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last {weeks} weeks'**
   String earningsLastWeeks(int weeks);
+
+  /// No description provided for @eventKpiLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Events live'**
+  String get eventKpiLive;
+
+  /// No description provided for @overviewMyEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'My events'**
+  String get overviewMyEvents;
 }
 
 class _AppLocalizationsDelegate

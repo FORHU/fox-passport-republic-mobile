@@ -236,7 +236,8 @@ void main() {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
 
-    await tester.tap(find.text('Calendar'));
+    // The Overview has a Calendar button too; the bar's is the last.
+    await tester.tap(find.text('Calendar').last);
     await settle(tester);
     expect(where(), RouteNames.spaceEventCalendar);
     expect(find.byType(EventCalendarPage), findsOneWidget);
@@ -428,13 +429,15 @@ void main() {
     router.go(RouteNames.spaceEvent);
     await settle(tester);
 
+    await tester.tap(find.text('More'));
+    await settle(tester);
     await tester.tap(find.text('Venue partners'));
     await settle(tester);
     expect(find.byType(PartnersPage), findsOneWidget);
 
     router.pop();
     await settle(tester);
-    expect(where(), RouteNames.spaceEvent);
+    expect(where(), RouteNames.spaceEventMore);
     await finish(tester);
   });
 

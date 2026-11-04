@@ -5441,4 +5441,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String earningsLastWeeks(int weeks) {
     return 'Last $weeks weeks';
   }
+
+  @override
+  String get eventKpiLive => 'Events live';
+
+  @override
+  String get overviewMyEvents => 'My events';
 }
