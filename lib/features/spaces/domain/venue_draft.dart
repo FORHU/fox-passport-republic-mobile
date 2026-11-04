@@ -141,6 +141,7 @@ class VenueDraft {
     this.address = '',
     this.city = '',
     this.state = '',
+    this.district = '',
     this.country = '',
     this.center,
     this.radiusMeters = 300,
@@ -163,6 +164,9 @@ class VenueDraft {
   final String address;
   final String city;
   final String state;
+
+  /// The barangay (district or neighbourhood outside the Philippines).
+  final String district;
   final String country;
   final GeoPoint? center;
   final double radiusMeters;
@@ -191,10 +195,19 @@ class VenueDraft {
             city.trim().isEmpty ||
             country.trim().isEmpty)
           'address',
+        if (isPhilippines && (state.trim().isEmpty || district.trim().isEmpty))
+          'district',
         if (center == null) 'location',
         if (photos.isEmpty) 'photos',
         if (price == null || price! < 0) 'price',
       ];
+
+  /// The API wants a province, a city and a barangay for a venue in the
+  /// Philippines.
+  bool get isPhilippines {
+    final c = country.trim().toLowerCase();
+    return c == 'philippines' || c == 'ph';
+  }
 
   bool get readyToSubmit => missing.isEmpty;
 
@@ -207,6 +220,7 @@ class VenueDraft {
     String? address,
     String? city,
     String? state,
+    String? district,
     String? country,
     GeoPoint? center,
     double? radiusMeters,
@@ -230,6 +244,7 @@ class VenueDraft {
         address: address ?? this.address,
         city: city ?? this.city,
         state: state ?? this.state,
+        district: district ?? this.district,
         country: country ?? this.country,
         center: center ?? this.center,
         radiusMeters: radiusMeters ?? this.radiusMeters,
@@ -255,6 +270,7 @@ class VenueDraft {
         'address': address.trim(),
         'city': city.trim(),
         if (state.trim().isNotEmpty) 'state': state.trim(),
+        if (district.trim().isNotEmpty) 'district': district.trim(),
         'country': country.trim(),
         if (boundary != null) 'boundary': boundary,
         'imgIds': [for (final p in photos) p.fileId],

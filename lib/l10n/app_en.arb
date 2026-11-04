@@ -744,6 +744,8 @@
   "studioCategoryOther": "Other",
   "studioAddress": "Street address",
   "studioCity": "City",
+  "studioDistrict": "Barangay",
+  "studioMissingDistrict": "Province, city and barangay",
   "studioState": "State or province",
   "studioCountry": "Country",
   "studioServiceArea": "Service area",

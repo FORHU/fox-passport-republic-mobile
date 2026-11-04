@@ -86,12 +86,21 @@ class PlaceFields extends StatelessWidget {
     required this.onPickCountry,
     required this.onPickState,
     required this.onUseMyLocation,
+    this.district,
+    this.districts = const [],
+    this.onDistrict,
     super.key,
   });
 
   final String country;
   final String state;
   final String city;
+
+  /// The barangay, for a form that asks for one (a venue). Null leaves the
+  /// field out.
+  final String? district;
+  final List<String> districts;
+  final ValueChanged<String>? onDistrict;
   final List<PlaceOption> countries;
   final List<PlaceOption> states;
   final List<String> cities;
@@ -141,6 +150,12 @@ class PlaceFields extends StatelessWidget {
             value: city,
             onChanged: onCityText,
           ),
+          if (district != null && onDistrict != null)
+            StudioField(
+              label: l10n.studioDistrict,
+              value: district!,
+              onChanged: onDistrict!,
+            ),
         ],
       );
     }
@@ -201,6 +216,24 @@ class PlaceFields extends StatelessWidget {
               label: l10n.studioCity,
               value: city,
               onChanged: onCityText,
+            ),
+        if (district != null && onDistrict != null && city.isNotEmpty)
+          if (districts.isNotEmpty)
+            _PlaceMenu(
+              label: l10n.studioDistrict,
+              value: district!,
+              options: [
+                ...districts,
+                if (district!.isNotEmpty && !districts.contains(district))
+                  district!,
+              ],
+              onPicked: onDistrict!,
+            )
+          else
+            StudioField(
+              label: l10n.studioDistrict,
+              value: district!,
+              onChanged: onDistrict!,
             ),
       ],
     );

@@ -113,6 +113,7 @@ class VenueDetail {
         address: '${raw['address'] ?? ''}',
         city: '${raw['city'] ?? ''}',
         state: '${raw['state'] ?? ''}',
+        district: '${raw['district'] ?? ''}',
         country: '${raw['country'] ?? ''}',
         center: center,
         radiusMeters: circle?.radiusMeters ?? 300,

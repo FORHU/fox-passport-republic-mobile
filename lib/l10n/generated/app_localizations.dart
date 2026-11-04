@@ -4102,6 +4102,18 @@ abstract class AppLocalizations {
   /// **'City'**
   String get studioCity;
 
+  /// No description provided for @studioDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Barangay'**
+  String get studioDistrict;
+
+  /// No description provided for @studioMissingDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Province, city and barangay'**
+  String get studioMissingDistrict;
+
   /// No description provided for @studioState.
   ///
   /// In en, this message translates to:
