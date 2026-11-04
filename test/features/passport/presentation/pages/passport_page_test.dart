@@ -166,19 +166,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Saved is an icon in the top bar and opens the saved posts', (
+  testWidgets('Saved is not in the top bar: it is a row in Settings', (
     tester,
   ) async {
-    final router = await _open(tester);
+    await _open(tester);
 
-    await tester.tap(find.byTooltip('Saved'));
-    await tester.pumpAndSettle();
-    expect(find.text('SAVED SCREEN'), findsOneWidget);
-
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('SAVED SCREEN'), findsNothing);
-    expect(find.text('Fox Partner'), findsOneWidget);
+    expect(find.byTooltip('Saved'), findsNothing);
+    expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);
+    expect(find.byTooltip('Settings'), findsOneWidget);
   });
 
   testWidgets('fits a narrow phone and scrolls to the end', (tester) async {
