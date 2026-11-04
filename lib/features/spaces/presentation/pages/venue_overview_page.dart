@@ -17,6 +17,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/listing_st
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
@@ -146,75 +147,96 @@ class VenueOverviewPage extends ConsumerWidget {
           children: [
             const OverviewGreeting(),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.go(RouteNames.spaceVenueCalendar),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text(l10n.spaceTabCalendar),
+            tourTarget(
+              'dash-actions',
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          context.go(RouteNames.spaceVenueCalendar),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      label: Text(l10n.spaceTabCalendar),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => context.push(RouteNames.spaceVenueStudio),
-                    icon: const Icon(Icons.add_business_outlined),
-                    label: Text(l10n.venueQuickAddVenue),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () =>
+                          context.push(RouteNames.spaceVenueStudio),
+                      icon: const Icon(Icons.add_business_outlined),
+                      label: Text(l10n.venueQuickAddVenue),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            HomeSectionHeader(
-              title: l10n.overviewAttention,
-              action: waiting.isEmpty ? null : l10n.venueSeeAll,
-              onAction: () => context.go(RouteNames.spaceVenueRequests),
+            tourTarget(
+              'dash-needs',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeSectionHeader(
+                    title: l10n.overviewAttention,
+                    action: waiting.isEmpty ? null : l10n.venueSeeAll,
+                    onAction: () => context.go(RouteNames.spaceVenueRequests),
+                  ),
+                  if (loaded && !somethingToDo)
+                    AllClearCard(text: l10n.overviewAllClear),
+                  for (final request in waiting.take(3)) ...[
+                    VenueRequestCard(
+                      request: request,
+                      onAccept: () => unawaited(
+                        answerVenueRequest(context, ref, request, accept: true),
+                      ),
+                      onDecline: () => unawaited(
+                        answerVenueRequest(
+                          context,
+                          ref,
+                          request,
+                          accept: false,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  if (partnersWaiting > 0)
+                    AttentionRow(
+                      icon: Icons.handshake_outlined,
+                      color: AppColors.warning,
+                      text: l10n.overviewPartnersWaiting(partnersWaiting),
+                      onTap: () => context.push(RouteNames.spaceVenuePartners),
+                    ),
+                  if (declined > 0)
+                    AttentionRow(
+                      icon: Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      text: l10n.overviewVenuesDeclined(declined),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                  if (inReview > 0)
+                    AttentionRow(
+                      icon: Icons.hourglass_top_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.overviewVenuesInReview(inReview),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                  if (drafts > 0)
+                    AttentionRow(
+                      icon: Icons.edit_note_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.overviewVenuesDrafts(drafts),
+                      onTap: () => context.go(RouteNames.spaceVenueVenues),
+                    ),
+                ],
+              ),
             ),
-            if (loaded && !somethingToDo)
-              AllClearCard(text: l10n.overviewAllClear),
-            for (final request in waiting.take(3)) ...[
-              VenueRequestCard(
-                request: request,
-                onAccept: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: true),
-                ),
-                onDecline: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: false),
-                ),
-              ),
-              const SizedBox(height: 10),
-            ],
-            if (partnersWaiting > 0)
-              AttentionRow(
-                icon: Icons.handshake_outlined,
-                color: AppColors.warning,
-                text: l10n.overviewPartnersWaiting(partnersWaiting),
-                onTap: () => context.push(RouteNames.spaceVenuePartners),
-              ),
-            if (declined > 0)
-              AttentionRow(
-                icon: Icons.error_outline_rounded,
-                color: AppColors.error,
-                text: l10n.overviewVenuesDeclined(declined),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
-            if (inReview > 0)
-              AttentionRow(
-                icon: Icons.hourglass_top_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.overviewVenuesInReview(inReview),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
-            if (drafts > 0)
-              AttentionRow(
-                icon: Icons.edit_note_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.overviewVenuesDrafts(drafts),
-                onTap: () => context.go(RouteNames.spaceVenueVenues),
-              ),
             if (stepsLoaded) ...[
               const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              tourTarget(
+                'dash-steps',
+                FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              ),
               const SizedBox(height: 10),
             ],
             HomeSectionHeader(
@@ -248,20 +270,26 @@ class VenueOverviewPage extends ConsumerWidget {
             payouts.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
-              data: (p) => EarningsCard(
-                paid:
-                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
-                pending: money.format(
-                  p.totals.pending,
-                  kBaseCurrency,
-                  locale: locale,
+              data: (p) => tourTarget(
+                'dash-earnings',
+                EarningsCard(
+                  paid: money.format(
+                    p.totals.paid,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  pending: money.format(
+                    p.totals.pending,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  change: monthChange(p.rows, DateTime.now()),
+                  // A chart of nearly nothing says nothing.
+                  weeks: p.rows.length < 3
+                      ? null
+                      : weeklyPaid(p.rows, DateTime.now()),
+                  onTap: () => context.go(RouteNames.spaceVenueEarnings),
                 ),
-                change: monthChange(p.rows, DateTime.now()),
-                // A chart of nearly nothing says nothing.
-                weeks: p.rows.length < 3
-                    ? null
-                    : weeklyPaid(p.rows, DateTime.now()),
-                onTap: () => context.go(RouteNames.spaceVenueEarnings),
               ),
             ),
             const SizedBox(height: 10),

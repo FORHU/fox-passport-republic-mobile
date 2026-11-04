@@ -17,6 +17,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/listing_st
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -140,50 +141,69 @@ class ProviderOverviewPage extends ConsumerWidget {
           children: [
             const OverviewGreeting(),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.go(kind.calendar),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text(l10n.spaceTabCalendar),
+            tourTarget(
+              'dash-actions',
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.go(kind.calendar),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      label: Text(l10n.spaceTabCalendar),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => unawaited(context.push(kind.studio)),
-                    icon: const Icon(Icons.add_circle_outline_rounded),
-                    label: Text(addLabel),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () => unawaited(context.push(kind.studio)),
+                      icon: const Icon(Icons.add_circle_outline_rounded),
+                      label: Text(addLabel),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            HomeSectionHeader(title: l10n.overviewAttention),
-            if (loaded && waiting.isEmpty)
-              AllClearCard(text: l10n.overviewAllClear),
-            for (final request in waiting.take(3)) ...[
-              VenueRequestCard(
-                request: request,
-                onAccept: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: true),
-                ),
-                onDecline: () => unawaited(
-                  answerVenueRequest(context, ref, request, accept: false),
-                ),
+            tourTarget(
+              'dash-needs',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeSectionHeader(title: l10n.overviewAttention),
+                  if (loaded && waiting.isEmpty)
+                    AllClearCard(text: l10n.overviewAllClear),
+                  for (final request in waiting.take(3)) ...[
+                    VenueRequestCard(
+                      request: request,
+                      onAccept: () => unawaited(
+                        answerVenueRequest(context, ref, request, accept: true),
+                      ),
+                      onDecline: () => unawaited(
+                        answerVenueRequest(
+                          context,
+                          ref,
+                          request,
+                          accept: false,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  if (waiting.length > 3)
+                    AttentionRow(
+                      icon: Icons.inbox_outlined,
+                      color: AppColors.warning,
+                      text: l10n.providerRequestsWaiting(waiting.length),
+                      onTap: () => context.push(kind.requests),
+                    ),
+                ],
               ),
-              const SizedBox(height: 12),
-            ],
-            if (waiting.length > 3)
-              AttentionRow(
-                icon: Icons.inbox_outlined,
-                color: AppColors.warning,
-                text: l10n.providerRequestsWaiting(waiting.length),
-                onTap: () => context.push(kind.requests),
-              ),
+            ),
             if (stepsLoaded) ...[
               const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              tourTarget(
+                'dash-steps',
+                FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              ),
               const SizedBox(height: 10),
             ],
             HomeSectionHeader(title: l10n.providerComingUp),
@@ -212,19 +232,25 @@ class ProviderOverviewPage extends ConsumerWidget {
             payouts.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
-              data: (p) => EarningsCard(
-                paid:
-                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
-                pending: money.format(
-                  p.totals.pending,
-                  kBaseCurrency,
-                  locale: locale,
+              data: (p) => tourTarget(
+                'dash-earnings',
+                EarningsCard(
+                  paid: money.format(
+                    p.totals.paid,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  pending: money.format(
+                    p.totals.pending,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  change: monthChange(p.rows, DateTime.now()),
+                  weeks: p.rows.length < 3
+                      ? null
+                      : weeklyPaid(p.rows, DateTime.now()),
+                  onTap: () => context.go(kind.earnings),
                 ),
-                change: monthChange(p.rows, DateTime.now()),
-                weeks: p.rows.length < 3
-                    ? null
-                    : weeklyPaid(p.rows, DateTime.now()),
-                onTap: () => context.go(kind.earnings),
               ),
             ),
             const SizedBox(height: 10),

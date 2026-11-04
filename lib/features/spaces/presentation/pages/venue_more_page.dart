@@ -29,8 +29,6 @@ class VenueMorePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final isNew =
-        ref.watch(newFoxerProvider(NewFoxerSpace.venue)).asData?.value ?? false;
     final waiting = ref
             .watch(venueRequestsProvider)
             .asData
@@ -93,16 +91,19 @@ class VenueMorePage extends ConsumerWidget {
             onTap: () => showSpaceSheet(context),
           ),
           const SizedBox(height: 8),
-          if (isNew) ...[
-            MoreRow(
-              icon: Icons.tour_outlined,
-              title: l10n.tourTake,
-              onTap: () => unawaited(
-                replaySpaceTour(context, l10n, NewFoxerSpace.venue),
+          MoreRow(
+            icon: Icons.tour_outlined,
+            title: l10n.tourTake,
+            onTap: () => unawaited(
+              restartSpaceTour(
+                ref,
+                context,
+                NewFoxerSpace.venue,
+                RouteNames.spaceVenue,
               ),
             ),
-            const SizedBox(height: 8),
-          ],
+          ),
+          const SizedBox(height: 8),
           MoreRow(
             icon: Icons.open_in_new_rounded,
             title: l10n.spaceManageOnWeb,

@@ -2701,7 +2701,7 @@ abstract class AppLocalizations {
   /// No description provided for @spaceTabOverview.
   ///
   /// In en, this message translates to:
-  /// **'Overview'**
+  /// **'Dashboard'**
   String get spaceTabOverview;
 
   /// No description provided for @spaceTabCalendar.
@@ -3406,18 +3406,6 @@ abstract class AppLocalizations {
   /// **'Welcome back'**
   String get overviewGreetingNoName;
 
-  /// No description provided for @overviewRoleVenue.
-  ///
-  /// In en, this message translates to:
-  /// **'Venue Foxer'**
-  String get overviewRoleVenue;
-
-  /// No description provided for @overviewRoleEvent.
-  ///
-  /// In en, this message translates to:
-  /// **'Event Foxer'**
-  String get overviewRoleEvent;
-
   /// No description provided for @firstStepHost.
   ///
   /// In en, this message translates to:
@@ -3429,24 +3417,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build your first event'**
   String get firstStepEvent;
-
-  /// No description provided for @overviewRoleGear.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear Foxer'**
-  String get overviewRoleGear;
-
-  /// No description provided for @overviewRoleTalent.
-  ///
-  /// In en, this message translates to:
-  /// **'Talent Foxer'**
-  String get overviewRoleTalent;
-
-  /// No description provided for @overviewRolePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer Foxer'**
-  String get overviewRolePerformer;
 
   /// No description provided for @firstStepGear.
   ///
@@ -9652,18 +9622,6 @@ abstract class AppLocalizations {
   /// **'A quick look at what is in your space. It takes under a minute.'**
   String get tourWelcomeBody;
 
-  /// No description provided for @tourOverviewTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Overview'**
-  String get tourOverviewTitle;
-
-  /// No description provided for @tourOverviewBody.
-  ///
-  /// In en, this message translates to:
-  /// **'What needs you now, what is coming up and your numbers, in one scroll.'**
-  String get tourOverviewBody;
-
   /// No description provided for @tourFirstStepsTitle.
   ///
   /// In en, this message translates to:
@@ -9963,6 +9921,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My performances'**
   String get overviewMyPerformances;
+
+  /// No description provided for @tourActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your shortcuts'**
+  String get tourActionsTitle;
+
+  /// No description provided for @tourActionsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your calendar, or add something new, from here.'**
+  String get tourActionsBody;
+
+  /// No description provided for @tourNeedsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs you'**
+  String get tourNeedsTitle;
+
+  /// No description provided for @tourNeedsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests and invitations waiting for your answer come first, so nothing is missed.'**
+  String get tourNeedsBody;
+
+  /// No description provided for @tourEarningsCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your earnings'**
+  String get tourEarningsCardTitle;
+
+  /// No description provided for @tourEarningsCardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What you have been paid, how it changed since last month, and the last eight weeks.'**
+  String get tourEarningsCardBody;
 }
 
 class _AppLocalizationsDelegate

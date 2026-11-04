@@ -75,22 +75,60 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('walks through the Overview cards and closes', (tester) async {
+    testWidgets('walks through the dashboard cards and closes', (
+      tester,
+    ) async {
       await open(tester, NewFoxerSpace.venue, 0);
 
+      // Cards for parts that are not on screen are left out.
       expect(find.text('Welcome, Foxer'), findsOneWidget);
       expect(find.text('1 of 3'), findsOneWidget);
       await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
-      expect(find.text('Your Overview'), findsOneWidget);
+      expect(find.text('Your shortcuts'), findsOneWidget);
       await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
-      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('Needs you'), findsOneWidget);
       expect(find.text('Next'), findsNothing);
 
       await tester.tap(find.text('Got it'));
       await tester.pumpAndSettle();
-      expect(find.text('Getting started'), findsNothing);
+      expect(find.text('Needs you'), findsNothing);
+    });
+
+    testWidgets('includes an optional card once its part is on screen', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Column(
+                children: [
+                  tourTarget('dash-steps', const Text('the steps card')),
+                  TextButton(
+                    onPressed: () => showSpaceTour(
+                      context,
+                      spaceTourSteps(
+                        AppLocalizations.of(context)!,
+                        NewFoxerSpace.venue,
+                      )[0],
+                    ),
+                    child: const Text('go'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('go'));
+      await tester.pumpAndSettle();
+
+      // Welcome, shortcuts, needs you and getting started.
+      expect(find.text('1 of 4'), findsOneWidget);
     });
 
     testWidgets('can be skipped', (tester) async {
