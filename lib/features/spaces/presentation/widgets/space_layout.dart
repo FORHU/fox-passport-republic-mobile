@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
@@ -196,9 +197,13 @@ class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
   /// Tabs already looked at in this session, so a tour is offered once.
   final _visited = <int>{};
 
+  /// How many times the tour had been asked for again when last looked.
+  int _restarts = 0;
+
   @override
   void initState() {
     super.initState();
+    _restarts = ref.read(tourRestartProvider);
     _offerTour();
   }
 
@@ -208,13 +213,18 @@ class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
     _offerTour();
   }
 
-  String _key(int tab) => 'spaceTourSeen.${widget.tourSpace!.name}.$tab';
-
-  /// Shows the tour of the tab now open, once, and only to a new Foxer.
+  /// Shows the tour of the tab now open, once: it is remembered per account
+  /// and tab, and comes back only when the Foxer asks for it.
   void _offerTour() {
     final space = widget.tourSpace;
     final tab = widget.navigationShell.currentIndex;
-    if (space == null || !_visited.add(tab)) return;
+    if (space == null) return;
+    final restarts = ref.read(tourRestartProvider);
+    if (restarts != _restarts) {
+      _restarts = restarts;
+      _visited.clear();
+    }
+    if (!_visited.add(tab)) return;
     unawaited(_runTour(space, tab));
   }
 
@@ -225,9 +235,12 @@ class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
     } on Object {
       return;
     }
-    if (prefs.getBool(_key(tab)) ?? false) return;
-    final isNew = await ref.read(newFoxerProvider(space).future);
-    if (!isNew || !mounted) return;
+    final key = tourSeenKey(ref.read(currentUserIdProvider), space, tab);
+    if (prefs.getBool(key) ?? false) return;
+    // Let the screen load what it shows, so the tour can point at it.
+    await ref.read(newFoxerProvider(space).future);
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
     // Another tab may have been opened while this was loading.
     if (widget.navigationShell.currentIndex != tab) {
       _visited.remove(tab);
@@ -235,7 +248,7 @@ class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
     }
     final steps = spaceTourSteps(context.l10n, space);
     if (tab >= steps.length) return;
-    await prefs.setBool(_key(tab), true);
+    await prefs.setBool(key, true);
     if (!mounted) return;
     await showSpaceTour(context, steps[tab]);
   }
@@ -251,6 +264,7 @@ class _SpaceLayoutState extends ConsumerState<SpaceLayout> {
       bottomNavigationBar: AnimatedBottomNavigation(
         items: items,
         currentIndex: currentIndex,
+        itemKeys: [for (var i = 0; i < items.length; i++) TourKeys.tab(i)],
         // Tapping the tab you are on goes back to its first screen.
         onTap: (index) => navigationShell.goBranch(
           index,

@@ -15,6 +15,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/listing_st
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -110,78 +111,100 @@ class EventOverviewPage extends ConsumerWidget {
           children: [
             const OverviewGreeting(),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.go(RouteNames.spaceEventCalendar),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text(l10n.spaceTabCalendar),
+            tourTarget(
+              'dash-actions',
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          context.go(RouteNames.spaceEventCalendar),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      label: Text(l10n.spaceTabCalendar),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => context.push(RouteNames.spaceEventStudio),
-                    icon: const Icon(Icons.add_circle_outline_rounded),
-                    label: Text(l10n.eventsNewOnWeb),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () =>
+                          context.push(RouteNames.spaceEventStudio),
+                      icon: const Icon(Icons.add_circle_outline_rounded),
+                      label: Text(l10n.eventsNewOnWeb),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            HomeSectionHeader(title: l10n.overviewAttention),
-            if (partners.hasValue && events.hasValue && !somethingToDo)
-              AllClearCard(text: l10n.overviewAllClear),
-            if (invites > 0)
-              AttentionRow(
-                icon: Icons.mail_outline_rounded,
-                color: AppColors.warning,
-                text: l10n.eventsInvitesWaiting(invites),
-                onTap: () => context.push(RouteNames.spaceEventPartners),
+            tourTarget(
+              'dash-needs',
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HomeSectionHeader(title: l10n.overviewAttention),
+                  if (partners.hasValue && events.hasValue && !somethingToDo)
+                    AllClearCard(text: l10n.overviewAllClear),
+                  if (invites > 0)
+                    AttentionRow(
+                      icon: Icons.mail_outline_rounded,
+                      color: AppColors.warning,
+                      text: l10n.eventsInvitesWaiting(invites),
+                      onTap: () => context.push(RouteNames.spaceEventPartners),
+                    ),
+                  if (declined > 0)
+                    AttentionRow(
+                      icon: Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      text: l10n.eventsDeclined(declined),
+                      onTap: () => showGroup('rejected'),
+                    ),
+                  if (inReview > 0)
+                    AttentionRow(
+                      icon: Icons.hourglass_top_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.eventsInReview(inReview),
+                      onTap: () => showGroup('pending'),
+                    ),
+                  if (drafts > 0)
+                    AttentionRow(
+                      icon: Icons.edit_note_rounded,
+                      color: AppColors.textSecondary,
+                      text: l10n.eventsDrafts(drafts),
+                      onTap: () => showGroup('draft'),
+                    ),
+                ],
               ),
-            if (declined > 0)
-              AttentionRow(
-                icon: Icons.error_outline_rounded,
-                color: AppColors.error,
-                text: l10n.eventsDeclined(declined),
-                onTap: () => showGroup('rejected'),
-              ),
-            if (inReview > 0)
-              AttentionRow(
-                icon: Icons.hourglass_top_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.eventsInReview(inReview),
-                onTap: () => showGroup('pending'),
-              ),
-            if (drafts > 0)
-              AttentionRow(
-                icon: Icons.edit_note_rounded,
-                color: AppColors.textSecondary,
-                text: l10n.eventsDrafts(drafts),
-                onTap: () => showGroup('draft'),
-              ),
+            ),
             if (stepsLoaded) ...[
               const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              tourTarget(
+                'dash-steps',
+                FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              ),
               const SizedBox(height: 10),
             ],
             HomeSectionHeader(title: l10n.overviewNumbers),
             payouts.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
-              data: (p) => EarningsCard(
-                paid:
-                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
-                pending: money.format(
-                  p.totals.pending,
-                  kBaseCurrency,
-                  locale: locale,
+              data: (p) => tourTarget(
+                'dash-earnings',
+                EarningsCard(
+                  paid: money.format(
+                    p.totals.paid,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  pending: money.format(
+                    p.totals.pending,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                  change: monthChange(p.rows, DateTime.now()),
+                  weeks: p.rows.length < 3
+                      ? null
+                      : weeklyPaid(p.rows, DateTime.now()),
+                  onTap: () => context.go(RouteNames.spaceEventEarnings),
                 ),
-                change: monthChange(p.rows, DateTime.now()),
-                weeks: p.rows.length < 3
-                    ? null
-                    : weeklyPaid(p.rows, DateTime.now()),
-                onTap: () => context.go(RouteNames.spaceEventEarnings),
               ),
             ),
             const SizedBox(height: 10),

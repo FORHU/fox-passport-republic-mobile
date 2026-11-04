@@ -470,7 +470,7 @@
   "spaceTabVenues": "Venues",
   "spaceTabEvents": "Events",
   "spaceTabCheckIn": "Check-in",
-  "spaceTabOverview": "Overview",
+  "spaceTabOverview": "Dashboard",
   "spaceTabCalendar": "Calendar",
   "spaceTabEarnings": "Earnings",
   "spaceTabMore": "More",
@@ -1766,8 +1766,6 @@
   "tourTake": "Take the tour",
   "tourWelcomeTitle": "Welcome, Foxer",
   "tourWelcomeBody": "A quick look at what is in your space. It takes under a minute.",
-  "tourOverviewTitle": "Your Overview",
-  "tourOverviewBody": "What needs you now, what is coming up and your numbers, in one scroll.",
   "tourFirstStepsTitle": "Getting started",
   "tourFirstStepsBody": "Your first steps. Each one ticks itself off, and the list goes away once you have a live listing or a booking.",
   "tourVenuesTitle": "Your venues",
@@ -1823,5 +1821,11 @@
   "providerAddPerformance": "Add performance",
   "overviewMyGear": "My gear",
   "overviewMyServices": "My services",
-  "overviewMyPerformances": "My performances"
+  "overviewMyPerformances": "My performances",
+  "tourActionsTitle": "Your shortcuts",
+  "tourActionsBody": "Open your calendar, or add something new, from here.",
+  "tourNeedsTitle": "Needs you",
+  "tourNeedsBody": "Requests and invitations waiting for your answer come first, so nothing is missed.",
+  "tourEarningsCardTitle": "Your earnings",
+  "tourEarningsCardBody": "What you have been paid, how it changed since last month, and the last eight weeks."
 }

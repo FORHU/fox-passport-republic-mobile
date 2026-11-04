@@ -918,18 +918,16 @@ void main() {
       expect(find.text('Settings'), findsNothing);
     });
 
-    testWidgets('offers the tour to a new Foxer', (tester) async {
-      await pump(tester, const VenueMorePage());
+    testWidgets('always offers the tour again', (tester) async {
+      await pump(tester, const VenueMorePage(), venues: const [_sky]);
 
       expect(find.text('Take the tour'), findsOneWidget);
     });
 
-    testWidgets('does not offer the tour to an established Foxer', (
-      tester,
-    ) async {
-      await pump(tester, const VenueMorePage(), venues: const [_sky]);
+    testWidgets('has the space switcher in the top bar too', (tester) async {
+      await pump(tester, const VenueMorePage());
 
-      expect(find.text('Take the tour'), findsNothing);
+      expect(find.byTooltip('Switch space'), findsOneWidget);
     });
 
     testWidgets('shows how many requests need a reply', (tester) async {

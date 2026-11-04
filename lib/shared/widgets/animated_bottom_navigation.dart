@@ -42,12 +42,16 @@ class AnimatedBottomNavigation extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
+    this.itemKeys,
     super.key,
   });
 
   final List<NavBarItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
+
+  /// A key for each destination, for something that points at one (a tour).
+  final List<GlobalKey>? itemKeys;
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +77,15 @@ class AnimatedBottomNavigation extends StatelessWidget {
             children: [
               for (var i = 0; i < items.length; i++)
                 Expanded(
-                  child: _NavItem(
-                    item: items[i],
-                    selected: i == currentIndex,
-                    onTap: () => onTap(i),
+                  child: KeyedSubtree(
+                    key: itemKeys != null && i < itemKeys!.length
+                        ? itemKeys![i]
+                        : null,
+                    child: _NavItem(
+                      item: items[i],
+                      selected: i == currentIndex,
+                      onTap: () => onTap(i),
+                    ),
                   ),
                 ),
             ],

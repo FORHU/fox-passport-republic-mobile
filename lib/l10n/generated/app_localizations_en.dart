@@ -1396,7 +1396,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spaceTabCheckIn => 'Check-in';
 
   @override
-  String get spaceTabOverview => 'Overview';
+  String get spaceTabOverview => 'Dashboard';
 
   @override
   String get spaceTabCalendar => 'Calendar';
@@ -5330,13 +5330,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'A quick look at what is in your space. It takes under a minute.';
 
   @override
-  String get tourOverviewTitle => 'Your Overview';
-
-  @override
-  String get tourOverviewBody =>
-      'What needs you now, what is coming up and your numbers, in one scroll.';
-
-  @override
   String get tourFirstStepsTitle => 'Getting started';
 
   @override
@@ -5508,4 +5501,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewMyPerformances => 'My performances';
+
+  @override
+  String get tourActionsTitle => 'Your shortcuts';
+
+  @override
+  String get tourActionsBody =>
+      'Open your calendar, or add something new, from here.';
+
+  @override
+  String get tourNeedsTitle => 'Needs you';
+
+  @override
+  String get tourNeedsBody =>
+      'Requests and invitations waiting for your answer come first, so nothing is missed.';
+
+  @override
+  String get tourEarningsCardTitle => 'Your earnings';
+
+  @override
+  String get tourEarningsCardBody =>
+      'What you have been paid, how it changed since last month, and the last eight weeks.';
 }

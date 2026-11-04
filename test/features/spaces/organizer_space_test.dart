@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockRepo extends Mock implements SpacesRepository {}
 
@@ -116,6 +118,8 @@ void main() {
     });
 
     Future<void> pump(WidgetTester tester, Widget home) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
       tester.view
         ..physicalSize = const Size(390, 1800)
         ..devicePixelRatio = 1;
@@ -124,6 +128,7 @@ void main() {
         ProviderScope(
           retry: (_, __) => null,
           overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
             authControllerProvider.overrideWith(_Session.new),
             spacesRepositoryProvider.overrideWithValue(repo),
           ],

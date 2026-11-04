@@ -30,12 +30,6 @@ class ProviderMorePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final isNew = ref
-            .watch(newFoxerProvider(
-                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,),)
-            .asData
-            ?.value ??
-        false;
     final waiting = ref
             .watch(supplyRequestsProvider(kind.request))
             .asData
@@ -77,20 +71,19 @@ class ProviderMorePage extends ConsumerWidget {
             onTap: () => unawaited(showSpaceSheet(context)),
           ),
           const SizedBox(height: 8),
-          if (isNew) ...[
-            MoreRow(
-              icon: Icons.tour_outlined,
-              title: l10n.tourTake,
-              onTap: () => unawaited(
-                replaySpaceTour(
-                  context,
-                  l10n,
-                  kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
-                ),
+          MoreRow(
+            icon: Icons.tour_outlined,
+            title: l10n.tourTake,
+            onTap: () => unawaited(
+              restartSpaceTour(
+                ref,
+                context,
+                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+                kind.root,
               ),
             ),
-            const SizedBox(height: 8),
-          ],
+          ),
+          const SizedBox(height: 8),
           MoreRow(
             icon: Icons.open_in_new_rounded,
             title: l10n.spaceManageOnWeb,
