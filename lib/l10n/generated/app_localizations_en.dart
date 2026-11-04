@@ -5449,6 +5449,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewMyEvents => 'My events';
 
   @override
+  String get spaceOrganizer => 'Organizer';
+
+  @override
+  String get spaceOrganizerHint => 'The venues and events you help run';
+
+  @override
+  String get organizerInvitations => 'Invitations';
+
+  @override
+  String get organizerRoleOrganizer => 'Organizer';
+
+  @override
+  String get organizerRoleHelper => 'Check-in helper';
+
+  @override
+  String get organizerNextUp => 'Next up';
+
+  @override
+  String get organizerYouOrganize => 'You organize';
+
+  @override
+  String get organizerOrganizing => 'Organizing';
+
+  @override
+  String get organizerNothingNext => 'Nothing coming up yet.';
+
+  @override
+  String get organizerNoTeams =>
+      'The teams you join show up here once you accept an invitation.';
+
+  @override
+  String get organizerNoInvitations => 'No invitations right now.';
+
+  @override
+  String get organizerAnswerFailed =>
+      'We couldn\'t send your answer. Try again.';
+
+  @override
+  String organizerInvitedBy(String name) {
+    return 'Invited by $name';
+  }
+
+  @override
   String get providerAddGear => 'Add gear';
 
   @override

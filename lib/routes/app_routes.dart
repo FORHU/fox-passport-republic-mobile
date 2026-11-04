@@ -47,6 +47,7 @@ import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
+import 'package:flutter_template/features/spaces/domain/appointment_models.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
@@ -60,6 +61,9 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_studio
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/listing_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/open_slots_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_invitations_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_more_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/organizer_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
@@ -716,6 +720,73 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         const MessagesPage(showBack: true),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      // The Organizer space: the teams they help run.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => Consumer(
+          // A count of invitations waiting for an answer, on the Overview tab.
+          builder: (context, ref, _) => SpaceLayout(
+            navigationShell: navigationShell,
+            items: SpaceLayout.organizerItems(
+              context,
+              invitations: ref.watch(myAppointmentsProvider).maybeWhen(
+                    data: (list) => list
+                        .where((a) => a.state == AppointmentState.invited)
+                        .length,
+                    orElse: () => 0,
+                  ),
+            ),
+          ),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizer,
+                builder: (context, state) => const OrganizerOverviewPage(),
+                routes: [
+                  GoRoute(
+                    path: 'invitations',
+                    builder: (context, state) =>
+                        const OrganizerInvitationsPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerCalendar,
+                builder: (context, state) => const EventCalendarPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerCheckIn,
+                builder: (context, state) => const CheckInPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerMessages,
+                builder: (context, state) => const MessagesPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.spaceOrganizerMore,
+                builder: (context, state) => const OrganizerMorePage(),
               ),
             ],
           ),

@@ -65,10 +65,14 @@ void main() {
       }
     });
 
-    test('other roles open no space of their own yet', () {
+    test('an Investor opens no space of their own yet', () {
+      expect(AppSpace.availableTo(const ['investor']), [AppSpace.citizen]);
+    });
+
+    test('an Organizer opens the Organizer space', () {
       expect(
-        AppSpace.availableTo(const ['investor', 'organizer']),
-        [AppSpace.citizen],
+        AppSpace.availableTo(const ['organizer']),
+        [AppSpace.citizen, AppSpace.organizer],
       );
     });
 
