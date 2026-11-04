@@ -5447,4 +5447,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewMyEvents => 'My events';
+
+  @override
+  String get providerAddGear => 'Add gear';
+
+  @override
+  String get providerAddService => 'Add service';
+
+  @override
+  String get providerAddPerformance => 'Add performance';
+
+  @override
+  String get overviewMyGear => 'My gear';
+
+  @override
+  String get overviewMyServices => 'My services';
+
+  @override
+  String get overviewMyPerformances => 'My performances';
 }

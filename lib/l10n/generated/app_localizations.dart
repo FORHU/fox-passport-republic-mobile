@@ -9849,6 +9849,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My events'**
   String get overviewMyEvents;
+
+  /// No description provided for @providerAddGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Add gear'**
+  String get providerAddGear;
+
+  /// No description provided for @providerAddService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add service'**
+  String get providerAddService;
+
+  /// No description provided for @providerAddPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Add performance'**
+  String get providerAddPerformance;
+
+  /// No description provided for @overviewMyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'My gear'**
+  String get overviewMyGear;
+
+  /// No description provided for @overviewMyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'My services'**
+  String get overviewMyServices;
+
+  /// No description provided for @overviewMyPerformances.
+  ///
+  /// In en, this message translates to:
+  /// **'My performances'**
+  String get overviewMyPerformances;
 }
 
 class _AppLocalizationsDelegate
