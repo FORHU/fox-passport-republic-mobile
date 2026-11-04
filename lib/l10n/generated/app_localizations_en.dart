@@ -5490,4 +5490,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String organizerInvitedBy(String name) {
     return 'Invited by $name';
   }
+
+  @override
+  String get providerAddGear => 'Add gear';
+
+  @override
+  String get providerAddService => 'Add service';
+
+  @override
+  String get providerAddPerformance => 'Add performance';
+
+  @override
+  String get overviewMyGear => 'My gear';
+
+  @override
+  String get overviewMyServices => 'My services';
+
+  @override
+  String get overviewMyPerformances => 'My performances';
 }

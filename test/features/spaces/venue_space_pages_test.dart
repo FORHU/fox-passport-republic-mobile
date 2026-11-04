@@ -910,11 +910,26 @@ void main() {
         'Check-in',
         'Messages',
         'Switch space',
-        'Settings',
         'Manage on the web',
       ]) {
         expect(find.text(row), findsOneWidget, reason: row);
       }
+      // The photo in the corner opens Settings, so it has no row here.
+      expect(find.text('Settings'), findsNothing);
+    });
+
+    testWidgets('offers the tour to a new Foxer', (tester) async {
+      await pump(tester, const VenueMorePage());
+
+      expect(find.text('Take the tour'), findsOneWidget);
+    });
+
+    testWidgets('does not offer the tour to an established Foxer', (
+      tester,
+    ) async {
+      await pump(tester, const VenueMorePage(), venues: const [_sky]);
+
+      expect(find.text('Take the tour'), findsNothing);
     });
 
     testWidgets('shows how many requests need a reply', (tester) async {

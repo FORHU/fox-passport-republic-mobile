@@ -1817,5 +1817,11 @@
   "organizerNoInvitations": "No invitations right now.",
   "organizerAnswerFailed": "We couldn't send your answer. Try again.",
   "organizerInvitedBy": "Invited by {name}",
-  "@organizerInvitedBy": {"placeholders":{"name":{"type":"String"}}}
+  "@organizerInvitedBy": {"placeholders":{"name":{"type":"String"}}},
+  "providerAddGear": "Add gear",
+  "providerAddService": "Add service",
+  "providerAddPerformance": "Add performance",
+  "overviewMyGear": "My gear",
+  "overviewMyServices": "My services",
+  "overviewMyPerformances": "My performances"
 }

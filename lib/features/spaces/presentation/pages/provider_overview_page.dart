@@ -6,14 +6,16 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_status.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -84,6 +86,16 @@ class ProviderOverviewPage extends ConsumerWidget {
     final performerOnly = !kind.isGear &&
         roles.contains('performerFoxer') &&
         !roles.contains('serviceFoxer');
+    final addLabel = kind.isGear
+        ? l10n.providerAddGear
+        : performerOnly
+            ? l10n.providerAddPerformance
+            : l10n.providerAddService;
+    final myLabel = kind.isGear
+        ? l10n.overviewMyGear
+        : performerOnly
+            ? l10n.overviewMyPerformances
+            : l10n.overviewMyServices;
     final firstSteps = [
       FirstStep(
         label: kind.isGear
@@ -127,45 +139,25 @@ class ProviderOverviewPage extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
             const OverviewGreeting(),
-            if (stepsLoaded) ...[
-              const SizedBox(height: 10),
-              FirstStepsCard(steps: firstSteps),
-              const SizedBox(height: 10),
-            ],
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.inbox_outlined,
-                      label: l10n.requestsTitle,
-                      badge: waiting.length,
-                      onTap: () => context.push(kind.requests),
-                    ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.go(kind.calendar),
+                    icon: const Icon(Icons.calendar_month_outlined),
+                    label: Text(l10n.spaceTabCalendar),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.inventory_2_outlined,
-                      label: listingsLabel(
-                        l10n,
-                        kind,
-                        roles: ref.watch(heldRolesProvider),
-                      ),
-                      onTap: () => context.go(kind.listings),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => unawaited(context.push(kind.studio)),
+                    icon: const Icon(Icons.add_circle_outline_rounded),
+                    label: Text(addLabel),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: QuickActionTile(
-                      icon: Icons.add_circle_outline_rounded,
-                      label: l10n.providerAdd,
-                      onTap: () => unawaited(context.push(kind.studio)),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             HomeSectionHeader(title: l10n.overviewAttention),
             if (loaded && waiting.isEmpty)
@@ -189,6 +181,11 @@ class ProviderOverviewPage extends ConsumerWidget {
                 text: l10n.providerRequestsWaiting(waiting.length),
                 onTap: () => context.push(kind.requests),
               ),
+            if (stepsLoaded) ...[
+              const SizedBox(height: 10),
+              FirstStepsCard(steps: firstSteps, collapseWhenStarted: true),
+              const SizedBox(height: 10),
+            ],
             HomeSectionHeader(title: l10n.providerComingUp),
             if (ahead.isEmpty)
               Text(
@@ -212,6 +209,25 @@ class ProviderOverviewPage extends ConsumerWidget {
                 const SizedBox(height: 8),
               ],
             HomeSectionHeader(title: l10n.overviewNumbers),
+            payouts.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (p) => EarningsCard(
+                paid:
+                    money.format(p.totals.paid, kBaseCurrency, locale: locale),
+                pending: money.format(
+                  p.totals.pending,
+                  kBaseCurrency,
+                  locale: locale,
+                ),
+                change: monthChange(p.rows, DateTime.now()),
+                weeks: p.rows.length < 3
+                    ? null
+                    : weeklyPaid(p.rows, DateTime.now()),
+                onTap: () => context.go(kind.earnings),
+              ),
+            ),
+            const SizedBox(height: 10),
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -234,43 +250,26 @@ class ProviderOverviewPage extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPaid,
-                      onTap: () => context.go(kind.earnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.paid,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: KpiTile(
-                      label: l10n.venueKpiPending,
-                      onTap: () => context.go(kind.earnings),
-                      value: dash(
-                        payouts,
-                        () => money.format(
-                          payouts.requireValue.totals.pending,
-                          kBaseCurrency,
-                          locale: locale,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            if (listings.isNotEmpty) ...[
+              HomeSectionHeader(
+                title: myLabel,
+                action: l10n.venueViewAll,
+                onAction: () => context.go(kind.listings),
               ),
-            ),
+              for (final item in listings.take(2)) ...[
+                GestureDetector(
+                  onTap: () => unawaited(context.push(kind.studioFor(item.id))),
+                  child: FeaturedPhotoCard(
+                    dayLabel: (listingStatusLabel(l10n, item.status) ?? '')
+                        .toUpperCase(),
+                    title: item.name,
+                    subtitle: item.city,
+                    imageUrl: item.imageUrl,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ],
           ],
         ),
       ),
