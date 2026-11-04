@@ -111,6 +111,44 @@ class SpaceLayout extends ConsumerStatefulWidget {
     ];
   }
 
+  /// The Organizer space: Overview, Calendar, Check-in, Messages and More.
+  /// [invitations] is how many invitations wait for an answer, shown on
+  /// Overview.
+  static List<NavBarItem> organizerItems(
+    BuildContext context, {
+    int invitations = 0,
+  }) {
+    final l10n = context.l10n;
+    return [
+      NavBarItem(
+        label: l10n.spaceTabOverview,
+        icon: Icons.dashboard_outlined,
+        activeIcon: Icons.dashboard_rounded,
+        badgeLabel: _badge(invitations),
+      ),
+      NavBarItem(
+        label: l10n.spaceTabCalendar,
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabCheckIn,
+        icon: Icons.qr_code_scanner_rounded,
+        activeIcon: Icons.qr_code_scanner_rounded,
+      ),
+      NavBarItem(
+        label: l10n.messages,
+        icon: Icons.chat_bubble_outline_rounded,
+        activeIcon: Icons.chat_bubble_rounded,
+      ),
+      NavBarItem(
+        label: l10n.spaceTabMore,
+        icon: Icons.menu_rounded,
+        activeIcon: Icons.menu_rounded,
+      ),
+    ];
+  }
+
   /// A provider's space: Overview, [listings] (Gear, Services or
   /// Performances), Calendar, Earnings and More. [waiting] is how many
   /// requests need a reply, shown on Overview.

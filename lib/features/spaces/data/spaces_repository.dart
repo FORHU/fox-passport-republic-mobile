@@ -5,6 +5,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
+import 'package:flutter_template/features/spaces/domain/appointment_models.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/domain/listing_draft.dart';
@@ -524,6 +525,23 @@ class SpacesRepository {
     ];
   }
 
+  /// The invitations to help run a venue or event, and the teams the person
+  /// is on, as an Organizer or a Check-in Helper.
+  Future<List<MyAppointment>> myAppointments() async {
+    final body = await _api.get(ApiEndpoints.appointmentsMine);
+    final rows = body is Map ? body['data'] : null;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (MyAppointment.tryParse(row) case final a?) a,
+    ];
+  }
+
+  /// Accepts or declines an invitation.
+  Future<void> answerAppointment(String id, {required bool accept}) async {
+    await _api.post(ApiEndpoints.appointmentAnswer(id, accept: accept), {});
+  }
+
   /// The event as saved, to edit.
   Future<EventDetail> eventDetail(String id) async {
     final body = await _api.get(ApiEndpoints.eventById(id));
@@ -831,4 +849,9 @@ final teamAcceptsRequestsProvider =
 final organizerSearchProvider =
     FutureProvider.autoDispose.family<List<OrganizerCard>, String>(
   (ref, query) => ref.watch(spacesRepositoryProvider).searchOrganizers(query),
+);
+
+final FutureProvider<List<MyAppointment>> myAppointmentsProvider =
+    FutureProvider.autoDispose<List<MyAppointment>>(
+  (ref) => ref.watch(spacesRepositoryProvider).myAppointments(),
 );

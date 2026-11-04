@@ -157,6 +157,15 @@ class RouteNames {
   static const String spaceVenueCheckIn = '/space/venue/more/check-in';
   static const String spaceVenueMessages = '/space/venue/more/messages';
 
+  /// The Organizer space: the teams they help run, check-in and messages.
+  static const String spaceOrganizer = '/space/organizer';
+  static const String spaceOrganizerCalendar = '/space/organizer/calendar';
+  static const String spaceOrganizerCheckIn = '/space/organizer/check-in';
+  static const String spaceOrganizerMessages = '/space/organizer/messages';
+  static const String spaceOrganizerMore = '/space/organizer/more';
+  static const String spaceOrganizerInvitations =
+      '/space/organizer/invitations';
+
   /// The Event space, for an EventFoxer: their events, check-in and messages.
   static const String spaceEvent = '/space/event';
   static const String spaceEventList = '/space/event/events';

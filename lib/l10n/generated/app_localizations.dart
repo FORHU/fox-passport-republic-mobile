@@ -9849,6 +9849,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My events'**
   String get overviewMyEvents;
+
+  /// No description provided for @spaceOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get spaceOrganizer;
+
+  /// No description provided for @spaceOrganizerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The venues and events you help run'**
+  String get spaceOrganizerHint;
+
+  /// No description provided for @organizerInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitations'**
+  String get organizerInvitations;
+
+  /// No description provided for @organizerRoleOrganizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizer'**
+  String get organizerRoleOrganizer;
+
+  /// No description provided for @organizerRoleHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in helper'**
+  String get organizerRoleHelper;
+
+  /// No description provided for @organizerNextUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Next up'**
+  String get organizerNextUp;
+
+  /// No description provided for @organizerYouOrganize.
+  ///
+  /// In en, this message translates to:
+  /// **'You organize'**
+  String get organizerYouOrganize;
+
+  /// No description provided for @organizerOrganizing.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizing'**
+  String get organizerOrganizing;
+
+  /// No description provided for @organizerNothingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up yet.'**
+  String get organizerNothingNext;
+
+  /// No description provided for @organizerNoTeams.
+  ///
+  /// In en, this message translates to:
+  /// **'The teams you join show up here once you accept an invitation.'**
+  String get organizerNoTeams;
+
+  /// No description provided for @organizerNoInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No invitations right now.'**
+  String get organizerNoInvitations;
+
+  /// No description provided for @organizerAnswerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send your answer. Try again.'**
+  String get organizerAnswerFailed;
+
+  /// No description provided for @organizerInvitedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited by {name}'**
+  String organizerInvitedBy(String name);
 }
 
 class _AppLocalizationsDelegate

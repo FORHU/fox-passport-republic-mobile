@@ -103,6 +103,11 @@ class ApiEndpoints {
   /// or event: Organizers and Check-in Helpers.
   static const String organizerEvents = '/events';
   static const String organizerSearch = '/appointments/organizers';
+
+  /// The invitations and teams of the signed-in person, and answering one.
+  static const String appointmentsMine = '/appointments/mine';
+  static String appointmentAnswer(String id, {required bool accept}) =>
+      '/appointments/${Uri.encodeComponent(id)}/${accept ? 'accept' : 'decline'}';
   static String venueTeam(String id) =>
       '/venues/${Uri.encodeComponent(id)}/appointments';
   static String eventTeam(String id) =>
