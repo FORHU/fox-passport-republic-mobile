@@ -144,6 +144,8 @@ void main() {
             'capacity': 100,
             'address': '1 Main St',
             'city': 'Manila',
+            'state': 'Metro Manila',
+            'district': 'Ermita',
             'country': 'Philippines',
             'price': '5000',
             'billingRate': 'hourly',
@@ -166,6 +168,7 @@ void main() {
       expect(detail.draft.photos.single.fileId, 'f1');
       expect(detail.draft.radiusMeters, closeTo(450, 10));
       expect(detail.draft.center!.lat, closeTo(_pin.lat, 0.001));
+      expect(detail.draft.district, 'Ermita');
       expect(detail.draft.readyToSubmit, isTrue);
     });
 

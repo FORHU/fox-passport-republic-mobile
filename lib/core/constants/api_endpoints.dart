@@ -49,6 +49,8 @@ class ApiEndpoints {
   static const String locationCountries = '/locations/countries';
   static String locationStates(String countryCode) =>
       '/locations/countries/$countryCode/states';
+  static String locationBarangays(String countryCode) =>
+      '/locations/countries/$countryCode/barangays';
   static String locationCities(String countryCode) =>
       '/locations/countries/$countryCode/cities';
 

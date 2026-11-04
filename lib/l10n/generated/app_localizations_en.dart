@@ -2249,6 +2249,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioCity => 'City';
 
   @override
+  String get studioDistrict => 'Barangay';
+
+  @override
+  String get studioMissingDistrict => 'Province, city and barangay';
+
+  @override
   String get studioState => 'State or province';
 
   @override

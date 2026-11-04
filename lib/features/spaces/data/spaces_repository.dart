@@ -326,6 +326,25 @@ class SpacesRepository {
   Future<List<PlaceOption>> states(String countryCode) =>
       _places(ApiEndpoints.locationStates(countryCode));
 
+  /// The barangays of a Philippine city, from its province's code and the
+  /// city's name as `cities` lists it.
+  Future<List<String>> barangays(
+    String countryCode,
+    String stateCode,
+    String city,
+  ) async {
+    final body = await _api.get(
+      ApiEndpoints.locationBarangays(countryCode),
+      query: {'state': stateCode, 'city': city},
+    );
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if ('$row'.trim().isNotEmpty) '$row'.trim(),
+    ];
+  }
+
   /// The cities of a country, or of one of its states.
   Future<List<String>> cities(String countryCode, {String? stateCode}) async {
     final body = await _api.get(

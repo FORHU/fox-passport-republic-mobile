@@ -45,6 +45,8 @@ const _ready = VenueDraft(
   capacity: 100,
   address: '1 Main St',
   city: 'Manila',
+  state: 'Metro Manila',
+  district: 'Ermita',
   country: 'Philippines',
   center: _pin,
   photos: [VenuePhoto(fileId: 'f1', url: 'https://x.test/a.png')],
