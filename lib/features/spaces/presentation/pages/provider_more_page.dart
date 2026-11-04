@@ -31,8 +31,11 @@ class ProviderMorePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final isNew = ref
-            .watch(newFoxerProvider(
-                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,),)
+            .watch(
+              newFoxerProvider(
+                kind.isGear ? NewFoxerSpace.gear : NewFoxerSpace.services,
+              ),
+            )
             .asData
             ?.value ??
         false;
