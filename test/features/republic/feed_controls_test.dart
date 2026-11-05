@@ -133,24 +133,24 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('there are four tabs and no sort', (tester) async {
+    testWidgets('the sections are in a filter menu, and there is no sort', (
+      tester,
+    ) async {
       await pumpPage(tester);
 
+      // Closed, only the button shows.
+      for (final label in ['Community', 'Marketplace', 'Partners']) {
+        expect(find.text(label), findsNothing, reason: label);
+      }
+      expect(find.byTooltip('Filter by section'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Filter by section'));
+      await tester.pumpAndSettle();
       for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
         expect(find.text(label), findsOneWidget, reason: label);
       }
       expect(find.byIcon(Icons.swap_vert_rounded), findsNothing);
       expect(find.text('Recent'), findsNothing);
-    });
-
-    testWidgets('the four tabs are the same size', (tester) async {
-      await pumpPage(tester);
-
-      final sizes = {
-        for (final label in ['All', 'Community', 'Marketplace', 'Partners'])
-          tester.widget<Text>(find.text(label)).style?.fontSize,
-      };
-      expect(sizes, hasLength(1));
     });
 
     testWidgets('the header is just search; Saved lives in the Passport', (
@@ -166,30 +166,58 @@ void main() {
       expect(find.text("What's on your mind?"), findsOneWidget);
     });
 
-    testWidgets('the four sections fill the width, none cut off', (
+    for (final width in [320.0, 360.0, 412.0]) {
+      testWidgets('the header buttons stay clear of the pill at $width wide', (
+        tester,
+      ) async {
+        tester.view
+          ..physicalSize = Size(width, 800)
+          ..devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await pumpPage(tester);
+
+        // The pill is the Posts and Videos labels with their padding; it
+        // floats over the header, so a button under it would lose its taps.
+        final pill = tester
+            .getRect(find.text('Posts'))
+            .expandToInclude(tester.getRect(find.text('Reels')))
+            .inflate(3);
+        for (final tooltip in ['Filter by section', 'Search the Republic']) {
+          final button = tester.getRect(find.byTooltip(tooltip));
+          expect(button.right, lessThanOrEqualTo(width), reason: tooltip);
+          expect(
+            button.left,
+            greaterThanOrEqualTo(pill.right),
+            reason: tooltip,
+          );
+        }
+
+        await tester.tap(find.byTooltip('Filter by section'));
+        await tester.pumpAndSettle();
+        expect(find.text('Marketplace'), findsOneWidget);
+      });
+    }
+
+    testWidgets('choosing a section opens it, and the chip clears it', (
       tester,
     ) async {
-      tester.view
-        ..physicalSize = const Size(360, 800)
-        ..devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await pumpPage(tester);
-
-      for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
-        final box = tester.getRect(find.text(label));
-        expect(box.left, greaterThanOrEqualTo(0), reason: label);
-        expect(box.right, lessThanOrEqualTo(360), reason: label);
-      }
-    });
-
-    testWidgets('tapping a section opens it', (tester) async {
       await pumpPage(tester);
       clearInteractions(api);
 
+      await tester.tap(find.byTooltip('Filter by section'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Partners'));
       await tester.pumpAndSettle();
 
       expect(lastQuery()['tab'], 'partners');
+      expect(find.byType(InputChip), findsOneWidget);
+
+      clearInteractions(api);
+      await tester.tap(find.byTooltip('Delete'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(InputChip), findsNothing);
+      expect(lastQuery().containsKey('tab'), isFalse);
     });
 
     testWidgets('the search icon stays a magnifier while the field shows', (

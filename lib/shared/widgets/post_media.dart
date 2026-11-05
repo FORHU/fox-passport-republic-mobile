@@ -18,15 +18,31 @@ bool isVideoUrl(String url) {
 /// two side by side, three with a big one, four or more in a grid with "+N" on
 /// the last. A photo opens full screen; a video opens in the player app.
 class PostMedia extends StatelessWidget {
-  const PostMedia({required this.urls, super.key});
+  const PostMedia({
+    required this.urls,
+    this.onVideo,
+    this.singleVideoBuilder,
+    super.key,
+  });
 
   final List<String> urls;
+
+  /// Draws the video, taller than a photo, when it is the post's only media,
+  /// in place of the still tile; it handles its own tap.
+  final Widget Function(String url)? singleVideoBuilder;
+
+  /// A video was tapped. Without it the video opens in the player app.
+  final ValueChanged<String>? onVideo;
 
   static const _gap = 2.0;
 
   Future<void> _open(BuildContext context, int index) async {
     final url = urls[index];
     if (isVideoUrl(url)) {
+      if (onVideo != null) {
+        onVideo!(url);
+        return;
+      }
       final uri = Uri.tryParse(resolveAssetUrl(url));
       if (uri != null) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -84,6 +100,13 @@ class PostMedia extends StatelessWidget {
     final n = urls.length;
     if (n == 0) return const SizedBox.shrink();
 
+    if (n == 1 && isVideoUrl(urls[0]) && singleVideoBuilder != null) {
+      return SizedBox(
+        height: 360,
+        width: double.infinity,
+        child: singleVideoBuilder!(urls[0]),
+      );
+    }
     if (n == 1) {
       return SizedBox(
         height: 300,
