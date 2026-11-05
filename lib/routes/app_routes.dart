@@ -15,6 +15,7 @@ import 'package:flutter_template/features/event/presentation/pages/event_detail_
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
@@ -248,6 +249,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.blockedUsers,
         builder: (context, state) => const BlockedUsersPage(),
+      ),
+      GoRoute(
+        path: RouteNames.howItWorks,
+        builder: (context, state) => const HowItWorksPage(),
       ),
       // Profile is opened from both Passport and Settings, so it is a screen
       // of its own, not part of the Passport tab: a route inside a tab cannot

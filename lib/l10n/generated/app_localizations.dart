@@ -10041,6 +10041,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What you have been paid, how it changed since last month, and the last eight weeks.'**
   String get tourEarningsCardBody;
+
+  /// No description provided for @settingsHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How XP and Coins work'**
+  String get settingsHowItWorks;
+
+  /// No description provided for @howItWorksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get howItWorksTitle;
+
+  /// No description provided for @howItWorksIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Two numbers grow as you use FoxPassport. Here is what each one does.'**
+  String get howItWorksIntro;
+
+  /// No description provided for @howItWorksXpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'XP is your progress'**
+  String get howItWorksXpTitle;
+
+  /// No description provided for @howItWorksXpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.'**
+  String get howItWorksXpBody;
+
+  /// No description provided for @howItWorksCoinsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins are your wallet'**
+  String get howItWorksCoinsTitle;
+
+  /// No description provided for @howItWorksCoinsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.'**
+  String get howItWorksCoinsBody;
+
+  /// No description provided for @howItWorksEarnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to earn'**
+  String get howItWorksEarnTitle;
+
+  /// No description provided for @howItWorksEarnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.'**
+  String get howItWorksEarnBody;
+
+  /// No description provided for @howItWorksSpendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to spend'**
+  String get howItWorksSpendTitle;
+
+  /// No description provided for @howItWorksSpendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Rewards from your Wallet and redeem a voucher. Each reward says what size of booking it works on, and a voucher belongs to your account only.'**
+  String get howItWorksSpendBody;
 }
 
 class _AppLocalizationsDelegate
