@@ -23,6 +23,7 @@ class CitizenHero extends ConsumerWidget {
     this.onMessage,
     this.progress,
     this.xpText,
+    this.footer,
     super.key,
   });
 
@@ -36,6 +37,9 @@ class CitizenHero extends ConsumerWidget {
 
   /// The XP line to show, in place of the one worked out from the profile.
   final String? xpText;
+
+  /// Shown under the level bar, on your own profile only.
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -267,6 +271,7 @@ class CitizenHero extends ConsumerWidget {
                 color: AppColors.accent,
               ),
             ),
+            if (footer != null) footer!,
           ],
         ],
       ),
