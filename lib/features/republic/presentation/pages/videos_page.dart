@@ -266,30 +266,84 @@ class _VideosPageState extends ConsumerState<VideosPage>
             );
           }
 
-          return PageView.builder(
-            controller: _pages,
-            scrollDirection: Axis.vertical,
-            itemCount: videos.length,
-            onPageChanged: _onPageChanged,
-            itemBuilder: (context, i) {
-              final post = videos[i];
-              return _ReelPage(
-                key: ValueKey(post.id),
-                post: post,
-                player: _players[post.id],
-                failed: _failed.contains(post.id),
-                active: i == _index,
-                muted: _muted,
-                paused: _userPaused && i == _index,
-                onTap: _togglePause,
-                onMute: _toggleMute,
-                actions: PostActions(context, ref, widget.tab),
-                onPost: widget.onPost,
-              );
-            },
+          // The buttons at the top are in a layer of their own over the pager,
+          // like the Republic's Posts | Reels pill, so they stay put as the
+          // reels slide under them.
+          return Stack(
+            children: [
+              Positioned.fill(child: _pager(videos)),
+              SafeArea(
+                child: Padding(
+                  // 12 in from the edge and down to the pill's middle.
+                  padding: const EdgeInsets.fromLTRB(4, 12, 12, 0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.onPost != null)
+                          IconButton.filled(
+                            tooltip: l10n.republicPostVideo,
+                            onPressed: widget.onPost,
+                            style: IconButton.styleFrom(
+                              backgroundColor: AppColors.accent,
+                              foregroundColor: AppColors.canvas,
+                              fixedSize: const Size(40, 40),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            icon: const Icon(Icons.add_rounded),
+                          ),
+                        if (widget.onPost != null) const SizedBox(width: 8),
+                        // A dark disc keeps the icon readable on a bright clip.
+                        IconButton.filled(
+                          tooltip: _muted
+                              ? l10n.republicVideoSoundOn
+                              : l10n.republicVideoSoundOff,
+                          onPressed: _toggleMute,
+                          style: IconButton.styleFrom(
+                            backgroundColor:
+                                AppColors.canvas.withValues(alpha: 0.5),
+                            foregroundColor: AppColors.textPrimary,
+                            fixedSize: const Size(40, 40),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          icon: Icon(
+                            _muted
+                                ? Icons.volume_off_rounded
+                                : Icons.volume_up_rounded,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
+    );
+  }
+
+  Widget _pager(List<Post> videos) {
+    return PageView.builder(
+      controller: _pages,
+      scrollDirection: Axis.vertical,
+      itemCount: videos.length,
+      onPageChanged: _onPageChanged,
+      itemBuilder: (context, i) {
+        final post = videos[i];
+        return _ReelPage(
+          key: ValueKey(post.id),
+          post: post,
+          player: _players[post.id],
+          failed: _failed.contains(post.id),
+          active: i == _index,
+          paused: _userPaused && i == _index,
+          onTap: _togglePause,
+          actions: PostActions(context, ref, widget.tab),
+        );
+      },
     );
   }
 }
@@ -316,12 +370,9 @@ class _ReelPage extends StatelessWidget {
     required this.player,
     required this.failed,
     required this.active,
-    required this.muted,
     required this.paused,
     required this.onTap,
-    required this.onMute,
     required this.actions,
-    required this.onPost,
     super.key,
   });
 
@@ -329,12 +380,9 @@ class _ReelPage extends StatelessWidget {
   final VideoPlayerController? player;
   final bool failed;
   final bool active;
-  final bool muted;
   final bool paused;
   final VoidCallback onTap;
-  final VoidCallback onMute;
   final PostActions actions;
-  final VoidCallback? onPost;
 
   @override
   Widget build(BuildContext context) {
@@ -405,40 +453,6 @@ class _ReelPage extends StatelessWidget {
               ),
             ),
           ),
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Row(
-                children: [
-                  const Spacer(),
-                  if (onPost != null)
-                    IconButton.filled(
-                      tooltip: l10n.republicPostVideo,
-                      onPressed: onPost,
-                      style: IconButton.styleFrom(
-                        backgroundColor: AppColors.accent,
-                        foregroundColor: AppColors.canvas,
-                      ),
-                      icon: const Icon(Icons.add_rounded),
-                    ),
-                  IconButton(
-                    tooltip: muted
-                        ? l10n.republicVideoSoundOn
-                        : l10n.republicVideoSoundOff,
-                    onPressed: onMute,
-                    icon: Icon(
-                      muted
-                          ? Icons.volume_off_rounded
-                          : Icons.volume_up_rounded,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
         SafeArea(
           child: Align(
             alignment: Alignment.bottomCenter,

@@ -551,7 +551,7 @@ class _ViewSwitch extends StatelessWidget {
   final PageController controller;
   final ValueChanged<int> onSelect;
 
-  static const _segmentWidth = 64.0;
+  static const _segmentWidth = 60.0;
   static const _height = 36.0;
 
   @override

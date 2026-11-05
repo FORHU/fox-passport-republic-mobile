@@ -315,5 +315,22 @@ void main() {
 
       expect(posted, 1);
     });
+
+    testWidgets('the post and sound buttons stay put as the reels slide', (
+      tester,
+    ) async {
+      await open(tester, feed, onPost: () {});
+      final post = tester.getRect(find.byTooltip('Post a reel'));
+      final sound = tester.getRect(find.byTooltip('Turn sound on'));
+
+      await tester.fling(find.text('First clip'), const Offset(0, -600), 2000);
+      await tester.pumpAndSettle();
+
+      // Still exactly one of each, in the same place, on the next reel.
+      expect(find.byTooltip('Post a reel'), findsOneWidget);
+      expect(find.byTooltip('Turn sound on'), findsOneWidget);
+      expect(tester.getRect(find.byTooltip('Post a reel')), post);
+      expect(tester.getRect(find.byTooltip('Turn sound on')), sound);
+    });
   });
 }
