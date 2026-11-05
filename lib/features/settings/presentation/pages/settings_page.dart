@@ -92,6 +92,12 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => context.push(RouteNames.identity),
           ),
           const SizedBox(height: 8),
+          _Row(
+            icon: Icons.bolt_rounded,
+            title: l10n.settingsHowItWorks,
+            onTap: () => context.push(RouteNames.howItWorks),
+          ),
+          const SizedBox(height: 8),
           // Only for someone who holds a role to switch to.
           if (spaces.length > 1) ...[
             _Row(

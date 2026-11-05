@@ -168,6 +168,7 @@ void main() {
     // What the profile used to hold: your followers and the ID check.
     expect(find.text('Followers, following and requests'), findsOneWidget);
     expect(find.text('Verify your identity'), findsOneWidget);
+    expect(find.text('How XP and Coins work'), findsOneWidget);
     expect(find.text('Saved posts'), findsOneWidget);
     expect(find.text('Blocked users'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('Where you are'), 200);
