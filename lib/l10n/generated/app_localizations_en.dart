@@ -5589,4 +5589,138 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get howItWorksSpendBody =>
       'Open Rewards from your Wallet and redeem a voucher. Each reward says what size of booking it works on, and a voucher belongs to your account only.';
+
+  @override
+  String get rewardsWalletTitle => 'Wallet';
+
+  @override
+  String get rewardsOpenWallet => 'Open your Wallet';
+
+  @override
+  String get rewardsCoins => 'Coins';
+
+  @override
+  String get rewardsBalanceLabel => 'Balance';
+
+  @override
+  String rewardsPending(String count) {
+    return '$count pending';
+  }
+
+  @override
+  String get rewardsPendingHint =>
+      'Pending Coins can be spent once the booking is safe from a refund.';
+
+  @override
+  String get rewardsRedeemRewards => 'Redeem rewards';
+
+  @override
+  String get rewardsHistory => 'History';
+
+  @override
+  String get rewardsEmptyTitle => 'No Coins yet';
+
+  @override
+  String get rewardsEmptyBody =>
+      'Attend an event or book one and your Coins show up here. You can spend them on discounts.';
+
+  @override
+  String get rewardsFindEvent => 'Find an event';
+
+  @override
+  String get rewardsTitle => 'Rewards';
+
+  @override
+  String get rewardsFilterAll => 'All';
+
+  @override
+  String get rewardsFilterDiscounts => 'Discounts';
+
+  @override
+  String get rewardsFilterPerks => 'Perks';
+
+  @override
+  String get rewardsNoneHere => 'No rewards here yet';
+
+  @override
+  String get rewardsRedeem => 'Redeem';
+
+  @override
+  String rewardsToGo(String count) {
+    return '$count Coins to go';
+  }
+
+  @override
+  String rewardsUnlocksAtLevel(int level) {
+    return 'Unlocks at Level $level';
+  }
+
+  @override
+  String rewardsOffPhp(String amount) {
+    return '₱$amount off';
+  }
+
+  @override
+  String rewardsOffPercent(String percent) {
+    return '$percent% off';
+  }
+
+  @override
+  String get rewardsRedeemSheetTitle => 'Redeem reward';
+
+  @override
+  String get rewardsYourBalance => 'Your balance';
+
+  @override
+  String get rewardsThisReward => 'This reward';
+
+  @override
+  String get rewardsAfterRedeeming => 'After redeeming';
+
+  @override
+  String rewardsRedeemFor(String cost) {
+    return 'Redeem for $cost Coins';
+  }
+
+  @override
+  String get rewardsCancel => 'Cancel';
+
+  @override
+  String get rewardsRedeemFailed => 'We couldn\'t redeem that right now.';
+
+  @override
+  String get rewardsVoucherReady => 'Your voucher is ready';
+
+  @override
+  String get rewardsVoucherHint =>
+      'Use it when you pay for a booking. It belongs to your account only.';
+
+  @override
+  String get rewardsVoucherCode => 'Voucher code';
+
+  @override
+  String get rewardsCopyCode => 'Copy code';
+
+  @override
+  String get rewardsCodeCopied => 'Code copied';
+
+  @override
+  String rewardsValidUntil(String date) {
+    return 'Valid until $date';
+  }
+
+  @override
+  String get rewardsDone => 'Done';
+
+  @override
+  String get rewardsLifeRelease => 'Coins released';
+
+  @override
+  String get rewardsLifeRedemption => 'Redeemed a reward';
+
+  @override
+  String get rewardsLifeExpiry => 'Coins expired';
+
+  @override
+  String get rewardsLifeReversal => 'Coins reversed';
 }

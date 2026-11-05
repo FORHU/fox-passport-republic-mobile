@@ -126,6 +126,12 @@ class RouteNames {
   /// The posts saved from the Republic. Pushed from its header.
   static const String republicSaved = '/republic/saved';
 
+  /// The Coins wallet, pushed from the Coins chip and the Passport.
+  static const String wallet = '/wallet';
+
+  /// What Coins can buy.
+  static const String rewards = '/rewards';
+
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.
   static String republicPost(String id, {bool comments = false}) => Uri(

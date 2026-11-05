@@ -37,6 +37,8 @@ import 'package:flutter_template/features/republic/presentation/pages/post_page.
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
+import 'package:flutter_template/features/rewards/presentation/pages/rewards_page.dart';
+import 'package:flutter_template/features/rewards/presentation/pages/wallet_page.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_resubmit_page.dart';
@@ -88,6 +90,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
 
@@ -411,6 +414,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SavedPostsPage(),
       ),
       GoRoute(
+        path: RouteNames.wallet,
+        builder: (context, state) => const WalletPage(),
+      ),
+      GoRoute(
+        path: RouteNames.rewards,
+        builder: (context, state) => const RewardsPage(),
+      ),
+      GoRoute(
         path: RouteNames.itemBooking,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -527,6 +538,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       final l10n = context.l10n;
                       return CitizenProfileView(
                         userId: me,
+                        heroFooter: const WalletRow(),
                         activityBuilder: (context, profile) =>
                             ProfilePosts(authorId: profile.id),
                         overrides: summary == null
