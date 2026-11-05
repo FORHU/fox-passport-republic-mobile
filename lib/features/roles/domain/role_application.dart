@@ -7,6 +7,7 @@ import 'package:flutter_template/shared/photos/photo_picker.dart';
 /// The roles that apply from the phone. The investor still applies on the
 /// web.
 const appliesInApp = <String>{
+  'providerFoxer',
   'serviceFoxer',
   'performerFoxer',
   'gearFoxer',
@@ -90,6 +91,7 @@ class RoleApplicationDraft extends Equatable {
   final List<String> specializations;
   final Map<KycDocument, PickedPhoto> documents;
 
+  bool get isProvider => roleType == 'providerFoxer';
   bool get isGear => roleType == 'gearFoxer';
   bool get isVenue => roleType == 'venueFoxer';
   bool get isEvent => roleType == 'eventFoxer';
@@ -151,10 +153,13 @@ class RoleApplicationDraft extends Equatable {
                       contactNumber.trim().isNotEmpty &&
                       address.trim().isNotEmpty &&
                       tinNumber.isNotEmpty
-                  : split(types).isNotEmpty &&
-                      (isGear
-                          ? businessName.trim().isNotEmpty
-                          : years != null && nbiNumber.isNotEmpty)) &&
+                  : isProvider
+                      ? businessName.trim().isNotEmpty &&
+                          split(types).isNotEmpty
+                      : split(types).isNotEmpty &&
+                          (isGear
+                              ? businessName.trim().isNotEmpty
+                              : years != null && nbiNumber.isNotEmpty)) &&
       requiredDocuments.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({
@@ -212,6 +217,13 @@ class RoleApplicationDraft extends Equatable {
           'bio': bio.trim(),
           'location': location,
           if (experience.trim().isNotEmpty) 'experience': experience.trim(),
+        } else if (isProvider) ...{
+          'businessName': businessName.trim(),
+          'assetTypes': split(types),
+          'serviceTypes': split(types),
+          if (years != null) 'experience': years,
+          if (nbiNumber.isNotEmpty) 'nbiClearanceIdNumber': nbiNumber,
+          if (portfolio.isNotEmpty) 'portfolioUrls': split(portfolio),
         } else if (isGear) ...{
           'businessName': businessName.trim(),
           'assetTypes': split(types),
@@ -296,6 +308,20 @@ List<String> specializationOptions(String roleType) => switch (roleType) {
           'beach_resort',
           'garden',
           'mix',
+          'other',
+        ],
+      'providerFoxer' => const [
+          'furnitures',
+          'sound_system',
+          'decorations',
+          'photography',
+          'videography',
+          'dj',
+          'live_band',
+          'mc',
+          'design',
+          'catering',
+          'service_staff',
           'other',
         ],
       'gearFoxer' => const [

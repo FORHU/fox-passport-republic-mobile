@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 
 // The roles that apply from the phone (`features/roles` owns the form).
 const _appliesInApp = {
+  'providerFoxer',
   'serviceFoxer',
   'performerFoxer',
   'gearFoxer',

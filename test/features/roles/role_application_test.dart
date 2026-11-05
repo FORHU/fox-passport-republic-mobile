@@ -94,6 +94,35 @@ void main() {
       expect(gear.containsKey('tinNumber'), isFalse);
     });
 
+    test(
+        'a provider application sends business name, asset/service types, and options',
+        () {
+      final provider = RoleApplicationDraft(
+        roleType: 'providerFoxer',
+        businessName: 'Apex Audio & Staging',
+        types: 'Speakers, DJ Sets',
+        experience: '5',
+        nbiNumber: '987654',
+        portfolio: 'https://apex.test',
+        tinNumber: '123456789',
+        specializations: const ['sound_system', 'dj'],
+        documents: _allDocuments(),
+      );
+      expect(provider.toData(), {
+        'businessName': 'Apex Audio & Staging',
+        'assetTypes': ['Speakers', 'DJ Sets'],
+        'serviceTypes': ['Speakers', 'DJ Sets'],
+        'experience': 5,
+        'nbiClearanceIdNumber': '987654',
+        'portfolioUrls': ['https://apex.test'],
+        'tinNumber': '123456789',
+        'specializations': ['sound_system', 'dj'],
+      });
+      expect(provider.isComplete, isTrue);
+      expect(provider.copyWith(businessName: '').isComplete, isFalse);
+      expect(provider.copyWith(types: '').isComplete, isFalse);
+    });
+
     test('each document goes under the name the API reads', () {
       final form = RoleApplicationDraft(
         roleType: 'gearFoxer',
@@ -320,6 +349,7 @@ void main() {
       expect(
         appliesInApp,
         {
+          'providerFoxer',
           'serviceFoxer',
           'performerFoxer',
           'gearFoxer',

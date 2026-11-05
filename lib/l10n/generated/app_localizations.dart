@@ -1960,6 +1960,12 @@ abstract class AppLocalizations {
   /// **'Seen'**
   String get messageSeen;
 
+  /// No description provided for @messageRoleProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get messageRoleProvider;
+
   /// No description provided for @messageRoleEventFoxer.
   ///
   /// In en, this message translates to:
@@ -8769,6 +8775,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Business or trade name'**
   String get roleApplyBusiness;
+
+  /// No description provided for @roleApplyProviderTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear, services, or performances you offer'**
+  String get roleApplyProviderTypes;
 
   /// No description provided for @roleApplyServiceTypes.
   ///

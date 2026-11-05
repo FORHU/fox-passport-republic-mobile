@@ -18,7 +18,9 @@ import 'package:go_router/go_router.dart';
 /// Whether the person lists performances and nothing else, for whom the
 /// Services space reads "Performer".
 bool _performerOnly(List<String> roles) =>
-    roles.contains('performerFoxer') && !roles.contains('serviceFoxer');
+    roles.contains('performerFoxer') &&
+    !roles.contains('serviceFoxer') &&
+    !roles.contains('providerFoxer');
 
 /// The name of a space, as the person reads it. [roles] are the roles they
 /// hold: a Performer Foxer's Services space is called Performer.

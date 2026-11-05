@@ -63,6 +63,7 @@ class AppColors {
 
   static const roleEvent = Color(0xFFCCFF00);
   static const roleVenue = Color(0xFFA78BFA);
+  static const roleProvider = Color(0xFFA9AFBB);
   static const roleGear = Color(0xFFF97316);
   static const roleTalent = Color(0xFF00D2FF);
   static const rolePerformer = Color(0xFFF59E0B);

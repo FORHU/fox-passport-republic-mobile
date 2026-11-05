@@ -20,12 +20,12 @@ enum AppSpace {
   gear(
     root: '/space/gear',
     icon: Icons.inventory_2_outlined,
-    requiredRoles: ['gearFoxer'],
+    requiredRoles: ['gearFoxer', 'providerFoxer'],
   ),
   services(
     root: '/space/services',
     icon: Icons.design_services_outlined,
-    requiredRoles: ['serviceFoxer', 'performerFoxer'],
+    requiredRoles: ['serviceFoxer', 'performerFoxer', 'providerFoxer'],
   ),
   // An Organizer helps run other people's venues and events.
   organizer(
