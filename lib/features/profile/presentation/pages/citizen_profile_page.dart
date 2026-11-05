@@ -181,6 +181,7 @@ class CitizenProfileView extends ConsumerStatefulWidget {
     this.activityBuilder,
     this.extraTabs = const [],
     this.overrides,
+    this.heroFooter,
     super.key,
   });
 
@@ -192,6 +193,9 @@ class CitizenProfileView extends ConsumerStatefulWidget {
   /// Added after the usual tabs, on your own profile only.
   final List<CitizenExtraTab> extraTabs;
   final CitizenOverrides? overrides;
+
+  /// Under the level bar on your own profile: the Passport's Wallet row.
+  final Widget? heroFooter;
 
   @override
   ConsumerState<CitizenProfileView> createState() => _CitizenProfileViewState();
@@ -292,6 +296,7 @@ class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
                   isMe: isMe,
                   progress: o?.progress,
                   xpText: o?.xpText,
+                  footer: widget.heroFooter,
                   onMessage: widget.onMessage == null
                       ? null
                       : () => unawaited(_message(profile)),
