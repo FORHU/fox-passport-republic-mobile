@@ -5432,6 +5432,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tourCitizenHomeTitle => 'Find what\'s on';
+
+  @override
+  String get tourCitizenHomeBody =>
+      'Search events, venues and Foxers, and see your next booking.';
+
+  @override
+  String get tourCitizenRepublicTitle => 'Join the conversation';
+
+  @override
+  String get tourCitizenRepublicBody =>
+      'Read and post what\'s happening. Posting earns XP.';
+
+  @override
+  String get tourCitizenBookingsTitle => 'Your tickets live here';
+
+  @override
+  String get tourCitizenBookingsBody =>
+      'Tickets, requests and your calendar, with a badge when something needs you.';
+
+  @override
+  String get tourCitizenMessagesTitle => 'Talk to Foxers';
+
+  @override
+  String get tourCitizenMessagesBody =>
+      'Ask a venue or a Foxer a question before you book.';
+
+  @override
+  String get tourCitizenPassportTitle => 'Your progress';
+
+  @override
+  String get tourCitizenPassportBody =>
+      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+
+  @override
+  String get settingsTakeTour => 'Take the app tour again';
+
+  @override
   String get earningsTotal => 'Total earnings';
 
   @override
@@ -5553,40 +5591,136 @@ class AppLocalizationsEn extends AppLocalizations {
       'What you have been paid, how it changed since last month, and the last eight weeks.';
 
   @override
-  String get tourCitizenHomeTitle => 'Find what\'s on';
+  String get rewardsWalletTitle => 'Wallet';
 
   @override
-  String get tourCitizenHomeBody =>
-      'Search events, venues and Foxers, and see your next booking.';
+  String get rewardsOpenWallet => 'Open your Wallet';
 
   @override
-  String get tourCitizenRepublicTitle => 'Join the conversation';
+  String get rewardsCoins => 'Coins';
 
   @override
-  String get tourCitizenRepublicBody =>
-      'Read and post what\'s happening. Posting earns XP.';
+  String get rewardsBalanceLabel => 'Balance';
 
   @override
-  String get tourCitizenBookingsTitle => 'Your tickets live here';
+  String rewardsPending(String count) {
+    return '$count pending';
+  }
 
   @override
-  String get tourCitizenBookingsBody =>
-      'Tickets, requests and your calendar, with a badge when something needs you.';
+  String get rewardsPendingHint =>
+      'Pending Coins can be spent once the booking is safe from a refund.';
 
   @override
-  String get tourCitizenMessagesTitle => 'Talk to Foxers';
+  String get rewardsRedeemRewards => 'Redeem rewards';
 
   @override
-  String get tourCitizenMessagesBody =>
-      'Ask a venue or a Foxer a question before you book.';
+  String get rewardsHistory => 'History';
 
   @override
-  String get tourCitizenPassportTitle => 'Your progress';
+  String get rewardsEmptyTitle => 'No Coins yet';
 
   @override
-  String get tourCitizenPassportBody =>
-      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+  String get rewardsEmptyBody =>
+      'Attend an event or book one and your Coins show up here. You can spend them on discounts.';
 
   @override
-  String get settingsTakeTour => 'Take the app tour again';
+  String get rewardsFindEvent => 'Find an event';
+
+  @override
+  String get rewardsTitle => 'Rewards';
+
+  @override
+  String get rewardsFilterAll => 'All';
+
+  @override
+  String get rewardsFilterDiscounts => 'Discounts';
+
+  @override
+  String get rewardsFilterPerks => 'Perks';
+
+  @override
+  String get rewardsNoneHere => 'No rewards here yet';
+
+  @override
+  String get rewardsRedeem => 'Redeem';
+
+  @override
+  String rewardsToGo(String count) {
+    return '$count Coins to go';
+  }
+
+  @override
+  String rewardsUnlocksAtLevel(int level) {
+    return 'Unlocks at Level $level';
+  }
+
+  @override
+  String rewardsOffPhp(String amount) {
+    return '₱$amount off';
+  }
+
+  @override
+  String rewardsOffPercent(String percent) {
+    return '$percent% off';
+  }
+
+  @override
+  String get rewardsRedeemSheetTitle => 'Redeem reward';
+
+  @override
+  String get rewardsYourBalance => 'Your balance';
+
+  @override
+  String get rewardsThisReward => 'This reward';
+
+  @override
+  String get rewardsAfterRedeeming => 'After redeeming';
+
+  @override
+  String rewardsRedeemFor(String cost) {
+    return 'Redeem for $cost Coins';
+  }
+
+  @override
+  String get rewardsCancel => 'Cancel';
+
+  @override
+  String get rewardsRedeemFailed => 'We couldn\'t redeem that right now.';
+
+  @override
+  String get rewardsVoucherReady => 'Your voucher is ready';
+
+  @override
+  String get rewardsVoucherHint =>
+      'Use it when you pay for a booking. It belongs to your account only.';
+
+  @override
+  String get rewardsVoucherCode => 'Voucher code';
+
+  @override
+  String get rewardsCopyCode => 'Copy code';
+
+  @override
+  String get rewardsCodeCopied => 'Code copied';
+
+  @override
+  String rewardsValidUntil(String date) {
+    return 'Valid until $date';
+  }
+
+  @override
+  String get rewardsDone => 'Done';
+
+  @override
+  String get rewardsLifeRelease => 'Coins released';
+
+  @override
+  String get rewardsLifeRedemption => 'Redeemed a reward';
+
+  @override
+  String get rewardsLifeExpiry => 'Coins expired';
+
+  @override
+  String get rewardsLifeReversal => 'Coins reversed';
 }

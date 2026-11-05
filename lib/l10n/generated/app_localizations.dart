@@ -9832,6 +9832,72 @@ abstract class AppLocalizations {
   /// **'{n} of {total}'**
   String tourStepOf(int n, int total);
 
+  /// No description provided for @tourCitizenHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find what\'s on'**
+  String get tourCitizenHomeTitle;
+
+  /// No description provided for @tourCitizenHomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events, venues and Foxers, and see your next booking.'**
+  String get tourCitizenHomeBody;
+
+  /// No description provided for @tourCitizenRepublicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the conversation'**
+  String get tourCitizenRepublicTitle;
+
+  /// No description provided for @tourCitizenRepublicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Read and post what\'s happening. Posting earns XP.'**
+  String get tourCitizenRepublicBody;
+
+  /// No description provided for @tourCitizenBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tickets live here'**
+  String get tourCitizenBookingsTitle;
+
+  /// No description provided for @tourCitizenBookingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets, requests and your calendar, with a badge when something needs you.'**
+  String get tourCitizenBookingsBody;
+
+  /// No description provided for @tourCitizenMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to Foxers'**
+  String get tourCitizenMessagesTitle;
+
+  /// No description provided for @tourCitizenMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a venue or a Foxer a question before you book.'**
+  String get tourCitizenMessagesBody;
+
+  /// No description provided for @tourCitizenPassportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress'**
+  String get tourCitizenPassportTitle;
+
+  /// No description provided for @tourCitizenPassportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your level, stamps and badges. Attend an event to earn your first stamp.'**
+  String get tourCitizenPassportBody;
+
+  /// No description provided for @settingsTakeTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the app tour again'**
+  String get settingsTakeTour;
+
   /// No description provided for @earningsTotal.
   ///
   /// In en, this message translates to:
@@ -10042,71 +10108,239 @@ abstract class AppLocalizations {
   /// **'What you have been paid, how it changed since last month, and the last eight weeks.'**
   String get tourEarningsCardBody;
 
-  /// No description provided for @tourCitizenHomeTitle.
+  /// No description provided for @rewardsWalletTitle.
   ///
   /// In en, this message translates to:
-  /// **'Find what\'s on'**
-  String get tourCitizenHomeTitle;
+  /// **'Wallet'**
+  String get rewardsWalletTitle;
 
-  /// No description provided for @tourCitizenHomeBody.
+  /// No description provided for @rewardsOpenWallet.
   ///
   /// In en, this message translates to:
-  /// **'Search events, venues and Foxers, and see your next booking.'**
-  String get tourCitizenHomeBody;
+  /// **'Open your Wallet'**
+  String get rewardsOpenWallet;
 
-  /// No description provided for @tourCitizenRepublicTitle.
+  /// No description provided for @rewardsCoins.
   ///
   /// In en, this message translates to:
-  /// **'Join the conversation'**
-  String get tourCitizenRepublicTitle;
+  /// **'Coins'**
+  String get rewardsCoins;
 
-  /// No description provided for @tourCitizenRepublicBody.
+  /// No description provided for @rewardsBalanceLabel.
   ///
   /// In en, this message translates to:
-  /// **'Read and post what\'s happening. Posting earns XP.'**
-  String get tourCitizenRepublicBody;
+  /// **'Balance'**
+  String get rewardsBalanceLabel;
 
-  /// No description provided for @tourCitizenBookingsTitle.
+  /// No description provided for @rewardsPending.
   ///
   /// In en, this message translates to:
-  /// **'Your tickets live here'**
-  String get tourCitizenBookingsTitle;
+  /// **'{count} pending'**
+  String rewardsPending(String count);
 
-  /// No description provided for @tourCitizenBookingsBody.
+  /// No description provided for @rewardsPendingHint.
   ///
   /// In en, this message translates to:
-  /// **'Tickets, requests and your calendar, with a badge when something needs you.'**
-  String get tourCitizenBookingsBody;
+  /// **'Pending Coins can be spent once the booking is safe from a refund.'**
+  String get rewardsPendingHint;
 
-  /// No description provided for @tourCitizenMessagesTitle.
+  /// No description provided for @rewardsRedeemRewards.
   ///
   /// In en, this message translates to:
-  /// **'Talk to Foxers'**
-  String get tourCitizenMessagesTitle;
+  /// **'Redeem rewards'**
+  String get rewardsRedeemRewards;
 
-  /// No description provided for @tourCitizenMessagesBody.
+  /// No description provided for @rewardsHistory.
   ///
   /// In en, this message translates to:
-  /// **'Ask a venue or a Foxer a question before you book.'**
-  String get tourCitizenMessagesBody;
+  /// **'History'**
+  String get rewardsHistory;
 
-  /// No description provided for @tourCitizenPassportTitle.
+  /// No description provided for @rewardsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your progress'**
-  String get tourCitizenPassportTitle;
+  /// **'No Coins yet'**
+  String get rewardsEmptyTitle;
 
-  /// No description provided for @tourCitizenPassportBody.
+  /// No description provided for @rewardsEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Your level, stamps and badges. Attend an event to earn your first stamp.'**
-  String get tourCitizenPassportBody;
+  /// **'Attend an event or book one and your Coins show up here. You can spend them on discounts.'**
+  String get rewardsEmptyBody;
 
-  /// No description provided for @settingsTakeTour.
+  /// No description provided for @rewardsFindEvent.
   ///
   /// In en, this message translates to:
-  /// **'Take the app tour again'**
-  String get settingsTakeTour;
+  /// **'Find an event'**
+  String get rewardsFindEvent;
+
+  /// No description provided for @rewardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewardsTitle;
+
+  /// No description provided for @rewardsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get rewardsFilterAll;
+
+  /// No description provided for @rewardsFilterDiscounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Discounts'**
+  String get rewardsFilterDiscounts;
+
+  /// No description provided for @rewardsFilterPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks'**
+  String get rewardsFilterPerks;
+
+  /// No description provided for @rewardsNoneHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards here yet'**
+  String get rewardsNoneHere;
+
+  /// No description provided for @rewardsRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get rewardsRedeem;
+
+  /// No description provided for @rewardsToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Coins to go'**
+  String rewardsToGo(String count);
+
+  /// No description provided for @rewardsUnlocksAtLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks at Level {level}'**
+  String rewardsUnlocksAtLevel(int level);
+
+  /// No description provided for @rewardsOffPhp.
+  ///
+  /// In en, this message translates to:
+  /// **'₱{amount} off'**
+  String rewardsOffPhp(String amount);
+
+  /// No description provided for @rewardsOffPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% off'**
+  String rewardsOffPercent(String percent);
+
+  /// No description provided for @rewardsRedeemSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem reward'**
+  String get rewardsRedeemSheetTitle;
+
+  /// No description provided for @rewardsYourBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your balance'**
+  String get rewardsYourBalance;
+
+  /// No description provided for @rewardsThisReward.
+  ///
+  /// In en, this message translates to:
+  /// **'This reward'**
+  String get rewardsThisReward;
+
+  /// No description provided for @rewardsAfterRedeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'After redeeming'**
+  String get rewardsAfterRedeeming;
+
+  /// No description provided for @rewardsRedeemFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem for {cost} Coins'**
+  String rewardsRedeemFor(String cost);
+
+  /// No description provided for @rewardsCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get rewardsCancel;
+
+  /// No description provided for @rewardsRedeemFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t redeem that right now.'**
+  String get rewardsRedeemFailed;
+
+  /// No description provided for @rewardsVoucherReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your voucher is ready'**
+  String get rewardsVoucherReady;
+
+  /// No description provided for @rewardsVoucherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it when you pay for a booking. It belongs to your account only.'**
+  String get rewardsVoucherHint;
+
+  /// No description provided for @rewardsVoucherCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher code'**
+  String get rewardsVoucherCode;
+
+  /// No description provided for @rewardsCopyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get rewardsCopyCode;
+
+  /// No description provided for @rewardsCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get rewardsCodeCopied;
+
+  /// No description provided for @rewardsValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until {date}'**
+  String rewardsValidUntil(String date);
+
+  /// No description provided for @rewardsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get rewardsDone;
+
+  /// No description provided for @rewardsLifeRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins released'**
+  String get rewardsLifeRelease;
+
+  /// No description provided for @rewardsLifeRedemption.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeemed a reward'**
+  String get rewardsLifeRedemption;
+
+  /// No description provided for @rewardsLifeExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins expired'**
+  String get rewardsLifeExpiry;
+
+  /// No description provided for @rewardsLifeReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins reversed'**
+  String get rewardsLifeReversal;
 }
 
 class _AppLocalizationsDelegate

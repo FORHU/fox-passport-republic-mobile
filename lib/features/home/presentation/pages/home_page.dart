@@ -25,6 +25,7 @@ import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
+import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -423,6 +424,7 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
+        const CoinsChip(trailingGap: 8),
         _RoundButton(
           icon: Icons.notifications_none_rounded,
           tooltip: l10n.notifications,
