@@ -254,6 +254,7 @@ class _BasicsCard extends ConsumerWidget {
         : [
             for (final c in serviceCategories)
               if (c == d.category ||
+                  roles.contains('providerFoxer') ||
                   (performerCategories.contains(c)
                       ? roles.contains('performerFoxer')
                       : roles.contains('serviceFoxer')))

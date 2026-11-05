@@ -1960,6 +1960,12 @@ abstract class AppLocalizations {
   /// **'Seen'**
   String get messageSeen;
 
+  /// No description provided for @messageRoleProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get messageRoleProvider;
+
   /// No description provided for @messageRoleEventFoxer.
   ///
   /// In en, this message translates to:
@@ -4101,6 +4107,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'City'**
   String get studioCity;
+
+  /// No description provided for @studioDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Barangay'**
+  String get studioDistrict;
+
+  /// No description provided for @studioMissingDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Province, city and barangay'**
+  String get studioMissingDistrict;
 
   /// No description provided for @studioState.
   ///
@@ -8757,6 +8775,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Business or trade name'**
   String get roleApplyBusiness;
+
+  /// No description provided for @roleApplyProviderTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear, services, or performances you offer'**
+  String get roleApplyProviderTypes;
 
   /// No description provided for @roleApplyServiceTypes.
   ///

@@ -163,14 +163,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('Where you are'), findsOneWidget);
-    expect(find.text('Baguio'), findsOneWidget);
     expect(find.text('Mia'), findsOneWidget);
     expect(find.text('Edit profile'), findsOneWidget);
     // What the profile used to hold: your followers and the ID check.
     expect(find.text('Followers, following and requests'), findsOneWidget);
     expect(find.text('Verify your identity'), findsOneWidget);
+    expect(find.text('Saved posts'), findsOneWidget);
     expect(find.text('Blocked users'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Where you are'), 200);
+    expect(find.text('Where you are'), findsOneWidget);
+    expect(find.text('Baguio'), findsOneWidget);
 
     // Security and sign out are further down the list.
     await tester.scrollUntilVisible(find.text('Sign out'), 200);

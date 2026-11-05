@@ -10,6 +10,8 @@ VenueDraft _complete() => const VenueDraft(
       capacity: 100,
       address: '1 Main St',
       city: 'Manila',
+      state: 'Metro Manila',
+      district: 'Ermita',
       country: 'Philippines',
       center: _manila,
       photos: [VenuePhoto(fileId: 'f1', url: 'https://x.test/a.png')],
@@ -88,6 +90,30 @@ void main() {
       expect(_complete().readyToSubmit, isTrue);
     });
 
+    test('a Philippine venue needs a province and a barangay', () {
+      const ph = VenueDraft(country: 'Philippines');
+      expect(ph.missing, contains('district'));
+      expect(ph.copyWith(state: 'Metro Manila').missing, contains('district'));
+      expect(ph.copyWith(district: 'Ermita').missing, contains('district'));
+      expect(
+        ph.copyWith(state: 'Metro Manila', district: 'Ermita').missing,
+        isNot(contains('district')),
+      );
+      // Elsewhere the barangay is not asked for.
+      expect(
+        const VenueDraft(country: 'Japan').missing,
+        isNot(contains('district')),
+      );
+    });
+
+    test('sends the barangay as district', () {
+      expect(_complete().toJson()['district'], 'Ermita');
+      expect(
+        const VenueDraft(country: 'Japan').toJson().containsKey('district'),
+        isFalse,
+      );
+    });
+
     test('sends photo file ids, not urls, and the boundary as a ring', () {
       final json = _complete().toJson(status: 'pending');
 
@@ -102,7 +128,10 @@ void main() {
     });
 
     test('leaves the state out when blank', () {
-      expect(_complete().toJson().containsKey('state'), isFalse);
+      expect(
+        _complete().copyWith(state: '').toJson().containsKey('state'),
+        isFalse,
+      );
       expect(
         _complete().copyWith(state: 'NCR').toJson()['state'],
         'NCR',

@@ -1001,6 +1001,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageSeen => 'Seen';
 
   @override
+  String get messageRoleProvider => 'Provider';
+
+  @override
   String get messageRoleEventFoxer => 'Event Foxer';
 
   @override
@@ -2247,6 +2250,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studioCity => 'City';
+
+  @override
+  String get studioDistrict => 'Barangay';
+
+  @override
+  String get studioMissingDistrict => 'Province, city and barangay';
 
   @override
   String get studioState => 'State or province';
@@ -4850,6 +4859,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleApplyBusiness => 'Business or trade name';
+
+  @override
+  String get roleApplyProviderTypes =>
+      'Gear, services, or performances you offer';
 
   @override
   String get roleApplyServiceTypes => 'Services you offer';

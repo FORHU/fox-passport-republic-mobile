@@ -44,6 +44,29 @@ const _businessDocuments =
 
 const roleCatalog = <RoleCatalogEntry>[
   RoleCatalogEntry(
+    type: 'provider',
+    roleType: 'providerFoxer',
+    href: '/foxer/apply?type=provider',
+    color: AppColors.roleProvider,
+    icon: Icons.build_rounded,
+    title: 'Provider',
+    desc: 'Rent out equipment, provide staffing, or perform live.',
+    responsibilities: [
+      'List equipment, professional services, or performances with your own '
+          'packages and pricing.',
+      'Get booked directly by citizens, or bid on open supplier slots in '
+          'published events.',
+      'Message clients and manage your listings, bookings, and payouts from '
+          'your dashboard.',
+    ],
+    requirements: [
+      'Your business or trade name and what you offer (gear, service, or '
+          'performance)',
+      'Your specializations, years of experience, or portfolio links',
+      _businessDocuments,
+    ],
+  ),
+  RoleCatalogEntry(
     type: 'service',
     roleType: 'serviceFoxer',
     href: '/foxer/apply?type=service',

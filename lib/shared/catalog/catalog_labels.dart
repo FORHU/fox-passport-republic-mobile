@@ -62,6 +62,7 @@ String spaceTypeLabel(AppLocalizations l10n, String tag) => switch (tag) {
 String? foxerRoleLabel(AppLocalizations l10n, List<String> roles) {
   for (final role in roles) {
     final label = switch (role) {
+      'providerFoxer' => l10n.messageRoleProvider,
       'eventFoxer' => l10n.messageRoleEventFoxer,
       'venueFoxer' => l10n.messageRoleVenueFoxer,
       'gearFoxer' => l10n.messageRoleGearFoxer,

@@ -28,6 +28,7 @@ class VenueStudioState {
     this.countries = const [],
     this.states = const [],
     this.cities = const [],
+    this.districts = const [],
     this.countryCode,
     this.stateCode,
     this.locating = false,
@@ -58,6 +59,9 @@ class VenueStudioState {
   final List<PlaceOption> countries;
   final List<PlaceOption> states;
   final List<String> cities;
+
+  /// The barangays of the chosen Philippine city.
+  final List<String> districts;
   final String? countryCode;
   final String? stateCode;
 
@@ -95,6 +99,7 @@ class VenueStudioState {
     List<PlaceOption>? countries,
     List<PlaceOption>? states,
     List<String>? cities,
+    List<String>? districts,
     String? countryCode,
     String? stateCode,
     bool clearStateCode = false,
@@ -117,6 +122,7 @@ class VenueStudioState {
         countries: countries ?? this.countries,
         states: states ?? this.states,
         cities: cities ?? this.cities,
+        districts: districts ?? this.districts,
         countryCode: countryCode ?? this.countryCode,
         stateCode: clearStateCode ? null : stateCode ?? this.stateCode,
         locating: locating ?? this.locating,
@@ -218,9 +224,33 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       final all = await _repo.cities(countryCode, stateCode: stateCode);
       if (!ref.mounted) return;
       state = state.copyWith(cities: all);
+      if (state.draft.city.isNotEmpty) await _loadDistricts();
     } on Object {
       if (!ref.mounted) return;
       state = state.copyWith(cities: const <String>[]);
+    }
+  }
+
+  /// Loads the barangays of the chosen city, for a Philippine venue. Other
+  /// countries have no list, and the barangay stays a free text field.
+  Future<void> _loadDistricts() async {
+    final code = state.countryCode;
+    final stateCode = state.stateCode;
+    final city = state.draft.city;
+    if (code == null ||
+        stateCode == null ||
+        city.isEmpty ||
+        code.toUpperCase() != 'PH') {
+      state = state.copyWith(districts: const <String>[]);
+      return;
+    }
+    try {
+      final all = await _repo.barangays(code, stateCode, city);
+      if (!ref.mounted || state.draft.city != city) return;
+      state = state.copyWith(districts: all);
+    } on Object {
+      if (!ref.mounted) return;
+      state = state.copyWith(districts: const <String>[]);
     }
   }
 
@@ -230,12 +260,14 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       draft: state.draft.copyWith(
         country: country.name,
         state: '',
+        district: '',
         city: '',
       ),
       countryCode: country.code,
       clearStateCode: true,
       states: const <PlaceOption>[],
       cities: const <String>[],
+      districts: const <String>[],
       clearError: true,
     );
     await _loadStates(country.code);
@@ -243,16 +275,29 @@ class VenueStudioController extends Notifier<VenueStudioState> {
 
   Future<void> pickState(PlaceOption chosen) async {
     state = state.copyWith(
-      draft: state.draft.copyWith(state: chosen.name, city: ''),
+      draft: state.draft.copyWith(state: chosen.name, city: '', district: ''),
       stateCode: chosen.code,
       cities: const <String>[],
+      districts: const <String>[],
       clearError: true,
     );
     final code = state.countryCode;
     if (code != null) await _loadCities(code, chosen.code);
   }
 
-  void pickCity(String city) => edit((d) => d.copyWith(city: city));
+  /// Chooses a city: the barangay starts over.
+  void pickCity(String city) {
+    if (city == state.draft.city) return;
+    state = state.copyWith(
+      draft: state.draft.copyWith(city: city, district: ''),
+      districts: const <String>[],
+      clearError: true,
+    );
+    unawaited(_loadDistricts());
+  }
+
+  void pickDistrict(String district) =>
+      edit((d) => d.copyWith(district: district));
 
   /// Puts the pin where the phone is and fills in the town and country.
   Future<void> useMyLocation() async {

@@ -86,7 +86,8 @@ class ProviderOverviewPage extends ConsumerWidget {
     // held: a Performer who is not also a Talent sees the Performer wording.
     final performerOnly = !kind.isGear &&
         roles.contains('performerFoxer') &&
-        !roles.contains('serviceFoxer');
+        !roles.contains('serviceFoxer') &&
+        !roles.contains('providerFoxer');
     final addLabel = kind.isGear
         ? l10n.providerAddGear
         : performerOnly
