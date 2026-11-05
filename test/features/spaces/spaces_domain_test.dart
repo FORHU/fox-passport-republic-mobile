@@ -65,6 +65,20 @@ void main() {
       }
     });
 
+    test('a consolidated Provider opens both Gear and Services spaces', () {
+      expect(
+        AppSpace.availableTo(const ['providerFoxer']),
+        [AppSpace.citizen, AppSpace.gear, AppSpace.services],
+      );
+    });
+
+    test('a consolidated Provider opens both Gear and Services spaces', () {
+      expect(
+        AppSpace.availableTo(const ['providerFoxer']),
+        [AppSpace.citizen, AppSpace.gear, AppSpace.services],
+      );
+    });
+
     test('an Investor opens no space of their own yet', () {
       expect(AppSpace.availableTo(const ['investor']), [AppSpace.citizen]);
     });

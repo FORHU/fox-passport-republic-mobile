@@ -73,7 +73,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (d.isGear || d.isVenue)
+                if (d.isGear || d.isVenue || d.isProvider)
                   _Field(
                     label: d.isVenue
                         ? l10n.roleApplyVenueName
@@ -140,6 +140,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                 ] else
                   _Field(
                     label: switch (widget.roleType) {
+                      'providerFoxer' => l10n.roleApplyProviderTypes,
                       'gearFoxer' => l10n.roleApplyGearTypes,
                       'performerFoxer' => l10n.roleApplyPerformerTypes,
                       _ => l10n.roleApplyServiceTypes,
@@ -149,10 +150,11 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(types: v)),
                   ),
-                if (!d.isGear &&
-                    !d.isVenue &&
-                    !d.isEvent &&
-                    !d.isOrganizer) ...[
+                if (d.isProvider ||
+                    (!d.isGear &&
+                        !d.isVenue &&
+                        !d.isEvent &&
+                        !d.isOrganizer)) ...[
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -183,7 +185,8 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!d.isGear && !d.isVenue && !d.isEvent && !d.isOrganizer)
+                if (d.isProvider ||
+                    (!d.isGear && !d.isVenue && !d.isEvent && !d.isOrganizer))
                   _Field(
                     label: l10n.roleApplyNbiNumber,
                     value: d.nbiNumber,
