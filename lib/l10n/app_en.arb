@@ -1882,5 +1882,7 @@
   "rewardsLifeRelease": "Coins released",
   "rewardsLifeRedemption": "Redeemed a reward",
   "rewardsLifeExpiry": "Coins expired",
-  "rewardsLifeReversal": "Coins reversed"
+  "rewardsLifeReversal": "Coins reversed",
+  "rewardsRankLevel": "{rank} · Level {level}",
+  "@rewardsRankLevel": {"placeholders":{"rank":{"type":"String"},"level":{"type":"int"}}}
 }

@@ -10275,6 +10275,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coins reversed'**
   String get rewardsLifeReversal;
+
+  /// No description provided for @rewardsRankLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{rank} · Level {level}'**
+  String rewardsRankLevel(String rank, int level);
 }
 
 class _AppLocalizationsDelegate
