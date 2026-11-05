@@ -125,6 +125,19 @@ void main() {
       verify(() => api.get('/rewards/me')).called(1);
     });
 
+    test('asks for one XP path when told which', () async {
+      when(
+        () => api.get(ApiEndpoints.rewardsMe, query: {'path': 'gearFoxer'}),
+      ).thenAnswer((_) async => {'success': true, 'data': _walletJson()});
+
+      final wallet = await repo.wallet(path: 'gearFoxer');
+
+      expect(wallet.rank, 'Explorer');
+      verify(
+        () => api.get('/rewards/me', query: {'path': 'gearFoxer'}),
+      ).called(1);
+    });
+
     test('a wallet answer without data is an error', () async {
       when(() => api.get(ApiEndpoints.rewardsMe))
           .thenAnswer((_) async => {'success': true});

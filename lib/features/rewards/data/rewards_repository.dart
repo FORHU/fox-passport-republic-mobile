@@ -12,8 +12,14 @@ class RewardsRepository {
 
   final ApiService _api;
 
-  Future<WalletSummary> wallet() async {
-    final data = _data(await _api.get(ApiEndpoints.rewardsMe));
+  /// The wallet. [path] is the XP path whose level and rank are wanted, as the
+  /// API names it (`venueFoxer`, `eventFoxer`, ...); the Coins are the
+  /// person's one balance whichever it is. Left out, it is the citizen's own.
+  Future<WalletSummary> wallet({String? path}) async {
+    final body = path == null
+        ? await _api.get(ApiEndpoints.rewardsMe)
+        : await _api.get(ApiEndpoints.rewardsMe, query: {'path': path});
+    final data = _data(body);
     if (data == null) {
       throw const FormatException('Wallet response is missing data');
     }
@@ -64,4 +70,13 @@ final FutureProvider<WalletSummary> walletProvider =
 final FutureProvider<List<RewardItem>> rewardCatalogProvider =
     FutureProvider.autoDispose<List<RewardItem>>(
   (ref) => ref.watch(rewardsRepositoryProvider).catalog(),
+);
+
+/// The wallet as seen from one XP path, for a Foxer space: its level and rank
+/// are that role's, and the Coins are the same balance.
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final walletForPathProvider =
+    FutureProvider.autoDispose.family<WalletSummary, String>(
+  (ref, path) => ref.watch(rewardsRepositoryProvider).wallet(path: path),
 );

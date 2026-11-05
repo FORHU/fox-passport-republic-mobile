@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
@@ -109,7 +110,7 @@ class EventOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            const OverviewGreeting(),
+            const OverviewGreeting(space: AppSpace.event),
             const SizedBox(height: 4),
             tourTarget(
               'dash-actions',

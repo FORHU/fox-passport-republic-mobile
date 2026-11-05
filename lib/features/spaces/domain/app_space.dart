@@ -51,6 +51,22 @@ enum AppSpace {
   bool isAvailableTo(List<String> roles) =>
       requiredRoles.isEmpty || requiredRoles.any(roles.contains);
 
+  /// The XP path this space's work lands on, as the API names it, for a person
+  /// holding [roles]. A Performer who is not also a Talent works the Services
+  /// space on the performer path.
+  String xpPath(List<String> roles) => switch (this) {
+        citizen => 'user',
+        venue => 'venueFoxer',
+        event => 'eventFoxer',
+        gear => 'gearFoxer',
+        services => roles.contains('performerFoxer') &&
+                !roles.contains('serviceFoxer') &&
+                !roles.contains('providerFoxer')
+            ? 'performerFoxer'
+            : 'serviceFoxer',
+        organizer => 'organizer',
+      };
+
   /// The spaces a person with [roles] can switch between, Citizen first.
   static List<AppSpace> availableTo(List<String> roles) => [
         for (final space in values)
