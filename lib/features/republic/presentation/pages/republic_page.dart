@@ -7,6 +7,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/republic/presentation/pages/videos_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
@@ -36,6 +37,14 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   final _search = TextEditingController();
   bool _searching = false;
 
+  // The tab's two views, side by side: Posts (0) and Videos (1).
+  final _views = PageController();
+  int _view = 0;
+
+  /// The video the Videos view opens at, when it was opened from a post or a
+  /// tile; null opens at the first one.
+  String? _videoPostId;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +55,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   void dispose() {
     _scroll.dispose();
     _search.dispose();
+    _views.dispose();
     super.dispose();
   }
 
@@ -120,11 +130,24 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     }
   }
 
-  /// Opens the full-screen videos from the open tab, at one post if given.
+  /// Shows the Videos view, at one post if given.
   void _openVideos({String? postId}) {
-    unawaited(
-      context.push(RouteNames.republicVideosAt(tab: _tab, postId: postId)),
-    );
+    setState(() => _videoPostId = postId);
+    unawaited(_showView(1));
+  }
+
+  Future<void> _showView(int view) => _views.animateToPage(
+        view,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+
+  void _onViewChanged(int view) {
+    setState(() {
+      _view = view;
+      // Back on Posts, the next swipe to Videos starts at the first one.
+      if (view == 0) _videoPostId = null;
+    });
   }
 
   String _tabLabel(String? tab) {
@@ -139,194 +162,293 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final feed = ref.watch(feedControllerProvider(_tab));
     final term = ref.watch(feedSearchProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            Padding(
+      body: Stack(
+        children: [
+          PageView(
+            controller: _views,
+            onPageChanged: _onViewChanged,
+            children: [
+              _KeepAlive(
+                child: SafeArea(
+                  bottom: false,
+                  child: _posts(context, feed, term),
+                ),
+              ),
+              // Dropped when swiped away, so it stops playing.
+              VideosPage(tab: _tab, initialPostId: _videoPostId),
+            ],
+          ),
+          // Over both views, so it stays put as they slide.
+          SafeArea(
+            bottom: false,
+            child: Padding(
               padding: EdgeInsets.fromLTRB(
-                Navigator.canPop(context) ? 8 : 16,
+                Navigator.canPop(context) ? 56 : 16,
                 8,
-                16,
+                0,
                 0,
               ),
-              child: Row(
-                children: [
-                  // A tab now; the arrow only shows if it was pushed.
-                  if (Navigator.canPop(context))
-                    IconButton(
-                      tooltip:
-                          MaterialLocalizations.of(context).backButtonTooltip,
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back_rounded),
-                    ),
-                  Expanded(
-                    child: Text(
-                      l10n.republicTitle,
-                      style: AppTypography.display(size: 26),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: l10n.republicVideos,
-                    onPressed: _openVideos,
-                    icon:
-                        const Icon(Icons.play_circle_outline_rounded, size: 28),
-                  ),
-                  IconButton(
-                    tooltip: l10n.republicSearchHint,
-                    onPressed: () {
-                      if (_searching && _search.text.isNotEmpty) {
-                        _clearSearch();
-                      }
-                      setState(() => _searching = !_searching);
-                    },
-                    // The same magnifier open or shut: it lights up while the
-                    // search field is showing.
-                    icon: Icon(
-                      Icons.search_rounded,
-                      size: 28,
-                      color: _searching ? AppColors.accent : null,
-                    ),
-                  ),
-                ],
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: _ViewSwitch(selected: _view, onSelect: _showView),
               ),
             ),
-            if (_searching)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: TextField(
-                  controller: _search,
-                  autofocus: true,
-                  textInputAction: TextInputAction.search,
-                  onSubmitted: _applySearch,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    hintText: l10n.republicSearchHint,
-                    suffixIcon: IconButton(
-                      tooltip: l10n.republicClearSearch,
-                      onPressed: _clearSearch,
-                      icon: const Icon(Icons.close_rounded),
-                    ),
-                  ),
-                ),
-              ),
-            _FeedTabs(
-              tabs: _tabs,
-              selected: _tab,
-              label: _tabLabel,
-              onSelect: (t) => setState(() => _tab = t),
-            ),
-            Expanded(
-              child: feed.when(
-                loading: () => const FeedSkeleton(),
-                error: (_, __) => AppStateView(
-                  kind: AppStateKind.error,
-                  title: l10n.apiLoadFailed,
-                  actionLabel: l10n.retry,
-                  onAction: () => ref.invalidate(feedControllerProvider(_tab)),
-                ),
-                data: (state) => RefreshIndicator(
-                  color: AppColors.accent,
-                  onRefresh: () =>
-                      ref.read(feedControllerProvider(_tab).notifier).refresh(),
-                  // The composer is the first row, then the posts, each one
-                  // full width and split by a thick rule, like a feed.
-                  child: ListView.separated(
-                    controller: _scroll,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(bottom: 24),
-                    itemCount: state.posts.length + 2,
-                    separatorBuilder: (_, __) => const Divider(
-                      height: 8,
-                      thickness: 8,
-                      color: AppColors.surface,
-                    ),
-                    itemBuilder: (context, i) {
-                      if (i == 0) {
-                        return Column(
-                          children: [
-                            _ComposerRow(onTap: _compose),
-                            // Videos right under the composer, but not while
-                            // searching: the words are what is wanted then.
-                            if (term.isEmpty)
-                              VideosShelf(
-                                posts: state.posts,
-                                onOpen: (p) => _openVideos(postId: p.id),
-                                onSeeAll: _openVideos,
-                              ),
-                          ],
-                        );
-                      }
-                      if (i == state.posts.length + 1) {
-                        return state.posts.isEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(32),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      term.isEmpty
-                                          ? l10n.republicEmpty
-                                          : l10n.republicSearchEmpty(term),
-                                      textAlign: TextAlign.center,
-                                      style: AppTypography.body(
-                                        color: AppColors.textMuted,
-                                      ),
-                                    ),
-                                    if (term.isNotEmpty)
-                                      TextButton(
-                                        onPressed: _clearSearch,
-                                        child: Text(l10n.republicClearSearch),
-                                      ),
-                                  ],
-                                ),
-                              )
-                            : _Footer(
-                                state: state,
-                                onRetry: () => unawaited(
-                                  ref
-                                      .read(
-                                        feedControllerProvider(_tab).notifier,
-                                      )
-                                      .loadMore(),
-                                ),
-                              );
-                      }
-                      final post = state.posts[i - 1];
-                      return PostCard(
-                        post: post,
-                        onLike: () => unawaited(_actions.like(post.id)),
-                        onComments: () => unawaited(_actions.comments(post.id)),
-                        onMore: () => unawaited(_actions.menu(post)),
-                        onAuthor: () => unawaited(
-                          context.push(RouteNames.citizen(post.author.id)),
-                        ),
-                        onReact: (r) => unawaited(_actions.react(post.id, r)),
-                        onReactions: () =>
-                            unawaited(_actions.reactions(post.id)),
-                        myUserId: ref.read(authControllerProvider).user?.id,
-                        onVote: (o) => unawaited(_actions.vote(post.id, o)),
-                        onOpenListing: () => _actions.openListing(post),
-                        onMessage: () =>
-                            unawaited(_actions.messageAuthor(post)),
-                        onShare: () => unawaited(_actions.share(post)),
-                        onHashtag: _searchFor,
-                        onOpenVideo: () => _openVideos(postId: post.id),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  /// The Posts view: the header, the sections and the feed.
+  Widget _posts(BuildContext context, AsyncValue<FeedState> feed, String term) {
+    final l10n = context.l10n;
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            Navigator.canPop(context) ? 8 : 16,
+            8,
+            16,
+            0,
+          ),
+          child: Row(
+            children: [
+              // A tab now; the arrow only shows if it was pushed.
+              if (Navigator.canPop(context))
+                IconButton(
+                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back_rounded),
+                ),
+              // Where the Posts | Videos switch floats.
+              const Expanded(child: SizedBox(height: 48)),
+              IconButton(
+                tooltip: l10n.republicSearchHint,
+                onPressed: () {
+                  if (_searching && _search.text.isNotEmpty) {
+                    _clearSearch();
+                  }
+                  setState(() => _searching = !_searching);
+                },
+                // The same magnifier open or shut: it lights up while the
+                // search field is showing.
+                icon: Icon(
+                  Icons.search_rounded,
+                  size: 28,
+                  color: _searching ? AppColors.accent : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_searching)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: TextField(
+              controller: _search,
+              autofocus: true,
+              textInputAction: TextInputAction.search,
+              onSubmitted: _applySearch,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search_rounded),
+                hintText: l10n.republicSearchHint,
+                suffixIcon: IconButton(
+                  tooltip: l10n.republicClearSearch,
+                  onPressed: _clearSearch,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ),
+            ),
+          ),
+        _FeedTabs(
+          tabs: _tabs,
+          selected: _tab,
+          label: _tabLabel,
+          onSelect: (t) => setState(() => _tab = t),
+        ),
+        Expanded(
+          child: feed.when(
+            loading: () => const FeedSkeleton(),
+            error: (_, __) => AppStateView(
+              kind: AppStateKind.error,
+              title: l10n.apiLoadFailed,
+              actionLabel: l10n.retry,
+              onAction: () => ref.invalidate(feedControllerProvider(_tab)),
+            ),
+            data: (state) => RefreshIndicator(
+              color: AppColors.accent,
+              onRefresh: () =>
+                  ref.read(feedControllerProvider(_tab).notifier).refresh(),
+              // The composer is the first row, then the posts, each one
+              // full width and split by a thick rule, like a feed.
+              child: ListView.separated(
+                controller: _scroll,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 24),
+                itemCount: state.posts.length + 2,
+                separatorBuilder: (_, __) => const Divider(
+                  height: 8,
+                  thickness: 8,
+                  color: AppColors.surface,
+                ),
+                itemBuilder: (context, i) {
+                  if (i == 0) {
+                    return Column(
+                      children: [
+                        _ComposerRow(onTap: _compose),
+                        // Videos right under the composer, but not while
+                        // searching: the words are what is wanted then.
+                        if (term.isEmpty)
+                          VideosShelf(
+                            posts: state.posts,
+                            onOpen: (p) => _openVideos(postId: p.id),
+                            onSeeAll: _openVideos,
+                          ),
+                      ],
+                    );
+                  }
+                  if (i == state.posts.length + 1) {
+                    return state.posts.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              children: [
+                                Text(
+                                  term.isEmpty
+                                      ? l10n.republicEmpty
+                                      : l10n.republicSearchEmpty(term),
+                                  textAlign: TextAlign.center,
+                                  style: AppTypography.body(
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                                if (term.isNotEmpty)
+                                  TextButton(
+                                    onPressed: _clearSearch,
+                                    child: Text(l10n.republicClearSearch),
+                                  ),
+                              ],
+                            ),
+                          )
+                        : _Footer(
+                            state: state,
+                            onRetry: () => unawaited(
+                              ref
+                                  .read(
+                                    feedControllerProvider(_tab).notifier,
+                                  )
+                                  .loadMore(),
+                            ),
+                          );
+                  }
+                  final post = state.posts[i - 1];
+                  return PostCard(
+                    post: post,
+                    onLike: () => unawaited(_actions.like(post.id)),
+                    onComments: () => unawaited(_actions.comments(post.id)),
+                    onMore: () => unawaited(_actions.menu(post)),
+                    onAuthor: () => unawaited(
+                      context.push(RouteNames.citizen(post.author.id)),
+                    ),
+                    onReact: (r) => unawaited(_actions.react(post.id, r)),
+                    onReactions: () => unawaited(_actions.reactions(post.id)),
+                    myUserId: ref.read(authControllerProvider).user?.id,
+                    onVote: (o) => unawaited(_actions.vote(post.id, o)),
+                    onOpenListing: () => _actions.openListing(post),
+                    onMessage: () => unawaited(_actions.messageAuthor(post)),
+                    onShare: () => unawaited(_actions.share(post)),
+                    onHashtag: _searchFor,
+                    onOpenVideo: () => _openVideos(postId: post.id),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Posts | Videos, the two views of the tab, as headline text with a line
+/// under the open one.
+class _ViewSwitch extends StatelessWidget {
+  const _ViewSwitch({required this.selected, required this.onSelect});
+
+  final int selected;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final labels = [l10n.republicViewPosts, l10n.republicVideos];
+    return SizedBox(
+      height: 48,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < labels.length; i++)
+            Semantics(
+              button: true,
+              selected: i == selected,
+              child: InkWell(
+                onTap: () => onSelect(i),
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 3,
+                        color: i == selected
+                            ? AppColors.accent
+                            : Colors.transparent,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    labels[i],
+                    style: AppTypography.display(
+                      size: 22,
+                      color: i == selected
+                          ? AppColors.textPrimary
+                          : AppColors.textMuted,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Keeps the Posts view built while the Videos view is showing, so its scroll
+/// position and search are still there on the way back.
+class _KeepAlive extends StatefulWidget {
+  const _KeepAlive({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlive> createState() => _KeepAliveState();
+}
+
+class _KeepAliveState extends State<_KeepAlive>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
 

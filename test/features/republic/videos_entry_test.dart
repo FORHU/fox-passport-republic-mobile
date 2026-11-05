@@ -3,19 +3,51 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/republic/data/reel_player.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
+import 'package:flutter_template/features/republic/presentation/pages/videos_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/videos_shelf.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
-import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:video_player/video_player.dart';
 
 class _MockApi extends Mock implements ApiService {}
+
+/// A player that plays nothing: it is ready at once.
+class _FakePlayer extends VideoPlayerController {
+  _FakePlayer(String url) : super.networkUrl(Uri.parse(url));
+
+  @override
+  Future<void> initialize() async {
+    value = value.copyWith(
+      isInitialized: true,
+      size: const Size(720, 1280),
+      duration: const Duration(seconds: 30),
+    );
+  }
+
+  @override
+  Future<void> play() async => value = value.copyWith(isPlaying: true);
+
+  @override
+  Future<void> pause() async => value = value.copyWith(isPlaying: false);
+
+  @override
+  Future<void> setLooping(bool looping) async {}
+
+  @override
+  Future<void> setVolume(double volume) async {}
+
+  @override
+  // The real one tells the platform to let go of a texture there is not.
+  // ignore: must_call_super
+  Future<void> dispose() async {}
+}
 
 class _Session extends AuthController {
   @override
@@ -126,15 +158,12 @@ void main() {
 
   group('the Republic', () {
     late _MockApi api;
-    late GoRouter router;
-    String? lastLocation;
 
     Future<void> open(
       WidgetTester tester,
       List<Map<String, dynamic>> posts,
     ) async {
       api = _MockApi();
-      lastLocation = null;
       when(() => api.get(any(), query: any(named: 'query'))).thenAnswer(
         (_) async => {'data': posts, 'nextCursor': null},
       );
@@ -142,31 +171,19 @@ void main() {
         ..physicalSize = const Size(900, 2400)
         ..devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      router = GoRouter(
-        routes: [
-          GoRoute(path: '/', builder: (_, __) => const RepublicPage()),
-          GoRoute(
-            path: RouteNames.republicVideos,
-            builder: (_, state) {
-              lastLocation = state.uri.toString();
-              return const Scaffold(body: Text('VIDEOS PAGE'));
-            },
-          ),
-        ],
-      );
-      addTearDown(router.dispose);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             republicRepositoryProvider
                 .overrideWithValue(RepublicRepository(api)),
             authControllerProvider.overrideWith(_Session.new),
+            reelPlayerFactoryProvider.overrideWithValue(_FakePlayer.new),
           ],
-          child: MaterialApp.router(
-            routerConfig: router,
+          child: MaterialApp(
             theme: AppTheme.dark,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
+            home: const RepublicPage(),
           ),
         ),
       );
@@ -178,6 +195,9 @@ void main() {
       _post('2', 'Ben'),
       _post('3', 'Cy', media: 'https://cdn.test/3.mp4'),
     ];
+
+    Finder inVideos(Finder what) =>
+        find.descendant(of: find.byType(VideosPage), matching: what);
 
     testWidgets('lists the videos in a shelf under the composer', (
       tester,
@@ -194,7 +214,18 @@ void main() {
       expect(find.text('See all'), findsNothing);
     });
 
-    testWidgets('a tile opens the videos page at that video', (tester) async {
+    testWidgets('starts on Posts, with a Posts | Videos switch', (
+      tester,
+    ) async {
+      await open(tester, posts);
+
+      expect(find.text('Posts'), findsOneWidget);
+      expect(find.text('Videos'), findsWidgets);
+      expect(find.byType(VideosPage), findsNothing);
+      expect(find.byType(PostCard), findsWidgets);
+    });
+
+    testWidgets('a tile opens the Videos view at that video', (tester) async {
       await open(tester, posts);
 
       await tester.tap(
@@ -205,27 +236,46 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('VIDEOS PAGE'), findsOneWidget);
-      expect(lastLocation, '/republic/videos?post=3');
+      expect(find.byType(VideosPage), findsOneWidget);
+      expect(inVideos(find.text('Cy')), findsOneWidget);
+      expect(inVideos(find.text('Ada')), findsNothing);
     });
 
-    testWidgets('See all and the header button open the videos', (
+    testWidgets('See all and the switch open Videos, Posts comes back', (
       tester,
     ) async {
       await open(tester, posts);
 
       await tester.tap(find.text('See all'));
       await tester.pumpAndSettle();
-      expect(lastLocation, '/republic/videos');
+      expect(inVideos(find.text('Ada')), findsOneWidget);
 
-      router.pop();
+      await tester.tap(find.text('Posts'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Videos'));
+      expect(find.byType(VideosPage), findsNothing);
+
+      await tester.tap(find.widgetWithText(InkWell, 'Videos'));
       await tester.pumpAndSettle();
-      expect(lastLocation, '/republic/videos');
+      expect(find.byType(VideosPage), findsOneWidget);
     });
 
-    testWidgets('the video inside a post opens the videos page at it', (
+    testWidgets('swiping sideways changes view', (tester) async {
+      await open(tester, posts);
+
+      await tester.fling(
+        find.byType(PageView).first,
+        const Offset(-600, 0),
+        1500,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(VideosPage), findsOneWidget);
+
+      await tester.fling(find.byType(VideosPage), const Offset(600, 0), 1500);
+      await tester.pumpAndSettle();
+      expect(find.byType(VideosPage), findsNothing);
+    });
+
+    testWidgets('the video inside a post opens the Videos view at it', (
       tester,
     ) async {
       await open(tester, posts);
@@ -238,8 +288,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('VIDEOS PAGE'), findsOneWidget);
-      expect(lastLocation, '/republic/videos?post=1');
+      expect(inVideos(find.text('Ada')), findsOneWidget);
     });
 
     testWidgets('the shelf steps aside while searching', (tester) async {

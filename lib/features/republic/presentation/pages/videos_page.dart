@@ -12,11 +12,12 @@ import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
 /// The Republic's videos, one to a screen, swiped up and down like Reels or
-/// TikTok. The server shrinks every upload to 9:16, 720x1280, so a clip fills
+/// TikTok. It is the Republic tab's second view (Posts | Videos), so it has
+/// no back arrow and the bottom bar stays. The server shrinks every upload to
+/// 9:16, 720x1280, so a clip fills
 /// the phone. The one on screen plays (muted at first, looping); the next and
 /// the last are got ready so a swipe does not wait.
 class VideosPage extends ConsumerStatefulWidget {
@@ -48,6 +49,10 @@ class _VideosPageState extends ConsumerState<VideosPage>
   bool _userPaused = false;
   bool _appActive = true;
 
+  /// False while the Republic's tab is behind another bottom tab: the tabs
+  /// are kept alive side by side, so the video would play on unseen.
+  bool _tabActive = true;
+
   /// How many times the page asked for more because it had no video to show.
   int _emptyLoads = 0;
 
@@ -55,6 +60,15 @@ class _VideosPageState extends ConsumerState<VideosPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final active = TickerMode.valuesOf(context).enabled;
+    if (active == _tabActive) return;
+    _tabActive = active;
+    _applyPlayback();
   }
 
   @override
@@ -130,7 +144,8 @@ class _VideosPageState extends ConsumerState<VideosPage>
     for (final entry in _players.entries) {
       final player = entry.value;
       if (!player.value.isInitialized) continue;
-      final play = entry.key == current && !_userPaused && _appActive;
+      final play =
+          entry.key == current && !_userPaused && _appActive && _tabActive;
       if (play && !player.value.isPlaying) {
         unawaited(player.play());
       } else if (!play && player.value.isPlaying) {
@@ -272,7 +287,8 @@ class _VideosPageState extends ConsumerState<VideosPage>
   }
 }
 
-/// A plain page with a back arrow, for a loading, empty or failed state.
+/// A plain page for a loading, empty or failed state, clear of the switch
+/// the Republic floats over the top.
 class _Plain extends StatelessWidget {
   const _Plain({required this.child});
 
@@ -280,19 +296,9 @@ class _Plain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-        child: Stack(
-          children: [
-            Positioned.fill(child: child),
-            Positioned(
-              left: 4,
-              top: 4,
-              child: IconButton(
-                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back_rounded),
-              ),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.only(top: 56),
+          child: child,
         ),
       );
 }
@@ -397,12 +403,6 @@ class _ReelPage extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Row(
                 children: [
-                  IconButton(
-                    tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
                   const Spacer(),
                   IconButton(
                     tooltip: muted

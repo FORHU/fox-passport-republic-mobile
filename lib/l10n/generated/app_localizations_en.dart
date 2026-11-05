@@ -3816,6 +3816,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicTitle => 'Republic';
 
   @override
+  String get republicViewPosts => 'Posts';
+
+  @override
   String get republicVideos => 'Videos';
 
   @override
