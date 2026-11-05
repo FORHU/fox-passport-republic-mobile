@@ -145,7 +145,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Republic'), findsOneWidget);
+    expect(find.text('Posts'), findsOneWidget);
     expect(find.text("What's on your mind?"), findsOneWidget);
     expect(find.text('Post 1'), findsOneWidget);
     expect(find.text('Post 2'), findsOneWidget);

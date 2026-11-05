@@ -22,7 +22,10 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 /// venue spotlight, what goes with it. Pops the new post's id once it is
 /// posted (empty if it came back without one).
 class ComposePostPage extends ConsumerStatefulWidget {
-  const ComposePostPage({super.key});
+  const ComposePostPage({this.startWithVideo = false, super.key});
+
+  /// Opens the video picker at once, for "post a video" from the Videos view.
+  final bool startWithVideo;
 
   @override
   ConsumerState<ComposePostPage> createState() => _ComposePostPageState();
@@ -60,6 +63,11 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.startWithVideo) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_addVideo());
+      });
+    }
     final userId = ref.read(authControllerProvider).user?.id;
     if (userId == null) return;
     try {

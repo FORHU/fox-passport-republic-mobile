@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/feed_video.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -79,10 +80,14 @@ class PostCard extends StatefulWidget {
     this.onMessage,
     this.onShare,
     this.onHashtag,
+    this.onOpenVideo,
     super.key,
   });
 
   final Post post;
+
+  /// The post's video was tapped: open the videos page at it.
+  final VoidCallback? onOpenVideo;
   final VoidCallback onLike;
   final VoidCallback onComments;
 
@@ -225,7 +230,20 @@ class _PostCardState extends State<PostCard> {
           ),
           if (post.mediaUrls.isNotEmpty) ...[
             const SizedBox(height: 10),
-            PostMedia(urls: post.mediaUrls),
+            PostMedia(
+              urls: post.mediaUrls,
+              onVideo: widget.onOpenVideo == null
+                  ? null
+                  : (_) => widget.onOpenVideo!(),
+              // A lone video plays in the feed as it scrolls into view.
+              singleVideoBuilder: widget.onOpenVideo == null
+                  ? null
+                  : (url) => FeedVideo(
+                        post: post,
+                        url: url,
+                        onOpen: widget.onOpenVideo!,
+                      ),
+            ),
           ],
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
