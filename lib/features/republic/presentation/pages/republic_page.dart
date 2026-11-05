@@ -202,12 +202,12 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
           ),
           // Over both views, so it stays put as they slide. It keeps clear of
           // the header buttons on each side (a back arrow, or filter and
-          // search): 100 is room for two buttons, and it shrinks to fit
-          // rather than run under them on a narrow phone.
+          // search): 108 is room for two buttons and a gap, and it shrinks
+          // to fit rather than run under them on a narrow phone.
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.only(left: 100, top: 8, right: 100),
+              padding: const EdgeInsets.only(left: 108, top: 8, right: 108),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: FittedBox(
@@ -230,7 +230,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
           padding: EdgeInsets.fromLTRB(
             Navigator.canPop(context) ? 8 : 16,
             8,
-            8,
+            12,
             0,
           ),
           child: Row(
@@ -436,7 +436,7 @@ class _ViewSwitch extends StatelessWidget {
   final PageController controller;
   final ValueChanged<int> onSelect;
 
-  static const _segmentWidth = 64.0;
+  static const _segmentWidth = 60.0;
   static const _height = 36.0;
 
   @override
