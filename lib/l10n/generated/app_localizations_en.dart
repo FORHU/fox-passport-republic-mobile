@@ -5432,6 +5432,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tourCitizenHomeTitle => 'Find what\'s on';
+
+  @override
+  String get tourCitizenHomeBody =>
+      'Search events, venues and Foxers, and see your next booking.';
+
+  @override
+  String get tourCitizenRepublicTitle => 'Join the conversation';
+
+  @override
+  String get tourCitizenRepublicBody =>
+      'Read and post what\'s happening. Posting earns XP.';
+
+  @override
+  String get tourCitizenBookingsTitle => 'Your tickets live here';
+
+  @override
+  String get tourCitizenBookingsBody =>
+      'Tickets, requests and your calendar, with a badge when something needs you.';
+
+  @override
+  String get tourCitizenMessagesTitle => 'Talk to Foxers';
+
+  @override
+  String get tourCitizenMessagesBody =>
+      'Ask a venue or a Foxer a question before you book.';
+
+  @override
+  String get tourCitizenPassportTitle => 'Your progress';
+
+  @override
+  String get tourCitizenPassportBody =>
+      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+
+  @override
+  String get settingsTakeTour => 'Take the app tour again';
+
+  @override
   String get earningsTotal => 'Total earnings';
 
   @override

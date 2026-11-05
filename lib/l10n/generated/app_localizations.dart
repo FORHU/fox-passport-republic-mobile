@@ -9832,6 +9832,72 @@ abstract class AppLocalizations {
   /// **'{n} of {total}'**
   String tourStepOf(int n, int total);
 
+  /// No description provided for @tourCitizenHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find what\'s on'**
+  String get tourCitizenHomeTitle;
+
+  /// No description provided for @tourCitizenHomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events, venues and Foxers, and see your next booking.'**
+  String get tourCitizenHomeBody;
+
+  /// No description provided for @tourCitizenRepublicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the conversation'**
+  String get tourCitizenRepublicTitle;
+
+  /// No description provided for @tourCitizenRepublicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Read and post what\'s happening. Posting earns XP.'**
+  String get tourCitizenRepublicBody;
+
+  /// No description provided for @tourCitizenBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tickets live here'**
+  String get tourCitizenBookingsTitle;
+
+  /// No description provided for @tourCitizenBookingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets, requests and your calendar, with a badge when something needs you.'**
+  String get tourCitizenBookingsBody;
+
+  /// No description provided for @tourCitizenMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to Foxers'**
+  String get tourCitizenMessagesTitle;
+
+  /// No description provided for @tourCitizenMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a venue or a Foxer a question before you book.'**
+  String get tourCitizenMessagesBody;
+
+  /// No description provided for @tourCitizenPassportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress'**
+  String get tourCitizenPassportTitle;
+
+  /// No description provided for @tourCitizenPassportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your level, stamps and badges. Attend an event to earn your first stamp.'**
+  String get tourCitizenPassportBody;
+
+  /// No description provided for @settingsTakeTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the app tour again'**
+  String get settingsTakeTour;
+
   /// No description provided for @earningsTotal.
   ///
   /// In en, this message translates to:
