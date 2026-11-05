@@ -8,6 +8,7 @@ import 'package:flutter_template/features/republic/data/republic_repository.dart
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/videos_page.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/feed_video.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_card.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/videos_shelf.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -20,7 +21,10 @@ class _MockApi extends Mock implements ApiService {}
 
 /// A player that plays nothing: it is ready at once.
 class _FakePlayer extends VideoPlayerController {
-  _FakePlayer(String url) : super.networkUrl(Uri.parse(url));
+  _FakePlayer(this.url) : super.networkUrl(Uri.parse(url));
+
+  final String url;
+  bool disposed = false;
 
   @override
   Future<void> initialize() async {
@@ -46,7 +50,7 @@ class _FakePlayer extends VideoPlayerController {
   @override
   // The real one tells the platform to let go of a texture there is not.
   // ignore: must_call_super
-  Future<void> dispose() async {}
+  Future<void> dispose() async => disposed = true;
 }
 
 class _Session extends AuthController {
@@ -104,7 +108,7 @@ void main() {
         _video('4', 'Dee'),
       ]);
 
-      expect(find.text('Videos'), findsOneWidget);
+      expect(find.text('Reels'), findsOneWidget);
       expect(find.text('Ada'), findsOneWidget);
       expect(find.text('Dee'), findsOneWidget);
       expect(find.text('Ben'), findsNothing);
@@ -114,7 +118,7 @@ void main() {
     testWidgets('takes no room when there is no video', (tester) async {
       await show(tester, [Post.fromJson(_post('2', 'Ben'))]);
 
-      expect(find.text('Videos'), findsNothing);
+      expect(find.text('Reels'), findsNothing);
       expect(tester.getSize(find.byType(VideosShelf)).height, 0);
     });
 
@@ -158,12 +162,14 @@ void main() {
 
   group('the Republic', () {
     late _MockApi api;
+    final created = <_FakePlayer>[];
 
     Future<void> open(
       WidgetTester tester,
       List<Map<String, dynamic>> posts,
     ) async {
       api = _MockApi();
+      created.clear();
       when(() => api.get(any(), query: any(named: 'query'))).thenAnswer(
         (_) async => {'data': posts, 'nextCursor': null},
       );
@@ -177,7 +183,11 @@ void main() {
             republicRepositoryProvider
                 .overrideWithValue(RepublicRepository(api)),
             authControllerProvider.overrideWith(_Session.new),
-            reelPlayerFactoryProvider.overrideWithValue(_FakePlayer.new),
+            reelPlayerFactoryProvider.overrideWithValue((url) {
+              final player = _FakePlayer(url);
+              created.add(player);
+              return player;
+            }),
           ],
           child: MaterialApp(
             theme: AppTheme.dark,
@@ -220,12 +230,12 @@ void main() {
       await open(tester, posts);
 
       expect(find.text('Posts'), findsOneWidget);
-      expect(find.text('Videos'), findsWidgets);
+      expect(find.text('Reels'), findsWidgets);
       expect(find.byType(VideosPage), findsNothing);
       expect(find.byType(PostCard), findsWidgets);
     });
 
-    testWidgets('a tile opens the Videos view at that video', (tester) async {
+    testWidgets('a tile opens the Reels view at that video', (tester) async {
       await open(tester, posts);
 
       await tester.tap(
@@ -254,7 +264,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(VideosPage), findsNothing);
 
-      await tester.tap(find.widgetWithText(InkWell, 'Videos'));
+      await tester.tap(find.text('Reels').last);
       await tester.pumpAndSettle();
       expect(find.byType(VideosPage), findsOneWidget);
     });
@@ -283,12 +293,47 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byType(PostCard).first,
-          matching: find.byIcon(Icons.play_circle_fill_rounded),
+          matching: find.byType(FeedVideo),
         ),
       );
       await tester.pumpAndSettle();
 
       expect(inVideos(find.text('Ada')), findsOneWidget);
+    });
+
+    testWidgets('a video in the feed plays by itself, one at a time', (
+      tester,
+    ) async {
+      await open(tester, posts);
+
+      final live = created.where((p) => !p.disposed).toList();
+      expect(live, hasLength(1));
+      expect(live.single.url, 'https://cdn.test/1.mp4');
+      expect(live.single.value.isPlaying, isTrue);
+      expect(live.single.value.volume, isNotNull);
+    });
+
+    testWidgets('the feed video stops when the Videos view opens', (
+      tester,
+    ) async {
+      await open(tester, posts);
+      final feedPlayer = created.firstWhere((p) => !p.disposed);
+
+      await tester.tap(find.text('See all'));
+      await tester.pumpAndSettle();
+
+      expect(feedPlayer.disposed, isTrue);
+    });
+
+    testWidgets('tapping the video in the feed opens it in Videos', (
+      tester,
+    ) async {
+      await open(tester, posts);
+
+      await tester.tap(find.byType(FeedVideo).last);
+      await tester.pumpAndSettle();
+
+      expect(inVideos(find.text('Cy')), findsOneWidget);
     });
 
     testWidgets('the shelf steps aside while searching', (tester) async {

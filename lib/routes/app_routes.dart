@@ -390,7 +390,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.republicCompose,
-        builder: (context, state) => const ComposePostPage(),
+        builder: (context, state) => ComposePostPage(
+          startWithVideo: state.uri.queryParameters['video'] == '1',
+        ),
       ),
       GoRoute(
         path: '/republic/post/:id',

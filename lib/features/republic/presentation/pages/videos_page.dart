@@ -15,13 +15,13 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:video_player/video_player.dart';
 
 /// The Republic's videos, one to a screen, swiped up and down like Reels or
-/// TikTok. It is the Republic tab's second view (Posts | Videos), so it has
+/// TikTok. It is the Republic tab's second view (Posts | Reels), so it has
 /// no back arrow and the bottom bar stays. The server shrinks every upload to
 /// 9:16, 720x1280, so a clip fills
 /// the phone. The one on screen plays (muted at first, looping); the next and
 /// the last are got ready so a swipe does not wait.
 class VideosPage extends ConsumerStatefulWidget {
-  const VideosPage({this.tab, this.initialPostId, super.key});
+  const VideosPage({this.tab, this.initialPostId, this.onPost, super.key});
 
   /// The feed the videos come from (null is the whole Republic), so what is
   /// opened from a tab is what that tab lists.
@@ -29,6 +29,9 @@ class VideosPage extends ConsumerStatefulWidget {
 
   /// The video to open at; the first one when null or not in the feed.
   final String? initialPostId;
+
+  /// Opens the composer on the video picker. Without it there is no way in.
+  final VoidCallback? onPost;
 
   @override
   ConsumerState<VideosPage> createState() => _VideosPageState();
@@ -256,6 +259,9 @@ class _VideosPageState extends ConsumerState<VideosPage>
                       icon: Icons.play_circle_outline_rounded,
                       title: l10n.republicVideosEmpty,
                       message: l10n.republicVideosEmptyHint,
+                      actionLabel:
+                          widget.onPost == null ? null : l10n.republicPostVideo,
+                      onAction: widget.onPost,
                     ),
             );
           }
@@ -278,6 +284,7 @@ class _VideosPageState extends ConsumerState<VideosPage>
                 onTap: _togglePause,
                 onMute: _toggleMute,
                 actions: PostActions(context, ref, widget.tab),
+                onPost: widget.onPost,
               );
             },
           );
@@ -314,6 +321,7 @@ class _ReelPage extends StatelessWidget {
     required this.onTap,
     required this.onMute,
     required this.actions,
+    required this.onPost,
     super.key,
   });
 
@@ -326,6 +334,7 @@ class _ReelPage extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onMute;
   final PostActions actions;
+  final VoidCallback? onPost;
 
   @override
   Widget build(BuildContext context) {
@@ -404,6 +413,16 @@ class _ReelPage extends StatelessWidget {
               child: Row(
                 children: [
                   const Spacer(),
+                  if (onPost != null)
+                    IconButton.filled(
+                      tooltip: l10n.republicPostVideo,
+                      onPressed: onPost,
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: AppColors.canvas,
+                      ),
+                      icon: const Icon(Icons.add_rounded),
+                    ),
                   IconButton(
                     tooltip: muted
                         ? l10n.republicVideoSoundOn

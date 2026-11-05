@@ -3819,20 +3819,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicViewPosts => 'Posts';
 
   @override
-  String get republicVideos => 'Videos';
+  String get republicPostVideo => 'Post a reel';
+
+  @override
+  String get republicFilterSections => 'Filter by section';
+
+  @override
+  String get republicVideos => 'Reels';
 
   @override
   String get republicVideosSeeAll => 'See all';
 
   @override
-  String get republicVideosEmpty => 'No videos yet';
+  String get republicVideosEmpty => 'No reels yet';
 
   @override
   String get republicVideosEmptyHint =>
-      'Videos people post in the Republic show up here.';
+      'Reels people post in the Republic show up here.';
 
   @override
-  String get republicVideoFailed => 'This video could not play.';
+  String get republicVideoFailed => 'This reel could not play.';
 
   @override
   String get republicVideoSoundOn => 'Turn sound on';

@@ -97,6 +97,7 @@ void main() {
     List<Map<String, dynamic>> posts, {
     String? nextCursor,
     String? initialPostId,
+    VoidCallback? onPost,
   }) async {
     when(() => api.get(any(), query: any(named: 'query'))).thenAnswer(
       (_) async => {'data': posts, 'nextCursor': nextCursor},
@@ -118,7 +119,7 @@ void main() {
           theme: AppTheme.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: VideosPage(initialPostId: initialPostId),
+          home: VideosPage(initialPostId: initialPostId, onPost: onPost),
         ),
       ),
     );
@@ -281,8 +282,38 @@ void main() {
     testWidgets('says so when there are no videos', (tester) async {
       await open(tester, [_post('2', 'Ben', content: 'Only words')]);
 
-      expect(find.text('No videos yet'), findsOneWidget);
+      expect(find.text('No reels yet'), findsOneWidget);
       expect(find.byType(PageView), findsNothing);
+    });
+
+    testWidgets('has a button to post a video, when it can', (tester) async {
+      var posted = 0;
+      await open(tester, feed, onPost: () => posted++);
+
+      await tester.tap(find.byTooltip('Post a reel'));
+
+      expect(posted, 1);
+    });
+
+    testWidgets('has no post button without a way to post', (tester) async {
+      await open(tester, feed);
+
+      expect(find.byTooltip('Post a reel'), findsNothing);
+    });
+
+    testWidgets('an empty Videos view offers to post the first video', (
+      tester,
+    ) async {
+      var posted = 0;
+      await open(
+        tester,
+        [_post('2', 'Ben', content: 'Only words')],
+        onPost: () => posted++,
+      );
+
+      await tester.tap(find.text('Post a reel'));
+
+      expect(posted, 1);
     });
   });
 }

@@ -161,6 +161,8 @@ void main() {
       await tester.pumpAndSettle();
 
       if (startTab != null) {
+        await tester.tap(find.byTooltip('Filter by section'));
+        await tester.pumpAndSettle();
         await tester.tap(find.text(startTab));
         await tester.pumpAndSettle();
       }

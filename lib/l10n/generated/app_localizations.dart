@@ -6916,10 +6916,22 @@ abstract class AppLocalizations {
   /// **'Posts'**
   String get republicViewPosts;
 
+  /// No description provided for @republicPostVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Post a reel'**
+  String get republicPostVideo;
+
+  /// No description provided for @republicFilterSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by section'**
+  String get republicFilterSections;
+
   /// No description provided for @republicVideos.
   ///
   /// In en, this message translates to:
-  /// **'Videos'**
+  /// **'Reels'**
   String get republicVideos;
 
   /// No description provided for @republicVideosSeeAll.
@@ -6931,19 +6943,19 @@ abstract class AppLocalizations {
   /// No description provided for @republicVideosEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No videos yet'**
+  /// **'No reels yet'**
   String get republicVideosEmpty;
 
   /// No description provided for @republicVideosEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Videos people post in the Republic show up here.'**
+  /// **'Reels people post in the Republic show up here.'**
   String get republicVideosEmptyHint;
 
   /// No description provided for @republicVideoFailed.
   ///
   /// In en, this message translates to:
-  /// **'This video could not play.'**
+  /// **'This reel could not play.'**
   String get republicVideoFailed;
 
   /// No description provided for @republicVideoSoundOn.

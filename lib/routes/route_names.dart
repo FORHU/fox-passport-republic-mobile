@@ -133,6 +133,9 @@ class RouteNames {
   /// Writing a post. Pushed from the Republic.
   static const String republicCompose = '/republic/compose';
 
+  /// The composer, opening on the video picker.
+  static const String republicComposeVideo = '/republic/compose?video=1';
+
   /// The Venue space, for someone who holds the VenueFoxer role. Five tabs:
   /// Overview, Venues, Calendar, Earnings and More.
   static const String spaceVenue = '/space/venue';
