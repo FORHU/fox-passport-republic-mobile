@@ -1836,5 +1836,16 @@
   "tourNeedsTitle": "Needs you",
   "tourNeedsBody": "Requests and invitations waiting for your answer come first, so nothing is missed.",
   "tourEarningsCardTitle": "Your earnings",
-  "tourEarningsCardBody": "What you have been paid, how it changed since last month, and the last eight weeks."
+  "tourEarningsCardBody": "What you have been paid, how it changed since last month, and the last eight weeks.",
+  "tourCitizenHomeTitle": "Find what's on",
+  "tourCitizenHomeBody": "Search events, venues and Foxers, and see your next booking.",
+  "tourCitizenRepublicTitle": "Join the conversation",
+  "tourCitizenRepublicBody": "Read and post what's happening. Posting earns XP.",
+  "tourCitizenBookingsTitle": "Your tickets live here",
+  "tourCitizenBookingsBody": "Tickets, requests and your calendar, with a badge when something needs you.",
+  "tourCitizenMessagesTitle": "Talk to Foxers",
+  "tourCitizenMessagesBody": "Ask a venue or a Foxer a question before you book.",
+  "tourCitizenPassportTitle": "Your progress",
+  "tourCitizenPassportBody": "Your level, stamps and badges. Attend an event to earn your first stamp.",
+  "settingsTakeTour": "Take the app tour again"
 }

@@ -11,6 +11,7 @@ import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/currency/currency_sheet.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
+import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -114,6 +115,12 @@ class SettingsPage extends ConsumerWidget {
             title: l10n.settingsBlockedUsers,
             value: l10n.settingsBlockedUsersHint,
             onTap: () => context.push(RouteNames.blockedUsers),
+          ),
+          const SizedBox(height: 8),
+          _Row(
+            icon: Icons.explore_outlined,
+            title: l10n.settingsTakeTour,
+            onTap: () => restartCitizenTour(ref, context, RouteNames.home),
           ),
           const SizedBox(height: 24),
           _Section(label: l10n.settingsPreferences),
