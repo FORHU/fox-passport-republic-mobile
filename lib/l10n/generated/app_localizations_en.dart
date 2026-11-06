@@ -5781,4 +5781,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String foxerPassportXpToNext(String xp, int level) {
     return '$xp XP to level $level';
   }
+
+  @override
+  String get leaderboardTitle => 'Leaderboard';
+
+  @override
+  String get leaderboardMostBooked => 'Most booked';
+
+  @override
+  String get leaderboardRoleVenue => 'Venues';
+
+  @override
+  String get leaderboardRoleEvent => 'Events';
+
+  @override
+  String get leaderboardRoleGear => 'Gear';
+
+  @override
+  String get leaderboardRoleServices => 'Services';
+
+  @override
+  String get leaderboardRolePerformers => 'Performers';
+
+  @override
+  String get leaderboardAllCities => 'All cities';
+
+  @override
+  String get leaderboardCityLabel => 'City';
+
+  @override
+  String get leaderboardCityApply => 'Apply';
+
+  @override
+  String get leaderboardEmpty =>
+      'No completed bookings yet this month. Check back soon.';
+
+  @override
+  String get leaderboardYou => 'You';
+
+  @override
+  String leaderboardRowSubtitle(String role, String rank) {
+    return '$role · $rank';
+  }
 }

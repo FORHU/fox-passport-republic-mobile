@@ -134,6 +134,11 @@ class RouteNames {
   static String foxerPassportFor(String path) =>
       '$foxerPassport?path=${Uri.encodeQueryComponent(path)}';
 
+  /// The Foxer leaderboard, opened on one role (`venue`, `event`, ...).
+  static const String leaderboard = '/leaderboard';
+  static String leaderboardFor(String role) =>
+      '$leaderboard?role=${Uri.encodeQueryComponent(role)}';
+
   /// What Coins can buy.
   static const String rewards = '/rewards';
 

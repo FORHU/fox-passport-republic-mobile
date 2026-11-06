@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/leaderboard_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/passport_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
@@ -50,6 +51,8 @@ class VenueMorePage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           const PassportMoreRow(space: AppSpace.venue),
+          const SizedBox(height: 8),
+          const LeaderboardMoreRow(space: AppSpace.venue),
           const SizedBox(height: 8),
           MoreRow(
             icon: Icons.inbox_outlined,

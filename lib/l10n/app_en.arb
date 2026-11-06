@@ -1911,5 +1911,19 @@
   "foxerPassportNoPerks": "Perks unlock as you level up.",
   "foxerPassportNoBadges": "Badges you earn in this role show up here.",
   "foxerPassportXpToNext": "{xp} XP to level {level}",
-  "@foxerPassportXpToNext": {"placeholders":{"xp":{"type":"String"},"level":{"type":"int"}}}
+  "@foxerPassportXpToNext": {"placeholders":{"xp":{"type":"String"},"level":{"type":"int"}}},
+  "leaderboardTitle": "Leaderboard",
+  "leaderboardMostBooked": "Most booked",
+  "leaderboardRoleVenue": "Venues",
+  "leaderboardRoleEvent": "Events",
+  "leaderboardRoleGear": "Gear",
+  "leaderboardRoleServices": "Services",
+  "leaderboardRolePerformers": "Performers",
+  "leaderboardAllCities": "All cities",
+  "leaderboardCityLabel": "City",
+  "leaderboardCityApply": "Apply",
+  "leaderboardEmpty": "No completed bookings yet this month. Check back soon.",
+  "leaderboardYou": "You",
+  "leaderboardRowSubtitle": "{role} · {rank}",
+  "@leaderboardRowSubtitle": {"placeholders":{"role":{"type":"String"},"rank":{"type":"String"}}}
 }
