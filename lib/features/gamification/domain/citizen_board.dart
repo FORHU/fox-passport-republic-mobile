@@ -20,9 +20,9 @@ enum LeaderboardSide {
 
 /// The citizen board's tabs, as the API names them.
 enum CitizenTab {
-  month('month'),
-  all('all'),
-  city('city');
+  month('this_month'),
+  all('all_time'),
+  city('my_city');
 
   const CitizenTab(this.api);
 
@@ -46,51 +46,34 @@ class CitizenBoardEntry extends Equatable {
     required this.name,
     required this.rankName,
     required this.level,
-    required this.isMe,
-    this.username,
     this.image,
     this.city,
   });
 
-  factory CitizenBoardEntry.fromJson(Map<String, dynamic> json) {
-    final rank = json['rank'];
-    return CitizenBoardEntry(
-      position: (json['position'] as num?)?.toInt() ?? 0,
-      userId: '${json['userId']}',
-      name: (json['name'] as String?) ?? '',
-      username: json['username'] as String?,
-      image: json['image'] as String?,
-      city: json['city'] as String?,
-      rankName: rank is Map ? (rank['name'] as String?) ?? '' : '',
-      level: (json['level'] as num?)?.toInt() ?? 1,
-      isMe: json['isMe'] == true,
-    );
-  }
+  factory CitizenBoardEntry.fromJson(Map<String, dynamic> json) =>
+      CitizenBoardEntry(
+        position: (json['position'] as num?)?.toInt() ?? 0,
+        userId: '${json['userId']}',
+        name: (json['name'] as String?) ?? '',
+        image: json['avatarUrl'] as String?,
+        city: json['city'] as String?,
+        rankName: (json['rankTitle'] as String?) ?? '',
+        level: (json['level'] as num?)?.toInt() ?? 1,
+      );
 
   final int position;
   final String userId;
   final String name;
-  final String? username;
   final String? image;
   final String? city;
 
   /// The rank's name on the citizen ladder ("Explorer").
   final String rankName;
   final int level;
-  final bool isMe;
 
   @override
-  List<Object?> get props => [
-        position,
-        userId,
-        name,
-        username,
-        image,
-        city,
-        rankName,
-        level,
-        isMe,
-      ];
+  List<Object?> get props =>
+      [position, userId, name, image, city, rankName, level];
 }
 
 /// A citizen board for one tab, and the caller's own place on it.
@@ -98,20 +81,18 @@ class CitizenBoard extends Equatable {
   const CitizenBoard({
     required this.tab,
     required this.rows,
-    this.city,
-    this.month,
+    this.season,
     this.me,
   });
 
   factory CitizenBoard.fromJson(Map<String, dynamic> json) {
-    final rows = json['rows'];
-    final me = json['me'];
+    final entries = json['entries'];
+    final me = json['userPosition'];
     return CitizenBoard(
       tab: CitizenTab.fromApi(json['tab'] as String?) ?? CitizenTab.month,
-      city: json['city'] as String?,
-      month: json['month'] as String?,
+      season: json['season'] as String?,
       rows: [
-        for (final r in (rows is List ? rows : const []))
+        for (final r in (entries is List ? entries : const []))
           if (r is Map) CitizenBoardEntry.fromJson(r.cast<String, dynamic>()),
       ],
       me: me is Map
@@ -122,12 +103,8 @@ class CitizenBoard extends Equatable {
 
   final CitizenTab tab;
 
-  /// The caller's own city on the city tab; null elsewhere, or when they have
-  /// none set.
-  final String? city;
-
-  /// The Manila month counted, as `YYYY-MM`; null for all time.
-  final String? month;
+  /// The month counted, as `YYYY-MM`.
+  final String? season;
   final List<CitizenBoardEntry> rows;
 
   /// The caller's own place, even when it is below the rows; null if absent.
@@ -137,5 +114,16 @@ class CitizenBoard extends Equatable {
   bool get meIsListed => me != null && rows.any((r) => r.userId == me!.userId);
 
   @override
-  List<Object?> get props => [tab, city, month, rows, me];
+  List<Object?> get props => [tab, season, rows, me];
+}
+
+/// What is asked of the citizen board: the tab and, for My city, the city.
+class CitizenQuery extends Equatable {
+  const CitizenQuery(this.tab, {this.city});
+
+  final CitizenTab tab;
+  final String? city;
+
+  @override
+  List<Object?> get props => [tab, city];
 }
