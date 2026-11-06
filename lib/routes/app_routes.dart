@@ -15,6 +15,8 @@ import 'package:flutter_template/features/event/presentation/pages/event_detail_
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
+import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/foxer_leaderboard_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
@@ -422,6 +424,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.foxerPassport,
         builder: (context, state) => FoxerPassportPage(
           path: state.uri.queryParameters['path'] ?? 'user',
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.leaderboard,
+        builder: (context, state) => FoxerLeaderboardPage(
+          initialRole:
+              LeaderboardRole.fromApi(state.uri.queryParameters['role']) ??
+                  LeaderboardRole.event,
         ),
       ),
       GoRoute(

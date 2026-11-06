@@ -176,6 +176,9 @@ void main() {
     router.go(RouteNames.spaceVenueMore);
     await settle(tester);
 
+    // The list is longer than the screen now; bring the row into view first.
+    await tester.ensureVisible(find.text('Messages'));
+    await settle(tester);
     await tester.tap(find.text('Messages'));
     await settle(tester);
     expect(find.byType(MessagesPage), findsOneWidget);

@@ -10437,6 +10437,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{xp} XP to level {level}'**
   String foxerPassportXpToNext(String xp, int level);
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardMostBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Most booked'**
+  String get leaderboardMostBooked;
+
+  /// No description provided for @leaderboardRoleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get leaderboardRoleVenue;
+
+  /// No description provided for @leaderboardRoleEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get leaderboardRoleEvent;
+
+  /// No description provided for @leaderboardRoleGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardRoleGear;
+
+  /// No description provided for @leaderboardRoleServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get leaderboardRoleServices;
+
+  /// No description provided for @leaderboardRolePerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performers'**
+  String get leaderboardRolePerformers;
+
+  /// No description provided for @leaderboardAllCities.
+  ///
+  /// In en, this message translates to:
+  /// **'All cities'**
+  String get leaderboardAllCities;
+
+  /// No description provided for @leaderboardCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get leaderboardCityLabel;
+
+  /// No description provided for @leaderboardCityApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get leaderboardCityApply;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed bookings yet this month. Check back soon.'**
+  String get leaderboardEmpty;
+
+  /// No description provided for @leaderboardYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get leaderboardYou;
+
+  /// No description provided for @leaderboardRowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{role} · {rank}'**
+  String leaderboardRowSubtitle(String role, String rank);
 }
 
 class _AppLocalizationsDelegate
