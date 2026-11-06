@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/appointment_models.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
@@ -89,7 +90,7 @@ class OrganizerOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            const OverviewGreeting(),
+            const OverviewGreeting(space: AppSpace.organizer),
             const SizedBox(height: 4),
             Row(
               children: [

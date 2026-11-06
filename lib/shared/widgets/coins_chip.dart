@@ -21,14 +21,21 @@ String _coins(BuildContext context, int n) =>
 /// takes no room until the balance is known: while it loads, when it fails and
 /// when nobody is signed in, the screen around it is left as it was.
 class CoinsChip extends ConsumerWidget {
-  const CoinsChip({this.trailingGap = 0, super.key});
+  const CoinsChip({this.trailingGap = 0, this.path, super.key});
 
   /// Space after the chip, taken only while the chip shows.
   final double trailingGap;
 
+  /// The XP path to read the wallet through, for a Foxer space; the citizen's
+  /// own when null. The Coins are the same balance either way.
+  final String? path;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final wallet = ref.watch(walletProvider).value;
+    final wallet = (path == null
+            ? ref.watch(walletProvider)
+            : ref.watch(walletForPathProvider(path!)))
+        .value;
     if (wallet == null) return const SizedBox.shrink();
     final chip = Semantics(
       button: true,
