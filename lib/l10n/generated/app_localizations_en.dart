@@ -5432,6 +5432,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tourCitizenHomeTitle => 'Find what\'s on';
+
+  @override
+  String get tourCitizenHomeBody =>
+      'Search events, venues and Foxers, and see your next booking.';
+
+  @override
+  String get tourCitizenRepublicTitle => 'Join the conversation';
+
+  @override
+  String get tourCitizenRepublicBody =>
+      'Read and post what\'s happening. Posting earns XP.';
+
+  @override
+  String get tourCitizenBookingsTitle => 'Your tickets live here';
+
+  @override
+  String get tourCitizenBookingsBody =>
+      'Tickets, requests and your calendar, with a badge when something needs you.';
+
+  @override
+  String get tourCitizenMessagesTitle => 'Talk to Foxers';
+
+  @override
+  String get tourCitizenMessagesBody =>
+      'Ask a venue or a Foxer a question before you book.';
+
+  @override
+  String get tourCitizenPassportTitle => 'Your progress';
+
+  @override
+  String get tourCitizenPassportBody =>
+      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+
+  @override
+  String get settingsTakeTour => 'Take the app tour again';
+
+  @override
   String get earningsTotal => 'Total earnings';
 
   @override
@@ -5551,6 +5589,44 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tourEarningsCardBody =>
       'What you have been paid, how it changed since last month, and the last eight weeks.';
+
+  @override
+  String get settingsHowItWorks => 'How XP and Coins work';
+
+  @override
+  String get howItWorksTitle => 'How it works';
+
+  @override
+  String get howItWorksIntro =>
+      'Two numbers grow as you use FoxPassport. Here is what each one does.';
+
+  @override
+  String get howItWorksXpTitle => 'XP is your progress';
+
+  @override
+  String get howItWorksXpBody =>
+      'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.';
+
+  @override
+  String get howItWorksCoinsTitle => 'Coins are your wallet';
+
+  @override
+  String get howItWorksCoinsBody =>
+      'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.';
+
+  @override
+  String get howItWorksEarnTitle => 'How to earn';
+
+  @override
+  String get howItWorksEarnBody =>
+      'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.';
+
+  @override
+  String get howItWorksSpendTitle => 'How to spend';
+
+  @override
+  String get howItWorksSpendBody =>
+      'Open Rewards from your Wallet and redeem a voucher. Each reward says what size of booking it works on, and a voucher belongs to your account only.';
 
   @override
   String get rewardsWalletTitle => 'Wallet';
