@@ -1932,5 +1932,10 @@
   "leaderboardTabAll": "All time",
   "leaderboardTabCity": "My city",
   "leaderboardNoCity": "Add your city to your profile to see your local board.",
-  "leaderboardEditProfile": "Edit profile"
+  "leaderboardEditProfile": "Edit profile",
+  "leaderboardTabTopRated": "Top rated",
+  "leaderboardTabRising": "Rising",
+  "leaderboardFoxerNew": "New",
+  "leaderboardReviews": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@leaderboardReviews": {"placeholders":{"count":{"type":"int"}}}
 }

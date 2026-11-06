@@ -10557,6 +10557,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get leaderboardEditProfile;
+
+  /// No description provided for @leaderboardTabTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get leaderboardTabTopRated;
+
+  /// No description provided for @leaderboardTabRising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get leaderboardTabRising;
+
+  /// No description provided for @leaderboardFoxerNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get leaderboardFoxerNew;
+
+  /// No description provided for @leaderboardReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String leaderboardReviews(int count);
 }
 
 class _AppLocalizationsDelegate

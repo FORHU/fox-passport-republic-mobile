@@ -5845,4 +5845,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardEditProfile => 'Edit profile';
+
+  @override
+  String get leaderboardTabTopRated => 'Top rated';
+
+  @override
+  String get leaderboardTabRising => 'Rising';
+
+  @override
+  String get leaderboardFoxerNew => 'New';
+
+  @override
+  String leaderboardReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
 }
