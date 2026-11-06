@@ -3,6 +3,7 @@ import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/passport/domain/entities/foxer_passport.dart';
 import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 
 /// Reads the signed-in user's passport.
@@ -60,6 +61,54 @@ class PassportRepository {
     );
   }
 
+  /// A Foxer's passport for one role: the level and XP of [path] as the
+  /// server holds them, the perks on the account, and the badges that belong
+  /// to this role or to none. A Foxer with no XP on the path yet is level 1.
+  Future<FoxerPassport> loadForPath(String path) async {
+    final body = await _api.get(ApiEndpoints.passportMe);
+    final data = _data(body);
+    if (data == null) {
+      throw const FormatException('Passport response is missing data');
+    }
+
+    Map<String, dynamic>? row;
+    for (final p in (data['paths'] as List? ?? const [])) {
+      if (p is Map && p['path'] == path) {
+        row = p.cast<String, dynamic>();
+        break;
+      }
+    }
+
+    final earned = <String, Map<String, dynamic>>{
+      for (final ub in (data['userBadges'] as List? ?? const []))
+        if (ub is Map && ub['badge'] is Map)
+          '${(ub['badge'] as Map)['id']}':
+              (ub['badge'] as Map).cast<String, dynamic>(),
+    };
+    final catalogue = await _catalogue();
+
+    bool forThisRole(Map<String, dynamic> b) =>
+        b['path'] == null || b['path'] == path;
+
+    return FoxerPassport(
+      path: path,
+      level: (row?['level'] as num?)?.toInt() ?? 1,
+      currentXp: (row?['currentXP'] as num?)?.toInt() ?? 0,
+      totalXp: (row?['totalXP'] as num?)?.toInt() ?? 0,
+      perks: [
+        for (final perk in (data['perks'] as List? ?? const []))
+          if (perk is String) perk,
+      ],
+      badges: [
+        for (final b in earned.values)
+          if (forThisRole(b)) _badge(b, earned: true),
+        for (final b in catalogue)
+          if (!earned.containsKey('${b['id']}') && forThisRole(b))
+            _badge(b, earned: false),
+      ],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> _catalogue() async {
     final body = await _api.get(ApiEndpoints.passportBadges);
     final list = body is Map ? body['data'] : body;
@@ -93,6 +142,7 @@ class PassportRepository {
         name: (b['name'] ?? '').toString(),
         earned: earned,
         colorHex: b['color'] as String?,
+        path: b['path'] as String?,
       );
 }
 
@@ -103,4 +153,12 @@ final passportRepositoryProvider = Provider<PassportRepository>(
 final FutureProvider<PassportSummary> passportProvider =
     FutureProvider.autoDispose<PassportSummary>(
   (ref) => ref.watch(passportRepositoryProvider).load(),
+);
+
+/// A Foxer's passport for one XP path.
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final foxerPassportProvider =
+    FutureProvider.autoDispose.family<FoxerPassport, String>(
+  (ref, path) => ref.watch(passportRepositoryProvider).loadForPath(path),
 );

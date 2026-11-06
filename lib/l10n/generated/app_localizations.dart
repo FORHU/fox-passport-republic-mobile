@@ -10413,6 +10413,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{rank} · Level {level}'**
   String rewardsRankLevel(String rank, int level);
+
+  /// No description provided for @foxerPassportPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks'**
+  String get foxerPassportPerks;
+
+  /// No description provided for @foxerPassportNoPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks unlock as you level up.'**
+  String get foxerPassportNoPerks;
+
+  /// No description provided for @foxerPassportNoBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges you earn in this role show up here.'**
+  String get foxerPassportNoBadges;
+
+  /// No description provided for @foxerPassportXpToNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP to level {level}'**
+  String foxerPassportXpToNext(String xp, int level);
 }
 
 class _AppLocalizationsDelegate

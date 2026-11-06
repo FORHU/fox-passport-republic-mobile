@@ -24,6 +24,7 @@ class PassportBadge extends Equatable {
     required this.name,
     required this.earned,
     this.colorHex,
+    this.path,
   });
 
   final String id;
@@ -33,8 +34,12 @@ class PassportBadge extends Equatable {
   /// `#RRGGBB` from the catalogue, when it has one.
   final String? colorHex;
 
+  /// The XP path the badge belongs to (`venueFoxer`, ...), or null for one
+  /// that is not tied to a role.
+  final String? path;
+
   @override
-  List<Object?> get props => [id, name, earned, colorHex];
+  List<Object?> get props => [id, name, earned, colorHex, path];
 }
 
 /// Everything the Passport screen shows.

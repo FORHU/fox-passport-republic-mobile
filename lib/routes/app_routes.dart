@@ -26,6 +26,7 @@ import 'package:flutter_template/features/notifications/presentation/pages/notif
 import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:flutter_template/features/passport/presentation/pages/foxer_passport_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
@@ -416,6 +417,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.wallet,
         builder: (context, state) => const WalletPage(),
+      ),
+      GoRoute(
+        path: RouteNames.foxerPassport,
+        builder: (context, state) => FoxerPassportPage(
+          path: state.uri.queryParameters['path'] ?? 'user',
+        ),
       ),
       GoRoute(
         path: RouteNames.rewards,

@@ -129,6 +129,11 @@ class RouteNames {
   /// The Coins wallet, pushed from the Coins chip and the Passport.
   static const String wallet = '/wallet';
 
+  /// A Foxer's Passport for one XP path, pushed from a space's More tab.
+  static const String foxerPassport = '/foxer-passport';
+  static String foxerPassportFor(String path) =>
+      '$foxerPassport?path=${Uri.encodeQueryComponent(path)}';
+
   /// What Coins can buy.
   static const String rewards = '/rewards';
 
