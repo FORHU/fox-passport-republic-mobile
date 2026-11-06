@@ -1906,5 +1906,10 @@
   "rewardsLifeExpiry": "Coins expired",
   "rewardsLifeReversal": "Coins reversed",
   "rewardsRankLevel": "{rank} · Level {level}",
-  "@rewardsRankLevel": {"placeholders":{"rank":{"type":"String"},"level":{"type":"int"}}}
+  "@rewardsRankLevel": {"placeholders":{"rank":{"type":"String"},"level":{"type":"int"}}},
+  "foxerPassportPerks": "Perks",
+  "foxerPassportNoPerks": "Perks unlock as you level up.",
+  "foxerPassportNoBadges": "Badges you earn in this role show up here.",
+  "foxerPassportXpToNext": "{xp} XP to level {level}",
+  "@foxerPassportXpToNext": {"placeholders":{"xp":{"type":"String"},"level":{"type":"int"}}}
 }

@@ -5766,4 +5766,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String rewardsRankLevel(String rank, int level) {
     return '$rank · Level $level';
   }
+
+  @override
+  String get foxerPassportPerks => 'Perks';
+
+  @override
+  String get foxerPassportNoPerks => 'Perks unlock as you level up.';
+
+  @override
+  String get foxerPassportNoBadges =>
+      'Badges you earn in this role show up here.';
+
+  @override
+  String foxerPassportXpToNext(String xp, int level) {
+    return '$xp XP to level $level';
+  }
 }

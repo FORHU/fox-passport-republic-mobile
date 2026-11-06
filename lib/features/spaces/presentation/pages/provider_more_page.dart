@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/passport_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
@@ -44,6 +45,8 @@ class ProviderMorePage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
+          PassportMoreRow(space: kind.space),
+          const SizedBox(height: 8),
           MoreRow(
             icon: Icons.inbox_outlined,
             title: l10n.requestsTitle,
