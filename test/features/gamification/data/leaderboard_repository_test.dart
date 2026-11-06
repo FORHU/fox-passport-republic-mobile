@@ -1,6 +1,7 @@
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
+import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -82,5 +83,51 @@ void main() {
       () => repository.foxers(LeaderboardRole.event),
       throwsA(isA<FormatException>()),
     );
+  });
+
+  group('the citizen board', () {
+    test('asks for the tab it was given', () async {
+      when(
+        () => api.get(
+          ApiEndpoints.leaderboardCitizens,
+          query: any(named: 'query'),
+        ),
+      ).thenAnswer(
+        (_) async => {
+          'success': true,
+          'data': {
+            'tab': 'all',
+            'month': null,
+            'rows': <Object>[],
+            'me': null,
+          },
+        },
+      );
+
+      final board = await repository.citizens(CitizenTab.all);
+
+      expect(board.tab, CitizenTab.all);
+      expect(board.month, isNull);
+      verify(
+        () => api.get(
+          ApiEndpoints.leaderboardCitizens,
+          query: {'tab': 'all'},
+        ),
+      ).called(1);
+    });
+
+    test('a response with no data is an error, not an empty board', () async {
+      when(
+        () => api.get(
+          ApiEndpoints.leaderboardCitizens,
+          query: any(named: 'query'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
+
+      expect(
+        () => repository.citizens(CitizenTab.month),
+        throwsA(isA<FormatException>()),
+      );
+    });
   });
 }

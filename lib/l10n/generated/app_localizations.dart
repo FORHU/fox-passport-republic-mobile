@@ -10515,6 +10515,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{role} · {rank}'**
   String leaderboardRowSubtitle(String role, String rank);
+
+  /// No description provided for @leaderboardSideCitizens.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizens'**
+  String get leaderboardSideCitizens;
+
+  /// No description provided for @leaderboardSideFoxers.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxers'**
+  String get leaderboardSideFoxers;
+
+  /// No description provided for @leaderboardTabMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get leaderboardTabMonth;
+
+  /// No description provided for @leaderboardTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get leaderboardTabAll;
+
+  /// No description provided for @leaderboardTabCity.
+  ///
+  /// In en, this message translates to:
+  /// **'My city'**
+  String get leaderboardTabCity;
+
+  /// No description provided for @leaderboardNoCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your city to your profile to see your local board.'**
+  String get leaderboardNoCity;
+
+  /// No description provided for @leaderboardEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get leaderboardEditProfile;
 }
 
 class _AppLocalizationsDelegate

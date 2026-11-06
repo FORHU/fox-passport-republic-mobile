@@ -1925,5 +1925,12 @@
   "leaderboardEmpty": "No completed bookings yet this month. Check back soon.",
   "leaderboardYou": "You",
   "leaderboardRowSubtitle": "{role} · {rank}",
-  "@leaderboardRowSubtitle": {"placeholders":{"role":{"type":"String"},"rank":{"type":"String"}}}
+  "@leaderboardRowSubtitle": {"placeholders":{"role":{"type":"String"},"rank":{"type":"String"}}},
+  "leaderboardSideCitizens": "Citizens",
+  "leaderboardSideFoxers": "Foxers",
+  "leaderboardTabMonth": "This month",
+  "leaderboardTabAll": "All time",
+  "leaderboardTabCity": "My city",
+  "leaderboardNoCity": "Add your city to your profile to see your local board.",
+  "leaderboardEditProfile": "Edit profile"
 }
