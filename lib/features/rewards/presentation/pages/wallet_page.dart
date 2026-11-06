@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet.dart';
+import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/features/rewards/presentation/widgets/wallet_entry_title.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -115,6 +116,16 @@ class _BalanceCard extends StatelessWidget {
               ),
             ],
           ),
+          if (summary.hasRank) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.rewardsRankLevel(summary.rank, summary.level),
+              style: AppTypography.display(
+                size: 13,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
           if (summary.pendingCoins > 0) ...[
             const SizedBox(height: 8),
             Text(

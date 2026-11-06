@@ -5761,4 +5761,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardsLifeReversal => 'Coins reversed';
+
+  @override
+  String rewardsRankLevel(String rank, int level) {
+    return '$rank · Level $level';
+  }
 }

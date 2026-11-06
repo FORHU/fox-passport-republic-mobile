@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
+import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -90,9 +91,22 @@ class WalletRow extends ConsumerWidget {
               const Icon(coinsIcon, size: 18, color: AppColors.textPrimary),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  l10n.rewardsWalletTitle,
-                  style: AppTypography.display(size: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.rewardsWalletTitle,
+                      style: AppTypography.display(size: 14),
+                    ),
+                    if (wallet.hasRank)
+                      Text(
+                        l10n.rewardsRankLevel(wallet.rank, wallet.level),
+                        style: AppTypography.body(
+                          size: 12,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               Text(

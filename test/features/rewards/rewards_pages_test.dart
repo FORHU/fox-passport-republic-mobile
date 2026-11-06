@@ -17,6 +17,7 @@ class _MockApi extends Mock implements ApiService {}
 Map<String, dynamic> _wallet({
   int coins = 1240,
   int pending = 0,
+  String rank = 'Explorer',
   List<Map<String, dynamic>> history = const [],
 }) =>
     {
@@ -26,7 +27,7 @@ Map<String, dynamic> _wallet({
         'pendingCoins': pending,
         'totalEarnedCoins': coins,
         'level': 5,
-        'rank': 'Explorer',
+        'rank': rank,
         'history': history,
       },
     };
@@ -271,6 +272,7 @@ void main() {
       expect(find.text('1,240'), findsOneWidget);
       expect(find.text('Wallet'), findsOneWidget);
       expect(find.text('1,240 Coins'), findsOneWidget);
+      expect(find.text('Explorer · Level 5'), findsOneWidget);
     });
 
     testWidgets('take no room when the balance cannot be had', (tester) async {
@@ -285,6 +287,29 @@ void main() {
       expect(find.text('Wallet'), findsNothing);
       expect(tester.getSize(find.byType(CoinsChip)), Size.zero);
       expect(tester.getSize(find.byType(WalletRow)), Size.zero);
+    });
+  });
+
+  group('the rank name', () {
+    testWidgets('the Wallet card shows the rank and level', (tester) async {
+      when(() => api.get(ApiEndpoints.rewardsMe))
+          .thenAnswer((_) async => _wallet());
+
+      await show(tester, const WalletPage());
+
+      expect(find.text('Explorer · Level 5'), findsOneWidget);
+    });
+
+    testWidgets('nothing is shown until the server names a rank', (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.rewardsMe))
+          .thenAnswer((_) async => _wallet(rank: ''));
+
+      await show(tester, const WalletPage());
+
+      expect(find.textContaining('Level'), findsNothing);
+      expect(find.text('1,240'), findsOneWidget);
     });
   });
 }
