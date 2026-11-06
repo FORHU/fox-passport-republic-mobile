@@ -53,7 +53,8 @@ void main() {
     final passport = await repository.load();
 
     expect(passport.totalXp, 1200);
-    expect(passport.level, 2);
+    // 1200 XP is level 5 on the new curve (level 5 starts at 1195).
+    expect(passport.level, 5);
     expect(passport.stamps.single.label, 'MAN');
     expect(passport.badges.map((badge) => badge.earned), [true, false]);
     expect(passport.isSample, isFalse);
