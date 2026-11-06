@@ -7,6 +7,7 @@ import 'package:flutter_template/features/messages/data/messages_repository.dart
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
+import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -80,7 +81,8 @@ void main() {
   late SharedPreferences prefs;
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues({});
+    // The first-run tour has been seen, so these tests see the bare shell.
+    SharedPreferences.setMockInitialValues({'citizenTourSeen.anon': true});
     prefs = await SharedPreferences.getInstance();
   });
 
@@ -214,5 +216,93 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1'), findsNothing);
+  });
+
+  group('the first-run tour', () {
+    Future<void> freshAccount() async {
+      SharedPreferences.setMockInitialValues({});
+      prefs = await SharedPreferences.getInstance();
+    }
+
+    testWidgets('plays once on the first sign-in, one card per tab', (
+      tester,
+    ) async {
+      await freshAccount();
+      await tester.pumpWidget(app(_router()));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Find what's on"), findsOneWidget);
+      expect(find.text('1 of 5'), findsOneWidget);
+
+      for (final title in [
+        'Join the conversation',
+        'Your tickets live here',
+        'Talk to Foxers',
+        'Your progress',
+      ]) {
+        await tester.tap(find.text('Next'));
+        await tester.pumpAndSettle();
+        expect(find.text(title), findsOneWidget, reason: title);
+      }
+      expect(find.text('5 of 5'), findsOneWidget);
+
+      await tester.tap(find.text('Got it'));
+      await tester.pumpAndSettle();
+      expect(find.text("Find what's on"), findsNothing);
+      expect(prefs.getBool('citizenTourSeen.anon'), isTrue);
+    });
+
+    testWidgets('does not come back by itself once it was seen', (
+      tester,
+    ) async {
+      await freshAccount();
+      await tester.pumpWidget(app(_router()));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Skip'));
+      await tester.pumpAndSettle();
+
+      // A fresh start of the app, same account and device.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(app(_router()));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Find what's on"), findsNothing);
+    });
+
+    testWidgets('skipping counts as seen', (tester) async {
+      await freshAccount();
+      await tester.pumpWidget(app(_router()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Skip'));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Find what's on"), findsNothing);
+      expect(prefs.getBool('citizenTourSeen.anon'), isTrue);
+    });
+
+    testWidgets('asking for it again plays it even when it was seen', (
+      tester,
+    ) async {
+      await tester.pumpWidget(app(_router()));
+      await tester.pumpAndSettle();
+      expect(find.text("Find what's on"), findsNothing);
+
+      ProviderScope.containerOf(tester.element(find.byType(MainLayout)))
+          .read(citizenTourRestartProvider.notifier)
+          .ask();
+      await tester.pumpAndSettle();
+
+      expect(find.text("Find what's on"), findsOneWidget);
+    });
+
+    testWidgets('waits for the Home tab', (tester) async {
+      await freshAccount();
+      final router = _router()..go('/republic');
+      await tester.pumpWidget(app(router));
+      await tester.pumpAndSettle();
+
+      expect(find.text("Find what's on"), findsNothing);
+    });
   });
 }
