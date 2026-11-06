@@ -15,9 +15,10 @@ import 'package:flutter_template/features/event/presentation/pages/event_detail_
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
+import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
-import 'package:flutter_template/features/gamification/presentation/pages/foxer_leaderboard_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
@@ -94,6 +95,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
 
@@ -428,7 +430,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.leaderboard,
-        builder: (context, state) => FoxerLeaderboardPage(
+        builder: (context, state) => LeaderboardPage(
+          initialSide: LeaderboardSide.fromApi(
+                state.uri.queryParameters['side'],
+              ) ??
+              LeaderboardSide.foxers,
           initialRole:
               LeaderboardRole.fromApi(state.uri.queryParameters['role']) ??
                   LeaderboardRole.event,
@@ -555,7 +561,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       final l10n = context.l10n;
                       return CitizenProfileView(
                         userId: me,
-                        heroFooter: const WalletRow(),
+                        heroFooter: const Column(
+                          children: [WalletRow(), LeaderboardRow()],
+                        ),
                         activityBuilder: (context, profile) =>
                             ProfilePosts(authorId: profile.id),
                         overrides: summary == null

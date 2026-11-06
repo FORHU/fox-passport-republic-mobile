@@ -222,6 +222,7 @@ class ApiEndpoints {
   static const String passportBadges = '/passport/badges';
   static const String passportLeaderboard = '/passport/leaderboard';
   static const String leaderboardFoxers = '/leaderboard/foxers';
+  static const String leaderboardCitizens = '/leaderboard/citizens';
   static String passportByUser(String userId) => '/passport/$userId';
 
   // ── Rewards (XP and Coins) ──────────────────────────────────────────────

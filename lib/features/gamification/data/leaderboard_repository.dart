@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 
-/// Reads the Foxer leaderboard.
+/// Reads the leaderboards.
 class LeaderboardRepository {
   LeaderboardRepository(this._api);
 
@@ -27,6 +28,20 @@ class LeaderboardRepository {
     }
     return FoxerBoard.fromJson(data.cast<String, dynamic>());
   }
+
+  /// The citizen board for [tab]: this month, all time, or this month in the
+  /// caller's own city.
+  Future<CitizenBoard> citizens(CitizenTab tab) async {
+    final body = await _api.get(
+      ApiEndpoints.leaderboardCitizens,
+      query: {'tab': tab.api},
+    );
+    final data = body is Map ? body['data'] : null;
+    if (data is! Map) {
+      throw const FormatException('Leaderboard response is missing data');
+    }
+    return CitizenBoard.fromJson(data.cast<String, dynamic>());
+  }
 }
 
 final leaderboardRepositoryProvider = Provider<LeaderboardRepository>(
@@ -41,4 +56,12 @@ final foxerBoardProvider =
   (ref, query) => ref
       .watch(leaderboardRepositoryProvider)
       .foxers(query.role, city: query.city),
+);
+
+/// The citizen board for one tab; read again with `ref.invalidate`.
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final citizenBoardProvider =
+    FutureProvider.autoDispose.family<CitizenBoard, CitizenTab>(
+  (ref, tab) => ref.watch(leaderboardRepositoryProvider).citizens(tab),
 );

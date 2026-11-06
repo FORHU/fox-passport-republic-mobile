@@ -5823,4 +5823,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String leaderboardRowSubtitle(String role, String rank) {
     return '$role · $rank';
   }
+
+  @override
+  String get leaderboardSideCitizens => 'Citizens';
+
+  @override
+  String get leaderboardSideFoxers => 'Foxers';
+
+  @override
+  String get leaderboardTabMonth => 'This month';
+
+  @override
+  String get leaderboardTabAll => 'All time';
+
+  @override
+  String get leaderboardTabCity => 'My city';
+
+  @override
+  String get leaderboardNoCity =>
+      'Add your city to your profile to see your local board.';
+
+  @override
+  String get leaderboardEditProfile => 'Edit profile';
 }

@@ -139,6 +139,9 @@ class RouteNames {
   static String leaderboardFor(String role) =>
       '$leaderboard?role=${Uri.encodeQueryComponent(role)}';
 
+  /// The leaderboard on its Citizens side, from the citizen Passport.
+  static const String leaderboardCitizens = '$leaderboard?side=citizens';
+
   /// What Coins can buy.
   static const String rewards = '/rewards';
 
