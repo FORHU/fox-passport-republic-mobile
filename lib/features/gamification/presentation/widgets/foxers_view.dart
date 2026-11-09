@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/leaderboard_labels.dart';
@@ -10,10 +11,10 @@ import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// The Foxer board: who completed the most bookings this month, for one role
-/// and, optionally, one city. Shows position, name and rank, never the number
-/// of bookings. The caller's own place is pinned below the list when it is
-/// further down than the list goes.
+/// The Foxer board for one role and tab (Top rated, Most booked, Rising) and,
+/// optionally, one city. Shows position, name, rank and the star rating, never
+/// the number of bookings. The caller's own place is pinned below the list when
+/// it is further down than the list goes.
 class FoxersView extends ConsumerStatefulWidget {
   const FoxersView({required this.initialRole, super.key});
 
@@ -26,9 +27,10 @@ class FoxersView extends ConsumerStatefulWidget {
 
 class _FoxersViewState extends ConsumerState<FoxersView> {
   late LeaderboardRole _role = widget.initialRole;
+  FoxerTab _tab = FoxerTab.topRated;
   String? _city;
 
-  BoardQuery get _query => BoardQuery(_role, city: _city);
+  BoardQuery get _query => BoardQuery(_role, tab: _tab, city: _city);
 
   Future<void> _pickCity() async {
     final next = await showModalBottomSheet<String>(
@@ -45,6 +47,7 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final board = ref.watch(foxerBoardProvider(_query));
+    final myId = ref.watch(currentUserIdProvider);
 
     return Column(
       children: [
@@ -71,18 +74,16 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  [
-                    l10n.leaderboardMostBooked,
-                    monthLabel(
-                      board.value?.month,
-                      Localizations.localeOf(context),
-                    ),
-                  ].where((s) => s.isNotEmpty).join(' · '),
-                  style: AppTypography.body(
-                    size: 13,
-                    color: AppColors.textMuted,
-                  ),
+                child: Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final tab in FoxerTab.values)
+                      ChoiceChip(
+                        label: Text(foxerTabLabel(l10n, tab)),
+                        selected: tab == _tab,
+                        onSelected: (_) => setState(() => _tab = tab),
+                      ),
+                  ],
                 ),
               ),
               TextButton.icon(
@@ -114,9 +115,9 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
                     title: l10n.leaderboardEmpty,
                   )
                 : BoardList(
-                    rows: [for (final e in data.rows) _row(l10n, e)],
+                    rows: [for (final e in data.rows) _row(l10n, e, myId)],
                     pinned: data.me != null && !data.meIsListed
-                        ? _row(l10n, data.me!)
+                        ? _row(l10n, data.me!, myId)
                         : null,
                   ),
           ),
@@ -125,7 +126,8 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
     );
   }
 
-  Widget _row(AppLocalizations l10n, FoxerBoardEntry e) => BoardRow(
+  Widget _row(AppLocalizations l10n, FoxerBoardEntry e, String? myId) =>
+      BoardRow(
         position: e.position,
         name: e.name,
         image: e.image,
@@ -133,8 +135,48 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
           roleLabel(l10n, e.role),
           e.rankName,
         ),
-        isMe: e.isMe,
+        isMe: myId != null && e.userId == myId,
+        trailing: _Rating(entry: e),
       );
+}
+
+/// A Foxer's star rating and review count, or "New" while there are too few
+/// reviews for a number to mean anything.
+class _Rating extends StatelessWidget {
+  const _Rating({required this.entry});
+
+  final FoxerBoardEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    if (!entry.hasRating) {
+      return Text(
+        l10n.leaderboardFoxerNew,
+        style: AppTypography.body(size: 12, color: AppColors.textMuted),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
+            const SizedBox(width: 2),
+            Text(
+              entry.starRating.toStringAsFixed(1),
+              style: AppTypography.display(size: 14),
+            ),
+          ],
+        ),
+        Text(
+          l10n.leaderboardReviews(entry.reviewCount),
+          style: AppTypography.body(size: 11, color: AppColors.textMuted),
+        ),
+      ],
+    );
+  }
 }
 
 class _CitySheet extends StatefulWidget {

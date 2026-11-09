@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
 import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
@@ -7,16 +8,18 @@ import 'package:flutter_template/features/gamification/presentation/leaderboard_
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-FoxerBoardEntry _entry(
+FoxerBoardEntry _foxer(
   int position,
   String name, {
   LeaderboardRole role = LeaderboardRole.venue,
   String rank = 'Veteran',
-  bool isMe = false,
+  double rating = 4.8,
+  int reviews = 126,
 }) =>
     FoxerBoardEntry(
       position: position,
@@ -24,39 +27,94 @@ FoxerBoardEntry _entry(
       name: name,
       role: role,
       rankName: rank,
-      isMe: isMe,
+      starRating: rating,
+      reviewCount: reviews,
     );
 
-class _FakeRepository implements LeaderboardRepository {
-  _FakeRepository(this.answer, {this.citizenAnswer});
+CitizenBoardEntry _citizen(
+  int position,
+  String name, {
+  String rank = 'Explorer',
+  int level = 5,
+}) =>
+    CitizenBoardEntry(
+      position: position,
+      userId: 'id-$name',
+      name: name,
+      rankName: rank,
+      level: level,
+    );
 
-  final Future<FoxerBoard> Function(LeaderboardRole role, String? city) answer;
-  final Future<CitizenBoard> Function(CitizenTab tab)? citizenAnswer;
-  final List<(LeaderboardRole, String?)> calls = [];
-  final List<CitizenTab> citizenCalls = [];
+FoxerBoard _foxerBoard(
+  LeaderboardRole role,
+  List<FoxerBoardEntry> rows, {
+  FoxerTab tab = FoxerTab.topRated,
+  FoxerBoardEntry? me,
+}) =>
+    FoxerBoard(tab: tab, role: role, rows: rows, me: me);
+
+CitizenBoard _citizenBoard(
+  CitizenTab tab,
+  List<CitizenBoardEntry> rows, {
+  CitizenBoardEntry? me,
+  String? season = '2026-11',
+}) =>
+    CitizenBoard(tab: tab, season: season, rows: rows, me: me);
+
+class _FakeRepository implements LeaderboardRepository {
+  _FakeRepository({this.foxerAnswer, this.citizenAnswer});
+
+  final Future<FoxerBoard> Function(
+    LeaderboardRole role,
+    FoxerTab tab,
+    String? city,
+  )? foxerAnswer;
+  final Future<CitizenBoard> Function(CitizenTab tab, String? city)?
+      citizenAnswer;
+
+  final List<(LeaderboardRole, FoxerTab, String?)> foxerCalls = [];
+  final List<(CitizenTab, String?)> citizenCalls = [];
 
   @override
-  Future<CitizenBoard> citizens(CitizenTab tab) {
-    citizenCalls.add(tab);
-    return citizenAnswer!(tab);
+  Future<FoxerBoard> foxers(
+    LeaderboardRole role, {
+    FoxerTab tab = FoxerTab.topRated,
+    String? city,
+  }) {
+    foxerCalls.add((role, tab, city));
+    return foxerAnswer!(role, tab, city);
   }
 
   @override
-  Future<FoxerBoard> foxers(LeaderboardRole role, {String? city}) {
-    calls.add((role, city));
-    return answer(role, city);
+  Future<CitizenBoard> citizens(CitizenTab tab, {String? city}) {
+    citizenCalls.add((tab, city));
+    return citizenAnswer!(tab, city);
   }
 }
 
 void main() {
-  Future<_FakeRepository> show(
+  Future<void> show(
     WidgetTester tester,
-    Future<FoxerBoard> Function(LeaderboardRole role, String? city) answer, {
-    LeaderboardRole role = LeaderboardRole.venue,
+    _FakeRepository repository, {
     LeaderboardSide side = LeaderboardSide.foxers,
-    Future<CitizenBoard> Function(CitizenTab tab)? citizens,
+    LeaderboardRole role = LeaderboardRole.venue,
+    String? profileCity = 'Davao',
+    String? me = 'id-Me',
   }) async {
-    final repository = _FakeRepository(answer, citizenAnswer: citizens);
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) =>
+              LeaderboardPage(initialSide: side, initialRole: role),
+        ),
+        GoRoute(
+          path: RouteNames.profileEdit,
+          builder: (context, state) =>
+              const Scaffold(body: Text('edit profile opened')),
+        ),
+      ],
+    );
     tester.view
       ..physicalSize = const Size(900, 2000)
       ..devicePixelRatio = 1;
@@ -65,270 +123,148 @@ void main() {
       ProviderScope(
         overrides: [
           leaderboardRepositoryProvider.overrideWithValue(repository),
+          currentUserIdProvider.overrideWithValue(me),
+          profileCityProvider.overrideWith((ref) async => profileCity),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
           theme: AppTheme.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: LeaderboardPage(initialSide: side, initialRole: role),
+          routerConfig: router,
         ),
       ),
     );
     await tester.pumpAndSettle();
-    return repository;
   }
 
-  FoxerBoard board(
-    LeaderboardRole role,
-    List<FoxerBoardEntry> rows, {
-    FoxerBoardEntry? me,
-    String? city,
-  }) =>
-      FoxerBoard(
-        role: role,
-        city: city,
-        month: '2026-11',
-        rows: rows,
-        me: me,
-      );
-
-  testWidgets('lists the Foxers with position, rank and the month', (
-    tester,
-  ) async {
-    await show(
-      tester,
-      (role, city) async => board(role, [
-        _entry(1, 'Glass Pavilion', rank: 'Icon'),
-        _entry(1, 'Harbor Loft', rank: 'Headliner'),
-        _entry(3, 'Old Mill Hall'),
-      ]),
-    );
-
-    expect(find.text('Leaderboard'), findsOneWidget);
-    expect(find.textContaining('Most booked'), findsOneWidget);
-    expect(find.textContaining('2026'), findsOneWidget);
-    expect(find.text('Glass Pavilion'), findsOneWidget);
-    expect(find.text('Venues · Icon'), findsOneWidget);
-    expect(find.text('Venues · Headliner'), findsOneWidget);
-    expect(find.text('Venues · Veteran'), findsOneWidget);
-    // Ties share a position.
-    expect(find.text('1'), findsNWidgets(2));
-    expect(find.text('3'), findsOneWidget);
-  });
-
-  testWidgets('marks the caller inside the list', (tester) async {
-    final mine = _entry(2, 'Me Myself', isMe: true);
-    await show(
-      tester,
-      (role, city) async => board(
-        role,
-        [_entry(1, 'Top'), mine],
-        me: mine,
-      ),
-    );
-
-    expect(find.text('You'), findsOneWidget);
-    expect(find.text('Me Myself'), findsOneWidget);
-  });
-
-  testWidgets('pins the caller below the list when it does not reach them', (
-    tester,
-  ) async {
-    await show(
-      tester,
-      (role, city) async => board(
-        role,
-        [_entry(1, 'Top')],
-        me: _entry(27, 'Far Down', isMe: true),
-      ),
-    );
-
-    expect(find.text('Far Down'), findsOneWidget);
-    expect(find.text('27'), findsOneWidget);
-    expect(find.text('You'), findsOneWidget);
-  });
-
-  testWidgets('says so when nobody has completed a booking, not a blank', (
-    tester,
-  ) async {
-    await show(tester, (role, city) async => board(role, const []));
-
-    expect(
-      find.text('No completed bookings yet this month. Check back soon.'),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('a failed load offers a retry that asks again', (tester) async {
-    // The provider also retries by itself, so the fake keeps failing until the
-    // test lets it recover; only then does the tap have something to fix.
-    var offline = true;
-    final repository = await show(tester, (role, city) async {
-      if (offline) throw Exception('offline');
-      return board(role, [_entry(1, 'Back Again')]);
-    });
-
-    expect(find.text('Try again'), findsOneWidget);
-    expect(find.text('Back Again'), findsNothing);
-    final before = repository.calls.length;
-
-    offline = false;
-    await tester.tap(find.text('Try again'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Back Again'), findsOneWidget);
-    expect(repository.calls.length, greaterThan(before));
-  });
-
-  testWidgets('opens on the role it was given and switches on a tap', (
-    tester,
-  ) async {
-    final repository = await show(
-      tester,
-      (role, city) async => board(
-        role,
-        [_entry(1, 'Someone', role: role)],
-      ),
-      role: LeaderboardRole.gear,
-    );
-
-    expect(repository.calls.first.$1, LeaderboardRole.gear);
-    expect(find.text('Gear · Veteran'), findsOneWidget);
-
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Events'));
-    await tester.pumpAndSettle();
-
-    expect(repository.calls.last.$1, LeaderboardRole.event);
-    expect(find.text('Events · Veteran'), findsOneWidget);
-  });
-
-  testWidgets('filters by the city typed in, and clears it again', (
-    tester,
-  ) async {
-    final repository = await show(
-      tester,
-      (role, city) async => board(role, [_entry(1, 'Someone')], city: city),
-    );
-
-    expect(find.text('All cities'), findsOneWidget);
-
-    await tester.tap(find.text('All cities'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Davao');
-    await tester.tap(find.text('Apply'));
-    await tester.pumpAndSettle();
-
-    expect(repository.calls.last, (LeaderboardRole.venue, 'Davao'));
-    expect(find.text('Davao'), findsOneWidget);
-
-    await tester.tap(find.text('Davao'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'All cities').last);
-    await tester.pumpAndSettle();
-
-    expect(repository.calls.last, (LeaderboardRole.venue, null));
-  });
-
-  CitizenBoardEntry citizen(
-    int position,
-    String name, {
-    String rank = 'Explorer',
-    int level = 5,
-    bool isMe = false,
-  }) =>
-      CitizenBoardEntry(
-        position: position,
-        userId: 'id-$name',
-        name: name,
-        rankName: rank,
-        level: level,
-        isMe: isMe,
-      );
-
-  CitizenBoard citizenBoard(
-    CitizenTab tab,
-    List<CitizenBoardEntry> rows, {
-    CitizenBoardEntry? me,
-    String? city,
-    String? month = '2026-11',
-  }) =>
-      CitizenBoard(tab: tab, city: city, month: month, rows: rows, me: me);
-
-  Future<_FakeRepository> showCitizens(
-    WidgetTester tester,
-    Future<CitizenBoard> Function(CitizenTab tab) answer,
+  _FakeRepository foxersOnly(
+    Future<FoxerBoard> Function(
+      LeaderboardRole role,
+      FoxerTab tab,
+      String? city,
+    ) answer,
   ) =>
-      show(
-        tester,
-        (role, city) async => board(role, const []),
-        side: LeaderboardSide.citizens,
-        citizens: answer,
-      );
+      _FakeRepository(foxerAnswer: answer);
 
-  group('the Citizens side', () {
-    testWidgets('lists citizens with rank and level, and no scores', (
-      tester,
-    ) async {
-      await showCitizens(
-        tester,
-        (tab) async => citizenBoard(tab, [
-          citizen(1, 'Kai Santos', rank: 'Adventurer', level: 22),
-          citizen(1, 'Ana Cruz', rank: 'Adventurer', level: 20),
-          citizen(3, 'Leo Reyes', rank: 'Voyager', level: 16),
+  _FakeRepository citizensOnly(
+    Future<CitizenBoard> Function(CitizenTab tab, String? city) answer,
+  ) =>
+      _FakeRepository(citizenAnswer: answer);
+
+  group('the Foxers side', () {
+    testWidgets('lists Foxers with position, rank and rating', (tester) async {
+      final repository = foxersOnly(
+        (role, tab, city) async => _foxerBoard(role, [
+          _foxer(1, 'Glass Pavilion', rank: 'Icon', rating: 4.9, reviews: 210),
+          _foxer(2, 'Harbor Loft', rank: 'Headliner', reviews: 1),
+          _foxer(3, 'Old Mill Hall'),
         ]),
       );
+      await show(tester, repository);
 
-      expect(find.text('Kai Santos'), findsOneWidget);
-      expect(find.text('Adventurer · Level 22'), findsOneWidget);
-      expect(find.text('Voyager · Level 16'), findsOneWidget);
-      // Ties share a position.
-      expect(find.text('1'), findsNWidgets(2));
+      expect(find.text('Leaderboard'), findsOneWidget);
+      expect(find.text('Glass Pavilion'), findsOneWidget);
+      expect(find.text('Venues · Icon'), findsOneWidget);
+      expect(find.text('Venues · Headliner'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
-      expect(find.textContaining('XP'), findsNothing);
-      expect(find.text('November 2026'), findsOneWidget);
+      // A rating with its review count; "New" while there are too few reviews.
+      expect(find.text('4.9'), findsOneWidget);
+      expect(find.text('210 reviews'), findsOneWidget);
+      expect(find.text('New'), findsOneWidget);
+      expect(find.textContaining('booking'), findsNothing);
     });
 
-    testWidgets('opens on This month and switches tabs', (tester) async {
-      final repository = await showCitizens(
-        tester,
-        (tab) async => citizenBoard(
-          tab,
-          [citizen(1, 'Top')],
-          month: tab == CitizenTab.all ? null : '2026-11',
-        ),
-      );
-
-      expect(repository.citizenCalls.first, CitizenTab.month);
-
-      await tester.tap(find.widgetWithText(ChoiceChip, 'All time'));
-      await tester.pumpAndSettle();
-
-      expect(repository.citizenCalls.last, CitizenTab.all);
-      // All time does not belong to a month.
-      expect(find.text('November 2026'), findsNothing);
-    });
-
-    testWidgets('pins the caller below the list and marks them in it', (
+    testWidgets('opens on Top rated and asks for the account role', (
       tester,
     ) async {
-      await showCitizens(
-        tester,
-        (tab) async => citizenBoard(
-          tab,
-          [citizen(1, 'Top')],
-          me: citizen(48, 'Far Down', isMe: true),
+      final repository = foxersOnly(
+        (role, tab, city) async => _foxerBoard(role, [_foxer(1, 'Someone')]),
+      );
+      await show(tester, repository, role: LeaderboardRole.gear);
+
+      expect(
+        repository.foxerCalls.first,
+        (
+          LeaderboardRole.gear,
+          FoxerTab.topRated,
+          null,
+        ),
+      );
+      expect(repository.citizenCalls, isEmpty);
+    });
+
+    testWidgets('switches role and tab, keeping the other', (tester) async {
+      final repository = foxersOnly(
+        (role, tab, city) async => _foxerBoard(
+          role,
+          [_foxer(1, 'Someone', role: role)],
+          tab: tab,
+        ),
+      );
+      await show(tester, repository);
+
+      await tester.tap(find.widgetWithText(ChoiceChip, 'Most booked'));
+      await tester.pumpAndSettle();
+      expect(
+        repository.foxerCalls.last,
+        (
+          LeaderboardRole.venue,
+          FoxerTab.mostBooked,
+          null,
         ),
       );
 
-      expect(find.text('Far Down'), findsOneWidget);
-      expect(find.text('48'), findsOneWidget);
+      await tester.tap(find.widgetWithText(ChoiceChip, 'Events'));
+      await tester.pumpAndSettle();
+      expect(
+        repository.foxerCalls.last,
+        (
+          LeaderboardRole.event,
+          FoxerTab.mostBooked,
+          null,
+        ),
+      );
+      expect(find.text('Events · Veteran'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(ChoiceChip, 'Rising'));
+      await tester.pumpAndSettle();
+      expect(repository.foxerCalls.last.$2, FoxerTab.rising);
+    });
+
+    testWidgets('marks the caller in the list and pins them when below it', (
+      tester,
+    ) async {
+      final repository = foxersOnly(
+        (role, tab, city) async => _foxerBoard(
+          role,
+          [_foxer(1, 'Top'), _foxer(2, 'Me')],
+          me: _foxer(2, 'Me'),
+        ),
+      );
+      await show(tester, repository);
+      expect(find.text('You'), findsOneWidget);
+
+      final far = foxersOnly(
+        (role, tab, city) async => _foxerBoard(
+          role,
+          [_foxer(1, 'Top')],
+          me: _foxer(51, 'Me'),
+        ),
+      );
+      await show(tester, far);
+      expect(find.text('51'), findsOneWidget);
       expect(find.text('You'), findsOneWidget);
     });
 
-    testWidgets('says so when nobody has earned XP yet, not a blank', (
+    testWidgets('says so when nobody is on the board, not a blank', (
       tester,
     ) async {
-      await showCitizens(tester, (tab) async => citizenBoard(tab, const []));
+      await show(
+        tester,
+        foxersOnly((role, tab, city) async => _foxerBoard(role, const [])),
+      );
 
       expect(
         find.text('No completed bookings yet this month. Check back soon.'),
@@ -336,48 +272,132 @@ void main() {
       );
     });
 
-    testWidgets('asks a caller with no city to add one, and opens Edit profile',
-        (
+    testWidgets('a failed load offers a retry that asks again', (tester) async {
+      var offline = true;
+      final repository = foxersOnly((role, tab, city) async {
+        if (offline) throw Exception('offline');
+        return _foxerBoard(role, [_foxer(1, 'Back Again')]);
+      });
+      await show(tester, repository);
+
+      expect(find.text('Try again'), findsOneWidget);
+      final before = repository.foxerCalls.length;
+
+      offline = false;
+      await tester.tap(find.text('Try again'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Back Again'), findsOneWidget);
+      expect(repository.foxerCalls.length, greaterThan(before));
+    });
+
+    testWidgets('filters by the city typed in, and clears it again', (
       tester,
     ) async {
-      final repository = _FakeRepository(
-        (role, city) async => board(role, const []),
-        citizenAnswer: (tab) async => citizenBoard(tab, const []),
+      final repository = foxersOnly(
+        (role, tab, city) async => _foxerBoard(role, [_foxer(1, 'Someone')]),
       );
-      final router = GoRouter(
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const LeaderboardPage(
-              initialSide: LeaderboardSide.citizens,
-              initialRole: LeaderboardRole.event,
-            ),
-          ),
-          GoRoute(
-            path: RouteNames.profileEdit,
-            builder: (context, state) =>
-                const Scaffold(body: Text('edit profile opened')),
-          ),
-        ],
+      await show(tester, repository);
+
+      await tester.tap(find.text('All cities'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Davao');
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+
+      expect(repository.foxerCalls.last.$3, 'Davao');
+      expect(find.text('Davao'), findsOneWidget);
+
+      await tester.tap(find.text('Davao'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'All cities').last);
+      await tester.pumpAndSettle();
+
+      expect(repository.foxerCalls.last.$3, isNull);
+    });
+  });
+
+  group('the Citizens side', () {
+    Future<_FakeRepository> showCitizens(
+      WidgetTester tester,
+      Future<CitizenBoard> Function(CitizenTab tab, String? city) answer, {
+      String? profileCity = 'Davao',
+    }) async {
+      final repository = citizensOnly(answer);
+      await show(
+        tester,
+        repository,
+        side: LeaderboardSide.citizens,
+        profileCity: profileCity,
       );
-      tester.view
-        ..physicalSize = const Size(900, 2000)
-        ..devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            leaderboardRepositoryProvider.overrideWithValue(repository),
-          ],
-          child: MaterialApp.router(
-            theme: AppTheme.dark,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: router,
-          ),
+      return repository;
+    }
+
+    testWidgets('lists citizens with rank and level, and no scores', (
+      tester,
+    ) async {
+      await showCitizens(
+        tester,
+        (tab, city) async => _citizenBoard(tab, [
+          _citizen(1, 'Kai Santos', rank: 'Adventurer', level: 22),
+          _citizen(2, 'Ana Cruz', rank: 'Adventurer', level: 20),
+          _citizen(3, 'Leo Reyes', rank: 'Voyager', level: 16),
+        ]),
+      );
+
+      expect(find.text('Kai Santos'), findsOneWidget);
+      expect(find.text('Adventurer · Level 22'), findsOneWidget);
+      expect(find.text('Voyager · Level 16'), findsOneWidget);
+      expect(find.textContaining('XP'), findsNothing);
+      expect(find.text('November 2026'), findsOneWidget);
+    });
+
+    testWidgets("opens on This month and asks for the API's tab names", (
+      tester,
+    ) async {
+      final repository = await showCitizens(
+        tester,
+        (tab, city) async => _citizenBoard(
+          tab,
+          [_citizen(1, 'Top')],
+          season: tab == CitizenTab.all ? null : '2026-11',
         ),
       );
+
+      expect(repository.citizenCalls.first, (CitizenTab.month, null));
+
+      await tester.tap(find.widgetWithText(ChoiceChip, 'All time'));
       await tester.pumpAndSettle();
+
+      expect(repository.citizenCalls.last, (CitizenTab.all, null));
+      expect(find.text('November 2026'), findsNothing);
+    });
+
+    testWidgets("My city sends the caller's own profile city", (tester) async {
+      final repository = await showCitizens(
+        tester,
+        (tab, city) async => _citizenBoard(tab, [_citizen(1, 'Local Hero')]),
+        profileCity: ' Davao ',
+      );
+
+      await tester.tap(find.widgetWithText(ChoiceChip, 'My city'));
+      await tester.pumpAndSettle();
+
+      expect(repository.citizenCalls.last, (CitizenTab.city, 'Davao'));
+      expect(find.text('Local Hero'), findsOneWidget);
+      expect(find.textContaining('Davao'), findsOneWidget);
+      expect(find.text('Edit profile'), findsNothing);
+    });
+
+    testWidgets(
+        'My city asks a caller with no city to add one, and calls nothing',
+        (tester) async {
+      final repository = await showCitizens(
+        tester,
+        (tab, city) async => _citizenBoard(tab, [_citizen(1, 'Top')]),
+        profileCity: null,
+      );
+      final before = repository.citizenCalls.length;
 
       await tester.tap(find.widgetWithText(ChoiceChip, 'My city'));
       await tester.pumpAndSettle();
@@ -386,6 +406,7 @@ void main() {
         find.text('Add your city to your profile to see your local board.'),
         findsOneWidget,
       );
+      expect(repository.citizenCalls.length, before);
 
       await tester.tap(find.text('Edit profile'));
       await tester.pumpAndSettle();
@@ -393,31 +414,41 @@ void main() {
       expect(find.text('edit profile opened'), findsOneWidget);
     });
 
-    testWidgets('My city shows the board once the caller has a city', (
+    testWidgets('marks the caller by id, and pins them when below the list', (
       tester,
     ) async {
       await showCitizens(
         tester,
-        (tab) async => citizenBoard(
+        (tab, city) async => _citizenBoard(
           tab,
-          [citizen(1, 'Local Hero')],
-          city: tab == CitizenTab.city ? 'Davao' : null,
+          [_citizen(1, 'Top')],
+          me: _citizen(51, 'Me'),
         ),
       );
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'My city'));
-      await tester.pumpAndSettle();
+      expect(find.text('51'), findsOneWidget);
+      expect(find.text('You'), findsOneWidget);
+    });
 
-      expect(find.text('Local Hero'), findsOneWidget);
-      expect(find.textContaining('Davao'), findsOneWidget);
-      expect(find.text('Edit profile'), findsNothing);
+    testWidgets('says so when nobody has earned XP yet, not a blank', (
+      tester,
+    ) async {
+      await showCitizens(
+        tester,
+        (tab, city) async => _citizenBoard(tab, const []),
+      );
+
+      expect(
+        find.text('No completed bookings yet this month. Check back soon.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a failed load offers a retry', (tester) async {
       var offline = true;
-      await showCitizens(tester, (tab) async {
+      await showCitizens(tester, (tab, city) async {
         if (offline) throw Exception('offline');
-        return citizenBoard(tab, [citizen(1, 'Back Again')]);
+        return _citizenBoard(tab, [_citizen(1, 'Back Again')]);
       });
 
       expect(find.text('Try again'), findsOneWidget);
@@ -432,32 +463,23 @@ void main() {
 
   group('the switch', () {
     testWidgets('moves between the Citizens and Foxers sides', (tester) async {
-      final repository = await show(
-        tester,
-        (role, city) async => board(role, [_entry(1, 'Venue Person')]),
-        side: LeaderboardSide.citizens,
-        citizens: (tab) async => citizenBoard(tab, [citizen(1, 'Citizen One')]),
+      final repository = _FakeRepository(
+        foxerAnswer: (role, tab, city) async =>
+            _foxerBoard(role, [_foxer(1, 'Venue Person')]),
+        citizenAnswer: (tab, city) async =>
+            _citizenBoard(tab, [_citizen(1, 'Citizen One')]),
       );
+      await show(tester, repository, side: LeaderboardSide.citizens);
 
       expect(find.text('Citizen One'), findsOneWidget);
-      expect(repository.calls, isEmpty);
+      expect(repository.foxerCalls, isEmpty);
 
       await tester.tap(find.text('Foxers'));
       await tester.pumpAndSettle();
 
       expect(find.text('Venue Person'), findsOneWidget);
       expect(find.text('Citizen One'), findsNothing);
-      expect(repository.calls.first.$1, LeaderboardRole.venue);
-    });
-
-    testWidgets('the Foxers side is the default', (tester) async {
-      final repository = await show(
-        tester,
-        (role, city) async => board(role, [_entry(1, 'Someone')]),
-      );
-
-      expect(repository.citizenCalls, isEmpty);
-      expect(find.text('Someone'), findsOneWidget);
+      expect(repository.foxerCalls.first.$1, LeaderboardRole.venue);
     });
   });
 
