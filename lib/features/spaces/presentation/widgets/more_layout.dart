@@ -13,7 +13,10 @@ class MoreSectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
-      child: Text(label.toUpperCase(), style: AppTypography.label()),
+      child: Text(
+        label.toUpperCase(),
+        style: AppTypography.label(color: AppColors.textSecondary),
+      ),
     );
   }
 }
@@ -94,7 +97,7 @@ class MoreQuickTile extends StatelessWidget {
 }
 
 /// Lays children out two to a row with an even gap, so a group of short
-/// entries takes half the height of a list. A last odd one keeps its width.
+/// entries takes half the height of a list. A last odd one spans the row.
 class MoreGrid extends StatelessWidget {
   const MoreGrid({required this.children, super.key});
 
@@ -105,18 +108,17 @@ class MoreGrid extends StatelessWidget {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i += 2) {
       if (i > 0) rows.add(const SizedBox(height: 8));
+      // A lone last entry takes the whole row, so there is no empty slot.
       rows.add(
-        Row(
-          children: [
-            Expanded(child: children[i]),
-            const SizedBox(width: 8),
-            Expanded(
-              child: i + 1 < children.length
-                  ? children[i + 1]
-                  : const SizedBox.shrink(),
-            ),
-          ],
-        ),
+        i + 1 < children.length
+            ? Row(
+                children: [
+                  Expanded(child: children[i]),
+                  const SizedBox(width: 8),
+                  Expanded(child: children[i + 1]),
+                ],
+              )
+            : children[i],
       );
     }
     return Column(children: rows);

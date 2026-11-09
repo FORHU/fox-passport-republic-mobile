@@ -955,6 +955,15 @@ void main() {
       expect(top('GROW'), lessThan(top('Partners')));
       expect(top('YOU'), lessThan(top('Passport')));
       expect(top('ACCOUNT'), lessThan(top('Switch space')));
+      // Team is alone in its group, so it spans the row (wider than Partners).
+      double width(String text) => tester
+          .getSize(
+            find
+                .ancestor(of: find.text(text), matching: find.byType(InkWell))
+                .first,
+          )
+          .width;
+      expect(width('Team'), greaterThan(width('Partners')));
       // The three quick ones share a row.
       expect(top('Check-in'), top('Requests'));
       expect(top('Requests'), top('Messages'));
