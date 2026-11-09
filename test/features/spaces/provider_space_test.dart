@@ -213,7 +213,7 @@ void main() {
     Future<void> pump(
       WidgetTester tester,
       Widget home, {
-      List<String> roles = const ['gearFoxer'],
+      List<String> roles = const ['providerFoxer'],
       StripeStatus stripe = const StripeStatus(),
     }) async {
       tester.view
@@ -262,22 +262,9 @@ void main() {
       await pump(
         tester,
         const ProviderOverviewPage(kind: ProviderKind.services),
-        roles: const ['serviceFoxer'],
       );
 
       expect(find.text('List your first service'), findsOneWidget);
-    });
-
-    testWidgets('a performer without the talent role sees performer wording', (
-      tester,
-    ) async {
-      await pump(
-        tester,
-        const ProviderOverviewPage(kind: ProviderKind.services),
-        roles: const ['performerFoxer'],
-      );
-
-      expect(find.text('List your first performance'), findsOneWidget);
     });
 
     testWidgets('first steps tick off from the listings and payouts', (
@@ -311,20 +298,9 @@ void main() {
       await pump(
         tester,
         const ProviderOverviewPage(kind: ProviderKind.services),
-        roles: const ['serviceFoxer'],
       );
 
       expect(find.text('Add service'), findsOneWidget);
-    });
-
-    testWidgets('names the add button for a performer', (tester) async {
-      await pump(
-        tester,
-        const ProviderOverviewPage(kind: ProviderKind.services),
-        roles: const ['performerFoxer'],
-      );
-
-      expect(find.text('Add performance'), findsOneWidget);
     });
 
     testWidgets('shows the earnings card and My gear, two cards at most', (
@@ -429,7 +405,7 @@ void main() {
       await pump(
         tester,
         const ProviderOverviewPage(kind: ProviderKind.services),
-        roles: ['serviceFoxer'],
+        roles: ['providerFoxer'],
       );
 
       expect(find.text('DJ set'), findsOneWidget);
@@ -463,25 +439,11 @@ void main() {
       await pump(
         tester,
         const ProviderListingsPage(kind: ProviderKind.services),
-        roles: ['serviceFoxer'],
+        roles: ['providerFoxer'],
       );
 
       expect(find.text('DJ set'), findsOneWidget);
       expect(find.text('PA system'), findsNothing);
-    });
-
-    testWidgets('the tab of a Performer Foxer is called Performances', (
-      tester,
-    ) async {
-      await pump(
-        tester,
-        const ProviderListingsPage(kind: ProviderKind.services),
-        roles: ['performerFoxer'],
-      );
-
-      expect(find.text('Performances'), findsWidgets);
-      expect(find.text('You have no services listed yet.'), findsOneWidget);
-      expect(find.text('Add'), findsOneWidget);
     });
 
     testWidgets('tapping a listing offers to edit it', (
@@ -503,28 +465,18 @@ void main() {
   });
 
   group('space names follow the roles held', () {
-    test('the Services space of a Performer Foxer is called Performer', () {
-      final context = {
-        'performer': ['performerFoxer'],
-        'service': ['serviceFoxer'],
-        'both': ['serviceFoxer', 'performerFoxer'],
-      };
-      // Names need the generated strings; the roles decide which one.
+    test('a Provider sees Gear and Services by those names', () {
+      // Names need the generated strings.
       final l10n = lookupAppLocalizations(const Locale('en'));
 
       expect(
-        spaceLabel(l10n, AppSpace.services, roles: context['performer']!),
-        'Performer',
-      );
-      expect(
-        spaceLabel(l10n, AppSpace.services, roles: context['service']!),
+        spaceLabel(l10n, AppSpace.services, roles: const ['providerFoxer']),
         'Services',
       );
       expect(
-        spaceLabel(l10n, AppSpace.services, roles: context['both']!),
-        'Services',
+        spaceLabel(l10n, AppSpace.gear, roles: const ['providerFoxer']),
+        'Gear',
       );
-      expect(spaceLabel(l10n, AppSpace.gear), 'Gear');
     });
   });
 }

@@ -127,14 +127,14 @@ void main() {
 
     test('asks for one XP path when told which', () async {
       when(
-        () => api.get(ApiEndpoints.rewardsMe, query: {'path': 'gearFoxer'}),
+        () => api.get(ApiEndpoints.rewardsMe, query: {'path': 'providerFoxer'}),
       ).thenAnswer((_) async => {'success': true, 'data': _walletJson()});
 
-      final wallet = await repo.wallet(path: 'gearFoxer');
+      final wallet = await repo.wallet(path: 'providerFoxer');
 
       expect(wallet.rank, 'Explorer');
       verify(
-        () => api.get('/rewards/me', query: {'path': 'gearFoxer'}),
+        () => api.get('/rewards/me', query: {'path': 'providerFoxer'}),
       ).called(1);
     });
 

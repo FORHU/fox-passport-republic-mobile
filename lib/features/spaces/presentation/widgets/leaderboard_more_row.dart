@@ -19,8 +19,7 @@ class LeaderboardMoreRow extends ConsumerWidget {
   static String roleFor(AppSpace space, List<String> roles) => switch (space) {
         AppSpace.venue => 'venue',
         AppSpace.gear => 'gear',
-        AppSpace.services =>
-          space.xpPath(roles) == 'performerFoxer' ? 'performers' : 'services',
+        AppSpace.services => 'services',
         AppSpace.event || AppSpace.organizer || AppSpace.citizen => 'event',
       };
 

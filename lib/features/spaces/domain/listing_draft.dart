@@ -17,8 +17,8 @@ const serviceCategories = <String>[
   'other',
 ];
 
-/// The service categories only a Performer Foxer may list under; the rest
-/// need a Service Foxer.
+/// The performer service categories (listed under `performer:manage`); the
+/// rest need `service:manage`. A Provider holds both.
 const performerCategories = <String>[
   'photography',
   'videography',

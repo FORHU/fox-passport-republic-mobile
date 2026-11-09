@@ -45,55 +45,14 @@ void main() {
   late _MockRepo repo;
 
   setUpAll(() {
-    registerFallbackValue(const RoleApplicationDraft(roleType: 'gearFoxer'));
+    registerFallbackValue(
+      const RoleApplicationDraft(roleType: 'providerFoxer'),
+    );
   });
 
   setUp(() => repo = _MockRepo());
 
   group('RoleApplicationDraft', () {
-    test('a service application is sent the way the web sends it', () {
-      final draft = RoleApplicationDraft(
-        roleType: 'serviceFoxer',
-        types: 'Catering, Cakes ,',
-        portfolio: 'https://a.test, https://b.test',
-        experience: '7',
-        nbiNumber: '123456',
-        tinNumber: '99',
-        specializations: const ['catering'],
-        documents: _allDocuments(),
-      );
-
-      expect(draft.toData(), {
-        'experience': 7,
-        'nbiClearanceIdNumber': '123456',
-        'serviceTypes': ['Catering', 'Cakes'],
-        'portfolioUrls': ['https://a.test', 'https://b.test'],
-        'tinNumber': '99',
-        'specializations': ['catering'],
-      });
-    });
-
-    test('a performer names what they perform; gear its business', () {
-      final performer = const RoleApplicationDraft(
-        roleType: 'performerFoxer',
-        types: 'DJ',
-        experience: '2',
-        nbiNumber: '1',
-      ).toData();
-      expect(performer['performerTypes'], ['DJ']);
-      expect(performer.containsKey('serviceTypes'), isFalse);
-
-      final gear = const RoleApplicationDraft(
-        roleType: 'gearFoxer',
-        businessName: ' Loud Co ',
-        types: 'Speakers, Lights',
-      ).toData();
-      expect(gear['businessName'], 'Loud Co');
-      expect(gear['assetTypes'], ['Speakers', 'Lights']);
-      expect(gear.containsKey('experience'), isFalse);
-      expect(gear.containsKey('tinNumber'), isFalse);
-    });
-
     test(
         'a provider application sends business name, asset/service types, and options',
         () {
@@ -125,7 +84,7 @@ void main() {
 
     test('each document goes under the name the API reads', () {
       final form = RoleApplicationDraft(
-        roleType: 'gearFoxer',
+        roleType: 'providerFoxer',
         documents: _allDocuments(),
       ).toForm();
 
@@ -137,36 +96,24 @@ void main() {
     });
 
     test('is complete only with the details and every document', () {
-      final service = RoleApplicationDraft(
-        roleType: 'serviceFoxer',
-        types: 'Catering',
-        experience: '3',
-        nbiNumber: '1',
-        documents: _allDocuments(),
-      );
-      expect(service.isComplete, isTrue);
-      expect(service.copyWith(experience: '').isComplete, isFalse);
-      expect(service.copyWith(experience: '101').isComplete, isFalse);
-      expect(service.copyWith(nbiNumber: '').isComplete, isFalse);
-      expect(service.copyWith(types: ' , ').isComplete, isFalse);
-      expect(
-        service
-            .copyWith(
-              documents: {...service.documents}..remove(KycDocument.selfie),
-            )
-            .isComplete,
-        isFalse,
-      );
-
-      final gear = RoleApplicationDraft(
-        roleType: 'gearFoxer',
+      final provider = RoleApplicationDraft(
+        roleType: 'providerFoxer',
         types: 'Speakers',
         businessName: 'Loud Co',
         documents: _allDocuments(),
       );
-      // Gear is not asked for experience or an NBI number.
-      expect(gear.isComplete, isTrue);
-      expect(gear.copyWith(businessName: '').isComplete, isFalse);
+      // Experience and an NBI number are optional for a Provider.
+      expect(provider.isComplete, isTrue);
+      expect(provider.copyWith(businessName: '').isComplete, isFalse);
+      expect(provider.copyWith(types: ' , ').isComplete, isFalse);
+      expect(
+        provider
+            .copyWith(
+              documents: {...provider.documents}..remove(KycDocument.selfie),
+            )
+            .isComplete,
+        isFalse,
+      );
     });
 
     test('numbers keep their digits and no more than the API takes', () {
@@ -344,21 +291,15 @@ void main() {
       );
     });
 
-    test('the provider roles, venue, event and organizer apply from the phone',
-        () {
+    test('provider, venue, event and organizer apply from the phone', () {
       expect(
         appliesInApp,
-        {
-          'providerFoxer',
-          'serviceFoxer',
-          'performerFoxer',
-          'gearFoxer',
-          'venueFoxer',
-          'eventFoxer',
-          'organizer',
-        },
+        {'providerFoxer', 'venueFoxer', 'eventFoxer', 'organizer'},
       );
-      expect(RouteNames.roleApply('gearFoxer'), '/roles/apply/gearFoxer');
+      expect(
+        RouteNames.roleApply('providerFoxer'),
+        '/roles/apply/providerFoxer',
+      );
     });
   });
 
@@ -375,15 +316,17 @@ void main() {
     }
 
     test('keeps to three specializations and lets one go', () {
-      final c = container('serviceFoxer');
-      final app = c.read(roleApplicationProvider('serviceFoxer').notifier)
+      final c = container('providerFoxer');
+      final app = c.read(roleApplicationProvider('providerFoxer').notifier)
         ..toggleSpecialization('design')
         ..toggleSpecialization('catering')
         ..toggleSpecialization('service_staff')
         ..toggleSpecialization('other');
 
-      List<String> picked() =>
-          c.read(roleApplicationProvider('serviceFoxer')).draft.specializations;
+      List<String> picked() => c
+          .read(roleApplicationProvider('providerFoxer'))
+          .draft
+          .specializations;
       expect(picked(), ['design', 'catering', 'service_staff']);
 
       app.toggleSpecialization('catering');
@@ -391,18 +334,19 @@ void main() {
     });
 
     test('will not send an incomplete application', () async {
-      final c = container('gearFoxer');
+      final c = container('providerFoxer');
 
-      final ok =
-          await c.read(roleApplicationProvider('gearFoxer').notifier).submit();
+      final ok = await c
+          .read(roleApplicationProvider('providerFoxer').notifier)
+          .submit();
 
       expect(ok, isFalse);
       verifyNever(() => repo.submit(any()));
     });
 
     test('sends it, and shows what the API said when it refuses', () async {
-      final c = container('gearFoxer');
-      final app = c.read(roleApplicationProvider('gearFoxer').notifier)
+      final c = container('providerFoxer');
+      final app = c.read(roleApplicationProvider('providerFoxer').notifier)
         ..edit(
           (d) => d.copyWith(
             businessName: 'Loud Co',
@@ -419,7 +363,7 @@ void main() {
       );
       expect(await app.submit(), isFalse);
       expect(
-        c.read(roleApplicationProvider('gearFoxer')).error,
+        c.read(roleApplicationProvider('providerFoxer')).error,
         'You already have a pending application',
       );
     });
@@ -444,25 +388,14 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('gear asks for a business name, not experience', (
+    testWidgets('a Provider is asked for a business name and experience', (
       tester,
     ) async {
-      await open(tester, 'gearFoxer');
+      await open(tester, 'providerFoxer');
 
-      expect(find.text('Gear Foxer'), findsOneWidget);
+      expect(find.text('Provider'), findsOneWidget);
       expect(find.text('Business or trade name'), findsOneWidget);
-      expect(find.text('Years of experience'), findsNothing);
-      expect(find.text('NBI clearance ID number'), findsNothing);
-    });
-
-    testWidgets('a service asks for experience and an NBI number', (
-      tester,
-    ) async {
-      await open(tester, 'serviceFoxer');
-
       expect(find.text('Years of experience'), findsOneWidget);
-      expect(find.text('NBI clearance ID number'), findsOneWidget);
-      expect(find.text('Business or trade name'), findsNothing);
     });
 
     testWidgets('a venue asks for contact and address, not services', (
@@ -534,7 +467,7 @@ void main() {
     });
 
     testWidgets('Send waits until it is complete', (tester) async {
-      await open(tester, 'serviceFoxer');
+      await open(tester, 'providerFoxer');
 
       final send = find.widgetWithText(ElevatedButton, 'Send application');
       expect(tester.widget<ElevatedButton>(send).onPressed, isNull);
@@ -545,7 +478,7 @@ void main() {
         ..physicalSize = const Size(320, 700)
         ..devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      await open(tester, 'serviceFoxer');
+      await open(tester, 'providerFoxer');
       await tester.drag(find.byType(ListView), const Offset(0, -600));
       await tester.pump();
 
