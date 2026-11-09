@@ -56,10 +56,7 @@ class MoreRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.display(size: compact ? 14 : 15),
                   ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 4),
-                    subtitle!,
-                  ],
+                  if (subtitle != null) subtitle!,
                 ],
               ),
             ),
