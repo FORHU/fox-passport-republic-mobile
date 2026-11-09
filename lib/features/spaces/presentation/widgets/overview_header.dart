@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:flutter_template/features/spaces/domain/app_space.dart';
-import 'package:flutter_template/shared/widgets/role_progress.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// The top of a space's Overview: a greeting by first name. Which role this
-/// is shows in the space switcher, and switching lives in More.
+/// The top of a space's Overview: a greeting by first name. Coins sit beside
+/// the photo in the top bar, and rank and level are on the Passport row in
+/// More; switching spaces lives in More too.
 class OverviewGreeting extends ConsumerWidget {
-  const OverviewGreeting({required this.space, super.key});
-
-  /// The space this Overview belongs to, whose role the progress line shows.
-  final AppSpace space;
+  const OverviewGreeting({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,8 +36,6 @@ class OverviewGreeting extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
             style: AppTypography.display(size: 22),
           ),
-          // Rank, level and Coins for this role; nothing until known.
-          RoleProgress(path: space.xpPath(user?.roleType ?? const [])),
         ],
       ),
     );

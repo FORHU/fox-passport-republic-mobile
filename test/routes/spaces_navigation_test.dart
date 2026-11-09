@@ -550,7 +550,9 @@ void main() {
     await boot(tester, roles: const ['venueFoxer'], savedSpace: 'venue');
     expect(where(), RouteNames.spaceVenue);
 
-    // The switcher is in the top bar, one tap from anywhere in the space.
+    // The switcher is in the top bar of More, where switching lives.
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
     await tester.tap(find.byTooltip('Switch space'));
     await settle(tester);
     expect(find.text('WORKING AS'), findsOneWidget);
