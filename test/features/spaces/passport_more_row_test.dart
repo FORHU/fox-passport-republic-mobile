@@ -98,9 +98,9 @@ void main() {
       await tapRow(
         tester,
         space: AppSpace.services,
-        roles: const ['performerFoxer'],
+        roles: const ['providerFoxer'],
       ),
-      'performerFoxer',
+      'providerFoxer',
     );
   });
 

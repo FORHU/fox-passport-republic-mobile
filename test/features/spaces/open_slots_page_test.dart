@@ -27,7 +27,7 @@ class _FakeBids extends BidsRepository {
 
   @override
   Future<void> submit(BidDraft draft) async {
-    if (refuses) throw const ServerException('You must be a Talent Foxer');
+    if (refuses) throw const ServerException('You must be a Provider');
     sent.add(draft.toJson());
   }
 }
@@ -258,7 +258,7 @@ void main() {
     await tester.tap(find.text('Send application'));
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('You must be a Talent Foxer'), findsOneWidget);
+    expect(find.text('You must be a Provider'), findsOneWidget);
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 }

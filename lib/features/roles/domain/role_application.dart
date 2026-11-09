@@ -5,12 +5,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
 /// The roles that apply from the phone. The investor still applies on the
-/// web.
+/// web. Gear, Talent and Performer Foxer were folded into Provider and take
+/// no new applications.
 const appliesInApp = <String>{
   'providerFoxer',
-  'serviceFoxer',
-  'performerFoxer',
-  'gearFoxer',
   'venueFoxer',
   'eventFoxer',
   'organizer',
@@ -92,7 +90,6 @@ class RoleApplicationDraft extends Equatable {
   final Map<KycDocument, PickedPhoto> documents;
 
   bool get isProvider => roleType == 'providerFoxer';
-  bool get isGear => roleType == 'gearFoxer';
   bool get isVenue => roleType == 'venueFoxer';
   bool get isEvent => roleType == 'eventFoxer';
   bool get isOrganizer => roleType == 'organizer';
@@ -153,13 +150,8 @@ class RoleApplicationDraft extends Equatable {
                       contactNumber.trim().isNotEmpty &&
                       address.trim().isNotEmpty &&
                       tinNumber.isNotEmpty
-                  : isProvider
-                      ? businessName.trim().isNotEmpty &&
-                          split(types).isNotEmpty
-                      : split(types).isNotEmpty &&
-                          (isGear
-                              ? businessName.trim().isNotEmpty
-                              : years != null && nbiNumber.isNotEmpty)) &&
+                  : businessName.trim().isNotEmpty &&
+                      split(types).isNotEmpty) &&
       requiredDocuments.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({
@@ -224,17 +216,6 @@ class RoleApplicationDraft extends Equatable {
           if (years != null) 'experience': years,
           if (nbiNumber.isNotEmpty) 'nbiClearanceIdNumber': nbiNumber,
           if (portfolio.isNotEmpty) 'portfolioUrls': split(portfolio),
-        } else if (isGear) ...{
-          'businessName': businessName.trim(),
-          'assetTypes': split(types),
-        } else ...{
-          'experience': years,
-          'nbiClearanceIdNumber': nbiNumber,
-          if (roleType == 'performerFoxer')
-            'performerTypes': split(types)
-          else
-            'serviceTypes': split(types),
-          'portfolioUrls': split(portfolio),
         },
         if (tinNumber.isNotEmpty) 'tinNumber': tinNumber,
         'specializations': specializations,
@@ -323,19 +304,6 @@ List<String> specializationOptions(String roleType) => switch (roleType) {
           'catering',
           'service_staff',
           'other',
-        ],
-      'gearFoxer' => const [
-          'furnitures',
-          'sound_system',
-          'decorations',
-          'other',
-        ],
-      'performerFoxer' => const [
-          'photography',
-          'videography',
-          'dj',
-          'live_band',
-          'mc',
         ],
       _ => const ['design', 'catering', 'service_staff', 'other'],
     };
