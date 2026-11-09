@@ -11,9 +11,14 @@ import 'package:go_router/go_router.dart';
 /// this [space] works on; an Organizer, who has no board of their own, lands on
 /// Events.
 class LeaderboardMoreRow extends ConsumerWidget {
-  const LeaderboardMoreRow({required this.space, super.key});
+  const LeaderboardMoreRow({
+    required this.space,
+    this.compact = false,
+    super.key,
+  });
 
   final AppSpace space;
+  final bool compact;
 
   /// The leaderboard role for a space and the roles the person holds.
   static String roleFor(AppSpace space, List<String> roles) => switch (space) {
@@ -29,6 +34,7 @@ class LeaderboardMoreRow extends ConsumerWidget {
     return MoreRow(
       icon: Icons.emoji_events_outlined,
       title: context.l10n.leaderboardTitle,
+      compact: compact,
       onTap: () => context.push(
         RouteNames.leaderboardFor(roleFor(space, roles)),
       ),

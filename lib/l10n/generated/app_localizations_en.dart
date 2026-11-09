@@ -2496,6 +2496,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreTitle => 'More';
 
   @override
+  String get moreSectionGrow => 'Grow';
+
+  @override
+  String get moreSectionYou => 'You';
+
+  @override
+  String get moreSectionAccount => 'Account';
+
+  @override
   String get requestsTitle => 'Requests';
 
   @override
