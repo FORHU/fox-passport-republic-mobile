@@ -205,18 +205,13 @@ class TicketCard extends ConsumerWidget {
             style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
             child: Text(l10n.ticketRequestChange),
           ),
-        if (_canCancel)
-          TextButton(
-            onPressed: () => showCancelSheet(context, ticket),
-            style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
-            child: Text(
-              l10n.ticketCancel,
-              style: AppTypography.body(
-                color: AppColors.error,
-                weight: FontWeight.w600,
-              ),
-            ),
+        if (_canCancel) ...[
+          const SizedBox(height: 12),
+          _CancelAction(
+            label: l10n.ticketCancel,
+            onTap: () => showCancelSheet(context, ticket),
           ),
+        ],
       ],
     );
   }
@@ -340,6 +335,41 @@ class _Qr extends StatelessWidget {
                 backgroundColor: AppColors.lightSurface,
               ),
             ),
+    );
+  }
+}
+
+/// "Cancel booking": the same 48 px outlined button as the actions above it,
+/// in the error colour, so it reads as a button and not as loose text.
+class _CancelAction extends StatelessWidget {
+  const _CancelAction({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: AppRadius.brMd,
+      child: InkWell(
+        borderRadius: AppRadius.brMd,
+        onTap: onTap,
+        child: Container(
+          height: 48,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.brMd,
+            border: Border.all(color: AppColors.error.withValues(alpha: 0.6)),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.display(size: 14, color: AppColors.error),
+          ),
+        ),
+      ),
     );
   }
 }
