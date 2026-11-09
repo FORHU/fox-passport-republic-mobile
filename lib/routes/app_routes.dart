@@ -442,7 +442,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ) ??
               LeaderboardSide.foxers,
           initialRole:
-              LeaderboardRole.fromApi(state.uri.queryParameters['role']) ??
+              LeaderboardRole.fromRoute(state.uri.queryParameters['role']) ??
                   LeaderboardRole.event,
         ),
       ),

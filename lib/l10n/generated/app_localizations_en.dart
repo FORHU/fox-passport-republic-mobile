@@ -1010,15 +1010,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageRoleVenueFoxer => 'Venue Foxer';
 
   @override
-  String get messageRoleGearFoxer => 'Gear Foxer';
-
-  @override
-  String get messageRoleServiceFoxer => 'Service Foxer';
-
-  @override
-  String get messageRolePerformer => 'Performer';
-
-  @override
   String get priceUnitDay => 'day';
 
   @override
@@ -1867,9 +1858,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstStepService => 'List your first service';
-
-  @override
-  String get firstStepPerformance => 'List your first performance';
 
   @override
   String get firstStepsTitle => 'Getting started';
@@ -5152,12 +5140,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyServiceTypes => 'Services you offer';
 
   @override
-  String get roleApplyPerformerTypes => 'What you perform';
-
-  @override
-  String get roleApplyGearTypes => 'Gear you rent out';
-
-  @override
   String get roleApplyCommaHint => 'Separate with commas';
 
   @override
@@ -5391,16 +5373,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spaceServicesHint => 'Your services and the requests for them';
-
-  @override
-  String get spacePerformer => 'Performer';
-
-  @override
-  String get spacePerformerHint =>
-      'Your performances and the requests for them';
-
-  @override
-  String get spaceTabPerformances => 'Performances';
 
   @override
   String get requestsIntroGear =>
@@ -5811,16 +5783,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get providerAddService => 'Add service';
 
   @override
-  String get providerAddPerformance => 'Add performance';
-
-  @override
   String get overviewMyGear => 'My gear';
 
   @override
   String get overviewMyServices => 'My services';
-
-  @override
-  String get overviewMyPerformances => 'My performances';
 
   @override
   String get tourActionsTitle => 'Your shortcuts';
@@ -6098,4 +6064,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardEditProfile => 'Edit profile';
+
+  @override
+  String leaderboardLevelShort(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String leaderboardYouName(String name) {
+    return 'You · $name';
+  }
+
+  @override
+  String get leaderboardPillVenue => 'Venue';
+
+  @override
+  String get leaderboardPillEvent => 'Event';
+
+  @override
+  String get leaderboardPillGear => 'Gear';
+
+  @override
+  String get leaderboardPillServices => 'Service';
+
+  @override
+  String get leaderboardPillPerformers => 'Performer';
+
+  @override
+  String get leaderboardTabTopRated => 'Top rated';
+
+  @override
+  String get leaderboardTabRising => 'Rising';
+
+  @override
+  String get leaderboardFoxerNew => 'New';
+
+  @override
+  String leaderboardReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
 }

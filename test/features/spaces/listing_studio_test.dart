@@ -253,7 +253,7 @@ void main() {
     Future<void> open(
       WidgetTester tester,
       ListingStudioPage page, {
-      List<String> roles = const ['serviceFoxer'],
+      List<String> roles = const ['providerFoxer'],
     }) async {
       await tester.pumpWidget(
         ProviderScope(

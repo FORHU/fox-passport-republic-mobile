@@ -550,7 +550,7 @@ void main() {
       id: 'g1',
       kind: CatalogKind.foxers,
       title: 'Gus Gear',
-      roles: ['gearFoxer'],
+      roles: ['providerFoxer'],
     );
 
     testWidgets('a Mayor invites an Event Foxer to their venue', (

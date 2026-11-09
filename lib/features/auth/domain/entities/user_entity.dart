@@ -22,8 +22,8 @@ class UserEntity extends Equatable {
   /// `user` | `admin_secretary` | `admin` — mirrors the API's `SystemRole`.
   final String systemRole;
 
-  /// Supply-side capabilities (`venueFoxer`, `eventFoxer`, `gearFoxer`,
-  /// `serviceFoxer`, `performerFoxer`, `investor`, `organizer`). Empty for a
+  /// Supply-side capabilities (`venueFoxer`, `eventFoxer`, `providerFoxer`,
+  /// `investor`, `organizer`). Empty for a
   /// plain Citizen — see CONTEXT.md in the web repo.
   final List<String> roleType;
   final bool isEmailVerified;

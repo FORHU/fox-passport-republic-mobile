@@ -13,6 +13,23 @@ String roleLabel(AppLocalizations l10n, LeaderboardRole role) => switch (role) {
       LeaderboardRole.performers => l10n.leaderboardRolePerformers,
     };
 
+/// The short, singular label for a role on a row ("Venue").
+String rolePillLabel(AppLocalizations l10n, LeaderboardRole role) =>
+    switch (role) {
+      LeaderboardRole.venue => l10n.leaderboardPillVenue,
+      LeaderboardRole.event => l10n.leaderboardPillEvent,
+      LeaderboardRole.gear => l10n.leaderboardPillGear,
+      LeaderboardRole.services => l10n.leaderboardPillServices,
+      LeaderboardRole.performers => l10n.leaderboardPillPerformers,
+    };
+
+/// The label for a tab of the Foxer board.
+String foxerTabLabel(AppLocalizations l10n, FoxerTab tab) => switch (tab) {
+      FoxerTab.topRated => l10n.leaderboardTabTopRated,
+      FoxerTab.mostBooked => l10n.leaderboardMostBooked,
+      FoxerTab.rising => l10n.leaderboardTabRising,
+    };
+
 /// The label for a tab of the citizen board.
 String citizenTabLabel(AppLocalizations l10n, CitizenTab tab) => switch (tab) {
       CitizenTab.month => l10n.leaderboardTabMonth,

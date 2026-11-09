@@ -14,18 +14,17 @@ enum AppSpace {
     icon: Icons.celebration_outlined,
     requiredRoles: ['eventFoxer'],
   ),
-  // Gear owns assets; Service and Performer Foxers both list services (the web
-  // gives them the same list under two permissions), so a Performer opens the
-  // Services space.
+  // A Provider lists gear in one space and services (performances included)
+  // in the other.
   gear(
     root: '/space/gear',
     icon: Icons.inventory_2_outlined,
-    requiredRoles: ['gearFoxer', 'providerFoxer'],
+    requiredRoles: ['providerFoxer'],
   ),
   services(
     root: '/space/services',
     icon: Icons.design_services_outlined,
-    requiredRoles: ['serviceFoxer', 'performerFoxer', 'providerFoxer'],
+    requiredRoles: ['providerFoxer'],
   ),
   // An Organizer helps run other people's venues and events.
   organizer(
@@ -52,18 +51,12 @@ enum AppSpace {
       requiredRoles.isEmpty || requiredRoles.any(roles.contains);
 
   /// The XP path this space's work lands on, as the API names it, for a person
-  /// holding [roles]. A Performer who is not also a Talent works the Services
-  /// space on the performer path.
+  /// holding [roles]. Both Provider spaces share the Provider path.
   String xpPath(List<String> roles) => switch (this) {
         citizen => 'user',
         venue => 'venueFoxer',
         event => 'eventFoxer',
-        gear => 'gearFoxer',
-        services => roles.contains('performerFoxer') &&
-                !roles.contains('serviceFoxer') &&
-                !roles.contains('providerFoxer')
-            ? 'performerFoxer'
-            : 'serviceFoxer',
+        gear || services => 'providerFoxer',
         organizer => 'organizer',
       };
 

@@ -15,15 +15,8 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// Whether the person lists performances and nothing else, for whom the
-/// Services space reads "Performer".
-bool _performerOnly(List<String> roles) =>
-    roles.contains('performerFoxer') &&
-    !roles.contains('serviceFoxer') &&
-    !roles.contains('providerFoxer');
-
 /// The name of a space, as the person reads it. [roles] are the roles they
-/// hold: a Performer Foxer's Services space is called Performer.
+/// hold.
 String spaceLabel(
   AppLocalizations l10n,
   AppSpace space, {
@@ -34,8 +27,7 @@ String spaceLabel(
       AppSpace.venue => l10n.spaceVenue,
       AppSpace.event => l10n.spaceEvent,
       AppSpace.gear => l10n.spaceGear,
-      AppSpace.services =>
-        _performerOnly(roles) ? l10n.spacePerformer : l10n.spaceServices,
+      AppSpace.services => l10n.spaceServices,
       AppSpace.organizer => l10n.spaceOrganizer,
     };
 
@@ -49,9 +41,7 @@ String spaceHint(
       AppSpace.venue => l10n.spaceVenueHint,
       AppSpace.event => l10n.spaceEventHint,
       AppSpace.gear => l10n.spaceGearHint,
-      AppSpace.services => _performerOnly(roles)
-          ? l10n.spacePerformerHint
-          : l10n.spaceServicesHint,
+      AppSpace.services => l10n.spaceServicesHint,
       AppSpace.organizer => l10n.spaceOrganizerHint,
     };
 
@@ -61,11 +51,7 @@ String listingsLabel(
   ProviderKind kind, {
   List<String> roles = const [],
 }) =>
-    kind.isGear
-        ? l10n.providerGear
-        : (_performerOnly(roles)
-            ? l10n.spaceTabPerformances
-            : l10n.providerServices);
+    kind.isGear ? l10n.providerGear : l10n.providerServices;
 
 /// The colour a space is known by: the role's own for the spaces that have
 /// one, and a neutral white for Citizen.

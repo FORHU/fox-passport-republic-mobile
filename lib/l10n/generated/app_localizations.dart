@@ -1978,24 +1978,6 @@ abstract class AppLocalizations {
   /// **'Venue Foxer'**
   String get messageRoleVenueFoxer;
 
-  /// No description provided for @messageRoleGearFoxer.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear Foxer'**
-  String get messageRoleGearFoxer;
-
-  /// No description provided for @messageRoleServiceFoxer.
-  ///
-  /// In en, this message translates to:
-  /// **'Service Foxer'**
-  String get messageRoleServiceFoxer;
-
-  /// No description provided for @messageRolePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get messageRolePerformer;
-
   /// No description provided for @priceUnitDay.
   ///
   /// In en, this message translates to:
@@ -3435,12 +3417,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'List your first service'**
   String get firstStepService;
-
-  /// No description provided for @firstStepPerformance.
-  ///
-  /// In en, this message translates to:
-  /// **'List your first performance'**
-  String get firstStepPerformance;
 
   /// No description provided for @firstStepsTitle.
   ///
@@ -9262,18 +9238,6 @@ abstract class AppLocalizations {
   /// **'Services you offer'**
   String get roleApplyServiceTypes;
 
-  /// No description provided for @roleApplyPerformerTypes.
-  ///
-  /// In en, this message translates to:
-  /// **'What you perform'**
-  String get roleApplyPerformerTypes;
-
-  /// No description provided for @roleApplyGearTypes.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear you rent out'**
-  String get roleApplyGearTypes;
-
   /// No description provided for @roleApplyCommaHint.
   ///
   /// In en, this message translates to:
@@ -9723,24 +9687,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your services and the requests for them'**
   String get spaceServicesHint;
-
-  /// No description provided for @spacePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get spacePerformer;
-
-  /// No description provided for @spacePerformerHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Your performances and the requests for them'**
-  String get spacePerformerHint;
-
-  /// No description provided for @spaceTabPerformances.
-  ///
-  /// In en, this message translates to:
-  /// **'Performances'**
-  String get spaceTabPerformances;
 
   /// No description provided for @requestsIntroGear.
   ///
@@ -10462,12 +10408,6 @@ abstract class AppLocalizations {
   /// **'Add service'**
   String get providerAddService;
 
-  /// No description provided for @providerAddPerformance.
-  ///
-  /// In en, this message translates to:
-  /// **'Add performance'**
-  String get providerAddPerformance;
-
   /// No description provided for @overviewMyGear.
   ///
   /// In en, this message translates to:
@@ -10479,12 +10419,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My services'**
   String get overviewMyServices;
-
-  /// No description provided for @overviewMyPerformances.
-  ///
-  /// In en, this message translates to:
-  /// **'My performances'**
-  String get overviewMyPerformances;
 
   /// No description provided for @tourActionsTitle.
   ///
@@ -10971,6 +10905,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get leaderboardEditProfile;
+
+  /// No description provided for @leaderboardLevelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String leaderboardLevelShort(int level);
+
+  /// No description provided for @leaderboardYouName.
+  ///
+  /// In en, this message translates to:
+  /// **'You · {name}'**
+  String leaderboardYouName(String name);
+
+  /// No description provided for @leaderboardPillVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get leaderboardPillVenue;
+
+  /// No description provided for @leaderboardPillEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get leaderboardPillEvent;
+
+  /// No description provided for @leaderboardPillGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardPillGear;
+
+  /// No description provided for @leaderboardPillServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get leaderboardPillServices;
+
+  /// No description provided for @leaderboardPillPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get leaderboardPillPerformers;
+
+  /// No description provided for @leaderboardTabTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get leaderboardTabTopRated;
+
+  /// No description provided for @leaderboardTabRising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get leaderboardTabRising;
+
+  /// No description provided for @leaderboardFoxerNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get leaderboardFoxerNew;
+
+  /// No description provided for @leaderboardReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String leaderboardReviews(int count);
 }
 
 class _AppLocalizationsDelegate

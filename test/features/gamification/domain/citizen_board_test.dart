@@ -1,74 +1,62 @@
 import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Map<String, dynamic> _row(
-  int position,
-  String id, {
-  bool isMe = false,
-  int level = 5,
-}) =>
-    {
+Map<String, dynamic> _entry(int position, String id, {int level = 5}) => {
       'position': position,
       'userId': id,
       'name': 'Citizen $id',
-      'username': 'c_$id',
-      'image': null,
-      'city': 'Manila',
+      'avatarUrl': null,
       'level': level,
-      'rank': {'number': 3, 'name': 'Explorer', 'rarity': 'Uncommon'},
-      'isMe': isMe,
+      'rankTitle': 'Explorer',
+      'city': 'Manila',
     };
 
 void main() {
   test('reads a board the way the API sends it', () {
     final board = CitizenBoard.fromJson({
-      'tab': 'month',
-      'city': null,
-      'month': '2026-11',
-      'rows': [_row(1, 'a'), _row(1, 'b'), _row(3, 'c', isMe: true)],
-      'me': _row(3, 'c', isMe: true),
+      'tab': 'this_month',
+      'season': '2026-11',
+      'entries': [_entry(1, 'a'), _entry(2, 'b'), _entry(3, 'c')],
+      'userPosition': _entry(3, 'c'),
     });
 
     expect(board.tab, CitizenTab.month);
-    expect(board.month, '2026-11');
-    expect(board.rows.map((r) => r.position), [1, 1, 3]);
+    expect(board.season, '2026-11');
+    expect(board.rows.map((r) => r.position), [1, 2, 3]);
     expect(board.rows.first.rankName, 'Explorer');
     expect(board.rows.first.level, 5);
     expect(board.meIsListed, isTrue);
   });
 
-  test('all time has no month, and a caller further down is not listed', () {
+  test('a caller further down than the rows is not listed', () {
     final board = CitizenBoard.fromJson({
-      'tab': 'all',
-      'month': null,
-      'rows': [_row(1, 'a')],
-      'me': _row(40, 'z', isMe: true),
+      'tab': 'all_time',
+      'season': '2026-11',
+      'entries': [_entry(1, 'a')],
+      'userPosition': _entry(51, 'z'),
     });
 
     expect(board.tab, CitizenTab.all);
-    expect(board.month, isNull);
-    expect(board.me?.position, 40);
+    expect(board.me?.position, 51);
     expect(board.meIsListed, isFalse);
   });
 
-  test('a city board for a caller with no city has no city and no rows', () {
+  test('a board without the caller has no pinned place', () {
     final board = CitizenBoard.fromJson(const {
-      'tab': 'city',
-      'city': null,
-      'month': '2026-11',
-      'rows': <Object>[],
-      'me': null,
+      'tab': 'my_city',
+      'entries': <Object>[],
+      'userPosition': null,
     });
 
     expect(board.tab, CitizenTab.city);
-    expect(board.city, isNull);
     expect(board.rows, isEmpty);
     expect(board.me, isNull);
+    expect(board.season, isNull);
   });
 
   test('leaves out what is not a row and fills in what is missing', () {
     final board = CitizenBoard.fromJson(const {
-      'rows': [
+      'entries': [
         'junk',
         {'userId': 'x'},
       ],
@@ -77,18 +65,20 @@ void main() {
     expect(board.rows, hasLength(1));
     expect(board.rows.single.name, '');
     expect(board.rows.single.level, 1);
-    expect(board.rows.single.isMe, isFalse);
     expect(board.tab, CitizenTab.month);
   });
 
   test('tabs and sides map to and from their names', () {
+    expect(CitizenTab.month.api, 'this_month');
+    expect(CitizenTab.all.api, 'all_time');
+    expect(CitizenTab.city.api, 'my_city');
     for (final tab in CitizenTab.values) {
       expect(CitizenTab.fromApi(tab.api), tab);
     }
     for (final side in LeaderboardSide.values) {
       expect(LeaderboardSide.fromApi(side.api), side);
     }
-    expect(CitizenTab.fromApi('week'), isNull);
+    expect(CitizenTab.fromApi('month'), isNull);
     expect(LeaderboardSide.fromApi(null), isNull);
   });
 }

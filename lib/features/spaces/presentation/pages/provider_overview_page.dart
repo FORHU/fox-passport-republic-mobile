@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
@@ -47,7 +46,6 @@ class ProviderOverviewPage extends ConsumerWidget {
     final items = ref.watch(listingsSource);
     final payouts = ref.watch(payoutsProvider);
     final stripe = ref.watch(stripeStatusProvider);
-    final roles = ref.watch(heldRolesProvider);
     final isNew = ref
             .watch(
               newFoxerProvider(
@@ -82,29 +80,13 @@ class ProviderOverviewPage extends ConsumerWidget {
     String dash(AsyncValue<Object?> value, String Function() shown) =>
         value.hasValue ? shown() : '—';
 
-    // Who this space is for, and what they do first. Both follow the roles
-    // held: a Performer who is not also a Talent sees the Performer wording.
-    final performerOnly = !kind.isGear &&
-        roles.contains('performerFoxer') &&
-        !roles.contains('serviceFoxer') &&
-        !roles.contains('providerFoxer');
-    final addLabel = kind.isGear
-        ? l10n.providerAddGear
-        : performerOnly
-            ? l10n.providerAddPerformance
-            : l10n.providerAddService;
-    final myLabel = kind.isGear
-        ? l10n.overviewMyGear
-        : performerOnly
-            ? l10n.overviewMyPerformances
-            : l10n.overviewMyServices;
+    // Who this space is for, and what they do first.
+    final addLabel =
+        kind.isGear ? l10n.providerAddGear : l10n.providerAddService;
+    final myLabel = kind.isGear ? l10n.overviewMyGear : l10n.overviewMyServices;
     final firstSteps = [
       FirstStep(
-        label: kind.isGear
-            ? l10n.firstStepGear
-            : performerOnly
-                ? l10n.firstStepPerformance
-                : l10n.firstStepService,
+        label: kind.isGear ? l10n.firstStepGear : l10n.firstStepService,
         done: listings.isNotEmpty,
         onTap: () => unawaited(context.push(kind.studio)),
       ),

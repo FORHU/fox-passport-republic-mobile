@@ -41,28 +41,17 @@ void main() {
         [AppSpace.citizen, AppSpace.venue],
       );
       expect(
-        AppSpace.availableTo(const ['eventFoxer', 'venueFoxer', 'gearFoxer']),
+        AppSpace.availableTo(
+          const ['eventFoxer', 'venueFoxer', 'providerFoxer'],
+        ),
         [
           AppSpace.citizen,
           AppSpace.venue,
           AppSpace.event,
           AppSpace.gear,
+          AppSpace.services,
         ],
       );
-    });
-
-    test('Gear has its own space; Service and Performer share Services', () {
-      expect(
-        AppSpace.availableTo(const ['gearFoxer']),
-        [AppSpace.citizen, AppSpace.gear],
-      );
-      for (final role in const ['serviceFoxer', 'performerFoxer']) {
-        expect(
-          AppSpace.availableTo([role]),
-          [AppSpace.citizen, AppSpace.services],
-          reason: role,
-        );
-      }
     });
 
     test('a consolidated Provider opens both Gear and Services spaces', () {

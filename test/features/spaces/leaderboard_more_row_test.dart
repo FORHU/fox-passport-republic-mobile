@@ -38,28 +38,11 @@ void main() {
         'event',
       );
       expect(
-        LeaderboardMoreRow.roleFor(AppSpace.gear, const ['gearFoxer']),
+        LeaderboardMoreRow.roleFor(AppSpace.gear, const ['providerFoxer']),
         'gear',
       );
       expect(
-        LeaderboardMoreRow.roleFor(AppSpace.services, const ['serviceFoxer']),
-        'services',
-      );
-    });
-
-    test('is performers for a Performer who only works the Services space', () {
-      expect(
-        LeaderboardMoreRow.roleFor(
-          AppSpace.services,
-          const ['performerFoxer'],
-        ),
-        'performers',
-      );
-      expect(
-        LeaderboardMoreRow.roleFor(
-          AppSpace.services,
-          const ['performerFoxer', 'serviceFoxer'],
-        ),
+        LeaderboardMoreRow.roleFor(AppSpace.services, const ['providerFoxer']),
         'services',
       );
     });

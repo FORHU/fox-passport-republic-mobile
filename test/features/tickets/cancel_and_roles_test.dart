@@ -24,7 +24,7 @@ class _Citizen extends AuthController {
           id: 'u',
           email: 'u@example.com',
           name: 'U',
-          roleType: ['gearFoxer'],
+          roleType: ['providerFoxer'],
         ),
       );
 }
@@ -221,7 +221,7 @@ void main() {
                 ),
                 RoleRequestSummary(
                   id: 'r2',
-                  roleType: 'serviceFoxer',
+                  roleType: 'eventFoxer',
                   status: 'revision_requested',
                 ),
               ],
@@ -237,7 +237,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Become a Foxer'), findsOneWidget);
-      // Held (gear), under review (venue), needs changes (talent).
+      // Held (provider), under review (venue), needs changes (event).
       expect(find.text('ACTIVE'), findsOneWidget);
       expect(find.text('UNDER REVIEW'), findsOneWidget);
       expect(find.text('NEEDS REVISION'), findsOneWidget);
@@ -266,7 +266,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Talent Foxer'));
+      await tester.tap(find.text('Organizer'));
       await tester.pumpAndSettle();
 
       expect(find.text('Continue on the web'), findsOneWidget);
