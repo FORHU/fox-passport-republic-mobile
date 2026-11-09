@@ -9,6 +9,7 @@ import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
 import 'package:flutter_template/features/home/presentation/widgets/first_event_checklist.dart';
 import 'package:flutter_template/features/home/presentation/widgets/foxers_row.dart';
+import 'package:flutter_template/features/home/presentation/widgets/getting_started_card.dart';
 import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
 import 'package:flutter_template/features/home/presentation/widgets/republic_teaser.dart';
@@ -23,8 +24,10 @@ import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/shared/location/area_sheet.dart';
+import 'package:flutter_template/shared/onboarding/onboarding_repository.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
+import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -68,6 +71,18 @@ class HomePage extends ConsumerWidget {
     final pastTickets = ref.watch(pastTicketsProvider);
     final noBookings = (upcomingTickets.asData?.value.isEmpty ?? false) &&
         (pastTickets.asData?.value.isEmpty ?? false);
+    final hasBooking = (upcomingTickets.asData?.value.isNotEmpty ?? false) ||
+        (pastTickets.asData?.value.isNotEmpty ?? false);
+    // The steps the server has on record; null until it has answered (and if
+    // it never does), so the card is simply absent.
+    final finished = ref.watch(onboardingStepsProvider).asData?.value;
+    final allStepsDone = finished != null &&
+        finished.containsAll(const [
+          OnboardingStep.intro,
+          OnboardingStep.profileComplete,
+          OnboardingStep.idVerified,
+        ]) &&
+        hasBooking;
     // Nothing on in the chosen city: look for events anywhere, so the row is
     // not simply missing. Only asked once the city's own answer is empty.
     final anywhereQuery = CatalogQuery(
@@ -151,6 +166,40 @@ class HomePage extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.display(size: 26),
+                ),
+              ],
+              // Getting started: nothing until the server has answered, and
+              // gone once every step is done.
+              if (finished != null && !allStepsDone) ...[
+                const SizedBox(height: 16),
+                GettingStartedCard(
+                  steps: [
+                    GettingStartedStep(
+                      label: l10n.gettingStartedTour,
+                      done: finished.contains(OnboardingStep.intro),
+                      reward: l10n.gettingStartedReward(50, 20),
+                      onTap: () =>
+                          restartCitizenTour(ref, context, RouteNames.home),
+                    ),
+                    GettingStartedStep(
+                      label: l10n.gettingStartedProfile,
+                      done: finished.contains(OnboardingStep.profileComplete),
+                      reward: l10n.gettingStartedReward(30, 10),
+                      onTap: () =>
+                          unawaited(context.push(RouteNames.profileEdit)),
+                    ),
+                    GettingStartedStep(
+                      label: l10n.gettingStartedId,
+                      done: finished.contains(OnboardingStep.idVerified),
+                      reward: l10n.gettingStartedReward(100, 40),
+                      onTap: () => unawaited(context.push(RouteNames.identity)),
+                    ),
+                    GettingStartedStep(
+                      label: l10n.gettingStartedBooking,
+                      done: hasBooking,
+                      onTap: () => openOccasion(last ?? tiles.first.occasion),
+                    ),
+                  ],
                 ),
               ],
               // An upcoming booking, if there is one. Failing or empty means

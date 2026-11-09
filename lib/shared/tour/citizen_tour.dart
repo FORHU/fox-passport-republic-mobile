@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/onboarding/onboarding_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,9 +71,11 @@ class CitizenTourRestarts extends Notifier<int> {
   void ask() => state++;
 }
 
-/// Plays the tour, once per account on this device unless [force] is set. It is
-/// remembered the moment it opens, so skipping, finishing and quitting the app
-/// halfway all count as seen. Returns whether it was shown.
+/// Plays the tour, once per account unless [force] is set. It is remembered on
+/// the device the moment it opens, so skipping, finishing and quitting the app
+/// halfway all count as seen. The server is told when it closes, which pays the
+/// introduction reward once, and a tour it already has on record is not played
+/// again on a new phone or after a reinstall. Returns whether it was shown.
 ///
 /// Remembered on the device only: the server does not know yet, so a new phone
 /// or a reinstall plays it again, and finishing pays nothing.
@@ -86,11 +92,44 @@ Future<bool> offerCitizenTour(
     return false;
   }
   final key = citizenTourSeenKey(ref.read(currentUserIdProvider));
-  if (!force && (prefs.getBool(key) ?? false)) return false;
+  if (!force) {
+    if (prefs.getBool(key) ?? false) return false;
+    if (await _tourOnRecord(ref)) {
+      await prefs.setBool(key, true);
+      return false;
+    }
+  }
   await prefs.setBool(key, true);
   if (!context.mounted) return false;
   await showSpaceTour(context, citizenTourSteps(context.l10n));
+  unawaited(_reportTour(ref));
   return true;
+}
+
+/// Whether the server already has this account's tour. When it cannot be
+/// asked, the tour plays, which is what it did before the server knew.
+Future<bool> _tourOnRecord(WidgetRef ref) async {
+  try {
+    final steps = await ref.read(onboardingRepositoryProvider).completedSteps();
+    return steps.contains(OnboardingStep.intro);
+  } on Object {
+    return false;
+  }
+}
+
+/// Tells the server the tour is done, then refreshes what shows its reward.
+/// Replaying from Settings reports too, so someone who saw the tour before the
+/// server kept track is credited. A failure is ignored: the next play reports
+/// it again, and the server pays once.
+Future<void> _reportTour(WidgetRef ref) async {
+  try {
+    await ref.read(onboardingRepositoryProvider).complete(OnboardingStep.intro);
+    ref
+      ..invalidate(onboardingStepsProvider)
+      ..invalidate(walletProvider);
+  } on Object {
+    // Nothing to show for it.
+  }
 }
 
 /// Plays the tour again from Settings: goes to Home, where the tabs are, and

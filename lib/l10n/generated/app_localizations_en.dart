@@ -3524,6 +3524,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeChecklistContinue => 'Continue';
 
   @override
+  String get gettingStartedTitle => 'Getting started';
+
+  @override
+  String get gettingStartedTour => 'Take the tour';
+
+  @override
+  String get gettingStartedProfile => 'Complete your profile';
+
+  @override
+  String get gettingStartedId => 'Verify your ID';
+
+  @override
+  String get gettingStartedBooking => 'Make your first booking';
+
+  @override
+  String gettingStartedReward(int xp, int coins) {
+    return '+$xp XP · $coins Coins';
+  }
+
+  @override
   String get homeComingUp => 'Coming up';
 
   @override

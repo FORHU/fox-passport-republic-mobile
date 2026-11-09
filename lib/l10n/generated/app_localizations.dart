@@ -6394,6 +6394,42 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get homeChecklistContinue;
 
+  /// No description provided for @gettingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get gettingStartedTitle;
+
+  /// No description provided for @gettingStartedTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the tour'**
+  String get gettingStartedTour;
+
+  /// No description provided for @gettingStartedProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get gettingStartedProfile;
+
+  /// No description provided for @gettingStartedId.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your ID'**
+  String get gettingStartedId;
+
+  /// No description provided for @gettingStartedBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your first booking'**
+  String get gettingStartedBooking;
+
+  /// No description provided for @gettingStartedReward.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP · {coins} Coins'**
+  String gettingStartedReward(int xp, int coins);
+
   /// No description provided for @homeComingUp.
   ///
   /// In en, this message translates to:
