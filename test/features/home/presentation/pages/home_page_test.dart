@@ -891,7 +891,8 @@ void main() {
     expect(find.text('3'), findsOneWidget);
     // What going will pay.
     expect(find.text('+100 XP'), findsOneWidget);
-    expect(find.text('+ Coins'), findsOneWidget);
+    // No Coins amount is known up front, so no empty "+ Coins" chip.
+    expect(find.text('+ Coins'), findsNothing);
   });
 
   testWidgets('no strip and no error without a booking', (tester) async {
@@ -923,9 +924,42 @@ void main() {
   });
 
   group('Getting started', () {
+    testWidgets('starts as one short card with the next step', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(onboarding: {OnboardingStep.intro}));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('1 of 4 done'), findsOneWidget);
+      expect(find.text('Next: Complete your profile'), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      // The list itself stays closed until it is tapped.
+      expect(find.text('Verify your ID'), findsNothing);
+      expect(find.text('+30 XP · 10 Coins'), findsNothing);
+    });
+
+    testWidgets('keeps the search and the next night above the card',
+        (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(tickets: [Ticket.sample()], onboarding: {OnboardingStep.intro}),
+      );
+      await tester.pumpAndSettle();
+
+      final search =
+          tester.getTopLeft(find.text('Search venues, Foxers and events')).dy;
+      final night =
+          tester.getTopLeft(find.textContaining('YOUR NEXT NIGHT')).dy;
+      final card = tester.getTopLeft(find.text('Getting started')).dy;
+      expect(search, lessThan(night));
+      expect(night, lessThan(card));
+    });
+
     testWidgets('lists the four steps with what each pays', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_app(onboarding: {OnboardingStep.intro}));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
       await tester.pumpAndSettle();
 
       expect(find.text('Getting started'), findsOneWidget);
@@ -1013,6 +1047,8 @@ void main() {
         _app(router: router, onboarding: {OnboardingStep.intro}),
       );
       await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Complete your profile'));
       await tester.pumpAndSettle();
@@ -1042,6 +1078,8 @@ void main() {
           onboarding: {OnboardingStep.profileComplete},
         ),
       );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Complete your profile'));

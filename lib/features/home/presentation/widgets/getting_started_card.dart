@@ -22,21 +22,37 @@ class GettingStartedStep {
   final String? reward;
 }
 
-/// The checklist at the top of Home that walks a new citizen through the tour,
-/// a complete profile, an ID check and a first booking. The server decides
-/// which of the first three are done; the caller passes them in and shows the
-/// card only while something is left, so it goes away by itself.
-class GettingStartedCard extends StatelessWidget {
-  const GettingStartedCard({required this.steps, super.key});
+/// The checklist on Home that walks a new citizen through the tour, a complete
+/// profile, an ID check and a first booking. The server decides which of the
+/// first three are done; the caller passes them in and shows the card only
+/// while something is left, so it goes away by itself.
+///
+/// It starts as one short card (progress bar and the next step) so it does not
+/// push the page's main actions down; tapping it opens the whole list.
+class GettingStartedCard extends StatefulWidget {
+  const GettingStartedCard({
+    required this.steps,
+    this.initiallyExpanded = false,
+    super.key,
+  });
 
   final List<GettingStartedStep> steps;
+  final bool initiallyExpanded;
+
+  @override
+  State<GettingStartedCard> createState() => _GettingStartedCardState();
+}
+
+class _GettingStartedCardState extends State<GettingStartedCard> {
+  late bool _expanded = widget.initiallyExpanded;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final steps = widget.steps;
     final done = steps.where((s) => s.done).length;
+    final next = steps.where((s) => !s.done).firstOrNull;
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppRadius.brMd,
@@ -45,22 +61,69 @@ class GettingStartedCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.gettingStartedTitle,
-                  style: AppTypography.display(size: 18),
-                ),
+          InkWell(
+            borderRadius: AppRadius.brMd,
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.gettingStartedTitle,
+                          style: AppTypography.display(),
+                        ),
+                      ),
+                      Text(
+                        l10n.homeChecklistProgress(done, steps.length),
+                        style: AppTypography.label(),
+                      ),
+                      Icon(
+                        _expanded
+                            ? Icons.expand_less_rounded
+                            : Icons.expand_more_rounded,
+                        color: AppColors.textMuted,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: AppRadius.brPill,
+                    child: LinearProgressIndicator(
+                      value: steps.isEmpty ? 0 : done / steps.length,
+                      minHeight: 6,
+                      backgroundColor: AppColors.surfaceRaised,
+                      valueColor: const AlwaysStoppedAnimation(
+                        AppColors.accent,
+                      ),
+                    ),
+                  ),
+                  if (!_expanded && next != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.gettingStartedNext(next.label),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              Text(
-                l10n.homeChecklistProgress(done, steps.length),
-                style: AppTypography.label(),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 4),
-          for (final step in steps) _StepRow(step: step),
+          if (_expanded)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Column(
+                children: [for (final step in steps) _StepRow(step: step)],
+              ),
+            ),
         ],
       ),
     );

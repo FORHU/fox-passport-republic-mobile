@@ -173,6 +173,20 @@ class HomePage extends ConsumerWidget {
                   style: AppTypography.display(size: 26),
                 ),
               ],
+              const SizedBox(height: 16),
+              _HomeSearch(onTap: () => context.push(RouteNames.search)),
+              const SizedBox(height: 12),
+              // The kinds Search used to put in a tab bar, one tap away.
+              _QuickPicks(
+                onPick: (kind) =>
+                    unawaited(context.push(RouteNames.searchFor(kind.name))),
+              ),
+              // An upcoming booking, if there is one. Failing or empty means
+              // no strip and no error.
+              if (ticket != null) ...[
+                const SizedBox(height: 16),
+                _NextNight(ticket: ticket),
+              ],
               // Getting started: nothing until the server has answered, and
               // gone once every step is done.
               if (finished != null && !allStepsDone) ...[
@@ -207,17 +221,6 @@ class HomePage extends ConsumerWidget {
                   ],
                 ),
               ],
-              // An upcoming booking, if there is one. Failing or empty means
-              // no strip and no error.
-              if (ticket != null) _NextNight(ticket: ticket),
-              const SizedBox(height: 16),
-              _HomeSearch(onTap: () => context.push(RouteNames.search)),
-              const SizedBox(height: 12),
-              // The kinds Search used to put in a tab bar, one tap away.
-              _QuickPicks(
-                onPick: (kind) =>
-                    unawaited(context.push(RouteNames.searchFor(kind.name))),
-              ),
               if (noBookings) ...[
                 const SizedBox(height: 16),
                 FirstEventChecklist(
@@ -660,7 +663,6 @@ class _NextNight extends StatelessWidget {
                                 label: l10n.homeNextNightXp(attendEventXp),
                                 filled: true,
                               ),
-                              _EarnTag(label: l10n.homeNextNightCoins),
                             ],
                           ),
                         ],
