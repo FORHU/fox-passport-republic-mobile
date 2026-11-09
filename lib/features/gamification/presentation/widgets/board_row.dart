@@ -15,6 +15,7 @@ class BoardRow extends StatelessWidget {
     required this.subtitle,
     required this.isMe,
     this.image,
+    this.trailing,
     super.key,
   });
 
@@ -23,6 +24,9 @@ class BoardRow extends StatelessWidget {
   final String subtitle;
   final String? image;
   final bool isMe;
+
+  /// Something at the end of the row, such as a Foxer's rating.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -75,11 +79,17 @@ class BoardRow extends StatelessWidget {
               ],
             ),
           ),
-          if (isMe)
+          if (trailing != null) ...[
+            const SizedBox(width: 8),
+            trailing!,
+          ],
+          if (isMe) ...[
+            const SizedBox(width: 8),
             Text(
               l10n.leaderboardYou,
               style: AppTypography.display(size: 13, color: AppColors.accent),
             ),
+          ],
         ],
       ),
     );
