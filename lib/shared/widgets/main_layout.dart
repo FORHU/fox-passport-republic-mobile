@@ -10,6 +10,7 @@ import 'package:flutter_template/features/messages/data/messages_repository.dart
 import 'package:flutter_template/features/notifications/data/notifications_realtime.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
+import 'package:flutter_template/shared/reward_moment/reward_moments.dart';
 import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/animated_bottom_navigation.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -28,10 +29,14 @@ class MainLayout extends ConsumerStatefulWidget {
   ConsumerState<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends ConsumerState<MainLayout> {
+class _MainLayoutState extends ConsumerState<MainLayout>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // XP, Coins and a new rank earned since the last look.
+    unawaited(_offerRewards());
     // The first-run tour, once per account on this device, and again when
     // Settings asks for it.
     ref.listenManual(
@@ -39,6 +44,25 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       (_, __) => unawaited(_offerTour(force: true)),
     );
     unawaited(_offerTour());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_offerRewards());
+  }
+
+  /// Shows what was earned since the last look, unless another screen is on
+  /// top of the shell right now.
+  Future<void> _offerRewards() async {
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) return;
+    await showPendingRewardMoments(context, ref);
   }
 
   /// Waits for the bar, which is what the tour points at, to be drawn, then

@@ -3544,6 +3544,239 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rewardMomentCheckedIn => 'Checked in';
+
+  @override
+  String get rewardMomentAttended => 'You attended an event';
+
+  @override
+  String get rewardMomentReview => 'Thanks for your review';
+
+  @override
+  String rewardMomentAttendedAt(String event) {
+    return 'You attended $event';
+  }
+
+  @override
+  String get rewardMomentNewStamp => 'New stamp added';
+
+  @override
+  String get rewardMomentGeneric => 'You earned rewards';
+
+  @override
+  String get rewardMomentXp => 'XP';
+
+  @override
+  String get rewardMomentCoins => 'Coins';
+
+  @override
+  String rewardMomentLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String rewardMomentToNext(String xp, int level) {
+    return '$xp XP to Level $level';
+  }
+
+  @override
+  String get rewardMomentNote => 'XP builds your level. Coins buy discounts.';
+
+  @override
+  String get rewardMomentLearnMore => 'Learn more';
+
+  @override
+  String get rewardMomentViewPassport => 'View my passport';
+
+  @override
+  String get rewardMomentDone => 'Done';
+
+  @override
+  String get rankUpEyebrow => 'New rank';
+
+  @override
+  String rankUpLevelRank(int level, int rank, int total) {
+    return 'Level $level · Rank $rank of $total';
+  }
+
+  @override
+  String rankUpCoins(String coins) {
+    return '+$coins Coins';
+  }
+
+  @override
+  String get rankUpNewBadge => 'New badge unlocked';
+
+  @override
+  String rankUpNext(String name) {
+    return 'Next rank: $name';
+  }
+
+  @override
+  String rankUpNextLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String get rankUpSeeBadges => 'See my badges';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achievementsEarned => 'earned';
+
+  @override
+  String achievementsOf(int done, int total) {
+    return '$done of $total';
+  }
+
+  @override
+  String get achievementsFilterProgress => 'In progress';
+
+  @override
+  String get achievementsFilterDone => 'Done';
+
+  @override
+  String get achievementsFilterLocked => 'Locked';
+
+  @override
+  String get achievementsSectionCitizen => 'Citizen';
+
+  @override
+  String get achievementsSectionFoxer => 'Foxer';
+
+  @override
+  String achievementsCount(int count, int target) {
+    return '$count / $target';
+  }
+
+  @override
+  String achievementsPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String achievementsRewardXp(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String achievementsRewardCoins(int coins) {
+    return '+$coins Coins';
+  }
+
+  @override
+  String achievementsRewardBadge(String name) {
+    return 'Badge: $name';
+  }
+
+  @override
+  String achievementsTierDone(int tier) {
+    return 'Tier $tier done';
+  }
+
+  @override
+  String achievementsTierTodo(int tier) {
+    return 'Tier $tier not yet';
+  }
+
+  @override
+  String get achievementsEmptyProgress =>
+      'Nothing in progress yet. Book, attend or review to start.';
+
+  @override
+  String get achievementsEmptyDone => 'No finished achievements yet.';
+
+  @override
+  String get achievementsEmptyLocked => 'Everything has been started.';
+
+  @override
+  String get achievementsComplete => 'All three tiers done';
+
+  @override
+  String homeNextNightXp(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get homeNextNightCoins => '+ Coins';
+
+  @override
+  String get foxerStatBookings => 'Bookings done';
+
+  @override
+  String get foxerStatReplies => 'Replies in time';
+
+  @override
+  String get foxerStatCancellations => 'Cancellations';
+
+  @override
+  String foxerStatPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get foxerLabelTopRated => 'Top rated';
+
+  @override
+  String get foxerLabelFastResponder => 'Fast responder';
+
+  @override
+  String get foxerLabelReliable => 'Reliable';
+
+  @override
+  String get foxerLabelRising => 'Rising';
+
+  @override
+  String foxerPlace(int position, String role, String city) {
+    return '#$position $role in $city';
+  }
+
+  @override
+  String foxerPlaceNoCity(int position, String role) {
+    return '#$position $role';
+  }
+
+  @override
+  String get foxerPlaceRoleProviders => 'Providers';
+
+  @override
+  String get foxerScoreTitle => 'Foxer Score';
+
+  @override
+  String foxerScoreOutOf(int score) {
+    return '$score / 100';
+  }
+
+  @override
+  String get foxerScorePartRating => 'Rating';
+
+  @override
+  String get foxerScorePartVolume => 'Volume';
+
+  @override
+  String get foxerScorePartReplies => 'Responsiveness';
+
+  @override
+  String get foxerScorePartReliability => 'Reliability';
+
+  @override
+  String get foxerScorePartTrust => 'Trust';
+
+  @override
+  String foxerScorePart(String value, int max) {
+    return '$value / $max';
+  }
+
+  @override
+  String get foxerScorePrivate =>
+      'Only you see this score. Guests see your star rating, the facts and your labels.';
+
+  @override
+  String get foxerScoreStars => 'Guest rating';
+
+  @override
   String get homeComingUp => 'Coming up';
 
   @override

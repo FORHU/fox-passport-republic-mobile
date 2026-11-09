@@ -69,6 +69,9 @@ class RouteNames {
   static String chat(String conversationId) =>
       '$messages/${Uri.encodeComponent(conversationId)}';
   static const String passport = '/passport';
+
+  /// The Passport opened on its Badges tab.
+  static const String passportBadges = '$passport?tab=badges';
   static const String profile = '/profile';
 
   /// Someone's public profile, by id or username. Opened from a post's
@@ -133,6 +136,9 @@ class RouteNames {
   static const String foxerPassport = '/foxer-passport';
   static String foxerPassportFor(String path) =>
       '$foxerPassport?path=${Uri.encodeQueryComponent(path)}';
+
+  /// Tiers earned and progress on each achievement. Opened from the Passport.
+  static const String achievements = '/achievements';
 
   /// The Foxer leaderboard, opened on one role (`venue`, `event`, ...).
   static const String leaderboard = '/leaderboard';

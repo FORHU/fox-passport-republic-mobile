@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/core/utils/rank_info.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
@@ -76,13 +77,17 @@ class HomePage extends ConsumerWidget {
     // The steps the server has on record; null until it has answered (and if
     // it never does), so the card is simply absent.
     final finished = ref.watch(onboardingStepsProvider).asData?.value;
+    // The server records the first booking; the tickets Home already has
+    // answer for an API that does not yet.
+    final booked = hasBooking ||
+        (finished?.contains(OnboardingStep.firstBooking) ?? false);
     final allStepsDone = finished != null &&
         finished.containsAll(const [
           OnboardingStep.intro,
           OnboardingStep.profileComplete,
           OnboardingStep.idVerified,
         ]) &&
-        hasBooking;
+        booked;
     // Nothing on in the chosen city: look for events anywhere, so the row is
     // not simply missing. Only asked once the city's own answer is empty.
     final anywhereQuery = CatalogQuery(
@@ -196,7 +201,7 @@ class HomePage extends ConsumerWidget {
                     ),
                     GettingStartedStep(
                       label: l10n.gettingStartedBooking,
-                      done: hasBooking,
+                      done: booked,
                       onTap: () => openOccasion(last ?? tiles.first.occasion),
                     ),
                   ],
@@ -550,6 +555,38 @@ class _RoundButton extends StatelessWidget {
   }
 }
 
+/// "+100 XP" or "+ Coins", a small tag on the next-night card: violet when
+/// filled, an outline when not.
+class _EarnTag extends StatelessWidget {
+  const _EarnTag({required this.label, this.filled = false});
+
+  final String label;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: filled ? AppColors.violet : Colors.transparent,
+        borderRadius: AppRadius.brPill,
+        border: Border.all(
+          color: filled ? AppColors.violet : AppColors.borderStrong,
+        ),
+      ),
+      child: Text(
+        label,
+        style: AppTypography.display(
+          size: 11,
+          color: filled ? AppColors.textPrimary : AppColors.textSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+/// Your next booking: when, what and where, and what going will pay. The whole
+/// card opens your tickets.
 class _NextNight extends StatelessWidget {
   const _NextNight({required this.ticket});
 
@@ -566,59 +603,76 @@ class _NextNight extends StatelessWidget {
       1 => l10n.ticketTomorrow,
       _ => l10n.ticketInDays(days),
     };
-    final textColor = AppColors.onAccent.withValues(alpha: 0.72);
+    final place = ticket.city;
+    final where =
+        place == null || place.trim().isEmpty ? date : '$date · $place';
     return Padding(
       padding: const EdgeInsets.only(top: 12),
-      child: Material(
-        color: AppColors.accent,
-        borderRadius: AppRadius.brMd,
-        child: InkWell(
-          borderRadius: AppRadius.brMd,
-          onTap: () => context.go(RouteNames.tickets),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        when.toUpperCase(),
-                        style: AppTypography.label(color: textColor),
+      child: Semantics(
+        button: true,
+        label: '${ticket.eventName}, ${l10n.homeOpenTicket}',
+        child: ExcludeSemantics(
+          child: Material(
+            color: AppColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: AppRadius.brMd,
+              side: const BorderSide(color: AppColors.border),
+            ),
+            child: InkWell(
+              borderRadius: AppRadius.brMd,
+              onTap: () => context.go(RouteNames.tickets),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${l10n.homeYourNextNight} · $when'.toUpperCase(),
+                            style: AppTypography.label(),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            ticket.eventName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.display(size: 18),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            where,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.body(
+                              size: 13,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          // What going will pay.
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              _EarnTag(
+                                label: l10n.homeNextNightXp(attendEventXp),
+                                filled: true,
+                              ),
+                              _EarnTag(label: l10n.homeNextNightCoins),
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        '${ticket.eventName} · $date',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.display(
-                          size: 15,
-                          color: AppColors.onAccent,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.onAccent,
-                    borderRadius: AppRadius.brPill,
-                  ),
-                  child: Text(
-                    l10n.homeOpenTicket,
-                    style: AppTypography.display(
-                      size: 12,
-                      color: AppColors.accent,
                     ),
-                  ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.textMuted,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

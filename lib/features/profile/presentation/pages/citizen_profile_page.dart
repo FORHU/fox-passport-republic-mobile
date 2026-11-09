@@ -182,6 +182,7 @@ class CitizenProfileView extends ConsumerStatefulWidget {
     this.extraTabs = const [],
     this.overrides,
     this.heroFooter,
+    this.initialTab = 0,
     super.key,
   });
 
@@ -197,12 +198,22 @@ class CitizenProfileView extends ConsumerStatefulWidget {
   /// Under the level bar on your own profile: the Passport's Wallet row.
   final Widget? heroFooter;
 
+  /// The tab shown first (0 is Stamps, 1 Badges); asking for another while
+  /// the page is up switches to it.
+  final int initialTab;
+
   @override
   ConsumerState<CitizenProfileView> createState() => _CitizenProfileViewState();
 }
 
 class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
-  int _tab = 0;
+  late int _tab = widget.initialTab;
+
+  @override
+  void didUpdateWidget(CitizenProfileView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTab != oldWidget.initialTab) _tab = widget.initialTab;
+  }
 
   Future<void> _message(CitizenProfile profile) async {
     final l10n = context.l10n;

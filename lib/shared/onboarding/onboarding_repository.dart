@@ -10,6 +10,10 @@ abstract final class OnboardingStep {
   static const String intro = 'intro';
   static const String profileComplete = 'profile_complete';
   static const String idVerified = 'id_verified';
+
+  /// Worked out by the server too: the account holds a booking that was not
+  /// cancelled.
+  static const String firstBooking = 'first_booking';
 }
 
 /// What reporting a step paid. Zero when it had been reported before.

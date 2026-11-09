@@ -10,6 +10,9 @@ class WalletEntry {
     this.action,
     this.lifecycleType,
     this.reason,
+    this.refType,
+    this.refId,
+    this.isPending = false,
   });
 
   factory WalletEntry.fromJson(Map<String, dynamic> json) => WalletEntry(
@@ -20,6 +23,9 @@ class WalletEntry {
         xp: (json['xp'] as num?)?.toInt() ?? 0,
         coinsDelta: (json['coinsDelta'] as num?)?.toInt() ?? 0,
         reason: json['reason'] as String?,
+        refType: json['refType'] as String?,
+        refId: json['refId'] == null ? null : '${json['refId']}',
+        isPending: json['isPending'] == true,
         createdAt: DateTime.tryParse('${json['createdAt']}')?.toLocal() ??
             DateTime.fromMillisecondsSinceEpoch(0),
       );
@@ -39,6 +45,15 @@ class WalletEntry {
   /// Plus for Coins earned, minus for Coins spent, expired or reversed.
   final int coinsDelta;
   final String? reason;
+
+  /// What a grant was for: `booking` and the booking's id, for an event
+  /// attended.
+  final String? refType;
+  final String? refId;
+
+  /// A grant whose Coins are held until the first attended paid booking: they
+  /// show as pending in the Wallet and are not counted as earned.
+  final bool isPending;
   final DateTime createdAt;
 }
 
