@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
@@ -27,14 +28,23 @@ class RoleProgress extends ConsumerWidget {
         children: [
           Expanded(
             child: wallet.hasRank
-                ? Text(
-                    context.l10n.rewardsRankLevel(wallet.rank, wallet.level),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.display(
-                      size: 14,
-                      color: AppColors.textSecondary,
-                    ),
+                ? Row(
+                    children: [
+                      RankBadge.forLevel(wallet.level, size: 22),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          context.l10n
+                              .rewardsRankLevel(wallet.rank, wallet.level),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.display(
+                            size: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                 : const SizedBox.shrink(),
           ),

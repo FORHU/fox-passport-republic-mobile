@@ -20,12 +20,16 @@ class SegmentedPills<T> extends StatelessWidget {
     required this.options,
     required this.value,
     required this.onChanged,
+    this.prominent = false,
     super.key,
   });
 
   final List<SegmentOption<T>> options;
   final T value;
   final ValueChanged<T> onChanged;
+
+  /// The chosen segment is white with dark text, instead of raised.
+  final bool prominent;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +61,9 @@ class SegmentedPills<T> extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: option.value == value
-                            ? AppColors.surfaceRaised
+                            ? (prominent
+                                ? AppColors.textPrimary
+                                : AppColors.surfaceRaised)
                             : Colors.transparent,
                         borderRadius: AppRadius.brPill,
                       ),
@@ -68,7 +74,9 @@ class SegmentedPills<T> extends StatelessWidget {
                         style: AppTypography.display(
                           size: 14,
                           color: option.value == value
-                              ? AppColors.textPrimary
+                              ? (prominent
+                                  ? AppColors.canvas
+                                  : AppColors.textPrimary)
                               : AppColors.textMuted,
                         ),
                       ),

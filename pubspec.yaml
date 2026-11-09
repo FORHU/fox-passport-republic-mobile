@@ -47,6 +47,7 @@ dependencies:
   flutter_riverpod: ^3.3.2
   flutter_secure_storage: ^10.3.1
   flutter_stripe: ^14.2.0
+  flutter_svg: ^2.0.17
   flutter_web_auth_2: ^5.1.0
   font_awesome_flutter: ^11.0.0
   fpdart: ^1.2.0
@@ -98,6 +99,7 @@ flutter:
     - .env.dev
     - .env.prod
     - assets/images/foxonlylogo.png
+    - assets/badges/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

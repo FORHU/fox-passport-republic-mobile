@@ -106,6 +106,13 @@ class AppColors {
   static const orange = Color(0xFFFB923C);
   static const peach = Color(0xFFFDBA74);
 
+  // ── Rank rarity: the badge frame and the rank name ──────────────────────
+  static const rarityCommon = Color(0xFFA9ADBA);
+  static const rarityUncommon = Color(0xFF4ADE80);
+  static const rarityRare = Color(0xFF00D2FF);
+  static const rarityEpic = Color(0xFFE879F9);
+  static const rarityLegendary = Color(0xFFCCFF00);
+
   // ── Legacy groups (same values, older names) ────────────────────────────
 
   static const ink = _Ink();

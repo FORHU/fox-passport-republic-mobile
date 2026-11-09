@@ -6394,6 +6394,42 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get homeChecklistContinue;
 
+  /// No description provided for @gettingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get gettingStartedTitle;
+
+  /// No description provided for @gettingStartedTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the tour'**
+  String get gettingStartedTour;
+
+  /// No description provided for @gettingStartedProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get gettingStartedProfile;
+
+  /// No description provided for @gettingStartedId.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your ID'**
+  String get gettingStartedId;
+
+  /// No description provided for @gettingStartedBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your first booking'**
+  String get gettingStartedBooking;
+
+  /// No description provided for @gettingStartedReward.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP · {coins} Coins'**
+  String gettingStartedReward(int xp, int coins);
+
   /// No description provided for @homeComingUp.
   ///
   /// In en, this message translates to:
@@ -10557,6 +10593,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get leaderboardEditProfile;
+
+  /// No description provided for @leaderboardLevelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String leaderboardLevelShort(int level);
+
+  /// No description provided for @leaderboardYouName.
+  ///
+  /// In en, this message translates to:
+  /// **'You · {name}'**
+  String leaderboardYouName(String name);
+
+  /// No description provided for @leaderboardPillVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get leaderboardPillVenue;
+
+  /// No description provided for @leaderboardPillEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get leaderboardPillEvent;
+
+  /// No description provided for @leaderboardPillGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardPillGear;
+
+  /// No description provided for @leaderboardPillServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get leaderboardPillServices;
+
+  /// No description provided for @leaderboardPillPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get leaderboardPillPerformers;
 
   /// No description provided for @leaderboardTabTopRated.
   ///

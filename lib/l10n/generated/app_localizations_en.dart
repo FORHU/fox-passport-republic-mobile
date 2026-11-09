@@ -3524,6 +3524,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeChecklistContinue => 'Continue';
 
   @override
+  String get gettingStartedTitle => 'Getting started';
+
+  @override
+  String get gettingStartedTour => 'Take the tour';
+
+  @override
+  String get gettingStartedProfile => 'Complete your profile';
+
+  @override
+  String get gettingStartedId => 'Verify your ID';
+
+  @override
+  String get gettingStartedBooking => 'Make your first booking';
+
+  @override
+  String gettingStartedReward(int xp, int coins) {
+    return '+$xp XP · $coins Coins';
+  }
+
+  @override
   String get homeComingUp => 'Coming up';
 
   @override
@@ -5845,6 +5865,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardEditProfile => 'Edit profile';
+
+  @override
+  String leaderboardLevelShort(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String leaderboardYouName(String name) {
+    return 'You · $name';
+  }
+
+  @override
+  String get leaderboardPillVenue => 'Venue';
+
+  @override
+  String get leaderboardPillEvent => 'Event';
+
+  @override
+  String get leaderboardPillGear => 'Gear';
+
+  @override
+  String get leaderboardPillServices => 'Service';
+
+  @override
+  String get leaderboardPillPerformers => 'Performer';
 
   @override
   String get leaderboardTabTopRated => 'Top rated';

@@ -230,6 +230,11 @@ class ApiEndpoints {
   static const String rewardsCatalog = '/rewards/catalog';
   static const String rewardsRedeem = '/rewards/redeem';
 
+  // ── Onboarding steps ─────────────────────────────────────────────────────
+  static const String onboarding = '/onboarding';
+  static String onboardingStep(String step) =>
+      '/onboarding/${Uri.encodeComponent(step)}';
+
   // ── Favorites ───────────────────────────────────────────────────────────
   static const String favorites = '/favorites';
   static String favoritesByUser(String userId) => '/favorites/user/$userId';

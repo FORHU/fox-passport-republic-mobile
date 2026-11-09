@@ -8,11 +8,16 @@ import 'package:flutter_template/features/rewards/presentation/pages/rewards_pag
 import 'package:flutter_template/features/rewards/presentation/pages/wallet_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
+
+/// The badge for [rank], wherever it is drawn.
+Finder _badge(int rank) =>
+    find.byWidgetPredicate((w) => w is RankBadge && w.rank == rank);
 
 Map<String, dynamic> _wallet({
   int coins = 1240,
@@ -273,6 +278,7 @@ void main() {
       expect(find.text('Wallet'), findsOneWidget);
       expect(find.text('1,240 Coins'), findsOneWidget);
       expect(find.text('Explorer · Level 5'), findsOneWidget);
+      expect(_badge(3), findsOneWidget); // level 5 is rank 3
     });
 
     testWidgets('take no room when the balance cannot be had', (tester) async {
@@ -298,6 +304,7 @@ void main() {
       await show(tester, const WalletPage());
 
       expect(find.text('Explorer · Level 5'), findsOneWidget);
+      expect(_badge(3), findsOneWidget);
     });
 
     testWidgets('nothing is shown until the server names a rank', (
@@ -309,6 +316,7 @@ void main() {
       await show(tester, const WalletPage());
 
       expect(find.textContaining('Level'), findsNothing);
+      expect(find.byType(RankBadge), findsNothing);
       expect(find.text('1,240'), findsOneWidget);
     });
   });

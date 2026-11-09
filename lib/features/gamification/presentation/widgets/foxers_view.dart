@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
@@ -60,42 +61,61 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
               for (final role in LeaderboardRole.values)
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(roleLabel(l10n, role)),
+                  child: BoardChip(
+                    label: roleLabel(l10n, role),
                     selected: role == _role,
-                    onSelected: (_) => setState(() => _role = role),
+                    onTap: () => setState(() => _role = role),
                   ),
                 ),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 8, 0),
-          child: Row(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 8,
-                  children: [
-                    for (final tab in FoxerTab.values)
-                      ChoiceChip(
-                        label: Text(foxerTabLabel(l10n, tab)),
-                        selected: tab == _tab,
-                        onSelected: (_) => setState(() => _tab = tab),
-                      ),
-                  ],
+              for (final tab in FoxerTab.values)
+                BoardChip(
+                  label: foxerTabLabel(l10n, tab),
+                  selected: tab == _tab,
+                  onTap: () => setState(() => _tab = tab),
                 ),
-              ),
-              TextButton.icon(
-                onPressed: _pickCity,
-                icon: const Icon(Icons.place_outlined, size: 18),
-                label: Text(
-                  _city ?? l10n.leaderboardAllCities,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
             ],
+          ),
+        ),
+        // The board in words, "Manila · Venues · Top rated"; tapping it
+        // changes the city.
+        InkWell(
+          onTap: _pickCity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.place_outlined,
+                  size: 16,
+                  color: AppColors.textMuted,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    [
+                      _city ?? l10n.leaderboardAllCities,
+                      roleLabel(l10n, _role),
+                      foxerTabLabel(l10n, _tab),
+                    ].join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.body(
+                      size: 13,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -131,10 +151,10 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
         position: e.position,
         name: e.name,
         image: e.image,
-        subtitle: l10n.leaderboardRowSubtitle(
-          roleLabel(l10n, e.role),
-          e.rankName,
-        ),
+        rankName: e.rankName,
+        rank: rankNumberForName(e.rankName),
+        rolePill: rolePillLabel(l10n, e.role),
+        squareAvatar: true,
         isMe: myId != null && e.userId == myId,
         trailing: _Rating(entry: e),
       );
@@ -162,7 +182,7 @@ class _Rating extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
+            const Icon(Icons.star_rounded, size: 16, color: AppColors.warning),
             const SizedBox(width: 2),
             Text(
               entry.starRating.toStringAsFixed(1),
