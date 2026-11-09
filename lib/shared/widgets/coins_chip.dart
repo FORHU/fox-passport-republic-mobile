@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -106,12 +107,22 @@ class WalletRow extends ConsumerWidget {
                       style: AppTypography.display(size: 14),
                     ),
                     if (wallet.hasRank)
-                      Text(
-                        l10n.rewardsRankLevel(wallet.rank, wallet.level),
-                        style: AppTypography.body(
-                          size: 12,
-                          color: AppColors.textMuted,
-                        ),
+                      Row(
+                        children: [
+                          RankBadge.forLevel(wallet.level, size: 18),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              l10n.rewardsRankLevel(wallet.rank, wallet.level),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.body(
+                                size: 12,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
