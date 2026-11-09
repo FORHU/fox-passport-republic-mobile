@@ -230,6 +230,15 @@ class ApiEndpoints {
   static const String rewardsCatalog = '/rewards/catalog';
   static const String rewardsRedeem = '/rewards/redeem';
 
+  static const String achievementsMe = '/achievements/me';
+
+  /// The signed-in Foxer's own Foxer Score and its parts.
+  static const String foxerScoreMe = '/foxer-score/me';
+
+  /// A Foxer's public reputation: rating, facts and earned labels.
+  static String foxerScoreFor(String userId) =>
+      '/foxer-score/${Uri.encodeComponent(userId)}';
+
   // ── Onboarding steps ─────────────────────────────────────────────────────
   static const String onboarding = '/onboarding';
   static String onboardingStep(String step) =>

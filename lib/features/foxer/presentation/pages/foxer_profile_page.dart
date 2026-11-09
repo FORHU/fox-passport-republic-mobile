@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/foxer/data/foxer_repository.dart';
+import 'package:flutter_template/features/foxer/presentation/widgets/foxer_reputation_panel.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -239,8 +240,10 @@ class _LoadedState extends ConsumerState<_Loaded> {
             ),
           ],
         ),
-        // A sample row is not a real account, so there is no one to follow.
+        // A sample row is not a real account, so there is no one to follow
+        // and nothing to say about how they are doing.
         if (!profile.isSample) ...[
+          FoxerReputationPanel(userId: profile.id),
           const SizedBox(height: 12),
           FollowButton(userId: profile.id),
         ],

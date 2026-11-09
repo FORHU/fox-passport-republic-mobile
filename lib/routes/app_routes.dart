@@ -17,6 +17,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
@@ -94,6 +95,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/widgets/achievements_row.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
@@ -429,6 +431,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
+        path: RouteNames.achievements,
+        builder: (context, state) => const AchievementsPage(),
+      ),
+      GoRoute(
         path: RouteNames.leaderboard,
         builder: (context, state) => LeaderboardPage(
           initialSide: LeaderboardSide.fromApi(
@@ -561,8 +567,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       final l10n = context.l10n;
                       return CitizenProfileView(
                         userId: me,
+                        initialTab: state.uri.queryParameters['tab'] == 'badges'
+                            ? 1
+                            : 0,
                         heroFooter: const Column(
-                          children: [WalletRow(), LeaderboardRow()],
+                          children: [
+                            WalletRow(),
+                            LeaderboardRow(),
+                            AchievementsRow(),
+                          ],
                         ),
                         activityBuilder: (context, profile) =>
                             ProfilePosts(authorId: profile.id),

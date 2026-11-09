@@ -883,9 +883,15 @@ void main() {
     await tester.pumpWidget(_app(tickets: [Ticket.sample()], unread: 3));
     await tester.pumpAndSettle();
 
-    expect(find.text('IN 3 DAYS'), findsOneWidget);
-    expect(find.text('Open ticket'), findsOneWidget);
+    // The card: when, what and where; the whole card opens the tickets.
+    expect(find.text('YOUR NEXT NIGHT · IN 3 DAYS'), findsOneWidget);
+    expect(find.text('Sky Hall'), findsOneWidget);
+    expect(find.textContaining('· Davao City'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right_rounded), findsWidgets);
     expect(find.text('3'), findsOneWidget);
+    // What going will pay.
+    expect(find.text('+100 XP'), findsOneWidget);
+    expect(find.text('+ Coins'), findsOneWidget);
   });
 
   testWidgets('no strip and no error without a booking', (tester) async {
@@ -893,7 +899,9 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    expect(find.text('Open ticket'), findsNothing);
+    expect(find.textContaining('YOUR NEXT NIGHT'), findsNothing);
+    expect(find.text('+100 XP'), findsNothing);
+    expect(find.text('+ Coins'), findsNothing);
   });
 
   testWidgets('has no Foxer pitch or empty boxes', (tester) async {
@@ -947,6 +955,21 @@ void main() {
         _app(
           tickets: [Ticket.sample()],
           onboarding: {OnboardingStep.intro},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('2 of 4 done'), findsOneWidget);
+    });
+
+    testWidgets('ticks the booking step when the server says so',
+        (tester) async {
+      _phone(tester);
+      // No tickets here (they may be cached or still loading); the server
+      // has recorded the first booking.
+      await tester.pumpWidget(
+        _app(
+          onboarding: {OnboardingStep.intro, OnboardingStep.firstBooking},
         ),
       );
       await tester.pumpAndSettle();

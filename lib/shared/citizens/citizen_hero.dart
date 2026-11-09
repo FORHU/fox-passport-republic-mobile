@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/core/utils/rank_info.dart';
+import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
 import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/follow/follow_button.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -115,6 +118,31 @@ class CitizenHero extends ConsumerWidget {
                           ),
                         ),
                       ),
+                    // The rank badge, drawn from the logo, with the rank and
+                    // the level; everyone sees both, only the owner the XP.
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        children: [
+                          RankBadge.forLevel(profile.level, size: 34),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              l10n.rewardsRankLevel(
+                                citizenRankName(
+                                  rankNumberForLevel(profile.level),
+                                ),
+                                profile.level,
+                              ),
+                              style: AppTypography.body(
+                                size: 12 * context.fit,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -5,6 +5,7 @@ import 'package:flutter_template/features/passport/data/passport_repository.dart
 import 'package:flutter_template/features/passport/domain/entities/foxer_passport.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/foxer_score_card.dart';
 import 'package:flutter_template/shared/widgets/role_progress.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -53,6 +54,8 @@ class FoxerPassportPage extends ConsumerWidget {
             children: [
               _LevelCard(passport: data, path: path),
               const WalletRow(),
+              // Only the Foxer sees their score.
+              const FoxerScoreCard(),
               const SizedBox(height: 24),
               _Section(title: l10n.foxerPassportPerks),
               if (data.perks.isEmpty)
