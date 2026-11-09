@@ -1,37 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
+import 'package:flutter_template/shared/widgets/network_image_box.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// One line of a leaderboard: position, avatar, name and a line under it.
-/// The caller's own row has an accent border and a "You" tag. It shows no
-/// scores: the server does not send any.
+/// One line of a leaderboard: position, avatar, name, and under the name the
+/// rank badge and rank name in the rank's colour, after the Foxer's role when
+/// it is a Foxer board. The caller's own row has an accent border and reads
+/// "You · name". It shows no scores: the server does not send any.
 class BoardRow extends StatelessWidget {
   const BoardRow({
     required this.position,
     required this.name,
-    required this.subtitle,
+    required this.rankName,
     required this.isMe,
+    this.rank,
+    this.rolePill,
     this.image,
+    this.squareAvatar = false,
     this.trailing,
     super.key,
   });
 
   final int position;
   final String name;
-  final String subtitle;
+
+  /// The rank's name, as the server sent it ("Explorer").
+  final String rankName;
+
+  /// The rank number 1 to 9, for the badge and the colour; the name alone is
+  /// shown, in grey, when it is not known.
+  final int? rank;
+
+  /// The role of a Foxer ("Venue"), shown before the rank; none on the citizen
+  /// board.
+  final String? rolePill;
   final String? image;
+
+  /// A rounded square instead of a circle, as Foxers (who run venues and
+  /// listings) are drawn on the board; citizens are round.
+  final bool squareAvatar;
   final bool isMe;
 
-  /// Something at the end of the row, such as a Foxer's rating.
+  /// Something at the end of the row, such as a level or a Foxer's rating.
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
+    final color = rank == null ? AppColors.textSecondary : rankColor(rank!);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -46,35 +67,52 @@ class BoardRow extends StatelessWidget {
             child: Text(
               '$position',
               style: AppTypography.display(
-                color:
-                    position <= 3 ? AppColors.accent : AppColors.textSecondary,
+                size: position <= 3 ? 18 : 15,
+                color: position <= 3
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
               ),
             ),
           ),
-          AvatarImage(
-            url: image,
-            radius: 20,
-            fallback: Text(initial, style: AppTypography.display()),
-          ),
+          if (squareAvatar)
+            _SquareAvatar(url: image, initial: initial)
+          else
+            AvatarImage(
+              url: image,
+              radius: 20,
+              fallback: Text(initial, style: AppTypography.display()),
+            ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  isMe ? l10n.leaderboardYouName(name) : name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.display(size: 15),
                 ),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.body(
-                    size: 12,
-                    color: AppColors.textMuted,
-                  ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    if (rolePill != null) ...[
+                      _RolePill(label: rolePill!),
+                      const SizedBox(width: 6),
+                    ],
+                    if (rank != null) ...[
+                      RankBadge(rank: rank!, size: 18),
+                      const SizedBox(width: 4),
+                    ],
+                    Flexible(
+                      child: Text(
+                        rankName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.body(size: 12, color: color),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -83,14 +121,58 @@ class BoardRow extends StatelessWidget {
             const SizedBox(width: 8),
             trailing!,
           ],
-          if (isMe) ...[
-            const SizedBox(width: 8),
-            Text(
-              l10n.leaderboardYou,
-              style: AppTypography.display(size: 13, color: AppColors.accent),
-            ),
-          ],
         ],
+      ),
+    );
+  }
+}
+
+/// A 40 px rounded square: the picture, or the initial when there is none.
+class _SquareAvatar extends StatelessWidget {
+  const _SquareAvatar({required this.url, required this.initial});
+
+  final String? url;
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    final src = url;
+    return ClipRRect(
+      borderRadius: AppRadius.brMd,
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: src == null || src.isEmpty
+            ? ColoredBox(
+                color: AppColors.surfaceRaised,
+                child: Center(
+                  child: Text(initial, style: AppTypography.display()),
+                ),
+              )
+            : NetworkImageBox(url: src, width: 40, height: 40),
+      ),
+    );
+  }
+}
+
+/// "Venue", "Event", ...: the role a Foxer is ranked in.
+class _RolePill extends StatelessWidget {
+  const _RolePill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.violet.withValues(alpha: 0.18),
+        borderRadius: AppRadius.brPill,
+        border: Border.all(color: AppColors.violet.withValues(alpha: 0.6)),
+      ),
+      child: Text(
+        label,
+        style: AppTypography.body(size: 11, color: AppColors.textPrimary),
       ),
     );
   }
@@ -122,6 +204,53 @@ class BoardList extends StatelessWidget {
             child: pinned,
           ),
       ],
+    );
+  }
+}
+
+/// A filter pill: white when chosen, dark with a border when not.
+class BoardChip extends StatelessWidget {
+  const BoardChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: InkWell(
+        borderRadius: AppRadius.brPill,
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 40),
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: selected ? AppColors.textPrimary : AppColors.surface,
+              borderRadius: AppRadius.brPill,
+              border: Border.all(
+                color: selected ? AppColors.textPrimary : AppColors.border,
+              ),
+            ),
+            child: Text(
+              label,
+              style: AppTypography.display(
+                size: 14,
+                color: selected ? AppColors.canvas : AppColors.textSecondary,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

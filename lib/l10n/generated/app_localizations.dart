@@ -10594,6 +10594,48 @@ abstract class AppLocalizations {
   /// **'Edit profile'**
   String get leaderboardEditProfile;
 
+  /// No description provided for @leaderboardLevelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String leaderboardLevelShort(int level);
+
+  /// No description provided for @leaderboardYouName.
+  ///
+  /// In en, this message translates to:
+  /// **'You · {name}'**
+  String leaderboardYouName(String name);
+
+  /// No description provided for @leaderboardPillVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get leaderboardPillVenue;
+
+  /// No description provided for @leaderboardPillEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get leaderboardPillEvent;
+
+  /// No description provided for @leaderboardPillGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardPillGear;
+
+  /// No description provided for @leaderboardPillServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get leaderboardPillServices;
+
+  /// No description provided for @leaderboardPillPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get leaderboardPillPerformers;
+
   /// No description provided for @leaderboardTabTopRated.
   ///
   /// In en, this message translates to:

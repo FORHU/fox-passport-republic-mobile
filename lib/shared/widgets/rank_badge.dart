@@ -1,6 +1,17 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_template/core/utils/rank_ladder.dart';
+import 'package:flutter_template/theme/tokens/colors.dart';
+
+/// The colour of a rank: grey, green, cyan, magenta, and lime for Legend only.
+/// The same colours frame the badge drawings.
+Color rankColor(int rank) => switch (rank) {
+      <= 2 => AppColors.rarityCommon,
+      <= 4 => AppColors.rarityUncommon,
+      <= 6 => AppColors.rarityRare,
+      <= 8 => AppColors.rarityEpic,
+      _ => AppColors.rarityLegendary,
+    };
 
 const List<String> _badgeFiles = [
   'rank-1-newcomer',

@@ -5,6 +5,44 @@
 /// the rank name; this only picks the badge that goes with a level.
 const List<int> rankMinLevels = [1, 3, 5, 10, 15, 20, 30, 40, 50];
 
+const List<String> _citizenRankNames = [
+  'Newcomer',
+  'Wanderer',
+  'Explorer',
+  'Trailblazer',
+  'Voyager',
+  'Adventurer',
+  'Pioneer',
+  'Vanguard',
+  'Legend',
+];
+const List<String> _foxerRankNames = [
+  'Rookie',
+  'Regular',
+  'Pro',
+  'Veteran',
+  'Headliner',
+  'Maestro',
+  'Icon',
+  'Luminary',
+  'Legend',
+];
+
+/// The rank number, 1 to 9, for a rank name the server sent ('Explorer',
+/// 'Veteran'), whichever ladder it is on; null for a name it does not know.
+/// The API sends the name only, so a renamed rank shows no badge until this
+/// list is updated.
+int? rankNumberForName(String name) {
+  final wanted = name.trim().toLowerCase();
+  for (var i = 0; i < 9; i++) {
+    if (_citizenRankNames[i].toLowerCase() == wanted ||
+        _foxerRankNames[i].toLowerCase() == wanted) {
+      return i + 1;
+    }
+  }
+  return null;
+}
+
 /// The rank number, 1 to 9, a [level] has reached. A level below 1 counts as 1
 /// and a level past 50 stays at 9, the top rank.
 int rankNumberForLevel(int level) {

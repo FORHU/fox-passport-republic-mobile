@@ -6,9 +6,11 @@ import 'package:flutter_template/features/gamification/domain/citizen_board.dart
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/leaderboard_labels.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
+import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/location/area.dart';
+import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -92,6 +94,10 @@ class _FakeRepository implements LeaderboardRepository {
   }
 }
 
+/// The badge for [rank], wherever it is drawn.
+Finder _badge(int rank) =>
+    find.byWidgetPredicate((w) => w is RankBadge && w.rank == rank);
+
 void main() {
   Future<void> show(
     WidgetTester tester,
@@ -164,8 +170,14 @@ void main() {
 
       expect(find.text('Leaderboard'), findsOneWidget);
       expect(find.text('Glass Pavilion'), findsOneWidget);
-      expect(find.text('Venues · Icon'), findsOneWidget);
-      expect(find.text('Venues · Headliner'), findsOneWidget);
+      // The rank's name, in its colour, after the role and the rank badge.
+      expect(find.text('Icon'), findsOneWidget);
+      expect(find.text('Headliner'), findsOneWidget);
+      expect(find.text('Venue'), findsNWidgets(3));
+      expect(_badge(7), findsOneWidget); // Icon is rank 7
+      expect(_badge(5), findsOneWidget); // Headliner is rank 5
+      // The board in words under the filters.
+      expect(find.text('All cities · Venues · Top rated'), findsOneWidget);
       expect(find.text('1'), findsOneWidget);
       expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
@@ -205,7 +217,7 @@ void main() {
       );
       await show(tester, repository);
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Most booked'));
+      await tester.tap(find.widgetWithText(BoardChip, 'Most booked'));
       await tester.pumpAndSettle();
       expect(
         repository.foxerCalls.last,
@@ -216,7 +228,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Events'));
+      await tester.tap(find.widgetWithText(BoardChip, 'Events'));
       await tester.pumpAndSettle();
       expect(
         repository.foxerCalls.last,
@@ -226,9 +238,10 @@ void main() {
           null,
         ),
       );
-      expect(find.text('Events · Veteran'), findsOneWidget);
+      expect(find.text('Veteran'), findsOneWidget);
+      expect(find.text('All cities · Events · Most booked'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Rising'));
+      await tester.tap(find.widgetWithText(BoardChip, 'Rising'));
       await tester.pumpAndSettle();
       expect(repository.foxerCalls.last.$2, FoxerTab.rising);
     });
@@ -244,7 +257,7 @@ void main() {
         ),
       );
       await show(tester, repository);
-      expect(find.text('You'), findsOneWidget);
+      expect(find.text('You · Me'), findsOneWidget);
 
       final far = foxersOnly(
         (role, tab, city) async => _foxerBoard(
@@ -255,7 +268,7 @@ void main() {
       );
       await show(tester, far);
       expect(find.text('51'), findsOneWidget);
-      expect(find.text('You'), findsOneWidget);
+      expect(find.text('You · Me'), findsOneWidget);
     });
 
     testWidgets('says so when nobody is on the board, not a blank', (
@@ -299,16 +312,17 @@ void main() {
       );
       await show(tester, repository);
 
-      await tester.tap(find.text('All cities'));
+      // The caption "All cities · Venues · Top rated" opens the city sheet.
+      await tester.tap(find.text('All cities · Venues · Top rated'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'Davao');
       await tester.tap(find.text('Apply'));
       await tester.pumpAndSettle();
 
       expect(repository.foxerCalls.last.$3, 'Davao');
-      expect(find.text('Davao'), findsOneWidget);
+      expect(find.text('Davao · Venues · Top rated'), findsOneWidget);
 
-      await tester.tap(find.text('Davao'));
+      await tester.tap(find.text('Davao · Venues · Top rated'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(TextButton, 'All cities').last);
       await tester.pumpAndSettle();
@@ -346,10 +360,15 @@ void main() {
       );
 
       expect(find.text('Kai Santos'), findsOneWidget);
-      expect(find.text('Adventurer · Level 22'), findsOneWidget);
-      expect(find.text('Voyager · Level 16'), findsOneWidget);
+      expect(find.text('Adventurer'), findsNWidgets(2));
+      expect(find.text('Voyager'), findsOneWidget);
+      expect(find.text('Lv 22'), findsOneWidget);
+      expect(find.text('Lv 16'), findsOneWidget);
+      expect(_badge(6), findsNWidgets(2)); // Adventurer is rank 6
+      expect(_badge(5), findsOneWidget); // Voyager is rank 5
       expect(find.textContaining('XP'), findsNothing);
-      expect(find.text('November 2026'), findsOneWidget);
+      // The design has no month line above the list.
+      expect(find.text('November 2026'), findsNothing);
     });
 
     testWidgets("opens on This month and asks for the API's tab names", (
@@ -366,7 +385,7 @@ void main() {
 
       expect(repository.citizenCalls.first, (CitizenTab.month, null));
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'All time'));
+      await tester.tap(find.widgetWithText(BoardChip, 'All time'));
       await tester.pumpAndSettle();
 
       expect(repository.citizenCalls.last, (CitizenTab.all, null));
@@ -380,12 +399,11 @@ void main() {
         profileCity: ' Davao ',
       );
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'My city'));
+      await tester.tap(find.widgetWithText(BoardChip, 'My city'));
       await tester.pumpAndSettle();
 
       expect(repository.citizenCalls.last, (CitizenTab.city, 'Davao'));
       expect(find.text('Local Hero'), findsOneWidget);
-      expect(find.textContaining('Davao'), findsOneWidget);
       expect(find.text('Edit profile'), findsNothing);
     });
 
@@ -399,7 +417,7 @@ void main() {
       );
       final before = repository.citizenCalls.length;
 
-      await tester.tap(find.widgetWithText(ChoiceChip, 'My city'));
+      await tester.tap(find.widgetWithText(BoardChip, 'My city'));
       await tester.pumpAndSettle();
 
       expect(
@@ -427,7 +445,7 @@ void main() {
       );
 
       expect(find.text('51'), findsOneWidget);
-      expect(find.text('You'), findsOneWidget);
+      expect(find.text('You · Me'), findsOneWidget);
     });
 
     testWidgets('says so when nobody has earned XP yet, not a blank', (

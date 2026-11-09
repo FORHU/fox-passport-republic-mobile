@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
 import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
@@ -42,10 +43,10 @@ class _CitizensViewState extends ConsumerState<CitizensView> {
               for (final tab in CitizenTab.values)
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(citizenTabLabel(l10n, tab)),
+                  child: BoardChip(
+                    label: citizenTabLabel(l10n, tab),
                     selected: tab == _tab,
-                    onSelected: (_) => setState(() => _tab = tab),
+                    onTap: () => setState(() => _tab = tab),
                   ),
                 ),
             ],
@@ -108,22 +109,6 @@ class _Body extends ConsumerWidget {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              [
-                monthLabel(
-                  board.value?.season,
-                  Localizations.localeOf(context),
-                ),
-                if (query.city != null) query.city!,
-              ].where((s) => s.isNotEmpty).join(' · '),
-              style: AppTypography.body(size: 13, color: AppColors.textMuted),
-            ),
-          ),
-        ),
         Expanded(
           child: board.when(
             loading: () => const Center(
@@ -157,7 +142,15 @@ class _Body extends ConsumerWidget {
         position: e.position,
         name: e.name,
         image: e.image,
-        subtitle: l10n.rewardsRankLevel(e.rankName, e.level),
+        rankName: e.rankName,
+        rank: rankNumberForName(e.rankName) ?? rankNumberForLevel(e.level),
         isMe: myId != null && e.userId == myId,
+        trailing: Text(
+          l10n.leaderboardLevelShort(e.level),
+          style: AppTypography.display(
+            size: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
       );
 }

@@ -5867,6 +5867,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardEditProfile => 'Edit profile';
 
   @override
+  String leaderboardLevelShort(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String leaderboardYouName(String name) {
+    return 'You · $name';
+  }
+
+  @override
+  String get leaderboardPillVenue => 'Venue';
+
+  @override
+  String get leaderboardPillEvent => 'Event';
+
+  @override
+  String get leaderboardPillGear => 'Gear';
+
+  @override
+  String get leaderboardPillServices => 'Service';
+
+  @override
+  String get leaderboardPillPerformers => 'Performer';
+
+  @override
   String get leaderboardTabTopRated => 'Top rated';
 
   @override
