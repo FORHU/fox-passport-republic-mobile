@@ -389,9 +389,10 @@ void main() {
     });
 
     testWidgets('tapping a day brings its bookings into view', (tester) async {
-      // A short screen: the day's list starts below the fold.
+      // A short screen: the day's list starts below the fold. (One role gets no
+      // filter row, so the list sits higher than it once did.)
       tester.view
-        ..physicalSize = const Size(800, 520)
+        ..physicalSize = const Size(800, 440)
         ..devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
@@ -402,7 +403,7 @@ void main() {
       // To begin with, the booking is below the bottom of the screen.
       final before = find.text('Wedding');
       expect(
-        before.evaluate().isEmpty || tester.getCenter(before).dy > 520,
+        before.evaluate().isEmpty || tester.getCenter(before).dy > 440,
         isTrue,
       );
       final day = DateTime.now().day;
@@ -412,7 +413,7 @@ void main() {
 
       final y = tester.getCenter(find.text('Wedding')).dy;
       expect(y, greaterThan(0));
-      expect(y, lessThan(520));
+      expect(y, lessThan(440));
     });
 
     testWidgets('with one venue there is no filter to choose', (tester) async {
