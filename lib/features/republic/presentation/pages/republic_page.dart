@@ -231,7 +231,9 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
             Navigator.canPop(context) ? 8 : 16,
             8,
             8,
-            0,
+            // Room under the Posts | Reels pill, so the feed does not start
+            // right against it.
+            8,
           ),
           child: Row(
             children: [

@@ -153,6 +153,15 @@ void main() {
       expect(find.text('Recent'), findsNothing);
     });
 
+    testWidgets('there is room between the pill and the feed', (tester) async {
+      await pumpPage(tester);
+
+      final pillBottom = tester.getRect(find.text('Posts')).bottom;
+      final feedTop = tester.getRect(find.text("What's on your mind?")).top;
+      // 36 before the header got 8 more under it.
+      expect(feedTop - pillBottom, greaterThanOrEqualTo(44));
+    });
+
     testWidgets('the header is just search; Saved lives in the Passport', (
       tester,
     ) async {
