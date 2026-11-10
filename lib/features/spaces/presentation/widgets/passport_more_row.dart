@@ -10,9 +10,14 @@ import 'package:go_router/go_router.dart';
 /// The Passport row of a space's More tab: it opens the Foxer's Passport for
 /// the role this [space] works on.
 class PassportMoreRow extends ConsumerWidget {
-  const PassportMoreRow({required this.space, super.key});
+  const PassportMoreRow({
+    required this.space,
+    this.compact = false,
+    super.key,
+  });
 
   final AppSpace space;
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,6 +25,7 @@ class PassportMoreRow extends ConsumerWidget {
     return MoreRow(
       icon: Icons.badge_outlined,
       title: context.l10n.passport,
+      compact: compact,
       onTap: () => context.push(
         RouteNames.foxerPassportFor(space.xpPath(roles)),
       ),

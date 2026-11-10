@@ -9,6 +9,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/leaderboard_more_row.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/more_layout.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/passport_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
@@ -50,48 +51,67 @@ class VenueMorePage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          const PassportMoreRow(space: AppSpace.venue),
-          const SizedBox(height: 8),
-          const LeaderboardMoreRow(space: AppSpace.venue),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.inbox_outlined,
-            title: l10n.requestsTitle,
-            badge: waiting == 0 ? null : '$waiting',
-            onTap: () => context.push(RouteNames.spaceVenueRequests),
+          // What is used most is one tap away, three to a row.
+          Row(
+            children: [
+              Expanded(
+                child: MoreQuickTile(
+                  icon: Icons.qr_code_scanner_rounded,
+                  title: l10n.spaceTabCheckIn,
+                  onTap: () => context.push(RouteNames.spaceVenueCheckIn),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: MoreQuickTile(
+                  icon: Icons.inbox_outlined,
+                  title: l10n.requestsTitle,
+                  badge: waiting == 0 ? null : '$waiting',
+                  onTap: () => context.push(RouteNames.spaceVenueRequests),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: MoreQuickTile(
+                  icon: Icons.chat_bubble_outline_rounded,
+                  title: l10n.messages,
+                  onTap: () => context.push(RouteNames.spaceVenueMessages),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.handshake_outlined,
-            title: l10n.partnersTitle,
-            badge: partnersWaiting == 0 ? null : '$partnersWaiting',
-            onTap: () => context.push(RouteNames.spaceVenuePartners),
+          MoreSectionLabel(l10n.moreSectionGrow),
+          MoreGrid(
+            children: [
+              MoreRow(
+                icon: Icons.handshake_outlined,
+                title: l10n.partnersTitle,
+                badge: partnersWaiting == 0 ? null : '$partnersWaiting',
+                compact: true,
+                onTap: () => context.push(RouteNames.spaceVenuePartners),
+              ),
+              MoreRow(
+                icon: Icons.local_offer_outlined,
+                title: l10n.promotionsTitle,
+                compact: true,
+                onTap: () => context.push(RouteNames.spaceVenuePromotions),
+              ),
+              MoreRow(
+                icon: Icons.groups_outlined,
+                title: l10n.teamTitle,
+                compact: true,
+                onTap: () => context.push(RouteNames.spaceTeamVenues),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.local_offer_outlined,
-            title: l10n.promotionsTitle,
-            onTap: () => context.push(RouteNames.spaceVenuePromotions),
+          MoreSectionLabel(l10n.moreSectionYou),
+          const MoreGrid(
+            children: [
+              PassportMoreRow(space: AppSpace.venue, compact: true),
+              LeaderboardMoreRow(space: AppSpace.venue, compact: true),
+            ],
           ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.groups_outlined,
-            title: l10n.teamTitle,
-            onTap: () => context.push(RouteNames.spaceTeamVenues),
-          ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.qr_code_scanner_rounded,
-            title: l10n.spaceTabCheckIn,
-            onTap: () => context.push(RouteNames.spaceVenueCheckIn),
-          ),
-          const SizedBox(height: 8),
-          MoreRow(
-            icon: Icons.chat_bubble_outline_rounded,
-            title: l10n.messages,
-            onTap: () => context.push(RouteNames.spaceVenueMessages),
-          ),
-          const SizedBox(height: 24),
+          MoreSectionLabel(l10n.moreSectionAccount),
           MoreRow(
             icon: Icons.swap_horiz_rounded,
             title: l10n.spaceSwitchTitle,

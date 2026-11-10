@@ -4564,6 +4564,24 @@ abstract class AppLocalizations {
   /// **'More'**
   String get moreTitle;
 
+  /// No description provided for @moreSectionGrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow'**
+  String get moreSectionGrow;
+
+  /// No description provided for @moreSectionYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get moreSectionYou;
+
+  /// No description provided for @moreSectionAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get moreSectionAccount;
+
   /// No description provided for @requestsTitle.
   ///
   /// In en, this message translates to:
