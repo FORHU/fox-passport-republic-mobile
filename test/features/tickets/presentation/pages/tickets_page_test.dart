@@ -42,7 +42,7 @@ void main() {
     expect(find.text('DOORS'), findsOneWidget);
     expect(find.text('GUESTS'), findsOneWidget);
     expect(find.text('FXP-0000-SAMPLE'), findsOneWidget);
-    expect(find.text('Add to wallet'), findsOneWidget);
+    expect(find.text('Add to wallet'), findsNothing);
     expect(find.text('Directions'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
