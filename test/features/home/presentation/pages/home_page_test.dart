@@ -1087,4 +1087,34 @@ void main() {
       expect(find.text('edit profile screen'), findsNothing);
     });
   });
+
+  group('narrow and large-text screens', () {
+    for (final width in [320.0, 360.0]) {
+      for (final scale in [1.0, 1.5, 2.0]) {
+        testWidgets('Home fits ${width.toInt()} px, text x$scale', (
+          tester,
+        ) async {
+          _phone(tester, size: Size(width, 740));
+          tester.platformDispatcher.textScaleFactorTestValue = scale;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+
+          await tester.pumpWidget(
+            _app(
+              userName: 'Maria Cristina de la Santisima Trinidad',
+              city: 'San Pedro de Macoris',
+              tickets: [Ticket.sample()],
+              onboarding: {OnboardingStep.intro},
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final error = tester.takeException();
+          expect(error, isNull);
+          // The checklist starts collapsed.
+          expect(find.text('Getting started'), findsOneWidget);
+          expect(find.text('Complete your profile'), findsNothing);
+        });
+      }
+    }
+  });
 }

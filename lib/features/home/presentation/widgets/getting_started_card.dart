@@ -77,9 +77,13 @@ class _GettingStartedCardState extends State<GettingStartedCard> {
                           style: AppTypography.display(),
                         ),
                       ),
-                      Text(
-                        l10n.homeChecklistProgress(done, steps.length),
-                        style: AppTypography.label(),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          l10n.homeChecklistProgress(done, steps.length),
+                          textAlign: TextAlign.end,
+                          style: AppTypography.label(),
+                        ),
                       ),
                       Icon(
                         _expanded

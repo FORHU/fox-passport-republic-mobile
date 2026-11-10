@@ -81,7 +81,13 @@ class RoleProgress extends ConsumerWidget {
                   )
                 : const SizedBox.shrink(),
           ),
-          CoinsChip(path: path),
+          // Capped so a big balance cannot push the rank name out.
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+            ),
+            child: CoinsChip(path: path),
+          ),
         ],
       ),
     );

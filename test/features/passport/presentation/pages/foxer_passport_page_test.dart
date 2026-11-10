@@ -104,6 +104,73 @@ void main() {
     expect(find.text('Level 1'), findsNothing);
   });
 
+  for (final width in [320.0, 360.0]) {
+    for (final scale in [1.0, 1.5, 2.0]) {
+      testWidgets('fits ${width.toInt()} px, text x$scale', (tester) async {
+        tester.view
+          ..physicalSize = Size(width, 740)
+          ..devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        addTearDown(() {
+          tester.view.reset();
+          tester.platformDispatcher.clearAllTestValues();
+        });
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              foxerPassportProvider('venueFoxer').overrideWith(
+                (ref) async => const FoxerPassport(
+                  path: 'venueFoxer',
+                  level: 50,
+                  currentXp: 123456,
+                  totalXp: 9999999,
+                  perks: [
+                    'venue_authority_and_city_badge',
+                    'early_bird_priority_access',
+                    'a_very_long_perk_key_for_a_narrow_screen',
+                  ],
+                  badges: [
+                    PassportBadge(
+                      id: 'b1',
+                      name: 'The Grand Host Master of the Whole City',
+                      earned: true,
+                    ),
+                    PassportBadge(
+                      id: 'b2',
+                      name: 'City Builder and Nightlife Pioneer',
+                      earned: false,
+                    ),
+                  ],
+                ),
+              ),
+              walletForPathProvider('venueFoxer').overrideWith(
+                (ref) async => const WalletSummary(
+                  coins: 1234567,
+                  pendingCoins: 98765,
+                  totalEarnedCoins: 2000000,
+                  level: 50,
+                  rank: 'Grand Master',
+                  history: [],
+                ),
+              ),
+              walletProvider.overrideWith((ref) async => _wallet),
+            ],
+            child: MaterialApp(
+              theme: AppTheme.dark,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: const FoxerPassportPage(path: 'venueFoxer'),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Passport'), findsOneWidget);
+      });
+    }
+  }
+
   test('perk keys read as words', () {
     expect(perkLabel('venue_authority'), 'Venue authority');
     expect(perkLabel('early_bird'), 'Early bird');

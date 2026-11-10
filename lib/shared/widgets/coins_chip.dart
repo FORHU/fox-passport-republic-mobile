@@ -57,9 +57,15 @@ class CoinsChip extends ConsumerWidget {
             children: [
               const Icon(coinsIcon, size: 16, color: AppColors.textPrimary),
               const SizedBox(width: 6),
-              Text(
-                _coins(context, wallet.coins),
-                style: AppTypography.display(size: 14),
+              // A big balance shrinks to the room the chip is given.
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _coins(context, wallet.coins),
+                    style: AppTypography.display(size: 14),
+                  ),
+                ),
               ),
             ],
           ),
@@ -127,9 +133,18 @@ class WalletRow extends ConsumerWidget {
                   ],
                 ),
               ),
-              Text(
-                '${_coins(context, wallet.coins)} ${l10n.rewardsCoins}',
-                style: AppTypography.body(),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${_coins(context, wallet.coins)} ${l10n.rewardsCoins}',
+                    style: AppTypography.body(),
+                  ),
+                ),
               ),
               const SizedBox(width: 4),
               const Icon(
