@@ -58,30 +58,34 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    for (final label in ['Upcoming', 'Requests', 'Past', 'Calendar']) {
+    // The tabs are states only. The calendar is the second half of the
+    // List | Calendar toggle in the header, not a tab.
+    for (final label in ['Upcoming', 'Requests', 'Past']) {
       expect(find.text(label), findsOneWidget, reason: label);
     }
-    // The old header shortcut is gone: the switch is the way in.
-    expect(find.byIcon(Icons.calendar_month_outlined), findsNothing);
+    expect(find.text('Calendar'), findsNothing);
+    expect(find.bySemanticsLabel('List view'), findsOneWidget);
+    expect(find.bySemanticsLabel('Calendar view'), findsOneWidget);
   });
 
-  testWidgets('the Calendar switch shows the month, under the same title', (
+  testWidgets('the calendar view shows the month, under the same title', (
     tester,
   ) async {
     _screen(tester);
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Calendar'));
+    await tester.tap(find.bySemanticsLabel('Calendar view'));
     await tester.pumpAndSettle();
 
     expect(find.text('Bookings'), findsOneWidget);
     expect(find.text('Today'), findsOneWidget);
     expect(find.text('Nothing on this day.'), findsOneWidget);
-    // The switch stays, so the way back is one tap.
-    expect(find.text('Upcoming'), findsOneWidget);
+    // The state tabs belong to the list; the toggle is the way back.
+    expect(find.text('Requests'), findsNothing);
+    expect(find.bySemanticsLabel('List view'), findsOneWidget);
 
-    await tester.tap(find.text('Upcoming'));
+    await tester.tap(find.bySemanticsLabel('List view'));
     await tester.pumpAndSettle();
     expect(find.text('Sky Hall'), findsOneWidget);
     expect(find.text('Today'), findsNothing);
@@ -114,7 +118,7 @@ void main() {
     expect(find.text('Sky Hall'), findsOneWidget);
   });
 
-  testWidgets('four switches lay out on a small phone without overflow', (
+  testWidgets('the tabs and the toggle lay out on a small phone', (
     tester,
   ) async {
     _screen(tester, width: 320);
@@ -124,10 +128,43 @@ void main() {
     // Whether each word fits whole depends on the real font, which widget
     // tests do not load; that needs a look on a device.
     expect(tester.takeException(), isNull);
-    for (final label in ['Upcoming', 'Requests', 'Past', 'Calendar']) {
+    for (final label in ['Upcoming', 'Requests', 'Past']) {
       expect(find.text(label), findsOneWidget, reason: label);
     }
+    expect(find.bySemanticsLabel('Calendar view'), findsOneWidget);
   });
+
+  testWidgets('the chosen tab is kept when going to the calendar and back', (
+    tester,
+  ) async {
+    _screen(tester);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Past'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel('Calendar view'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel('List view'));
+    await tester.pumpAndSettle();
+
+    // Still on Past (the sample upcoming booking is not listed).
+    expect(find.text('Sky Hall'), findsNothing);
+    expect(find.text('Requests'), findsOneWidget);
+  });
+
+  for (final scale in [1.0, 1.5, 2.0]) {
+    testWidgets('the header toggle fits 320 px, text x$scale', (tester) async {
+      _screen(tester, width: 320);
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.bySemanticsLabel('Calendar view'), findsOneWidget);
+    });
+  }
 
   test('the tab bar has five tabs, and Calendar is not one of them', () {
     expect(RouteNames.shellTabs, hasLength(5));

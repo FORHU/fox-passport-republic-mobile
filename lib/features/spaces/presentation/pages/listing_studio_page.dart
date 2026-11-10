@@ -253,12 +253,7 @@ class _BasicsCard extends ConsumerWidget {
         ? gearCategories
         : [
             for (final c in serviceCategories)
-              if (c == d.category ||
-                  roles.contains('providerFoxer') ||
-                  (performerCategories.contains(c)
-                      ? roles.contains('performerFoxer')
-                      : roles.contains('serviceFoxer')))
-                c,
+              if (c == d.category || roles.contains('providerFoxer')) c,
           ];
     return StudioCard(
       child: Column(

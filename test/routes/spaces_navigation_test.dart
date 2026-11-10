@@ -64,7 +64,8 @@ void main() {
       'onboarding_seen': true,
       'location_prompt_seen': true,
       if (savedSpace != null) 'active_space_u1': savedSpace,
-      // The first-time tour has been seen, so it does not cover the screen.
+      // The first-time tours have been seen, so none covers the screen.
+      if (seenTours) 'citizenTourSeen.u1': true,
       if (seenTours)
         for (final space in ['venue', 'event', 'gear', 'services'])
           for (var tab = 0; tab < 5; tab++)
@@ -175,6 +176,9 @@ void main() {
     router.go(RouteNames.spaceVenueMore);
     await settle(tester);
 
+    // The list is longer than the screen now; bring the row into view first.
+    await tester.ensureVisible(find.text('Messages'));
+    await settle(tester);
     await tester.tap(find.text('Messages'));
     await settle(tester);
     expect(find.byType(MessagesPage), findsOneWidget);
@@ -546,7 +550,9 @@ void main() {
     await boot(tester, roles: const ['venueFoxer'], savedSpace: 'venue');
     expect(where(), RouteNames.spaceVenue);
 
-    // The switcher is in the top bar, one tap from anywhere in the space.
+    // The switcher is in the top bar of More, where switching lives.
+    router.go(RouteNames.spaceVenueMore);
+    await settle(tester);
     await tester.tap(find.byTooltip('Switch space'));
     await settle(tester);
     expect(find.text('WORKING AS'), findsOneWidget);

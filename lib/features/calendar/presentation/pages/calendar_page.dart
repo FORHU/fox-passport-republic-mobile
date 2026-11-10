@@ -425,7 +425,9 @@ class _Body extends StatelessWidget {
               minHeight: 2,
             ),
           ),
-        if (present.isNotEmpty) ...[
+        // A filter needs something to filter: with one role in the month there
+        // is nothing to switch off, so no row.
+        if (present.length > 1) ...[
           const SizedBox(height: 12),
           // One scrolling row, so the legend never grows into a block that
           // pushes the day's list off the screen.
@@ -437,15 +439,11 @@ class _Body extends StatelessWidget {
                 for (final role in present)
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
+                    child: _RoleChip(
+                      role: role,
+                      label: roleLabel(l10n, role),
                       selected: !hidden.contains(role),
-                      onSelected: (_) => onToggleRole(role),
-                      avatar: CircleAvatar(
-                        radius: 5,
-                        backgroundColor: roleColor(role),
-                      ),
-                      label: Text(roleLabel(l10n, role)),
-                      showCheckmark: false,
+                      onTap: () => onToggleRole(role),
                     ),
                   ),
               ],
@@ -1065,6 +1063,46 @@ class _VenueSheetState extends State<_VenueSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// One role in the legend, and the switch that shows or hides it. Chosen: a
+/// tint of the role's own colour with a matching outline, so the dot is always
+/// visible (a solid fill hid a dot of the same colour). Not chosen: plain and
+/// muted.
+class _RoleChip extends StatelessWidget {
+  const _RoleChip({
+    required this.role,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final CalendarRole role;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = roleColor(role);
+    return FilterChip(
+      selected: selected,
+      onSelected: (_) => onTap(),
+      showCheckmark: false,
+      avatar: CircleAvatar(
+        radius: 5,
+        backgroundColor: selected ? color : color.withValues(alpha: 0.4),
+      ),
+      label: Text(label),
+      labelStyle: AppTypography.body(
+        size: 13,
+        color: selected ? AppColors.textPrimary : AppColors.textMuted,
+      ),
+      backgroundColor: Colors.transparent,
+      selectedColor: color.withValues(alpha: 0.16),
+      side: BorderSide(color: selected ? color : AppColors.border),
     );
   }
 }

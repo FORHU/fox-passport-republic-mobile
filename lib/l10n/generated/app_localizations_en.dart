@@ -1010,15 +1010,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageRoleVenueFoxer => 'Venue Foxer';
 
   @override
-  String get messageRoleGearFoxer => 'Gear Foxer';
-
-  @override
-  String get messageRoleServiceFoxer => 'Service Foxer';
-
-  @override
-  String get messageRolePerformer => 'Performer';
-
-  @override
   String get priceUnitDay => 'day';
 
   @override
@@ -1106,6 +1097,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketDirections => 'Directions';
+
+  @override
+  String get ticketDirectionsAfterConfirm =>
+      'Directions appear once this booking is confirmed.';
 
   @override
   String get ticketStatusConfirmed => 'Confirmed';
@@ -1869,9 +1864,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firstStepService => 'List your first service';
 
   @override
-  String get firstStepPerformance => 'List your first performance';
-
-  @override
   String get firstStepsTitle => 'Getting started';
 
   @override
@@ -2506,6 +2498,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moreTitle => 'More';
+
+  @override
+  String get moreSectionGrow => 'Grow';
+
+  @override
+  String get moreSectionYou => 'You';
+
+  @override
+  String get moreSectionAccount => 'Account';
 
   @override
   String get requestsTitle => 'Requests';
@@ -3366,6 +3367,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarTitle => 'Calendar';
 
   @override
+  String get ticketsViewList => 'List view';
+
+  @override
+  String get ticketsViewCalendar => 'Calendar view';
+
+  @override
   String get calendarHint => 'Everything you book, host or supply';
 
   @override
@@ -3522,6 +3529,261 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeChecklistContinue => 'Continue';
+
+  @override
+  String get gettingStartedTitle => 'Getting started';
+
+  @override
+  String gettingStartedNext(String step) {
+    return 'Next: $step';
+  }
+
+  @override
+  String get gettingStartedTour => 'Take the tour';
+
+  @override
+  String get gettingStartedProfile => 'Complete your profile';
+
+  @override
+  String get gettingStartedId => 'Verify your ID';
+
+  @override
+  String get gettingStartedBooking => 'Make your first booking';
+
+  @override
+  String gettingStartedReward(int xp, int coins) {
+    return '+$xp XP · $coins Coins';
+  }
+
+  @override
+  String get rewardMomentCheckedIn => 'Checked in';
+
+  @override
+  String get rewardMomentAttended => 'You attended an event';
+
+  @override
+  String get rewardMomentReview => 'Thanks for your review';
+
+  @override
+  String rewardMomentAttendedAt(String event) {
+    return 'You attended $event';
+  }
+
+  @override
+  String get rewardMomentNewStamp => 'New stamp added';
+
+  @override
+  String get rewardMomentGeneric => 'You earned rewards';
+
+  @override
+  String get rewardMomentXp => 'XP';
+
+  @override
+  String get rewardMomentCoins => 'Coins';
+
+  @override
+  String rewardMomentLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String rewardMomentToNext(String xp, int level) {
+    return '$xp XP to Level $level';
+  }
+
+  @override
+  String get rewardMomentNote => 'XP builds your level. Coins buy discounts.';
+
+  @override
+  String get rewardMomentLearnMore => 'Learn more';
+
+  @override
+  String get rewardMomentViewPassport => 'View my passport';
+
+  @override
+  String get rewardMomentDone => 'Done';
+
+  @override
+  String get rankUpEyebrow => 'New rank';
+
+  @override
+  String rankUpLevelRank(int level, int rank, int total) {
+    return 'Level $level · Rank $rank of $total';
+  }
+
+  @override
+  String rankUpCoins(String coins) {
+    return '+$coins Coins';
+  }
+
+  @override
+  String get rankUpNewBadge => 'New badge unlocked';
+
+  @override
+  String rankUpNext(String name) {
+    return 'Next rank: $name';
+  }
+
+  @override
+  String rankUpNextLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String get rankUpSeeBadges => 'See my badges';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achievementsEarned => 'earned';
+
+  @override
+  String achievementsOf(int done, int total) {
+    return '$done of $total';
+  }
+
+  @override
+  String get achievementsFilterProgress => 'In progress';
+
+  @override
+  String get achievementsFilterDone => 'Done';
+
+  @override
+  String get achievementsFilterLocked => 'Locked';
+
+  @override
+  String get achievementsSectionCitizen => 'Citizen';
+
+  @override
+  String get achievementsSectionFoxer => 'Foxer';
+
+  @override
+  String achievementsCount(int count, int target) {
+    return '$count / $target';
+  }
+
+  @override
+  String achievementsPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String achievementsRewardXp(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String achievementsRewardCoins(int coins) {
+    return '+$coins Coins';
+  }
+
+  @override
+  String achievementsRewardBadge(String name) {
+    return 'Badge: $name';
+  }
+
+  @override
+  String achievementsTierDone(int tier) {
+    return 'Tier $tier done';
+  }
+
+  @override
+  String achievementsTierTodo(int tier) {
+    return 'Tier $tier not yet';
+  }
+
+  @override
+  String get achievementsEmptyProgress =>
+      'Nothing in progress yet. Book, attend or review to start.';
+
+  @override
+  String get achievementsEmptyDone => 'No finished achievements yet.';
+
+  @override
+  String get achievementsEmptyLocked => 'Everything has been started.';
+
+  @override
+  String get achievementsComplete => 'All three tiers done';
+
+  @override
+  String homeNextNightXp(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get foxerStatBookings => 'Bookings done';
+
+  @override
+  String get foxerStatReplies => 'Replies in time';
+
+  @override
+  String get foxerStatCancellations => 'Cancellations';
+
+  @override
+  String foxerStatPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get foxerLabelTopRated => 'Top rated';
+
+  @override
+  String get foxerLabelFastResponder => 'Fast responder';
+
+  @override
+  String get foxerLabelReliable => 'Reliable';
+
+  @override
+  String get foxerLabelRising => 'Rising';
+
+  @override
+  String foxerPlace(int position, String role, String city) {
+    return '#$position $role in $city';
+  }
+
+  @override
+  String foxerPlaceNoCity(int position, String role) {
+    return '#$position $role';
+  }
+
+  @override
+  String get foxerPlaceRoleProviders => 'Providers';
+
+  @override
+  String get foxerScoreTitle => 'Foxer Score';
+
+  @override
+  String foxerScoreOutOf(int score) {
+    return '$score / 100';
+  }
+
+  @override
+  String get foxerScorePartRating => 'Rating';
+
+  @override
+  String get foxerScorePartVolume => 'Volume';
+
+  @override
+  String get foxerScorePartReplies => 'Responsiveness';
+
+  @override
+  String get foxerScorePartReliability => 'Reliability';
+
+  @override
+  String get foxerScorePartTrust => 'Trust';
+
+  @override
+  String foxerScorePart(String value, int max) {
+    return '$value / $max';
+  }
+
+  @override
+  String get foxerScorePrivate =>
+      'Only you see this score. Guests see your star rating, the facts and your labels.';
+
+  @override
+  String get foxerScoreStars => 'Guest rating';
 
   @override
   String get homeComingUp => 'Coming up';
@@ -4899,12 +5161,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyServiceTypes => 'Services you offer';
 
   @override
-  String get roleApplyPerformerTypes => 'What you perform';
-
-  @override
-  String get roleApplyGearTypes => 'Gear you rent out';
-
-  @override
   String get roleApplyCommaHint => 'Separate with commas';
 
   @override
@@ -5138,16 +5394,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spaceServicesHint => 'Your services and the requests for them';
-
-  @override
-  String get spacePerformer => 'Performer';
-
-  @override
-  String get spacePerformerHint =>
-      'Your performances and the requests for them';
-
-  @override
-  String get spaceTabPerformances => 'Performances';
 
   @override
   String get requestsIntroGear =>
@@ -5432,6 +5678,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tourCitizenHomeTitle => 'Find what\'s on';
+
+  @override
+  String get tourCitizenHomeBody =>
+      'Search events, venues and Foxers, and see your next booking.';
+
+  @override
+  String get tourCitizenRepublicTitle => 'Join the conversation';
+
+  @override
+  String get tourCitizenRepublicBody =>
+      'Read and post what\'s happening. Posting earns XP.';
+
+  @override
+  String get tourCitizenBookingsTitle => 'Your tickets live here';
+
+  @override
+  String get tourCitizenBookingsBody =>
+      'Tickets, requests and your calendar, with a badge when something needs you.';
+
+  @override
+  String get tourCitizenMessagesTitle => 'Talk to Foxers';
+
+  @override
+  String get tourCitizenMessagesBody =>
+      'Ask a venue or a Foxer a question before you book.';
+
+  @override
+  String get tourCitizenPassportTitle => 'Your progress';
+
+  @override
+  String get tourCitizenPassportBody =>
+      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+
+  @override
+  String get settingsTakeTour => 'Take the app tour again';
+
+  @override
   String get earningsTotal => 'Total earnings';
 
   @override
@@ -5520,16 +5804,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get providerAddService => 'Add service';
 
   @override
-  String get providerAddPerformance => 'Add performance';
-
-  @override
   String get overviewMyGear => 'My gear';
 
   @override
   String get overviewMyServices => 'My services';
-
-  @override
-  String get overviewMyPerformances => 'My performances';
 
   @override
   String get tourActionsTitle => 'Your shortcuts';
@@ -5551,4 +5829,305 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tourEarningsCardBody =>
       'What you have been paid, how it changed since last month, and the last eight weeks.';
+
+  @override
+  String get settingsHowItWorks => 'How XP and Coins work';
+
+  @override
+  String get howItWorksTitle => 'How it works';
+
+  @override
+  String get howItWorksIntro =>
+      'Two numbers grow as you use FoxPassport. Here is what each one does.';
+
+  @override
+  String get howItWorksXpTitle => 'XP is your progress';
+
+  @override
+  String get howItWorksXpBody =>
+      'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.';
+
+  @override
+  String get howItWorksCoinsTitle => 'Coins are your wallet';
+
+  @override
+  String get howItWorksCoinsBody =>
+      'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.';
+
+  @override
+  String get howItWorksEarnTitle => 'How to earn';
+
+  @override
+  String get howItWorksEarnBody =>
+      'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.';
+
+  @override
+  String get howItWorksSpendTitle => 'How to spend';
+
+  @override
+  String get howItWorksSpendBody =>
+      'Open Rewards from your Wallet and redeem a voucher. Each reward says what size of booking it works on, and a voucher belongs to your account only.';
+
+  @override
+  String get rewardsWalletTitle => 'Wallet';
+
+  @override
+  String get rewardsOpenWallet => 'Open your Wallet';
+
+  @override
+  String get rewardsCoins => 'Coins';
+
+  @override
+  String get rewardsBalanceLabel => 'Balance';
+
+  @override
+  String rewardsPending(String count) {
+    return '$count pending';
+  }
+
+  @override
+  String get rewardsPendingHint =>
+      'Pending Coins can be spent once the booking is safe from a refund.';
+
+  @override
+  String get rewardsRedeemRewards => 'Redeem rewards';
+
+  @override
+  String get rewardsHistory => 'History';
+
+  @override
+  String get rewardsEmptyTitle => 'No Coins yet';
+
+  @override
+  String get rewardsEmptyBody =>
+      'Attend an event or book one and your Coins show up here. You can spend them on discounts.';
+
+  @override
+  String get rewardsFindEvent => 'Find an event';
+
+  @override
+  String get rewardsTitle => 'Rewards';
+
+  @override
+  String get rewardsFilterAll => 'All';
+
+  @override
+  String get rewardsFilterDiscounts => 'Discounts';
+
+  @override
+  String get rewardsFilterPerks => 'Perks';
+
+  @override
+  String get rewardsNoneHere => 'No rewards here yet';
+
+  @override
+  String get rewardsRedeem => 'Redeem';
+
+  @override
+  String rewardsToGo(String count) {
+    return '$count Coins to go';
+  }
+
+  @override
+  String rewardsUnlocksAtLevel(int level) {
+    return 'Unlocks at Level $level';
+  }
+
+  @override
+  String rewardsOffPhp(String amount) {
+    return '₱$amount off';
+  }
+
+  @override
+  String rewardsOffPercent(String percent) {
+    return '$percent% off';
+  }
+
+  @override
+  String get rewardsRedeemSheetTitle => 'Redeem reward';
+
+  @override
+  String get rewardsYourBalance => 'Your balance';
+
+  @override
+  String get rewardsThisReward => 'This reward';
+
+  @override
+  String get rewardsAfterRedeeming => 'After redeeming';
+
+  @override
+  String rewardsRedeemFor(String cost) {
+    return 'Redeem for $cost Coins';
+  }
+
+  @override
+  String get rewardsCancel => 'Cancel';
+
+  @override
+  String get rewardsRedeemFailed => 'We couldn\'t redeem that right now.';
+
+  @override
+  String get rewardsVoucherReady => 'Your voucher is ready';
+
+  @override
+  String get rewardsVoucherHint =>
+      'Use it when you pay for a booking. It belongs to your account only.';
+
+  @override
+  String get rewardsVoucherCode => 'Voucher code';
+
+  @override
+  String get rewardsCopyCode => 'Copy code';
+
+  @override
+  String get rewardsCodeCopied => 'Code copied';
+
+  @override
+  String rewardsValidUntil(String date) {
+    return 'Valid until $date';
+  }
+
+  @override
+  String get rewardsDone => 'Done';
+
+  @override
+  String get rewardsLifeRelease => 'Coins released';
+
+  @override
+  String get rewardsLifeRedemption => 'Redeemed a reward';
+
+  @override
+  String get rewardsLifeExpiry => 'Coins expired';
+
+  @override
+  String get rewardsLifeReversal => 'Coins reversed';
+
+  @override
+  String rewardsRankLevel(String rank, int level) {
+    return '$rank · Level $level';
+  }
+
+  @override
+  String get foxerPassportPerks => 'Perks';
+
+  @override
+  String get foxerPassportNoPerks => 'Perks unlock as you level up.';
+
+  @override
+  String get foxerPassportNoBadges =>
+      'Badges you earn in this role show up here.';
+
+  @override
+  String foxerPassportXpToNext(String xp, int level) {
+    return '$xp XP to level $level';
+  }
+
+  @override
+  String get leaderboardTitle => 'Leaderboard';
+
+  @override
+  String get leaderboardMostBooked => 'Most booked';
+
+  @override
+  String get leaderboardRoleVenue => 'Venues';
+
+  @override
+  String get leaderboardRoleEvent => 'Events';
+
+  @override
+  String get leaderboardRoleGear => 'Gear';
+
+  @override
+  String get leaderboardRoleServices => 'Services';
+
+  @override
+  String get leaderboardRolePerformers => 'Performers';
+
+  @override
+  String get leaderboardAllCities => 'All cities';
+
+  @override
+  String get leaderboardCityLabel => 'City';
+
+  @override
+  String get leaderboardCityApply => 'Apply';
+
+  @override
+  String get leaderboardEmpty =>
+      'No completed bookings yet this month. Check back soon.';
+
+  @override
+  String get leaderboardYou => 'You';
+
+  @override
+  String leaderboardRowSubtitle(String role, String rank) {
+    return '$role · $rank';
+  }
+
+  @override
+  String get leaderboardSideCitizens => 'Citizens';
+
+  @override
+  String get leaderboardSideFoxers => 'Foxers';
+
+  @override
+  String get leaderboardTabMonth => 'This month';
+
+  @override
+  String get leaderboardTabAll => 'All time';
+
+  @override
+  String get leaderboardTabCity => 'My city';
+
+  @override
+  String get leaderboardNoCity =>
+      'Add your city to your profile to see your local board.';
+
+  @override
+  String get leaderboardEditProfile => 'Edit profile';
+
+  @override
+  String leaderboardLevelShort(int level) {
+    return 'Lv $level';
+  }
+
+  @override
+  String leaderboardYouName(String name) {
+    return 'You · $name';
+  }
+
+  @override
+  String get leaderboardPillVenue => 'Venue';
+
+  @override
+  String get leaderboardPillEvent => 'Event';
+
+  @override
+  String get leaderboardPillGear => 'Gear';
+
+  @override
+  String get leaderboardPillServices => 'Service';
+
+  @override
+  String get leaderboardPillPerformers => 'Performer';
+
+  @override
+  String get leaderboardTabTopRated => 'Top rated';
+
+  @override
+  String get leaderboardTabRising => 'Rising';
+
+  @override
+  String get leaderboardFoxerNew => 'New';
+
+  @override
+  String leaderboardReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
 }

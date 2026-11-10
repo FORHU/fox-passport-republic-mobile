@@ -6,8 +6,11 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/leaderboard_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/passport_more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour_content.dart';
@@ -34,10 +37,14 @@ class EventMorePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: SpaceAppBar(title: l10n.moreTitle),
+      appBar: SpaceAppBar(title: l10n.moreTitle, showSwitcher: true),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
+          const PassportMoreRow(space: AppSpace.event),
+          const SizedBox(height: 8),
+          const LeaderboardMoreRow(space: AppSpace.event),
+          const SizedBox(height: 8),
           MoreRow(
             icon: Icons.qr_code_scanner_rounded,
             title: l10n.spaceTabCheckIn,

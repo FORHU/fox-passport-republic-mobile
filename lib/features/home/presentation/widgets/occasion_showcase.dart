@@ -242,19 +242,30 @@ class _FeaturedCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          height: 36,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: AppRadius.brPill,
+                        // Never wider than half the screen; the words shrink to
+                        // fit rather than push the title out or overflow.
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                           ),
-                          child: Text(
-                            pill,
-                            style: AppTypography.display(
-                              size: 13,
-                              color: AppColors.onAccent,
+                          child: Container(
+                            height: 36,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: AppColors.accent,
+                              borderRadius: AppRadius.brPill,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                pill,
+                                maxLines: 1,
+                                style: AppTypography.display(
+                                  size: 13,
+                                  color: AppColors.onAccent,
+                                ),
+                              ),
                             ),
                           ),
                         ),

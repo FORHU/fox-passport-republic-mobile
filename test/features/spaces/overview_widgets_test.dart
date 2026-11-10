@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
+import 'package:flutter_template/features/rewards/domain/wallet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -29,10 +31,16 @@ Widget _app(
   Widget child, {
   List<String> roles = const ['venueFoxer'],
   String name = '',
+  WalletSummary? wallet,
 }) {
   return ProviderScope(
     overrides: [
       authControllerProvider.overrideWith(() => _Session(roles, name)),
+      // No wallet unless a test gives one, so nothing reaches the network.
+      walletForPathProvider.overrideWith((ref, path) async {
+        if (wallet == null) throw Exception('no wallet');
+        return wallet;
+      }),
     ],
     child: MaterialApp(
       theme: AppTheme.dark,
@@ -161,6 +169,42 @@ void main() {
       await tester.pump();
 
       expect(find.text('Welcome back'), findsOneWidget);
+    });
+
+    testWidgets('leaves rank, level and Coins to the top bar and More', (
+      tester,
+    ) async {
+      const wallet = WalletSummary(
+        coins: 1240,
+        pendingCoins: 0,
+        totalEarnedCoins: 1240,
+        level: 12,
+        rank: 'Veteran',
+        history: [],
+      );
+      await tester.pumpWidget(
+        _app(
+          const OverviewGreeting(),
+          name: 'Ada',
+          wallet: wallet,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Veteran · Level 12'), findsNothing);
+      expect(find.text('1,240'), findsNothing);
+    });
+
+    testWidgets('shows nothing about progress when there is no wallet', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app(const OverviewGreeting(), name: 'Ada'),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Level'), findsNothing);
+      expect(find.textContaining(', Ada'), findsOneWidget);
     });
   });
 }

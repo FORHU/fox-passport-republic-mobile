@@ -14,8 +14,9 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// Applying to be a Talent, Performer or Gear Foxer: what they offer, a few
-/// details, and the documents an admin checks. One scrolling form.
+/// Applying for a role from the phone (Provider, Venue, Event or Organizer):
+/// what they offer, a few details, and the documents an admin checks. One
+/// scrolling form.
 class RoleApplicationPage extends ConsumerStatefulWidget {
   const RoleApplicationPage({required this.roleType, super.key});
 
@@ -73,7 +74,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (d.isGear || d.isVenue || d.isProvider)
+                if (d.isVenue || d.isProvider)
                   _Field(
                     label: d.isVenue
                         ? l10n.roleApplyVenueName
@@ -141,8 +142,6 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                   _Field(
                     label: switch (widget.roleType) {
                       'providerFoxer' => l10n.roleApplyProviderTypes,
-                      'gearFoxer' => l10n.roleApplyGearTypes,
-                      'performerFoxer' => l10n.roleApplyPerformerTypes,
                       _ => l10n.roleApplyServiceTypes,
                     },
                     hint: l10n.roleApplyCommaHint,
@@ -150,11 +149,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(types: v)),
                   ),
-                if (d.isProvider ||
-                    (!d.isGear &&
-                        !d.isVenue &&
-                        !d.isEvent &&
-                        !d.isOrganizer)) ...[
+                if (d.isProvider) ...[
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -185,8 +180,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (d.isProvider ||
-                    (!d.isGear && !d.isVenue && !d.isEvent && !d.isOrganizer))
+                if (d.isProvider)
                   _Field(
                     label: l10n.roleApplyNbiNumber,
                     value: d.nbiNumber,

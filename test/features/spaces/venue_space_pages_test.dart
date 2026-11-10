@@ -944,6 +944,38 @@ void main() {
       expect(find.text('2'), findsOneWidget);
     });
 
+    testWidgets('puts Check-in, Requests and Messages first, then groups',
+        (tester) async {
+      await pump(tester, const VenueMorePage());
+
+      double top(String text) => tester.getTopLeft(find.text(text)).dy;
+      for (final quick in ['Check-in', 'Requests', 'Messages']) {
+        expect(top(quick), lessThan(top('GROW')), reason: quick);
+      }
+      expect(top('GROW'), lessThan(top('Partners')));
+      expect(top('YOU'), lessThan(top('Passport')));
+      expect(top('ACCOUNT'), lessThan(top('Switch space')));
+      // Grow is a tidy two by two: Team and Leaderboard share the second row.
+      expect(top('Partners'), top('Promotions'));
+      expect(top('Team'), top('Leaderboard'));
+      expect(top('Team'), greaterThan(top('Partners')));
+      // The three quick ones share a row.
+      expect(top('Check-in'), top('Requests'));
+      expect(top('Requests'), top('Messages'));
+    });
+
+    testWidgets('fits a phone screen without scrolling or overflow',
+        (tester) async {
+      await pump(tester, const VenueMorePage());
+      tester.view.physicalSize = const Size(360, 740);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final last = tester.getBottomLeft(find.text('Manage on the web')).dy;
+      // Above the bottom bar, which takes about 100 px.
+      expect(last, lessThan(740 - 100));
+    });
+
     testWidgets('Requests, Check-in and Messages open their screens', (
       tester,
     ) async {

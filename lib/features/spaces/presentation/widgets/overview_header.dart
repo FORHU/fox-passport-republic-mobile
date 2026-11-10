@@ -4,15 +4,17 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// The top of a space's Overview: a greeting by first name. Which role this
-/// is shows in the space switcher, and switching lives in More.
+/// The top of a space's Overview: a greeting by first name. Coins sit beside
+/// the photo in the top bar, and rank and level are on the Passport row in
+/// More; switching spaces lives in More too.
 class OverviewGreeting extends ConsumerWidget {
   const OverviewGreeting({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final name = ref.watch(authControllerProvider).user?.name.trim() ?? '';
+    final user = ref.watch(authControllerProvider).user;
+    final name = user?.name.trim() ?? '';
     final first = name.isEmpty ? '' : name.split(RegExp(r'\s+')).first;
     final hour = DateTime.now().hour;
     final greeting = first.isEmpty

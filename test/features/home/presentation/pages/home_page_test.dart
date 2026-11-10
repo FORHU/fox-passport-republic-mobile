@@ -18,6 +18,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/location/area.dart';
+import 'package:flutter_template/shared/onboarding/onboarding_repository.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
@@ -94,6 +95,7 @@ Widget _app({
   List<Post> posts = const [],
   List<Ticket> past = const [],
   String? userName,
+  Set<String>? onboarding,
 }) {
   final storage = MockStorageService();
   when(storage.readUserModel).thenReturn(null);
@@ -135,6 +137,10 @@ Widget _app({
             .overrideWithValue(AreaFilter(city: city, label: city)),
       packagesProvider.overrideWith((ref, q) async => packages),
       pastTicketsProvider.overrideWith((ref) async => past),
+      // The server's finished steps; unanswered unless a test gives them.
+      onboardingStepsProvider.overrideWith(
+        (ref) async => onboarding ?? (throw Exception('offline')),
+      ),
       feedControllerProvider.overrideWith2((tab) => _FakeFeed(tab, posts)),
       // No network in tests: a photo is whatever [covers] says, else none.
       occasionCoverProvider.overrideWith((ref, q) async => covers[q.category]),
@@ -877,9 +883,16 @@ void main() {
     await tester.pumpWidget(_app(tickets: [Ticket.sample()], unread: 3));
     await tester.pumpAndSettle();
 
-    expect(find.text('IN 3 DAYS'), findsOneWidget);
-    expect(find.text('Open ticket'), findsOneWidget);
+    // The card: when, what and where; the whole card opens the tickets.
+    expect(find.text('YOUR NEXT NIGHT · IN 3 DAYS'), findsOneWidget);
+    expect(find.text('Sky Hall'), findsOneWidget);
+    expect(find.textContaining('· Davao City'), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right_rounded), findsWidgets);
     expect(find.text('3'), findsOneWidget);
+    // What going will pay.
+    expect(find.text('+100 XP'), findsOneWidget);
+    // No Coins amount is known up front, so no empty "+ Coins" chip.
+    expect(find.text('+ Coins'), findsNothing);
   });
 
   testWidgets('no strip and no error without a booking', (tester) async {
@@ -887,7 +900,9 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    expect(find.text('Open ticket'), findsNothing);
+    expect(find.textContaining('YOUR NEXT NIGHT'), findsNothing);
+    expect(find.text('+100 XP'), findsNothing);
+    expect(find.text('+ Coins'), findsNothing);
   });
 
   testWidgets('has no Foxer pitch or empty boxes', (tester) async {
@@ -906,5 +921,200 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
+  });
+
+  group('Getting started', () {
+    testWidgets('starts as one short card with the next step', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(onboarding: {OnboardingStep.intro}));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('1 of 4 done'), findsOneWidget);
+      expect(find.text('Next: Complete your profile'), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      // The list itself stays closed until it is tapped.
+      expect(find.text('Verify your ID'), findsNothing);
+      expect(find.text('+30 XP · 10 Coins'), findsNothing);
+    });
+
+    testWidgets('keeps the search and the next night above the card',
+        (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(tickets: [Ticket.sample()], onboarding: {OnboardingStep.intro}),
+      );
+      await tester.pumpAndSettle();
+
+      final search =
+          tester.getTopLeft(find.text('Search venues, Foxers and events')).dy;
+      final night =
+          tester.getTopLeft(find.textContaining('YOUR NEXT NIGHT')).dy;
+      final card = tester.getTopLeft(find.text('Getting started')).dy;
+      expect(search, lessThan(night));
+      expect(night, lessThan(card));
+    });
+
+    testWidgets('lists the four steps with what each pays', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app(onboarding: {OnboardingStep.intro}));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Getting started'), findsOneWidget);
+      expect(find.text('1 of 4 done'), findsOneWidget);
+      expect(find.text('Take the tour'), findsOneWidget);
+      expect(find.text('Complete your profile'), findsOneWidget);
+      expect(find.text('Verify your ID'), findsOneWidget);
+      expect(find.text('Make your first booking'), findsOneWidget);
+      expect(find.text('+30 XP · 10 Coins'), findsOneWidget);
+      expect(find.text('+100 XP · 40 Coins'), findsOneWidget);
+      // The tour is done, so its reward is no longer offered.
+      expect(find.text('+50 XP · 20 Coins'), findsNothing);
+    });
+
+    testWidgets('is absent until the server answers, and when it cannot',
+        (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('ticks the booking step once there is one', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(
+          tickets: [Ticket.sample()],
+          onboarding: {OnboardingStep.intro},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('2 of 4 done'), findsOneWidget);
+    });
+
+    testWidgets('ticks the booking step when the server says so',
+        (tester) async {
+      _phone(tester);
+      // No tickets here (they may be cached or still loading); the server
+      // has recorded the first booking.
+      await tester.pumpWidget(
+        _app(
+          onboarding: {OnboardingStep.intro, OnboardingStep.firstBooking},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('2 of 4 done'), findsOneWidget);
+    });
+
+    testWidgets('goes away once every step is done', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(
+          tickets: [Ticket.sample()],
+          onboarding: {
+            OnboardingStep.intro,
+            OnboardingStep.profileComplete,
+            OnboardingStep.idVerified,
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Getting started'), findsNothing);
+    });
+
+    testWidgets('opens the profile editor and the ID check', (tester) async {
+      _phone(tester);
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, __) => const HomePage()),
+          GoRoute(
+            path: RouteNames.profileEdit,
+            builder: (_, __) => const Text('edit profile screen'),
+          ),
+          GoRoute(
+            path: RouteNames.identity,
+            builder: (_, __) => const Text('identity screen'),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        _app(router: router, onboarding: {OnboardingStep.intro}),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Complete your profile'));
+      await tester.pumpAndSettle();
+      expect(find.text('edit profile screen'), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Verify your ID'));
+      await tester.pumpAndSettle();
+      expect(find.text('identity screen'), findsOneWidget);
+    });
+
+    testWidgets('does not make a finished step tappable', (tester) async {
+      _phone(tester);
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, __) => const HomePage()),
+          GoRoute(
+            path: RouteNames.profileEdit,
+            builder: (_, __) => const Text('edit profile screen'),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        _app(
+          router: router,
+          onboarding: {OnboardingStep.profileComplete},
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Getting started'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Complete your profile'));
+      await tester.pumpAndSettle();
+      expect(find.text('edit profile screen'), findsNothing);
+    });
+  });
+
+  group('narrow and large-text screens', () {
+    for (final width in [320.0, 360.0]) {
+      for (final scale in [1.0, 1.5, 2.0]) {
+        testWidgets('Home fits ${width.toInt()} px, text x$scale', (
+          tester,
+        ) async {
+          _phone(tester, size: Size(width, 740));
+          tester.platformDispatcher.textScaleFactorTestValue = scale;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+
+          await tester.pumpWidget(
+            _app(
+              userName: 'Maria Cristina de la Santisima Trinidad',
+              city: 'San Pedro de Macoris',
+              tickets: [Ticket.sample()],
+              onboarding: {OnboardingStep.intro},
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final error = tester.takeException();
+          expect(error, isNull);
+          // The checklist starts collapsed.
+          expect(find.text('Getting started'), findsOneWidget);
+          expect(find.text('Complete your profile'), findsNothing);
+        });
+      }
+    }
   });
 }

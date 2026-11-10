@@ -24,6 +24,7 @@ class PassportBadge extends Equatable {
     required this.name,
     required this.earned,
     this.colorHex,
+    this.path,
   });
 
   final String id;
@@ -33,8 +34,12 @@ class PassportBadge extends Equatable {
   /// `#RRGGBB` from the catalogue, when it has one.
   final String? colorHex;
 
+  /// The XP path the badge belongs to (`venueFoxer`, ...), or null for one
+  /// that is not tied to a role.
+  final String? path;
+
   @override
-  List<Object?> get props => [id, name, earned, colorHex];
+  List<Object?> get props => [id, name, earned, colorHex, path];
 }
 
 /// Everything the Passport screen shows.
@@ -89,13 +94,19 @@ class PassportSummary extends Equatable {
   /// Stamps a passport page holds.
   static const int stampSlots = 8;
 
-  /// The API's curve (`passport.service.ts`): 1000 XP for level 2, each level
-  /// after that 15% more.
+  /// Level `i` costs this many XP less than level `i + 1` needs, up to
+  /// [_costCapLevel]; from there every level costs the same.
+  static const int _costCapLevel = 25;
+
+  /// The API's curve (`passport.service.ts`, requirements section 4.1): 250 XP
+  /// for level 2, each level after that 12% more, and no more from level 25 on.
+  /// It must change together with the API's.
   static int xpRequiredForLevel(int level) {
     if (level <= 1) return 0;
     var total = 0;
     for (var i = 1; i < level; i++) {
-      total += (1000 * math.pow(1.15, i - 1)).round();
+      final step = math.min(i, _costCapLevel);
+      total += (250 * math.pow(1.12, step - 1)).round();
     }
     return total;
   }

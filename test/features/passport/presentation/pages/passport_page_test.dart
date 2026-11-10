@@ -187,20 +187,49 @@ void main() {
 
   group('PassportSummary', () {
     test('follows the API level curve', () {
+      expect(PassportSummary.xpRequiredForLevel(0), 0);
       expect(PassportSummary.xpRequiredForLevel(1), 0);
-      expect(PassportSummary.xpRequiredForLevel(2), 1000);
-      expect(PassportSummary.xpRequiredForLevel(3), 2150);
+      // The table in requirements/xp-and-coins.md, section 4.1; the API's
+      // tests pin the same numbers.
+      const table = {
+        2: 250,
+        3: 530,
+        5: 1195,
+        10: 3694,
+        15: 8098,
+        20: 15860,
+        30: 48514,
+        40: 86464,
+        50: 124414,
+      };
+      table.forEach((level, xp) {
+        expect(
+          PassportSummary.xpRequiredForLevel(level),
+          xp,
+          reason: 'level $level',
+        );
+      });
+    });
+
+    test('every level from 25 on costs the same', () {
+      int cost(int level) =>
+          PassportSummary.xpRequiredForLevel(level + 1) -
+          PassportSummary.xpRequiredForLevel(level);
+
+      expect(cost(24), lessThan(cost(25)));
+      expect(cost(25), cost(26));
+      expect(cost(26), cost(60));
     });
 
     test('works out level and progress from total XP', () {
       final s = PassportSummary.fromTotalXp(
-        totalXp: 1575,
+        totalXp: 390,
         stamps: const [],
         badges: const [],
       );
       expect(s.level, 2);
-      expect(s.levelStartXp, 1000);
-      expect(s.nextLevelXp, 2150);
+      expect(s.levelStartXp, 250);
+      expect(s.nextLevelXp, 530);
       expect(s.progress, closeTo(0.5, 0.01));
     });
   });

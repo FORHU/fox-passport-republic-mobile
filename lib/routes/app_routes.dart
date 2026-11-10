@@ -15,6 +15,11 @@ import 'package:flutter_template/features/event/presentation/pages/event_detail_
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
+import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
+import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
@@ -25,6 +30,7 @@ import 'package:flutter_template/features/notifications/presentation/pages/notif
 import 'package:flutter_template/features/occasion/presentation/pages/all_categories_page.dart';
 import 'package:flutter_template/features/occasion/presentation/pages/occasion_page.dart';
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:flutter_template/features/passport/presentation/pages/foxer_passport_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
@@ -36,6 +42,8 @@ import 'package:flutter_template/features/republic/presentation/pages/post_page.
 import 'package:flutter_template/features/republic/presentation/pages/republic_page.dart';
 import 'package:flutter_template/features/republic/presentation/pages/saved_posts_page.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/profile_posts.dart';
+import 'package:flutter_template/features/rewards/presentation/pages/rewards_page.dart';
+import 'package:flutter_template/features/rewards/presentation/pages/wallet_page.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_resubmit_page.dart';
@@ -87,6 +95,9 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/widgets/achievements_row.dart';
+import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:go_router/go_router.dart';
 
@@ -249,6 +260,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.blockedUsers,
         builder: (context, state) => const BlockedUsersPage(),
       ),
+      GoRoute(
+        path: RouteNames.howItWorks,
+        builder: (context, state) => const HowItWorksPage(),
+      ),
       // Profile is opened from both Passport and Settings, so it is a screen
       // of its own, not part of the Passport tab: a route inside a tab cannot
       // be pushed from outside it (the tab's page would be on the stack twice).
@@ -406,6 +421,36 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SavedPostsPage(),
       ),
       GoRoute(
+        path: RouteNames.wallet,
+        builder: (context, state) => const WalletPage(),
+      ),
+      GoRoute(
+        path: RouteNames.foxerPassport,
+        builder: (context, state) => FoxerPassportPage(
+          path: state.uri.queryParameters['path'] ?? 'user',
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.achievements,
+        builder: (context, state) => const AchievementsPage(),
+      ),
+      GoRoute(
+        path: RouteNames.leaderboard,
+        builder: (context, state) => LeaderboardPage(
+          initialSide: LeaderboardSide.fromApi(
+                state.uri.queryParameters['side'],
+              ) ??
+              LeaderboardSide.foxers,
+          initialRole:
+              LeaderboardRole.fromRoute(state.uri.queryParameters['role']) ??
+                  LeaderboardRole.event,
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.rewards,
+        builder: (context, state) => const RewardsPage(),
+      ),
+      GoRoute(
         path: RouteNames.itemBooking,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
@@ -522,6 +567,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       final l10n = context.l10n;
                       return CitizenProfileView(
                         userId: me,
+                        initialTab: state.uri.queryParameters['tab'] == 'badges'
+                            ? 1
+                            : 0,
+                        heroFooter: const Column(
+                          children: [
+                            WalletRow(),
+                            LeaderboardRow(),
+                            AchievementsRow(),
+                          ],
+                        ),
                         activityBuilder: (context, profile) =>
                             ProfilePosts(authorId: profile.id),
                         overrides: summary == null

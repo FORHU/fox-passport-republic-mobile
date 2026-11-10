@@ -116,6 +116,85 @@ void main() {
       expect(find.text('Rooftop Launch Night'), findsOneWidget);
     });
 
+    testWidgets('with one role in the month there is no role filter', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _app(
+          () async => [_entry('a', CalendarRole.guest, 'Rooftop Launch Night')],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Rooftop Launch Night'), findsOneWidget);
+      expect(find.byType(FilterChip), findsNothing);
+      expect(find.text('My bookings'), findsNothing);
+    });
+
+    testWidgets('two roles get a filter, and a hidden role can be turned on', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _app(
+          () async => [
+            _entry('a', CalendarRole.guest, 'Rooftop Launch Night'),
+            _entry('b', CalendarRole.host, 'Garden Birthday', startHour: 10),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(FilterChip), findsNWidgets(2));
+      await tester.tap(find.text('Events I host'));
+      await tester.pumpAndSettle();
+      // The chip stays after its role is hidden, so it can be turned back on.
+      expect(find.byType(FilterChip), findsNWidgets(2));
+      expect(find.text('Garden Birthday'), findsNothing);
+
+      await tester.tap(find.text('Events I host'));
+      await tester.pumpAndSettle();
+      expect(find.text('Garden Birthday'), findsOneWidget);
+    });
+
+    testWidgets('a chosen chip is a tint, so its dot is never hidden', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _app(
+          () async => [
+            _entry('a', CalendarRole.guest, 'Rooftop Launch Night'),
+            _entry('b', CalendarRole.host, 'Garden Birthday', startHour: 10),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final host = tester.widget<FilterChip>(
+        find.widgetWithText(FilterChip, 'Events I host'),
+      );
+      final dot = (host.avatar! as CircleAvatar).backgroundColor!;
+      // The fill is a see-through tint of the role colour, not the colour
+      // itself (a solid lime fill hid the lime dot).
+      expect(host.selectedColor!.a, lessThan(0.5));
+      expect(dot.a, 1.0);
+      expect(dot, roleColor(CalendarRole.host));
+    });
+
     testWidgets('has a Today button and no title or back arrow of its own', (
       tester,
     ) async {

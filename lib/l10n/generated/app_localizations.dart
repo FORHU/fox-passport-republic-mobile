@@ -1978,24 +1978,6 @@ abstract class AppLocalizations {
   /// **'Venue Foxer'**
   String get messageRoleVenueFoxer;
 
-  /// No description provided for @messageRoleGearFoxer.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear Foxer'**
-  String get messageRoleGearFoxer;
-
-  /// No description provided for @messageRoleServiceFoxer.
-  ///
-  /// In en, this message translates to:
-  /// **'Service Foxer'**
-  String get messageRoleServiceFoxer;
-
-  /// No description provided for @messageRolePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get messageRolePerformer;
-
   /// No description provided for @priceUnitDay.
   ///
   /// In en, this message translates to:
@@ -2169,6 +2151,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Directions'**
   String get ticketDirections;
+
+  /// No description provided for @ticketDirectionsAfterConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions appear once this booking is confirmed.'**
+  String get ticketDirectionsAfterConfirm;
 
   /// No description provided for @ticketStatusConfirmed.
   ///
@@ -3436,12 +3424,6 @@ abstract class AppLocalizations {
   /// **'List your first service'**
   String get firstStepService;
 
-  /// No description provided for @firstStepPerformance.
-  ///
-  /// In en, this message translates to:
-  /// **'List your first performance'**
-  String get firstStepPerformance;
-
   /// No description provided for @firstStepsTitle.
   ///
   /// In en, this message translates to:
@@ -4587,6 +4569,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get moreTitle;
+
+  /// No description provided for @moreSectionGrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow'**
+  String get moreSectionGrow;
+
+  /// No description provided for @moreSectionYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get moreSectionYou;
+
+  /// No description provided for @moreSectionAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get moreSectionAccount;
 
   /// No description provided for @requestsTitle.
   ///
@@ -6106,6 +6106,18 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendarTitle;
 
+  /// No description provided for @ticketsViewList.
+  ///
+  /// In en, this message translates to:
+  /// **'List view'**
+  String get ticketsViewList;
+
+  /// No description provided for @ticketsViewCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar view'**
+  String get ticketsViewCalendar;
+
   /// No description provided for @calendarHint.
   ///
   /// In en, this message translates to:
@@ -6393,6 +6405,420 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get homeChecklistContinue;
+
+  /// No description provided for @gettingStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get gettingStartedTitle;
+
+  /// No description provided for @gettingStartedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String gettingStartedNext(String step);
+
+  /// No description provided for @gettingStartedTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the tour'**
+  String get gettingStartedTour;
+
+  /// No description provided for @gettingStartedProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get gettingStartedProfile;
+
+  /// No description provided for @gettingStartedId.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your ID'**
+  String get gettingStartedId;
+
+  /// No description provided for @gettingStartedBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your first booking'**
+  String get gettingStartedBooking;
+
+  /// No description provided for @gettingStartedReward.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP · {coins} Coins'**
+  String gettingStartedReward(int xp, int coins);
+
+  /// No description provided for @rewardMomentCheckedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked in'**
+  String get rewardMomentCheckedIn;
+
+  /// No description provided for @rewardMomentAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'You attended an event'**
+  String get rewardMomentAttended;
+
+  /// No description provided for @rewardMomentReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for your review'**
+  String get rewardMomentReview;
+
+  /// No description provided for @rewardMomentAttendedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'You attended {event}'**
+  String rewardMomentAttendedAt(String event);
+
+  /// No description provided for @rewardMomentNewStamp.
+  ///
+  /// In en, this message translates to:
+  /// **'New stamp added'**
+  String get rewardMomentNewStamp;
+
+  /// No description provided for @rewardMomentGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'You earned rewards'**
+  String get rewardMomentGeneric;
+
+  /// No description provided for @rewardMomentXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get rewardMomentXp;
+
+  /// No description provided for @rewardMomentCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins'**
+  String get rewardMomentCoins;
+
+  /// No description provided for @rewardMomentLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String rewardMomentLevel(int level);
+
+  /// No description provided for @rewardMomentToNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP to Level {level}'**
+  String rewardMomentToNext(String xp, int level);
+
+  /// No description provided for @rewardMomentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'XP builds your level. Coins buy discounts.'**
+  String get rewardMomentNote;
+
+  /// No description provided for @rewardMomentLearnMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more'**
+  String get rewardMomentLearnMore;
+
+  /// No description provided for @rewardMomentViewPassport.
+  ///
+  /// In en, this message translates to:
+  /// **'View my passport'**
+  String get rewardMomentViewPassport;
+
+  /// No description provided for @rewardMomentDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get rewardMomentDone;
+
+  /// No description provided for @rankUpEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'New rank'**
+  String get rankUpEyebrow;
+
+  /// No description provided for @rankUpLevelRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level} · Rank {rank} of {total}'**
+  String rankUpLevelRank(int level, int rank, int total);
+
+  /// No description provided for @rankUpCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'+{coins} Coins'**
+  String rankUpCoins(String coins);
+
+  /// No description provided for @rankUpNewBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'New badge unlocked'**
+  String get rankUpNewBadge;
+
+  /// No description provided for @rankUpNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next rank: {name}'**
+  String rankUpNext(String name);
+
+  /// No description provided for @rankUpNextLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String rankUpNextLevel(int level);
+
+  /// No description provided for @rankUpSeeBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'See my badges'**
+  String get rankUpSeeBadges;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// No description provided for @achievementsEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'earned'**
+  String get achievementsEarned;
+
+  /// No description provided for @achievementsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total}'**
+  String achievementsOf(int done, int total);
+
+  /// No description provided for @achievementsFilterProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get achievementsFilterProgress;
+
+  /// No description provided for @achievementsFilterDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get achievementsFilterDone;
+
+  /// No description provided for @achievementsFilterLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get achievementsFilterLocked;
+
+  /// No description provided for @achievementsSectionCitizen.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen'**
+  String get achievementsSectionCitizen;
+
+  /// No description provided for @achievementsSectionFoxer.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxer'**
+  String get achievementsSectionFoxer;
+
+  /// No description provided for @achievementsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / {target}'**
+  String achievementsCount(int count, int target);
+
+  /// No description provided for @achievementsPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String achievementsPercent(int percent);
+
+  /// No description provided for @achievementsRewardXp.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String achievementsRewardXp(int xp);
+
+  /// No description provided for @achievementsRewardCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'+{coins} Coins'**
+  String achievementsRewardCoins(int coins);
+
+  /// No description provided for @achievementsRewardBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge: {name}'**
+  String achievementsRewardBadge(String name);
+
+  /// No description provided for @achievementsTierDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier {tier} done'**
+  String achievementsTierDone(int tier);
+
+  /// No description provided for @achievementsTierTodo.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier {tier} not yet'**
+  String achievementsTierTodo(int tier);
+
+  /// No description provided for @achievementsEmptyProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in progress yet. Book, attend or review to start.'**
+  String get achievementsEmptyProgress;
+
+  /// No description provided for @achievementsEmptyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'No finished achievements yet.'**
+  String get achievementsEmptyDone;
+
+  /// No description provided for @achievementsEmptyLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything has been started.'**
+  String get achievementsEmptyLocked;
+
+  /// No description provided for @achievementsComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'All three tiers done'**
+  String get achievementsComplete;
+
+  /// No description provided for @homeNextNightXp.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String homeNextNightXp(int xp);
+
+  /// No description provided for @foxerStatBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings done'**
+  String get foxerStatBookings;
+
+  /// No description provided for @foxerStatReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Replies in time'**
+  String get foxerStatReplies;
+
+  /// No description provided for @foxerStatCancellations.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellations'**
+  String get foxerStatCancellations;
+
+  /// No description provided for @foxerStatPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String foxerStatPercent(int percent);
+
+  /// No description provided for @foxerLabelTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get foxerLabelTopRated;
+
+  /// No description provided for @foxerLabelFastResponder.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast responder'**
+  String get foxerLabelFastResponder;
+
+  /// No description provided for @foxerLabelReliable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliable'**
+  String get foxerLabelReliable;
+
+  /// No description provided for @foxerLabelRising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get foxerLabelRising;
+
+  /// No description provided for @foxerPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'#{position} {role} in {city}'**
+  String foxerPlace(int position, String role, String city);
+
+  /// No description provided for @foxerPlaceNoCity.
+  ///
+  /// In en, this message translates to:
+  /// **'#{position} {role}'**
+  String foxerPlaceNoCity(int position, String role);
+
+  /// No description provided for @foxerPlaceRoleProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Providers'**
+  String get foxerPlaceRoleProviders;
+
+  /// No description provided for @foxerScoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxer Score'**
+  String get foxerScoreTitle;
+
+  /// No description provided for @foxerScoreOutOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{score} / 100'**
+  String foxerScoreOutOf(int score);
+
+  /// No description provided for @foxerScorePartRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get foxerScorePartRating;
+
+  /// No description provided for @foxerScorePartVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get foxerScorePartVolume;
+
+  /// No description provided for @foxerScorePartReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsiveness'**
+  String get foxerScorePartReplies;
+
+  /// No description provided for @foxerScorePartReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get foxerScorePartReliability;
+
+  /// No description provided for @foxerScorePartTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust'**
+  String get foxerScorePartTrust;
+
+  /// No description provided for @foxerScorePart.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} / {max}'**
+  String foxerScorePart(String value, int max);
+
+  /// No description provided for @foxerScorePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you see this score. Guests see your star rating, the facts and your labels.'**
+  String get foxerScorePrivate;
+
+  /// No description provided for @foxerScoreStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest rating'**
+  String get foxerScoreStars;
 
   /// No description provided for @homeComingUp.
   ///
@@ -8848,18 +9274,6 @@ abstract class AppLocalizations {
   /// **'Services you offer'**
   String get roleApplyServiceTypes;
 
-  /// No description provided for @roleApplyPerformerTypes.
-  ///
-  /// In en, this message translates to:
-  /// **'What you perform'**
-  String get roleApplyPerformerTypes;
-
-  /// No description provided for @roleApplyGearTypes.
-  ///
-  /// In en, this message translates to:
-  /// **'Gear you rent out'**
-  String get roleApplyGearTypes;
-
   /// No description provided for @roleApplyCommaHint.
   ///
   /// In en, this message translates to:
@@ -9309,24 +9723,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your services and the requests for them'**
   String get spaceServicesHint;
-
-  /// No description provided for @spacePerformer.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get spacePerformer;
-
-  /// No description provided for @spacePerformerHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Your performances and the requests for them'**
-  String get spacePerformerHint;
-
-  /// No description provided for @spaceTabPerformances.
-  ///
-  /// In en, this message translates to:
-  /// **'Performances'**
-  String get spaceTabPerformances;
 
   /// No description provided for @requestsIntroGear.
   ///
@@ -9832,6 +10228,72 @@ abstract class AppLocalizations {
   /// **'{n} of {total}'**
   String tourStepOf(int n, int total);
 
+  /// No description provided for @tourCitizenHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find what\'s on'**
+  String get tourCitizenHomeTitle;
+
+  /// No description provided for @tourCitizenHomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events, venues and Foxers, and see your next booking.'**
+  String get tourCitizenHomeBody;
+
+  /// No description provided for @tourCitizenRepublicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the conversation'**
+  String get tourCitizenRepublicTitle;
+
+  /// No description provided for @tourCitizenRepublicBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Read and post what\'s happening. Posting earns XP.'**
+  String get tourCitizenRepublicBody;
+
+  /// No description provided for @tourCitizenBookingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tickets live here'**
+  String get tourCitizenBookingsTitle;
+
+  /// No description provided for @tourCitizenBookingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets, requests and your calendar, with a badge when something needs you.'**
+  String get tourCitizenBookingsBody;
+
+  /// No description provided for @tourCitizenMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to Foxers'**
+  String get tourCitizenMessagesTitle;
+
+  /// No description provided for @tourCitizenMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a venue or a Foxer a question before you book.'**
+  String get tourCitizenMessagesBody;
+
+  /// No description provided for @tourCitizenPassportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress'**
+  String get tourCitizenPassportTitle;
+
+  /// No description provided for @tourCitizenPassportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your level, stamps and badges. Attend an event to earn your first stamp.'**
+  String get tourCitizenPassportBody;
+
+  /// No description provided for @settingsTakeTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the app tour again'**
+  String get settingsTakeTour;
+
   /// No description provided for @earningsTotal.
   ///
   /// In en, this message translates to:
@@ -9982,12 +10444,6 @@ abstract class AppLocalizations {
   /// **'Add service'**
   String get providerAddService;
 
-  /// No description provided for @providerAddPerformance.
-  ///
-  /// In en, this message translates to:
-  /// **'Add performance'**
-  String get providerAddPerformance;
-
   /// No description provided for @overviewMyGear.
   ///
   /// In en, this message translates to:
@@ -9999,12 +10455,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My services'**
   String get overviewMyServices;
-
-  /// No description provided for @overviewMyPerformances.
-  ///
-  /// In en, this message translates to:
-  /// **'My performances'**
-  String get overviewMyPerformances;
 
   /// No description provided for @tourActionsTitle.
   ///
@@ -10041,6 +10491,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What you have been paid, how it changed since last month, and the last eight weeks.'**
   String get tourEarningsCardBody;
+
+  /// No description provided for @settingsHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How XP and Coins work'**
+  String get settingsHowItWorks;
+
+  /// No description provided for @howItWorksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get howItWorksTitle;
+
+  /// No description provided for @howItWorksIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Two numbers grow as you use FoxPassport. Here is what each one does.'**
+  String get howItWorksIntro;
+
+  /// No description provided for @howItWorksXpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'XP is your progress'**
+  String get howItWorksXpTitle;
+
+  /// No description provided for @howItWorksXpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.'**
+  String get howItWorksXpBody;
+
+  /// No description provided for @howItWorksCoinsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins are your wallet'**
+  String get howItWorksCoinsTitle;
+
+  /// No description provided for @howItWorksCoinsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.'**
+  String get howItWorksCoinsBody;
+
+  /// No description provided for @howItWorksEarnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to earn'**
+  String get howItWorksEarnTitle;
+
+  /// No description provided for @howItWorksEarnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.'**
+  String get howItWorksEarnBody;
+
+  /// No description provided for @howItWorksSpendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to spend'**
+  String get howItWorksSpendTitle;
+
+  /// No description provided for @howItWorksSpendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Rewards from your Wallet and redeem a voucher. Each reward says what size of booking it works on, and a voucher belongs to your account only.'**
+  String get howItWorksSpendBody;
+
+  /// No description provided for @rewardsWalletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get rewardsWalletTitle;
+
+  /// No description provided for @rewardsOpenWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your Wallet'**
+  String get rewardsOpenWallet;
+
+  /// No description provided for @rewardsCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins'**
+  String get rewardsCoins;
+
+  /// No description provided for @rewardsBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get rewardsBalanceLabel;
+
+  /// No description provided for @rewardsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending'**
+  String rewardsPending(String count);
+
+  /// No description provided for @rewardsPendingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Coins can be spent once the booking is safe from a refund.'**
+  String get rewardsPendingHint;
+
+  /// No description provided for @rewardsRedeemRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem rewards'**
+  String get rewardsRedeemRewards;
+
+  /// No description provided for @rewardsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get rewardsHistory;
+
+  /// No description provided for @rewardsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Coins yet'**
+  String get rewardsEmptyTitle;
+
+  /// No description provided for @rewardsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend an event or book one and your Coins show up here. You can spend them on discounts.'**
+  String get rewardsEmptyBody;
+
+  /// No description provided for @rewardsFindEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Find an event'**
+  String get rewardsFindEvent;
+
+  /// No description provided for @rewardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewardsTitle;
+
+  /// No description provided for @rewardsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get rewardsFilterAll;
+
+  /// No description provided for @rewardsFilterDiscounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Discounts'**
+  String get rewardsFilterDiscounts;
+
+  /// No description provided for @rewardsFilterPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks'**
+  String get rewardsFilterPerks;
+
+  /// No description provided for @rewardsNoneHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards here yet'**
+  String get rewardsNoneHere;
+
+  /// No description provided for @rewardsRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get rewardsRedeem;
+
+  /// No description provided for @rewardsToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Coins to go'**
+  String rewardsToGo(String count);
+
+  /// No description provided for @rewardsUnlocksAtLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks at Level {level}'**
+  String rewardsUnlocksAtLevel(int level);
+
+  /// No description provided for @rewardsOffPhp.
+  ///
+  /// In en, this message translates to:
+  /// **'₱{amount} off'**
+  String rewardsOffPhp(String amount);
+
+  /// No description provided for @rewardsOffPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% off'**
+  String rewardsOffPercent(String percent);
+
+  /// No description provided for @rewardsRedeemSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem reward'**
+  String get rewardsRedeemSheetTitle;
+
+  /// No description provided for @rewardsYourBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your balance'**
+  String get rewardsYourBalance;
+
+  /// No description provided for @rewardsThisReward.
+  ///
+  /// In en, this message translates to:
+  /// **'This reward'**
+  String get rewardsThisReward;
+
+  /// No description provided for @rewardsAfterRedeeming.
+  ///
+  /// In en, this message translates to:
+  /// **'After redeeming'**
+  String get rewardsAfterRedeeming;
+
+  /// No description provided for @rewardsRedeemFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem for {cost} Coins'**
+  String rewardsRedeemFor(String cost);
+
+  /// No description provided for @rewardsCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get rewardsCancel;
+
+  /// No description provided for @rewardsRedeemFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t redeem that right now.'**
+  String get rewardsRedeemFailed;
+
+  /// No description provided for @rewardsVoucherReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your voucher is ready'**
+  String get rewardsVoucherReady;
+
+  /// No description provided for @rewardsVoucherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it when you pay for a booking. It belongs to your account only.'**
+  String get rewardsVoucherHint;
+
+  /// No description provided for @rewardsVoucherCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Voucher code'**
+  String get rewardsVoucherCode;
+
+  /// No description provided for @rewardsCopyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get rewardsCopyCode;
+
+  /// No description provided for @rewardsCodeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Code copied'**
+  String get rewardsCodeCopied;
+
+  /// No description provided for @rewardsValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until {date}'**
+  String rewardsValidUntil(String date);
+
+  /// No description provided for @rewardsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get rewardsDone;
+
+  /// No description provided for @rewardsLifeRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins released'**
+  String get rewardsLifeRelease;
+
+  /// No description provided for @rewardsLifeRedemption.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeemed a reward'**
+  String get rewardsLifeRedemption;
+
+  /// No description provided for @rewardsLifeExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins expired'**
+  String get rewardsLifeExpiry;
+
+  /// No description provided for @rewardsLifeReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins reversed'**
+  String get rewardsLifeReversal;
+
+  /// No description provided for @rewardsRankLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{rank} · Level {level}'**
+  String rewardsRankLevel(String rank, int level);
+
+  /// No description provided for @foxerPassportPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks'**
+  String get foxerPassportPerks;
+
+  /// No description provided for @foxerPassportNoPerks.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks unlock as you level up.'**
+  String get foxerPassportNoPerks;
+
+  /// No description provided for @foxerPassportNoBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Badges you earn in this role show up here.'**
+  String get foxerPassportNoBadges;
+
+  /// No description provided for @foxerPassportXpToNext.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP to level {level}'**
+  String foxerPassportXpToNext(String xp, int level);
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardMostBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Most booked'**
+  String get leaderboardMostBooked;
+
+  /// No description provided for @leaderboardRoleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venues'**
+  String get leaderboardRoleVenue;
+
+  /// No description provided for @leaderboardRoleEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get leaderboardRoleEvent;
+
+  /// No description provided for @leaderboardRoleGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardRoleGear;
+
+  /// No description provided for @leaderboardRoleServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get leaderboardRoleServices;
+
+  /// No description provided for @leaderboardRolePerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performers'**
+  String get leaderboardRolePerformers;
+
+  /// No description provided for @leaderboardAllCities.
+  ///
+  /// In en, this message translates to:
+  /// **'All cities'**
+  String get leaderboardAllCities;
+
+  /// No description provided for @leaderboardCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get leaderboardCityLabel;
+
+  /// No description provided for @leaderboardCityApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get leaderboardCityApply;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed bookings yet this month. Check back soon.'**
+  String get leaderboardEmpty;
+
+  /// No description provided for @leaderboardYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get leaderboardYou;
+
+  /// No description provided for @leaderboardRowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{role} · {rank}'**
+  String leaderboardRowSubtitle(String role, String rank);
+
+  /// No description provided for @leaderboardSideCitizens.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizens'**
+  String get leaderboardSideCitizens;
+
+  /// No description provided for @leaderboardSideFoxers.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxers'**
+  String get leaderboardSideFoxers;
+
+  /// No description provided for @leaderboardTabMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get leaderboardTabMonth;
+
+  /// No description provided for @leaderboardTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get leaderboardTabAll;
+
+  /// No description provided for @leaderboardTabCity.
+  ///
+  /// In en, this message translates to:
+  /// **'My city'**
+  String get leaderboardTabCity;
+
+  /// No description provided for @leaderboardNoCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your city to your profile to see your local board.'**
+  String get leaderboardNoCity;
+
+  /// No description provided for @leaderboardEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get leaderboardEditProfile;
+
+  /// No description provided for @leaderboardLevelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lv {level}'**
+  String leaderboardLevelShort(int level);
+
+  /// No description provided for @leaderboardYouName.
+  ///
+  /// In en, this message translates to:
+  /// **'You · {name}'**
+  String leaderboardYouName(String name);
+
+  /// No description provided for @leaderboardPillVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get leaderboardPillVenue;
+
+  /// No description provided for @leaderboardPillEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get leaderboardPillEvent;
+
+  /// No description provided for @leaderboardPillGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get leaderboardPillGear;
+
+  /// No description provided for @leaderboardPillServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get leaderboardPillServices;
+
+  /// No description provided for @leaderboardPillPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Performer'**
+  String get leaderboardPillPerformers;
+
+  /// No description provided for @leaderboardTabTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get leaderboardTabTopRated;
+
+  /// No description provided for @leaderboardTabRising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get leaderboardTabRising;
+
+  /// No description provided for @leaderboardFoxerNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get leaderboardFoxerNew;
+
+  /// No description provided for @leaderboardReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String leaderboardReviews(int count);
 }
 
 class _AppLocalizationsDelegate

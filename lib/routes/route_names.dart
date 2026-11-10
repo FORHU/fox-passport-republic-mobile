@@ -69,6 +69,9 @@ class RouteNames {
   static String chat(String conversationId) =>
       '$messages/${Uri.encodeComponent(conversationId)}';
   static const String passport = '/passport';
+
+  /// The Passport opened on its Badges tab.
+  static const String passportBadges = '$passport?tab=badges';
   static const String profile = '/profile';
 
   /// Someone's public profile, by id or username. Opened from a post's
@@ -111,6 +114,9 @@ class RouteNames {
   /// The people you blocked, with a way to unblock. Pushed from Settings.
   static const String blockedUsers = '/settings/blocked';
 
+  /// What XP and Coins are, in plain words. Pushed from Settings.
+  static const String howItWorks = '/how-it-works';
+
   /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.
   static const String foxer = '/foxer';
 
@@ -122,6 +128,28 @@ class RouteNames {
 
   /// The posts saved from the Republic. Pushed from its header.
   static const String republicSaved = '/republic/saved';
+
+  /// The Coins wallet, pushed from the Coins chip and the Passport.
+  static const String wallet = '/wallet';
+
+  /// A Foxer's Passport for one XP path, pushed from a space's More tab.
+  static const String foxerPassport = '/foxer-passport';
+  static String foxerPassportFor(String path) =>
+      '$foxerPassport?path=${Uri.encodeQueryComponent(path)}';
+
+  /// Tiers earned and progress on each achievement. Opened from the Passport.
+  static const String achievements = '/achievements';
+
+  /// The Foxer leaderboard, opened on one role (`venue`, `event`, ...).
+  static const String leaderboard = '/leaderboard';
+  static String leaderboardFor(String role) =>
+      '$leaderboard?role=${Uri.encodeQueryComponent(role)}';
+
+  /// The leaderboard on its Citizens side, from the citizen Passport.
+  static const String leaderboardCitizens = '$leaderboard?side=citizens';
+
+  /// What Coins can buy.
+  static const String rewards = '/rewards';
 
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.

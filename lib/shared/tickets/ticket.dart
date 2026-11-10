@@ -14,6 +14,8 @@ class Ticket extends Equatable {
     this.templateId,
     this.hasReview = false,
     this.isSample = false,
+    this.lat,
+    this.lng,
     this.cachedAt,
   });
 
@@ -34,6 +36,8 @@ class Ticket extends Equatable {
       ticketCode: json['ticketCode']?.toString(),
       templateId: eventMap?['templateId']?.toString(),
       hasReview: json['hasReview'] == true,
+      lat: (eventMap?['lat'] as num?)?.toDouble(),
+      lng: (eventMap?['lng'] as num?)?.toDouble(),
     );
   }
 
@@ -53,6 +57,8 @@ class Ticket extends Equatable {
       ticketCode: json['ticketCode'] as String?,
       templateId: json['templateId'] as String?,
       hasReview: json['hasReview'] == true,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lng: (json['lng'] as num?)?.toDouble(),
       cachedAt: cachedAt,
     );
   }
@@ -93,6 +99,14 @@ class Ticket extends Equatable {
   final bool hasReview;
   final bool isSample;
 
+  /// Where the event is, for directions. The API gives them only for a
+  /// confirmed booking; null before that, and null on an older API.
+  final double? lat;
+  final double? lng;
+
+  /// Both coordinates are known.
+  bool get hasPin => lat != null && lng != null;
+
   /// Set when this is the copy saved on the phone, not what the server just
   /// said: when it was saved.
   final DateTime? cachedAt;
@@ -109,6 +123,8 @@ class Ticket extends Equatable {
         'ticketCode': ticketCode,
         'templateId': templateId,
         'hasReview': hasReview,
+        'lat': lat,
+        'lng': lng,
       };
 
   /// Whole calendar days from [now] to the start; 0 is today.
@@ -132,6 +148,8 @@ class Ticket extends Equatable {
         templateId,
         hasReview,
         isSample,
+        lat,
+        lng,
         cachedAt,
       ];
 }

@@ -221,7 +221,28 @@ class ApiEndpoints {
   static const String passportMe = '/passport/me';
   static const String passportBadges = '/passport/badges';
   static const String passportLeaderboard = '/passport/leaderboard';
+  static const String leaderboardFoxers = '/leaderboard/foxers';
+  static const String leaderboardCitizens = '/leaderboard/citizens';
   static String passportByUser(String userId) => '/passport/$userId';
+
+  // ── Rewards (XP and Coins) ──────────────────────────────────────────────
+  static const String rewardsMe = '/rewards/me';
+  static const String rewardsCatalog = '/rewards/catalog';
+  static const String rewardsRedeem = '/rewards/redeem';
+
+  static const String achievementsMe = '/achievements/me';
+
+  /// The signed-in Foxer's own Foxer Score and its parts.
+  static const String foxerScoreMe = '/foxer-score/me';
+
+  /// A Foxer's public reputation: rating, facts and earned labels.
+  static String foxerScoreFor(String userId) =>
+      '/foxer-score/${Uri.encodeComponent(userId)}';
+
+  // ── Onboarding steps ─────────────────────────────────────────────────────
+  static const String onboarding = '/onboarding';
+  static String onboardingStep(String step) =>
+      '/onboarding/${Uri.encodeComponent(step)}';
 
   // ── Favorites ───────────────────────────────────────────────────────────
   static const String favorites = '/favorites';

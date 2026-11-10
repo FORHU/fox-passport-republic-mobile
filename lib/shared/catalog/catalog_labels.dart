@@ -65,9 +65,6 @@ String? foxerRoleLabel(AppLocalizations l10n, List<String> roles) {
       'providerFoxer' => l10n.messageRoleProvider,
       'eventFoxer' => l10n.messageRoleEventFoxer,
       'venueFoxer' => l10n.messageRoleVenueFoxer,
-      'gearFoxer' => l10n.messageRoleGearFoxer,
-      'serviceFoxer' => l10n.messageRoleServiceFoxer,
-      'performerFoxer' => l10n.messageRolePerformer,
       _ => null,
     };
     if (label != null) return label;
