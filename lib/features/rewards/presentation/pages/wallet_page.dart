@@ -103,9 +103,16 @@ class _BalanceCard extends StatelessWidget {
             children: [
               const Icon(coinsIcon, size: 28),
               const SizedBox(width: 8),
-              Text(
-                format.format(summary.coins),
-                style: AppTypography.display(size: 40),
+              // A big balance on a narrow screen shrinks rather than overflows.
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    format.format(summary.coins),
+                    style: AppTypography.display(size: 40),
+                  ),
+                ),
               ),
               const SizedBox(width: 6),
               Padding(

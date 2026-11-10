@@ -235,9 +235,11 @@ class _Note extends StatelessWidget {
           children: [
             Icon(icon, size: 16, color: AppColors.textMuted),
             const SizedBox(width: 8),
-            Text(
-              text,
-              style: AppTypography.body(size: 13, color: AppColors.textMuted),
+            Expanded(
+              child: Text(
+                text,
+                style: AppTypography.body(size: 13, color: AppColors.textMuted),
+              ),
             ),
           ],
         ),
