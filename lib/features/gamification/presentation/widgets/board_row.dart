@@ -97,7 +97,7 @@ class BoardRow extends StatelessWidget {
                 Row(
                   children: [
                     if (rolePill != null) ...[
-                      _RolePill(label: rolePill!),
+                      Flexible(child: _RolePill(label: rolePill!)),
                       const SizedBox(width: 6),
                     ],
                     if (rank != null) ...[
@@ -172,6 +172,8 @@ class _RolePill extends StatelessWidget {
       ),
       child: Text(
         label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: AppTypography.body(size: 11, color: AppColors.textPrimary),
       ),
     );

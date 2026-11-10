@@ -148,14 +148,17 @@ class RankUpSheet extends StatelessWidget {
               const SizedBox(height: 18),
               Row(
                 children: [
-                  Text(
-                    l10n.rankUpNext(next),
-                    style: AppTypography.body(
-                      size: 12,
-                      color: AppColors.textMuted,
+                  Expanded(
+                    child: Text(
+                      l10n.rankUpNext(next),
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
                   Text(
                     l10n.rankUpNextLevel(nextLevel),
                     style: AppTypography.body(
@@ -229,9 +232,12 @@ class _Chip extends StatelessWidget {
             Icon(icon, size: 16, color: color),
             const SizedBox(width: 6),
           ],
-          Text(
-            label,
-            style: AppTypography.display(size: 14, color: color),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.display(size: 14, color: color),
+            ),
           ),
         ],
       ),

@@ -167,13 +167,17 @@ class RewardSheet extends StatelessWidget {
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () =>
-                        Navigator.of(context).pop(RewardSheetChoice.learnMore),
-                    child: Text(
-                      l10n.rewardMomentLearnMore,
-                      style: AppTypography.display(
-                        size: 12,
+                  Flexible(
+                    flex: 0,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context)
+                          .pop(RewardSheetChoice.learnMore),
+                      child: Text(
+                        l10n.rewardMomentLearnMore,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.display(
+                          size: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -276,9 +280,12 @@ class _Amount extends StatelessWidget {
                 children: [
                   Icon(icon, size: 16, color: color),
                   const SizedBox(width: 4),
-                  Text(
-                    label.toUpperCase(),
-                    style: AppTypography.label(color: color),
+                  Flexible(
+                    child: Text(
+                      label.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.label(color: color),
+                    ),
                   ),
                 ],
               ),
@@ -314,13 +321,17 @@ class _LevelBar extends StatelessWidget {
               l10n.rewardMomentLevel(passport.level),
               style: AppTypography.display(size: 14),
             ),
-            const Spacer(),
-            Text(
-              l10n.rewardMomentToNext(
-                format.format(toNext),
-                passport.level + 1,
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                l10n.rewardMomentToNext(
+                  format.format(toNext),
+                  passport.level + 1,
+                ),
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.body(size: 12, color: AppColors.textMuted),
               ),
-              style: AppTypography.body(size: 12, color: AppColors.textMuted),
             ),
           ],
         ),
