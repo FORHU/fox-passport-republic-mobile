@@ -36,6 +36,15 @@ android {
             )
         }
     }
+
+    // flutter_stripe's push-provisioning module lists
+    // com.google.android.gms:play-services-tapandpay, which Google doesn't
+    // publish to public Maven, so the release lint check can't resolve it and
+    // fails the build. This skips release lint entirely; revisit when
+    // flutter_stripe stops requiring the artifact (issue #371).
+    lint {
+        checkReleaseBuilds = false
+    }
 }
 
 kotlin {
