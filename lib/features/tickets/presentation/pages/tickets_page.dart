@@ -16,14 +16,16 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
-enum _Segment { upcoming, requests, past, calendar }
+/// What the list shows. The calendar is a different way to look at bookings,
+/// not another state, so it is a view switch in the header (see [_ViewToggle]).
+enum _Segment { upcoming, requests, past }
 
 /// Tickets: the bookings the user holds, upcoming and past.
 class TicketsPage extends ConsumerStatefulWidget {
   const TicketsPage({this.initialSegment, super.key});
 
   /// `requests` opens on the Match requests switch, `calendar` on the
-  /// Calendar switch.
+  /// calendar view.
   final String? initialSegment;
 
   @override
@@ -32,10 +34,10 @@ class TicketsPage extends ConsumerStatefulWidget {
 
 class _TicketsPageState extends ConsumerState<TicketsPage> {
   late _Segment _segment = _fromParam(widget.initialSegment);
+  late bool _calendar = widget.initialSegment == 'calendar';
 
   static _Segment _fromParam(String? value) => switch (value) {
         'requests' => _Segment.requests,
-        'calendar' => _Segment.calendar,
         _ => _Segment.upcoming,
       };
 
@@ -45,7 +47,10 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
     // The shell keeps this page alive, so a link arrives as an update.
     if (oldWidget.initialSegment != widget.initialSegment &&
         widget.initialSegment != null) {
-      setState(() => _segment = _fromParam(widget.initialSegment));
+      setState(() {
+        _segment = _fromParam(widget.initialSegment);
+        _calendar = widget.initialSegment == 'calendar';
+      });
     }
   }
 
@@ -71,6 +76,10 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
             style: AppTypography.display(size: 28),
           ),
         ),
+        _ViewToggle(
+          calendar: _calendar,
+          onChanged: (calendar) => setState(() => _calendar = calendar),
+        ),
       ],
     );
     final pills = SegmentedPills<_Segment>(
@@ -80,13 +89,13 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
         SegmentOption(_Segment.upcoming, l10n.ticketsUpcoming),
         SegmentOption(_Segment.requests, l10n.ticketsRequests),
         SegmentOption(_Segment.past, l10n.ticketsPast),
-        SegmentOption(_Segment.calendar, l10n.calendarTitle),
       ],
     );
 
     // The calendar draws its own scrolling month, so it sits below a fixed
-    // header and switch instead of inside the list the other three share.
-    if (_segment == _Segment.calendar) {
+    // header instead of inside the list the other views share. It has its own
+    // role filter, so the Upcoming / Requests / Past switch is not shown.
+    if (_calendar) {
       return Scaffold(
         backgroundColor: AppColors.canvas,
         body: SafeArea(
@@ -97,14 +106,12 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: header,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: pills,
-              ),
               Expanded(
                 child: CalendarView(
-                  onOpenTickets: () =>
-                      setState(() => _segment = _Segment.upcoming),
+                  onOpenTickets: () => setState(() {
+                    _calendar = false;
+                    _segment = _Segment.upcoming;
+                  }),
                 ),
               ),
             ],
@@ -287,4 +294,75 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
           ),
         ),
       );
+}
+
+/// List | Calendar: two icons in a small pill, level with the title. The
+/// chosen one is raised, as in [SegmentedPills]; each is a 44 px thumb target.
+class _ViewToggle extends StatelessWidget {
+  const _ViewToggle({required this.calendar, required this.onChanged});
+
+  final bool calendar;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    Widget option({
+      required bool isCalendar,
+      required IconData icon,
+      required String label,
+    }) {
+      final selected = calendar == isCalendar;
+      return Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => onChanged(isCalendar),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              width: 44,
+              height: 40,
+              decoration: BoxDecoration(
+                color: selected ? AppColors.surfaceRaised : Colors.transparent,
+                borderRadius: AppRadius.brPill,
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: selected ? AppColors.textPrimary : AppColors.textMuted,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.brPill,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          option(
+            isCalendar: false,
+            icon: Icons.view_agenda_outlined,
+            label: l10n.ticketsViewList,
+          ),
+          option(
+            isCalendar: true,
+            icon: Icons.calendar_month_outlined,
+            label: l10n.ticketsViewCalendar,
+          ),
+        ],
+      ),
+    );
+  }
 }

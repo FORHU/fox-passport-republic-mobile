@@ -3363,6 +3363,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarTitle => 'Calendar';
 
   @override
+  String get ticketsViewList => 'List view';
+
+  @override
+  String get ticketsViewCalendar => 'Calendar view';
+
+  @override
   String get calendarHint => 'Everything you book, host or supply';
 
   @override

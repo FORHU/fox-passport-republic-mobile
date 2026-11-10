@@ -1104,6 +1104,8 @@
   "passportEmptyAction": "Find events",
   "calendar": "Calendar",
   "calendarTitle": "Calendar",
+  "ticketsViewList": "List view",
+  "ticketsViewCalendar": "Calendar view",
   "calendarHint": "Everything you book, host or supply",
   "calendarToday": "Today",
   "calendarNothingToday": "Nothing on this day.",

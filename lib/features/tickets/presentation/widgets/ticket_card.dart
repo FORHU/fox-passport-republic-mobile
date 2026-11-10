@@ -107,19 +107,25 @@ class TicketCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _status(l10n, ticket.status).toUpperCase(),
-                      style: AppTypography.label(
-                        color: _statusColor(ticket.status),
+                    Expanded(
+                      child: Text(
+                        _status(l10n, ticket.status).toUpperCase(),
+                        style: AppTypography.label(
+                          color: _statusColor(ticket.status),
+                        ),
                       ),
                     ),
-                    if (ticket.isSample)
-                      Text(
-                        l10n.sampleTag.toUpperCase(),
-                        style: AppTypography.label(),
+                    if (ticket.isSample) ...[
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          l10n.sampleTag.toUpperCase(),
+                          textAlign: TextAlign.end,
+                          style: AppTypography.label(),
+                        ),
                       ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 10),
