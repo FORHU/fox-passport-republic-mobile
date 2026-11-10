@@ -132,6 +132,63 @@ void main() {
     });
   });
 
+  group('Directions', () {
+    final directions = find.text('Directions');
+    final hint = find.text('Directions appear once this booking is confirmed.');
+
+    testWidgets('a confirmed booking has the button and no hint', (
+      tester,
+    ) async {
+      _size(tester);
+      await tester.pumpWidget(_card(_ticket()));
+      await tester.pump();
+
+      expect(directions, findsOneWidget);
+      expect(hint, findsNothing);
+    });
+
+    testWidgets('a pending booking has no button, and says why', (
+      tester,
+    ) async {
+      _size(tester);
+      await tester.pumpWidget(_card(_ticket(status: 'pending')));
+      await tester.pump();
+
+      expect(directions, findsNothing);
+      expect(hint, findsOneWidget);
+      // Add to wallet is still there, and takes the whole row.
+      expect(find.text('Add to wallet'), findsOneWidget);
+    });
+
+    testWidgets('cancelled and finished bookings have neither', (
+      tester,
+    ) async {
+      _size(tester);
+      for (final ticket in [
+        _ticket(status: 'cancelled'),
+        _ticket(status: 'completed', startsIn: _past),
+        _ticket(startsIn: _past),
+      ]) {
+        await tester.pumpWidget(_card(ticket));
+        await tester.pump();
+
+        expect(directions, findsNothing, reason: ticket.status);
+        expect(hint, findsNothing, reason: ticket.status);
+      }
+    });
+
+    testWidgets('the pending layout fits 320 px with large text', (
+      tester,
+    ) async {
+      _size(tester, width: 320, text: 2);
+      await tester.pumpWidget(_card(_ticket(status: 'pending')));
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(hint, findsOneWidget);
+    });
+  });
+
   group('spacing', () {
     testWidgets('text actions sit clear of the Directions button', (
       tester,

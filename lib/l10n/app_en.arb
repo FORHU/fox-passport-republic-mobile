@@ -371,6 +371,7 @@
   "ticketQrPending": "Your QR appears once this booking is confirmed",
   "ticketAddToWallet": "Add to wallet",
   "ticketDirections": "Directions",
+  "ticketDirectionsAfterConfirm": "Directions appear once this booking is confirmed.",
   "ticketStatusConfirmed": "Confirmed",
   "ticketStatusPending": "Pending",
   "ticketStatusCompleted": "Completed",
