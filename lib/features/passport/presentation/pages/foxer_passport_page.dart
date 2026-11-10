@@ -149,12 +149,16 @@ class _LevelCard extends StatelessWidget {
                   style: AppTypography.body(size: 13),
                 ),
               ),
-              Text(
-                l10n.foxerPassportXpToNext(
-                  number.format(passport.xpToNext),
-                  passport.level + 1,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  l10n.foxerPassportXpToNext(
+                    number.format(passport.xpToNext),
+                    passport.level + 1,
+                  ),
+                  textAlign: TextAlign.end,
+                  style: AppTypography.body(size: 13, color: AppColors.accent),
                 ),
-                style: AppTypography.body(size: 13, color: AppColors.accent),
               ),
             ],
           ),
