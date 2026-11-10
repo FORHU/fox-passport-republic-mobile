@@ -119,7 +119,12 @@ class BoardRow extends StatelessWidget {
           ),
           if (trailing != null) ...[
             const SizedBox(width: 8),
-            trailing!,
+            // Capped so a long count or large text wraps instead of pushing
+            // the name out of the row.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 104),
+              child: trailing,
+            ),
           ],
         ],
       ),
