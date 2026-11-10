@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/screen/screen_brightness_boost.dart';
+import 'package:flutter_template/shared/tickets/directions_link.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/ticket_panel.dart';
@@ -51,6 +53,12 @@ class TicketCard extends ConsumerWidget {
       !ticket.isSample &&
       ticket.status == 'pending' &&
       ticket.endAt.isAfter(DateTime.now());
+
+  /// Directions are for a booking that is confirmed and still to come. Before
+  /// that the exact place is not shared, so a pending booking says so instead.
+  bool get _canDirections =>
+      ticket.isSample ||
+      (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
 
   /// A finished or cancelled booking that came from an event package can be
   /// booked again; a live one cannot (it is already booked).
@@ -181,16 +189,26 @@ class TicketCard extends ConsumerWidget {
                 onTap: () => showTopToast(context, l10n.comingSoonWallet),
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _Action(
-                icon: Icons.location_on_outlined,
-                label: l10n.ticketDirections,
-                onTap: () => _directions(context),
+            if (_canDirections) ...[
+              const SizedBox(width: 12),
+              Expanded(
+                child: _Action(
+                  icon: Icons.location_on_outlined,
+                  label: l10n.ticketDirections,
+                  onTap: () => _directions(context),
+                ),
               ),
-            ),
+            ],
           ],
         ),
+        if (_showPendingQr) ...[
+          const SizedBox(height: 8),
+          Text(
+            l10n.ticketDirectionsAfterConfirm,
+            textAlign: TextAlign.center,
+            style: AppTypography.body(size: 12, color: AppColors.textMuted),
+          ),
+        ],
         if (_canReview || _canRebook || _canRequestChange)
           const SizedBox(height: 12),
         if (_canReview)
@@ -225,15 +243,29 @@ class TicketCard extends ConsumerWidget {
   }
 
   Future<void> _directions(BuildContext context) async {
-    final query = [ticket.eventName, ticket.city]
-        .whereType<String>()
-        .where((p) => p.isNotEmpty)
-        .join(', ');
-    final uri = Uri.https('www.google.com', '/maps/search/', {
-      'api': '1',
-      'query': query,
-    });
-    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    // The phone's own maps app does the navigation. If it will not open the
+    // platform link, Google Maps in the browser is the fallback.
+    final uri = directionsUri(
+      ticket,
+      platform: defaultTargetPlatform,
+      isWeb: kIsWeb,
+    );
+    var opened = false;
+    try {
+      opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on Object {
+      opened = false;
+    }
+    if (!opened) {
+      try {
+        opened = await launchUrl(
+          googleDirectionsUri(ticket),
+          mode: LaunchMode.externalApplication,
+        );
+      } on Object {
+        opened = false;
+      }
+    }
     if (!opened && context.mounted) {
       showTopToast(context, context.l10n.comingSoonMap);
     }

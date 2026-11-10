@@ -2152,6 +2152,12 @@ abstract class AppLocalizations {
   /// **'Directions'**
   String get ticketDirections;
 
+  /// No description provided for @ticketDirectionsAfterConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions appear once this booking is confirmed.'**
+  String get ticketDirectionsAfterConfirm;
+
   /// No description provided for @ticketStatusConfirmed.
   ///
   /// In en, this message translates to:

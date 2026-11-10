@@ -1099,6 +1099,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketDirections => 'Directions';
 
   @override
+  String get ticketDirectionsAfterConfirm =>
+      'Directions appear once this booking is confirmed.';
+
+  @override
   String get ticketStatusConfirmed => 'Confirmed';
 
   @override
