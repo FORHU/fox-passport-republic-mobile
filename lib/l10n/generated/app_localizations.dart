@@ -6376,6 +6376,12 @@ abstract class AppLocalizations {
   /// **'Getting started'**
   String get gettingStartedTitle;
 
+  /// No description provided for @gettingStartedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String gettingStartedNext(String step);
+
   /// No description provided for @gettingStartedTour.
   ///
   /// In en, this message translates to:
@@ -6651,12 +6657,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+{xp} XP'**
   String homeNextNightXp(int xp);
-
-  /// No description provided for @homeNextNightCoins.
-  ///
-  /// In en, this message translates to:
-  /// **'+ Coins'**
-  String get homeNextNightCoins;
 
   /// No description provided for @foxerStatBookings.
   ///

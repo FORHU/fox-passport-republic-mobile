@@ -3515,6 +3515,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gettingStartedTitle => 'Getting started';
 
   @override
+  String gettingStartedNext(String step) {
+    return 'Next: $step';
+  }
+
+  @override
   String get gettingStartedTour => 'Take the tour';
 
   @override
@@ -3686,9 +3691,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeNextNightXp(int xp) {
     return '+$xp XP';
   }
-
-  @override
-  String get homeNextNightCoins => '+ Coins';
 
   @override
   String get foxerStatBookings => 'Bookings done';
