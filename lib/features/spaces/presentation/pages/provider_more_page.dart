@@ -42,7 +42,7 @@ class ProviderMorePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: SpaceAppBar(title: l10n.moreTitle),
+      appBar: SpaceAppBar(title: l10n.moreTitle, showSwitcher: true),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [

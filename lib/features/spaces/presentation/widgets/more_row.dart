@@ -11,6 +11,7 @@ class MoreRow extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.badge,
+    this.subtitle,
     this.compact = false,
     super.key,
   });
@@ -18,6 +19,9 @@ class MoreRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? badge;
+
+  /// A line under the title, such as the rank and level on the Passport row.
+  final Widget? subtitle;
   final bool compact;
   final VoidCallback onTap;
 
@@ -42,11 +46,18 @@ class MoreRow extends StatelessWidget {
             Icon(icon, size: compact ? 20 : 22, color: AppColors.textMuted),
             SizedBox(width: compact ? 10 : 12),
             Expanded(
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.display(size: compact ? 14 : 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.display(size: compact ? 14 : 15),
+                  ),
+                  if (subtitle != null) subtitle!,
+                ],
               ),
             ),
             if (badge != null)

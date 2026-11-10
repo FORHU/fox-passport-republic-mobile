@@ -4,7 +4,6 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet.dart';
-import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/overview_header.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -151,7 +150,7 @@ void main() {
     testWidgets('greets by first name and shows no role chip', (tester) async {
       await tester.pumpWidget(
         _app(
-          const OverviewGreeting(space: AppSpace.venue),
+          const OverviewGreeting(),
           roles: const ['venueFoxer', 'eventFoxer'],
           name: 'Ada Lovelace',
         ),
@@ -166,14 +165,13 @@ void main() {
     });
 
     testWidgets('has nothing to name when there is no name', (tester) async {
-      await tester
-          .pumpWidget(_app(const OverviewGreeting(space: AppSpace.venue)));
+      await tester.pumpWidget(_app(const OverviewGreeting()));
       await tester.pump();
 
       expect(find.text('Welcome back'), findsOneWidget);
     });
 
-    testWidgets('shows the rank and level of the space it belongs to', (
+    testWidgets('leaves rank, level and Coins to the top bar and More', (
       tester,
     ) async {
       const wallet = WalletSummary(
@@ -186,22 +184,22 @@ void main() {
       );
       await tester.pumpWidget(
         _app(
-          const OverviewGreeting(space: AppSpace.venue),
+          const OverviewGreeting(),
           name: 'Ada',
           wallet: wallet,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Veteran · Level 12'), findsOneWidget);
-      expect(find.text('1,240'), findsOneWidget);
+      expect(find.text('Veteran · Level 12'), findsNothing);
+      expect(find.text('1,240'), findsNothing);
     });
 
     testWidgets('shows nothing about progress when there is no wallet', (
       tester,
     ) async {
       await tester.pumpWidget(
-        _app(const OverviewGreeting(space: AppSpace.venue), name: 'Ada'),
+        _app(const OverviewGreeting(), name: 'Ada'),
       );
       await tester.pumpAndSettle();
 

@@ -122,7 +122,7 @@ class ProviderOverviewPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
-            OverviewGreeting(space: kind.space),
+            const OverviewGreeting(),
             const SizedBox(height: 4),
             tourTarget(
               'dash-actions',

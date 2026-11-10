@@ -47,7 +47,7 @@ class VenueMorePage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: SpaceAppBar(title: l10n.moreTitle),
+      appBar: SpaceAppBar(title: l10n.moreTitle, showSwitcher: true),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
@@ -102,15 +102,11 @@ class VenueMorePage extends ConsumerWidget {
                 compact: true,
                 onTap: () => context.push(RouteNames.spaceTeamVenues),
               ),
+              const LeaderboardMoreRow(space: AppSpace.venue, compact: true),
             ],
           ),
           MoreSectionLabel(l10n.moreSectionYou),
-          const MoreGrid(
-            children: [
-              PassportMoreRow(space: AppSpace.venue, compact: true),
-              LeaderboardMoreRow(space: AppSpace.venue, compact: true),
-            ],
-          ),
+          const PassportMoreRow(space: AppSpace.venue),
           MoreSectionLabel(l10n.moreSectionAccount),
           MoreRow(
             icon: Icons.swap_horiz_rounded,
