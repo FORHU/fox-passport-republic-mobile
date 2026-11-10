@@ -6100,6 +6100,18 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendarTitle;
 
+  /// No description provided for @ticketsViewList.
+  ///
+  /// In en, this message translates to:
+  /// **'List view'**
+  String get ticketsViewList;
+
+  /// No description provided for @ticketsViewCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar view'**
+  String get ticketsViewCalendar;
+
   /// No description provided for @calendarHint.
   ///
   /// In en, this message translates to:
