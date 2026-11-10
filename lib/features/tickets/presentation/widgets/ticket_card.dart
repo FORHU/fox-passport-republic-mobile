@@ -191,6 +191,8 @@ class TicketCard extends ConsumerWidget {
             ),
           ],
         ),
+        if (_canReview || _canRebook || _canRequestChange)
+          const SizedBox(height: 12),
         if (_canReview)
           TextButton.icon(
             onPressed: () => unawaited(_review(context, ref)),
