@@ -357,29 +357,35 @@ class _TabBar extends StatelessWidget {
         child: Row(
           children: [
             for (var i = 0; i < labels.length; i++)
+              // Equal side padding inside the InkWell keeps each label
+              // centred in its press highlight; the gap between tabs
+              // (10 + 10) is part of each tab's own padding.
               InkWell(
                 onTap: () => onSelect(i),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
-                  margin: const EdgeInsets.only(right: 20),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: i == selected
-                            ? AppColors.accent
-                            : Colors.transparent,
-                        width: 2,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: i == selected
+                              ? AppColors.accent
+                              : Colors.transparent,
+                          width: 2,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text(
-                    labels[i],
-                    style: AppTypography.body(
-                      size: 12 * context.fit,
-                      weight: FontWeight.w700,
-                      color: i == selected
-                          ? AppColors.accent
-                          : AppColors.textMuted,
+                    child: Text(
+                      labels[i],
+                      style: AppTypography.body(
+                        size: 12 * context.fit,
+                        weight: FontWeight.w700,
+                        color: i == selected
+                            ? AppColors.accent
+                            : AppColors.textMuted,
+                      ),
                     ),
                   ),
                 ),
