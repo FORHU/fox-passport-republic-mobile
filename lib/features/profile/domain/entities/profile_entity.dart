@@ -15,6 +15,7 @@ class ProfileEntity extends Equatable {
     this.isPrivate = false,
     this.bio,
     this.socialLinks = const {},
+    this.specialties = const [],
     this.joinedAt,
   });
 
@@ -33,6 +34,9 @@ class ProfileEntity extends Equatable {
 
   /// Links to their other accounts, by platform.
   final Map<SocialPlatform, String> socialLinks;
+
+  /// A Provider's specialties, as catalog slugs; empty for everyone else.
+  final List<String> specialties;
   final DateTime? joinedAt;
 
   @override
@@ -46,6 +50,7 @@ class ProfileEntity extends Equatable {
         isPrivate,
         bio,
         socialLinks,
+        specialties,
         joinedAt,
       ];
 }
