@@ -6,7 +6,6 @@ class AchievementTier extends Equatable {
   const AchievementTier({
     required this.tier,
     required this.target,
-    required this.xp,
     required this.coins,
     required this.isUnlocked,
     this.badgeName,
@@ -16,7 +15,6 @@ class AchievementTier extends Equatable {
       AchievementTier(
         tier: (json['tier'] as num?)?.toInt() ?? 1,
         target: (json['target'] as num?)?.toInt() ?? 0,
-        xp: (json['xp'] as num?)?.toInt() ?? 0,
         coins: (json['coins'] as num?)?.toInt() ?? 0,
         badgeName: _nonEmpty(json['badgeName']),
         isUnlocked: json['isUnlocked'] == true,
@@ -25,13 +23,12 @@ class AchievementTier extends Equatable {
   /// 1, 2 or 3.
   final int tier;
   final int target;
-  final int xp;
   final int coins;
   final String? badgeName;
   final bool isUnlocked;
 
   @override
-  List<Object?> get props => [tier, target, xp, coins, badgeName, isUnlocked];
+  List<Object?> get props => [tier, target, coins, badgeName, isUnlocked];
 }
 
 /// Where an achievement stands.

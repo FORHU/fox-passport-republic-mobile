@@ -3,28 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/passport/data/passport_repository.dart';
 import 'package:flutter_template/features/passport/domain/entities/foxer_passport.dart';
 import 'package:flutter_template/features/passport/presentation/pages/foxer_passport_page.dart';
-import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
-import 'package:flutter_template/features/rewards/domain/wallet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/foxers/foxer_score.dart';
 import 'package:flutter_template/shared/foxers/foxer_score_source.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _wallet = WalletSummary(
-  coins: 1240,
-  pendingCoins: 0,
-  totalEarnedCoins: 1240,
-  level: 12,
-  rank: 'Veteran',
-  history: [],
-);
-
 const _passport = FoxerPassport(
   path: 'venueFoxer',
-  level: 12,
-  currentXp: 300,
-  totalXp: 20000,
   perks: [],
   badges: [],
 );
@@ -61,9 +47,6 @@ Future<void> _show(
       overrides: [
         foxerPassportProvider('venueFoxer')
             .overrideWith((ref) async => _passport),
-        walletForPathProvider('venueFoxer')
-            .overrideWith((ref) async => _wallet),
-        walletProvider.overrideWith((ref) async => _wallet),
         myFoxerScoreProvider.overrideWith((ref) => score()),
       ],
       child: MaterialApp(
@@ -86,7 +69,7 @@ void main() {
     expect(find.text('82 / 100'), findsOneWidget);
     expect(find.textContaining('Only you see this score'), findsOneWidget);
     // The rest of the Passport is still there.
-    expect(find.text('Level 12'), findsOneWidget);
+    expect(find.text('Perks'), findsOneWidget);
   });
 
   testWidgets('the Passport still works when the score cannot be loaded',
@@ -94,7 +77,7 @@ void main() {
     await _show(tester, score: () async => throw Exception('offline'));
 
     expect(find.text('Foxer Score'), findsNothing);
-    expect(find.text('Level 12'), findsOneWidget);
+    expect(find.text('Perks'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

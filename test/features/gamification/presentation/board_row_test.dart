@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,121 +14,42 @@ Color? _colorOf(WidgetTester tester, String text) =>
     tester.widget<Text>(find.text(text)).style?.color;
 
 void main() {
-  group('rankNumberForName', () {
-    test('knows every rank on both ladders', () {
-      const citizen = [
-        'Newcomer',
-        'Wanderer',
-        'Explorer',
-        'Trailblazer',
-        'Voyager',
-        'Adventurer',
-        'Pioneer',
-        'Vanguard',
-        'Legend',
-      ];
-      const foxer = [
-        'Rookie',
-        'Regular',
-        'Pro',
-        'Veteran',
-        'Headliner',
-        'Maestro',
-        'Icon',
-        'Luminary',
-        'Legend',
-      ];
-      for (var i = 0; i < 9; i++) {
-        expect(rankNumberForName(citizen[i]), i + 1, reason: citizen[i]);
-        expect(rankNumberForName(foxer[i]), i + 1, reason: foxer[i]);
-      }
-    });
-
-    test('ignores case and spaces, and is null for a name it does not know',
-        () {
-      expect(rankNumberForName('  explorer '), 3);
-      expect(rankNumberForName('Grandmaster'), isNull);
-      expect(rankNumberForName(''), isNull);
-    });
-  });
-
-  test('rank colours go grey, green, cyan, magenta, with lime for Legend only',
-      () {
-    expect(rankColor(1), AppColors.rarityCommon);
-    expect(rankColor(2), AppColors.rarityCommon);
-    expect(rankColor(3), AppColors.rarityUncommon);
-    expect(rankColor(4), AppColors.rarityUncommon);
-    expect(rankColor(5), AppColors.rarityRare);
-    expect(rankColor(6), AppColors.rarityRare);
-    expect(rankColor(7), AppColors.rarityEpic);
-    expect(rankColor(8), AppColors.rarityEpic);
-    expect(rankColor(9), AppColors.rarityLegendary);
-    for (var r = 1; r <= 8; r++) {
-      expect(rankColor(r), isNot(AppColors.rarityLegendary));
-    }
-  });
-
   group('BoardRow', () {
-    testWidgets('shows the badge and the rank name in the rank colour',
-        (tester) async {
+    testWidgets('shows the name and what is at the end of the row', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const BoardRow(
             position: 1,
             name: 'Kai Santos',
-            rankName: 'Adventurer',
-            rank: 6,
             isMe: false,
-            trailing: Text('Lv 22'),
+            trailing: Text('4.8'),
           ),
         ),
       );
 
       expect(find.text('Kai Santos'), findsOneWidget);
-      expect(find.text('Lv 22'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate((w) => w is RankBadge && w.rank == 6),
-        findsOneWidget,
-      );
-      expect(_colorOf(tester, 'Adventurer'), AppColors.rarityRare);
+      expect(find.text('4.8'), findsOneWidget);
     });
 
-    testWidgets('without a known rank it shows the name only, in grey',
-        (tester) async {
-      await tester.pumpWidget(
-        _wrap(
-          const BoardRow(
-            position: 4,
-            name: 'Mika',
-            rankName: 'Grandmaster',
-            isMe: false,
-          ),
-        ),
-      );
-
-      expect(find.byType(RankBadge), findsNothing);
-      expect(_colorOf(tester, 'Grandmaster'), AppColors.textSecondary);
-    });
-
-    testWidgets('a Foxer row puts the role before the rank', (tester) async {
+    testWidgets('a Foxer row shows its role and no rank or level', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _wrap(
           const BoardRow(
             position: 1,
             name: 'The Glass Pavilion',
-            rankName: 'Icon',
-            rank: 7,
             rolePill: 'Venue',
             isMe: false,
           ),
         ),
       );
 
-      final pill = tester.getTopLeft(find.text('Venue')).dx;
-      final badge = tester.getTopLeft(find.byType(RankBadge)).dx;
-      final rank = tester.getTopLeft(find.text('Icon')).dx;
-      expect(pill, lessThan(badge));
-      expect(badge, lessThan(rank));
+      expect(find.text('Venue'), findsOneWidget);
+      expect(find.textContaining('Level'), findsNothing);
+      expect(find.textContaining('Lv'), findsNothing);
     });
 
     testWidgets('the caller reads "You · name" with the accent border',
@@ -140,8 +59,6 @@ void main() {
           const BoardRow(
             position: 48,
             name: 'Ian Visperas',
-            rankName: 'Explorer',
-            rank: 3,
             isMe: true,
           ),
         ),
@@ -167,8 +84,8 @@ void main() {
         _wrap(
           const Column(
             children: [
-              BoardRow(position: 3, name: 'A', rankName: 'Pro', isMe: false),
-              BoardRow(position: 4, name: 'B', rankName: 'Pro', isMe: false),
+              BoardRow(position: 3, name: 'A', isMe: false),
+              BoardRow(position: 4, name: 'B', isMe: false),
             ],
           ),
         ),

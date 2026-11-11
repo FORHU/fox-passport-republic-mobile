@@ -151,22 +151,11 @@ class CitizenExtraTab {
   final WidgetBuilder builder;
 }
 
-/// Level, XP and counts the caller knows better than the public profile does.
-/// The Passport has the real level curve and the full stamp and badge lists.
+/// Counts the caller knows better than the public profile does: the Passport
+/// has the full stamp and badge lists.
 class CitizenOverrides {
-  const CitizenOverrides({
-    required this.level,
-    required this.xp,
-    required this.progress,
-    required this.xpText,
-    required this.stamps,
-    required this.badges,
-  });
+  const CitizenOverrides({required this.stamps, required this.badges});
 
-  final int level;
-  final int xp;
-  final double progress;
-  final String xpText;
   final int stamps;
   final int badges;
 }
@@ -256,15 +245,14 @@ class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
         ),
         data: (loaded) {
           final o = widget.overrides;
-          final profile =
-              o == null ? loaded : loaded.copyWith(level: o.level, xp: o.xp);
+          final profile = loaded;
           final isMe = profile.id == me;
           final stampCount = o?.stamps ?? profile.stamps.length;
           final badgeCount = o?.badges ?? profile.badges.length;
           final tabs = <(String, WidgetBuilder)>[
             (
               '${l10n.citizenTabStamps} ($stampCount)',
-              (_) => _StampsTab(stamps: profile.stamps, showXp: isMe),
+              (_) => _StampsTab(stamps: profile.stamps),
             ),
             (
               '${l10n.citizenTabBadges} ($badgeCount)',
@@ -305,8 +293,6 @@ class _CitizenProfileViewState extends ConsumerState<CitizenProfileView> {
                 CitizenHero(
                   profile: profile,
                   isMe: isMe,
-                  progress: o?.progress,
-                  xpText: o?.xpText,
                   footer: widget.heroFooter,
                   onMessage: widget.onMessage == null
                       ? null
@@ -445,12 +431,9 @@ class _Card extends StatelessWidget {
 }
 
 class _StampsTab extends StatelessWidget {
-  const _StampsTab({required this.stamps, required this.showXp});
+  const _StampsTab({required this.stamps});
 
   final List<CitizenStamp> stamps;
-
-  /// Earned XP is private to the owner.
-  final bool showXp;
 
   @override
   Widget build(BuildContext context) {
@@ -522,8 +505,6 @@ class _StampsTab extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (showXp)
-                  CitizenChip(label: '+${s.xp} XP', color: AppColors.accent),
               ],
             ),
           ),

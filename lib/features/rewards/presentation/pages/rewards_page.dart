@@ -16,8 +16,8 @@ import 'package:intl/intl.dart';
 
 enum _Filter { all, discounts, perks }
 
-/// What Coins can buy: discount vouchers and perks, with what you can afford
-/// now, what is almost within reach, and what waits for a higher level.
+/// What Tokens can buy: discount vouchers and perks, with what you can afford
+/// now and what is almost within reach.
 class RewardsPage extends ConsumerStatefulWidget {
   const RewardsPage({super.key});
 
@@ -137,8 +137,7 @@ class _RewardCard extends ConsumerWidget {
     final format = NumberFormat.decimalPattern(
       Localizations.localeOf(context).toString(),
     );
-    final locked = !item.levelQualified;
-    final canRedeem = !locked && item.canAfford;
+    final canRedeem = item.canAfford;
     final toGo = (item.coinCost - balance).clamp(0, item.coinCost);
 
     return Container(
@@ -180,12 +179,7 @@ class _RewardCard extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 12),
-          if (locked)
-            _Note(
-              icon: Icons.lock_outline_rounded,
-              text: l10n.rewardsUnlocksAtLevel(item.minLevel),
-            )
-          else if (canRedeem)
+          if (canRedeem)
             SecondaryButton(
               label: l10n.rewardsRedeem,
               onPressed: () => showRedeemSheet(
@@ -216,32 +210,4 @@ class _RewardCard extends ConsumerWidget {
       ),
     );
   }
-}
-
-class _Note extends StatelessWidget {
-  const _Note({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceRaised,
-          borderRadius: AppRadius.brMd,
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 16, color: AppColors.textMuted),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                text,
-                style: AppTypography.body(size: 13, color: AppColors.textMuted),
-              ),
-            ),
-          ],
-        ),
-      );
 }

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/rank_info.dart';
-import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/citizens/citizen_profile.dart';
 import 'package:flutter_template/shared/citizens/citizen_repository.dart';
 import 'package:flutter_template/shared/citizens/citizen_widgets.dart';
 import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/follow/follow_button.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
-import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -24,8 +20,6 @@ class CitizenHero extends ConsumerWidget {
     required this.profile,
     required this.isMe,
     this.onMessage,
-    this.progress,
-    this.xpText,
     this.footer,
     super.key,
   });
@@ -34,14 +28,7 @@ class CitizenHero extends ConsumerWidget {
   final bool isMe;
   final VoidCallback? onMessage;
 
-  /// 0 to 1. Where the level curve is known (the Passport), it replaces the
-  /// profile's own estimate.
-  final double? progress;
-
-  /// The XP line to show, in place of the one worked out from the profile.
-  final String? xpText;
-
-  /// Shown under the level bar, on your own profile only.
+  /// Shown under the card's buttons, on your own profile only.
   final Widget? footer;
 
   @override
@@ -72,7 +59,6 @@ class CitizenHero extends ConsumerWidget {
             children: [
               CitizenAvatar(
                 name: profile.name,
-                level: profile.level,
                 imageUrl: profile.imageUrl,
                 partner: profile.isPartner,
               ),
@@ -118,31 +104,6 @@ class CitizenHero extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    // The rank badge, drawn from the logo, with the rank and
-                    // the level; everyone sees both, only the owner the XP.
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        children: [
-                          RankBadge.forLevel(profile.level, size: 34),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              l10n.rewardsRankLevel(
-                                citizenRankName(
-                                  rankNumberForLevel(profile.level),
-                                ),
-                                profile.level,
-                              ),
-                              style: AppTypography.body(
-                                size: 12 * context.fit,
-                                weight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -260,46 +221,11 @@ class CitizenHero extends ConsumerWidget {
                   ),
               ],
             ),
-          // Experience points are private: only the owner sees them. Others
-          // still see the level.
-          if (isMe) ...[
+          // Wallet, leaderboard and achievements rows: your own profile only.
+          if (isMe && footer != null) ...[
             const SizedBox(height: 16),
             const Divider(height: 1),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.citizenProgression,
-                    style: citizenTiny(context),
-                  ),
-                ),
-                Flexible(
-                  child: Text(
-                    xpText ??
-                        l10n.citizenXp(
-                          profile.xp,
-                          profile.nextLevelXp,
-                          (profile.progress * 100).round(),
-                        ),
-                    textAlign: TextAlign.end,
-                    maxLines: 2,
-                    style: citizenTiny(context, color: AppColors.accent),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: AppRadius.brPill,
-              child: LinearProgressIndicator(
-                value: progress ?? profile.progress,
-                minHeight: 6,
-                backgroundColor: AppColors.surfaceRaised,
-                color: AppColors.accent,
-              ),
-            ),
-            if (footer != null) footer!,
+            footer!,
           ],
         ],
       ),
@@ -398,13 +324,6 @@ class CitizenStats extends StatelessWidget {
 
     return Row(
       children: [
-        tile(
-          Icons.military_tech_outlined,
-          AppColors.accent,
-          l10n.citizenStatLevel,
-          'L${profile.level}',
-        ),
-        const SizedBox(width: 8),
         tile(
           Icons.verified_outlined,
           AppColors.warning,

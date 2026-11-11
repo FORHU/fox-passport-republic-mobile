@@ -3,13 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet.dart';
-import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/features/rewards/presentation/widgets/wallet_entry_title.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -124,24 +122,6 @@ class _BalanceCard extends StatelessWidget {
               ),
             ],
           ),
-          if (summary.hasRank) ...[
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                RankBadge.forLevel(summary.level),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    l10n.rewardsRankLevel(summary.rank, summary.level),
-                    style: AppTypography.display(
-                      size: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
           if (summary.pendingCoins > 0) ...[
             const SizedBox(height: 8),
             Text(

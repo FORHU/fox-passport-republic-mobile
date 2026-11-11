@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -33,19 +32,17 @@ String citizenRoleLabel(AppLocalizations l10n, String role) =>
             : role.replaceAll('Foxer', ' Foxer'))
         .toUpperCase();
 
-/// Their photo, or their initial, in a rounded square with a ring, and a
-/// "Level N" chip on the corner. Gold for a Partner Foxer.
+/// Their photo, or their initial, in a rounded square with a ring. Gold for a
+/// Partner Foxer.
 class CitizenAvatar extends StatelessWidget {
   const CitizenAvatar({
     required this.name,
-    required this.level,
     this.imageUrl,
     this.partner = false,
     super.key,
   });
 
   final String name;
-  final int level;
   final String? imageUrl;
   final bool partner;
 
@@ -92,33 +89,12 @@ class CitizenAvatar extends StatelessWidget {
                   ),
           ),
         ),
-        Positioned(
-          right: -6,
-          bottom: -6,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: partner ? AppColors.warning : AppColors.canvas,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: partner ? AppColors.warning : AppColors.accentTintBorder,
-              ),
-            ),
-            child: Text(
-              context.l10n.citizenLevelChip(level),
-              style: citizenTiny(
-                context,
-                color: partner ? AppColors.onAccent : AppColors.accent,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
 }
 
-/// A small tinted label: a role, a specialization or an XP amount.
+/// A small tinted label: a role or a specialization.
 class CitizenChip extends StatelessWidget {
   const CitizenChip({
     required this.label,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
-import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
@@ -38,10 +37,6 @@ class _EmptyBoards implements LeaderboardRepository {
     String? city,
   }) async =>
       FoxerBoard(role: role, tab: tab, rows: const []);
-
-  @override
-  Future<CitizenBoard> citizens(CitizenTab tab, {String? city}) async =>
-      CitizenBoard(tab: tab, season: '2026-11', rows: const []);
 }
 
 void main() {
@@ -91,13 +86,11 @@ void main() {
                 BoardRow(
                   position: 1,
                   name: 'Ana',
-                  rankName: 'Pro',
                   isMe: false,
                 ),
                 BoardRow(
                   position: 2,
                   name: 'Glass Pavilion',
-                  rankName: 'Icon',
                   squareAvatar: true,
                   isMe: false,
                 ),
@@ -132,7 +125,6 @@ void main() {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => const LeaderboardPage(
-                        initialSide: LeaderboardSide.citizens,
                         initialRole: LeaderboardRole.venue,
                       ),
                     ),

@@ -2194,24 +2194,6 @@ abstract class AppLocalizations {
   /// **'Republic of Foxers'**
   String get passportRepublic;
 
-  /// No description provided for @passportCitizenLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Citizen · Level {level}'**
-  String passportCitizenLevel(int level);
-
-  /// No description provided for @passportXp.
-  ///
-  /// In en, this message translates to:
-  /// **'{xp} XP'**
-  String passportXp(int xp);
-
-  /// No description provided for @passportNextLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Level {level} at {xp}'**
-  String passportNextLevel(int level, int xp);
-
   /// No description provided for @passportStamps.
   ///
   /// In en, this message translates to:
@@ -6445,8 +6427,8 @@ abstract class AppLocalizations {
   /// No description provided for @gettingStartedReward.
   ///
   /// In en, this message translates to:
-  /// **'+{xp} XP · {coins} Coins'**
-  String gettingStartedReward(int xp, int coins);
+  /// **'{coins} Tokens'**
+  String gettingStartedReward(int coins);
 
   /// No description provided for @rewardMomentCheckedIn.
   ///
@@ -6484,34 +6466,16 @@ abstract class AppLocalizations {
   /// **'You earned rewards'**
   String get rewardMomentGeneric;
 
-  /// No description provided for @rewardMomentXp.
-  ///
-  /// In en, this message translates to:
-  /// **'XP'**
-  String get rewardMomentXp;
-
   /// No description provided for @rewardMomentCoins.
   ///
   /// In en, this message translates to:
-  /// **'Coins'**
+  /// **'Tokens'**
   String get rewardMomentCoins;
-
-  /// No description provided for @rewardMomentLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Level {level}'**
-  String rewardMomentLevel(int level);
-
-  /// No description provided for @rewardMomentToNext.
-  ///
-  /// In en, this message translates to:
-  /// **'{xp} XP to Level {level}'**
-  String rewardMomentToNext(String xp, int level);
 
   /// No description provided for @rewardMomentNote.
   ///
   /// In en, this message translates to:
-  /// **'XP builds your level. Coins buy discounts.'**
+  /// **'Tokens buy discounts.'**
   String get rewardMomentNote;
 
   /// No description provided for @rewardMomentLearnMore.
@@ -6531,48 +6495,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get rewardMomentDone;
-
-  /// No description provided for @rankUpEyebrow.
-  ///
-  /// In en, this message translates to:
-  /// **'New rank'**
-  String get rankUpEyebrow;
-
-  /// No description provided for @rankUpLevelRank.
-  ///
-  /// In en, this message translates to:
-  /// **'Level {level} · Rank {rank} of {total}'**
-  String rankUpLevelRank(int level, int rank, int total);
-
-  /// No description provided for @rankUpCoins.
-  ///
-  /// In en, this message translates to:
-  /// **'+{coins} Coins'**
-  String rankUpCoins(String coins);
-
-  /// No description provided for @rankUpNewBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'New badge unlocked'**
-  String get rankUpNewBadge;
-
-  /// No description provided for @rankUpNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next rank: {name}'**
-  String rankUpNext(String name);
-
-  /// No description provided for @rankUpNextLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Level {level}'**
-  String rankUpNextLevel(int level);
-
-  /// No description provided for @rankUpSeeBadges.
-  ///
-  /// In en, this message translates to:
-  /// **'See my badges'**
-  String get rankUpSeeBadges;
 
   /// No description provided for @achievementsTitle.
   ///
@@ -6634,16 +6556,10 @@ abstract class AppLocalizations {
   /// **'{percent}%'**
   String achievementsPercent(int percent);
 
-  /// No description provided for @achievementsRewardXp.
-  ///
-  /// In en, this message translates to:
-  /// **'+{xp} XP'**
-  String achievementsRewardXp(int xp);
-
   /// No description provided for @achievementsRewardCoins.
   ///
   /// In en, this message translates to:
-  /// **'+{coins} Coins'**
+  /// **'+{coins} Tokens'**
   String achievementsRewardCoins(int coins);
 
   /// No description provided for @achievementsRewardBadge.
@@ -6687,12 +6603,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All three tiers done'**
   String get achievementsComplete;
-
-  /// No description provided for @homeNextNightXp.
-  ///
-  /// In en, this message translates to:
-  /// **'+{xp} XP'**
-  String homeNextNightXp(int xp);
 
   /// No description provided for @foxerStatBookings.
   ///
@@ -7780,12 +7690,6 @@ abstract class AppLocalizations {
   /// **'Partner Foxer'**
   String get citizenPartner;
 
-  /// No description provided for @citizenLevelChip.
-  ///
-  /// In en, this message translates to:
-  /// **'Level {level}'**
-  String citizenLevelChip(int level);
-
   /// No description provided for @citizenSince.
   ///
   /// In en, this message translates to:
@@ -7803,24 +7707,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Following'**
   String get citizenFollowing;
-
-  /// No description provided for @citizenProgression.
-  ///
-  /// In en, this message translates to:
-  /// **'Republic citizenship progression'**
-  String get citizenProgression;
-
-  /// No description provided for @citizenXp.
-  ///
-  /// In en, this message translates to:
-  /// **'{xp} / {next} XP ({percent}%)'**
-  String citizenXp(int xp, int next, int percent);
-
-  /// No description provided for @citizenStatLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Level'**
-  String get citizenStatLevel;
 
   /// No description provided for @citizenStatStamps.
   ///
@@ -7885,7 +7771,7 @@ abstract class AppLocalizations {
   /// No description provided for @citizenNoBadgesBody.
   ///
   /// In en, this message translates to:
-  /// **'Badges come from exploring venues, posting in the community and climbing levels.'**
+  /// **'Badges come from exploring venues and posting in the community.'**
   String get citizenNoBadgesBody;
 
   /// No description provided for @citizenNoPosts.
@@ -9076,12 +8962,6 @@ abstract class AppLocalizations {
   /// **'On the team'**
   String get teamOnTeamAlready;
 
-  /// No description provided for @teamLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Lv {level}'**
-  String teamLevel(int level);
-
   /// No description provided for @teamOnTheTeam.
   ///
   /// In en, this message translates to:
@@ -10249,7 +10129,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourCitizenRepublicBody.
   ///
   /// In en, this message translates to:
-  /// **'Read and post what\'s happening. Posting earns XP.'**
+  /// **'Read and post what\'s happening.'**
   String get tourCitizenRepublicBody;
 
   /// No description provided for @tourCitizenBookingsTitle.
@@ -10285,7 +10165,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourCitizenPassportBody.
   ///
   /// In en, this message translates to:
-  /// **'Your level, stamps and badges. Attend an event to earn your first stamp.'**
+  /// **'Your stamps and badges. Attend an event to earn your first stamp.'**
   String get tourCitizenPassportBody;
 
   /// No description provided for @settingsTakeTour.
@@ -10495,7 +10375,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHowItWorks.
   ///
   /// In en, this message translates to:
-  /// **'How XP and Coins work'**
+  /// **'How Tokens work'**
   String get settingsHowItWorks;
 
   /// No description provided for @howItWorksTitle.
@@ -10507,31 +10387,19 @@ abstract class AppLocalizations {
   /// No description provided for @howItWorksIntro.
   ///
   /// In en, this message translates to:
-  /// **'Two numbers grow as you use FoxPassport. Here is what each one does.'**
+  /// **'Tokens are what you earn for using FoxPassport. Here is how they work.'**
   String get howItWorksIntro;
-
-  /// No description provided for @howItWorksXpTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'XP is your progress'**
-  String get howItWorksXpTitle;
-
-  /// No description provided for @howItWorksXpBody.
-  ///
-  /// In en, this message translates to:
-  /// **'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.'**
-  String get howItWorksXpBody;
 
   /// No description provided for @howItWorksCoinsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Coins are your wallet'**
+  /// **'Tokens are your wallet'**
   String get howItWorksCoinsTitle;
 
   /// No description provided for @howItWorksCoinsBody.
   ///
   /// In en, this message translates to:
-  /// **'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.'**
+  /// **'You earn them from the events you attend and the reviews you leave. Spend them on booking discounts: 5 Tokens is ₱1 off. Tokens are never cash, and they never expire.'**
   String get howItWorksCoinsBody;
 
   /// No description provided for @howItWorksEarnTitle.
@@ -10543,7 +10411,7 @@ abstract class AppLocalizations {
   /// No description provided for @howItWorksEarnBody.
   ///
   /// In en, this message translates to:
-  /// **'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.'**
+  /// **'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post.'**
   String get howItWorksEarnBody;
 
   /// No description provided for @howItWorksSpendTitle.
@@ -10573,7 +10441,7 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsCoins.
   ///
   /// In en, this message translates to:
-  /// **'Coins'**
+  /// **'Tokens'**
   String get rewardsCoins;
 
   /// No description provided for @rewardsBalanceLabel.
@@ -10591,7 +10459,7 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsPendingHint.
   ///
   /// In en, this message translates to:
-  /// **'Pending Coins can be spent once the booking is safe from a refund.'**
+  /// **'Pending Tokens can be spent once the booking is safe from a refund.'**
   String get rewardsPendingHint;
 
   /// No description provided for @rewardsRedeemRewards.
@@ -10609,13 +10477,13 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No Coins yet'**
+  /// **'No Tokens yet'**
   String get rewardsEmptyTitle;
 
   /// No description provided for @rewardsEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Attend an event or book one and your Coins show up here. You can spend them on discounts.'**
+  /// **'Attend an event or book one and your Tokens show up here. You can spend them on discounts.'**
   String get rewardsEmptyBody;
 
   /// No description provided for @rewardsFindEvent.
@@ -10663,14 +10531,8 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsToGo.
   ///
   /// In en, this message translates to:
-  /// **'{count} Coins to go'**
+  /// **'{count} Tokens to go'**
   String rewardsToGo(String count);
-
-  /// No description provided for @rewardsUnlocksAtLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlocks at Level {level}'**
-  String rewardsUnlocksAtLevel(int level);
 
   /// No description provided for @rewardsOffPhp.
   ///
@@ -10711,7 +10573,7 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsRedeemFor.
   ///
   /// In en, this message translates to:
-  /// **'Redeem for {cost} Coins'**
+  /// **'Redeem for {cost} Tokens'**
   String rewardsRedeemFor(String cost);
 
   /// No description provided for @rewardsCancel.
@@ -10771,7 +10633,7 @@ abstract class AppLocalizations {
   /// No description provided for @rewardsLifeRelease.
   ///
   /// In en, this message translates to:
-  /// **'Coins released'**
+  /// **'Tokens released'**
   String get rewardsLifeRelease;
 
   /// No description provided for @rewardsLifeRedemption.
@@ -10780,23 +10642,17 @@ abstract class AppLocalizations {
   /// **'Redeemed a reward'**
   String get rewardsLifeRedemption;
 
-  /// No description provided for @rewardsLifeExpiry.
-  ///
-  /// In en, this message translates to:
-  /// **'Coins expired'**
-  String get rewardsLifeExpiry;
-
   /// No description provided for @rewardsLifeReversal.
   ///
   /// In en, this message translates to:
-  /// **'Coins reversed'**
+  /// **'Tokens reversed'**
   String get rewardsLifeReversal;
 
-  /// No description provided for @rewardsRankLevel.
+  /// No description provided for @rewardsLifeVoucherReturn.
   ///
   /// In en, this message translates to:
-  /// **'{rank} · Level {level}'**
-  String rewardsRankLevel(String rank, int level);
+  /// **'Voucher expired, Tokens returned'**
+  String get rewardsLifeVoucherReturn;
 
   /// No description provided for @foxerPassportPerks.
   ///
@@ -10807,7 +10663,7 @@ abstract class AppLocalizations {
   /// No description provided for @foxerPassportNoPerks.
   ///
   /// In en, this message translates to:
-  /// **'Perks unlock as you level up.'**
+  /// **'No perks yet.'**
   String get foxerPassportNoPerks;
 
   /// No description provided for @foxerPassportNoBadges.
@@ -10815,12 +10671,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Badges you earn in this role show up here.'**
   String get foxerPassportNoBadges;
-
-  /// No description provided for @foxerPassportXpToNext.
-  ///
-  /// In en, this message translates to:
-  /// **'{xp} XP to level {level}'**
-  String foxerPassportXpToNext(String xp, int level);
 
   /// No description provided for @leaderboardTitle.
   ///
@@ -10893,60 +10743,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You'**
   String get leaderboardYou;
-
-  /// No description provided for @leaderboardRowSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{role} · {rank}'**
-  String leaderboardRowSubtitle(String role, String rank);
-
-  /// No description provided for @leaderboardSideCitizens.
-  ///
-  /// In en, this message translates to:
-  /// **'Citizens'**
-  String get leaderboardSideCitizens;
-
-  /// No description provided for @leaderboardSideFoxers.
-  ///
-  /// In en, this message translates to:
-  /// **'Foxers'**
-  String get leaderboardSideFoxers;
-
-  /// No description provided for @leaderboardTabMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'This month'**
-  String get leaderboardTabMonth;
-
-  /// No description provided for @leaderboardTabAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All time'**
-  String get leaderboardTabAll;
-
-  /// No description provided for @leaderboardTabCity.
-  ///
-  /// In en, this message translates to:
-  /// **'My city'**
-  String get leaderboardTabCity;
-
-  /// No description provided for @leaderboardNoCity.
-  ///
-  /// In en, this message translates to:
-  /// **'Add your city to your profile to see your local board.'**
-  String get leaderboardNoCity;
-
-  /// No description provided for @leaderboardEditProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit profile'**
-  String get leaderboardEditProfile;
-
-  /// No description provided for @leaderboardLevelShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Lv {level}'**
-  String leaderboardLevelShort(int level);
 
   /// No description provided for @leaderboardYouName.
   ///

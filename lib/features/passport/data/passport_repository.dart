@@ -21,18 +21,6 @@ class PassportRepository {
       throw const FormatException('Passport response is missing data');
     }
 
-    final paths = [
-      for (final p in (data['paths'] as List? ?? const []))
-        if (p is Map) p.cast<String, dynamic>(),
-    ];
-    final totalXp = paths.fold<int>(
-      0,
-      (best, p) {
-        final xp = (p['totalXP'] as num?)?.toInt() ?? 0;
-        return xp > best ? xp : best;
-      },
-    );
-
     final stamps = [
       for (final s in (data['stamps'] as List? ?? const []))
         if (s is Map) _stamp(s.cast<String, dynamic>()),
@@ -51,32 +39,22 @@ class PassportRepository {
         if (!earned.containsKey('${b['id']}')) _badge(b, earned: false),
     ];
 
-    if (totalXp == 0 && stamps.isEmpty && earned.isEmpty) {
+    if (stamps.isEmpty && earned.isEmpty) {
       if (AppConfig.instance.useMock) return PassportSummary.sample();
     }
-    return PassportSummary.fromTotalXp(
-      totalXp: totalXp,
+    return PassportSummary(
       stamps: stamps,
       badges: badges,
     );
   }
 
-  /// A Foxer's passport for one role: the level and XP of [path] as the
-  /// server holds them, the perks on the account, and the badges that belong
-  /// to this role or to none. A Foxer with no XP on the path yet is level 1.
+  /// A Foxer.s passport for one role: the perks on the account, and the badges
+  /// that belong to this role or to none.
   Future<FoxerPassport> loadForPath(String path) async {
     final body = await _api.get(ApiEndpoints.passportMe);
     final data = _data(body);
     if (data == null) {
       throw const FormatException('Passport response is missing data');
-    }
-
-    Map<String, dynamic>? row;
-    for (final p in (data['paths'] as List? ?? const [])) {
-      if (p is Map && p['path'] == path) {
-        row = p.cast<String, dynamic>();
-        break;
-      }
     }
 
     final earned = <String, Map<String, dynamic>>{
@@ -92,9 +70,6 @@ class PassportRepository {
 
     return FoxerPassport(
       path: path,
-      level: (row?['level'] as num?)?.toInt() ?? 1,
-      currentXp: (row?['currentXP'] as num?)?.toInt() ?? 0,
-      totalXp: (row?['totalXP'] as num?)?.toInt() ?? 0,
       perks: [
         for (final perk in (data['perks'] as List? ?? const []))
           if (perk is String) perk,

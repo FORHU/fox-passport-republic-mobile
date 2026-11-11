@@ -889,8 +889,8 @@ void main() {
     expect(find.textContaining('· Davao City'), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right_rounded), findsWidgets);
     expect(find.text('3'), findsOneWidget);
-    // What going will pay.
-    expect(find.text('+100 XP'), findsOneWidget);
+    // No XP and no earn tag: what going pays is set by an admin.
+    expect(find.textContaining('XP'), findsNothing);
     // No Coins amount is known up front, so no empty "+ Coins" chip.
     expect(find.text('+ Coins'), findsNothing);
   });
@@ -935,7 +935,7 @@ void main() {
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
       // The list itself stays closed until it is tapped.
       expect(find.text('Verify your ID'), findsNothing);
-      expect(find.text('+30 XP · 10 Coins'), findsNothing);
+      expect(find.text('10 Tokens'), findsNothing);
     });
 
     testWidgets('keeps the search and the next night above the card',
@@ -968,10 +968,10 @@ void main() {
       expect(find.text('Complete your profile'), findsOneWidget);
       expect(find.text('Verify your ID'), findsOneWidget);
       expect(find.text('Make your first booking'), findsOneWidget);
-      expect(find.text('+30 XP · 10 Coins'), findsOneWidget);
-      expect(find.text('+100 XP · 40 Coins'), findsOneWidget);
+      expect(find.text('10 Tokens'), findsOneWidget);
+      expect(find.text('40 Tokens'), findsOneWidget);
       // The tour is done, so its reward is no longer offered.
-      expect(find.text('+50 XP · 20 Coins'), findsNothing);
+      expect(find.text('20 Tokens'), findsNothing);
     });
 
     testWidgets('is absent until the server answers, and when it cannot',

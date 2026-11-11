@@ -15,7 +15,6 @@ import 'package:flutter_template/features/event/presentation/pages/event_detail_
 import 'package:flutter_template/features/event/presentation/pages/scheduled_event_detail_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile_page.dart';
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
-import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
@@ -437,10 +436,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.leaderboard,
         builder: (context, state) => LeaderboardPage(
-          initialSide: LeaderboardSide.fromApi(
-                state.uri.queryParameters['side'],
-              ) ??
-              LeaderboardSide.foxers,
           initialRole:
               LeaderboardRole.fromRoute(state.uri.queryParameters['role']) ??
                   LeaderboardRole.event,
@@ -557,8 +552,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.passport,
                 // Your Passport is your profile as others see it, with your
-                // Passport level and XP, and your match requests and the
-                // way to earn a role as two more tabs.
+                // match requests and the way to earn a role as two more
+                // tabs.
                 builder: (context, state) => PassportPage(
                   bodyBuilder: (context, summary) => Consumer(
                     builder: (context, ref, _) {
@@ -582,10 +577,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         overrides: summary == null
                             ? null
                             : CitizenOverrides(
-                                level: summary.level,
-                                xp: summary.totalXp,
-                                progress: summary.progress,
-                                xpText: passportXpText(l10n, summary),
                                 stamps: summary.stamps.length,
                                 badges: summary.badges
                                     .where((b) => b.earned)

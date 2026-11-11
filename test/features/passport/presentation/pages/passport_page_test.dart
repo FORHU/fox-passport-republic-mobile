@@ -53,10 +53,6 @@ Widget _profile(BuildContext context, PassportSummary? summary) =>
       overrides: summary == null
           ? null
           : CitizenOverrides(
-              level: summary.level,
-              xp: summary.totalXp,
-              progress: summary.progress,
-              xpText: passportXpText(AppLocalizations.of(context)!, summary),
               stamps: summary.stamps.length,
               badges: summary.badges.where((b) => b.earned).length,
             ),
@@ -136,11 +132,11 @@ void main() {
     await _open(tester);
 
     expect(find.text('Passport'), findsOneWidget);
-    // The card others see, with your Passport level and XP.
+    // The card others see, with no level or XP.
     expect(find.text('Fox Partner'), findsOneWidget);
     expect(find.text('@fox_partner'), findsOneWidget);
-    expect(find.text('Level 1'), findsOneWidget);
-    expect(find.text('15 XP · Level 2 at 50'), findsOneWidget);
+    expect(find.textContaining('Level'), findsNothing);
+    expect(find.textContaining('XP'), findsNothing);
     expect(find.text('Edit profile'), findsOneWidget);
     // The profile's tabs, with the counts from your Passport.
     expect(find.text('Stamps (2)'), findsOneWidget);
@@ -183,54 +179,5 @@ void main() {
     await tester.drag(find.byType(ListView).first, const Offset(0, -2000));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-  });
-
-  group('PassportSummary', () {
-    test('follows the API level curve', () {
-      expect(PassportSummary.xpRequiredForLevel(0), 0);
-      expect(PassportSummary.xpRequiredForLevel(1), 0);
-      // The table in requirements/xp-and-coins.md, section 4.1; the API's
-      // tests pin the same numbers.
-      const table = {
-        2: 250,
-        3: 530,
-        5: 1195,
-        10: 3694,
-        15: 8098,
-        20: 15860,
-        30: 48514,
-        40: 86464,
-        50: 124414,
-      };
-      table.forEach((level, xp) {
-        expect(
-          PassportSummary.xpRequiredForLevel(level),
-          xp,
-          reason: 'level $level',
-        );
-      });
-    });
-
-    test('every level from 25 on costs the same', () {
-      int cost(int level) =>
-          PassportSummary.xpRequiredForLevel(level + 1) -
-          PassportSummary.xpRequiredForLevel(level);
-
-      expect(cost(24), lessThan(cost(25)));
-      expect(cost(25), cost(26));
-      expect(cost(26), cost(60));
-    });
-
-    test('works out level and progress from total XP', () {
-      final s = PassportSummary.fromTotalXp(
-        totalXp: 390,
-        stamps: const [],
-        badges: const [],
-      );
-      expect(s.level, 2);
-      expect(s.levelStartXp, 250);
-      expect(s.nextLevelXp, 530);
-      expect(s.progress, closeTo(0.5, 0.01));
-    });
   });
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/reward_moment/reward_moment.dart';
 import 'package:flutter_template/shared/widgets/buttons.dart';
@@ -13,13 +12,12 @@ import 'package:intl/intl.dart';
 /// What the person chose on the reward sheet.
 enum RewardSheetChoice { viewPassport, learnMore }
 
-/// The sheet shown after XP and Coins arrive: what they were for, how much,
-/// and how far the level has come. Pops with [RewardSheetChoice] when a button
+/// The sheet shown after Tokens arrive: what they were for and how much. Pops
+/// with [RewardSheetChoice] when a button
 /// other than Done is pressed, so the caller can navigate once it has closed.
 Future<RewardSheetChoice?> showRewardSheet(
   BuildContext context, {
   required RewardMoment reward,
-  PassportSummary? passport,
   String? eventName,
 }) =>
     showModalBottomSheet<RewardSheetChoice>(
@@ -31,7 +29,6 @@ Future<RewardSheetChoice?> showRewardSheet(
       ),
       builder: (_) => RewardSheet(
         reward: reward,
-        passport: passport,
         eventName: eventName,
       ),
     );
@@ -53,7 +50,6 @@ String rewardMomentTitle(
 class RewardSheet extends StatelessWidget {
   const RewardSheet({
     required this.reward,
-    this.passport,
     this.eventName,
     super.key,
   });
@@ -63,9 +59,6 @@ class RewardSheet extends StatelessWidget {
   /// The event it was for, when it could be found; the title is then "You
   /// attended Rooftop Sessions", and the new stamp is named.
   final String? eventName;
-
-  /// For the level bar; the bar is left out when it could not be loaded.
-  final PassportSummary? passport;
 
   @override
   Widget build(BuildContext context) {
@@ -117,34 +110,13 @@ class RewardSheet extends StatelessWidget {
               style: AppTypography.display(size: 24),
             ),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                if (reward.xp > 0)
-                  Expanded(
-                    child: _Amount(
-                      icon: Icons.bolt_rounded,
-                      label: l10n.rewardMomentXp,
-                      value: '+${format.format(reward.xp)}',
-                      color: AppColors.violet,
-                    ),
-                  ),
-                if (reward.xp > 0 && reward.coins > 0)
-                  const SizedBox(width: 12),
-                if (reward.coins > 0)
-                  Expanded(
-                    child: _Amount(
-                      icon: coinsIcon,
-                      label: l10n.rewardMomentCoins,
-                      value: '+${format.format(reward.coins)}',
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-              ],
-            ),
-            if (passport != null) ...[
-              const SizedBox(height: 20),
-              _LevelBar(passport: passport!, format: format),
-            ],
+            if (reward.coins > 0)
+              _Amount(
+                icon: coinsIcon,
+                label: l10n.rewardMomentCoins,
+                value: '+${format.format(reward.coins)}',
+                color: AppColors.textSecondary,
+              ),
             // Attending is what earns a stamp, in the same step.
             if (attended && eventName != null) ...[
               const SizedBox(height: 14),
@@ -247,7 +219,7 @@ class _StampRow extends StatelessWidget {
   }
 }
 
-/// "+100 XP" or "+40 Coins" in a tile.
+/// "+40 Tokens" in a tile.
 class _Amount extends StatelessWidget {
   const _Amount({
     required this.icon,
@@ -295,57 +267,6 @@ class _Amount extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// "Level 5" and the XP left to the next, over a bar in the XP colour.
-class _LevelBar extends StatelessWidget {
-  const _LevelBar({required this.passport, required this.format});
-
-  final PassportSummary passport;
-  final NumberFormat format;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final span = passport.nextLevelXp - passport.levelStartXp;
-    final into = passport.totalXp - passport.levelStartXp;
-    final progress = span <= 0 ? 1.0 : (into / span).clamp(0.0, 1.0);
-    final toNext = (passport.nextLevelXp - passport.totalXp).clamp(0, 1 << 30);
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              l10n.rewardMomentLevel(passport.level),
-              style: AppTypography.display(size: 14),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                l10n.rewardMomentToNext(
-                  format.format(toNext),
-                  passport.level + 1,
-                ),
-                textAlign: TextAlign.end,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.body(size: 12, color: AppColors.textMuted),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: AppRadius.brPill,
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 8,
-            backgroundColor: AppColors.surfaceRaised,
-            valueColor: const AlwaysStoppedAnimation(AppColors.violet),
-          ),
-        ),
-      ],
     );
   }
 }

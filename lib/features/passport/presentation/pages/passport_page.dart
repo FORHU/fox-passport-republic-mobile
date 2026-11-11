@@ -5,7 +5,6 @@ import 'package:flutter_template/features/passport/data/passport_repository.dart
 import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/match_request_card.dart';
-import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -17,7 +16,7 @@ import 'package:go_router/go_router.dart';
 /// things only you have: the space switcher and Settings (Saved posts is a
 /// row there). The profile itself is passed in by the route, so this feature
 /// does not reach into Profile. It is given your [PassportSummary] once that
-/// has loaded, for your real level and XP.
+/// has loaded.
 class PassportPage extends ConsumerWidget {
   const PassportPage({required this.bodyBuilder, super.key});
 
@@ -67,12 +66,6 @@ class PassportPage extends ConsumerWidget {
     );
   }
 }
-
-/// Your XP and what the next level takes, in one line: `4530 XP · Level 5 at
-/// 4993`.
-String passportXpText(AppLocalizations l10n, PassportSummary summary) =>
-    '${l10n.passportXp(summary.totalXp)} · '
-    '${l10n.passportNextLevel(summary.level + 1, summary.nextLevelXp)}';
 
 /// The people you have asked to match with, and where each stands. A tab on
 /// your own profile.

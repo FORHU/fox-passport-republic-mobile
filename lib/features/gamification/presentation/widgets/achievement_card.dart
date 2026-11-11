@@ -128,7 +128,7 @@ class _TierPip extends StatelessWidget {
   }
 }
 
-/// What the next tier pays: XP, Coins and a badge, each when it has one.
+/// What the next tier pays: Tokens and a badge, each when it has one.
 class _Rewards extends StatelessWidget {
   const _Rewards({required this.tier, required this.l10n});
 
@@ -141,11 +141,6 @@ class _Rewards extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        if (tier.xp > 0)
-          _Reward(
-            label: l10n.achievementsRewardXp(tier.xp),
-            color: AppColors.violet,
-          ),
         if (tier.coins > 0)
           _Reward(
             label: l10n.achievementsRewardCoins(tier.coins),

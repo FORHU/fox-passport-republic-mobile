@@ -55,7 +55,7 @@ Future<void> _pump(
 
 void main() {
   testWidgets(
-    'ProfilePage shows your profile as others see it, with your XP',
+    'ProfilePage shows your profile as others see it, with no XP',
     (tester) async {
       final repository = MockProfileRepository();
       when(repository.getProfile).thenAnswer(
@@ -75,11 +75,6 @@ void main() {
           'id': '1',
           'name': 'Ada Lovelace',
           'bio': 'Building great things with Flutter.',
-          'passport': {
-            'paths': [
-              {'path': 'user', 'level': 2, 'currentXP': 100},
-            ],
-          },
         })!,
       );
 
@@ -88,8 +83,8 @@ void main() {
         find.text('Building great things with Flutter.'),
         findsOneWidget,
       );
-      // Your own XP, which others do not see.
-      expect(find.text('100 / 400 XP (25%)'), findsOneWidget);
+      expect(find.textContaining('XP'), findsNothing);
+      expect(find.textContaining('Level'), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
