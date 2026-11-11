@@ -42,6 +42,7 @@ class Post extends Equatable {
     this.likesCount = 0,
     this.commentsCount = 0,
     this.myReaction,
+    this.reactionCounts = const [],
     this.edited = false,
     this.isSavedByMe = false,
     this.type = 'citizen_experience',
@@ -68,6 +69,7 @@ class Post extends Equatable {
         // Older rows only say that it was liked.
         myReaction: ReactionType.tryParse(json['myReaction']) ??
             (json['isLikedByMe'] == true ? ReactionType.like : null),
+        reactionCounts: ReactionCount.parseList(json['reactionCounts']),
         edited: json['editedAt'] != null,
         isSavedByMe: json['isSavedByMe'] == true,
         type: _text(json['type']) ?? 'citizen_experience',
@@ -89,6 +91,18 @@ class Post extends Equatable {
   final int commentsCount;
   final ReactionType? myReaction;
   bool get isLikedByMe => myReaction != null;
+
+  /// How many of each reaction the post has, most chosen first. Empty when
+  /// it has none, or when the server didn't say.
+  final List<ReactionCount> reactionCounts;
+
+  /// The reactions to show beside the total: the three most chosen, or the
+  /// viewer's own when the counts are unknown.
+  List<ReactionType> get topReactions {
+    final chosen = reactionCounts.where((c) => c.count > 0);
+    if (chosen.isEmpty) return [if (myReaction != null) myReaction!];
+    return [for (final c in chosen.take(3)) c.type];
+  }
 
   /// The first video the post carries, or null.
   String? get videoUrl => mediaUrls.where(isVideoUrl).firstOrNull;
@@ -127,6 +141,7 @@ class Post extends Equatable {
     int? commentsCount,
     ReactionType? myReaction,
     bool clearReaction = false,
+    List<ReactionCount>? reactionCounts,
     bool? isSavedByMe,
     bool? edited,
     PostPoll? poll,
@@ -141,6 +156,7 @@ class Post extends Equatable {
         likesCount: likesCount ?? this.likesCount,
         commentsCount: commentsCount ?? this.commentsCount,
         myReaction: clearReaction ? null : myReaction ?? this.myReaction,
+        reactionCounts: reactionCounts ?? this.reactionCounts,
         edited: edited ?? this.edited,
         isSavedByMe: isSavedByMe ?? this.isSavedByMe,
         type: type,
@@ -163,6 +179,7 @@ class Post extends Equatable {
         likesCount,
         commentsCount,
         myReaction,
+        reactionCounts,
         edited,
         isSavedByMe,
         type,

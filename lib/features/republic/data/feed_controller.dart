@@ -161,6 +161,11 @@ class FeedController extends AsyncNotifier<FeedState> {
         myReaction: type,
         clearReaction: type == null,
         likesCount: (post.likesCount + delta).clamp(0, 1 << 30),
+        reactionCounts: ReactionCount.change(
+          post.reactionCounts,
+          from: post.myReaction,
+          to: type,
+        ),
       ),
     );
     try {
