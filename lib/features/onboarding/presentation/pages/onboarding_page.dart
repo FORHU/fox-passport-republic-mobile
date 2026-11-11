@@ -15,6 +15,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/spacing.dart';
 import 'package:go_router/go_router.dart';
 
 // The roles that apply from the phone (`features/roles` owns the form).
@@ -239,7 +240,8 @@ class _TopBar extends StatelessWidget {
           onTap: onHome,
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+            // Vertical only, so the arrow lines up with the card's left edge.
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: Row(
               children: [
                 Icon(
@@ -602,7 +604,9 @@ class _IntentOption extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: OnboardingPalette.white(0.05)),
           ),
+          // Icon, title and arrow share one top line however long the body is.
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 40,
@@ -636,9 +640,12 @@ class _IntentOption extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: OnboardingPalette.white(0.2),
+              SizedBox(
+                height: 40,
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  color: OnboardingPalette.white(0.2),
+                ),
               ),
             ],
           ),
@@ -701,19 +708,34 @@ class _RolesStep extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = constraints.maxWidth >= 520 ? 2 : 1;
-              final cardWidth = columns == 1
-                  ? constraints.maxWidth
-                  : (constraints.maxWidth - 10) / 2;
-              return Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 10,
-                runSpacing: 10,
+              // Cards in a row share one height, and an odd last card stays
+              // in the left column instead of floating in the middle.
+              Widget row(int i) {
+                if (columns == 1) return _roleCard(roleCatalog[i]);
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var j = i; j < i + columns; j++) ...[
+                        if (j > i) const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: j < roleCatalog.length
+                              ? _roleCard(roleCatalog[j])
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final role in roleCatalog)
-                    SizedBox(
-                      width: cardWidth,
-                      child: _roleCard(role),
-                    ),
+                  for (var i = 0; i < roleCatalog.length; i += columns) ...[
+                    if (i > 0) const SizedBox(height: AppSpacing.sm),
+                    row(i),
+                  ],
                 ],
               );
             },
