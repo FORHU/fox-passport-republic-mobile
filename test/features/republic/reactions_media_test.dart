@@ -23,6 +23,7 @@ Map<String, dynamic> _post({
   String? mine,
   bool liked = false,
   List<String> media = const [],
+  Map<String, int>? counts,
 }) =>
     {
       'id': id,
@@ -33,6 +34,10 @@ Map<String, dynamic> _post({
       'isLikedByMe': liked,
       'mediaUrls': media,
       'author': {'id': 'u', 'name': 'Maria'},
+      if (counts != null)
+        'reactionCounts': [
+          for (final e in counts.entries) {'type': e.key, 'count': e.value},
+        ],
     };
 
 void main() {
@@ -101,6 +106,65 @@ void main() {
       verify(
         () => api.post(ApiEndpoints.feedReaction('1'), {'type': null}),
       ).called(1);
+    });
+
+    test('the counts of each reaction are read, most chosen first', () {
+      final post = Post.fromJson(
+        _post(likes: 6, counts: {'like': 3, 'love': 2, 'haha': 1, 'wow': 0}),
+      );
+      expect(post.reactionCounts, const [
+        ReactionCount(ReactionType.like, 3),
+        ReactionCount(ReactionType.love, 2),
+        ReactionCount(ReactionType.haha, 1),
+        ReactionCount(ReactionType.wow, 0),
+      ]);
+      expect(
+        post.topReactions,
+        [ReactionType.like, ReactionType.love, ReactionType.haha],
+      );
+      // An older server sends no counts: only the viewer's own is known.
+      expect(Post.fromJson(_post(likes: 4)).topReactions, isEmpty);
+      expect(
+        Post.fromJson(_post(likes: 4, mine: 'sad')).topReactions,
+        [ReactionType.sad],
+      );
+    });
+
+    test('reacting moves one count between reactions at once', () async {
+      final c = await load(_post(likes: 2, counts: {'love': 2}));
+      when(() => api.post(any(), any())).thenAnswer((_) async => {});
+
+      await c.react('1', ReactionType.like);
+      expect(only().reactionCounts, const [
+        ReactionCount(ReactionType.love, 2),
+        ReactionCount(ReactionType.like, 1),
+      ]);
+
+      await c.react('1', ReactionType.love);
+      expect(only().reactionCounts, const [
+        ReactionCount(ReactionType.love, 3),
+      ]);
+      expect(only().likesCount, 3);
+
+      await c.react('1', null);
+      expect(only().reactionCounts, const [
+        ReactionCount(ReactionType.love, 2),
+      ]);
+      expect(only().likesCount, 2);
+    });
+
+    test('a refused reaction puts the counts back too', () async {
+      final c = await load(
+        _post(likes: 2, mine: 'love', counts: {'love': 1, 'like': 1}),
+      );
+      when(() => api.post(any(), any())).thenThrow(Exception('no'));
+
+      await c.react('1', ReactionType.angry);
+
+      expect(only().reactionCounts, const [
+        ReactionCount(ReactionType.love, 1),
+        ReactionCount(ReactionType.like, 1),
+      ]);
     });
 
     test('a refused reaction is put back', () async {
@@ -188,6 +252,25 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('2 / 3'), findsOneWidget);
+    });
+
+    testWidgets('the summary stacks the reactions the post has, not a heart', (
+      tester,
+    ) async {
+      final post = Post.fromJson(
+        _post(likes: 4, mine: 'like', counts: {'like': 3, 'love': 1}),
+      );
+      await pump(
+        tester,
+        PostCard(post: post, onLike: () {}, onComments: () {}),
+      );
+
+      final stack = tester.widget<ReactionStack>(find.byType(ReactionStack));
+      expect(stack.reactions, [ReactionType.like, ReactionType.love]);
+      expect(find.byKey(const ValueKey('reaction-like')), findsOneWidget);
+      expect(find.byKey(const ValueKey('reaction-love')), findsOneWidget);
+      expect(find.byIcon(Icons.favorite_rounded), findsNothing);
+      expect(find.text('4'), findsOneWidget);
     });
 
     testWidgets('Like shows the reaction chosen, and the picker has six', (

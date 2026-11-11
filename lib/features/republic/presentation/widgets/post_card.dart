@@ -253,12 +253,8 @@ class _PostCardState extends State<PostCard> {
                   onTap: post.likesCount > 0 ? widget.onReactions : null,
                   child: Row(
                     children: [
-                      if (post.myReaction != null &&
-                          post.myReaction != ReactionType.like)
-                        Text(
-                          post.myReaction!.emoji,
-                          style: const TextStyle(fontSize: 14),
-                        )
+                      if (post.topReactions.isNotEmpty)
+                        ReactionStack(reactions: post.topReactions)
                       else
                         const Icon(
                           Icons.favorite_rounded,
@@ -388,6 +384,50 @@ class _ActionButton extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// A post's most chosen reactions as overlapping emojis, most chosen in
+/// front, like the summary under a Facebook post.
+class ReactionStack extends StatelessWidget {
+  const ReactionStack({required this.reactions, super.key});
+
+  final List<ReactionType> reactions;
+
+  static const double _size = 20;
+  static const double _step = 14;
+
+  @override
+  Widget build(BuildContext context) {
+    final n = reactions.length;
+    return SizedBox(
+      width: _size + _step * (n - 1),
+      height: _size,
+      child: Stack(
+        children: [
+          // Drawn last-first so the most chosen sits on top.
+          for (var i = n - 1; i >= 0; i--)
+            Positioned(
+              left: _step * i,
+              child: Container(
+                key: ValueKey('reaction-${reactions[i].name}'),
+                width: _size,
+                height: _size,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceRaised,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.canvas, width: 1.5),
+                ),
+                child: Text(
+                  reactions[i].emoji,
+                  style: const TextStyle(fontSize: 11, height: 1),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

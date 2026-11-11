@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/features/republic/data/feed_realtime.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
@@ -81,6 +82,15 @@ class FeedController extends AsyncNotifier<FeedState> {
   Future<FeedState> build() async {
     // Watched, so a search reloads the list.
     if (!_plain) ref.watch(feedSearchProvider);
+    // Someone commented, or deleted one, on a post this list may show.
+    ref.listen(postCommentsCountProvider, (_, next) {
+      final change = next.value;
+      if (change == null) return;
+      _replace(
+        change.postId,
+        (p) => p.copyWith(commentsCount: change.commentsCount),
+      );
+    });
     final page = await _page();
     return FeedState(posts: page.posts, nextCursor: page.nextCursor);
   }
@@ -161,6 +171,11 @@ class FeedController extends AsyncNotifier<FeedState> {
         myReaction: type,
         clearReaction: type == null,
         likesCount: (post.likesCount + delta).clamp(0, 1 << 30),
+        reactionCounts: ReactionCount.change(
+          post.reactionCounts,
+          from: post.myReaction,
+          to: type,
+        ),
       ),
     );
     try {
@@ -173,7 +188,7 @@ class FeedController extends AsyncNotifier<FeedState> {
   }
 
   /// Takes the server's version of one post, for when its comment count may
-  /// have moved in ways the phone cannot work out (comments deleted).
+  /// have moved while the socket was not there to say so.
   Future<void> reload(String postId) async {
     try {
       final fresh = await ref.read(republicRepositoryProvider).post(postId);
@@ -181,23 +196,6 @@ class FeedController extends AsyncNotifier<FeedState> {
     } on Object {
       // The old count stays; a pull to refresh fixes it.
     }
-  }
-
-  /// Bumps a post's comment count after the person comments.
-  void commentAdded(String postId) {
-    final latest = state.value;
-    if (latest == null) return;
-    state = AsyncData(
-      latest.copyWith(
-        posts: [
-          for (final p in latest.posts)
-            if (p.id == postId)
-              p.copyWith(commentsCount: p.commentsCount + 1)
-            else
-              p,
-        ],
-      ),
-    );
   }
 
   void _replace(String postId, Post Function(Post) change) {
