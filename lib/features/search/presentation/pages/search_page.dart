@@ -960,9 +960,9 @@ class _CatalogCard extends StatelessWidget {
               ),
               if (rating != null) ...[
                 const Icon(
-                  Icons.star_rounded,
+                  Icons.pets,
                   color: AppColors.warning,
-                  size: 17,
+                  size: 15,
                 ),
                 Text(
                   rating.toStringAsFixed(1),
