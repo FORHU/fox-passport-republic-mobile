@@ -9172,11 +9172,17 @@ abstract class AppLocalizations {
   /// **'Links to your work'**
   String get roleApplyPortfolio;
 
-  /// No description provided for @roleApplySpecializations.
+  /// No description provided for @roleApplySpecializationsProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Specializations (choose at least one)'**
+  String get roleApplySpecializationsProvider;
+
+  /// No description provided for @roleApplySpecializationsOther.
   ///
   /// In en, this message translates to:
   /// **'Specializations (up to 3)'**
-  String get roleApplySpecializations;
+  String get roleApplySpecializationsOther;
 
   /// No description provided for @roleApplyIds.
   ///
