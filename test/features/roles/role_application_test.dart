@@ -100,12 +100,22 @@ void main() {
         roleType: 'providerFoxer',
         types: 'Speakers',
         businessName: 'Loud Co',
+        specializations: const ['dj'],
         documents: _allDocuments(),
       );
       // Experience and an NBI number are optional for a Provider.
       expect(provider.isComplete, isTrue);
       expect(provider.copyWith(businessName: '').isComplete, isFalse);
       expect(provider.copyWith(types: ' , ').isComplete, isFalse);
+      expect(
+        provider.copyWith(specializations: const []).isComplete,
+        isFalse,
+      );
+      expect(
+        RoleApplicationDraft.maxSpecializationsFor('providerFoxer'),
+        isNull,
+      );
+      expect(RoleApplicationDraft.maxSpecializationsFor('venueFoxer'), 3);
       expect(
         provider
             .copyWith(
@@ -315,7 +325,7 @@ void main() {
       return c;
     }
 
-    test('keeps to three specializations and lets one go', () {
+    test('a Provider can pick any number and lets one go', () {
       final c = container('providerFoxer');
       final app = c.read(roleApplicationProvider('providerFoxer').notifier)
         ..toggleSpecialization('design')
@@ -327,10 +337,25 @@ void main() {
           .read(roleApplicationProvider('providerFoxer'))
           .draft
           .specializations;
-      expect(picked(), ['design', 'catering', 'service_staff']);
+      expect(picked(), ['design', 'catering', 'service_staff', 'other']);
 
       app.toggleSpecialization('catering');
-      expect(picked(), ['design', 'service_staff']);
+      expect(picked(), ['design', 'service_staff', 'other']);
+    });
+
+    test('other roles keep to three', () {
+      final c = container('venueFoxer');
+      final app = c.read(roleApplicationProvider('venueFoxer').notifier)
+        ..toggleSpecialization('a')
+        ..toggleSpecialization('b')
+        ..toggleSpecialization('c')
+        ..toggleSpecialization('d');
+
+      expect(
+        c.read(roleApplicationProvider('venueFoxer')).draft.specializations,
+        ['a', 'b', 'c'],
+      );
+      app.toggleSpecialization('a');
     });
 
     test('will not send an incomplete application', () async {
@@ -351,6 +376,7 @@ void main() {
           (d) => d.copyWith(
             businessName: 'Loud Co',
             types: 'Speakers',
+            specializations: const ['dj'],
             documents: _allDocuments(),
           ),
         );

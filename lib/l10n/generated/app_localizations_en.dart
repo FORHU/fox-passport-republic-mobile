@@ -5082,7 +5082,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyPortfolio => 'Links to your work';
 
   @override
-  String get roleApplySpecializations => 'Specializations (up to 3)';
+  String get roleApplySpecializationsProvider =>
+      'Specializations (choose at least one)';
+
+  @override
+  String get roleApplySpecializationsOther => 'Specializations (up to 3)';
 
   @override
   String get roleApplyIds => 'Documents';

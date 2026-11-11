@@ -45,12 +45,14 @@ class RoleApplicationController extends Notifier<RoleApplicationState> {
     state = state.copyWith(draft: change(state.draft), clearError: true);
   }
 
-  /// Picks or drops a specialization, keeping to three.
+  /// Picks or drops a specialization. A Provider may pick any number; the
+  /// other roles keep to three.
   void toggleSpecialization(String value) {
     final now = state.draft.specializations;
+    final max = RoleApplicationDraft.maxSpecializationsFor(roleType);
     if (now.contains(value)) {
       edit((d) => d.copyWith(specializations: [...now]..remove(value)));
-    } else if (now.length < RoleApplicationDraft.maxSpecializations) {
+    } else if (max == null || now.length < max) {
       edit((d) => d.copyWith(specializations: [...now, value]));
     }
   }
