@@ -111,10 +111,9 @@ class PostActions {
       postId: postId,
       signedIn: ref.read(authControllerProvider).user != null,
     );
-    for (var i = 0; i < result.added; i++) {
-      _feed.commentAdded(postId);
-    }
-    if (result.removed) await _feed.reload(postId);
+    // The socket usually has the count here already; reading it back covers
+    // a dropped connection without counting the same comment twice.
+    if (result.added > 0 || result.removed) await _feed.reload(postId);
   }
 
   /// The link to a post on the web, or null when the app has no web address.

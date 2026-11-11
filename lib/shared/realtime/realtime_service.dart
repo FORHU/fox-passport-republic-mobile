@@ -22,6 +22,7 @@ class RealtimeEvents {
   static const typing = 'typing';
   static const presenceUpdate = 'presence:update';
   static const groupRemoved = 'group:removed';
+  static const postCommentsCount = 'post:comments_count';
 
   static const List<String> all = [
     newNotification,
@@ -35,6 +36,7 @@ class RealtimeEvents {
     typing,
     presenceUpdate,
     groupRemoved,
+    postCommentsCount,
   ];
 }
 
