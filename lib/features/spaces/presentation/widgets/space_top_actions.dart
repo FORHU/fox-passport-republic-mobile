@@ -8,14 +8,13 @@ import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
-import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// What every space screen has at the right of its top bar: the Coins balance,
-/// which opens the Wallet, and the person's photo, which opens Settings (the
-/// way to Profile and Sign out, which a space has no tab for). With
+/// What every space screen has at the right of its top bar: the person's
+/// photo, which opens Settings (the way to Profile and Sign out, which a space
+/// has no tab for). With
 /// [showSwitcher] the space the person is in comes first and opens the
 /// switcher (Citizen or another role's space); only More turns it on, where
 /// switching lives.
@@ -66,8 +65,8 @@ class SpaceTopActions extends ConsumerWidget {
               ),
             ),
           ),
-        // Nothing until the balance is known; the same balance in every space.
-        CoinsChip(path: active.xpPath(const []), trailingGap: 4),
+        // No Tokens here: a Foxer earns Tokens only as a citizen, so the
+        // balance lives in the Citizen space.
         IconButton(
           tooltip: context.l10n.settingsTitle,
           onPressed: () => context.push(RouteNames.settings),
@@ -86,8 +85,8 @@ class SpaceTopActions extends ConsumerWidget {
   }
 }
 
-/// The top bar of a space's screens: the title, the Coins and the photo, and
-/// the space switcher on More ([showSwitcher]).
+/// The top bar of a space's screens: the title and the photo, and the space
+/// switcher on More ([showSwitcher]).
 class SpaceAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SpaceAppBar({
     required this.title,

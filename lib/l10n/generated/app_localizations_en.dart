@@ -1121,21 +1121,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportRepublic => 'Republic of Foxers';
 
   @override
-  String passportCitizenLevel(int level) {
-    return 'Citizen · Level $level';
-  }
-
-  @override
-  String passportXp(int xp) {
-    return '$xp XP';
-  }
-
-  @override
-  String passportNextLevel(int level, int xp) {
-    return 'Level $level at $xp';
-  }
-
-  @override
   String get passportStamps => 'Stamps';
 
   @override
@@ -3551,8 +3536,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gettingStartedBooking => 'Make your first booking';
 
   @override
-  String gettingStartedReward(int xp, int coins) {
-    return '+$xp XP · $coins Coins';
+  String gettingStartedReward(int coins) {
+    return '$coins Tokens';
   }
 
   @override
@@ -3576,23 +3561,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardMomentGeneric => 'You earned rewards';
 
   @override
-  String get rewardMomentXp => 'XP';
+  String get rewardMomentCoins => 'Tokens';
 
   @override
-  String get rewardMomentCoins => 'Coins';
-
-  @override
-  String rewardMomentLevel(int level) {
-    return 'Level $level';
-  }
-
-  @override
-  String rewardMomentToNext(String xp, int level) {
-    return '$xp XP to Level $level';
-  }
-
-  @override
-  String get rewardMomentNote => 'XP builds your level. Coins buy discounts.';
+  String get rewardMomentNote => 'Tokens buy discounts.';
 
   @override
   String get rewardMomentLearnMore => 'Learn more';
@@ -3602,35 +3574,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardMomentDone => 'Done';
-
-  @override
-  String get rankUpEyebrow => 'New rank';
-
-  @override
-  String rankUpLevelRank(int level, int rank, int total) {
-    return 'Level $level · Rank $rank of $total';
-  }
-
-  @override
-  String rankUpCoins(String coins) {
-    return '+$coins Coins';
-  }
-
-  @override
-  String get rankUpNewBadge => 'New badge unlocked';
-
-  @override
-  String rankUpNext(String name) {
-    return 'Next rank: $name';
-  }
-
-  @override
-  String rankUpNextLevel(int level) {
-    return 'Level $level';
-  }
-
-  @override
-  String get rankUpSeeBadges => 'See my badges';
 
   @override
   String get achievementsTitle => 'Achievements';
@@ -3669,13 +3612,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String achievementsRewardXp(int xp) {
-    return '+$xp XP';
-  }
-
-  @override
   String achievementsRewardCoins(int coins) {
-    return '+$coins Coins';
+    return '+$coins Tokens';
   }
 
   @override
@@ -3705,11 +3643,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get achievementsComplete => 'All three tiers done';
-
-  @override
-  String homeNextNightXp(int xp) {
-    return '+$xp XP';
-  }
 
   @override
   String get foxerStatBookings => 'Bookings done';
@@ -4318,11 +4251,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get citizenPartner => 'Partner Foxer';
 
   @override
-  String citizenLevelChip(int level) {
-    return 'Level $level';
-  }
-
-  @override
   String citizenSince(String year) {
     return 'Citizen since $year';
   }
@@ -4332,17 +4260,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get citizenFollowing => 'Following';
-
-  @override
-  String get citizenProgression => 'Republic citizenship progression';
-
-  @override
-  String citizenXp(int xp, int next, int percent) {
-    return '$xp / $next XP ($percent%)';
-  }
-
-  @override
-  String get citizenStatLevel => 'Level';
 
   @override
   String get citizenStatStamps => 'Stamps';
@@ -4377,7 +4294,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get citizenNoBadgesBody =>
-      'Badges come from exploring venues, posting in the community and climbing levels.';
+      'Badges come from exploring venues and posting in the community.';
 
   @override
   String get citizenNoPosts => 'No Republic posts yet';
@@ -5047,11 +4964,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamOnTeamAlready => 'On the team';
 
   @override
-  String teamLevel(int level) {
-    return 'Lv $level';
-  }
-
-  @override
   String get teamOnTheTeam => 'On the team';
 
   @override
@@ -5688,8 +5600,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tourCitizenRepublicTitle => 'Join the conversation';
 
   @override
-  String get tourCitizenRepublicBody =>
-      'Read and post what\'s happening. Posting earns XP.';
+  String get tourCitizenRepublicBody => 'Read and post what\'s happening.';
 
   @override
   String get tourCitizenBookingsTitle => 'Your tickets live here';
@@ -5710,7 +5621,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tourCitizenPassportBody =>
-      'Your level, stamps and badges. Attend an event to earn your first stamp.';
+      'Your stamps and badges. Attend an event to earn your first stamp.';
 
   @override
   String get settingsTakeTour => 'Take the app tour again';
@@ -5831,35 +5742,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'What you have been paid, how it changed since last month, and the last eight weeks.';
 
   @override
-  String get settingsHowItWorks => 'How XP and Coins work';
+  String get settingsHowItWorks => 'How Tokens work';
 
   @override
   String get howItWorksTitle => 'How it works';
 
   @override
   String get howItWorksIntro =>
-      'Two numbers grow as you use FoxPassport. Here is what each one does.';
+      'Tokens are what you earn for using FoxPassport. Here is how they work.';
 
   @override
-  String get howItWorksXpTitle => 'XP is your progress';
-
-  @override
-  String get howItWorksXpBody =>
-      'It only goes up. It sets your level, and you earn it for almost everything you do: booking, attending, reviewing and posting.';
-
-  @override
-  String get howItWorksCoinsTitle => 'Coins are your wallet';
+  String get howItWorksCoinsTitle => 'Tokens are your wallet';
 
   @override
   String get howItWorksCoinsBody =>
-      'You earn them from the events you attend and the reviews you leave, plus a few for posting and commenting. Spend them on booking discounts: 5 Coins is ₱1 off. Coins are never cash.';
+      'You earn them from the events you attend and the reviews you leave. Spend them on booking discounts: 5 Tokens is ₱1 off. Tokens are never cash, and they never expire.';
 
   @override
   String get howItWorksEarnTitle => 'How to earn';
 
   @override
   String get howItWorksEarnBody =>
-      'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post. Posts and comments earn a little, up to a daily limit.';
+      'Attend an event and the host checks you in. Leave a review for a booking you attended, and share it as a post.';
 
   @override
   String get howItWorksSpendTitle => 'How to spend';
@@ -5875,7 +5779,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardsOpenWallet => 'Open your Wallet';
 
   @override
-  String get rewardsCoins => 'Coins';
+  String get rewardsCoins => 'Tokens';
 
   @override
   String get rewardsBalanceLabel => 'Balance';
@@ -5887,7 +5791,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardsPendingHint =>
-      'Pending Coins can be spent once the booking is safe from a refund.';
+      'Pending Tokens can be spent once the booking is safe from a refund.';
 
   @override
   String get rewardsRedeemRewards => 'Redeem rewards';
@@ -5896,11 +5800,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardsHistory => 'History';
 
   @override
-  String get rewardsEmptyTitle => 'No Coins yet';
+  String get rewardsEmptyTitle => 'No Tokens yet';
 
   @override
   String get rewardsEmptyBody =>
-      'Attend an event or book one and your Coins show up here. You can spend them on discounts.';
+      'Attend an event or book one and your Tokens show up here. You can spend them on discounts.';
 
   @override
   String get rewardsFindEvent => 'Find an event';
@@ -5925,12 +5829,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String rewardsToGo(String count) {
-    return '$count Coins to go';
-  }
-
-  @override
-  String rewardsUnlocksAtLevel(int level) {
-    return 'Unlocks at Level $level';
+    return '$count Tokens to go';
   }
 
   @override
@@ -5957,7 +5856,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String rewardsRedeemFor(String cost) {
-    return 'Redeem for $cost Coins';
+    return 'Redeem for $cost Tokens';
   }
 
   @override
@@ -5991,36 +5890,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardsDone => 'Done';
 
   @override
-  String get rewardsLifeRelease => 'Coins released';
+  String get rewardsLifeRelease => 'Tokens released';
 
   @override
   String get rewardsLifeRedemption => 'Redeemed a reward';
 
   @override
-  String get rewardsLifeExpiry => 'Coins expired';
+  String get rewardsLifeReversal => 'Tokens reversed';
 
   @override
-  String get rewardsLifeReversal => 'Coins reversed';
-
-  @override
-  String rewardsRankLevel(String rank, int level) {
-    return '$rank · Level $level';
-  }
+  String get rewardsLifeVoucherReturn => 'Voucher expired, Tokens returned';
 
   @override
   String get foxerPassportPerks => 'Perks';
 
   @override
-  String get foxerPassportNoPerks => 'Perks unlock as you level up.';
+  String get foxerPassportNoPerks => 'No perks yet.';
 
   @override
   String get foxerPassportNoBadges =>
       'Badges you earn in this role show up here.';
-
-  @override
-  String foxerPassportXpToNext(String xp, int level) {
-    return '$xp XP to level $level';
-  }
 
   @override
   String get leaderboardTitle => 'Leaderboard';
@@ -6058,38 +5947,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardYou => 'You';
-
-  @override
-  String leaderboardRowSubtitle(String role, String rank) {
-    return '$role · $rank';
-  }
-
-  @override
-  String get leaderboardSideCitizens => 'Citizens';
-
-  @override
-  String get leaderboardSideFoxers => 'Foxers';
-
-  @override
-  String get leaderboardTabMonth => 'This month';
-
-  @override
-  String get leaderboardTabAll => 'All time';
-
-  @override
-  String get leaderboardTabCity => 'My city';
-
-  @override
-  String get leaderboardNoCity =>
-      'Add your city to your profile to see your local board.';
-
-  @override
-  String get leaderboardEditProfile => 'Edit profile';
-
-  @override
-  String leaderboardLevelShort(int level) {
-    return 'Lv $level';
-  }
 
   @override
   String leaderboardYouName(String name) {

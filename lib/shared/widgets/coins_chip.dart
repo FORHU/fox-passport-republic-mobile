@@ -2,41 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
-import 'package:flutter_template/features/rewards/domain/wallet_rank.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-/// The Coins icon, one for every place Coins show.
+/// The Tokens icon, one for every place Tokens show.
 const IconData coinsIcon = Icons.toll_rounded;
 
 String _coins(BuildContext context, int n) =>
     NumberFormat.decimalPattern(Localizations.localeOf(context).toString())
         .format(n);
 
-/// The signed-in person's Coins, as a small chip that opens the Wallet. It
+/// The signed-in person's Tokens, as a small chip that opens the Wallet. It
 /// takes no room until the balance is known: while it loads, when it fails and
-/// when nobody is signed in, the screen around it is left as it was.
+/// when nobody is signed in, the screen around it is left as it was. Foxer
+/// spaces do not show it: a Foxer earns Tokens only as a citizen.
 class CoinsChip extends ConsumerWidget {
-  const CoinsChip({this.trailingGap = 0, this.path, super.key});
+  const CoinsChip({this.trailingGap = 0, super.key});
 
   /// Space after the chip, taken only while the chip shows.
   final double trailingGap;
 
-  /// The XP path to read the wallet through, for a Foxer space; the citizen's
-  /// own when null. The Coins are the same balance either way.
-  final String? path;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final wallet = (path == null
-            ? ref.watch(walletProvider)
-            : ref.watch(walletForPathProvider(path!)))
-        .value;
+    final wallet = ref.watch(walletProvider).value;
     if (wallet == null) return const SizedBox.shrink();
     final chip = Semantics(
       button: true,
@@ -78,8 +70,8 @@ class CoinsChip extends ConsumerWidget {
   }
 }
 
-/// "Wallet · 1,240 Coins", a row that opens the Wallet. For the Passport,
-/// under the level bar. Left out the same way as [CoinsChip].
+/// "Wallet · 1,240 Tokens", a row that opens the Wallet. For the Passport.
+/// Left out the same way as [CoinsChip].
 class WalletRow extends ConsumerWidget {
   const WalletRow({super.key});
 
@@ -112,24 +104,6 @@ class WalletRow extends ConsumerWidget {
                       l10n.rewardsWalletTitle,
                       style: AppTypography.display(size: 14),
                     ),
-                    if (wallet.hasRank)
-                      Row(
-                        children: [
-                          RankBadge.forLevel(wallet.level, size: 18),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              l10n.rewardsRankLevel(wallet.rank, wallet.level),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTypography.body(
-                                size: 12,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                   ],
                 ),
               ),
