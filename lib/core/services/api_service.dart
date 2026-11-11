@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
@@ -33,12 +31,12 @@ class ApiService {
                 contentType: Headers.jsonContentType,
               ),
             ) {
-    // 0. Enable Web credentials & native platform cookie jar
+    // 0. On web the browser keeps the cookies (and sends `Origin`). Native
+    //    sends no cookies: the session travels as `Authorization: Bearer`
+    //    (AuthInterceptor). Replaying Better Auth's session cookie from a
+    //    native jar, which sends no `Origin`, made its CSRF check refuse
+    //    every auth POST with 403 "Missing or null Origin" (mobile#284).
     configureWebCredentials(client);
-    final jar = cookieService?.jar;
-    if (jar != null && !kIsWeb) {
-      client.interceptors.add(CookieManager(jar));
-    }
 
     if (AppConfig.instance.useMock) {
       client.interceptors.add(MockInterceptor());

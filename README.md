@@ -271,7 +271,7 @@ The template ships **backend-ready** but runs with **no server** out of the box.
 - `AuthInterceptor` attaches the bearer token and **transparently refreshes it once on a 401**, retrying the original request; if refresh fails it clears the session and the router sends the user back to login.
 - **Cookie & Web Credentials**:
   - **Flutter Web**: `withCredentials = true` is configured so browser HTTP-only cookies (`accessToken` and `refreshToken`) are stored and sent automatically with CORS credentials.
-  - **Mobile & Desktop**: `dio_cookie_manager` with `CookieJar` persists and attaches session cookies across requests while `FlutterSecureStorage` retains encrypted tokens for offline access.
+  - **Mobile & Desktop**: no cookies are sent; the session token from `FlutterSecureStorage` goes in `Authorization: Bearer`. Better Auth refuses a cookie sent without an `Origin` header, which native requests never have ("Missing or null Origin").
 - A `MockInterceptor` serves canned responses while `useMock` is on — so `flutter run` works immediately.
 
 ### Going live in 3 steps
