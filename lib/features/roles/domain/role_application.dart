@@ -115,7 +115,12 @@ class RoleApplicationDraft extends Equatable {
       .where((p) => p.isNotEmpty)
       .join(', ');
 
+  /// How many specializations a role may pick. A Provider has no limit (it
+  /// must pick at least one); the other roles keep to three.
   static const maxSpecializations = 3;
+
+  static int? maxSpecializationsFor(String roleType) =>
+      roleType == 'providerFoxer' ? null : maxSpecializations;
 
   static List<String> split(String value) => [
         for (final s in value.split(','))
@@ -151,7 +156,8 @@ class RoleApplicationDraft extends Equatable {
                       address.trim().isNotEmpty &&
                       tinNumber.isNotEmpty
                   : businessName.trim().isNotEmpty &&
-                      split(types).isNotEmpty) &&
+                      split(types).isNotEmpty &&
+                      specializations.isNotEmpty) &&
       requiredDocuments.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({

@@ -170,6 +170,9 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                   options: specializationOptions(widget.roleType),
                   picked: d.specializations,
                   onToggle: controller.toggleSpecialization,
+                  maxPicks: RoleApplicationDraft.maxSpecializationsFor(
+                    widget.roleType,
+                  ),
                 ),
               ],
             ),
@@ -381,20 +384,27 @@ class _Specializations extends StatelessWidget {
     required this.options,
     required this.picked,
     required this.onToggle,
+    this.maxPicks,
   });
 
   final List<String> options;
   final List<String> picked;
   final ValueChanged<String> onToggle;
+  final int? maxPicks;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final full = picked.length >= RoleApplicationDraft.maxSpecializations;
+    final full = maxPicks != null && picked.length >= maxPicks!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.roleApplySpecializations, style: AppTypography.label()),
+        Text(
+          maxPicks == null
+              ? l10n.roleApplySpecializationsProvider
+              : l10n.roleApplySpecializationsOther,
+          style: AppTypography.label(),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
