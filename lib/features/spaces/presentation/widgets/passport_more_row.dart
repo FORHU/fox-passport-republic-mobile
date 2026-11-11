@@ -5,7 +5,6 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/widgets/role_progress.dart';
 import 'package:go_router/go_router.dart';
 
 /// The Passport row of a space's More tab: it opens the Foxer's Passport for
@@ -27,8 +26,6 @@ class PassportMoreRow extends ConsumerWidget {
       icon: Icons.badge_outlined,
       title: context.l10n.passport,
       compact: compact,
-      // The rank and level for this role, once the server has named them.
-      subtitle: compact ? null : RoleRankLine(path: space.xpPath(roles)),
       onTap: () => context.push(
         RouteNames.foxerPassportFor(space.xpPath(roles)),
       ),
