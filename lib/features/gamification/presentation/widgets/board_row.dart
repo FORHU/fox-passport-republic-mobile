@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// One line of a leaderboard: position, avatar, name, and under the name the
-/// rank badge and rank name in the rank's colour, after the Foxer's role when
-/// it is a Foxer board. The caller's own row has an accent border and reads
-/// "You · name". It shows no scores: the server does not send any.
+/// Foxer's role. The caller's own row has an accent border and reads
+/// "You · name". There is no rank or level: those are retired.
 class BoardRow extends StatelessWidget {
   const BoardRow({
     required this.position,
     required this.name,
-    required this.rankName,
     required this.isMe,
-    this.rank,
     this.rolePill,
     this.image,
     this.squareAvatar = false,
@@ -28,20 +24,12 @@ class BoardRow extends StatelessWidget {
   final int position;
   final String name;
 
-  /// The rank's name, as the server sent it ("Explorer").
-  final String rankName;
-
-  /// The rank number 1 to 9, for the badge and the colour; the name alone is
-  /// shown, in grey, when it is not known.
-  final int? rank;
-
-  /// The role of a Foxer ("Venue"), shown before the rank; none on the citizen
-  /// board.
+  /// The role of a Foxer ("Venue"), shown under the name.
   final String? rolePill;
   final String? image;
 
   /// A rounded square instead of a circle, as Foxers (who run venues and
-  /// listings) are drawn on the board; citizens are round.
+  /// listings) are drawn on the board.
   final bool squareAvatar;
   final bool isMe;
 
@@ -52,7 +40,6 @@ class BoardRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
-    final color = rank == null ? AppColors.textSecondary : rankColor(rank!);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -96,22 +83,8 @@ class BoardRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    if (rolePill != null) ...[
+                    if (rolePill != null)
                       Flexible(child: _RolePill(label: rolePill!)),
-                      const SizedBox(width: 6),
-                    ],
-                    if (rank != null) ...[
-                      RankBadge(rank: rank!, size: 18),
-                      const SizedBox(width: 4),
-                    ],
-                    Flexible(
-                      child: Text(
-                        rankName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.body(size: 12, color: color),
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -160,7 +133,7 @@ class _SquareAvatar extends StatelessWidget {
   }
 }
 
-/// "Venue", "Event", ...: the role a Foxer is ranked in.
+/// "Venue", "Event", ...: the role a Foxer is listed in.
 class _RolePill extends StatelessWidget {
   const _RolePill({required this.label});
 

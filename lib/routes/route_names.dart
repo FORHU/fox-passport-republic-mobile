@@ -140,13 +140,11 @@ class RouteNames {
   /// Tiers earned and progress on each achievement. Opened from the Passport.
   static const String achievements = '/achievements';
 
-  /// The Foxer leaderboard, opened on one role (`venue`, `event`, ...).
+  /// The Foxer leaderboard (the only one), opened on one role (`venue`,
+  /// `event`, ...).
   static const String leaderboard = '/leaderboard';
   static String leaderboardFor(String role) =>
       '$leaderboard?role=${Uri.encodeQueryComponent(role)}';
-
-  /// The leaderboard on its Citizens side, from the citizen Passport.
-  static const String leaderboardCitizens = '$leaderboard?side=citizens';
 
   /// What Coins can buy.
   static const String rewards = '/rewards';
