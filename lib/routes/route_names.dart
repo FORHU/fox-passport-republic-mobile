@@ -114,7 +114,7 @@ class RouteNames {
   /// The people you blocked, with a way to unblock. Pushed from Settings.
   static const String blockedUsers = '/settings/blocked';
 
-  /// What XP and Coins are, in plain words. Pushed from Settings.
+  /// What Tokens are, in plain words. Pushed from Settings.
   static const String howItWorks = '/how-it-works';
 
   /// A Foxer's profile. Takes the Foxer's catalog row as `extra`.

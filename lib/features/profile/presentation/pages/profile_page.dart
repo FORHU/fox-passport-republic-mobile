@@ -8,7 +8,7 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// Your own profile: the same page others see when they open you (photo,
-/// level, roles, bio, counts, stamps, badges and your posts), with your XP and
+/// roles, bio, counts, stamps, badges and your posts), with
 /// an Edit profile button, and your email, phone, followers and Sign out under
 /// the card.
 class ProfilePage extends ConsumerWidget {

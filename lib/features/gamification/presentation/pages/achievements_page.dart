@@ -181,7 +181,7 @@ class _Loaded extends StatelessWidget {
       );
 }
 
-/// "12 of 38 earned" over a bar in the XP colour.
+/// "12 of 38 earned" over a progress bar.
 class _Summary extends StatelessWidget {
   const _Summary({required this.earned, required this.total});
 

@@ -18,14 +18,14 @@ abstract final class OnboardingStep {
 
 /// What reporting a step paid. Zero when it had been reported before.
 class StepReward {
-  const StepReward({required this.xp, required this.coins});
+  const StepReward({required this.coins});
 
-  static const none = StepReward(xp: 0, coins: 0);
+  static const none = StepReward(coins: 0);
 
-  final int xp;
+  /// The Tokens paid (the API still calls them `coinsAwarded`).
   final int coins;
 
-  bool get isNone => xp == 0 && coins == 0;
+  bool get isNone => coins == 0;
 }
 
 /// Reads which onboarding steps the account has finished, and reports the tour.
@@ -57,7 +57,6 @@ class OnboardingRepository {
     final reward = data is Map ? data['reward'] : null;
     if (reward is! Map) return StepReward.none;
     return StepReward(
-      xp: (reward['xpAwarded'] as num?)?.toInt() ?? 0,
       coins: (reward['coinsAwarded'] as num?)?.toInt() ?? 0,
     );
   }

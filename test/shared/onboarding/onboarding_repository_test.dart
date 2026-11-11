@@ -57,14 +57,13 @@ void main() {
           'data': {
             'step': 'intro',
             'alreadyCompleted': false,
-            'reward': {'xpAwarded': 50, 'coinsAwarded': 20},
+            'reward': {'coinsAwarded': 20},
           },
         },
       );
 
       final reward = await repo.complete(OnboardingStep.intro);
 
-      expect(reward.xp, 50);
       expect(reward.coins, 20);
       expect(reward.isNone, isFalse);
     });

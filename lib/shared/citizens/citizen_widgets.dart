@@ -94,7 +94,7 @@ class CitizenAvatar extends StatelessWidget {
   }
 }
 
-/// A small tinted label: a role, a specialization or an XP amount.
+/// A small tinted label: a role or a specialization.
 class CitizenChip extends StatelessWidget {
   const CitizenChip({
     required this.label,

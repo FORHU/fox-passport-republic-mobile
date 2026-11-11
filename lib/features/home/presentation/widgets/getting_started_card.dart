@@ -17,7 +17,7 @@ class GettingStartedStep {
   final bool done;
   final VoidCallback onTap;
 
-  /// What finishing it pays, such as "+30 XP · 10 Coins"; nothing when it pays
+  /// What finishing it pays, such as "10 Tokens"; nothing when it pays
   /// no fixed amount.
   final String? reward;
 }

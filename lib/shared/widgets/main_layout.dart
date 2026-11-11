@@ -35,7 +35,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // XP, Coins and a new rank earned since the last look.
+    // Tokens earned since the last look.
     unawaited(_offerRewards());
     // The first-run tour, once per account on this device, and again when
     // Settings asks for it.
