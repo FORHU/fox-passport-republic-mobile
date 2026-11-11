@@ -105,12 +105,9 @@ void main() {
         'name': 'Bea',
         'city': 'Cebu',
         'specializations': ['beach_resort', 3],
-        'level': 4,
       })!;
 
-      expect(card.level, 4);
       expect(card.specializations, ['beach_resort']);
-      expect(OrganizerCard.tryParse({'id': 'o2'})!.level, 1);
       expect(OrganizerCard.tryParse({'name': 'x'}), isNull);
     });
 
@@ -314,11 +311,10 @@ void main() {
           OrganizerCard(
             id: 'o1',
             name: 'Bea Cruz',
-            level: 3,
             city: 'Cebu',
             specializations: ['beach_resort'],
           ),
-          OrganizerCard(id: 'user-a', name: 'Ada', level: 1),
+          OrganizerCard(id: 'user-a', name: 'Ada'),
         ],
       );
     });

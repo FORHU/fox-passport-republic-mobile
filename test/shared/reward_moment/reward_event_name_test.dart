@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:flutter_template/features/passport/data/passport_repository.dart';
-import 'package:flutter_template/features/passport/domain/entities/passport_summary.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/wallet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -21,7 +19,6 @@ WalletEntry _attend(String bookingId, {int minutes = 5}) => WalletEntry(
       id: 'g-$bookingId',
       isGrant: true,
       action: 'attend_event',
-      xp: 100,
       coinsDelta: 40,
       refType: 'booking',
       refId: bookingId,
@@ -36,15 +33,6 @@ Ticket _ticket(String id, String name) => Ticket(
       status: 'completed',
     );
 
-const _passport = PassportSummary(
-  level: 5,
-  totalXp: 1000,
-  levelStartXp: 800,
-  nextLevelXp: 1370,
-  stamps: [],
-  badges: [],
-);
-
 void main() {
   group('the wallet entry', () {
     test('keeps what a grant was for', () {
@@ -52,7 +40,6 @@ void main() {
         'id': 'g1',
         'type': 'grant',
         'action': 'attend_event',
-        'xp': 100,
         'coinsDelta': 40,
         'refType': 'booking',
         'refId': 'b-77',
@@ -86,16 +73,13 @@ void main() {
             id: 'x',
             isGrant: true,
             action: 'like_feed',
-            xp: 1,
             coinsDelta: 0,
             refType: 'feed',
             refId: 'p1',
             createdAt: _t0.add(const Duration(minutes: 6)),
           ),
         ],
-        level: 5,
         seenAt: _t0,
-        seenRank: 3,
       );
 
       expect(moments.reward!.bookingId, 'b-77');
@@ -108,16 +92,13 @@ void main() {
             id: 'x',
             isGrant: true,
             action: 'post_feed',
-            xp: 15,
             coinsDelta: 3,
             refType: 'feed',
             refId: 'p1',
             createdAt: _t0.add(const Duration(minutes: 6)),
           ),
         ],
-        level: 5,
         seenAt: _t0,
-        seenRank: 3,
       );
 
       expect(moments.reward!.bookingId, isNull);
@@ -137,11 +118,9 @@ void main() {
           home: Scaffold(
             body: RewardSheet(
               reward: const RewardMoment(
-                xp: 100,
                 coins: 40,
                 action: 'attend_event',
               ),
-              passport: _passport,
               eventName: eventName,
             ),
           ),
@@ -174,7 +153,6 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       prefs = await SharedPreferences.getInstance();
       await prefs.setString(rewardSeenAtKey('u1'), _t0.toIso8601String());
-      await prefs.setInt(rewardSeenRankKey('u1'), 3);
     });
 
     Future<void> run(
@@ -196,12 +174,9 @@ void main() {
                 coins: 100,
                 pendingCoins: 0,
                 totalEarnedCoins: 100,
-                level: 5,
-                rank: 'Explorer',
                 history: [_attend('b-77')],
               ),
             ),
-            passportProvider.overrideWith((ref) async => _passport),
             pastTicketsProvider.overrideWith((ref) => tickets()),
           ],
           child: MaterialApp(

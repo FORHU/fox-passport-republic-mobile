@@ -25,12 +25,8 @@ void main() {
         (_) async => {'success': true, 'data': badges},
       );
 
-  test('takes the level and XP of the role it was asked for', () async {
+  test('reads the perks for the role it was asked for', () async {
     stubMe({
-      'paths': [
-        {'path': 'user', 'level': 7, 'currentXP': 5, 'totalXP': 9000},
-        {'path': 'venueFoxer', 'level': 4, 'currentXP': 120, 'totalXP': 800},
-      ],
       'perks': ['venue_authority', 'city_badge'],
       'userBadges': <Object>[],
     });
@@ -39,32 +35,20 @@ void main() {
     final p = await repository.loadForPath('venueFoxer');
 
     expect(p.path, 'venueFoxer');
-    expect(p.level, 4);
-    expect(p.currentXp, 120);
-    expect(p.totalXp, 800);
     expect(p.perks, ['venue_authority', 'city_badge']);
   });
 
-  test('a Foxer with no XP on the path yet is level 1', () async {
-    stubMe({
-      'paths': [
-        {'path': 'user', 'level': 7, 'currentXP': 5, 'totalXP': 9000},
-      ],
-      'userBadges': <Object>[],
-    });
+  test('a Foxer with no perks yet has an empty list', () async {
+    stubMe({'userBadges': <Object>[]});
     stubBadges(const []);
 
     final p = await repository.loadForPath('eventFoxer');
 
-    expect(p.level, 1);
-    expect(p.currentXp, 0);
-    expect(p.totalXp, 0);
     expect(p.perks, isEmpty);
   });
 
   test('keeps badges for this role or for none, earned ones first', () async {
     stubMe({
-      'paths': <Object>[],
       'userBadges': [
         {
           'badge': {'id': 'b1', 'name': 'Host Master', 'path': 'venueFoxer'},

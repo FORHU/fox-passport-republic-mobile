@@ -21,22 +21,22 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('explains XP, Coins, earning and spending', (tester) async {
+  testWidgets('explains Tokens, earning and spending', (tester) async {
     await show(tester);
 
     expect(find.text('How it works'), findsOneWidget);
-    expect(find.text('XP is your progress'), findsOneWidget);
-    expect(find.text('Coins are your wallet'), findsOneWidget);
+    expect(find.text('Tokens are your wallet'), findsOneWidget);
+    expect(find.textContaining('XP'), findsNothing);
     expect(find.text('How to earn'), findsOneWidget);
     expect(find.text('How to spend'), findsOneWidget);
   });
 
-  testWidgets('states the Coin rate and that Coins are never cash', (
+  testWidgets('states the Token rate and that Tokens are never cash', (
     tester,
   ) async {
     await show(tester);
 
-    expect(find.textContaining('5 Coins is ₱1 off'), findsOneWidget);
+    expect(find.textContaining('5 Tokens is ₱1 off'), findsOneWidget);
     expect(find.textContaining('never cash'), findsOneWidget);
   });
 

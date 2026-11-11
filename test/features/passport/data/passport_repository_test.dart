@@ -23,9 +23,6 @@ void main() {
       (_) async => {
         'success': true,
         'data': {
-          'paths': [
-            {'totalXP': 1200},
-          ],
           'stamps': [
             {
               'location': 'Manila, Philippines',
@@ -52,9 +49,6 @@ void main() {
 
     final passport = await repository.load();
 
-    expect(passport.totalXp, 1200);
-    // 1200 XP is level 5 on the new curve (level 5 starts at 1195).
-    expect(passport.level, 5);
     expect(passport.stamps.single.label, 'MAN');
     expect(passport.badges.map((badge) => badge.earned), [true, false]);
     expect(passport.isSample, isFalse);
@@ -77,7 +71,6 @@ void main() {
 
     final passport = await repository.load();
 
-    expect(passport.totalXp, 0);
     expect(passport.stamps, isEmpty);
     expect(passport.isSample, isFalse);
   });

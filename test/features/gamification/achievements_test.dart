@@ -25,7 +25,6 @@ Map<String, dynamic> _tiers(
           {
             'tier': i + 1,
             'target': targets[i],
-            'xp': 100 + i * 50,
             'coins': i == 1 ? 75 : 25,
             if (i == 1 && badge != null) 'badgeName': badge,
             'isUnlocked': i < unlocked,
@@ -127,7 +126,6 @@ void main() {
     test('the next tier carries what it pays, and a finished one has none', () {
       final next = summary.citizen[0].next!;
       expect(next.tier, 2);
-      expect(next.xp, 150);
       expect(next.coins, 75);
       expect(summary.citizen[1].next!.tier, 1);
       expect(summary.citizen[2].next, isNull);
@@ -237,11 +235,11 @@ void main() {
       expect(find.text('City Hopper'), findsNothing); // locked
       expect(find.text('7 / 10'), findsOneWidget);
       expect(find.text('70%'), findsOneWidget);
-      // Regular is on tier 2 next: 150 XP and 75 Coins.
-      expect(find.text('+150 XP'), findsOneWidget);
-      expect(find.text('+75 Coins'), findsOneWidget);
-      // Stamp Collector's first tier has no badge; its XP and Coins show.
-      expect(find.text('+100 XP'), findsOneWidget);
+      // Regular is on tier 2 next: 75 Tokens, and no XP.
+      expect(find.text('+75 Tokens'), findsOneWidget);
+      expect(find.textContaining('XP'), findsNothing);
+      // Stamp Collector's first tier has no badge; its Tokens show.
+      expect(find.text('+25 Tokens'), findsOneWidget);
     });
 
     testWidgets('a tier with a badge says which', (tester) async {
