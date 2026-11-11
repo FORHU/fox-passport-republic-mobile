@@ -57,7 +57,6 @@ class FoxerBoardEntry extends Equatable {
     required this.userId,
     required this.name,
     required this.role,
-    required this.rankName,
     required this.starRating,
     required this.reviewCount,
     this.image,
@@ -76,7 +75,6 @@ class FoxerBoardEntry extends Equatable {
         city: json['city'] as String?,
         role: LeaderboardRole.fromAccountRole(json['role'] as String?) ??
             fallbackRole,
-        rankName: (json['rankTitle'] as String?) ?? '',
         starRating: (json['starRating'] as num?)?.toDouble() ?? 0,
         reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
       );
@@ -90,9 +88,6 @@ class FoxerBoardEntry extends Equatable {
   final String? image;
   final String? city;
   final LeaderboardRole role;
-
-  /// The rank's name on this role's ladder ("Veteran").
-  final String rankName;
   final double starRating;
   final int reviewCount;
 
@@ -107,7 +102,6 @@ class FoxerBoardEntry extends Equatable {
         image,
         city,
         role,
-        rankName,
         starRating,
         reviewCount,
       ];

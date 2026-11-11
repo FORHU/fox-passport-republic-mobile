@@ -13,14 +13,11 @@ Map<String, dynamic> _walletJson() => {
       'coins': 1240,
       'pendingCoins': 60,
       'totalEarnedCoins': 2000,
-      'level': 5,
-      'rank': 'Explorer',
       'history': [
         {
           'id': 'g1',
           'type': 'grant',
           'action': 'attendEvent',
-          'xp': 100,
           'coinsDelta': 40,
           'createdAt': '2026-11-04T10:00:00.000Z',
         },
@@ -28,7 +25,6 @@ Map<String, dynamic> _walletJson() => {
           'id': 'l1',
           'type': 'lifecycle',
           'lifecycleType': 'REDEMPTION',
-          'xp': 0,
           'coinsDelta': -500,
           'createdAt': '2026-11-05T10:00:00.000Z',
         },
@@ -37,14 +33,12 @@ Map<String, dynamic> _walletJson() => {
 
 void main() {
   group('the wallet', () {
-    test('reads the balance, pending Coins, level, rank and history', () {
+    test('reads the balance, pending Tokens and history', () {
       final wallet = WalletSummary.fromJson(_walletJson());
 
       expect(wallet.coins, 1240);
       expect(wallet.pendingCoins, 60);
       expect(wallet.totalEarnedCoins, 2000);
-      expect(wallet.level, 5);
-      expect(wallet.rank, 'Explorer');
       expect(wallet.history, hasLength(2));
       expect(wallet.history.first.isGrant, isTrue);
       expect(wallet.history.last.isGrant, isFalse);
@@ -56,7 +50,6 @@ void main() {
       final wallet = WalletSummary.fromJson(const {});
 
       expect(wallet.coins, 0);
-      expect(wallet.level, 1);
       expect(wallet.history, isEmpty);
       expect(wallet.isEmpty, isTrue);
     });
@@ -70,7 +63,6 @@ void main() {
           isGrant: grant,
           action: action,
           lifecycleType: life,
-          xp: 0,
           coinsDelta: 0,
           createdAt: DateTime(2026),
         );
@@ -88,10 +80,10 @@ void main() {
 
     test('a change is named by what happened', () {
       for (final (life, text) in [
-        ('RELEASE', 'Coins released'),
+        ('RELEASE', 'Tokens released'),
         ('REDEMPTION', 'Redeemed a reward'),
-        ('EXPIRY', 'Coins expired'),
-        ('REVERSAL', 'Coins reversed'),
+        ('VOUCHER_RETURN', 'Voucher expired, Tokens returned'),
+        ('REVERSAL', 'Tokens reversed'),
       ]) {
         expect(
           walletEntryTitle(l10n, entry(life: life, grant: false)),
@@ -100,8 +92,8 @@ void main() {
       }
     });
 
-    test('with nothing to go on it says Coins', () {
-      expect(walletEntryTitle(l10n, entry()), 'Coins');
+    test('with nothing to go on it says Tokens', () {
+      expect(walletEntryTitle(l10n, entry()), 'Tokens');
     });
   });
 
@@ -125,19 +117,6 @@ void main() {
       verify(() => api.get('/rewards/me')).called(1);
     });
 
-    test('asks for one XP path when told which', () async {
-      when(
-        () => api.get(ApiEndpoints.rewardsMe, query: {'path': 'providerFoxer'}),
-      ).thenAnswer((_) async => {'success': true, 'data': _walletJson()});
-
-      final wallet = await repo.wallet(path: 'providerFoxer');
-
-      expect(wallet.rank, 'Explorer');
-      verify(
-        () => api.get('/rewards/me', query: {'path': 'providerFoxer'}),
-      ).called(1);
-    });
-
     test('a wallet answer without data is an error', () async {
       when(() => api.get(ApiEndpoints.rewardsMe))
           .thenAnswer((_) async => {'success': true});
@@ -155,17 +134,13 @@ void main() {
               'title': 'Off a booking',
               'coinCost': 100,
               'discountPhp': 20,
-              'minLevel': 1,
               'canAfford': true,
-              'levelQualified': true,
             },
             {
               'id': 'r2',
               'title': 'Priority support',
               'coinCost': 800,
-              'minLevel': 7,
               'canAfford': false,
-              'levelQualified': false,
             },
           ],
         },
@@ -178,8 +153,6 @@ void main() {
       expect(items.first.discountPhp, 20);
       expect(items.first.canAfford, isTrue);
       expect(items.last.isDiscount, isFalse);
-      expect(items.last.levelQualified, isFalse);
-      expect(items.last.minLevel, 7);
     });
 
     test('redeeming sends the reward id and returns the voucher', () async {

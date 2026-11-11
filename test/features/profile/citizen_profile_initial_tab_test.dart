@@ -18,9 +18,7 @@ class _Session extends AuthController {
 const _profile = CitizenProfile(
   id: 'me',
   name: 'Ada Lovelace',
-  level: 5,
-  xp: 900,
-  stamps: [CitizenStamp(id: 's1', eventName: 'Rooftop Sessions', xp: 100)],
+  stamps: [CitizenStamp(id: 's1', eventName: 'Rooftop Sessions')],
   badges: [
     CitizenBadge(id: 'b1', name: 'First Night Out', rarity: 'Common'),
   ],

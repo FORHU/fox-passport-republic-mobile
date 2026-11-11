@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  testWidgets('opens the leaderboards on the Citizens side', (tester) async {
-    String? side;
+  testWidgets('opens the Foxer leaderboard', (tester) async {
+    var opened = false;
     final router = GoRouter(
       routes: [
         GoRoute(
@@ -18,7 +18,7 @@ void main() {
         GoRoute(
           path: RouteNames.leaderboard,
           builder: (context, state) {
-            side = state.uri.queryParameters['side'];
+            opened = true;
             return const Scaffold(body: Text('opened'));
           },
         ),
@@ -37,6 +37,7 @@ void main() {
     await tester.tap(find.text('Leaderboard'));
     await tester.pumpAndSettle();
 
-    expect(side, 'citizens');
+    expect(opened, isTrue);
+    expect(find.text('opened'), findsOneWidget);
   });
 }

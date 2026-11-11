@@ -4,7 +4,6 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
-import 'package:flutter_template/features/gamification/domain/citizen_board.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
@@ -35,26 +34,8 @@ class _Board implements LeaderboardRepository {
               userId: 'id-$i',
               name: 'A very long venue name that goes on and on $i',
               role: role,
-              rankName: 'Grand Master',
               starRating: 4.8,
               reviewCount: 12345,
-            ),
-        ],
-      );
-
-  @override
-  Future<CitizenBoard> citizens(CitizenTab tab, {String? city}) async =>
-      CitizenBoard(
-        tab: tab,
-        season: '2026-11',
-        rows: [
-          for (var i = 1; i <= 6; i++)
-            CitizenBoardEntry(
-              position: i,
-              userId: 'id-$i',
-              name: 'Maria Cristina de la Santisima Trinidad $i',
-              rankName: 'Grand Master',
-              level: 50,
             ),
         ],
       );
@@ -75,8 +56,6 @@ void main() {
           'coins': 1234567,
           'pendingCoins': 98765,
           'totalEarnedCoins': 2000000,
-          'level': 50,
-          'rank': 'Grand Master',
           'history': [
             for (var i = 0; i < 6; i++)
               {
@@ -104,9 +83,7 @@ void main() {
                       'and when it can be used, so it wraps on a small phone.',
               'coinCost': 250000,
               'discountPhp': 500.0,
-              'minLevel': 40,
               'canAfford': i.isEven,
-              'levelQualified': i.isEven,
             },
         ],
       },
@@ -149,14 +126,7 @@ void main() {
   final pages = <String, Widget>{
     'Wallet': const WalletPage(),
     'Rewards': const RewardsPage(),
-    'Leaderboard (Foxers)': const LeaderboardPage(
-      initialSide: LeaderboardSide.foxers,
-      initialRole: LeaderboardRole.venue,
-    ),
-    'Leaderboard (Citizens)': const LeaderboardPage(
-      initialSide: LeaderboardSide.citizens,
-      initialRole: LeaderboardRole.venue,
-    ),
+    'Leaderboard': const LeaderboardPage(initialRole: LeaderboardRole.venue),
   };
 
   for (final entry in pages.entries) {

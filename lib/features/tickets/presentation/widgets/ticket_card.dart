@@ -180,29 +180,13 @@ class TicketCard extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _Action(
-                icon: Icons.account_balance_wallet_outlined,
-                label: l10n.ticketAddToWallet,
-                onTap: () => showTopToast(context, l10n.comingSoonWallet),
-              ),
-            ),
-            if (_canDirections) ...[
-              const SizedBox(width: 12),
-              Expanded(
-                child: _Action(
-                  icon: Icons.location_on_outlined,
-                  label: l10n.ticketDirections,
-                  onTap: () => _directions(context),
-                ),
-              ),
-            ],
-          ],
-        ),
+        if (_canDirections)
+          _Action(
+            icon: Icons.location_on_outlined,
+            label: l10n.ticketDirections,
+            onTap: () => _directions(context),
+          ),
         if (_showPendingQr) ...[
-          const SizedBox(height: 8),
           Text(
             l10n.ticketDirectionsAfterConfirm,
             textAlign: TextAlign.center,

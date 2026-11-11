@@ -156,8 +156,8 @@ void main() {
 
       expect(directions, findsNothing);
       expect(hint, findsOneWidget);
-      // Add to wallet is still there, and takes the whole row.
-      expect(find.text('Add to wallet'), findsOneWidget);
+      // The wallet button was a placeholder, and is gone.
+      expect(find.text('Add to wallet'), findsNothing);
     });
 
     testWidgets('cancelled and finished bookings have neither', (
@@ -197,14 +197,11 @@ void main() {
       await tester.pumpWidget(_card(_ticket()));
       await tester.pump();
 
-      // The Wallet | Directions row: the only Row with two Expanded tiles.
-      final tiles = find.ancestor(
+      final tile = find.ancestor(
         of: _directionsText,
-        matching: find.byWidgetPredicate(
-          (w) => w is Row && w.children.whereType<Expanded>().length == 2,
-        ),
+        matching: find.byType(InkWell),
       );
-      final above = tester.getBottomLeft(tiles).dy;
+      final above = tester.getBottomLeft(tile).dy;
       final button = find.ancestor(
         of: _changeText,
         matching: find.byType(TextButton),

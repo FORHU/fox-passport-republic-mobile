@@ -8,21 +8,15 @@ import 'package:flutter_template/features/rewards/presentation/pages/rewards_pag
 import 'package:flutter_template/features/rewards/presentation/pages/wallet_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
-import 'package:flutter_template/shared/widgets/rank_badge.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
 
-/// The badge for [rank], wherever it is drawn.
-Finder _badge(int rank) =>
-    find.byWidgetPredicate((w) => w is RankBadge && w.rank == rank);
-
 Map<String, dynamic> _wallet({
   int coins = 1240,
   int pending = 0,
-  String rank = 'Explorer',
   List<Map<String, dynamic>> history = const [],
 }) =>
     {
@@ -31,8 +25,6 @@ Map<String, dynamic> _wallet({
         'coins': coins,
         'pendingCoins': pending,
         'totalEarnedCoins': coins,
-        'level': 5,
-        'rank': rank,
         'history': history,
       },
     };
@@ -42,9 +34,7 @@ Map<String, dynamic> _reward(
   String title,
   int cost, {
   double? php,
-  int minLevel = 1,
   bool afford = false,
-  bool level = true,
 }) =>
     {
       'id': id,
@@ -52,9 +42,7 @@ Map<String, dynamic> _reward(
       'description': 'About $title',
       'coinCost': cost,
       'discountPhp': php,
-      'minLevel': minLevel,
       'canAfford': afford,
-      'levelQualified': level,
     };
 
 void main() {
@@ -95,7 +83,6 @@ void main() {
               'id': 'g1',
               'type': 'grant',
               'action': 'attendEvent',
-              'xp': 100,
               'coinsDelta': 40,
               'createdAt': '2026-11-04T10:00:00.000Z',
             },
@@ -103,7 +90,6 @@ void main() {
               'id': 'l1',
               'type': 'lifecycle',
               'lifecycleType': 'REDEMPTION',
-              'xp': 0,
               'coinsDelta': -500,
               'createdAt': '2026-11-05T10:00:00.000Z',
             },
@@ -130,7 +116,7 @@ void main() {
 
       await show(tester, const WalletPage());
 
-      expect(find.text('No Coins yet'), findsOneWidget);
+      expect(find.text('No Tokens yet'), findsOneWidget);
       expect(find.text('Find an event'), findsOneWidget);
     });
 
@@ -162,7 +148,7 @@ void main() {
           'data': [
             _reward('r1', 'Small', 100, php: 20, afford: true),
             _reward('r2', 'Medium', 500, php: 100),
-            _reward('r3', 'Big', 2500, php: 500, minLevel: 7, level: false),
+            _reward('r3', 'Big', 2500, php: 500),
             _reward('r4', 'Priority support', 800),
           ],
         },
@@ -182,13 +168,7 @@ void main() {
       await show(tester, const RewardsPage());
 
       // 500 cost, 300 balance.
-      expect(find.text('200 Coins to go'), findsOneWidget);
-    });
-
-    testWidgets('one for a higher level says when it unlocks', (tester) async {
-      await show(tester, const RewardsPage());
-
-      expect(find.text('Unlocks at Level 7'), findsOneWidget);
+      expect(find.text('200 Tokens to go'), findsOneWidget);
     });
 
     testWidgets('the filters split discounts from perks', (tester) async {
@@ -234,9 +214,9 @@ void main() {
       // 300 now, 100 for the reward, 200 after.
       expect(find.text('REDEEM REWARD'), findsOneWidget);
       expect(find.text('200'), findsOneWidget);
-      expect(find.text('Redeem for 100 Coins'), findsOneWidget);
+      expect(find.text('Redeem for 100 Tokens'), findsOneWidget);
 
-      await tester.tap(find.text('Redeem for 100 Coins'));
+      await tester.tap(find.text('Redeem for 100 Tokens'));
       await tester.pumpAndSettle();
 
       verify(() => api.post('/rewards/redeem', {'rewardId': 'r1'})).called(1);
@@ -255,11 +235,11 @@ void main() {
 
       await tester.tap(find.text('Redeem'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Redeem for 100 Coins'));
+      await tester.tap(find.text('Redeem for 100 Tokens'));
       await tester.pumpAndSettle();
 
       expect(find.text('Not enough Coins'), findsOneWidget);
-      expect(find.text('Redeem for 100 Coins'), findsOneWidget);
+      expect(find.text('Redeem for 100 Tokens'), findsOneWidget);
       expect(find.text('Your voucher is ready'), findsNothing);
     });
   });
@@ -276,9 +256,8 @@ void main() {
 
       expect(find.text('1,240'), findsOneWidget);
       expect(find.text('Wallet'), findsOneWidget);
-      expect(find.text('1,240 Coins'), findsOneWidget);
-      expect(find.text('Explorer · Level 5'), findsOneWidget);
-      expect(_badge(3), findsOneWidget); // level 5 is rank 3
+      expect(find.text('1,240 Tokens'), findsOneWidget);
+      expect(find.textContaining('Level'), findsNothing);
     });
 
     testWidgets('take no room when the balance cannot be had', (tester) async {
@@ -296,27 +275,15 @@ void main() {
     });
   });
 
-  group('the rank name', () {
-    testWidgets('the Wallet card shows the rank and level', (tester) async {
+  group('no rank or level', () {
+    testWidgets('the Wallet card shows only Tokens', (tester) async {
       when(() => api.get(ApiEndpoints.rewardsMe))
           .thenAnswer((_) async => _wallet());
 
       await show(tester, const WalletPage());
 
-      expect(find.text('Explorer · Level 5'), findsOneWidget);
-      expect(_badge(3), findsOneWidget);
-    });
-
-    testWidgets('nothing is shown until the server names a rank', (
-      tester,
-    ) async {
-      when(() => api.get(ApiEndpoints.rewardsMe))
-          .thenAnswer((_) async => _wallet(rank: ''));
-
-      await show(tester, const WalletPage());
-
       expect(find.textContaining('Level'), findsNothing);
-      expect(find.byType(RankBadge), findsNothing);
+      expect(find.textContaining('Rank'), findsNothing);
       expect(find.text('1,240'), findsOneWidget);
     });
   });

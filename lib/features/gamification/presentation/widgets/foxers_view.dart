@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/rank_ladder.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/data/leaderboard_repository.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
@@ -13,7 +12,7 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// The Foxer board for one role and tab (Top rated, Most booked, Rising) and,
-/// optionally, one city. Shows position, name, rank and the star rating, never
+/// optionally, one city. Shows position, name, role and the star rating, never
 /// the number of bookings. The caller's own place is pinned below the list when
 /// it is further down than the list goes.
 class FoxersView extends ConsumerStatefulWidget {
@@ -151,8 +150,6 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
         position: e.position,
         name: e.name,
         image: e.image,
-        rankName: e.rankName,
-        rank: rankNumberForName(e.rankName),
         rolePill: rolePillLabel(l10n, e.role),
         squareAvatar: true,
         isMe: myId != null && e.userId == myId,

@@ -5,6 +5,7 @@ import 'package:flutter_template/features/onboarding/presentation/theme/onboardi
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
+import 'package:flutter_template/theme/tokens/spacing.dart';
 
 /// The card every step sits in: raised surface, hairline border, a soft blurred
 /// glow in the top-right corner (the web's `STEP_CARD`).
@@ -262,8 +263,13 @@ class BackAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // No horizontal padding, so the arrow lines up with the card content edge.
     return TextButton.icon(
       onPressed: onPressed,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        minimumSize: const Size(48, 48),
+      ),
       icon: Icon(
         Icons.arrow_back_rounded,
         size: 18,
@@ -470,7 +476,6 @@ class RoleCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Opacity(
                     opacity: dim ? 0.6 : 1,

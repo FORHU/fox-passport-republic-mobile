@@ -4,8 +4,8 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
-/// What XP and Coins are, in plain words. Static: it says only what is true in
-/// the app today, so it changes when ranks, achievements and the rest arrive.
+/// What Tokens are, in plain words. Static: it says only what is true in the
+/// app today, so it changes when milestones and challenges arrive.
 class HowItWorksPage extends StatelessWidget {
   const HowItWorksPage({super.key});
 
@@ -13,7 +13,6 @@ class HowItWorksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final cards = [
-      (Icons.bolt_rounded, l10n.howItWorksXpTitle, l10n.howItWorksXpBody),
       (
         Icons.toll_rounded,
         l10n.howItWorksCoinsTitle,

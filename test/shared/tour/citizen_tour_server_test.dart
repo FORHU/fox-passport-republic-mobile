@@ -24,7 +24,7 @@ void main() {
     onboarding = _MockOnboarding();
     shown = null;
     when(() => onboarding.complete(any()))
-        .thenAnswer((_) async => const StepReward(xp: 50, coins: 20));
+        .thenAnswer((_) async => const StepReward(coins: 20));
   });
 
   Future<void> open(WidgetTester tester, {bool force = false}) async {

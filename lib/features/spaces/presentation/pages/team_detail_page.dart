@@ -550,7 +550,7 @@ class _OrganizerRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${card.name}  ${l10n.teamLevel(card.level)}',
+                    card.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.display(size: 14),

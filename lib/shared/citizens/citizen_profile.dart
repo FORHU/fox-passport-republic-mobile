@@ -13,7 +13,6 @@ class CitizenStamp extends Equatable {
   const CitizenStamp({
     required this.id,
     required this.eventName,
-    required this.xp,
     this.place,
     this.date,
     this.imageUrl,
@@ -26,7 +25,6 @@ class CitizenStamp extends Equatable {
     return CitizenStamp(
       id: '${row['id']}',
       eventName: _text(row['eventName']) ?? _text(venueMap['name']) ?? '',
-      xp: _int(row['xpEarned']),
       place: _text(venueMap['name']) ?? _text(row['location']),
       date: _date(row['eventDate']),
       imageUrl: _text(venueMap['stampIconUrl']) ?? _text(row['imageUrl']),
@@ -35,13 +33,12 @@ class CitizenStamp extends Equatable {
 
   final String id;
   final String eventName;
-  final int xp;
   final String? place;
   final DateTime? date;
   final String? imageUrl;
 
   @override
-  List<Object?> get props => [id, eventName, xp, place, date];
+  List<Object?> get props => [id, eventName, place, date];
 }
 
 /// A milestone badge a citizen has earned.
@@ -156,14 +153,12 @@ class CitizenOffering extends Equatable {
   List<Object?> get props => [id, name, kind];
 }
 
-/// A person's public profile: who they are, their level, stamps and badges,
-/// recent posts and what they list.
+/// A person.s public profile: who they are, their stamps and badges, recent
+/// posts and what they list.
 class CitizenProfile extends Equatable {
   const CitizenProfile({
     required this.id,
     required this.name,
-    required this.level,
-    required this.xp,
     this.username,
     this.bio,
     this.socialLinks = const {},
@@ -184,20 +179,9 @@ class CitizenProfile extends Equatable {
   static CitizenProfile? tryParse(Object? json) {
     if (json is! Map || json['id'] == null) return null;
     final passport = json['passport'];
-    var level = 1;
-    var xp = 0;
     var stamps = const <CitizenStamp>[];
     var badges = const <CitizenBadge>[];
     if (passport is Map) {
-      final paths = passport['paths'];
-      if (paths is List) {
-        for (final p in paths) {
-          if (p is Map && p['path'] == 'user') {
-            level = _int(p['level']).clamp(1, 1 << 30);
-            xp = _int(p['currentXP']);
-          }
-        }
-      }
       stamps = [
         for (final s in passport['stamps'] as List? ?? const [])
           if (CitizenStamp.tryParse(s) case final v?) v,
@@ -236,8 +220,6 @@ class CitizenProfile extends Equatable {
       ],
       verified: json['identityVerifiedAt'] != null,
       joinedAt: _date(json['createdAt']),
-      level: level,
-      xp: xp,
       stamps: stamps,
       badges: badges,
       posts: posts,
@@ -268,49 +250,17 @@ class CitizenProfile extends Equatable {
   /// Their ID was checked: the Verified badge.
   final bool verified;
   final DateTime? joinedAt;
-  final int level;
-  final int xp;
   final List<CitizenStamp> stamps;
   final List<CitizenBadge> badges;
   final List<CitizenPost> posts;
   final int postCount;
   final List<CitizenOffering> offerings;
 
-  /// The same profile with the level and XP the caller knows to be right,
-  /// such as the Passport's, which has the real level curve.
-  CitizenProfile copyWith({int? level, int? xp}) => CitizenProfile(
-        id: id,
-        name: name,
-        level: level ?? this.level,
-        xp: xp ?? this.xp,
-        username: username,
-        bio: bio,
-        socialLinks: socialLinks,
-        imageUrl: imageUrl,
-        city: city,
-        country: country,
-        roles: roles,
-        specializations: specializations,
-        verified: verified,
-        joinedAt: joinedAt,
-        stamps: stamps,
-        badges: badges,
-        posts: posts,
-        postCount: postCount,
-        offerings: offerings,
-      );
-
-  /// XP needed for the next level, as the web shows it.
-  int get nextLevelXp => level * 200;
-
-  /// 0 to 1.
-  double get progress => (xp / nextLevelXp).clamp(0, 1).toDouble();
-
   /// A Partner Foxer is shown in gold, as on the web.
   bool get isPartner => roles.contains('investor');
 
   @override
-  List<Object?> get props => [id, name, level, xp, stamps, badges];
+  List<Object?> get props => [id, name, stamps, badges];
 }
 
 /// How many follow a person and how many they follow.

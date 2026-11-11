@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/rank_info.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
@@ -196,21 +195,21 @@ class HomePage extends ConsumerWidget {
                     GettingStartedStep(
                       label: l10n.gettingStartedTour,
                       done: finished.contains(OnboardingStep.intro),
-                      reward: l10n.gettingStartedReward(50, 20),
+                      reward: l10n.gettingStartedReward(20),
                       onTap: () =>
                           restartCitizenTour(ref, context, RouteNames.home),
                     ),
                     GettingStartedStep(
                       label: l10n.gettingStartedProfile,
                       done: finished.contains(OnboardingStep.profileComplete),
-                      reward: l10n.gettingStartedReward(30, 10),
+                      reward: l10n.gettingStartedReward(10),
                       onTap: () =>
                           unawaited(context.push(RouteNames.profileEdit)),
                     ),
                     GettingStartedStep(
                       label: l10n.gettingStartedId,
                       done: finished.contains(OnboardingStep.idVerified),
-                      reward: l10n.gettingStartedReward(100, 40),
+                      reward: l10n.gettingStartedReward(40),
                       onTap: () => unawaited(context.push(RouteNames.identity)),
                     ),
                     GettingStartedStep(
@@ -558,37 +557,7 @@ class _RoundButton extends StatelessWidget {
   }
 }
 
-/// "+100 XP" or "+ Coins", a small tag on the next-night card: violet when
-/// filled, an outline when not.
-class _EarnTag extends StatelessWidget {
-  const _EarnTag({required this.label, this.filled = false});
-
-  final String label;
-  final bool filled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: filled ? AppColors.violet : Colors.transparent,
-        borderRadius: AppRadius.brPill,
-        border: Border.all(
-          color: filled ? AppColors.violet : AppColors.borderStrong,
-        ),
-      ),
-      child: Text(
-        label,
-        style: AppTypography.display(
-          size: 11,
-          color: filled ? AppColors.textPrimary : AppColors.textSecondary,
-        ),
-      ),
-    );
-  }
-}
-
-/// Your next booking: when, what and where, and what going will pay. The whole
+/// Your next booking: when, what and where. The whole
 /// card opens your tickets.
 class _NextNight extends StatelessWidget {
   const _NextNight({required this.ticket});
@@ -652,18 +621,6 @@ class _NextNight extends StatelessWidget {
                               size: 13,
                               color: AppColors.textMuted,
                             ),
-                          ),
-                          // What going will pay.
-                          const SizedBox(height: 10),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: [
-                              _EarnTag(
-                                label: l10n.homeNextNightXp(attendEventXp),
-                                filled: true,
-                              ),
-                            ],
                           ),
                         ],
                       ),

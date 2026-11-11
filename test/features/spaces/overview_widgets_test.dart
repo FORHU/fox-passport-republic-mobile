@@ -37,7 +37,7 @@ Widget _app(
     overrides: [
       authControllerProvider.overrideWith(() => _Session(roles, name)),
       // No wallet unless a test gives one, so nothing reaches the network.
-      walletForPathProvider.overrideWith((ref, path) async {
+      walletProvider.overrideWith((ref) async {
         if (wallet == null) throw Exception('no wallet');
         return wallet;
       }),
@@ -171,15 +171,13 @@ void main() {
       expect(find.text('Welcome back'), findsOneWidget);
     });
 
-    testWidgets('leaves rank, level and Coins to the top bar and More', (
+    testWidgets('shows no rank, level or Tokens', (
       tester,
     ) async {
       const wallet = WalletSummary(
         coins: 1240,
         pendingCoins: 0,
         totalEarnedCoins: 1240,
-        level: 12,
-        rank: 'Veteran',
         history: [],
       );
       await tester.pumpWidget(

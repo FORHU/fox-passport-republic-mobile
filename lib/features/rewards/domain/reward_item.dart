@@ -1,12 +1,11 @@
-/// A reward Coins can buy: a discount voucher or a perk.
+/// A reward Tokens can buy: a discount voucher or a perk. Anyone can redeem
+/// what they can afford; there is no level lock.
 class RewardItem {
   const RewardItem({
     required this.id,
     required this.title,
     required this.coinCost,
-    required this.minLevel,
     required this.canAfford,
-    required this.levelQualified,
     this.description,
     this.discountPhp,
     this.discountPercentage,
@@ -19,9 +18,7 @@ class RewardItem {
         coinCost: (json['coinCost'] as num?)?.toInt() ?? 0,
         discountPhp: (json['discountPhp'] as num?)?.toDouble(),
         discountPercentage: (json['discountPercentage'] as num?)?.toDouble(),
-        minLevel: (json['minLevel'] as num?)?.toInt() ?? 1,
         canAfford: json['canAfford'] == true,
-        levelQualified: json['levelQualified'] != false,
       );
 
   final String id;
@@ -31,14 +28,8 @@ class RewardItem {
   final double? discountPhp;
   final double? discountPercentage;
 
-  /// The level the person must have reached.
-  final int minLevel;
-
   /// The server says the balance covers the cost.
   final bool canAfford;
-
-  /// The server says the person has reached [minLevel].
-  final bool levelQualified;
 
   /// Takes money off a booking, rather than being a perk.
   bool get isDiscount => discountPhp != null || discountPercentage != null;

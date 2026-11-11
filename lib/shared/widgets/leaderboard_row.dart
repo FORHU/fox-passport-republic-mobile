@@ -6,8 +6,8 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// "Leaderboard", a row that opens the leaderboards on their Citizens side.
-/// For the citizen Passport, under the Wallet row.
+/// "Leaderboard", a row that opens the Foxer leaderboard. For the citizen
+/// Passport, under the Wallet row.
 class LeaderboardRow extends StatelessWidget {
   const LeaderboardRow({super.key});
 
@@ -17,7 +17,7 @@ class LeaderboardRow extends StatelessWidget {
       padding: const EdgeInsets.only(top: 12),
       child: InkWell(
         borderRadius: AppRadius.brMd,
-        onTap: () => context.push(RouteNames.leaderboardCitizens),
+        onTap: () => context.push(RouteNames.leaderboard),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(

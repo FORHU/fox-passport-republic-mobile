@@ -165,25 +165,21 @@ class OrganizerCard extends Equatable {
   const OrganizerCard({
     required this.id,
     required this.name,
-    required this.level,
     this.city,
     this.specializations = const [],
   });
 
   final String id;
   final String name;
-  final int level;
   final String? city;
   final List<String> specializations;
 
   static OrganizerCard? tryParse(Object? raw) {
     if (raw is! Map || raw['id'] is! String) return null;
-    final level = raw['level'];
     final specs = raw['specializations'];
     return OrganizerCard(
       id: raw['id'] as String,
       name: _text(raw['name']) ?? '',
-      level: level is num ? level.toInt() : 1,
       city: _text(raw['city']),
       specializations: [
         if (specs is List)

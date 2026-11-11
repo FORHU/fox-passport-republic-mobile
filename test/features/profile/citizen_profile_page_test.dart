@@ -54,15 +54,12 @@ final _json = <String, dynamic>{
     {'id': 's', 'category': 'live_music'},
   ],
   'passport': {
-    'paths': [
-      {'path': 'user', 'level': 4, 'currentXP': 400},
-    ],
+    'paths': <Object>[],
     'stamps': [
       {
         'id': 'st1',
         'eventName': 'Launch night',
         'eventDate': '2026-03-02T00:00:00Z',
-        'xpEarned': 50,
         'venue': {'name': 'The Loft', 'city': 'Manila'},
       },
     ],
@@ -135,13 +132,9 @@ Future<void> _pump(
 }
 
 void main() {
-  test('reads level, xp, stamps, badges and offerings', () {
+  test('reads stamps, badges and offerings', () {
     final p = CitizenProfile.tryParse(_json)!;
 
-    expect(p.level, 4);
-    expect(p.xp, 400);
-    expect(p.nextLevelXp, 800);
-    expect(p.progress, 0.5);
     expect(p.stamps.single.place, 'The Loft');
     expect(p.badges.single.rarity, 'rare');
     expect(p.postCount, 12);
@@ -157,11 +150,9 @@ void main() {
     expect(CitizenProfile.tryParse({'name': 'no id'}), isNull);
   });
 
-  test('a person with no passport starts at level 1', () {
+  test('a person with no passport has no stamps', () {
     final p = CitizenProfile.tryParse({'id': 'u2', 'name': 'New'})!;
 
-    expect(p.level, 1);
-    expect(p.xp, 0);
     expect(p.stamps, isEmpty);
     expect(p.isPartner, isFalse);
   });
@@ -172,9 +163,7 @@ void main() {
     expect(find.text('Rex Santos'), findsOneWidget);
     expect(find.text('@rex'), findsOneWidget);
     expect(find.text('Manila, Philippines'), findsOneWidget);
-    expect(find.text('Level 4'), findsOneWidget);
-    // Someone else's XP is private; their level is not.
-    expect(find.text('400 / 800 XP (50%)'), findsNothing);
+    expect(find.textContaining('Level'), findsNothing);
     expect(find.textContaining('XP'), findsNothing);
     expect(find.text('EVENT FOXER'), findsOneWidget);
     // Their other accounts, as links under the bio.
@@ -252,25 +241,15 @@ void main() {
     expect(find.text('Citizen profile not found'), findsOneWidget);
   });
 
-  testWidgets('your own profile shows your XP and Edit profile', (
+  testWidgets('your own profile shows Edit profile and no XP', (
     tester,
   ) async {
     await _pump(tester, profile: {..._json, 'id': 'me'});
 
-    expect(find.text('400 / 800 XP (50%)'), findsOneWidget);
-    // The Stamps tab is open first: what each stamp earned shows too.
-    expect(find.text('+50 XP'), findsOneWidget);
+    expect(find.textContaining('XP'), findsNothing);
+    expect(find.textContaining('Level'), findsNothing);
     expect(find.text('Edit profile'), findsOneWidget);
     expect(find.text('Follow'), findsNothing);
-  });
-
-  testWidgets("someone else's stamps do not show the XP they earned", (
-    tester,
-  ) async {
-    await _pump(tester, profile: _json);
-
-    expect(find.text('Launch night · Mar 2, 2026'), findsOneWidget);
-    expect(find.text('+50 XP'), findsNothing);
   });
 
   testWidgets('shows their bio, and invites you to add your own', (

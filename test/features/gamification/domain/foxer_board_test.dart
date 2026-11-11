@@ -38,7 +38,6 @@ void main() {
     expect(board.role, LeaderboardRole.venue);
     expect(board.city, 'Manila');
     expect(board.rows.map((r) => r.position), [1, 2]);
-    expect(board.rows.first.rankName, 'Veteran');
     expect(board.rows.first.starRating, 4.8);
     expect(board.rows.first.reviewCount, 126);
     expect(board.meIsListed, isTrue);
@@ -100,7 +99,6 @@ void main() {
     expect(board.tab, FoxerTab.topRated);
     expect(board.rows, hasLength(1));
     expect(board.rows.single.name, '');
-    expect(board.rows.single.rankName, '');
     expect(board.rows.single.reviewCount, 0);
   });
 

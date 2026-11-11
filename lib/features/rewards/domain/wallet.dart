@@ -1,10 +1,9 @@
-/// One line in the Wallet history: a grant of XP and Coins, or something that
-/// changed Coins afterwards (spent, released, expired, reversed).
+/// One line in the Wallet history: a grant of Tokens, or something that changed
+/// Tokens afterwards (spent, released, returned, reversed).
 class WalletEntry {
   const WalletEntry({
     required this.id,
     required this.isGrant,
-    required this.xp,
     required this.coinsDelta,
     required this.createdAt,
     this.action,
@@ -20,7 +19,6 @@ class WalletEntry {
         isGrant: json['type'] != 'lifecycle',
         action: json['action'] as String?,
         lifecycleType: json['lifecycleType'] as String?,
-        xp: (json['xp'] as num?)?.toInt() ?? 0,
         coinsDelta: (json['coinsDelta'] as num?)?.toInt() ?? 0,
         reason: json['reason'] as String?,
         refType: json['refType'] as String?,
@@ -38,11 +36,10 @@ class WalletEntry {
   /// The reward rule behind a grant, such as `attendEvent`.
   final String? action;
 
-  /// `RELEASE`, `REDEMPTION`, `EXPIRY` or `REVERSAL`, for a change.
+  /// `RELEASE`, `REDEMPTION`, `VOUCHER_RETURN` or `REVERSAL`, for a change.
   final String? lifecycleType;
-  final int xp;
 
-  /// Plus for Coins earned, minus for Coins spent, expired or reversed.
+  /// Plus for Tokens earned or returned, minus for Tokens spent or reversed.
   final int coinsDelta;
   final String? reason;
 
@@ -51,21 +48,20 @@ class WalletEntry {
   final String? refType;
   final String? refId;
 
-  /// A grant whose Coins are held until the first attended paid booking: they
+  /// A grant whose Tokens are held until the first attended paid booking: they
   /// show as pending in the Wallet and are not counted as earned.
   final bool isPending;
   final DateTime createdAt;
 }
 
-/// The signed-in person's Coins: what can be spent, what is waiting, and the
-/// history behind both. Computed by the server; the app never adds Coins up.
+/// The signed-in person's Tokens: what can be spent, what is waiting, and the
+/// history behind both. Computed by the server; the app never adds Tokens up.
+/// (The data and the API field names still say `coins`.)
 class WalletSummary {
   const WalletSummary({
     required this.coins,
     required this.pendingCoins,
     required this.totalEarnedCoins,
-    required this.level,
-    required this.rank,
     required this.history,
   });
 
@@ -73,8 +69,6 @@ class WalletSummary {
         coins: (json['coins'] as num?)?.toInt() ?? 0,
         pendingCoins: (json['pendingCoins'] as num?)?.toInt() ?? 0,
         totalEarnedCoins: (json['totalEarnedCoins'] as num?)?.toInt() ?? 0,
-        level: (json['level'] as num?)?.toInt() ?? 1,
-        rank: (json['rank'] as String?) ?? '',
         history: [
           for (final e in (json['history'] as List? ?? const []))
             if (e is Map) WalletEntry.fromJson(e.cast<String, dynamic>()),
@@ -87,8 +81,6 @@ class WalletSummary {
   /// Earned, but not spendable until it is safe from a refund.
   final int pendingCoins;
   final int totalEarnedCoins;
-  final int level;
-  final String rank;
   final List<WalletEntry> history;
 
   /// Nothing earned, spent or waiting yet.
