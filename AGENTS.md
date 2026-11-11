@@ -111,7 +111,7 @@ The repository enforces Clean Architecture per feature under `lib/features/<name
 - **Better Auth Session Contract**:
   - The backend uses Better Auth as its primary authentication system.
   - Better Auth validates sessions via `auth.api.getSession`, which accepts either HTTP cookies or `Authorization: Bearer <better_auth_session_token>`.
-  - The mobile client manages session cookies via `dio_cookie_manager` and can pass the session token in the `Authorization: Bearer` header via `AuthInterceptor` (`_storage.readToken()`).
+  - The mobile client passes the session token in the `Authorization: Bearer` header via `AuthInterceptor` (`_storage.readToken()`). On native it sends no cookies: Better Auth refuses a cookie without an `Origin` header with 403 "Missing or null Origin" (mobile#284). Do not add a `CookieManager` to `ApiService`.
   - When storing the session token, use `StorageService` (`flutter_secure_storage`). Never store tokens in `SharedPreferences` or log them in plaintext.
 - **No Custom JWT Schemes**: Do not introduce custom JWT signing, custom refresh endpoints, or non-standard token schemes. Both mobile and API standardize on Better Auth session tokens.
 
