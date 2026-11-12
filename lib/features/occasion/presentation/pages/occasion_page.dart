@@ -92,7 +92,8 @@ class _OccasionPageState extends ConsumerState<OccasionPage> {
                   ),
                   IconButton(
                     tooltip: l10n.search,
-                    onPressed: () => context.go(RouteNames.searchFor('events')),
+                    onPressed: () =>
+                        context.push(RouteNames.searchFor('events')),
                     icon: const Icon(Icons.search_rounded),
                   ),
                 ],
@@ -155,7 +156,7 @@ class _OccasionPageState extends ConsumerState<OccasionPage> {
               ),
               const SizedBox(height: 24),
               _PlannerCard(
-                onTap: () => context.go(_search('foxers', city: city)),
+                onTap: () => context.push(_search('foxers', city: city)),
               ),
               const SizedBox(height: 24),
               Text(
@@ -206,7 +207,7 @@ class _OccasionPageState extends ConsumerState<OccasionPage> {
           label: categoryLabel(l10n, r.category),
           count: r.count,
           noneLabel: l10n.occasionNoneHere,
-          onTap: () => context.go(_search(r.kind.name)),
+          onTap: () => context.push(_search(r.kind.name)),
         ),
     ];
   }
