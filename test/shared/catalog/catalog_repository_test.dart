@@ -127,6 +127,26 @@ void main() {
       expect(query['sortBy'], 'price_asc');
     });
 
+    test('Foxers by specialty send the catalog slug, and nobody else does',
+        () async {
+      when(
+        () => api.get(any(), query: any(named: 'query')),
+      ).thenAnswer((_) async => {'data': <Object>[]});
+
+      final foxers = await repository.fetch(
+        CatalogKind.foxers,
+        specialty: 'photography',
+      );
+      await repository.fetch(CatalogKind.venues, specialty: 'photography');
+
+      expect(foxers.isSample, isFalse);
+      final queries = verify(
+        () => api.get(any(), query: captureAny(named: 'query')),
+      ).captured.cast<Map<String, dynamic>>();
+      expect(queries.first['specialty'], 'photography');
+      expect(queries.last.containsKey('specialty'), isFalse);
+    });
+
     test('Foxers in a city use the API city filter', () async {
       when(
         () => api.get(ApiEndpoints.foxers, query: any(named: 'query')),

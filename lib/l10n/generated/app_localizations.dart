@@ -9190,6 +9190,24 @@ abstract class AppLocalizations {
   /// **'Links to your work'**
   String get roleApplyPortfolio;
 
+  /// No description provided for @profileSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get profileSpecialties;
+
+  /// No description provided for @profileSpecialtiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer. Choose at least one.'**
+  String get profileSpecialtiesHint;
+
+  /// No description provided for @profileSpecialtiesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one specialty.'**
+  String get profileSpecialtiesRequired;
+
   /// No description provided for @roleApplySpecializationsProvider.
   ///
   /// In en, this message translates to:

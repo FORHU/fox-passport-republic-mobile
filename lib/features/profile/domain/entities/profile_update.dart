@@ -11,6 +11,7 @@ class ProfileUpdate extends Equatable {
     this.isPrivate,
     this.bio,
     this.socialLinks,
+    this.specialties,
   });
 
   final String? name;
@@ -28,6 +29,9 @@ class ProfileUpdate extends Equatable {
   /// ones stored, so an empty map clears them all.
   final Map<String, String>? socialLinks;
 
+  /// A Provider's whole list of catalog slugs; it replaces the stored one.
+  final List<String>? specialties;
+
   /// The request body.
   Map<String, Object> toJson() => {
         if (name != null) 'name': name!,
@@ -37,9 +41,18 @@ class ProfileUpdate extends Equatable {
         if (isPrivate != null) 'isPrivate': isPrivate!,
         if (bio != null) 'bio': bio!,
         if (socialLinks != null) 'socialLinks': socialLinks!,
+        if (specialties != null) 'specialties': specialties!,
       };
 
   @override
-  List<Object?> get props =>
-      [name, username, phone, imageUrl, isPrivate, bio, socialLinks];
+  List<Object?> get props => [
+        name,
+        username,
+        phone,
+        imageUrl,
+        isPrivate,
+        bio,
+        socialLinks,
+        specialties,
+      ];
 }
