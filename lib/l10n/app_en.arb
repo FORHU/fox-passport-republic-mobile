@@ -123,6 +123,7 @@
   "authContinueWithApple": "Continue with Apple",
   "authAppleSoon": "Sign in with Apple is coming soon.",
   "authSocialUnavailable": "Google and Facebook sign-in are available in the mobile app.",
+  "authSocialAccountNotLinked": "This email already has a Fox Passport account that isn't verified yet. Sign in with your email and password (or use Forgot password if you don't have one) and enter the code we email you, then you can continue with Google or Facebook.",
 
   "authUsername": "Username",
   "registerTermsPrefix": "I agree to the",

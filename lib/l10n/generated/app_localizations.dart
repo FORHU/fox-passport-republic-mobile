@@ -814,6 +814,12 @@ abstract class AppLocalizations {
   /// **'Google and Facebook sign-in are available in the mobile app.'**
   String get authSocialUnavailable;
 
+  /// No description provided for @authSocialAccountNotLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'This email already has a Fox Passport account that isn\'t verified yet. Sign in with your email and password (or use Forgot password if you don\'t have one) and enter the code we email you, then you can continue with Google or Facebook.'**
+  String get authSocialAccountNotLinked;
+
   /// No description provided for @authUsername.
   ///
   /// In en, this message translates to:

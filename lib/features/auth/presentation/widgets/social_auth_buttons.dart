@@ -44,7 +44,17 @@ class SocialAuthButtons extends ConsumerWidget {
       context.go(RouteNames.home);
       return;
     }
-    final error = ref.read(authControllerProvider).error;
+    final auth = ref.read(authControllerProvider);
+    if (auth.socialAccountNotLinked) {
+      // Two sentences: the default 3 s is too short to read them.
+      showTopToast(
+        context,
+        context.l10n.authSocialAccountNotLinked,
+        duration: const Duration(seconds: 10),
+      );
+      return;
+    }
+    final error = auth.error;
     if (error != null) showTopToast(context, error);
   }
 
