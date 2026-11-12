@@ -1939,7 +1939,7 @@ abstract class AppLocalizations {
   /// No description provided for @messageRequestPending.
   ///
   /// In en, this message translates to:
-  /// **'Message request'**
+  /// **'Wants to message you'**
   String get messageRequestPending;
 
   /// No description provided for @messageSearchUnavailable.
@@ -2047,13 +2047,19 @@ abstract class AppLocalizations {
   /// No description provided for @ticketsEmptyUpcoming.
   ///
   /// In en, this message translates to:
-  /// **'No upcoming tickets yet'**
+  /// **'No upcoming bookings yet'**
   String get ticketsEmptyUpcoming;
+
+  /// No description provided for @ticketsBrowseEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse events'**
+  String get ticketsBrowseEvents;
 
   /// No description provided for @ticketsEmptyPast.
   ///
   /// In en, this message translates to:
-  /// **'No past tickets yet'**
+  /// **'No past bookings yet'**
   String get ticketsEmptyPast;
 
   /// No description provided for @apiLoadFailed.

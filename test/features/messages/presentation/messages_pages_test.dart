@@ -39,12 +39,13 @@ Conversation _conversation({
   String id = 'conversation-1',
   bool group = false,
   bool request = false,
+  bool noPreview = false,
 }) =>
     Conversation(
       id: id,
       title: group ? 'Planning group' : 'Rico Rival',
       contextLabel: 'Sky Hall · Sat 17 Oct',
-      lastMessage: 'Sound check is at 5, see you there',
+      lastMessage: noPreview ? null : 'Sound check is at 5, see you there',
       lastMessageIsMine: false,
       lastMessageAt: DateTime.now().subtract(const Duration(minutes: 2)),
       unreadCount: 2,
@@ -90,6 +91,29 @@ void main() {
     expect(find.text('Sky Hall · Sat 17 Oct'), findsOneWidget);
     expect(find.text('Sound check is at 5, see you there'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a pending request with no preview says who wants to message', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
+          currentUserIdProvider.overrideWithValue(null),
+          conversationsProvider.overrideWith(
+            (ref) async => [_conversation(request: true, noPreview: true)],
+          ),
+        ],
+        child: _app(const MessagesPage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rico Rival'), findsOneWidget);
+    expect(find.text('Wants to message you'), findsOneWidget);
+    expect(find.text('Message request'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

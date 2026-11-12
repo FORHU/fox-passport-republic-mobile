@@ -988,7 +988,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEventInbox => 'Event inbox';
 
   @override
-  String get messageRequestPending => 'Message request';
+  String get messageRequestPending => 'Wants to message you';
 
   @override
   String get messageSearchUnavailable =>
@@ -1043,10 +1043,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsPast => 'Past';
 
   @override
-  String get ticketsEmptyUpcoming => 'No upcoming tickets yet';
+  String get ticketsEmptyUpcoming => 'No upcoming bookings yet';
 
   @override
-  String get ticketsEmptyPast => 'No past tickets yet';
+  String get ticketsBrowseEvents => 'Browse events';
+
+  @override
+  String get ticketsEmptyPast => 'No past bookings yet';
 
   @override
   String get apiLoadFailed => 'We couldn\'t load this right now.';
