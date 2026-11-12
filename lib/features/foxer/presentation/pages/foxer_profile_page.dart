@@ -17,6 +17,7 @@ import 'package:flutter_template/shared/follow/follow_button.dart';
 import 'package:flutter_template/shared/foxers/foxer_profile.dart';
 import 'package:flutter_template/shared/reports/file_report.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
+import 'package:flutter_template/shared/widgets/paws.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -229,8 +230,10 @@ class _LoadedState extends ConsumerState<_Loaded> {
         const SizedBox(height: 12),
         Row(
           children: [
-            const Icon(Icons.star_rounded, size: 18, color: AppColors.warning),
-            const SizedBox(width: 4),
+            if (profile.rating != null) ...[
+              PawsRow(paws: profile.rating!, size: 18),
+              const SizedBox(width: 8),
+            ],
             Text(
               profile.rating == null
                   ? l10n.searchNew
