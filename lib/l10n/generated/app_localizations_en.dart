@@ -6023,10 +6023,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyLoginLabel => 'Daily login';
 
   @override
-  String get dailyLoginClaimBy => 'Claim by midnight';
+  String get dailyLoginClaimShort => 'Claim';
 
   @override
-  String get dailyLoginStart => 'Start your streak';
+  String dailyLoginReward(int amount) {
+    return '+$amount Tokens';
+  }
 
   @override
   String dailyLoginStreak(int count) {

@@ -43,7 +43,7 @@ void main() {
           theme: AppTheme.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const Scaffold(body: DailyLoginCard()),
+          home: const Scaffold(body: Column(children: [DailyLoginCard()])),
         ),
       ),
     );
@@ -87,10 +87,37 @@ void main() {
       when(() => repo.dailyLogin()).thenAnswer((_) async => _open);
       await show(tester);
 
-      expect(find.text('DAILY LOGIN'), findsOneWidget);
-      expect(find.text('Claim by midnight'), findsOneWidget);
-      expect(find.text('Start your streak'), findsOneWidget);
-      expect(find.text('Claim +15 Tokens'), findsOneWidget);
+      expect(find.text('Daily login'), findsOneWidget);
+      expect(find.text('+15 Tokens'), findsOneWidget);
+      expect(find.text('Claim'), findsOneWidget);
+    });
+
+    testWidgets('is one slim row with a small button', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(360, 640)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      when(() => repo.dailyLogin()).thenAnswer(
+        (_) async => const DailyLoginStatus(
+          claimedToday: false,
+          canClaim: true,
+          amount: 15,
+          streak: 0,
+        ),
+      );
+      await show(tester);
+
+      expect(tester.takeException(), isNull);
+      // The card and the button are small: not a tall block with a button
+      // across the whole width.
+      expect(
+        tester.getSize(find.byType(DailyLoginCard)).height,
+        lessThan(110),
+      );
+      expect(tester.getSize(find.byType(ElevatedButton)).width, lessThan(140));
+      expect(find.text('+15 Tokens'), findsOneWidget);
     });
 
     testWidgets('shows the streak when there is one', (tester) async {
@@ -103,8 +130,8 @@ void main() {
         ),
       );
       await show(tester);
-      expect(find.text('4-day streak'), findsOneWidget);
-      expect(find.text('Start your streak'), findsNothing);
+      expect(find.text('+15 Tokens · 4-day streak'), findsOneWidget);
+      expect(find.text('+15 Tokens'), findsNothing);
     });
 
     testWidgets('a claim pays once and the card says claimed', (tester) async {
@@ -122,14 +149,14 @@ void main() {
       });
       await show(tester);
 
-      await tester.tap(find.text('Claim +15 Tokens'));
+      await tester.tap(find.text('Claim'));
       await tester.pumpAndSettle();
 
       verify(() => repo.claimDailyLogin()).called(1);
       expect(find.text('Claimed today'), findsOneWidget);
       expect(find.text('Come back tomorrow for +15 Tokens.'), findsOneWidget);
       expect(find.text('3-day streak'), findsOneWidget);
-      expect(find.text('Claim +15 Tokens'), findsNothing);
+      expect(find.text('Claim'), findsNothing);
       expect(find.text('+15 Tokens added'), findsOneWidget);
     });
 
@@ -147,7 +174,7 @@ void main() {
       });
       await show(tester);
 
-      await tester.tap(find.text('Claim +15 Tokens'));
+      await tester.tap(find.text('Claim'));
       await tester.pump();
       // The button is busy: a tap now is ignored.
       await tester.tap(find.byType(ElevatedButton), warnIfMissed: false);
@@ -161,7 +188,6 @@ void main() {
       await show(tester);
 
       expect(find.text('Claimed today'), findsOneWidget);
-      expect(find.text('Claim by midnight'), findsNothing);
       expect(find.byType(ElevatedButton), findsNothing);
     });
 
@@ -213,13 +239,13 @@ void main() {
         ),
       );
       await show(tester);
-      expect(find.text('DAILY LOGIN'), findsNothing);
+      expect(find.text('Daily login'), findsNothing);
     });
 
     testWidgets('takes no room when it cannot be reached', (tester) async {
       when(() => repo.dailyLogin()).thenAnswer((_) async => throw Exception());
       await show(tester);
-      expect(find.text('DAILY LOGIN'), findsNothing);
+      expect(find.text('Daily login'), findsNothing);
     });
 
     testWidgets('a failed claim says so and stays claimable', (tester) async {
@@ -229,14 +255,14 @@ void main() {
       );
       await show(tester);
 
-      await tester.tap(find.text('Claim +15 Tokens'));
+      await tester.tap(find.text('Claim'));
       await tester.pumpAndSettle();
 
       expect(
         find.text("We couldn't claim that right now. Try again."),
         findsOneWidget,
       );
-      expect(find.text('Claim +15 Tokens'), findsOneWidget);
+      expect(find.text('Claim'), findsOneWidget);
     });
   });
 }

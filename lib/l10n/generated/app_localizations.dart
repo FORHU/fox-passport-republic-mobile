@@ -10864,17 +10864,17 @@ abstract class AppLocalizations {
   /// **'Daily login'**
   String get dailyLoginLabel;
 
-  /// No description provided for @dailyLoginClaimBy.
+  /// No description provided for @dailyLoginClaimShort.
   ///
   /// In en, this message translates to:
-  /// **'Claim by midnight'**
-  String get dailyLoginClaimBy;
+  /// **'Claim'**
+  String get dailyLoginClaimShort;
 
-  /// No description provided for @dailyLoginStart.
+  /// No description provided for @dailyLoginReward.
   ///
   /// In en, this message translates to:
-  /// **'Start your streak'**
-  String get dailyLoginStart;
+  /// **'+{amount} Tokens'**
+  String dailyLoginReward(int amount);
 
   /// No description provided for @dailyLoginStreak.
   ///
