@@ -37,6 +37,15 @@ class SocialSignInCancelledFailure extends Failure {
   const SocialSignInCancelledFailure([super.message = 'Sign-in cancelled']);
 }
 
+/// Google/Facebook sign-in found a Fox Passport account with the same email
+/// whose email isn't verified, and the API won't join the two until it is
+/// (Better Auth's `account not linked`). The UI explains how to verify.
+class SocialAccountNotLinkedFailure extends Failure {
+  const SocialAccountNotLinkedFailure([
+    super.message = 'This email already has an account that is not verified.',
+  ]);
+}
+
 /// Login was refused because the account's email isn't verified yet. The UI
 /// routes the user to the OTP screen instead of showing a plain error.
 class EmailNotVerifiedFailure extends Failure {

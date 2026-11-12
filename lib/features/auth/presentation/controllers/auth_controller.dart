@@ -65,6 +65,7 @@ class AuthState extends Equatable {
     this.user,
     this.error,
     this.pendingVerificationEmail,
+    this.socialAccountNotLinked = false,
   });
 
   final bool isLoading;
@@ -74,6 +75,11 @@ class AuthState extends Equatable {
   /// Set after sign-up, or after a login refused for an unverified email, so
   /// the OTP screen knows which account to verify.
   final String? pendingVerificationEmail;
+
+  /// The last Google/Facebook sign-in matched an account whose email isn't
+  /// verified; the UI explains how to verify instead of showing [error].
+  /// Like [error], cleared by the next state change.
+  final bool socialAccountNotLinked;
 
   bool get isAuthenticated => user != null;
 
@@ -93,7 +99,13 @@ class AuthState extends Equatable {
       );
 
   @override
-  List<Object?> get props => [isLoading, user, error, pendingVerificationEmail];
+  List<Object?> get props => [
+        isLoading,
+        user,
+        error,
+        pendingVerificationEmail,
+        socialAccountNotLinked,
+      ];
 }
 
 // --- Controller ---
@@ -183,6 +195,7 @@ class AuthController extends Notifier<AuthState> {
         state = AuthState(
           error:
               failure is SocialSignInCancelledFailure ? null : failure.message,
+          socialAccountNotLinked: failure is SocialAccountNotLinkedFailure,
         );
         return false;
       },

@@ -379,6 +379,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Google and Facebook sign-in are available in the mobile app.';
 
   @override
+  String get authSocialAccountNotLinked =>
+      'This email already has a Fox Passport account that isn\'t verified yet. Sign in with your email and password (or use Forgot password if you don\'t have one) and enter the code we email you, then you can continue with Google or Facebook.';
+
+  @override
   String get authUsername => 'Username';
 
   @override

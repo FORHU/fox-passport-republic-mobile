@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/failure.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
+import 'package:flutter_template/features/auth/data/datasources/social_credential_source.dart';
 import 'package:flutter_template/features/auth/data/repositories/auth_repository.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
@@ -121,6 +122,34 @@ void main() {
       expect(state.user, isNull);
       expect(state.error, tFailure.message);
       verify(() => mockRepository.login(tEmail, tPassword)).called(1);
+    });
+
+    test('social sign-in into an unverified account flags it for the UI',
+        () async {
+      when(() => mockRepository.loginWithSocial(SocialProvider.google))
+          .thenAnswer((_) async => const Left(SocialAccountNotLinkedFailure()));
+
+      final controller = container.read(authControllerProvider.notifier);
+      final result = await controller.loginWithSocial(SocialProvider.google);
+
+      expect(result, false);
+      final state = container.read(authControllerProvider);
+      expect(state.socialAccountNotLinked, true);
+      expect(state.isAuthenticated, false);
+    });
+
+    test('other social sign-in failures do not set the flag', () async {
+      when(() => mockRepository.loginWithSocial(SocialProvider.google))
+          .thenAnswer(
+        (_) async => const Left(UnauthorizedFailure('Invalid token')),
+      );
+
+      final controller = container.read(authControllerProvider.notifier);
+      await controller.loginWithSocial(SocialProvider.google);
+
+      final state = container.read(authControllerProvider);
+      expect(state.socialAccountNotLinked, false);
+      expect(state.error, 'Invalid token');
     });
   });
 }
