@@ -23,6 +23,9 @@ class DailyLoginStatus extends Equatable {
     required this.amount,
     required this.streak,
     this.block,
+    this.nextAmount = 0,
+    this.cycleDay = 1,
+    this.cycle = const [],
   });
 
   factory DailyLoginStatus.fromJson(Map<String, dynamic> json) =>
@@ -31,7 +34,13 @@ class DailyLoginStatus extends Equatable {
         canClaim: json['canClaim'] == true,
         block: DailyLoginBlock.tryParse(json['reason']),
         amount: (json['amount'] as num?)?.toInt() ?? 0,
+        nextAmount: (json['nextAmount'] as num?)?.toInt() ?? 0,
         streak: (json['streak'] as num?)?.toInt() ?? 0,
+        cycleDay: ((json['cycleDay'] as num?)?.toInt() ?? 1).clamp(1, 7),
+        cycle: [
+          for (final v in (json['cycle'] as List? ?? const []))
+            if (v is num) v.toInt(),
+        ],
       );
 
   final bool claimedToday;
@@ -40,14 +49,40 @@ class DailyLoginStatus extends Equatable {
   /// Null when nothing stops a claim (or today is already claimed).
   final DailyLoginBlock? block;
 
-  /// What a claim pays, before the monthly limit trims it.
+  /// What today's claim pays, before the monthly limit trims it.
   final int amount;
+
+  /// What tomorrow's claim pays; 0 when the server did not say.
+  final int nextAmount;
 
   /// Days in a row claimed.
   final int streak;
 
+  /// Which day of the 7-day cycle today is (1 to 7): the one being claimed,
+  /// or, once it is claimed, the one that was.
+  final int cycleDay;
+
+  /// What each of the seven days pays, day 1 first; empty when the server did
+  /// not say, and then there is no week to draw.
+  final List<int> cycle;
+
+  /// What coming back tomorrow pays: the server's word, else today's amount.
+  int get tomorrow => nextAmount > 0 ? nextAmount : amount;
+
+  /// What the last day of the cycle pays, or 0 without a cycle.
+  int get day7Amount => cycle.length == 7 ? cycle.last : 0;
+
   @override
-  List<Object?> get props => [claimedToday, canClaim, block, amount, streak];
+  List<Object?> get props => [
+        claimedToday,
+        canClaim,
+        block,
+        amount,
+        nextAmount,
+        streak,
+        cycleDay,
+        cycle,
+      ];
 }
 
 /// The answer to a claim: what was paid, and the status after it.

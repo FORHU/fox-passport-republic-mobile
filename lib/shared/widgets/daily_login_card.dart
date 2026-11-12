@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
 import 'package:flutter_template/features/rewards/domain/daily_login.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/daily_login_dialog.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -30,22 +33,22 @@ class _DailyLoginCardState extends ConsumerState<DailyLoginCard> {
     setState(() => _busy = true);
     final messenger = ScaffoldMessenger.maybeOf(context);
     final l10n = context.l10n;
+    DailyLoginClaim? result;
     try {
-      final result =
-          await ref.read(rewardsRepositoryProvider).claimDailyLogin();
+      result = await ref.read(rewardsRepositoryProvider).claimDailyLogin();
       // The balance changed: the status and the wallet are read again.
       ref
         ..invalidate(dailyLoginProvider)
         ..invalidate(walletProvider);
-      if (result.claimed && result.coinsAwarded > 0) {
-        messenger?.showSnackBar(
-          SnackBar(content: Text(l10n.dailyLoginAdded(result.coinsAwarded))),
-        );
-      }
     } on Object {
       messenger?.showSnackBar(SnackBar(content: Text(l10n.dailyLoginFailed)));
     } finally {
+      // Not busy any more before the modal opens: it is not waiting on it.
       if (mounted) setState(() => _busy = false);
+    }
+    // The reward is shown as a modal: "Day 3 done", the new balance, Done.
+    if (result != null && result.claimed && mounted) {
+      await showDailyLoginDialog(context, justClaimed: result);
     }
   }
 
@@ -61,36 +64,43 @@ class _DailyLoginCardState extends ConsumerState<DailyLoginCard> {
     // The gap above belongs to the card, so Home has none while it is hidden.
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
+      // Tapping the card, anywhere but the Claim button, opens the week.
+      child: Material(
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
           borderRadius: AppRadius.brLg,
-          border: Border.all(
+          side: BorderSide(
             color: claimable ? AppColors.accentTintBorder : AppColors.border,
           ),
         ),
-        child: Row(
-          children: [
-            _Badge(claimed: claimed, claimable: claimable),
-            const SizedBox(width: 12),
-            Expanded(child: _Words(status: status)),
-            if (claimable) ...[
-              const SizedBox(width: 12),
-              _ClaimButton(
-                label: l10n.dailyLoginClaimShort,
-                semanticLabel: l10n.dailyLoginClaim(status.amount),
-                busy: _busy,
-                onPressed: _claim,
-              ),
-            ] else if (claimed && status.streak > 0) ...[
-              const SizedBox(width: 12),
-              Text(
-                l10n.dailyLoginStreak(status.streak),
-                style: AppTypography.body(size: 12),
-              ),
-            ],
-          ],
+        child: InkWell(
+          borderRadius: AppRadius.brLg,
+          onTap: () => unawaited(showDailyLoginDialog(context)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                _Badge(claimed: claimed, claimable: claimable),
+                const SizedBox(width: 12),
+                Expanded(child: _Words(status: status)),
+                if (claimable) ...[
+                  const SizedBox(width: 12),
+                  _ClaimButton(
+                    label: l10n.dailyLoginClaimShort,
+                    semanticLabel: l10n.dailyLoginClaim(status.amount),
+                    busy: _busy,
+                    onPressed: _claim,
+                  ),
+                ] else if (claimed && status.streak > 0) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.dailyLoginStreak(status.streak),
+                    style: AppTypography.body(size: 12),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -142,7 +152,7 @@ class _Words extends StatelessWidget {
     final String subtitle;
     if (status.claimedToday) {
       title = l10n.dailyLoginClaimed;
-      subtitle = l10n.dailyLoginComeBack(status.amount);
+      subtitle = l10n.dailyLoginComeBack(status.tomorrow);
     } else if (status.canClaim) {
       title = l10n.dailyLoginLabel;
       subtitle = status.streak > 0

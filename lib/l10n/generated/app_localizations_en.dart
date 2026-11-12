@@ -6049,8 +6049,46 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String dailyLoginAdded(int amount) {
-    return '+$amount Tokens added';
+  String dailyLoginDayOf(int day, int total) {
+    return 'Day $day of $total';
+  }
+
+  @override
+  String dailyLoginDayDone(int day) {
+    return 'Day $day done';
+  }
+
+  @override
+  String get dailyLoginClaimedBadge => 'Claimed';
+
+  @override
+  String get dailyLoginExplain => 'Log in every day to build your streak.';
+
+  @override
+  String dailyLoginDay7(int amount) {
+    return 'Day 7 pays +$amount.';
+  }
+
+  @override
+  String get dailyLoginNotNow => 'Not now';
+
+  @override
+  String get dailyLoginDone => 'Done';
+
+  @override
+  String get dailyLoginNewBalance => 'New balance';
+
+  @override
+  String get dailyLoginBalance => 'Balance';
+
+  @override
+  String dailyLoginBalanceTokens(String count) {
+    return '$count Tokens';
+  }
+
+  @override
+  String dailyLoginDayLabel(int day, int amount) {
+    return 'Day $day, $amount Tokens';
   }
 
   @override
