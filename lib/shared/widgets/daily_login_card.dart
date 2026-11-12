@@ -58,9 +58,9 @@ class _DailyLoginCardState extends ConsumerState<DailyLoginCard> {
     final l10n = context.l10n;
     final claimable = status.canClaim;
     final claimed = status.claimedToday;
-    // The gap below belongs to the card, so Home has none while it is hidden.
+    // The gap above belongs to the card, so Home has none while it is hidden.
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(top: 16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(

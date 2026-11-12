@@ -174,9 +174,6 @@ class HomePage extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: 16),
-              // Today's daily login, always in view so it is easy to claim.
-              // Takes no room until the server has answered.
-              const DailyLoginCard(),
               _HomeSearch(onTap: () => context.push(RouteNames.search)),
               const SizedBox(height: 12),
               // The kinds Search used to put in a tab bar, one tap away.
@@ -184,6 +181,10 @@ class HomePage extends ConsumerWidget {
                 onPick: (kind) =>
                     unawaited(context.push(RouteNames.searchFor(kind.name))),
               ),
+              // Today's daily login: in the same place every day, under the
+              // search Home is for and in view without scrolling. Takes no
+              // room (and leaves no gap) until the server has answered.
+              const DailyLoginCard(),
               // An upcoming booking, if there is one. Failing or empty means
               // no strip and no error.
               if (ticket != null) ...[
