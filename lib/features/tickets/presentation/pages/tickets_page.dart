@@ -78,6 +78,11 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
             style: AppTypography.display(size: 28),
           ),
         ),
+        IconButton(
+          tooltip: l10n.search,
+          onPressed: () => context.push(RouteNames.search),
+          icon: const Icon(Icons.search_rounded),
+        ),
         _ViewToggle(
           calendar: _calendar,
           onChanged: (calendar) => setState(() => _calendar = calendar),
@@ -189,7 +194,7 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                             l10n.ticketsEmptyUpcoming,
                             icon: Icons.event_available_outlined,
                             actionLabel: l10n.ticketsBrowseEvents,
-                            onAction: () => context.go(RouteNames.search),
+                            onAction: () => context.push(RouteNames.search),
                           )
                         else
                           _empty(l10n.ticketsEmptyPast, icon: Icons.history),
