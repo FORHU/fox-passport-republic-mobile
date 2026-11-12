@@ -438,6 +438,9 @@
   "settingsLocationDevice": "Current location",
   "settingsLocationNone": "Not set",
   "settingsAccount": "Account",
+  "settingsSocial": "Social",
+  "settingsSpacesRoles": "Spaces and roles",
+  "settingsHelp": "Help",
   "settingsSignOut": "Sign out",
   "settingsCurrency": "Currency",
   "settingsPreferences": "Preferences",
@@ -1983,5 +1986,6 @@
   "leaderboardPillServices": "Service",
   "leaderboardPillPerformers": "Performer",
   "leaderboardTabTopRated": "Top rated",
-  "leaderboardTabRising": "Rising"
+  "leaderboardTabRising": "Rising",
+  "leaderboardNote": "Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard."
 }

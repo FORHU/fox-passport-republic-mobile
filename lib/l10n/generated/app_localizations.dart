@@ -2530,6 +2530,24 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get settingsAccount;
 
+  /// No description provided for @settingsSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get settingsSocial;
+
+  /// No description provided for @settingsSpacesRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and roles'**
+  String get settingsSpacesRoles;
+
+  /// No description provided for @settingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelp;
+
   /// No description provided for @settingsSignOut.
   ///
   /// In en, this message translates to:
@@ -10815,6 +10833,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rising'**
   String get leaderboardTabRising;
+
+  /// No description provided for @leaderboardNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.'**
+  String get leaderboardNote;
 }
 
 class _AppLocalizationsDelegate

@@ -74,6 +74,13 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           _Row(
+            icon: Icons.verified_user_outlined,
+            title: l10n.profileVerify,
+            onTap: () => context.push(RouteNames.identity),
+          ),
+          const SizedBox(height: 24),
+          _Section(label: l10n.settingsSocial),
+          _Row(
             icon: Icons.people_outline_rounded,
             title: l10n.profilePeople,
             onTap: () => context.push(RouteNames.people),
@@ -88,17 +95,13 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           _Row(
-            icon: Icons.verified_user_outlined,
-            title: l10n.profileVerify,
-            onTap: () => context.push(RouteNames.identity),
+            icon: Icons.block_rounded,
+            title: l10n.settingsBlockedUsers,
+            value: l10n.settingsBlockedUsersHint,
+            onTap: () => context.push(RouteNames.blockedUsers),
           ),
-          const SizedBox(height: 8),
-          _Row(
-            icon: Icons.bolt_rounded,
-            title: l10n.settingsHowItWorks,
-            onTap: () => context.push(RouteNames.howItWorks),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
+          _Section(label: l10n.settingsSpacesRoles),
           // Only for someone who holds a role to switch to.
           if (spaces.length > 1) ...[
             _Row(
@@ -115,12 +118,12 @@ class SettingsPage extends ConsumerWidget {
             value: l10n.rolesSettingsHint,
             onTap: () => context.push(RouteNames.roles),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
+          _Section(label: l10n.settingsHelp),
           _Row(
-            icon: Icons.block_rounded,
-            title: l10n.settingsBlockedUsers,
-            value: l10n.settingsBlockedUsersHint,
-            onTap: () => context.push(RouteNames.blockedUsers),
+            icon: Icons.bolt_rounded,
+            title: l10n.settingsHowItWorks,
+            onTap: () => context.push(RouteNames.howItWorks),
           ),
           const SizedBox(height: 8),
           _Row(
