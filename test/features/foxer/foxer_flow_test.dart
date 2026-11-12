@@ -102,11 +102,25 @@ void main() {
       expect(hall.host, 'Maria Mayor');
     });
 
+    test('reads the specialties of a Provider by name', () {
+      final provider = FoxerProfile.fromJson(const {
+        'id': 'p',
+        'name': 'Sample Studio',
+        'specialties': [
+          {'slug': 'photography', 'name': 'Photography'},
+          {'slug': 'videography', 'name': 'Videography'},
+          {'slug': 'bad'},
+        ],
+      });
+      expect(provider.specialties, ['Photography', 'Videography']);
+    });
+
     test('a bare Foxer has nothing optional', () {
       final bare = FoxerProfile.fromJson(const {'id': 'x', 'name': 'Bare'});
       expect(bare.offers, isEmpty);
       expect(bare.verified, isFalse);
       expect(bare.rating, isNull);
+      expect(bare.specialties, isEmpty);
     });
   });
 

@@ -6,6 +6,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/foxer/data/foxer_repository.dart';
 import 'package:flutter_template/features/foxer/presentation/widgets/foxer_reputation_panel.dart';
+import 'package:flutter_template/features/foxer/presentation/widgets/foxer_specialties.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -257,6 +258,7 @@ class _LoadedState extends ConsumerState<_Loaded> {
             style: AppTypography.label(),
           ),
         ],
+        FoxerSpecialties(specialties: profile.specialties),
         const SizedBox(height: 20),
         Row(
           children: [

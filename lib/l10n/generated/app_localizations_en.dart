@@ -1302,6 +1302,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAccount => 'Account';
 
   @override
+  String get settingsSocial => 'Social';
+
+  @override
+  String get settingsSpacesRoles => 'Spaces and roles';
+
+  @override
+  String get settingsHelp => 'Help';
+
+  @override
   String get settingsSignOut => 'Sign out';
 
   @override
@@ -3649,6 +3658,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foxerStatBookings => 'Bookings done';
+
+  @override
+  String get foxerSinceLabel => 'Foxer since';
+
+  @override
+  String get foxerSpecialtiesTitle => 'Specialties';
+
+  @override
+  String get foxerSpecialtiesNote =>
+      'Booked for one thing at a time, across all specialties.';
 
   @override
   String get foxerStatReplies => 'Replies in time';
@@ -6003,4 +6022,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardTabRising => 'Rising';
+
+  @override
+  String get leaderboardNote =>
+      'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.';
 }

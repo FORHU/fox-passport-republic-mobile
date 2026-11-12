@@ -135,7 +135,8 @@ void main() {
       // A rating with its review count; "New" while there are too few reviews.
       expect(find.text('4.9 · 210'), findsOneWidget);
       expect(find.text('New'), findsOneWidget);
-      expect(find.textContaining('booking'), findsNothing);
+      // No booking counts on the rows (the ranking note may say the word).
+      expect(find.textContaining(RegExp(r'\d+ bookings?')), findsNothing);
     });
 
     testWidgets('opens on Top rated and asks for the account role', (
@@ -217,6 +218,13 @@ void main() {
       await show(tester, far);
       expect(find.text('51'), findsOneWidget);
       expect(find.text('You · Me'), findsOneWidget);
+      // Pinned above the list, as in the design, and the ranking note ends it.
+      expect(
+        tester.getTopLeft(find.text('You · Me')).dy,
+        lessThan(tester.getTopLeft(find.text('Top')).dy),
+      );
+      expect(find.textContaining('Top rated ranks by Paws'), findsOneWidget);
+      expect(find.textContaining('no Citizens leaderboard'), findsOneWidget);
     });
 
     testWidgets('says so when nobody is on the board, not a blank', (

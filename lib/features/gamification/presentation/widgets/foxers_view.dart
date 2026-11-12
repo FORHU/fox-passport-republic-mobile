@@ -139,6 +139,7 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
                     pinned: data.me != null && !data.meIsListed
                         ? _row(l10n, data.me!, myId)
                         : null,
+                    footer: l10n.leaderboardNote,
                   ),
           ),
         ),
