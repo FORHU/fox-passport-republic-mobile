@@ -116,9 +116,9 @@ class _FoxerCard extends StatelessWidget {
               Row(
                 children: [
                   const Icon(
-                    Icons.star_rounded,
+                    Icons.pets,
                     size: 14,
-                    color: AppColors.accent,
+                    color: AppColors.warning,
                   ),
                   const SizedBox(width: 2),
                   Text(

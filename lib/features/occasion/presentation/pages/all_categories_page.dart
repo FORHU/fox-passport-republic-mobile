@@ -204,7 +204,7 @@ class _Groups extends StatelessWidget {
           for (final e in s.$2)
             InkWell(
               borderRadius: AppRadius.brMd,
-              onTap: () => context.go(e.open),
+              onTap: () => context.push(e.open),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(

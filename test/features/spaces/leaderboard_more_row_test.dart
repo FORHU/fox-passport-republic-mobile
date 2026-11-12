@@ -39,11 +39,11 @@ void main() {
       );
       expect(
         LeaderboardMoreRow.roleFor(AppSpace.gear, const ['providerFoxer']),
-        'gear',
+        'providers',
       );
       expect(
         LeaderboardMoreRow.roleFor(AppSpace.services, const ['providerFoxer']),
-        'services',
+        'providers',
       );
     });
 

@@ -52,36 +52,39 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
 
     return Column(
       children: [
-        SizedBox(
-          height: 44,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+        // The role bar is fixed: the roles share the full width, no scrolling.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             children: [
-              for (final role in LeaderboardRole.values)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
+              for (final (i, role) in LeaderboardRole.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
                   child: BoardChip(
                     label: roleLabel(l10n, role),
                     selected: role == _role,
                     onTap: () => setState(() => _role = role),
                   ),
                 ),
+              ],
             ],
           ),
         ),
+        // The board tabs are one fixed row too, sharing the width.
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
             children: [
-              for (final tab in FoxerTab.values)
-                BoardChip(
-                  label: foxerTabLabel(l10n, tab),
-                  selected: tab == _tab,
-                  onTap: () => setState(() => _tab = tab),
+              for (final (i, tab) in FoxerTab.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
+                  child: BoardChip(
+                    label: foxerTabLabel(l10n, tab),
+                    selected: tab == _tab,
+                    onTap: () => setState(() => _tab = tab),
+                  ),
                 ),
+              ],
             ],
           ),
         ),
@@ -139,6 +142,7 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
                     pinned: data.me != null && !data.meIsListed
                         ? _row(l10n, data.me!, myId)
                         : null,
+                    footer: l10n.leaderboardNote,
                   ),
           ),
         ),

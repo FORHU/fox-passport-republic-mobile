@@ -161,28 +161,49 @@ class _RolePill extends StatelessWidget {
 /// A leaderboard's rows, with the caller's own row pinned below them when the
 /// list does not reach it ([pinned] is null when it does, or they are absent).
 class BoardList extends StatelessWidget {
-  const BoardList({required this.rows, this.pinned, super.key});
+  const BoardList({
+    required this.rows,
+    this.pinned,
+    this.footer,
+    super.key,
+  });
 
   final List<Widget> rows;
+
+  /// The viewer's own row when it is not among [rows], shown above them.
   final Widget? pinned;
+
+  /// A note shown after the last row.
+  final String? footer;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (pinned != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: pinned,
+          ),
         Expanded(
           child: ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            itemCount: rows.length,
+            itemCount: rows.length + (footer == null ? 0 : 1),
             separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (_, i) => rows[i],
+            itemBuilder: (_, i) => i < rows.length
+                ? rows[i]
+                : Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+                    child: Text(
+                      footer!,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
           ),
         ),
-        if (pinned != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: pinned,
-          ),
       ],
     );
   }
@@ -213,7 +234,7 @@ class BoardChip extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 40),
           child: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: selected ? AppColors.textPrimary : AppColors.surface,
               borderRadius: AppRadius.brPill,
@@ -221,11 +242,17 @@ class BoardChip extends StatelessWidget {
                 color: selected ? AppColors.textPrimary : AppColors.border,
               ),
             ),
-            child: Text(
-              label,
-              style: AppTypography.display(
-                size: 14,
-                color: selected ? AppColors.canvas : AppColors.textSecondary,
+            // One line always: in a fixed row the label shrinks to fit
+            // instead of wrapping.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: AppTypography.display(
+                  size: 14,
+                  color: selected ? AppColors.canvas : AppColors.textSecondary,
+                ),
               ),
             ),
           ),

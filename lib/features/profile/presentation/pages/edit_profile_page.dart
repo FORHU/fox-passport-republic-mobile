@@ -12,6 +12,7 @@ import 'package:flutter_template/features/profile/domain/entities/profile_entity
 import 'package:flutter_template/features/profile/domain/entities/profile_update.dart';
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/widgets/social_links_editor.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_template/shared/widgets/app_input.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
@@ -38,6 +39,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _phone = TextEditingController();
   final _bio = TextEditingController();
   Map<SocialPlatform, String> _links = {};
+  List<String> _specialties = [];
   bool _private = false;
   bool _saving = false;
   bool _uploading = false;
@@ -53,6 +55,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _phone.text = profile?.phone ?? '';
     _bio.text = profile?.bio ?? '';
     _links = {...?profile?.socialLinks};
+    _specialties = [...?profile?.specialties];
     _private = profile?.isPrivate ?? false;
     _seeded = true;
   }
@@ -104,6 +107,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       for (final e in (profile?.socialLinks ?? const {}).entries)
         e.key.key: e.value,
     };
+    final isProvider = user?.hasRole('providerFoxer') ?? false;
+    final storedSpecialties = profile?.specialties ?? const <String>[];
+    final specialtiesChanged = isProvider &&
+        !(_specialties.length == storedSpecialties.length &&
+            _specialties.toSet().containsAll(storedSpecialties));
+    if (specialtiesChanged && _specialties.isEmpty) {
+      showTopToast(context, l10n.profileSpecialtiesRequired);
+      return;
+    }
     final update = ProfileUpdate(
       name: name == (profile?.name ?? user?.name) ? null : name,
       username:
@@ -112,6 +124,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       isPrivate: _private == (profile?.isPrivate ?? false) ? null : _private,
       bio: bio == (profile?.bio ?? '') ? null : bio,
       socialLinks: mapEquals(links, storedLinks) ? null : links,
+      specialties: specialtiesChanged ? _specialties : null,
     );
     if (update.toJson().isEmpty) {
       router.pop();
@@ -267,6 +280,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 ],
               ),
             ),
+            if (user?.hasRole('providerFoxer') ?? false) ...[
+              const SizedBox(height: 24),
+              _SpecialtiesEditor(
+                picked: _specialties,
+                onToggle: (slug) => setState(() {
+                  if (_specialties.contains(slug)) {
+                    _specialties = [..._specialties]..remove(slug);
+                  } else {
+                    _specialties = [..._specialties, slug];
+                  }
+                }),
+              ),
+            ],
             const SizedBox(height: 24),
             PrimaryButton(
               label: l10n.profileSave,
@@ -276,6 +302,62 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A Provider's specialties as chips from the catalog: any number, at least
+/// one. The API refuses to drop one that still has a booking ahead.
+class _SpecialtiesEditor extends ConsumerWidget {
+  const _SpecialtiesEditor({required this.picked, required this.onToggle});
+
+  final List<String> picked;
+  final ValueChanged<String> onToggle;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final catalog = ref.watch(providerSpecialtiesProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.profileSpecialties, style: AppTypography.label()),
+        const SizedBox(height: 4),
+        Text(l10n.profileSpecialtiesHint, style: AppTypography.body(size: 12)),
+        const SizedBox(height: 8),
+        catalog.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.accent),
+          ),
+          error: (_, __) => TextButton(
+            onPressed: () => ref.invalidate(providerSpecialtiesProvider),
+            child: Text(l10n.retry),
+          ),
+          data: (list) {
+            // One they hold that the catalog no longer lists stays on show, so
+            // it is not dropped by saving without ever having been seen.
+            final known = {for (final s in list) s.slug};
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final s in list)
+                  FilterChip(
+                    label: Text(s.name),
+                    selected: picked.contains(s.slug),
+                    onSelected: (_) => onToggle(s.slug),
+                  ),
+                for (final slug in picked.where((p) => !known.contains(p)))
+                  FilterChip(
+                    label: Text(slug),
+                    selected: true,
+                    onSelected: (_) => onToggle(slug),
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }

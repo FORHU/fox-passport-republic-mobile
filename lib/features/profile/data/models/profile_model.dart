@@ -13,6 +13,7 @@ class ProfileModel extends ProfileEntity {
     super.isPrivate,
     super.bio,
     super.socialLinks,
+    super.specialties,
     super.joinedAt,
   });
 
@@ -38,6 +39,12 @@ class ProfileModel extends ProfileEntity {
       isPrivate: payload['isPrivate'] == true,
       bio: payload['bio'] as String?,
       socialLinks: parseSocialLinks(payload['socialLinks']),
+      specialties: [
+        for (final s in (payload['specialties'] is List
+            ? payload['specialties'] as List
+            : const []))
+          if (s is Map && s['slug'] is String) s['slug'] as String,
+      ],
       joinedAt: (payload['createdAt'] ?? payload['joinedAt']) != null
           ? DateTime.tryParse(
               (payload['createdAt'] ?? payload['joinedAt']).toString(),

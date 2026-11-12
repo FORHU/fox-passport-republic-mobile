@@ -30,6 +30,7 @@ class CatalogRepository {
     DateTime? fromDate,
     DateTime? toDate,
     String? sortBy,
+    String? specialty,
   }) async {
     var page = await _fetch(
       kind,
@@ -44,6 +45,7 @@ class CatalogRepository {
       fromDate: fromDate,
       toDate: toDate,
       sortBy: sortBy,
+      specialty: specialty,
     );
     // Venues whose service area covers the position. When none do, fall back
     // to the city so "near you" is not empty for no reason.
@@ -59,6 +61,7 @@ class CatalogRepository {
         fromDate: fromDate,
         toDate: toDate,
         sortBy: sortBy,
+        specialty: specialty,
       );
     }
     // A narrowed search that finds nothing is an honest answer; only an
@@ -70,7 +73,8 @@ class CatalogRepository {
         maxPrice != null ||
         minCapacity != null ||
         fromDate != null ||
-        toDate != null;
+        toDate != null ||
+        specialty != null;
     if (page.items.isNotEmpty || narrowed || !AppConfig.instance.useMock) {
       return page;
     }
@@ -91,6 +95,7 @@ class CatalogRepository {
     DateTime? fromDate,
     DateTime? toDate,
     String? sortBy,
+    String? specialty,
   }) async {
     final byPoint = kind == CatalogKind.venues && lat != null && lng != null;
     final params = <String, dynamic>{
@@ -99,6 +104,8 @@ class CatalogRepository {
       if (query.isNotEmpty && kind == CatalogKind.venues) 'search': query,
       if (query.isNotEmpty && kind == CatalogKind.events) 'q': query,
       if (query.isNotEmpty && kind == CatalogKind.foxers) 'q': query,
+      if (specialty != null && kind == CatalogKind.foxers)
+        'specialty': specialty,
       if (city != null && !byPoint && query.isEmpty) ...{
         if (kind == CatalogKind.venues || kind == CatalogKind.events)
           'city': city,
@@ -396,6 +403,7 @@ class CatalogQuery extends Equatable {
     this.fromDate,
     this.toDate,
     this.sortBy,
+    this.specialty,
   });
 
   final CatalogKind kind;
@@ -415,6 +423,9 @@ class CatalogQuery extends Equatable {
   final DateTime? toDate;
   final String? sortBy;
 
+  /// Narrow Foxers to those who declared this specialty (a catalog slug).
+  final String? specialty;
+
   @override
   List<Object?> get props => [
         kind,
@@ -429,6 +440,7 @@ class CatalogQuery extends Equatable {
         fromDate,
         toDate,
         sortBy,
+        specialty,
       ];
 }
 
@@ -449,5 +461,6 @@ final catalogProvider =
         fromDate: q.fromDate,
         toDate: q.toDate,
         sortBy: q.sortBy,
+        specialty: q.specialty,
       ),
 );

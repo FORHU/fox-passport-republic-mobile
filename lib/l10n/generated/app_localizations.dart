@@ -2536,6 +2536,24 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get settingsAccount;
 
+  /// No description provided for @settingsSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get settingsSocial;
+
+  /// No description provided for @settingsSpacesRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and roles'**
+  String get settingsSpacesRoles;
+
+  /// No description provided for @settingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelp;
+
   /// No description provided for @settingsSignOut.
   ///
   /// In en, this message translates to:
@@ -6622,6 +6640,24 @@ abstract class AppLocalizations {
   /// **'Bookings done'**
   String get foxerStatBookings;
 
+  /// No description provided for @foxerSinceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxer since'**
+  String get foxerSinceLabel;
+
+  /// No description provided for @foxerSpecialtiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get foxerSpecialtiesTitle;
+
+  /// No description provided for @foxerSpecialtiesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked for one thing at a time, across all specialties.'**
+  String get foxerSpecialtiesNote;
+
   /// No description provided for @foxerStatReplies.
   ///
   /// In en, this message translates to:
@@ -9196,6 +9232,24 @@ abstract class AppLocalizations {
   /// **'Links to your work'**
   String get roleApplyPortfolio;
 
+  /// No description provided for @profileSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get profileSpecialties;
+
+  /// No description provided for @profileSpecialtiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer. Choose at least one.'**
+  String get profileSpecialtiesHint;
+
+  /// No description provided for @profileSpecialtiesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one specialty.'**
+  String get profileSpecialtiesRequired;
+
   /// No description provided for @roleApplySpecializationsProvider.
   ///
   /// In en, this message translates to:
@@ -10726,23 +10780,11 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get leaderboardRoleEvent;
 
-  /// No description provided for @leaderboardRoleGear.
+  /// No description provided for @leaderboardRoleProviders.
   ///
   /// In en, this message translates to:
-  /// **'Gear'**
-  String get leaderboardRoleGear;
-
-  /// No description provided for @leaderboardRoleServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Services'**
-  String get leaderboardRoleServices;
-
-  /// No description provided for @leaderboardRolePerformers.
-  ///
-  /// In en, this message translates to:
-  /// **'Performers'**
-  String get leaderboardRolePerformers;
+  /// **'Providers'**
+  String get leaderboardRoleProviders;
 
   /// No description provided for @leaderboardAllCities.
   ///
@@ -10792,23 +10834,11 @@ abstract class AppLocalizations {
   /// **'Event'**
   String get leaderboardPillEvent;
 
-  /// No description provided for @leaderboardPillGear.
+  /// No description provided for @leaderboardPillProviders.
   ///
   /// In en, this message translates to:
-  /// **'Gear'**
-  String get leaderboardPillGear;
-
-  /// No description provided for @leaderboardPillServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Service'**
-  String get leaderboardPillServices;
-
-  /// No description provided for @leaderboardPillPerformers.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get leaderboardPillPerformers;
+  /// **'Provider'**
+  String get leaderboardPillProviders;
 
   /// No description provided for @leaderboardTabTopRated.
   ///
@@ -10821,6 +10851,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rising'**
   String get leaderboardTabRising;
+
+  /// No description provided for @leaderboardNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.'**
+  String get leaderboardNote;
 }
 
 class _AppLocalizationsDelegate

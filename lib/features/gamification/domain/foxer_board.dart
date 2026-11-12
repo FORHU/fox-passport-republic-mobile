@@ -1,20 +1,24 @@
 import 'package:equatable/equatable.dart';
 
-/// The Foxer roles the leaderboard can be filtered by.
+/// The Foxer roles the leaderboard can be filtered by. Gear, Talent and
+/// Performer Foxers were unified into one Provider role (`providerFoxer`).
 enum LeaderboardRole {
   venue('venueFoxer'),
   event('eventFoxer'),
-  gear('gearFoxer'),
-  services('serviceFoxer'),
-  performers('performerFoxer');
+  providers('providerFoxer');
 
   const LeaderboardRole(this.accountRole);
 
   /// The account role the API takes as its `role` parameter.
   final String accountRole;
 
-  /// The role named in the screen's route (`venue`, `event`, ...).
+  /// Route names of the boards that became Providers; old links still open.
+  static const _legacyProviderRoutes = {'gear', 'services', 'performers'};
+
+  /// The role named in the screen's route (`venue`, `event`, `providers`).
+  /// The old `gear`, `services` and `performers` open Providers.
   static LeaderboardRole? fromRoute(String? value) {
+    if (_legacyProviderRoutes.contains(value)) return providers;
     for (final role in values) {
       if (role.name == value) return role;
     }
