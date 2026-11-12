@@ -10774,23 +10774,11 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get leaderboardRoleEvent;
 
-  /// No description provided for @leaderboardRoleGear.
+  /// No description provided for @leaderboardRoleProviders.
   ///
   /// In en, this message translates to:
-  /// **'Gear'**
-  String get leaderboardRoleGear;
-
-  /// No description provided for @leaderboardRoleServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Services'**
-  String get leaderboardRoleServices;
-
-  /// No description provided for @leaderboardRolePerformers.
-  ///
-  /// In en, this message translates to:
-  /// **'Performers'**
-  String get leaderboardRolePerformers;
+  /// **'Providers'**
+  String get leaderboardRoleProviders;
 
   /// No description provided for @leaderboardAllCities.
   ///
@@ -10840,23 +10828,11 @@ abstract class AppLocalizations {
   /// **'Event'**
   String get leaderboardPillEvent;
 
-  /// No description provided for @leaderboardPillGear.
+  /// No description provided for @leaderboardPillProviders.
   ///
   /// In en, this message translates to:
-  /// **'Gear'**
-  String get leaderboardPillGear;
-
-  /// No description provided for @leaderboardPillServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Service'**
-  String get leaderboardPillServices;
-
-  /// No description provided for @leaderboardPillPerformers.
-  ///
-  /// In en, this message translates to:
-  /// **'Performer'**
-  String get leaderboardPillPerformers;
+  /// **'Provider'**
+  String get leaderboardPillProviders;
 
   /// No description provided for @leaderboardTabTopRated.
   ///

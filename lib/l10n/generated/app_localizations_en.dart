@@ -5973,13 +5973,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardRoleEvent => 'Events';
 
   @override
-  String get leaderboardRoleGear => 'Gear';
-
-  @override
-  String get leaderboardRoleServices => 'Services';
-
-  @override
-  String get leaderboardRolePerformers => 'Performers';
+  String get leaderboardRoleProviders => 'Providers';
 
   @override
   String get leaderboardAllCities => 'All cities';
@@ -6009,13 +6003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardPillEvent => 'Event';
 
   @override
-  String get leaderboardPillGear => 'Gear';
-
-  @override
-  String get leaderboardPillServices => 'Service';
-
-  @override
-  String get leaderboardPillPerformers => 'Performer';
+  String get leaderboardPillProviders => 'Provider';
 
   @override
   String get leaderboardTabTopRated => 'Top rated';

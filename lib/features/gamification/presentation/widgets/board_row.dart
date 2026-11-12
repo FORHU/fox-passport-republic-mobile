@@ -234,7 +234,7 @@ class BoardChip extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 40),
           child: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: selected ? AppColors.textPrimary : AppColors.surface,
               borderRadius: AppRadius.brPill,
@@ -242,11 +242,17 @@ class BoardChip extends StatelessWidget {
                 color: selected ? AppColors.textPrimary : AppColors.border,
               ),
             ),
-            child: Text(
-              label,
-              style: AppTypography.display(
-                size: 14,
-                color: selected ? AppColors.canvas : AppColors.textSecondary,
+            // One line always: in a fixed row the label shrinks to fit
+            // instead of wrapping.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: AppTypography.display(
+                  size: 14,
+                  color: selected ? AppColors.canvas : AppColors.textSecondary,
+                ),
               ),
             ),
           ),

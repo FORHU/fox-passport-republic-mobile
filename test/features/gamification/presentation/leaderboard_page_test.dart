@@ -145,12 +145,12 @@ void main() {
       final repository = foxersOnly(
         (role, tab, city) async => _foxerBoard(role, [_foxer(1, 'Someone')]),
       );
-      await show(tester, repository, role: LeaderboardRole.gear);
+      await show(tester, repository, role: LeaderboardRole.providers);
 
       expect(
         repository.foxerCalls.first,
         (
-          LeaderboardRole.gear,
+          LeaderboardRole.providers,
           FoxerTab.topRated,
           null,
         ),

@@ -50,7 +50,7 @@ void main() {
         'entries': [_entry(1, 'a')],
         'userPosition': _entry(51, 'z'),
       },
-      requestedRole: LeaderboardRole.gear,
+      requestedRole: LeaderboardRole.providers,
     );
 
     expect(board.tab, FoxerTab.mostBooked);
@@ -78,11 +78,11 @@ void main() {
       {
         'entries': [_entry(1, 'a', role: 'Foxer')],
       },
-      requestedRole: LeaderboardRole.services,
+      requestedRole: LeaderboardRole.providers,
     );
 
-    expect(board.role, LeaderboardRole.services);
-    expect(board.rows.single.role, LeaderboardRole.services);
+    expect(board.role, LeaderboardRole.providers);
+    expect(board.rows.single.role, LeaderboardRole.providers);
   });
 
   test('leaves out what is not a row and fills in what is missing', () {
@@ -122,12 +122,18 @@ void main() {
 
   test('roles and tabs map to and from their names', () {
     expect(LeaderboardRole.venue.accountRole, 'venueFoxer');
-    expect(LeaderboardRole.performers.accountRole, 'performerFoxer');
+    expect(LeaderboardRole.providers.accountRole, 'providerFoxer');
+    expect(LeaderboardRole.values, hasLength(3));
     for (final role in LeaderboardRole.values) {
       expect(LeaderboardRole.fromRoute(role.name), role);
       expect(LeaderboardRole.fromAccountRole(role.accountRole), role);
     }
     expect(LeaderboardRole.fromRoute('venueFoxer'), isNull);
+    // Old links to the boards that became Providers still open.
+    for (final old in ['gear', 'services', 'performers']) {
+      expect(LeaderboardRole.fromRoute(old), LeaderboardRole.providers);
+    }
+    expect(LeaderboardRole.fromAccountRole('gearFoxer'), isNull);
     expect(LeaderboardRole.fromAccountRole('venue'), isNull);
     expect(LeaderboardRole.fromAccountRole(null), isNull);
 
