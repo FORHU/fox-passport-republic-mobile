@@ -45,7 +45,7 @@ void main() {
 
     test('drops an empty city', () {
       final p = FoxerPlace.tryParse(
-        const {'position': 1, 'role': 'gearFoxer', 'city': '  '},
+        const {'position': 1, 'role': 'providerFoxer', 'city': '  '},
       );
 
       expect(p!.city, isNull);
@@ -87,9 +87,9 @@ void main() {
       expect(
         foxerPlaceText(
           l10n,
-          const FoxerPlace(position: 7, role: 'gearFoxer'),
+          const FoxerPlace(position: 7, role: 'providerFoxer'),
         ),
-        '#7 Gear',
+        '#7 Providers',
       );
     });
 
@@ -102,9 +102,9 @@ void main() {
             FoxerPlace(position: 2, role: role, city: 'Manila'),
           );
 
-      expect(say('serviceFoxer'), '#2 Services in Manila');
-      expect(say('performerFoxer'), '#2 Performers in Manila');
       expect(say('providerFoxer'), '#2 Providers in Manila');
+      // The old Gear, Services and Performers roles no longer exist.
+      expect(say('gearFoxer'), '#2 · Manila');
       expect(say('mystery'), '#2 · Manila');
       expect(
         foxerPlaceText(l10n, const FoxerPlace(position: 2, role: 'mystery')),

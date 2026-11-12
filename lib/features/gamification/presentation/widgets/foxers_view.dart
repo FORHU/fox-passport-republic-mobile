@@ -52,21 +52,21 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
 
     return Column(
       children: [
-        SizedBox(
-          height: 44,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+        // The role bar is fixed: the roles share the full width, no scrolling.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             children: [
-              for (final role in LeaderboardRole.values)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
+              for (final (i, role) in LeaderboardRole.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
                   child: BoardChip(
                     label: roleLabel(l10n, role),
                     selected: role == _role,
                     onTap: () => setState(() => _role = role),
                   ),
                 ),
+              ],
             ],
           ),
         ),

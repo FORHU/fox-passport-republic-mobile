@@ -1967,9 +1967,7 @@
   "leaderboardMostBooked": "Most booked",
   "leaderboardRoleVenue": "Venues",
   "leaderboardRoleEvent": "Events",
-  "leaderboardRoleGear": "Gear",
-  "leaderboardRoleServices": "Services",
-  "leaderboardRolePerformers": "Performers",
+  "leaderboardRoleProviders": "Providers",
   "leaderboardAllCities": "All cities",
   "leaderboardCityLabel": "City",
   "leaderboardCityApply": "Apply",
@@ -1979,9 +1977,7 @@
   "@leaderboardYouName": {"placeholders":{"name":{"type":"String"}}},
   "leaderboardPillVenue": "Venue",
   "leaderboardPillEvent": "Event",
-  "leaderboardPillGear": "Gear",
-  "leaderboardPillServices": "Service",
-  "leaderboardPillPerformers": "Performer",
+  "leaderboardPillProviders": "Provider",
   "leaderboardTabTopRated": "Top rated",
   "leaderboardTabRising": "Rising"
 }

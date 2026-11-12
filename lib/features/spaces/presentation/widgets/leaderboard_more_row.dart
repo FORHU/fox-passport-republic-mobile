@@ -23,8 +23,7 @@ class LeaderboardMoreRow extends ConsumerWidget {
   /// The leaderboard role for a space and the roles the person holds.
   static String roleFor(AppSpace space, List<String> roles) => switch (space) {
         AppSpace.venue => 'venue',
-        AppSpace.gear => 'gear',
-        AppSpace.services => 'services',
+        AppSpace.gear || AppSpace.services => 'providers',
         AppSpace.event || AppSpace.organizer || AppSpace.citizen => 'event',
       };
 

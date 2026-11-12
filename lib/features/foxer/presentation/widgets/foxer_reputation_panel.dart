@@ -80,9 +80,6 @@ String foxerPlaceText(AppLocalizations l10n, FoxerPlace place) {
   final role = switch (place.role) {
     'venueFoxer' => l10n.leaderboardRoleVenue,
     'eventFoxer' => l10n.leaderboardRoleEvent,
-    'gearFoxer' => l10n.leaderboardRoleGear,
-    'serviceFoxer' => l10n.leaderboardRoleServices,
-    'performerFoxer' => l10n.leaderboardRolePerformers,
     'providerFoxer' => l10n.foxerPlaceRoleProviders,
     _ => '',
   };
