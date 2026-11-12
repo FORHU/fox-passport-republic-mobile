@@ -7,7 +7,7 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
 /// "Achievements", a row that opens the achievements screen. For the citizen
-/// Passport, under the Leaderboard row.
+/// Passport, under the Milestones row.
 class AchievementsRow extends StatelessWidget {
   const AchievementsRow({super.key});
 
