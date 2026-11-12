@@ -26,6 +26,7 @@ FoxerBoardEntry _foxer(
       role: role,
       starRating: rating,
       reviewCount: reviews,
+      paws: reviews >= 5 ? rating : null,
     );
 
 FoxerBoard _foxerBoard(
@@ -132,8 +133,7 @@ void main() {
       expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
       // A rating with its review count; "New" while there are too few reviews.
-      expect(find.text('4.9'), findsOneWidget);
-      expect(find.text('210 reviews'), findsOneWidget);
+      expect(find.text('4.9 · 210'), findsOneWidget);
       expect(find.text('New'), findsOneWidget);
       expect(find.textContaining('booking'), findsNothing);
     });

@@ -1228,6 +1228,9 @@
   "foxerScorePart": "{value} / {max}",
   "@foxerScorePart": {"placeholders":{"value":{"type":"String"},"max":{"type":"int"}}},
   "foxerScorePrivate": "Only you see this score. Guests see your star rating, the facts and your labels.",
+  "pawsNew": "New",
+  "pawsSemantics": "{paws} Paws from {count, plural, =1{1 review} other{{count} reviews}}",
+  "@pawsSemantics": {"placeholders":{"paws":{"type":"String"},"count":{"type":"int"}}},
   "foxerScoreStars": "Guest rating",
   "homeComingUp": "Coming up",
   "homeComingUpElsewhere": "Nothing in {city} yet, so here is what is on elsewhere.",
@@ -1979,8 +1982,5 @@
   "leaderboardPillServices": "Service",
   "leaderboardPillPerformers": "Performer",
   "leaderboardTabTopRated": "Top rated",
-  "leaderboardTabRising": "Rising",
-  "leaderboardFoxerNew": "New",
-  "leaderboardReviews": "{count, plural, =1{1 review} other{{count} reviews}}",
-  "@leaderboardReviews": {"placeholders":{"count":{"type":"int"}}}
+  "leaderboardTabRising": "Rising"
 }

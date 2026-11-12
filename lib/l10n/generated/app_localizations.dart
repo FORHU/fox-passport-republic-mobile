@@ -6724,6 +6724,18 @@ abstract class AppLocalizations {
   /// **'Only you see this score. Guests see your star rating, the facts and your labels.'**
   String get foxerScorePrivate;
 
+  /// No description provided for @pawsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get pawsNew;
+
+  /// No description provided for @pawsSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{paws} Paws from {count, plural, =1{1 review} other{{count} reviews}}'**
+  String pawsSemantics(String paws, int count);
+
   /// No description provided for @foxerScoreStars.
   ///
   /// In en, this message translates to:
@@ -10797,18 +10809,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rising'**
   String get leaderboardTabRising;
-
-  /// No description provided for @leaderboardFoxerNew.
-  ///
-  /// In en, this message translates to:
-  /// **'New'**
-  String get leaderboardFoxerNew;
-
-  /// No description provided for @leaderboardReviews.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
-  String leaderboardReviews(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -3716,6 +3716,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only you see this score. Guests see your star rating, the facts and your labels.';
 
   @override
+  String get pawsNew => 'New';
+
+  @override
+  String pawsSemantics(String paws, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$paws Paws from $_temp0';
+  }
+
+  @override
   String get foxerScoreStars => 'Guest rating';
 
   @override
@@ -5977,18 +5991,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaderboardTabRising => 'Rising';
-
-  @override
-  String get leaderboardFoxerNew => 'New';
-
-  @override
-  String leaderboardReviews(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count reviews',
-      one: '1 review',
-    );
-    return '$_temp0';
-  }
 }
