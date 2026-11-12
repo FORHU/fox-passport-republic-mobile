@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/gamification/domain/achievements.dart';
+import 'package:flutter_template/features/gamification/presentation/widgets/milestone_badge.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -36,7 +37,7 @@ class AchievementCard extends StatelessWidget {
               ),
               for (final tier in a.tiers) ...[
                 const SizedBox(width: 6),
-                _TierPip(tier: tier),
+                _TierPip(tier: tier, isNext: tier.tier == a.nextTier),
               ],
             ],
           ),
@@ -68,7 +69,7 @@ class AchievementCard extends StatelessWidget {
               value: percent / 100,
               minHeight: 6,
               backgroundColor: AppColors.surfaceRaised,
-              valueColor: const AlwaysStoppedAnimation(AppColors.violet),
+              valueColor: const AlwaysStoppedAnimation(AppColors.accent),
             ),
           ),
           if (next != null) ...[
@@ -81,47 +82,31 @@ class AchievementCard extends StatelessWidget {
   }
 }
 
-/// "I", "II" or "III": a check once reached, an outline until then.
+/// A tier as a badge: the shape is its rarity (circle, ringed circle,
+/// hexagon), filled when reached, outlined when it is the next one, grey when
+/// it is further off.
 class _TierPip extends StatelessWidget {
-  const _TierPip({required this.tier});
+  const _TierPip({required this.tier, required this.isNext});
 
   final AchievementTier tier;
-
-  static const _numerals = ['I', 'II', 'III'];
+  final bool isNext;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final numeral = _numerals[(tier.tier - 1).clamp(0, 2)];
     return Semantics(
       label: tier.isUnlocked
           ? l10n.achievementsTierDone(tier.tier)
           : l10n.achievementsTierTodo(tier.tier),
       child: ExcludeSemantics(
-        child: Container(
-          width: 26,
-          height: 26,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: tier.isUnlocked ? AppColors.violet : Colors.transparent,
-            border: Border.all(
-              color: tier.isUnlocked ? AppColors.violet : AppColors.border,
-            ),
-          ),
-          child: tier.isUnlocked
-              ? const Icon(
-                  Icons.check_rounded,
-                  size: 16,
-                  color: AppColors.textPrimary,
-                )
-              : Text(
-                  numeral,
-                  style: AppTypography.body(
-                    size: 10,
-                    color: AppColors.textMuted,
-                  ),
-                ),
+        child: MilestoneBadge(
+          rarity: tier.tier - 1,
+          size: 30,
+          state: tier.isUnlocked
+              ? MilestoneBadgeState.earned
+              : isNext
+                  ? MilestoneBadgeState.next
+                  : MilestoneBadgeState.locked,
         ),
       ),
     );
@@ -142,34 +127,27 @@ class _Rewards extends StatelessWidget {
       runSpacing: 8,
       children: [
         if (tier.coins > 0)
-          _Reward(
-            label: l10n.achievementsRewardCoins(tier.coins),
-            color: AppColors.textSecondary,
-          ),
+          _Reward(label: l10n.achievementsRewardCoins(tier.coins)),
         if (tier.badgeName != null)
-          _Reward(
-            label: l10n.achievementsRewardBadge(tier.badgeName!),
-            color: AppColors.textSecondary,
-          ),
+          _Reward(label: l10n.achievementsRewardBadge(tier.badgeName!)),
       ],
     );
   }
 }
 
 class _Reward extends StatelessWidget {
-  const _Reward({required this.label, required this.color});
+  const _Reward({required this.label});
 
   final String label;
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
+        color: AppColors.surfaceRaised,
         borderRadius: AppRadius.brPill,
-        border: Border.all(color: color.withValues(alpha: 0.45)),
+        border: Border.all(color: AppColors.borderStrong),
       ),
       child: Text(
         label,

@@ -2051,5 +2051,17 @@
   "milestonesMoreReviews": "{count, plural, one{{count} more review} other{{count} more reviews}}",
   "@milestonesMoreReviews": {"placeholders": {"count": {"type": "int"}}},
   "milestonesMoreSpend": "₱{amount} more",
-  "@milestonesMoreSpend": {"placeholders": {"amount": {"type": "String"}}}
+  "@milestonesMoreSpend": {"placeholders": {"amount": {"type": "String"}}},
+  "challengesTitle": "Challenges",
+  "challengesBookingSection": "Booking challenges",
+  "challengesPendingNote": "Tokens stay pending until the bookings are attended.",
+  "challengesPeriodDay": "Day",
+  "challengesPeriodWeek": "Week",
+  "challengesPeriodMonth": "Month",
+  "challengesProgress": "{period} · {count} of {target} {target, plural, one{booking} other{bookings}}",
+  "@challengesProgress": {"placeholders": {"period": {"type": "String"}, "count": {"type": "int"}, "target": {"type": "int"}}},
+  "challengesDone": "Done",
+  "challengesEmpty": "No challenges right now. Check back soon.",
+  "challengesOpen": "Open {name}",
+  "@challengesOpen": {"placeholders": {"name": {"type": "String"}}}
 }

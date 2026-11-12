@@ -11097,6 +11097,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'₱{amount} more'**
   String milestonesMoreSpend(String amount);
+
+  /// No description provided for @challengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get challengesTitle;
+
+  /// No description provided for @challengesBookingSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking challenges'**
+  String get challengesBookingSection;
+
+  /// No description provided for @challengesPendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens stay pending until the bookings are attended.'**
+  String get challengesPendingNote;
+
+  /// No description provided for @challengesPeriodDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get challengesPeriodDay;
+
+  /// No description provided for @challengesPeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get challengesPeriodWeek;
+
+  /// No description provided for @challengesPeriodMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get challengesPeriodMonth;
+
+  /// No description provided for @challengesProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{period} · {count} of {target} {target, plural, one{booking} other{bookings}}'**
+  String challengesProgress(String period, int count, int target);
+
+  /// No description provided for @challengesDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get challengesDone;
+
+  /// No description provided for @challengesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges right now. Check back soon.'**
+  String get challengesEmpty;
+
+  /// No description provided for @challengesOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {name}'**
+  String challengesOpen(String name);
 }
 
 class _AppLocalizationsDelegate

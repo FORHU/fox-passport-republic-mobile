@@ -6243,4 +6243,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String milestonesMoreSpend(String amount) {
     return '₱$amount more';
   }
+
+  @override
+  String get challengesTitle => 'Challenges';
+
+  @override
+  String get challengesBookingSection => 'Booking challenges';
+
+  @override
+  String get challengesPendingNote =>
+      'Tokens stay pending until the bookings are attended.';
+
+  @override
+  String get challengesPeriodDay => 'Day';
+
+  @override
+  String get challengesPeriodWeek => 'Week';
+
+  @override
+  String get challengesPeriodMonth => 'Month';
+
+  @override
+  String challengesProgress(String period, int count, int target) {
+    String _temp0 = intl.Intl.pluralLogic(
+      target,
+      locale: localeName,
+      other: 'bookings',
+      one: 'booking',
+    );
+    return '$period · $count of $target $_temp0';
+  }
+
+  @override
+  String get challengesDone => 'Done';
+
+  @override
+  String get challengesEmpty => 'No challenges right now. Check back soon.';
+
+  @override
+  String challengesOpen(String name) {
+    return 'Open $name';
+  }
 }

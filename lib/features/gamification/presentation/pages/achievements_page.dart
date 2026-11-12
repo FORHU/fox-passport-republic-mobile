@@ -115,16 +115,20 @@ class _Loaded extends StatelessWidget {
           total: summary.totalTiers(withFoxer: withFoxer),
         ),
         const SizedBox(height: 14),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        // One row, the chips sharing the width: a PillChip fills the width it
+        // is given, so in a Wrap each would take a line of its own.
+        Row(
           children: [
-            for (final state in _filters)
-              PillChip(
-                label: _label(l10n, state),
-                selected: state == filter,
-                onTap: () => onFilter(state),
+            for (final (i, state) in _filters.indexed) ...[
+              if (i > 0) const SizedBox(width: 8),
+              Expanded(
+                child: PillChip(
+                  label: _label(l10n, state),
+                  selected: state == filter,
+                  onTap: () => onFilter(state),
+                ),
               ),
+            ],
           ],
         ),
         const SizedBox(height: 14),
@@ -218,7 +222,7 @@ class _Summary extends StatelessWidget {
               value: total == 0 ? 0 : (earned / total).clamp(0.0, 1.0),
               minHeight: 8,
               backgroundColor: AppColors.surfaceRaised,
-              valueColor: const AlwaysStoppedAnimation(AppColors.violet),
+              valueColor: const AlwaysStoppedAnimation(AppColors.accent),
             ),
           ),
         ],
