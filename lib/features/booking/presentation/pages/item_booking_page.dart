@@ -36,6 +36,10 @@ class ItemBookingPage extends ConsumerStatefulWidget {
 }
 
 class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
+  /// Low enough that, on a common phone, the legend and part of the Days
+  /// stepper show under a six-row month before any scrolling.
+  static const double _heroHeight = 160;
+
   final _today = DateTime.now();
   late DateTime _month = DateTime(_today.year, _today.month);
   final _address = TextEditingController();
@@ -224,11 +228,14 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
+                  // A short photo, so the content after the calendar peeks
+                  // above the Pay bar: a screen that ends right on the
+                  // calendar's last row reads as finished, not as scrollable.
                   Stack(
                     children: [
                       PhotoBox(
                         url: item.imageUrl,
-                        height: 220,
+                        height: _heroHeight,
                         width: double.infinity,
                         radius: 0,
                       ),
@@ -271,7 +278,7 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
                           ].join(' · '),
                           style: AppTypography.body(color: AppColors.textMuted),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         _Section(l10n.bookWhenTitle),
                         BookingCalendar(
                           month: _month,
