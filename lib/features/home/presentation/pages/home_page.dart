@@ -29,6 +29,7 @@ import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/daily_login_card.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -173,6 +174,9 @@ class HomePage extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: 16),
+              // Today's daily login, always in view so it is easy to claim.
+              // Takes no room until the server has answered.
+              const DailyLoginCard(),
               _HomeSearch(onTap: () => context.push(RouteNames.search)),
               const SizedBox(height: 12),
               // The kinds Search used to put in a tab bar, one tap away.

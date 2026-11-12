@@ -6018,4 +6018,48 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get leaderboardNote =>
       'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.';
+
+  @override
+  String get dailyLoginLabel => 'Daily login';
+
+  @override
+  String get dailyLoginClaimBy => 'Claim by midnight';
+
+  @override
+  String get dailyLoginStart => 'Start your streak';
+
+  @override
+  String dailyLoginStreak(int count) {
+    return '$count-day streak';
+  }
+
+  @override
+  String dailyLoginClaim(int amount) {
+    return 'Claim +$amount Tokens';
+  }
+
+  @override
+  String get dailyLoginClaimed => 'Claimed today';
+
+  @override
+  String dailyLoginComeBack(int amount) {
+    return 'Come back tomorrow for +$amount Tokens.';
+  }
+
+  @override
+  String dailyLoginAdded(int amount) {
+    return '+$amount Tokens added';
+  }
+
+  @override
+  String get dailyLoginVerifyEmail =>
+      'Verify your email to claim your daily Tokens.';
+
+  @override
+  String get dailyLoginCapReached =>
+      'You have reached this month\'s limit for daily login Tokens. It starts again next month.';
+
+  @override
+  String get dailyLoginFailed =>
+      'We couldn\'t claim that right now. Try again.';
 }

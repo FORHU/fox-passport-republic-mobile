@@ -229,6 +229,9 @@ class ApiEndpoints {
   static const String rewardsCatalog = '/rewards/catalog';
   static const String rewardsRedeem = '/rewards/redeem';
 
+  /// Today's daily login (GET) and claiming it (POST).
+  static const String rewardsDailyLogin = '/rewards/daily-login';
+
   static const String achievementsMe = '/achievements/me';
 
   /// The signed-in Foxer's own Foxer Score and its parts.

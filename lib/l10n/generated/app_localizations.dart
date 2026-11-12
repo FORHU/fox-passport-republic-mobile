@@ -10857,6 +10857,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.'**
   String get leaderboardNote;
+
+  /// No description provided for @dailyLoginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily login'**
+  String get dailyLoginLabel;
+
+  /// No description provided for @dailyLoginClaimBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim by midnight'**
+  String get dailyLoginClaimBy;
+
+  /// No description provided for @dailyLoginStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your streak'**
+  String get dailyLoginStart;
+
+  /// No description provided for @dailyLoginStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-day streak'**
+  String dailyLoginStreak(int count);
+
+  /// No description provided for @dailyLoginClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim +{amount} Tokens'**
+  String dailyLoginClaim(int amount);
+
+  /// No description provided for @dailyLoginClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed today'**
+  String get dailyLoginClaimed;
+
+  /// No description provided for @dailyLoginComeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back tomorrow for +{amount} Tokens.'**
+  String dailyLoginComeBack(int amount);
+
+  /// No description provided for @dailyLoginAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'+{amount} Tokens added'**
+  String dailyLoginAdded(int amount);
+
+  /// No description provided for @dailyLoginVerifyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email to claim your daily Tokens.'**
+  String get dailyLoginVerifyEmail;
+
+  /// No description provided for @dailyLoginCapReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached this month\'s limit for daily login Tokens. It starts again next month.'**
+  String get dailyLoginCapReached;
+
+  /// No description provided for @dailyLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t claim that right now. Try again.'**
+  String get dailyLoginFailed;
 }
 
 class _AppLocalizationsDelegate
