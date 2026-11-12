@@ -70,18 +70,21 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
             ],
           ),
         ),
+        // The board tabs are one fixed row too, sharing the width.
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
             children: [
-              for (final tab in FoxerTab.values)
-                BoardChip(
-                  label: foxerTabLabel(l10n, tab),
-                  selected: tab == _tab,
-                  onTap: () => setState(() => _tab = tab),
+              for (final (i, tab) in FoxerTab.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
+                  child: BoardChip(
+                    label: foxerTabLabel(l10n, tab),
+                    selected: tab == _tab,
+                    onTap: () => setState(() => _tab = tab),
+                  ),
                 ),
+              ],
             ],
           ),
         ),
