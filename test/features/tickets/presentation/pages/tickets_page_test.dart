@@ -56,7 +56,19 @@ void main() {
     await tester.tap(find.text('Past'));
     await tester.pumpAndSettle();
 
-    expect(find.text('No past tickets yet'), findsOneWidget);
+    expect(find.text('No past bookings yet'), findsOneWidget);
+    expect(find.byIcon(Icons.history), findsOneWidget);
     expect(find.text('Sky Hall'), findsNothing);
+  });
+
+  testWidgets('Upcoming with no bookings shows an icon and Browse events', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+
+    expect(find.text('No upcoming bookings yet'), findsOneWidget);
+    expect(find.byIcon(Icons.event_available_outlined), findsOneWidget);
+    expect(find.text('Browse events'), findsOneWidget);
   });
 }

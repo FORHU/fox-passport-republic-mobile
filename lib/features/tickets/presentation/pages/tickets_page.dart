@@ -7,6 +7,7 @@ import 'package:flutter_template/features/tickets/presentation/widgets/offline_n
 import 'package:flutter_template/features/tickets/presentation/widgets/ticket_card.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/tickets_skeleton.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/matches/match_request_item.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_template/shared/widgets/segmented_pills.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 /// What the list shows. The calendar is a different way to look at bookings,
@@ -152,7 +154,12 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                     ),
                   ],
                   data: (list) => list.every((r) => r.needsPayment)
-                      ? [_empty(l10n.ticketsEmptyRequests)]
+                      ? [
+                          _empty(
+                            l10n.ticketsEmptyRequests,
+                            icon: Icons.mark_email_unread_outlined,
+                          ),
+                        ]
                       : [
                           // What needs the person is shown above, once.
                           for (final r in list.where((r) => !r.needsPayment))
@@ -177,11 +184,15 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                   data: (list) {
                     if (list.isEmpty) {
                       return [
-                        _empty(
-                          _segment == _Segment.upcoming
-                              ? l10n.ticketsEmptyUpcoming
-                              : l10n.ticketsEmptyPast,
-                        ),
+                        if (_segment == _Segment.upcoming)
+                          _empty(
+                            l10n.ticketsEmptyUpcoming,
+                            icon: Icons.event_available_outlined,
+                            actionLabel: l10n.ticketsBrowseEvents,
+                            onAction: () => context.go(RouteNames.search),
+                          )
+                        else
+                          _empty(l10n.ticketsEmptyPast, icon: Icons.history),
                       ];
                     }
                     if (_segment == _Segment.past) {
@@ -267,14 +278,30 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
     return widgets;
   }
 
-  Widget _empty(String message) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
-        child: Center(
-          child: Text(
-            message,
-            textAlign: TextAlign.center,
-            style: AppTypography.body(color: AppColors.textMuted),
-          ),
+  Widget _empty(
+    String message, {
+    IconData? icon,
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+        child: Column(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 40, color: AppColors.textMuted),
+              const SizedBox(height: 12),
+            ],
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: AppTypography.body(color: AppColors.textMuted),
+            ),
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(onPressed: onAction, child: Text(actionLabel)),
+            ],
+          ],
         ),
       );
 
