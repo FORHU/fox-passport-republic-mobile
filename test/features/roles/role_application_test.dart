@@ -9,6 +9,7 @@ import 'package:flutter_template/features/roles/presentation/controllers/role_ap
 import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -40,6 +41,11 @@ Map<KycDocument, PickedPhoto> _organizerDocuments() => {
       ])
         d: _photo('${d.name}.jpg'),
     };
+
+const _catalog = [
+  ProviderSpecialty(slug: 'photography', name: 'Photography'),
+  ProviderSpecialty(slug: 'sound_system', name: 'Sound system'),
+];
 
 void main() {
   late _MockRepo repo;
@@ -396,10 +402,18 @@ void main() {
   });
 
   group('the form', () {
-    Future<void> open(WidgetTester tester, String role) async {
+    Future<void> open(
+      WidgetTester tester,
+      String role, {
+      Future<List<ProviderSpecialty>> Function()? specialties,
+    }) async {
       await tester.pumpWidget(
         ProviderScope(
+          retry: (_, __) => null,
           overrides: [
+            providerSpecialtiesProvider.overrideWith(
+              (ref) => (specialties ?? () async => _catalog)(),
+            ),
             roleApplicationRepositoryProvider.overrideWithValue(repo),
             photoPickerProvider.overrideWithValue(_FakePicker()),
           ],
@@ -413,6 +427,47 @@ void main() {
       );
       await tester.pump();
     }
+
+    testWidgets('a Provider is offered the catalog specialties, by name', (
+      tester,
+    ) async {
+      await open(tester, 'providerFoxer');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Photography'), findsOneWidget);
+      expect(find.text('Sound system'), findsOneWidget);
+      expect(find.text('Specializations (choose at least one)'), findsOne);
+    });
+
+    testWidgets('a Provider whose specialties cannot load can try again', (
+      tester,
+    ) async {
+      var calls = 0;
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await open(
+        tester,
+        'providerFoxer',
+        specialties: () async {
+          calls++;
+          if (calls == 1) throw Exception('offline');
+          return _catalog;
+        },
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Photography'), findsNothing);
+
+      await tester.tap(find.text('Try again'));
+      await tester.pumpAndSettle();
+
+      expect(calls, 2);
+      expect(
+        find.text('Photography', skipOffstage: false),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('a Provider is asked for a business name and experience', (
       tester,

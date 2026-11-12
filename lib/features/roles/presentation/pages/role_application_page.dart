@@ -6,8 +6,10 @@ import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
+import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -166,14 +168,23 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                         controller.edit((x) => x.copyWith(portfolio: v)),
                   ),
                 ],
-                _Specializations(
-                  options: specializationOptions(widget.roleType),
-                  picked: d.specializations,
-                  onToggle: controller.toggleSpecialization,
-                  maxPicks: RoleApplicationDraft.maxSpecializationsFor(
-                    widget.roleType,
+                if (d.isProvider)
+                  _ProviderSpecializations(
+                    picked: d.specializations,
+                    onToggle: controller.toggleSpecialization,
+                  )
+                else
+                  _Specializations(
+                    options: [
+                      for (final o in specializationOptions(widget.roleType))
+                        (code: o, label: specializationLabel(l10n, o)),
+                    ],
+                    picked: d.specializations,
+                    onToggle: controller.toggleSpecialization,
+                    maxPicks: RoleApplicationDraft.maxSpecializationsFor(
+                      widget.roleType,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -387,7 +398,7 @@ class _Specializations extends StatelessWidget {
     this.maxPicks,
   });
 
-  final List<String> options;
+  final List<({String code, String label})> options;
   final List<String> picked;
   final ValueChanged<String> onToggle;
   final int? maxPicks;
@@ -412,14 +423,51 @@ class _Specializations extends StatelessWidget {
           children: [
             for (final o in options)
               FilterChip(
-                label: Text(specializationLabel(l10n, o)),
-                selected: picked.contains(o),
-                onSelected:
-                    full && !picked.contains(o) ? null : (_) => onToggle(o),
+                label: Text(o.label),
+                selected: picked.contains(o.code),
+                onSelected: full && !picked.contains(o.code)
+                    ? null
+                    : (_) => onToggle(o.code),
               ),
           ],
         ),
       ],
     );
+  }
+}
+
+/// A Provider's specialties, read live from the catalog so the form offers
+/// exactly what the API will accept.
+class _ProviderSpecializations extends ConsumerWidget {
+  const _ProviderSpecializations({
+    required this.picked,
+    required this.onToggle,
+  });
+
+  final List<String> picked;
+  final ValueChanged<String> onToggle;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    return ref.watch(providerSpecialtiesProvider).when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            ),
+          ),
+          error: (_, __) => AppStateView(
+            kind: AppStateKind.error,
+            title: l10n.apiLoadFailed,
+            actionLabel: l10n.retry,
+            onAction: () => ref.invalidate(providerSpecialtiesProvider),
+          ),
+          data: (list) => _Specializations(
+            options: [for (final s in list) (code: s.slug, label: s.name)],
+            picked: picked,
+            onToggle: onToggle,
+          ),
+        );
   }
 }

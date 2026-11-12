@@ -37,6 +37,7 @@ class ApiEndpoints {
   static const String matches = '/matches';
   static const String calendar = '/calendar';
   static const String categories = '/categories';
+  static const String providerSpecialties = '/categories/provider-specialties';
   static const String matchesMine = '/matches/my';
   static String publicProfile(String idOrUsername) =>
       '/users/profile/$idOrUsername';
