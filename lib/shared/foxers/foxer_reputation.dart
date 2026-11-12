@@ -44,6 +44,7 @@ class FoxerReputation extends Equatable {
     required this.isIdentityVerified,
     required this.labels,
     this.place,
+    this.foxerSince,
   });
 
   factory FoxerReputation.fromJson(Map<String, dynamic> json) =>
@@ -63,6 +64,9 @@ class FoxerReputation extends Equatable {
             if (l is String && l.trim().isNotEmpty) l.trim(),
         ],
         place: FoxerPlace.tryParse(json['leaderboard']),
+        foxerSince: json['foxerSince'] is String
+            ? DateTime.tryParse(json['foxerSince'] as String)
+            : null,
       );
 
   /// Null while the Foxer is new (fewer than five reviews): show "New".
@@ -81,6 +85,9 @@ class FoxerReputation extends Equatable {
   /// Their place on the leaderboard; null when they are not on one.
   final FoxerPlace? place;
 
+  /// When they became a Foxer (role approval, else account creation).
+  final DateTime? foxerSince;
+
   /// Nothing to show yet: no bookings and no labels.
   bool get isEmpty => completedBookings == 0 && labels.isEmpty && place == null;
 
@@ -95,5 +102,6 @@ class FoxerReputation extends Equatable {
         isIdentityVerified,
         labels,
         place,
+        foxerSince,
       ];
 }

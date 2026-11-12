@@ -7,6 +7,7 @@ import 'package:flutter_template/shared/foxers/foxer_reputation.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:intl/intl.dart';
 
 /// Three facts and the earned labels for the Foxer with [userId]: bookings
 /// done, replies in time and cancellations. It takes no room until the server
@@ -54,6 +55,15 @@ class FoxerReputationPanel extends ConsumerWidget {
               ),
             ],
           ),
+          if (reputation.foxerSince != null) ...[
+            const SizedBox(height: 8),
+            _Fact(
+              value: DateFormat.yMMM(
+                Localizations.localeOf(context).toString(),
+              ).format(reputation.foxerSince!.toLocal()),
+              label: context.l10n.foxerSinceLabel,
+            ),
+          ],
           if (reputation.place != null) ...[
             const SizedBox(height: 10),
             _Place(text: foxerPlaceText(context.l10n, reputation.place!)),

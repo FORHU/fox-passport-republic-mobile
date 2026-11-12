@@ -3660,6 +3660,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerStatBookings => 'Bookings done';
 
   @override
+  String get foxerSinceLabel => 'Foxer since';
+
+  @override
+  String get foxerSpecialtiesTitle => 'Specialties';
+
+  @override
+  String get foxerSpecialtiesNote =>
+      'Booked for one thing at a time, across all specialties.';
+
+  @override
   String get foxerStatReplies => 'Replies in time';
 
   @override

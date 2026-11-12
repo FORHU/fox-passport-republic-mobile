@@ -6634,6 +6634,24 @@ abstract class AppLocalizations {
   /// **'Bookings done'**
   String get foxerStatBookings;
 
+  /// No description provided for @foxerSinceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Foxer since'**
+  String get foxerSinceLabel;
+
+  /// No description provided for @foxerSpecialtiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get foxerSpecialtiesTitle;
+
+  /// No description provided for @foxerSpecialtiesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked for one thing at a time, across all specialties.'**
+  String get foxerSpecialtiesNote;
+
   /// No description provided for @foxerStatReplies.
   ///
   /// In en, this message translates to:
