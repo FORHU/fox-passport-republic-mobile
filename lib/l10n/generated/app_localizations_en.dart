@@ -5082,6 +5082,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyPortfolio => 'Links to your work';
 
   @override
+  String get profileSpecialties => 'Specialties';
+
+  @override
+  String get profileSpecialtiesHint => 'What you offer. Choose at least one.';
+
+  @override
+  String get profileSpecialtiesRequired => 'Choose at least one specialty.';
+
+  @override
   String get roleApplySpecializationsProvider =>
       'Specializations (choose at least one)';
 

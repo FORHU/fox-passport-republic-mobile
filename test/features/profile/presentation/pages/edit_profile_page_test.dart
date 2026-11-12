@@ -13,6 +13,7 @@ import 'package:flutter_template/features/profile/domain/entities/profile_update
 import 'package:flutter_template/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/citizens/social_links.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -37,10 +38,25 @@ const _user = UserEntity(
   username: 'ada_l',
 );
 
+UserEntity _sessionUser = _user;
+
 class _Session extends AuthController {
   @override
-  AuthState build() => const AuthState(user: _user);
+  AuthState build() => AuthState(user: _sessionUser);
 }
+
+const _provider = UserEntity(
+  id: 'u1',
+  email: 'ada@example.com',
+  name: 'Ada',
+  username: 'ada_l',
+  roleType: ['providerFoxer'],
+);
+
+const _catalog = [
+  ProviderSpecialty(slug: 'dj', name: 'DJ'),
+  ProviderSpecialty(slug: 'photography', name: 'Photography'),
+];
 
 const _profile = ProfileEntity(
   id: 'u1',
@@ -72,6 +88,7 @@ Future<ProviderContainer> _pump(
       retry: (_, __) => null,
       overrides: [
         authControllerProvider.overrideWith(_Session.new),
+        providerSpecialtiesProvider.overrideWith((ref) async => _catalog),
         profileRepositoryProvider.overrideWithValue(repo),
         if (picker != null) photoPickerProvider.overrideWithValue(picker),
       ],
@@ -103,10 +120,74 @@ void main() {
 
   setUp(() {
     repo = _MockProfileRepository();
+    _sessionUser = _user;
     when(repo.getProfile).thenAnswer((_) async => const Right(_profile));
   });
 
   Finder field(String label) => find.widgetWithText(TextFormField, label);
+
+  testWidgets('a citizen has no specialties to edit', (tester) async {
+    await _pump(tester, repo);
+
+    expect(find.text('Specialties'), findsNothing);
+  });
+
+  testWidgets('a Provider edits specialties and only the new list is sent', (
+    tester,
+  ) async {
+    _sessionUser = _provider;
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          phone: '+639171234567',
+          specialties: ['dj'],
+        ),
+      ),
+    );
+    when(() => repo.updateProfile(any()))
+        .thenAnswer((_) async => const Right(unit));
+    await _pump(tester, repo);
+
+    expect(find.text('Specialties'), findsOneWidget);
+    await tester.tap(find.text('Photography'));
+    await tester.pump();
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.updateProfile(
+        const ProfileUpdate(specialties: ['dj', 'photography']),
+      ),
+    ).called(1);
+  });
+
+  testWidgets('a Provider cannot save with no specialty', (tester) async {
+    _sessionUser = _provider;
+    when(repo.getProfile).thenAnswer(
+      (_) async => const Right(
+        ProfileEntity(
+          id: 'u1',
+          name: 'Ada',
+          email: 'ada@example.com',
+          username: 'ada_l',
+          specialties: ['dj'],
+        ),
+      ),
+    );
+    await _pump(tester, repo);
+
+    await tester.tap(find.text('DJ'));
+    await tester.pump();
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose at least one specialty.'), findsOneWidget);
+    verifyNever(() => repo.updateProfile(any()));
+  });
 
   testWidgets('starts with what the profile already has', (tester) async {
     await _pump(tester, repo);
