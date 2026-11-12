@@ -41,6 +41,7 @@ void main() {
     repository = AuthRepositoryImpl(remote, storage, social: social);
 
     when(() => social.isSupported).thenReturn(true);
+    when(() => social.signOut()).thenAnswer((_) async {});
     when(() => storage.saveToken(any())).thenAnswer((_) async {});
     when(() => storage.saveUserModel(any())).thenAnswer((_) async {});
   });
@@ -60,6 +61,7 @@ void main() {
 
       expect(result.getRight().toNullable(), tUser);
       verify(() => storage.saveToken('access')).called(1);
+      verifyNever(() => social.signOut());
     });
 
     test('a dismissed provider UI is a quiet cancellation', () async {
@@ -84,6 +86,38 @@ void main() {
 
       expect(result.getLeft().toNullable(), isA<UnauthorizedFailure>());
       verifyNever(() => storage.saveToken(any()));
+      // Forgets the refused account, so the next tap shows the picker.
+      verify(() => social.signOut()).called(1);
+    });
+
+    test('an unverified account with that email is SocialAccountNotLinked',
+        () async {
+      when(() => social.obtain(any()))
+          .thenAnswer((_) async => const SocialToken('google-id-token'));
+      when(() => remote.loginWithSocialToken(any(), any())).thenThrow(
+        const UnauthorizedException('account not linked', statusCode: 401),
+      );
+
+      final result = await repository.loginWithSocial(SocialProvider.google);
+
+      expect(
+        result.getLeft().toNullable(),
+        isA<SocialAccountNotLinkedFailure>(),
+      );
+      verifyNever(() => storage.saveToken(any()));
+      verify(() => social.signOut()).called(1);
+    });
+
+    test('an unreachable API also forgets the account', () async {
+      when(() => social.obtain(any()))
+          .thenAnswer((_) async => const SocialToken('google-id-token'));
+      when(() => remote.loginWithSocialToken(any(), any()))
+          .thenThrow(const NetworkException());
+
+      final result = await repository.loginWithSocial(SocialProvider.google);
+
+      expect(result.getLeft().toNullable(), isA<NetworkFailure>());
+      verify(() => social.signOut()).called(1);
     });
 
     test('maps provider-side failures to ServerFailure', () async {
@@ -102,6 +136,38 @@ void main() {
 
       expect(result.getLeft().toNullable(), isA<ServerFailure>());
       verifyNever(() => social.obtain(any()));
+    });
+
+    test('a cancelled provider sheet does not sign the provider out', () async {
+      when(() => social.obtain(any())).thenThrow(const SocialSignInCancelled());
+
+      await repository.loginWithSocial(SocialProvider.google);
+
+      verifyNever(() => social.signOut());
+    });
+  });
+
+  group('AuthRepositoryImpl.logout', () {
+    test('signs out of Google/Facebook after clearing the session', () async {
+      when(() => remote.logout()).thenAnswer((_) async {});
+      when(() => storage.clearSession()).thenAnswer((_) async {});
+
+      final result = await repository.logout();
+
+      expect(result.isRight(), isTrue);
+      verifyInOrder([
+        () => storage.clearSession(),
+        () => social.signOut(),
+      ]);
+    });
+
+    test('keeps the provider signed in when the server logout fails', () async {
+      when(() => remote.logout()).thenThrow(const NetworkException());
+
+      final result = await repository.logout();
+
+      expect(result.getLeft().toNullable(), isA<NetworkFailure>());
+      verifyNever(() => social.signOut());
     });
   });
 }

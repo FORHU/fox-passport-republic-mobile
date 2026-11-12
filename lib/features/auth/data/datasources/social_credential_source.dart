@@ -32,6 +32,12 @@ abstract class SocialCredentialSource {
 
   /// Throws [SocialSignInCancelled] on cancel, [ServerException] otherwise.
   Future<SocialCredential> obtain(SocialProvider provider);
+
+  /// Forgets the Google/Facebook account this app last used on the device, so
+  /// the next sign-in asks which account instead of silently reusing it.
+  /// Never throws: it runs on sign-out and after a refused sign-in, and must
+  /// not block either.
+  Future<void> signOut();
 }
 
 class PlatformSocialCredentialSource implements SocialCredentialSource {
@@ -51,7 +57,40 @@ class PlatformSocialCredentialSource implements SocialCredentialSource {
     };
   }
 
+  @override
+  Future<void> signOut() async {
+    if (kIsWeb) return;
+    // Without this, Android hands back the account used last time, so after
+    // one refused sign-in (or a sign-out) another Google account could never
+    // be picked.
+    if (_config.googleServerClientId.isNotEmpty) {
+      try {
+        await _ensureGoogleInitialised();
+        await GoogleSignIn.instance.signOut();
+      } on Object catch (e) {
+        debugPrint('Google sign-out failed: $e');
+      }
+    }
+    if (_config.facebookNativeEnabled) {
+      try {
+        await FacebookAuth.instance.logOut();
+      } on Object catch (e) {
+        debugPrint('Facebook sign-out failed: $e');
+      }
+    }
+  }
+
   // ── Google ────────────────────────────────────────────────────────────
+
+  /// `initialize` must run once, before any other GoogleSignIn call.
+  Future<void> _ensureGoogleInitialised() async {
+    if (_googleInitialised) return;
+    await GoogleSignIn.instance.initialize(
+      clientId: _config.googleClientId.isEmpty ? null : _config.googleClientId,
+      serverClientId: _config.googleServerClientId,
+    );
+    _googleInitialised = true;
+  }
 
   Future<SocialCredential> _google() async {
     final native = _config.googleServerClientId.isNotEmpty &&
@@ -63,14 +102,7 @@ class PlatformSocialCredentialSource implements SocialCredentialSource {
     }
 
     try {
-      if (!_googleInitialised) {
-        await GoogleSignIn.instance.initialize(
-          clientId:
-              _config.googleClientId.isEmpty ? null : _config.googleClientId,
-          serverClientId: _config.googleServerClientId,
-        );
-        _googleInitialised = true;
-      }
+      await _ensureGoogleInitialised();
       final account = await GoogleSignIn.instance.authenticate();
       final idToken = account.authentication.idToken;
       if (idToken == null || idToken.isEmpty) {

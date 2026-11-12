@@ -50,14 +50,14 @@ void main() {
       stub(ApiEndpoints.leaderboardFoxers, board());
 
       await repository.foxers(
-        LeaderboardRole.performers,
+        LeaderboardRole.providers,
         tab: FoxerTab.rising,
       );
 
       verify(
         () => api.get(
           ApiEndpoints.leaderboardFoxers,
-          query: {'role': 'performerFoxer', 'tab': 'rising'},
+          query: {'role': 'providerFoxer', 'tab': 'rising'},
         ),
       ).called(1);
     });
@@ -67,17 +67,17 @@ void main() {
       stub(ApiEndpoints.leaderboardFoxers, board());
 
       await repository.foxers(
-        LeaderboardRole.gear,
+        LeaderboardRole.providers,
         tab: FoxerTab.mostBooked,
         city: '  Davao ',
       );
-      await repository.foxers(LeaderboardRole.gear, city: '   ');
+      await repository.foxers(LeaderboardRole.providers, city: '   ');
 
       verify(
         () => api.get(
           ApiEndpoints.leaderboardFoxers,
           query: {
-            'role': 'gearFoxer',
+            'role': 'providerFoxer',
             'tab': 'most_booked',
             'city': 'Davao',
           },
@@ -86,7 +86,7 @@ void main() {
       verify(
         () => api.get(
           ApiEndpoints.leaderboardFoxers,
-          query: {'role': 'gearFoxer', 'tab': 'top_rated'},
+          query: {'role': 'providerFoxer', 'tab': 'top_rated'},
         ),
       ).called(1);
     });

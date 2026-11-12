@@ -36,6 +36,19 @@ Map<String, dynamic> _reply({
 
 void main() {
   group('the model', () {
+    test('reads Foxer since as a date', () {
+      final json = (_reply()['data'] as Map).cast<String, dynamic>()
+        ..['foxerSince'] = '2026-03-04T00:00:00.000Z';
+      final r = FoxerReputation.fromJson(json);
+      expect(r.foxerSince, DateTime.utc(2026, 3, 4));
+      expect(
+        FoxerReputation.fromJson(
+          (_reply()['data'] as Map).cast<String, dynamic>(),
+        ).foxerSince,
+        isNull,
+      );
+    });
+
     test('reads the facts and labels', () {
       final r = FoxerReputation.fromJson(
         (_reply()['data'] as Map).cast<String, dynamic>(),

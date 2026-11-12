@@ -8,11 +8,12 @@ import 'package:flutter_template/features/gamification/presentation/leaderboard_
 import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
+import 'package:flutter_template/shared/widgets/paws.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
 /// The Foxer board for one role and tab (Top rated, Most booked, Rising) and,
-/// optionally, one city. Shows position, name, role and the star rating, never
+/// optionally, one city. Shows position, name, role and the Paws, never
 /// the number of bookings. The caller's own place is pinned below the list when
 /// it is further down than the list goes.
 class FoxersView extends ConsumerStatefulWidget {
@@ -51,36 +52,39 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
 
     return Column(
       children: [
-        SizedBox(
-          height: 44,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+        // The role bar is fixed: the roles share the full width, no scrolling.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             children: [
-              for (final role in LeaderboardRole.values)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
+              for (final (i, role) in LeaderboardRole.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
                   child: BoardChip(
                     label: roleLabel(l10n, role),
                     selected: role == _role,
                     onTap: () => setState(() => _role = role),
                   ),
                 ),
+              ],
             ],
           ),
         ),
+        // The board tabs are one fixed row too, sharing the width.
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
             children: [
-              for (final tab in FoxerTab.values)
-                BoardChip(
-                  label: foxerTabLabel(l10n, tab),
-                  selected: tab == _tab,
-                  onTap: () => setState(() => _tab = tab),
+              for (final (i, tab) in FoxerTab.values.indexed) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(
+                  child: BoardChip(
+                    label: foxerTabLabel(l10n, tab),
+                    selected: tab == _tab,
+                    onTap: () => setState(() => _tab = tab),
+                  ),
                 ),
+              ],
             ],
           ),
         ),
@@ -138,6 +142,7 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
                     pinned: data.me != null && !data.meIsListed
                         ? _row(l10n, data.me!, myId)
                         : null,
+                    footer: l10n.leaderboardNote,
                   ),
           ),
         ),
@@ -153,47 +158,8 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
         rolePill: rolePillLabel(l10n, e.role),
         squareAvatar: true,
         isMe: myId != null && e.userId == myId,
-        trailing: _Rating(entry: e),
+        trailing: PawsLabel(paws: e.paws, reviewCount: e.reviewCount),
       );
-}
-
-/// A Foxer's star rating and review count, or "New" while there are too few
-/// reviews for a number to mean anything.
-class _Rating extends StatelessWidget {
-  const _Rating({required this.entry});
-
-  final FoxerBoardEntry entry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    if (!entry.hasRating) {
-      return Text(
-        l10n.leaderboardFoxerNew,
-        style: AppTypography.body(size: 12, color: AppColors.textMuted),
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_rounded, size: 16, color: AppColors.warning),
-            const SizedBox(width: 2),
-            Text(
-              entry.starRating.toStringAsFixed(1),
-              style: AppTypography.display(size: 14),
-            ),
-          ],
-        ),
-        Text(
-          l10n.leaderboardReviews(entry.reviewCount),
-          style: AppTypography.body(size: 11, color: AppColors.textMuted),
-        ),
-      ],
-    );
-  }
 }
 
 class _CitySheet extends StatefulWidget {

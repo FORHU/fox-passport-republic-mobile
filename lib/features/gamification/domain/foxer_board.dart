@@ -1,20 +1,24 @@
 import 'package:equatable/equatable.dart';
 
-/// The Foxer roles the leaderboard can be filtered by.
+/// The Foxer roles the leaderboard can be filtered by. Gear, Talent and
+/// Performer Foxers were unified into one Provider role (`providerFoxer`).
 enum LeaderboardRole {
   venue('venueFoxer'),
   event('eventFoxer'),
-  gear('gearFoxer'),
-  services('serviceFoxer'),
-  performers('performerFoxer');
+  providers('providerFoxer');
 
   const LeaderboardRole(this.accountRole);
 
   /// The account role the API takes as its `role` parameter.
   final String accountRole;
 
-  /// The role named in the screen's route (`venue`, `event`, ...).
+  /// Route names of the boards that became Providers; old links still open.
+  static const _legacyProviderRoutes = {'gear', 'services', 'performers'};
+
+  /// The role named in the screen's route (`venue`, `event`, `providers`).
+  /// The old `gear`, `services` and `performers` open Providers.
   static LeaderboardRole? fromRoute(String? value) {
+    if (_legacyProviderRoutes.contains(value)) return providers;
     for (final role in values) {
       if (role.name == value) return role;
     }
@@ -59,6 +63,10 @@ class FoxerBoardEntry extends Equatable {
     required this.role,
     required this.starRating,
     required this.reviewCount,
+    this.paws,
+    this.completedBookings = 0,
+    this.foxerSince,
+    this.isVerified = false,
     this.image,
     this.city,
   });
@@ -77,6 +85,10 @@ class FoxerBoardEntry extends Equatable {
             fallbackRole,
         starRating: (json['starRating'] as num?)?.toDouble() ?? 0,
         reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+        paws: (json['paws'] as num?)?.toDouble(),
+        completedBookings: (json['completedBookings'] as num?)?.toInt() ?? 0,
+        foxerSince: DateTime.tryParse('${json['foxerSince'] ?? ''}'),
+        isVerified: json['isVerified'] == true,
       );
 
   /// Fewer reviews than this and the rating is shown as "New", never a number.
@@ -91,6 +103,13 @@ class FoxerBoardEntry extends Equatable {
   final double starRating;
   final int reviewCount;
 
+  /// The verified rating, one decimal; null while there are fewer than 5
+  /// reviews ("New").
+  final double? paws;
+  final int completedBookings;
+  final DateTime? foxerSince;
+  final bool isVerified;
+
   /// A rating is only worth showing once enough people have given one.
   bool get hasRating => reviewCount >= minReviewsForRating;
 
@@ -104,6 +123,10 @@ class FoxerBoardEntry extends Equatable {
         role,
         starRating,
         reviewCount,
+        paws,
+        completedBookings,
+        foxerSince,
+        isVerified,
       ];
 }
 

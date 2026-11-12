@@ -5,9 +5,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 String roleLabel(AppLocalizations l10n, LeaderboardRole role) => switch (role) {
       LeaderboardRole.venue => l10n.leaderboardRoleVenue,
       LeaderboardRole.event => l10n.leaderboardRoleEvent,
-      LeaderboardRole.gear => l10n.leaderboardRoleGear,
-      LeaderboardRole.services => l10n.leaderboardRoleServices,
-      LeaderboardRole.performers => l10n.leaderboardRolePerformers,
+      LeaderboardRole.providers => l10n.leaderboardRoleProviders,
     };
 
 /// The short, singular label for a role on a row ("Venue").
@@ -15,9 +13,7 @@ String rolePillLabel(AppLocalizations l10n, LeaderboardRole role) =>
     switch (role) {
       LeaderboardRole.venue => l10n.leaderboardPillVenue,
       LeaderboardRole.event => l10n.leaderboardPillEvent,
-      LeaderboardRole.gear => l10n.leaderboardPillGear,
-      LeaderboardRole.services => l10n.leaderboardPillServices,
-      LeaderboardRole.performers => l10n.leaderboardPillPerformers,
+      LeaderboardRole.providers => l10n.leaderboardPillProviders,
     };
 
 /// The label for a tab of the Foxer board.

@@ -26,6 +26,7 @@ FoxerBoardEntry _foxer(
       role: role,
       starRating: rating,
       reviewCount: reviews,
+      paws: reviews >= 5 ? rating : null,
     );
 
 FoxerBoard _foxerBoard(
@@ -132,10 +133,10 @@ void main() {
       expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
       // A rating with its review count; "New" while there are too few reviews.
-      expect(find.text('4.9'), findsOneWidget);
-      expect(find.text('210 reviews'), findsOneWidget);
+      expect(find.text('4.9 · 210'), findsOneWidget);
       expect(find.text('New'), findsOneWidget);
-      expect(find.textContaining('booking'), findsNothing);
+      // No booking counts on the rows (the ranking note may say the word).
+      expect(find.textContaining(RegExp(r'\d+ bookings?')), findsNothing);
     });
 
     testWidgets('opens on Top rated and asks for the account role', (
@@ -144,12 +145,12 @@ void main() {
       final repository = foxersOnly(
         (role, tab, city) async => _foxerBoard(role, [_foxer(1, 'Someone')]),
       );
-      await show(tester, repository, role: LeaderboardRole.gear);
+      await show(tester, repository, role: LeaderboardRole.providers);
 
       expect(
         repository.foxerCalls.first,
         (
-          LeaderboardRole.gear,
+          LeaderboardRole.providers,
           FoxerTab.topRated,
           null,
         ),
@@ -217,6 +218,13 @@ void main() {
       await show(tester, far);
       expect(find.text('51'), findsOneWidget);
       expect(find.text('You · Me'), findsOneWidget);
+      // Pinned above the list, as in the design, and the ranking note ends it.
+      expect(
+        tester.getTopLeft(find.text('You · Me')).dy,
+        lessThan(tester.getTopLeft(find.text('Top')).dy),
+      );
+      expect(find.textContaining('Top rated ranks by Paws'), findsOneWidget);
+      expect(find.textContaining('no Citizens leaderboard'), findsOneWidget);
     });
 
     testWidgets('says so when nobody is on the board, not a blank', (

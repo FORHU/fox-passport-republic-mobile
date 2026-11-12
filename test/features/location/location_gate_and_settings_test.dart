@@ -168,9 +168,18 @@ void main() {
     // What the profile used to hold: your followers and the ID check.
     expect(find.text('Followers, following and requests'), findsOneWidget);
     expect(find.text('Verify your identity'), findsOneWidget);
-    expect(find.text('How Tokens work'), findsOneWidget);
     expect(find.text('Saved posts'), findsOneWidget);
     expect(find.text('Blocked users'), findsOneWidget);
+    // Grouped as Account, Social, Spaces and roles, Help.
+    double y(String text) => tester.getTopLeft(find.text(text)).dy;
+    expect(y('ACCOUNT'), lessThan(y('Verify your identity')));
+    expect(y('Verify your identity'), lessThan(y('SOCIAL')));
+    expect(y('SOCIAL'), lessThan(y('Saved posts')));
+    expect(y('Saved posts'), lessThan(y('Blocked users')));
+    // Help sits below the first screen, built only once scrolled to.
+    await tester.scrollUntilVisible(find.text('How Tokens work'), 200);
+    expect(y('SPACES AND ROLES'), lessThan(y('HELP')));
+    expect(y('HELP'), lessThan(y('How Tokens work')));
     // Further down the list, built only once scrolled to.
     await tester.scrollUntilVisible(find.text('Take the app tour again'), 200);
     expect(find.text('Take the app tour again'), findsOneWidget);

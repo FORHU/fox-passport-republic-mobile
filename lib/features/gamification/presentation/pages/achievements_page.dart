@@ -18,9 +18,6 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 const _foxerRoles = {
   'venueFoxer',
   'eventFoxer',
-  'gearFoxer',
-  'serviceFoxer',
-  'performerFoxer',
   'providerFoxer',
 };
 

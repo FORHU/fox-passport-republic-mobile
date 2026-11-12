@@ -379,6 +379,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Google and Facebook sign-in are available in the mobile app.';
 
   @override
+  String get authSocialAccountNotLinked =>
+      'This email already has a Fox Passport account that isn\'t verified yet. Sign in with your email and password (or use Forgot password if you don\'t have one) and enter the code we email you, then you can continue with Google or Facebook.';
+
+  @override
   String get authUsername => 'Username';
 
   @override
@@ -988,7 +992,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEventInbox => 'Event inbox';
 
   @override
-  String get messageRequestPending => 'Message request';
+  String get messageRequestPending => 'Wants to message you';
 
   @override
   String get messageSearchUnavailable =>
@@ -1043,10 +1047,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsPast => 'Past';
 
   @override
-  String get ticketsEmptyUpcoming => 'No upcoming tickets yet';
+  String get ticketsEmptyUpcoming => 'No upcoming bookings yet';
 
   @override
-  String get ticketsEmptyPast => 'No past tickets yet';
+  String get ticketsBrowseEvents => 'Browse events';
+
+  @override
+  String get ticketsEmptyPast => 'No past bookings yet';
 
   @override
   String get apiLoadFailed => 'We couldn\'t load this right now.';
@@ -1297,6 +1304,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAccount => 'Account';
+
+  @override
+  String get settingsSocial => 'Social';
+
+  @override
+  String get settingsSpacesRoles => 'Spaces and roles';
+
+  @override
+  String get settingsHelp => 'Help';
 
   @override
   String get settingsSignOut => 'Sign out';
@@ -3648,6 +3664,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get foxerStatBookings => 'Bookings done';
 
   @override
+  String get foxerSinceLabel => 'Foxer since';
+
+  @override
+  String get foxerSpecialtiesTitle => 'Specialties';
+
+  @override
+  String get foxerSpecialtiesNote =>
+      'Booked for one thing at a time, across all specialties.';
+
+  @override
   String get foxerStatReplies => 'Replies in time';
 
   @override
@@ -3714,6 +3740,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get foxerScorePrivate =>
       'Only you see this score. Guests see your star rating, the facts and your labels.';
+
+  @override
+  String get pawsNew => 'New';
+
+  @override
+  String pawsSemantics(String paws, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$paws Paws from $_temp0';
+  }
 
   @override
   String get foxerScoreStars => 'Guest rating';
@@ -5082,6 +5122,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyPortfolio => 'Links to your work';
 
   @override
+  String get profileSpecialties => 'Specialties';
+
+  @override
+  String get profileSpecialtiesHint => 'What you offer. Choose at least one.';
+
+  @override
+  String get profileSpecialtiesRequired => 'Choose at least one specialty.';
+
+  @override
   String get roleApplySpecializationsProvider =>
       'Specializations (choose at least one)';
 
@@ -5928,13 +5977,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardRoleEvent => 'Events';
 
   @override
-  String get leaderboardRoleGear => 'Gear';
-
-  @override
-  String get leaderboardRoleServices => 'Services';
-
-  @override
-  String get leaderboardRolePerformers => 'Performers';
+  String get leaderboardRoleProviders => 'Providers';
 
   @override
   String get leaderboardAllCities => 'All cities';
@@ -5964,13 +6007,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardPillEvent => 'Event';
 
   @override
-  String get leaderboardPillGear => 'Gear';
-
-  @override
-  String get leaderboardPillServices => 'Service';
-
-  @override
-  String get leaderboardPillPerformers => 'Performer';
+  String get leaderboardPillProviders => 'Provider';
 
   @override
   String get leaderboardTabTopRated => 'Top rated';
@@ -5979,16 +6016,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardTabRising => 'Rising';
 
   @override
-  String get leaderboardFoxerNew => 'New';
-
-  @override
-  String leaderboardReviews(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count reviews',
-      one: '1 review',
-    );
-    return '$_temp0';
-  }
+  String get leaderboardNote =>
+      'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.';
 }

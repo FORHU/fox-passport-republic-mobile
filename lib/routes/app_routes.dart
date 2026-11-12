@@ -466,6 +466,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             MatchRequestPage(item: state.extra! as CatalogItem),
       ),
+      // Search is a page pushed over whichever tab opened it, like the detail
+      // pages below, so Back always returns to that tab.
+      GoRoute(
+        path: RouteNames.search,
+        builder: (context, state) => SearchPage(
+          initialKind: CatalogKind.fromParam(
+            state.uri.queryParameters['kind'],
+          ),
+          initialCity: state.uri.queryParameters['city'],
+          initialMinCapacity: int.tryParse(
+            state.uri.queryParameters['capacity'] ?? '',
+          ),
+          initialDate: DateTime.tryParse(
+            state.uri.queryParameters['date'] ?? '',
+          ),
+        ),
+      ),
       GoRoute(
         path: RouteNames.venueDetail,
         redirect: (context, state) =>
@@ -502,22 +519,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.notifications,
                 builder: (context, state) => const NotificationsPage(),
-              ),
-              // Search lives under Home: it is opened from Home's search bar.
-              GoRoute(
-                path: RouteNames.search,
-                builder: (context, state) => SearchPage(
-                  initialKind: CatalogKind.fromParam(
-                    state.uri.queryParameters['kind'],
-                  ),
-                  initialCity: state.uri.queryParameters['city'],
-                  initialMinCapacity: int.tryParse(
-                    state.uri.queryParameters['capacity'] ?? '',
-                  ),
-                  initialDate: DateTime.tryParse(
-                    state.uri.queryParameters['date'] ?? '',
-                  ),
-                ),
               ),
             ],
           ),

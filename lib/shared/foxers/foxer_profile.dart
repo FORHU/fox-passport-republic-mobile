@@ -15,6 +15,7 @@ class FoxerProfile extends Equatable {
     this.rating,
     this.reviewCount = 0,
     this.offers = const [],
+    this.specialties = const [],
     this.isSample = false,
   });
 
@@ -61,6 +62,18 @@ class FoxerProfile extends Equatable {
       ];
     }
 
+    // A Provider's catalog specialties, as `{ slug, name }`; absent for anyone
+    // who is not a Provider.
+    final rawSpecialties = json['specialties'];
+    final specialties = [
+      if (rawSpecialties is List)
+        for (final s in rawSpecialties)
+          if (s is Map &&
+              s['name'] is String &&
+              (s['name'] as String).isNotEmpty)
+            s['name'] as String,
+    ];
+
     final roleType = json['roleType'];
     return FoxerProfile(
       id: id,
@@ -79,6 +92,7 @@ class FoxerProfile extends Equatable {
         ...rows('assets', CatalogKind.gear),
         ...rows('services', CatalogKind.services),
       ],
+      specialties: specialties,
     );
   }
 
@@ -124,6 +138,9 @@ class FoxerProfile extends Equatable {
 
   /// Event packages, venues, gear and services, as catalog rows.
   final List<CatalogItem> offers;
+
+  /// What a Provider specialises in, by name; empty for other Foxers.
+  final List<String> specialties;
   final bool isSample;
 
   /// "Davao City, Davao del Sur" from whatever parts there are.
@@ -142,6 +159,7 @@ class FoxerProfile extends Equatable {
         rating,
         reviewCount,
         offers,
+        specialties,
         isSample,
       ];
 }

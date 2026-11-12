@@ -13,6 +13,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -62,6 +63,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   late DateTime? _toDate = widget.initialDate?.add(const Duration(days: 1));
   late String _sortBy =
       widget.initialKind == CatalogKind.events ? 'date_asc' : '';
+  String? _specialty;
   Timer? _debounce;
 
   /// Kept local only for explicit mock-mode demos.
@@ -109,12 +111,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         fromDate: _fromDate,
         toDate: _toDate,
         sortBy: _sortBy.isEmpty ? null : _sortBy,
+        specialty: _specialty,
       );
 
   /// Anything narrowing the list: words, a city, a range or dates.
   bool get _hasFilters =>
       _query.isNotEmpty ||
       _city != null ||
+      _specialty != null ||
       _minPrice != null ||
       _maxPrice != null ||
       _minCapacity != null ||
@@ -126,6 +130,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     setState(() {
       _query = '';
       _city = null;
+      _specialty = null;
       _minPrice = null;
       _maxPrice = null;
       _minCapacity = null;
@@ -275,6 +280,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         onDeleted: () => setState(() => _city = null),
                       ),
                     ),
+                  ),
+                if (_kind == CatalogKind.foxers)
+                  _SpecialtyChips(
+                    value: _specialty,
+                    onChanged: (v) => setState(() => _specialty = v),
                   ),
                 if (_isPeopleGroup(_kind))
                   Padding(
@@ -960,9 +970,9 @@ class _CatalogCard extends StatelessWidget {
               ),
               if (rating != null) ...[
                 const Icon(
-                  Icons.star_rounded,
+                  Icons.pets,
                   color: AppColors.warning,
-                  size: 17,
+                  size: 15,
                 ),
                 Text(
                   rating.toStringAsFixed(1),
@@ -1119,6 +1129,40 @@ class _ViewSwitch extends StatelessWidget {
         children: [
           segment(_View.list, listLabel, Icons.view_agenda_outlined),
           segment(_View.map, mapLabel, Icons.map_outlined),
+        ],
+      ),
+    );
+  }
+}
+
+/// The catalog's specialties as a row of chips, to narrow Foxers to those who
+/// declared one. Tap the chosen chip again to drop it. Shows nothing while the
+/// list loads or when it cannot, since the search works without it.
+class _SpecialtyChips extends ConsumerWidget {
+  const _SpecialtyChips({required this.value, required this.onChanged});
+
+  final String? value;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final list = ref.watch(providerSpecialtiesProvider).asData?.value;
+    if (list == null || list.isEmpty) return const SizedBox.shrink();
+    return SizedBox(
+      height: 52,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+        children: [
+          for (final s in list)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(s.name),
+                selected: s.slug == value,
+                onSelected: (on) => onChanged(on ? s.slug : null),
+              ),
+            ),
         ],
       ),
     );

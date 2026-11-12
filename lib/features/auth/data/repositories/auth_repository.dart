@@ -8,6 +8,10 @@ import 'package:flutter_template/features/auth/data/models/user_model.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:fpdart/fpdart.dart';
 
+/// The API's message when a Google/Facebook email matches an account whose
+/// email isn't verified (Better Auth `requireLocalEmailVerified`).
+const _accountNotLinked = 'account not linked';
+
 /// Repository contract (the abstraction the domain layer depends on).
 abstract class AuthRepository {
   Future<Either<Failure, UserEntity>> login(String email, String password);
@@ -74,15 +78,28 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       final credential = await social.obtain(provider);
-      final user = switch (credential) {
-        SocialToken(:final value) =>
-          await _remote.loginWithSocialToken(provider, value),
-      };
+      final UserModel user;
+      try {
+        user = switch (credential) {
+          SocialToken(:final value) =>
+            await _remote.loginWithSocialToken(provider, value),
+        };
+      } on Object {
+        // The API refused this account (or couldn't be reached). Forget it on
+        // the device, or the next tap silently picks the same account again.
+        await social.signOut();
+        rethrow;
+      }
       await _persistSession(user);
       return Right(user);
     } on SocialSignInCancelled {
       return const Left(SocialSignInCancelledFailure());
     } on UnauthorizedException catch (e) {
+      // Better Auth's message (code OAUTH_LINK_ERROR) when the email belongs
+      // to an account whose email isn't verified yet.
+      if (e.message.trim().toLowerCase() == _accountNotLinked) {
+        return const Left(SocialAccountNotLinkedFailure());
+      }
       return Left(UnauthorizedFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
@@ -165,6 +182,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _storage.clearSession();
       await _cookieService?.clearCookies();
+      // So the next Google/Facebook sign-in asks which account to use.
+      await _social?.signOut();
       return const Right(null);
     } on Object catch (e) {
       return Left(CacheFailure('Failed to clear local session: $e'));

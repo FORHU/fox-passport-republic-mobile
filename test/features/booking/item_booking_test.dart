@@ -234,4 +234,48 @@ void main() {
     expect(find.text('Total'), findsOneWidget);
     expect(find.text('Sample amounts'), findsOneWidget);
   });
+
+  testWidgets(
+      'on a common phone, the content after a six-row month peeks above '
+      'the Pay bar so the page reads as scrollable', (tester) async {
+    // A 393 dp wide phone whose list area matches a real device (#404).
+    tester.view
+      ..physicalSize = const Size(393, 818)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [itemBookingRepositoryProvider.overrideWithValue(repo)],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ItemBookingPage(item: _service),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The tallest calendar: a month that needs six week rows (Monday first).
+    bool sixRows(DateTime m) =>
+        (m.weekday - 1) + DateTime(m.year, m.month + 1, 0).day > 35;
+    final now = DateTime.now();
+    var ahead = 0;
+    while (!sixRows(DateTime(now.year, now.month + ahead)) && ahead < 11) {
+      ahead++;
+    }
+    expect(sixRows(DateTime(now.year, now.month + ahead)), isTrue);
+    for (var i = 0; i < ahead; i++) {
+      await tester.tap(find.byTooltip('Next month'));
+      await tester.pumpAndSettle();
+    }
+
+    final payTop = tester.getTopLeft(find.byType(ElevatedButton)).dy - 12;
+    final legend = tester.getRect(find.text('Selected'));
+    final stepper = tester.getRect(find.byTooltip('Decrease How many days?'));
+
+    expect(legend.bottom, lessThan(payTop));
+    // At least 30% of the next control shows before any scrolling.
+    expect(payTop - stepper.top, greaterThanOrEqualTo(stepper.height * 0.3));
+  });
 }

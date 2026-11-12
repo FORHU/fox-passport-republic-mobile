@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -120,13 +122,15 @@ class _HeroSearchState extends State<HeroSearch> {
   void _find() {
     // The Search tab will read these when it is built; passing them now keeps
     // the hero's contract stable.
-    context.go(
-      RouteNames.search,
-      extra: <String, Object?>{
-        'type': _eventType,
-        'city': _city,
-        'date': _date?.toIso8601String(),
-      },
+    unawaited(
+      context.push(
+        RouteNames.search,
+        extra: <String, Object?>{
+          'type': _eventType,
+          'city': _city,
+          'date': _date?.toIso8601String(),
+        },
+      ),
     );
   }
 

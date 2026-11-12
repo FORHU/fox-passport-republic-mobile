@@ -260,7 +260,7 @@ class HomePage extends ConsumerWidget {
                           title: l10n.homeHappeningSoon,
                           action: l10n.seeAll,
                           onAction: () =>
-                              context.go(RouteNames.searchFor('events')),
+                              context.push(RouteNames.searchFor('events')),
                         ),
                         const SizedBox(height: 12),
                         _SoonRow(items: page.items),
@@ -308,7 +308,7 @@ class HomePage extends ConsumerWidget {
                 _OneThingRow(
                   items: oneThing,
                   onTap: (item) =>
-                      context.go(RouteNames.searchFor(item.kind.name)),
+                      context.push(RouteNames.searchFor(item.kind.name)),
                 ),
               ],
             ],
@@ -839,7 +839,7 @@ List<Widget> _comingUp(
     HomeSectionTitle(
       title: l10n.homeComingUp,
       action: l10n.seeAll,
-      onAction: () => context.go(RouteNames.searchFor('events')),
+      onAction: () => context.push(RouteNames.searchFor('events')),
     ),
     Text(l10n.homeComingUpElsewhere(city), style: AppTypography.body(size: 12)),
     const SizedBox(height: 12),
