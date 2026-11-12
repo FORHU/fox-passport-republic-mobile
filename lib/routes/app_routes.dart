@@ -166,8 +166,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // Onboarding gate: new users see it once.
       final seenOnboarding = ref.read(storageServiceProvider).onboardingSeen;
       if (!seenOnboarding) {
-        final goingToOnboarding = at == RouteNames.onboarding;
-        return goingToOnboarding ? null : RouteNames.onboarding;
+        // Onboarding's last step opens a role application from the phone, so
+        // that form (and a resubmission) is reachable before onboarding is
+        // finished; without this the form closed as soon as it opened
+        // (mobile#426).
+        final allowed = at == RouteNames.onboarding ||
+            at.startsWith('/roles/apply/') ||
+            at.startsWith('/roles/resubmit/');
+        return allowed ? null : RouteNames.onboarding;
       }
 
       // Location is asked once, before the app is used.
