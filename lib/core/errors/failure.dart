@@ -1,4 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+
+/// What people read when the server failed, or when something nobody planned
+/// for went wrong. Never an exception's own text: that is written for
+/// developers, and it was reaching screens.
+const String serverErrorMessage =
+    'Something went wrong on our side. Please try again.';
 
 /// Base class for all failures in the application.
 /// Ensures that domain layers return consistent error objects.
@@ -14,6 +21,14 @@ sealed class Failure extends Equatable {
 /// Represents an error returned by an external server/API.
 class ServerFailure extends Failure {
   const ServerFailure(super.message);
+
+  /// For an error nobody planned for, such as a reply in a shape the app did
+  /// not expect. People get the plain sentence; the raw error goes to the
+  /// debug log and never to the screen.
+  factory ServerFailure.unexpected(Object error) {
+    debugPrint('Unexpected error: $error');
+    return const ServerFailure(serverErrorMessage);
+  }
 }
 
 /// Represents an error caching data locally.

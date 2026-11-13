@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
+import 'package:flutter_template/core/errors/failure.dart' as shared_errors;
 import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
@@ -160,8 +161,7 @@ class ApiService {
 
   /// What a person sees when a request failed on the server's side, or failed
   /// without the server saying why.
-  static const String serverErrorMessage =
-      'Something went wrong on our side. Please try again.';
+  static const String serverErrorMessage = shared_errors.serverErrorMessage;
 
   /// Pulls a human-readable message from a `{ "message": "..." }` error body.
   /// Null when there is none. Never Dio's own message: it is a paragraph about
