@@ -10858,6 +10858,132 @@ abstract class AppLocalizations {
   /// **'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.'**
   String get leaderboardNote;
 
+  /// No description provided for @dailyLoginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily login'**
+  String get dailyLoginLabel;
+
+  /// No description provided for @dailyLoginClaimShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim'**
+  String get dailyLoginClaimShort;
+
+  /// No description provided for @dailyLoginReward.
+  ///
+  /// In en, this message translates to:
+  /// **'+{amount} Tokens'**
+  String dailyLoginReward(int amount);
+
+  /// No description provided for @dailyLoginStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-day streak'**
+  String dailyLoginStreak(int count);
+
+  /// No description provided for @dailyLoginClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim +{amount} Tokens'**
+  String dailyLoginClaim(int amount);
+
+  /// No description provided for @dailyLoginClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed today'**
+  String get dailyLoginClaimed;
+
+  /// No description provided for @dailyLoginComeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back tomorrow for +{amount} Tokens.'**
+  String dailyLoginComeBack(int amount);
+
+  /// No description provided for @dailyLoginDayOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {total}'**
+  String dailyLoginDayOf(int day, int total);
+
+  /// No description provided for @dailyLoginDayDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} done'**
+  String dailyLoginDayDone(int day);
+
+  /// No description provided for @dailyLoginClaimedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get dailyLoginClaimedBadge;
+
+  /// No description provided for @dailyLoginExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in every day to build your streak.'**
+  String get dailyLoginExplain;
+
+  /// No description provided for @dailyLoginDay7.
+  ///
+  /// In en, this message translates to:
+  /// **'Day 7 pays +{amount}.'**
+  String dailyLoginDay7(int amount);
+
+  /// No description provided for @dailyLoginNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get dailyLoginNotNow;
+
+  /// No description provided for @dailyLoginDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get dailyLoginDone;
+
+  /// No description provided for @dailyLoginNewBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'New balance'**
+  String get dailyLoginNewBalance;
+
+  /// No description provided for @dailyLoginBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get dailyLoginBalance;
+
+  /// No description provided for @dailyLoginBalanceTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens'**
+  String dailyLoginBalanceTokens(String count);
+
+  /// No description provided for @dailyLoginDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}, {amount} Tokens'**
+  String dailyLoginDayLabel(int day, int amount);
+
+  /// No description provided for @dailyLoginVerifyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email to claim your daily Tokens.'**
+  String get dailyLoginVerifyEmail;
+
+  /// No description provided for @dailyLoginCapReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached this month\'s limit for daily login Tokens. It starts again next month.'**
+  String get dailyLoginCapReached;
+
+  /// No description provided for @dailyLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t claim that right now. Try again.'**
+  String get dailyLoginFailed;
+
   /// No description provided for @milestonesTitle.
   ///
   /// In en, this message translates to:
