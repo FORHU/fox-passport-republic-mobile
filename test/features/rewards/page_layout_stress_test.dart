@@ -23,6 +23,7 @@ class _Board implements LeaderboardRepository {
     LeaderboardRole role, {
     FoxerTab tab = FoxerTab.topRated,
     String? city,
+    String? specialty,
   }) async =>
       FoxerBoard(
         tab: tab,

@@ -1235,7 +1235,7 @@
   "foxerScorePartTrust": "Trust",
   "foxerScorePart": "{value} / {max}",
   "@foxerScorePart": {"placeholders":{"value":{"type":"String"},"max":{"type":"int"}}},
-  "foxerScorePrivate": "Only you see this score. Guests see your star rating, the facts and your labels.",
+  "foxerScorePrivate": "Only you see this score. Guests see your Paws, the facts and your labels.",
   "pawsNew": "New",
   "pawsSemantics": "{paws} Paws from {count, plural, =1{1 review} other{{count} reviews}}",
   "@pawsSemantics": {"placeholders":{"paws":{"type":"String"},"count":{"type":"int"}}},
