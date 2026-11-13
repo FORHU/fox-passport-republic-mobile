@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/gamification/domain/milestones.dart';
@@ -12,7 +13,16 @@ class MilestonesRepository {
   final ApiService _api;
 
   Future<MilestonesSummary> mine() async {
-    final body = await _api.get(ApiEndpoints.milestonesMe);
+    final Object? body;
+    try {
+      body = await _api.get(ApiEndpoints.milestonesMe);
+    } on ServerException catch (e) {
+      // The server has not shipped milestones yet (RR-6, api#301), so the
+      // route answers 404. Show the empty state, not a retry error nobody can
+      // fix. Any other failure (network, 5xx, 401) still reaches the screen.
+      if (e.statusCode == 404) return const MilestonesSummary([]);
+      rethrow;
+    }
     final data = body is Map ? body['data'] : null;
     if (data is! Map) {
       throw const FormatException('Milestones response is missing data');
