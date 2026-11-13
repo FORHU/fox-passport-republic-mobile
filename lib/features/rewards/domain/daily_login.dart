@@ -4,11 +4,13 @@ import 'package:equatable/equatable.dart';
 enum DailyLoginBlock {
   inactive,
   emailNotVerified,
+  noAttendedBooking,
   capReached;
 
   static DailyLoginBlock? tryParse(Object? v) => switch (v) {
         'inactive' => inactive,
         'email_not_verified' => emailNotVerified,
+        'no_attended_booking' => noAttendedBooking,
         'cap_reached' => capReached,
         _ => null,
       };

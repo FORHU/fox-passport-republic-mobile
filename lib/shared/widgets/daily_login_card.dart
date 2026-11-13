@@ -161,9 +161,11 @@ class _Words extends StatelessWidget {
           : l10n.dailyLoginReward(status.amount);
     } else {
       title = l10n.dailyLoginLabel;
-      subtitle = status.block == DailyLoginBlock.capReached
-          ? l10n.dailyLoginCapReached
-          : l10n.dailyLoginVerifyEmail;
+      subtitle = switch (status.block) {
+        DailyLoginBlock.capReached => l10n.dailyLoginCapReached,
+        DailyLoginBlock.noAttendedBooking => l10n.dailyLoginNeedsBooking,
+        _ => l10n.dailyLoginVerifyEmail,
+      };
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

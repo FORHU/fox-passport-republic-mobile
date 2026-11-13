@@ -155,9 +155,11 @@ class _Header extends StatelessWidget {
       body = l10n.dailyLoginExplain;
     } else {
       title = l10n.dailyLoginLabel;
-      body = status.block == DailyLoginBlock.capReached
-          ? l10n.dailyLoginCapReached
-          : l10n.dailyLoginVerifyEmail;
+      body = switch (status.block) {
+        DailyLoginBlock.capReached => l10n.dailyLoginCapReached,
+        DailyLoginBlock.noAttendedBooking => l10n.dailyLoginNeedsBooking,
+        _ => l10n.dailyLoginVerifyEmail,
+      };
     }
     // Day 7 is worth saying only when it pays more than the other days.
     final extra = status.cycle.isNotEmpty && status.day7Amount > status.cycle[0]
@@ -391,7 +393,7 @@ class _BalanceBox extends StatelessWidget {
   }
 }
 
-/// Claim and Not now while there is something to claim; Done otherwise.
+/// Claim while there is something to claim; Done otherwise.
 class _Actions extends StatelessWidget {
   const _Actions({
     required this.status,
@@ -408,38 +410,30 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (status.canClaim) {
-      return Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: busy ? null : onClaim,
-              child: busy
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.onAccent,
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(coinsIcon, size: 18),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(l10n.dailyLoginClaim(status.amount)),
-                        ),
-                      ],
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: busy ? null : onClaim,
+          child: busy
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.onAccent,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(coinsIcon, size: 18),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(l10n.dailyLoginClaim(status.amount)),
                     ),
-            ),
-          ),
-          TextButton(
-            onPressed: busy ? null : () => Navigator.of(context).pop(),
-            child: Text(l10n.dailyLoginNotNow),
-          ),
-        ],
+                  ],
+                ),
+        ),
       );
     }
     return SizedBox(

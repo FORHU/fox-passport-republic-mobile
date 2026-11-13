@@ -127,6 +127,10 @@ void main() {
         DailyLoginBlock.capReached,
       );
       expect(DailyLoginBlock.tryParse('inactive'), DailyLoginBlock.inactive);
+      expect(
+        DailyLoginBlock.tryParse('no_attended_booking'),
+        DailyLoginBlock.noAttendedBooking,
+      );
       expect(DailyLoginBlock.tryParse('something_new'), isNull);
       expect(DailyLoginBlock.tryParse(null), isNull);
     });
@@ -271,6 +275,26 @@ void main() {
       expect(find.byType(ElevatedButton), findsNothing);
     });
 
+    testWidgets('says a paid booking is needed this month', (tester) async {
+      when(() => repo.dailyLogin()).thenAnswer(
+        (_) async => const DailyLoginStatus(
+          claimedToday: false,
+          canClaim: false,
+          block: DailyLoginBlock.noAttendedBooking,
+          amount: 15,
+          streak: 0,
+        ),
+      );
+      await show(tester);
+
+      expect(find.textContaining('attended a paid booking'), findsOneWidget);
+      expect(
+        find.text('Verify your email to claim your daily Tokens.'),
+        findsNothing,
+      );
+      expect(find.byType(ElevatedButton), findsNothing);
+    });
+
     testWidgets('says the monthly limit is reached', (tester) async {
       when(() => repo.dailyLogin()).thenAnswer(
         (_) async => const DailyLoginStatus(
@@ -345,16 +369,16 @@ void main() {
       // Seven days, each with what it pays.
       expect(find.text('+15'), findsNWidgets(7));
       expect(find.text('Claim +15 Tokens'), findsOneWidget);
-      expect(find.text('Not now'), findsOneWidget);
+      expect(find.text('Not now'), findsNothing);
     });
 
-    testWidgets('Not now closes it without claiming', (tester) async {
+    testWidgets('the close button closes it without claiming', (tester) async {
       when(() => repo.dailyLogin()).thenAnswer((_) async => _open);
       await show(tester);
       await tester.tap(find.text('Daily login'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Not now'));
+      await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pumpAndSettle();
 
       expect(find.byType(DailyLoginDialog), findsNothing);
