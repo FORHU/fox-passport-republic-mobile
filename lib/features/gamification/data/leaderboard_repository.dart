@@ -10,11 +10,13 @@ class LeaderboardRepository {
 
   final ApiService _api;
 
-  /// The Foxer board for [role] and [tab], optionally for one [city].
+  /// The Foxer board for [role] and [tab], optionally for one [city] and, on
+  /// the Providers board, one [specialty] (a catalog slug).
   Future<FoxerBoard> foxers(
     LeaderboardRole role, {
     FoxerTab tab = FoxerTab.topRated,
     String? city,
+    String? specialty,
   }) async {
     final trimmed = city?.trim();
     final body = await _api.get(
@@ -23,6 +25,8 @@ class LeaderboardRepository {
         'role': role.accountRole,
         'tab': tab.api,
         if (trimmed != null && trimmed.isNotEmpty) 'city': trimmed,
+        // Only a Provider has specialties; the server ignores it for the rest.
+        if (specialty != null && specialty.isNotEmpty) 'specialty': specialty,
       },
     );
     return FoxerBoard.fromJson(_data(body), requestedRole: role);
@@ -47,7 +51,10 @@ final leaderboardRepositoryProvider = Provider<LeaderboardRepository>(
 // ignore: specify_nonobvious_property_types
 final foxerBoardProvider =
     FutureProvider.autoDispose.family<FoxerBoard, BoardQuery>(
-  (ref, query) => ref
-      .watch(leaderboardRepositoryProvider)
-      .foxers(query.role, tab: query.tab, city: query.city),
+  (ref, query) => ref.watch(leaderboardRepositoryProvider).foxers(
+        query.role,
+        tab: query.tab,
+        city: query.city,
+        specialty: query.specialty,
+      ),
 );

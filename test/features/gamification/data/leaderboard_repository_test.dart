@@ -62,6 +62,35 @@ void main() {
       ).called(1);
     });
 
+    test('sends the specialty slug when given, and leaves it out otherwise',
+        () async {
+      stub(ApiEndpoints.leaderboardFoxers, board());
+
+      await repository.foxers(
+        LeaderboardRole.providers,
+        specialty: 'dj',
+      );
+      await repository.foxers(LeaderboardRole.providers);
+      await repository.foxers(LeaderboardRole.providers, specialty: '');
+
+      verify(
+        () => api.get(
+          ApiEndpoints.leaderboardFoxers,
+          query: {
+            'role': 'providerFoxer',
+            'tab': 'top_rated',
+            'specialty': 'dj',
+          },
+        ),
+      ).called(1);
+      verify(
+        () => api.get(
+          ApiEndpoints.leaderboardFoxers,
+          query: {'role': 'providerFoxer', 'tab': 'top_rated'},
+        ),
+      ).called(2);
+    });
+
     test('sends the city trimmed, and leaves it out when it is blank',
         () async {
       stub(ApiEndpoints.leaderboardFoxers, board());

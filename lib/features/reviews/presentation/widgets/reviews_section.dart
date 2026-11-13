@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/reviews/review.dart';
 import 'package:flutter_template/shared/reviews/reviews_repository.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
+import 'package:flutter_template/shared/widgets/paws.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -137,7 +138,7 @@ class _Overview extends StatelessWidget {
               summary.average.toStringAsFixed(1),
               style: AppTypography.display(size: 36),
             ),
-            Stars(rating: summary.average.round(), size: 16),
+            PawsRow(paws: summary.average),
             const SizedBox(height: 4),
             Text(
               l10n.reviewsCount(summary.count),

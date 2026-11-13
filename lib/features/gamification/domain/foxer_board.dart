@@ -186,12 +186,20 @@ class FoxerBoard extends Equatable {
 
 /// What is asked of the board: the role, the tab and, optionally, the city.
 class BoardQuery extends Equatable {
-  const BoardQuery(this.role, {this.tab = FoxerTab.topRated, this.city});
+  const BoardQuery(
+    this.role, {
+    this.tab = FoxerTab.topRated,
+    this.city,
+    this.specialty,
+  });
 
   final LeaderboardRole role;
   final FoxerTab tab;
   final String? city;
 
+  /// A Provider specialty slug, for the Providers board only.
+  final String? specialty;
+
   @override
-  List<Object?> get props => [role, tab, city];
+  List<Object?> get props => [role, tab, city, specialty];
 }
