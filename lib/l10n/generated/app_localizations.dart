@@ -10983,6 +10983,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t claim that right now. Try again.'**
   String get dailyLoginFailed;
+
+  /// No description provided for @milestonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get milestonesTitle;
+
+  /// No description provided for @milestonesClosest.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest reward'**
+  String get milestonesClosest;
+
+  /// No description provided for @milestonesTokensReward.
+  ///
+  /// In en, this message translates to:
+  /// **'+{tokens} Tokens'**
+  String milestonesTokensReward(int tokens);
+
+  /// No description provided for @milestonesBadgeReward.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} badge'**
+  String milestonesBadgeReward(String name);
+
+  /// No description provided for @milestonesFindEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Find an event to book'**
+  String get milestonesFindEvent;
+
+  /// No description provided for @milestonesTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tracks'**
+  String get milestonesTracks;
+
+  /// No description provided for @milestonesTracksNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers add up: reaching 10 also pays 1 and 5.'**
+  String get milestonesTracksNote;
+
+  /// No description provided for @milestonesTierOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier {tier} / {total}'**
+  String milestonesTierOfTotal(int tier, int total);
+
+  /// No description provided for @milestonesToReachTier.
+  ///
+  /// In en, this message translates to:
+  /// **'{more} to reach tier {tier}'**
+  String milestonesToReachTier(String more, int tier);
+
+  /// No description provided for @milestonesMoreToBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{more} to {badge}'**
+  String milestonesMoreToBadge(String more, String badge);
+
+  /// No description provided for @milestonesWordBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'booked'**
+  String get milestonesWordBooked;
+
+  /// No description provided for @milestonesWordAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'attended'**
+  String get milestonesWordAttended;
+
+  /// No description provided for @milestonesWordCities.
+  ///
+  /// In en, this message translates to:
+  /// **'cities'**
+  String get milestonesWordCities;
+
+  /// No description provided for @milestonesWordVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'venues'**
+  String get milestonesWordVenues;
+
+  /// No description provided for @milestonesWordReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'reviews'**
+  String get milestonesWordReviews;
+
+  /// No description provided for @milestonesWordSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'spent'**
+  String get milestonesWordSpent;
+
+  /// No description provided for @milestonesMoreCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more'**
+  String milestonesMoreCount(String count);
+
+  /// No description provided for @milestonesAllReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Every tier reached'**
+  String get milestonesAllReached;
+
+  /// No description provided for @milestonesJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Your journey'**
+  String get milestonesJourney;
+
+  /// No description provided for @milestonesJourneyTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'All tiers pay {tokens} Tokens'**
+  String milestonesJourneyTotal(int tokens);
+
+  /// No description provided for @milestonesReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached'**
+  String get milestonesReached;
+
+  /// No description provided for @milestonesNextUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Next up'**
+  String get milestonesNextUp;
+
+  /// No description provided for @milestonesLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get milestonesLocked;
+
+  /// No description provided for @milestonesTierPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Tier {tier} of {total}'**
+  String milestonesTierPosition(int tier, int total);
+
+  /// No description provided for @milestonesSwipeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe, or tap a dot, to see other tiers. Reaching a tier also pays the ones below it.'**
+  String get milestonesSwipeHint;
+
+  /// No description provided for @milestonesPaidNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled and refunded bookings do not count.'**
+  String get milestonesPaidNote;
+
+  /// No description provided for @milestonesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No milestones yet. Check back soon.'**
+  String get milestonesEmpty;
+
+  /// No description provided for @milestonesTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {name}'**
+  String milestonesTabLabel(String name);
+
+  /// No description provided for @milestonesUnitBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} booking} other{{count} bookings}}'**
+  String milestonesUnitBooked(int count);
+
+  /// No description provided for @milestonesUnitAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} event attended} other{{count} events attended}}'**
+  String milestonesUnitAttended(int count);
+
+  /// No description provided for @milestonesUnitCities.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} city} other{{count} cities}}'**
+  String milestonesUnitCities(int count);
+
+  /// No description provided for @milestonesUnitVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} venue} other{{count} venues}}'**
+  String milestonesUnitVenues(int count);
+
+  /// No description provided for @milestonesUnitReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} review} other{{count} reviews}}'**
+  String milestonesUnitReviews(int count);
+
+  /// No description provided for @milestonesUnitSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'₱{amount}'**
+  String milestonesUnitSpend(String amount);
+
+  /// No description provided for @milestonesMoreBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more booking} other{{count} more bookings}}'**
+  String milestonesMoreBooked(int count);
+
+  /// No description provided for @milestonesMoreAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more event} other{{count} more events}}'**
+  String milestonesMoreAttended(int count);
+
+  /// No description provided for @milestonesMoreCities.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more city} other{{count} more cities}}'**
+  String milestonesMoreCities(int count);
+
+  /// No description provided for @milestonesMoreVenues.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more venue} other{{count} more venues}}'**
+  String milestonesMoreVenues(int count);
+
+  /// No description provided for @milestonesMoreReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more review} other{{count} more reviews}}'**
+  String milestonesMoreReviews(int count);
+
+  /// No description provided for @milestonesMoreSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'₱{amount} more'**
+  String milestonesMoreSpend(String amount);
+
+  /// No description provided for @challengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get challengesTitle;
+
+  /// No description provided for @challengesBookingSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking challenges'**
+  String get challengesBookingSection;
+
+  /// No description provided for @challengesPendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens stay pending until the bookings are attended.'**
+  String get challengesPendingNote;
+
+  /// No description provided for @challengesPeriodDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get challengesPeriodDay;
+
+  /// No description provided for @challengesPeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get challengesPeriodWeek;
+
+  /// No description provided for @challengesPeriodMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get challengesPeriodMonth;
+
+  /// No description provided for @challengesProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{period} · {count} of {target} {target, plural, one{booking} other{bookings}}'**
+  String challengesProgress(String period, int count, int target);
+
+  /// No description provided for @challengesDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get challengesDone;
+
+  /// No description provided for @challengesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No challenges right now. Check back soon.'**
+  String get challengesEmpty;
+
+  /// No description provided for @challengesOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {name}'**
+  String challengesOpen(String name);
 }
 
 class _AppLocalizationsDelegate

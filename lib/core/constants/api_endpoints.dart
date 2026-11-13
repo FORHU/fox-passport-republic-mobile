@@ -234,6 +234,9 @@ class ApiEndpoints {
 
   static const String achievementsMe = '/achievements/me';
 
+  /// The signed-in citizen's milestone tracks and their progress.
+  static const String milestonesMe = '/milestones/me';
+
   /// The signed-in Foxer's own Foxer Score and its parts.
   static const String foxerScoreMe = '/foxer-score/me';
 
