@@ -88,5 +88,105 @@ void main() {
         ),
       );
     });
+
+    test('a 500 shows a plain sentence, not the server body or Dio text',
+        () async {
+      final api = _apiReturning(
+        status: 500,
+        body: {'message': 'ECONNREFUSED at pool.query (db.js:12)'},
+      );
+      await expectLater(
+        api.get('/data'),
+        throwsA(
+          isA<ServerException>()
+              .having((e) => e.statusCode, 'statusCode', 500)
+              .having(
+                (e) => e.message,
+                'message',
+                ApiService.serverErrorMessage,
+              ),
+        ),
+      );
+    });
+
+    test('a 500 with no message still shows the plain sentence', () async {
+      final api = _apiReturning(status: 500, body: <String, Object>{});
+      await expectLater(
+        api.get('/data'),
+        throwsA(
+          isA<ServerException>().having(
+            (e) => e.message,
+            'message',
+            ApiService.serverErrorMessage,
+          ),
+        ),
+      );
+    });
+
+    test('the message never carries the text Dio writes for developers',
+        () async {
+      for (final status in [400, 404, 422, 500, 502]) {
+        final api = _apiReturning(status: status, body: <String, Object>{});
+        await expectLater(
+          api.get('/data'),
+          throwsA(
+            isA<ServerException>().having(
+              (e) => e.message,
+              'message',
+              allOf(
+                isNot(contains('validateStatus')),
+                isNot(contains('developer.mozilla.org')),
+                isNot(contains('RequestOptions')),
+              ),
+            ),
+          ),
+        );
+      }
+    });
+
+    test('a 4xx without a message gets the plain sentence', () async {
+      final api = _apiReturning(status: 404, body: <String, Object>{});
+      await expectLater(
+        api.get('/data'),
+        throwsA(
+          isA<ServerException>().having(
+            (e) => e.message,
+            'message',
+            ApiService.serverErrorMessage,
+          ),
+        ),
+      );
+    });
+
+    test('a 4xx keeps the message the server wrote for people', () async {
+      final api = _apiReturning(
+        status: 409,
+        body: {'message': 'User already exists'},
+      );
+      await expectLater(
+        api.get('/data'),
+        throwsA(
+          isA<ServerException>().having(
+            (e) => e.message,
+            'message',
+            'User already exists',
+          ),
+        ),
+      );
+    });
+
+    test('a blank message is treated as none', () async {
+      final api = _apiReturning(status: 422, body: {'message': '   '});
+      await expectLater(
+        api.get('/data'),
+        throwsA(
+          isA<ServerException>().having(
+            (e) => e.message,
+            'message',
+            ApiService.serverErrorMessage,
+          ),
+        ),
+      );
+    });
   });
 }
