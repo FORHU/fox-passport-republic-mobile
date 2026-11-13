@@ -28,7 +28,7 @@ class HomeRepositoryImpl implements HomeRepository {
     } on AppException catch (e) {
       return Left(ServerFailure(e.message));
     } on Object catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure.unexpected(e));
     }
   }
 }
