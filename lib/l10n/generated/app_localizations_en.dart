@@ -6070,9 +6070,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dailyLoginNotNow => 'Not now';
-
-  @override
   String get dailyLoginDone => 'Done';
 
   @override
@@ -6098,6 +6095,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dailyLoginCapReached =>
       'You have reached this month\'s limit for daily login Tokens. It starts again next month.';
+
+  @override
+  String get dailyLoginNeedsBooking =>
+      'Daily login Tokens unlock once you have attended a paid booking this month.';
 
   @override
   String get dailyLoginFailed =>

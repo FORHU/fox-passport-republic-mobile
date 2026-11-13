@@ -10930,12 +10930,6 @@ abstract class AppLocalizations {
   /// **'Day 7 pays +{amount}.'**
   String dailyLoginDay7(int amount);
 
-  /// No description provided for @dailyLoginNotNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Not now'**
-  String get dailyLoginNotNow;
-
   /// No description provided for @dailyLoginDone.
   ///
   /// In en, this message translates to:
@@ -10977,6 +10971,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have reached this month\'s limit for daily login Tokens. It starts again next month.'**
   String get dailyLoginCapReached;
+
+  /// No description provided for @dailyLoginNeedsBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily login Tokens unlock once you have attended a paid booking this month.'**
+  String get dailyLoginNeedsBooking;
 
   /// No description provided for @dailyLoginFailed.
   ///
