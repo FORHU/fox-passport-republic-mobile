@@ -143,6 +143,10 @@ class RouteNames {
   /// Milestone tracks and the closest reward. Opened from the Passport.
   static const String milestones = '/milestones';
 
+  /// Booking challenges that start over every day, week and month. Opened from
+  /// the Passport.
+  static const String challenges = '/challenges';
+
   /// One track's journey: `/milestones/booked_events`.
   static String milestoneJourney(String key) =>
       '$milestones/${Uri.encodeComponent(key)}';

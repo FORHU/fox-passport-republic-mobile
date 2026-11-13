@@ -14,16 +14,17 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
-/// The app bar both milestone screens share: back, the title, and the Tokens
-/// chip that opens the Wallet.
-PreferredSizeWidget milestonesAppBar(BuildContext context) => AppBar(
+/// The app bar the rewards screens share: back, the [title] (Milestones unless
+/// given), and the Tokens chip that opens the Wallet.
+PreferredSizeWidget milestonesAppBar(BuildContext context, {String? title}) =>
+    AppBar(
       backgroundColor: AppColors.canvas,
       centerTitle: false,
       titleSpacing: 4,
       leadingWidth: 64,
       leading: const RoundBackButton(),
       title: Text(
-        context.l10n.milestonesTitle,
+        title ?? context.l10n.milestonesTitle,
         style: AppTypography.display(size: 26),
       ),
       actions: const [CoinsChip(trailingGap: 16)],

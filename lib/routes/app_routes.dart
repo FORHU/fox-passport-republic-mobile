@@ -17,6 +17,7 @@ import 'package:flutter_template/features/foxer/presentation/pages/foxer_profile
 import 'package:flutter_template/features/foxer/presentation/pages/match_request_page.dart';
 import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/challenges_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/milestone_journey_page.dart';
@@ -97,6 +98,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/achievements_row.dart';
+import 'package:flutter_template/shared/widgets/challenges_row.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
@@ -443,6 +445,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AchievementsPage(),
       ),
       GoRoute(
+        path: RouteNames.challenges,
+        builder: (context, state) => const ChallengesPage(),
+      ),
+      GoRoute(
         path: RouteNames.milestones,
         builder: (context, state) => const MilestonesPage(),
         routes: [
@@ -595,6 +601,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             WalletRow(),
                             LeaderboardRow(),
                             MilestonesRow(),
+                            ChallengesRow(),
                             AchievementsRow(),
                           ],
                         ),

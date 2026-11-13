@@ -123,17 +123,98 @@ class Milestone extends Equatable {
       ];
 }
 
-/// Every milestone track for the signed-in person.
+/// How long a challenge lasts before it starts over (Manila time).
+enum ChallengePeriod {
+  day,
+  week,
+  month;
+
+  /// Reads the API's `day`, `week` or `month`; null for anything else.
+  static ChallengePeriod? tryParse(Object? v) {
+    for (final p in values) {
+      if (p.name == v) return p;
+    }
+    return null;
+  }
+}
+
+/// A short goal that starts over every day, week or month, such as "Make 3
+/// bookings this week". The server counts and decides; the app only shows it.
+class Challenge extends Equatable {
+  const Challenge({
+    required this.key,
+    required this.name,
+    required this.period,
+    required this.target,
+    required this.tokens,
+    required this.currentCount,
+    required this.isCompleted,
+    this.description,
+  });
+
+  factory Challenge.fromJson(Map<String, dynamic> json) {
+    final target = (json['target'] as num?)?.toInt() ?? 0;
+    final count = (json['currentCount'] as num?)?.toInt() ?? 0;
+    return Challenge(
+      key: '${json['key']}',
+      name: (json['name'] as String?) ?? '',
+      description: _nonEmpty(json['description']),
+      // An unknown period is shown as the longest one rather than dropped.
+      period: ChallengePeriod.tryParse(json['period']) ?? ChallengePeriod.month,
+      target: target,
+      tokens: (json['tokens'] as num?)?.toInt() ?? 0,
+      currentCount: count,
+      isCompleted:
+          json['isCompleted'] == true || (target > 0 && count >= target),
+    );
+  }
+
+  final String key;
+  final String name;
+  final String? description;
+  final ChallengePeriod period;
+  final int target;
+
+  /// What it pays; 0 until an amount is set, and then nothing is promised.
+  final int tokens;
+  final int currentCount;
+  final bool isCompleted;
+
+  /// 0 to 1.
+  double get progress =>
+      target <= 0 ? 0 : (currentCount / target).clamp(0.0, 1.0);
+
+  @override
+  List<Object?> get props => [
+        key,
+        name,
+        description,
+        period,
+        target,
+        tokens,
+        currentCount,
+        isCompleted,
+      ];
+}
+
+/// Every milestone track and challenge for the signed-in person.
 class MilestonesSummary extends Equatable {
-  const MilestonesSummary(this.milestones);
+  const MilestonesSummary(this.milestones, {this.challenges = const []});
 
   factory MilestonesSummary.fromJson(Map<String, dynamic> json) =>
-      MilestonesSummary([
-        for (final m in (json['milestones'] as List? ?? const []))
-          if (m is Map) Milestone.fromJson(m.cast<String, dynamic>()),
-      ]);
+      MilestonesSummary(
+        [
+          for (final m in (json['milestones'] as List? ?? const []))
+            if (m is Map) Milestone.fromJson(m.cast<String, dynamic>()),
+        ],
+        challenges: [
+          for (final c in (json['challenges'] as List? ?? const []))
+            if (c is Map) Challenge.fromJson(c.cast<String, dynamic>()),
+        ],
+      );
 
   final List<Milestone> milestones;
+  final List<Challenge> challenges;
 
   /// The track closest to paying: the one furthest along toward its next tier.
   /// Null when there are no tracks or every tier of every track is reached.
@@ -156,7 +237,7 @@ class MilestonesSummary extends Equatable {
   }
 
   @override
-  List<Object?> get props => [milestones];
+  List<Object?> get props => [milestones, challenges];
 }
 
 String? _nonEmpty(Object? v) =>
