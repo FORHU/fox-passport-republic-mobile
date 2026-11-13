@@ -6018,4 +6018,229 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get leaderboardNote =>
       'Top rated ranks by Paws with a fair average, so one 5-star review cannot beat many good ones. A Foxer needs a few completed bookings to appear. Rising shows newer Foxers. There is no Citizens leaderboard.';
+
+  @override
+  String get milestonesTitle => 'Milestones';
+
+  @override
+  String get milestonesClosest => 'Closest reward';
+
+  @override
+  String milestonesTokensReward(int tokens) {
+    return '+$tokens Tokens';
+  }
+
+  @override
+  String milestonesBadgeReward(String name) {
+    return '$name badge';
+  }
+
+  @override
+  String get milestonesFindEvent => 'Find an event to book';
+
+  @override
+  String get milestonesTracks => 'Your tracks';
+
+  @override
+  String get milestonesTracksNote =>
+      'Tiers add up: reaching 10 also pays 1 and 5.';
+
+  @override
+  String milestonesTierOfTotal(int tier, int total) {
+    return 'Tier $tier / $total';
+  }
+
+  @override
+  String milestonesToReachTier(String more, int tier) {
+    return '$more to reach tier $tier';
+  }
+
+  @override
+  String milestonesMoreToBadge(String more, String badge) {
+    return '$more to $badge';
+  }
+
+  @override
+  String get milestonesWordBooked => 'booked';
+
+  @override
+  String get milestonesWordAttended => 'attended';
+
+  @override
+  String get milestonesWordCities => 'cities';
+
+  @override
+  String get milestonesWordVenues => 'venues';
+
+  @override
+  String get milestonesWordReviews => 'reviews';
+
+  @override
+  String get milestonesWordSpent => 'spent';
+
+  @override
+  String milestonesMoreCount(String count) {
+    return '$count more';
+  }
+
+  @override
+  String get milestonesAllReached => 'Every tier reached';
+
+  @override
+  String get milestonesJourney => 'Your journey';
+
+  @override
+  String milestonesJourneyTotal(int tokens) {
+    return 'All tiers pay $tokens Tokens';
+  }
+
+  @override
+  String get milestonesReached => 'Reached';
+
+  @override
+  String get milestonesNextUp => 'Next up';
+
+  @override
+  String get milestonesLocked => 'Locked';
+
+  @override
+  String milestonesTierPosition(int tier, int total) {
+    return 'Tier $tier of $total';
+  }
+
+  @override
+  String get milestonesSwipeHint =>
+      'Swipe, or tap a dot, to see other tiers. Reaching a tier also pays the ones below it.';
+
+  @override
+  String get milestonesPaidNote =>
+      'Cancelled and refunded bookings do not count.';
+
+  @override
+  String get milestonesEmpty => 'No milestones yet. Check back soon.';
+
+  @override
+  String milestonesTabLabel(String name) {
+    return 'Open $name';
+  }
+
+  @override
+  String milestonesUnitBooked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bookings',
+      one: '$count booking',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesUnitAttended(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events attended',
+      one: '$count event attended',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesUnitCities(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cities',
+      one: '$count city',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesUnitVenues(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count venues',
+      one: '$count venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesUnitReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '$count review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesUnitSpend(String amount) {
+    return '₱$amount';
+  }
+
+  @override
+  String milestonesMoreBooked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more bookings',
+      one: '$count more booking',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesMoreAttended(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more events',
+      one: '$count more event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesMoreCities(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more cities',
+      one: '$count more city',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesMoreVenues(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more venues',
+      one: '$count more venue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesMoreReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more reviews',
+      one: '$count more review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesMoreSpend(String amount) {
+    return '₱$amount more';
+  }
 }

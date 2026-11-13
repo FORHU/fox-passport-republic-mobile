@@ -19,6 +19,8 @@ import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/how_it_works_page.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/leaderboard_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/milestone_journey_page.dart';
+import 'package:flutter_template/features/gamification/presentation/pages/milestones_page.dart';
 import 'package:flutter_template/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_template/features/location/presentation/pages/location_gate_page.dart';
 import 'package:flutter_template/features/messages/data/messages_repository.dart';
@@ -98,6 +100,7 @@ import 'package:flutter_template/shared/widgets/achievements_row.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
+import 'package:flutter_template/shared/widgets/milestones_row.dart';
 import 'package:go_router/go_router.dart';
 
 /// Listenable helper to notify GoRouter whenever auth state changes.
@@ -440,6 +443,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AchievementsPage(),
       ),
       GoRoute(
+        path: RouteNames.milestones,
+        builder: (context, state) => const MilestonesPage(),
+        routes: [
+          GoRoute(
+            path: ':key',
+            builder: (context, state) => MilestoneJourneyPage(
+              milestoneKey: state.pathParameters['key'] ?? '',
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
         path: RouteNames.leaderboard,
         builder: (context, state) => LeaderboardPage(
           initialRole:
@@ -572,10 +587,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         initialTab: state.uri.queryParameters['tab'] == 'badges'
                             ? 1
                             : 0,
+                        // Milestones are the tiered counts that pay Tokens;
+                        // Achievements stay for everyone, as badges and the
+                        // Foxer ones that live nowhere else.
                         heroFooter: const Column(
                           children: [
                             WalletRow(),
                             LeaderboardRow(),
+                            MilestonesRow(),
                             AchievementsRow(),
                           ],
                         ),
