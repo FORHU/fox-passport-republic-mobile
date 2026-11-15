@@ -522,7 +522,7 @@ void main() {
       );
       expect(find.text('Night Market'), findsOneWidget);
       expect(find.text('Manila'), findsOneWidget);
-      expect(find.text('Happening soon near you'), findsNothing);
+      expect(find.text('Events near you'), findsNothing);
     });
 
     testWidgets('when the city has events, it is Happening soon, not Coming up',
@@ -553,7 +553,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Happening soon near you'), findsOneWidget);
+      expect(find.text('Events near you'), findsOneWidget);
       expect(find.text('Local Night'), findsOneWidget);
       expect(find.text('Coming up'), findsNothing);
       expect(find.text('Far Away Night'), findsNothing);
@@ -565,7 +565,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Coming up'), findsNothing);
-      expect(find.text('Happening soon near you'), findsNothing);
+      expect(find.text('Events near you'), findsNothing);
       expect(find.text('Try again'), findsNothing);
       expect(tester.takeException(), isNull);
     });
@@ -829,7 +829,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final soon = tester.getTopLeft(find.text('Happening soon near you'));
+      final soon = tester.getTopLeft(find.text('Events near you'));
       final oneThing = tester.getTopLeft(find.text('Or book just one thing'));
       expect(soon.dy, lessThan(oneThing.dy));
     });
@@ -892,7 +892,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Happening soon near you'), findsOneWidget);
+    expect(find.text('Events near you'), findsOneWidget);
     expect(find.text('Night Market'), findsOneWidget);
     expect(find.text('OCT'), findsOneWidget);
     expect(find.text('24'), findsOneWidget);
@@ -905,7 +905,7 @@ void main() {
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
 
-    expect(find.text('Happening soon near you'), findsNothing);
+    expect(find.text('Events near you'), findsNothing);
   });
 
   testWidgets('hides happening soon, heading included, when it fails', (
@@ -915,7 +915,7 @@ void main() {
     await tester.pumpWidget(_app(soonFails: true));
     await tester.pumpAndSettle();
 
-    expect(find.text('Happening soon near you'), findsNothing);
+    expect(find.text('Events near you'), findsNothing);
     expect(find.text('Try again'), findsNothing);
   });
 
