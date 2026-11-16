@@ -6769,7 +6769,7 @@ abstract class AppLocalizations {
   /// No description provided for @foxerScorePrivate.
   ///
   /// In en, this message translates to:
-  /// **'Only you see this score. Guests see your star rating, the facts and your labels.'**
+  /// **'Only you see this score. Guests see your Paws, the facts and your labels.'**
   String get foxerScorePrivate;
 
   /// No description provided for @pawsNew.

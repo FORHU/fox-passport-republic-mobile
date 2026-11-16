@@ -6,6 +6,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/reviews/review.dart';
 import 'package:flutter_template/shared/reviews/reviews_repository.dart';
 import 'package:flutter_template/shared/tickets/ticket.dart';
+import 'package:flutter_template/shared/widgets/paws.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeReviews implements ReviewsRepository {
@@ -84,7 +85,7 @@ void main() {
     expect(t.hasReview, isTrue);
   });
 
-  testWidgets('shows the stars, the reviews and a host reply', (tester) async {
+  testWidgets('shows the Paws, the reviews and a host reply', (tester) async {
     final repo = _FakeReviews(
       ReviewSummary.fromJson(const {
         'reviews': [
@@ -112,6 +113,8 @@ void main() {
     expect(find.text('1 review'), findsOneWidget);
     expect(find.text('Beautiful space'), findsOneWidget);
     expect(find.text('Thank you!'), findsOneWidget);
+    // The overall rating is drawn as Paws; each review keeps its own stars.
+    expect(find.byType(PawsRow), findsOneWidget);
   });
 
   testWidgets('says so when there are no reviews', (tester) async {

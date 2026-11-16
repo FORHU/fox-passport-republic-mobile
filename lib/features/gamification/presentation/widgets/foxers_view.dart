@@ -7,6 +7,7 @@ import 'package:flutter_template/features/gamification/domain/foxer_board.dart';
 import 'package:flutter_template/features/gamification/presentation/leaderboard_labels.dart';
 import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/specialty_chips.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/paws.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -30,8 +31,17 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
   late LeaderboardRole _role = widget.initialRole;
   FoxerTab _tab = FoxerTab.topRated;
   String? _city;
+  String? _specialty;
 
-  BoardQuery get _query => BoardQuery(_role, tab: _tab, city: _city);
+  // Only Providers have specialties, so the filter belongs to that board alone.
+  bool get _showsSpecialties => _role == LeaderboardRole.providers;
+
+  BoardQuery get _query => BoardQuery(
+        _role,
+        tab: _tab,
+        city: _city,
+        specialty: _showsSpecialties ? _specialty : null,
+      );
 
   Future<void> _pickCity() async {
     final next = await showModalBottomSheet<String>(
@@ -88,6 +98,12 @@ class _FoxersViewState extends ConsumerState<FoxersView> {
             ],
           ),
         ),
+        // Providers can be narrowed to one specialty; tap it again to drop it.
+        if (_showsSpecialties)
+          SpecialtyChips(
+            value: _specialty,
+            onChanged: (v) => setState(() => _specialty = v),
+          ),
         // The board in words, "Manila · Venues · Top rated"; tapping it
         // changes the city.
         InkWell(

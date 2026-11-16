@@ -3739,7 +3739,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foxerScorePrivate =>
-      'Only you see this score. Guests see your star rating, the facts and your labels.';
+      'Only you see this score. Guests see your Paws, the facts and your labels.';
 
   @override
   String get pawsNew => 'New';
