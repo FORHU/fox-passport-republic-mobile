@@ -6817,7 +6817,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeHappeningSoon.
   ///
   /// In en, this message translates to:
-  /// **'Happening soon near you'**
+  /// **'Events near you'**
   String get homeHappeningSoon;
 
   /// No description provided for @homeContinue.
@@ -11310,8 +11310,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

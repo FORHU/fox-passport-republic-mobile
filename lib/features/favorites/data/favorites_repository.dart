@@ -40,7 +40,8 @@ class FavoritesRepository {
 
   static String _type(CatalogKind kind) => switch (kind) {
         CatalogKind.venues => 'venue',
-        CatalogKind.events => 'public_event',
+        // An Events item is a package; the API saves those as `event`.
+        CatalogKind.events => 'event',
         CatalogKind.foxers ||
         CatalogKind.gear ||
         CatalogKind.services =>

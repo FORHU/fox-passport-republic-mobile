@@ -24,7 +24,6 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 /// Search: one box, one switch for what you are looking for, compact rows.
 class SearchPage extends ConsumerStatefulWidget {
@@ -61,8 +60,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   late int? _minCapacity = widget.initialMinCapacity;
   late DateTime? _fromDate = widget.initialDate;
   late DateTime? _toDate = widget.initialDate?.add(const Duration(days: 1));
-  late String _sortBy =
-      widget.initialKind == CatalogKind.events ? 'date_asc' : '';
+  late String _sortBy = '';
   String? _specialty;
   Timer? _debounce;
 
@@ -257,7 +255,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       _kind = k == CatalogKind.foxers && _isPeopleGroup(_kind)
                           ? _kind
                           : k;
-                      _sortBy = _kind == CatalogKind.events ? 'date_asc' : '';
+                      _sortBy = '';
                     }),
                     options: [
                       for (final k in _topKinds)
@@ -370,7 +368,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                 CatalogKind.venues => context
                                     .push(RouteNames.venueDetail, extra: item),
                                 CatalogKind.events => context.push(
-                                    RouteNames.scheduledEventDetail,
+                                    RouteNames.eventDetail,
                                     extra: item,
                                   ),
                                 CatalogKind.foxers =>
@@ -476,8 +474,8 @@ class _FilterSheetState extends State<_FilterSheet> {
   late final _minCapacity = TextEditingController(
     text: widget.initial.minCapacity?.toString() ?? '',
   );
-  late DateTime? _fromDate = widget.initial.fromDate;
-  late DateTime? _toDate = widget.initial.toDate;
+  late final DateTime? _fromDate = widget.initial.fromDate;
+  late final DateTime? _toDate = widget.initial.toDate;
   late String _sortBy = widget.initial.sortBy;
   String? _error;
 
@@ -488,35 +486,6 @@ class _FilterSheetState extends State<_FilterSheet> {
     _maxPrice.dispose();
     _minCapacity.dispose();
     super.dispose();
-  }
-
-  Future<void> _chooseDates() async {
-    final now = DateTime.now();
-    final initialRange = _fromDate != null && _toDate != null
-        ? DateTimeRange(
-            start: _fromDate!,
-            end: _toDate!.subtract(const Duration(days: 1)),
-          )
-        : null;
-    final range = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(now.year, now.month, now.day),
-      lastDate: DateTime(now.year + 3, now.month, now.day),
-      initialDateRange: initialRange,
-    );
-    if (range == null) return;
-    setState(() {
-      _fromDate = DateTime(
-        range.start.year,
-        range.start.month,
-        range.start.day,
-      );
-      _toDate = DateTime(
-        range.end.year,
-        range.end.month,
-        range.end.day + 1,
-      );
-    });
   }
 
   void _apply() {
@@ -556,9 +525,7 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   void _clear() {
     Navigator.of(context).pop(
-      _SearchFilters(
-        sortBy: widget.kind == CatalogKind.events ? 'date_asc' : '',
-      ),
+      const _SearchFilters(sortBy: ''),
     );
   }
 
@@ -573,15 +540,10 @@ class _FilterSheetState extends State<_FilterSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // Events are packages (mobile#416): no date or guest count to filter or
+    // sort by.
     final isEvent = widget.kind == CatalogKind.events;
-    final sortOptions = isEvent
-        ? const ['date_asc', 'date_desc', 'price_asc', 'price_desc']
-        : const ['', 'price_asc', 'price_desc'];
-    final dateFormat = DateFormat.yMMMd();
-    final dateLabel = _fromDate != null && _toDate != null
-        ? '${dateFormat.format(_fromDate!)} – '
-            '${dateFormat.format(_toDate!.subtract(const Duration(days: 1)))}'
-        : l10n.searchChooseDates;
+    const sortOptions = ['', 'price_asc', 'price_desc'];
 
     return Padding(
       padding: EdgeInsets.only(
@@ -639,20 +601,14 @@ class _FilterSheetState extends State<_FilterSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _minCapacity,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: l10n.searchFilterMinCapacity,
-              ),
-            ),
-            if (isEvent) ...[
+            if (!isEvent) ...[
               const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: _chooseDates,
-                icon: const Icon(Icons.calendar_month_outlined),
-                label: Text(dateLabel),
+              TextField(
+                controller: _minCapacity,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: l10n.searchFilterMinCapacity,
+                ),
               ),
             ],
             const SizedBox(height: 8),

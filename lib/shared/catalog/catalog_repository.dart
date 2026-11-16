@@ -116,28 +116,22 @@ class CatalogRepository {
           query.isNotEmpty &&
           (kind == CatalogKind.venues || kind == CatalogKind.events))
         'city': city,
-      if (minPrice != null &&
-          (kind == CatalogKind.venues || kind == CatalogKind.events))
-        'minPrice': minPrice,
+      if (minPrice != null && kind == CatalogKind.venues) 'minPrice': minPrice,
       if (maxPrice != null &&
           (kind == CatalogKind.venues || kind == CatalogKind.events))
         'maxPrice': maxPrice,
-      if (minCapacity != null &&
-          (kind == CatalogKind.venues || kind == CatalogKind.events))
+      if (minCapacity != null && kind == CatalogKind.venues)
         'minCapacity': minCapacity,
-      if (fromDate != null && kind == CatalogKind.events)
-        'fromDate': fromDate.toUtc().toIso8601String(),
-      if (toDate != null && kind == CatalogKind.events)
-        'toDate': toDate.toUtc().toIso8601String(),
-      if (sortBy != null &&
-          (kind == CatalogKind.venues || kind == CatalogKind.events))
-        'sortBy': sortBy,
+      if (sortBy != null && kind == CatalogKind.venues) 'sortBy': sortBy,
     };
 
+    // Events are the published packages the web lists (mobile#416): the
+    // browse takes city, q and maxPrice only, and a package has no date or
+    // guest count, so date and capacity filters never apply to it.
     final path = switch (kind) {
       CatalogKind.venues =>
         byPoint ? ApiEndpoints.venuesNear : ApiEndpoints.venues,
-      CatalogKind.events => ApiEndpoints.publicEventsBrowse,
+      CatalogKind.events => ApiEndpoints.eventsBrowse,
       CatalogKind.foxers => ApiEndpoints.foxers,
       CatalogKind.gear => ApiEndpoints.assetsBrowse,
       CatalogKind.services => ApiEndpoints.servicesBrowse,
@@ -175,20 +169,9 @@ class CatalogRepository {
           (item.price == null || item.price! > maxPrice)) {
         return false;
       }
-      if ((kind == CatalogKind.venues || kind == CatalogKind.events) &&
+      if (kind == CatalogKind.venues &&
           minCapacity != null &&
           (item.capacity == null || item.capacity! < minCapacity)) {
-        return false;
-      }
-      if (kind == CatalogKind.events &&
-          fromDate != null &&
-          (item.eventStartAt == null ||
-              item.eventStartAt!.isBefore(fromDate))) {
-        return false;
-      }
-      if (kind == CatalogKind.events &&
-          toDate != null &&
-          (item.eventStartAt == null || !item.eventStartAt!.isBefore(toDate))) {
         return false;
       }
       return true;
@@ -197,12 +180,6 @@ class CatalogRepository {
       filteredItems.sort((a, b) {
         final comparison = (a.price ?? 0).compareTo(b.price ?? 0);
         return sortBy == 'price_asc' ? comparison : -comparison;
-      });
-    } else if (sortBy == 'date_asc' || sortBy == 'date_desc') {
-      filteredItems.sort((a, b) {
-        final comparison = (a.eventStartAt ?? DateTime(9999))
-            .compareTo(b.eventStartAt ?? DateTime(9999));
-        return sortBy == 'date_asc' ? comparison : -comparison;
       });
     }
     final total = query.isNotEmpty

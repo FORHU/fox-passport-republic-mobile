@@ -3773,7 +3773,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookOne => 'Or book just one thing';
 
   @override
-  String get homeHappeningSoon => 'Happening soon near you';
+  String get homeHappeningSoon => 'Events near you';
 
   @override
   String homeContinue(String occasion) {

@@ -57,15 +57,12 @@ class HomePage extends ConsumerWidget {
       ref.watch(authControllerProvider.select((s) => s.user?.name)),
     );
 
-    // The start of today, not "now": the query is a provider key, and a key
-    // that changes every build would make Home rebuild without end.
-    final now = DateTime.now();
+    // Events are published packages (mobile#416), which have no date to
+    // filter or sort by.
     final soonQuery = CatalogQuery(
       CatalogKind.events,
       limit: 6,
       city: area.city,
-      fromDate: DateTime(now.year, now.month, now.day),
-      sortBy: 'date_asc',
     );
     final soon = ref.watch(catalogProvider(soonQuery));
     // No bookings at all (and both lists have answered): offer the checklist.
@@ -90,12 +87,7 @@ class HomePage extends ConsumerWidget {
         booked;
     // Nothing on in the chosen city: look for events anywhere, so the row is
     // not simply missing. Only asked once the city's own answer is empty.
-    final anywhereQuery = CatalogQuery(
-      CatalogKind.events,
-      limit: 6,
-      fromDate: DateTime(now.year, now.month, now.day),
-      sortBy: 'date_asc',
-    );
+    const anywhereQuery = CatalogQuery(CatalogKind.events, limit: 6);
     final nothingHere =
         area.city != null && (soon.asData?.value.items.isEmpty ?? false);
     final elsewhere =
@@ -724,10 +716,7 @@ class _SoonRow extends StatelessWidget {
           final start = item.eventStartAt;
           return InkWell(
             borderRadius: AppRadius.brMd,
-            onTap: () => context.push(
-              RouteNames.scheduledEventDetail,
-              extra: item,
-            ),
+            onTap: () => context.push(RouteNames.eventDetail, extra: item),
             child: SizedBox(
               width: 176,
               child: Column(
