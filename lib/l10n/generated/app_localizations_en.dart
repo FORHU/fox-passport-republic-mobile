@@ -3950,6 +3950,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get itemBookQuantity => 'How many?';
 
   @override
+  String itemBookQuantityInvalid(int max) {
+    return 'Enter a number from 1 to $max';
+  }
+
+  @override
   String get itemBookPickup => 'Pick up';
 
   @override

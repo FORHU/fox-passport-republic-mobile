@@ -7126,6 +7126,12 @@ abstract class AppLocalizations {
   /// **'How many?'**
   String get itemBookQuantity;
 
+  /// No description provided for @itemBookQuantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number from 1 to {max}'**
+  String itemBookQuantityInvalid(int max);
+
   /// No description provided for @itemBookPickup.
   ///
   /// In en, this message translates to:
@@ -11310,9 +11316,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }
