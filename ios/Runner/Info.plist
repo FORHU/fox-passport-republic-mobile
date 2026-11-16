@@ -67,7 +67,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>The camera scans a guest's ticket QR code to check them in.</string>
+	<string>The camera scans a guest's ticket QR code to check them in, and takes photos of your ID, documents and a selfie when you apply for a role.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Fox Passport uses your location to show venues and Foxers near you.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

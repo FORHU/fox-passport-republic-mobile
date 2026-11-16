@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_resubmit_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -169,6 +170,7 @@ class _ResubmitForm extends ConsumerWidget {
                 DocumentRow(
                   label: resubmitDocumentLabel(l10n, field),
                   photo: state.files[field],
+                  frontCamera: field == KycDocument.selfie.field,
                   onPicked: (p) => controller.setFile(field, p),
                   onRemove: () => controller.removeFile(field),
                 ),

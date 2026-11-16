@@ -2907,6 +2907,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rolesContinueOnWeb => 'Continue on the web';
 
   @override
+  String get rolesApply => 'Apply';
+
+  @override
+  String get rolesAlreadyActive => 'You already have this role.';
+
+  @override
+  String get rolesApplicationInReview =>
+      'Your application is in review. We will let you know when it is decided.';
+
+  @override
+  String get rolesClose => 'Close';
+
+  @override
   String get venueBookNow => 'Book now';
 
   @override
@@ -5208,6 +5221,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleApplyRemoveDoc => 'Remove';
+
+  @override
+  String get roleApplyTakePhoto => 'Take a photo';
+
+  @override
+  String get roleApplyFromGallery => 'Choose from gallery';
+
+  @override
+  String get roleApplyCameraDenied =>
+      'Camera access is off. Allow it in Settings, or choose a photo from the gallery.';
+
+  @override
+  String get roleApplyCameraUnavailable =>
+      'No camera found on this device. Choose a photo from the gallery.';
+
+  @override
+  String get roleApplyPhotoFailed => 'Could not get that photo. Try again.';
 
   @override
   String get roleApplySubmit => 'Send application';

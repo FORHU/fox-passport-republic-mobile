@@ -243,34 +243,95 @@ void main() {
       expect(find.text('NEEDS REVISION'), findsOneWidget);
     });
 
-    testWidgets('a role opens its details with a way to apply', (
-      tester,
-    ) async {
-      tester.view
-        ..physicalSize = const Size(800, 3200)
-        ..devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
+    // The button says what it does: roles with a form on the phone say Apply,
+    // and only the one that still applies on the web says so.
+    for (final (title, button, other) in const [
+      ('Organizer', 'Apply', 'Continue on the web'),
+      ('Partner Foxer', 'Continue on the web', 'Apply'),
+    ]) {
+      testWidgets('$title opens its details with a "$button" button', (
+        tester,
+      ) async {
+        tester.view
+          ..physicalSize = const Size(800, 3200)
+          ..devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authControllerProvider.overrideWith(_Citizen.new),
-            myRoleRequestsProvider.overrideWith((ref) async => const []),
-          ],
-          child: const MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: RolesPage(),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authControllerProvider.overrideWith(_Citizen.new),
+              myRoleRequestsProvider.overrideWith((ref) async => const []),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: RolesPage(),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Organizer'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text(title));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Continue on the web'), findsOneWidget);
-      expect(find.text("WHAT YOU'LL DO"), findsOneWidget);
-    });
+        expect(find.widgetWithText(ElevatedButton, button), findsOneWidget);
+        expect(find.widgetWithText(ElevatedButton, other), findsNothing);
+        expect(find.text("WHAT YOU'LL DO"), findsOneWidget);
+      });
+    }
+
+    // A role you already hold, or have applied for, has nothing to apply for.
+    for (final (title, requests, note) in const [
+      ('Provider', <RoleRequestSummary>[], 'You already have this role.'),
+      (
+        'Organizer',
+        [
+          RoleRequestSummary(
+            id: 'r1',
+            roleType: 'organizer',
+            status: 'pending',
+          ),
+        ],
+        'Your application is in review. We will let you know when it is '
+            'decided.',
+      ),
+    ]) {
+      testWidgets('$title shows "$note" and no way to apply again', (
+        tester,
+      ) async {
+        tester.view
+          ..physicalSize = const Size(800, 3200)
+          ..devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authControllerProvider.overrideWith(_Citizen.new),
+              myRoleRequestsProvider.overrideWith((ref) async => requests),
+            ],
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: RolesPage(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text(title));
+        await tester.pumpAndSettle();
+
+        expect(find.text(note), findsOneWidget);
+        expect(find.widgetWithText(OutlinedButton, 'Close'), findsOneWidget);
+        expect(find.widgetWithText(ElevatedButton, 'Apply'), findsNothing);
+        expect(
+          find.widgetWithText(ElevatedButton, 'Continue on the web'),
+          findsNothing,
+        );
+        expect(find.text('Not now'), findsNothing);
+      });
+    }
   });
 }
