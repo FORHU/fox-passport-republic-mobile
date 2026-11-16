@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
+import 'package:flutter_template/core/errors/failure.dart' as shared_errors;
 import 'package:flutter_template/core/services/adapter_config/adapter_config.dart';
 import 'package:flutter_template/core/services/cookie_service.dart';
 import 'package:flutter_template/core/services/interceptors/auth_interceptor.dart';
@@ -146,19 +147,31 @@ class ApiService {
       case DioExceptionType.cancel:
       case DioExceptionType.unknown:
         return ServerException(
-          _messageFrom(e) ?? 'Unexpected server error',
+          // A 5xx is the server's own failure: whatever its body says is for
+          // developers, so people get a plain sentence. A 4xx keeps the
+          // server's message, which is written to be read ("User already
+          // exists").
+          status != null && status >= 500
+              ? serverErrorMessage
+              : _messageFrom(e) ?? serverErrorMessage,
           statusCode: status,
         );
     }
   }
 
-  /// Pulls a human-readable message from a `{ "message": "..." }` error body,
-  /// falling back to Dio's own message.
+  /// What a person sees when a request failed on the server's side, or failed
+  /// without the server saying why.
+  static const String serverErrorMessage = shared_errors.serverErrorMessage;
+
+  /// Pulls a human-readable message from a `{ "message": "..." }` error body.
+  /// Null when there is none. Never Dio's own message: it is a paragraph about
+  /// `validateStatus` and MDN for developers, and it was reaching screens.
   String? _messageFrom(DioException e) {
     final data = e.response?.data;
     if (data is Map && data['message'] is String) {
-      return data['message'] as String;
+      final message = (data['message'] as String).trim();
+      if (message.isNotEmpty) return message;
     }
-    return e.message;
+    return null;
   }
 }
