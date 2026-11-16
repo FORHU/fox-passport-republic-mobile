@@ -456,11 +456,11 @@
  "signupPassword": [
   {
    "input": "",
-   "message": "Password must be at least 16 characters"
+   "message": "Password is required"
   },
   {
    "input": "short",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "abcdefghijklmnop",
@@ -488,7 +488,7 @@
   },
   {
    "input": "Abcdefghijklmno1#",
-   "message": "Password must contain at least one special character"
+   "message": null
   },
   {
    "input": "Abcdefghijklmno1&",
@@ -528,43 +528,43 @@
   },
   {
    "input": "Passw0rd",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Passw0rd!",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "passw0rd",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "PASSW0RD",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdefg1",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdefgh",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "abcdefg1",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "ABCDEFG1",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdef1",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "A1b2C3d4",
-   "message": "Password must be at least 16 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Éclair123!Éclair!",
@@ -839,11 +839,11 @@
  "resetNewPassword": [
   {
    "input": "",
-   "message": "Password must be at least 8 characters"
+   "message": "New password is required"
   },
   {
    "input": "short",
-   "message": "Password must be at least 8 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "abcdefghijklmnop",
@@ -859,7 +859,7 @@
   },
   {
    "input": "Abcdefghijklmno1",
-   "message": null
+   "message": "Password must contain at least one special character"
   },
   {
    "input": "Abcdefghijklmn1!",
@@ -907,47 +907,47 @@
   },
   {
    "input": "Aa1aaaaaaaaaaaaaa",
-   "message": null
+   "message": "Password must contain at least one special character"
   },
   {
    "input": "Passw0rd",
-   "message": null
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Passw0rd!",
-   "message": null
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "passw0rd",
-   "message": "Password must contain at least one uppercase letter"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "PASSW0RD",
-   "message": "Password must contain at least one lowercase letter"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdefg1",
-   "message": null
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdefgh",
-   "message": "Password must contain at least one digit"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "abcdefg1",
-   "message": "Password must contain at least one uppercase letter"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "ABCDEFG1",
-   "message": "Password must contain at least one lowercase letter"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Abcdef1",
-   "message": "Password must be at least 8 characters"
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "A1b2C3d4",
-   "message": null
+   "message": "Password must be at least 12 characters"
   },
   {
    "input": "Éclair123!Éclair!",

@@ -25,6 +25,8 @@ class ResetPasswordPage extends ConsumerStatefulWidget {
 
 class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  // No errors until the first submit; after that they follow the input.
+  bool _submitted = false;
   final _emailController = TextEditingController();
   final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -47,6 +49,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   }
 
   Future<void> _submit() async {
+    if (!_submitted) setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     final ok = await ref.read(authControllerProvider.notifier).resetPassword(
           _emailController.text,
@@ -75,7 +78,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       onBack: () => context.go(RouteNames.forgotPassword),
       child: Form(
         key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: _submitted
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -105,8 +110,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
               obscureText: _obscure,
               autofillHints: const [AutofillHints.newPassword],
               helperText:
-                  'At least 8 characters with upper and lower case letters '
-                  'and a number.',
+                  'At least 12 characters with upper and lower case letters, '
+                  'a number and a special character.',
               validator: Validators.resetNewPassword,
               suffixIcon: IconButton(
                 tooltip: _obscure

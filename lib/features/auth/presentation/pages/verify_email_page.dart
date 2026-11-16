@@ -31,6 +31,10 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   static const _resendCooldown = 30;
 
   final _formKey = GlobalKey<FormState>();
+
+  // No errors until the first submit; after that they follow the input.
+
+  bool _submitted = false;
   final _codeController = TextEditingController();
   Timer? _timer;
   int _secondsLeft = 0;
@@ -48,6 +52,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   }
 
   Future<void> _submit() async {
+    if (!_submitted) setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     final ok = await ref
         .read(authControllerProvider.notifier)
@@ -96,7 +101,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       onBack: () => context.go(RouteNames.login),
       child: Form(
         key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: _submitted
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
