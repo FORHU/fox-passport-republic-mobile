@@ -29,6 +29,7 @@ import 'package:flutter_template/shared/tickets/ticket.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/tour/citizen_tour.dart';
 import 'package:flutter_template/shared/widgets/coins_chip.dart';
+import 'package:flutter_template/shared/widgets/daily_login_card.dart';
 import 'package:flutter_template/shared/widgets/skeleton.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -180,6 +181,10 @@ class HomePage extends ConsumerWidget {
                 onPick: (kind) =>
                     unawaited(context.push(RouteNames.searchFor(kind.name))),
               ),
+              // Today's daily login: in the same place every day, under the
+              // search Home is for and in view without scrolling. Takes no
+              // room (and leaves no gap) until the server has answered.
+              const DailyLoginCard(),
               // An upcoming booking, if there is one. Failing or empty means
               // no strip and no error.
               if (ticket != null) ...[

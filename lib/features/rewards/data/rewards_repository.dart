@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/rewards/domain/daily_login.dart';
 import 'package:flutter_template/features/rewards/domain/reward_item.dart';
 import 'package:flutter_template/features/rewards/domain/wallet.dart';
 
@@ -47,6 +48,26 @@ class RewardsRepository {
     return Redemption.fromJson(data);
   }
 
+  /// Where today's daily login stands.
+  Future<DailyLoginStatus> dailyLogin() async {
+    final data = _data(await _api.get(ApiEndpoints.rewardsDailyLogin));
+    if (data == null) {
+      throw const FormatException('Daily login response is missing data');
+    }
+    return DailyLoginStatus.fromJson(data);
+  }
+
+  /// Claims today's Tokens. The server pays once per Manila day, so a repeat
+  /// pays nothing. Throws an `AppException` with the server's reason when it
+  /// refuses, such as an email that is not verified.
+  Future<DailyLoginClaim> claimDailyLogin() async {
+    final data = _data(await _api.post(ApiEndpoints.rewardsDailyLogin, {}));
+    if (data == null) {
+      throw const FormatException('Daily login claim is missing data');
+    }
+    return DailyLoginClaim.fromJson(data);
+  }
+
   Map<String, dynamic>? _data(dynamic body) {
     final data = body is Map ? body['data'] : null;
     return data is Map ? data.cast<String, dynamic>() : null;
@@ -62,6 +83,14 @@ final FutureProvider<WalletSummary> walletProvider =
     FutureProvider.autoDispose<WalletSummary>(
   (ref) => ref.watch(rewardsRepositoryProvider).wallet(),
 );
+
+/// Today's daily login; read again with `ref.invalidate` after a claim.
+final FutureProvider<DailyLoginStatus> dailyLoginProvider =
+    FutureProvider.autoDispose<DailyLoginStatus>((ref) {
+  // Another account has its own day.
+  ref.watch(currentUserIdProvider);
+  return ref.watch(rewardsRepositoryProvider).dailyLogin();
+});
 
 final FutureProvider<List<RewardItem>> rewardCatalogProvider =
     FutureProvider.autoDispose<List<RewardItem>>(

@@ -10,6 +10,8 @@ import 'package:flutter_template/features/notifications/data/notifications_repos
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
+import 'package:flutter_template/features/rewards/data/rewards_repository.dart';
+import 'package:flutter_template/features/rewards/domain/daily_login.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -96,6 +98,7 @@ Widget _app({
   List<Ticket> past = const [],
   String? userName,
   Set<String>? onboarding,
+  DailyLoginStatus? dailyLogin,
 }) {
   final storage = MockStorageService();
   when(storage.readUserModel).thenReturn(null);
@@ -107,6 +110,10 @@ Widget _app({
     retry: (_, __) => null,
     overrides: [
       availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
+      // Hidden (no status) unless a test gives one.
+      dailyLoginProvider.overrideWith(
+        (ref) async => dailyLogin ?? (throw Exception('no daily login')),
+      ),
       if (userName != null)
         authControllerProvider.overrideWith(() => _Session(userName)),
       storageServiceProvider.overrideWithValue(storage),
@@ -368,6 +375,42 @@ void main() {
       // Only Birthday has a photo; the rest are drawn from their colours.
       expect(find.byType(NetworkImageBox), findsOneWidget);
       expect(find.byIcon(Icons.favorite_border_rounded), findsOneWidget);
+    });
+
+    testWidgets('the daily login sits under the search and the kinds', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(
+        _app(
+          dailyLogin: const DailyLoginStatus(
+            claimedToday: false,
+            canClaim: true,
+            amount: 15,
+            streak: 0,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final search =
+          tester.getTopLeft(find.text('Search venues, Foxers and events'));
+      final services = tester.getTopLeft(find.text('Services').first);
+      final card = tester.getTopLeft(find.text('Daily login'));
+      expect(find.text('Claim'), findsOneWidget);
+      // Below the search and its kinds, so search stays first.
+      expect(card.dy, greaterThan(search.dy));
+      expect(card.dy, greaterThan(services.dy));
+    });
+
+    testWidgets('there is no daily login while the server has no answer', (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Daily login'), findsNothing);
     });
 
     testWidgets('a search bar opens Search', (tester) async {

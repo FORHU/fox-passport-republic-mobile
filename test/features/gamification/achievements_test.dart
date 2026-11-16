@@ -7,7 +7,9 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/gamification/data/achievements_repository.dart';
 import 'package:flutter_template/features/gamification/domain/achievements.dart';
 import 'package:flutter_template/features/gamification/presentation/pages/achievements_page.dart';
+import 'package:flutter_template/features/gamification/presentation/widgets/milestone_badge.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/widgets/pill_chip.dart';
 import 'package:flutter_template/shared/widgets/round_back_button.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -342,6 +344,36 @@ void main() {
       await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
       expect(calls, 2);
+    });
+
+    testWidgets('the three filters share one row', (tester) async {
+      await open(tester);
+
+      final progress =
+          tester.getTopLeft(find.widgetWithText(PillChip, 'In progress'));
+      final done = tester.getTopLeft(find.widgetWithText(PillChip, 'Done'));
+      final locked = tester.getTopLeft(find.widgetWithText(PillChip, 'Locked'));
+      expect(done.dy, progress.dy);
+      expect(locked.dy, progress.dy);
+      // Side by side, not each filling the width.
+      expect(done.dx, greaterThan(progress.dx));
+      expect(locked.dx, greaterThan(done.dx));
+    });
+
+    testWidgets('tiers are badges: three shapes, filled, outlined or grey',
+        (tester) async {
+      await open(tester);
+
+      final badges =
+          tester.widgetList<MilestoneBadge>(find.byType(MilestoneBadge));
+      expect(badges, isNotEmpty);
+      // Tier 1, 2 and 3 are the circle, ringed circle and hexagon.
+      expect({for (final b in badges) b.rarity}, {0, 1, 2});
+      // A reached tier is filled and a coming one is not.
+      expect(
+        badges.map((b) => b.state),
+        containsAll([MilestoneBadgeState.earned, MilestoneBadgeState.next]),
+      );
     });
 
     testWidgets('names each tier for a screen reader', (tester) async {
