@@ -514,8 +514,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.venueDetail,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
-        builder: (context, state) =>
-            VenueDetailPage(item: state.extra! as CatalogItem),
+        builder: (context, state) => VenueDetailPage(
+          item: state.extra! as CatalogItem,
+          previewOnly: state.uri.queryParameters['preview'] == '1',
+        ),
       ),
       GoRoute(
         path: RouteNames.eventDetail,
