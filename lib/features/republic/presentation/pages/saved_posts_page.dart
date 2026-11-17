@@ -16,7 +16,7 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 
 /// The posts this person saved, newest first. Unsaving one takes it off the
-/// list.
+/// list; swiping a post away unsaves it, with a way to undo.
 class SavedPostsPage extends ConsumerStatefulWidget {
   const SavedPostsPage({super.key});
 
@@ -44,6 +44,50 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
   void dispose() {
     _scroll.dispose();
     super.dispose();
+  }
+
+  /// A swiped-away post leaves the list at once and is unsaved on the server;
+  /// Undo saves it again and reloads the list. If the server refuses, the
+  /// list is reloaded so the post comes back.
+  Future<void> _unsave(String postId) async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    final repository = ref.read(republicRepositoryProvider);
+    final notifier = ref.read(feedControllerProvider(_tab).notifier);
+    try {
+      await repository.toggleSave(postId);
+    } on Object {
+      // Let the swiped row leave the tree first; a reload that brought it back
+      // in the same frame would leave a dismissed row on screen.
+      await WidgetsBinding.instance.endOfFrame;
+      await notifier.refresh();
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.republicActionFailed)));
+      return;
+    }
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(l10n.republicUnsaved),
+          action: SnackBarAction(
+            label: l10n.republicUndo,
+            onPressed: () => unawaited(_undo(postId)),
+          ),
+        ),
+      );
+  }
+
+  Future<void> _undo(String postId) async {
+    final repository = ref.read(republicRepositoryProvider);
+    final notifier = ref.read(feedControllerProvider(_tab).notifier);
+    try {
+      await repository.toggleSave(postId);
+    } on Object {
+      // Nothing to show: the list below is the truth after the reload.
+    }
+    await notifier.refresh();
   }
 
   @override
@@ -106,21 +150,41 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
                   ),
                   itemBuilder: (context, i) {
                     final post = state.posts[i];
-                    return PostCard(
-                      post: post,
-                      onLike: () => unawaited(actions.like(post.id)),
-                      onComments: () => unawaited(actions.comments(post.id)),
-                      onMore: () => unawaited(actions.menu(post)),
-                      onAuthor: () => unawaited(
-                        context.push(RouteNames.citizen(post.author.id)),
+                    return Dismissible(
+                      key: ValueKey('saved-${post.id}'),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        color: AppColors.error,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 24),
+                        child: const Icon(
+                          Icons.bookmark_remove_outlined,
+                          color: AppColors.canvas,
+                        ),
                       ),
-                      onReact: (r) => unawaited(actions.react(post.id, r)),
-                      onReactions: () => unawaited(actions.reactions(post.id)),
-                      myUserId: ref.read(authControllerProvider).user?.id,
-                      onVote: (o) => unawaited(actions.vote(post.id, o)),
-                      onOpenListing: () => actions.openListing(post),
-                      onMessage: () => unawaited(actions.messageAuthor(post)),
-                      onShare: () => unawaited(actions.share(post)),
+                      onDismissed: (_) {
+                        ref
+                            .read(feedControllerProvider(_tab).notifier)
+                            .removeLocally(post.id);
+                        unawaited(_unsave(post.id));
+                      },
+                      child: PostCard(
+                        post: post,
+                        onLike: () => unawaited(actions.like(post.id)),
+                        onComments: () => unawaited(actions.comments(post.id)),
+                        onMore: () => unawaited(actions.menu(post)),
+                        onAuthor: () => unawaited(
+                          context.push(RouteNames.citizen(post.author.id)),
+                        ),
+                        onReact: (r) => unawaited(actions.react(post.id, r)),
+                        onReactions: () =>
+                            unawaited(actions.reactions(post.id)),
+                        myUserId: ref.read(authControllerProvider).user?.id,
+                        onVote: (o) => unawaited(actions.vote(post.id, o)),
+                        onOpenListing: () => actions.openListing(post),
+                        onMessage: () => unawaited(actions.messageAuthor(post)),
+                        onShare: () => unawaited(actions.share(post)),
+                      ),
                     );
                   },
                 ),

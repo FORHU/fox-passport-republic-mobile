@@ -1400,6 +1400,7 @@
   "republicLinkCopied": "Link copied",
   "republicSaved": "Saved",
   "republicUnsaved": "Removed from saved",
+  "republicUndo": "Undo",
   "republicHidden": "Post hidden",
   "republicDeleted": "Post deleted",
   "republicEditTitle": "Edit post",

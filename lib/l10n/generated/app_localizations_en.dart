@@ -4229,6 +4229,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicUnsaved => 'Removed from saved';
 
   @override
+  String get republicUndo => 'Undo';
+
+  @override
   String get republicHidden => 'Post hidden';
 
   @override
