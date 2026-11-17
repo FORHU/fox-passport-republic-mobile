@@ -47,7 +47,6 @@ class PassportPage extends ConsumerWidget {
                   ),
                   // Only for someone who holds a role to switch to.
                   const SpaceSwitchButton(
-                    compact: true,
                     padding: EdgeInsets.only(right: 4),
                   ),
                   IconButton(

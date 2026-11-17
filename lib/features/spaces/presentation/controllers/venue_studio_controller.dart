@@ -11,6 +11,15 @@ import 'package:flutter_template/shared/location/device_locator.dart';
 /// The steps of the studio, in order.
 enum StudioStep { basics, location, photos, details, pricing, review }
 
+/// Which of [VenueDraft.missing]'s keys each step is responsible for. A step
+/// not listed here asks for nothing.
+const _stepRequires = <StudioStep, Set<String>>{
+  StudioStep.basics: {'name', 'category', 'description', 'capacity'},
+  StudioStep.location: {'address', 'district', 'location'},
+  StudioStep.photos: {'photos'},
+  StudioStep.pricing: {'price'},
+};
+
 /// Where the studio stands while a host fills in a venue.
 class VenueStudioState {
   const VenueStudioState({
@@ -33,10 +42,24 @@ class VenueStudioState {
     this.stateCode,
     this.locating = false,
     this.locateProblem,
+    this.showErrors = false,
   });
 
   final VenueDraft draft;
   final StudioStep step;
+
+  /// True once the host tried to leave a step that is not complete, so its
+  /// missing fields are flagged.
+  final bool showErrors;
+
+  /// What the draft still lacks on [s], in the order the steps ask for it.
+  List<String> missingIn(StudioStep s) {
+    final wanted = _stepRequires[s] ?? const <String>{};
+    return [
+      for (final key in draft.missing)
+        if (wanted.contains(key)) key,
+    ];
+  }
 
   /// Reading the venue to edit.
   final bool loading;
@@ -106,8 +129,10 @@ class VenueStudioState {
     bool? locating,
     String? locateProblem,
     bool clearLocateProblem = false,
+    bool? showErrors,
   }) =>
       VenueStudioState(
+        showErrors: showErrors ?? this.showErrors,
         draft: draft ?? this.draft,
         step: step ?? this.step,
         loading: loading ?? this.loading,
@@ -360,7 +385,22 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     state = state.copyWith(draft: change(state.draft), clearError: true);
   }
 
-  void goTo(StudioStep step) => state = state.copyWith(step: step);
+  /// Moves to [step]. Going back is always free. Going forward stops at the
+  /// first step that is not complete and flags what it lacks; "Save as draft"
+  /// is not held back by any of this.
+  void goTo(StudioStep step) {
+    final from = state.step.index;
+    if (step.index > from) {
+      for (var i = from; i < step.index; i++) {
+        final s = StudioStep.values[i];
+        if (state.missingIn(s).isNotEmpty) {
+          state = state.copyWith(step: s, showErrors: true);
+          return;
+        }
+      }
+    }
+    state = state.copyWith(step: step, showErrors: false);
+  }
 
   void next() {
     final i = state.step.index;

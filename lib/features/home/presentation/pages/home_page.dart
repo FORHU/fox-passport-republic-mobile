@@ -18,6 +18,7 @@ import 'package:flutter_template/features/notifications/data/notifications_repos
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -484,6 +485,12 @@ class _Header extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        // Only for someone who holds a role to switch to; shows the space they
+        // are in.
+        const SpaceSwitchButton(
+          compact: true,
+          padding: EdgeInsets.only(left: 6, right: 8),
         ),
         const CoinsChip(trailingGap: 8),
         _RoundButton(

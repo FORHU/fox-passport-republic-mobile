@@ -4354,6 +4354,18 @@ abstract class AppLocalizations {
   /// **'A price'**
   String get studioMissingPrice;
 
+  /// No description provided for @studioRequiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get studioRequiredField;
+
+  /// No description provided for @studioStepNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in to continue: {items}'**
+  String studioStepNeeds(String items);
+
   /// No description provided for @studioNext.
   ///
   /// In en, this message translates to:
@@ -7287,6 +7299,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Leave a review'**
   String get reviewWrite;
+
+  /// No description provided for @ticketReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed'**
+  String get ticketReviewed;
 
   /// No description provided for @ticketBookAgain.
   ///

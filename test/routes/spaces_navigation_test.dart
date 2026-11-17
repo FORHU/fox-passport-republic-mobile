@@ -213,7 +213,7 @@ void main() {
     await settle(tester);
 
     expect(find.text('New venue'), findsOneWidget);
-    expect(find.text('Venue name'), findsOneWidget);
+    expect(find.text('Venue name *'), findsOneWidget);
 
     router.pop();
     await settle(tester);
@@ -585,6 +585,21 @@ void main() {
     for (final tab in ['Dashboard', 'Events', 'Earnings', 'More']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
+    await finish(tester);
+  });
+
+  testWidgets('the switcher is on Home too, with no trip to Passport', (
+    tester,
+  ) async {
+    await boot(tester, roles: const ['eventFoxer']);
+    expect(where(), RouteNames.home);
+
+    await tester.tap(find.byIcon(Icons.expand_more_rounded));
+    await settle(tester);
+    await tester.tap(find.text('Event'));
+    await settle(tester);
+
+    expect(where(), RouteNames.spaceEvent);
     await finish(tester);
   });
 }

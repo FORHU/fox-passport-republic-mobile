@@ -7,7 +7,6 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_filters.dart';
-import 'package:flutter_template/features/spaces/presentation/widgets/more_row.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -154,10 +153,14 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      MoreRow(
-                        icon: Icons.add_circle_outline_rounded,
-                        title: l10n.eventsNewOnWeb,
-                        onTap: () => context.push(RouteNames.spaceEventStudio),
+                      FilledButton.icon(
+                        onPressed: () =>
+                            context.push(RouteNames.spaceEventStudio),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                        ),
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.eventsNewOnWeb),
                       ),
                       const SizedBox(height: 16),
                       if (all.isNotEmpty) ...[

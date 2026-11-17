@@ -2376,6 +2376,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioMissingPrice => 'A price';
 
   @override
+  String get studioRequiredField => 'Required';
+
+  @override
+  String studioStepNeeds(String items) {
+    return 'Fill in to continue: $items';
+  }
+
+  @override
   String get studioNext => 'Next';
 
   @override
@@ -4042,6 +4050,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewWrite => 'Leave a review';
+
+  @override
+  String get ticketReviewed => 'Reviewed';
 
   @override
   String get ticketBookAgain => 'Book again';

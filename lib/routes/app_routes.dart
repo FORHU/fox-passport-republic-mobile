@@ -517,6 +517,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             state.extra is CatalogItem ? null : RouteNames.search,
         builder: (context, state) => VenueDetailPage(
           item: state.extra! as CatalogItem,
+          previewOnly: state.uri.queryParameters['preview'] == '1',
           // For an Event Foxer: apply to host here, or where that stands.
           hostActions: (id, name) =>
               VenueApplyStrip(venueId: id, venueName: name),

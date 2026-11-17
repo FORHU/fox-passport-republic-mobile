@@ -54,7 +54,8 @@ class VenueHubPage extends ConsumerWidget {
               '${RouteNames.spaceVenueCalendar}?venue=${venue.id}',
             ),
             onPublic: () => context.push(
-              RouteNames.venueDetail,
+              // `preview` shows the page as guests see it, without booking.
+              '${RouteNames.venueDetail}?preview=1',
               extra: CatalogItem(
                 id: venue.id,
                 kind: CatalogKind.venues,
