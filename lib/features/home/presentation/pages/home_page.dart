@@ -269,30 +269,38 @@ class HomePage extends ConsumerWidget {
                     ? context.l10n.homeVenuesTitle
                     : context.l10n.homeVenuesTitleIn(area.city!),
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('venues', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('venues', city: area.city),
+                  ),
                 ),
               ),
               HomeFoxers(
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('foxers', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('foxers', city: area.city),
+                  ),
                 ),
               ),
               HomeItems(
                 kind: CatalogKind.gear,
                 title: context.l10n.homeGearTitle,
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('gear', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('gear', city: area.city),
+                  ),
                 ),
               ),
               HomeItems(
                 kind: CatalogKind.services,
                 title: context.l10n.homeServicesTitle,
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('services', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('services', city: area.city),
+                  ),
                 ),
               ),
               RepublicTeaser(
