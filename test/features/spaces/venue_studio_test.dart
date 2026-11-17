@@ -128,6 +128,7 @@ void main() {
     test('steps forward and back, and not past either end', () async {
       final c = container(null);
       final studio = c.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready)
         ..back()
         ..next()
         ..next();
@@ -137,6 +138,51 @@ void main() {
         studio.next();
       }
       expect(c.read(venueStudioProvider(null)).step, StudioStep.review);
+    });
+
+    test('Next stops on a step that lacks something, and says so', () async {
+      final c = container(null);
+      final studio = c.read(venueStudioProvider(null).notifier)..next();
+
+      var state = c.read(venueStudioProvider(null));
+      expect(state.step, StudioStep.basics);
+      expect(state.showErrors, isTrue);
+      expect(
+        state.missingIn(StudioStep.basics),
+        ['name', 'category', 'description', 'capacity'],
+      );
+
+      // Filling the step in lets it go on, with the flags cleared.
+      studio
+        ..edit(
+          (d) => d.copyWith(
+            name: 'Sky Hall',
+            category: 'indoor',
+            description: 'A hall',
+            capacity: 100,
+          ),
+        )
+        ..next();
+      state = c.read(venueStudioProvider(null));
+      expect(state.step, StudioStep.location);
+      expect(state.showErrors, isFalse);
+    });
+
+    test('the header cannot jump past an incomplete step, but back is free',
+        () async {
+      final c = container(null);
+      final studio = c.read(venueStudioProvider(null).notifier)
+        ..goTo(StudioStep.pricing);
+      expect(c.read(venueStudioProvider(null)).step, StudioStep.basics);
+
+      studio
+        ..edit((_) => _ready)
+        ..goTo(StudioStep.pricing);
+      expect(c.read(venueStudioProvider(null)).step, StudioStep.pricing);
+
+      studio.goTo(StudioStep.basics);
+      expect(c.read(venueStudioProvider(null)).step, StudioStep.basics);
+      expect(c.read(venueStudioProvider(null)).showErrors, isFalse);
     });
 
     test('loads a saved venue to edit, remembering that it is live', () async {
@@ -488,36 +534,73 @@ void main() {
       await pump(tester);
 
       expect(find.text('New venue'), findsOneWidget);
-      expect(find.text('Venue name'), findsOneWidget);
+      // Required fields carry an asterisk, and nothing is flagged yet.
+      expect(find.text('Venue name *'), findsOneWidget);
+      expect(find.text('Required'), findsNothing);
       expect(find.text('Next'), findsOneWidget);
       expect(find.byTooltip('Back'), findsNothing);
     });
 
-    testWidgets('Next walks through to the review, which lists the gaps', (
+    testWidgets('Next on an empty step stays, flags and lists the gaps', (
       tester,
     ) async {
       await pump(tester);
+
+      await tester.tap(find.text('Next'));
+      await tester.pump();
+
+      expect(find.text('New venue'), findsOneWidget);
+      expect(find.text('Venue name *'), findsOneWidget);
+      // Name, description and capacity, and the type of venue.
+      expect(find.text('Required'), findsNWidgets(4));
+      expect(
+        find.text(
+          'Fill in to continue: Venue name, Type of venue, Description, '
+          'Capacity',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('Next walks through a complete venue to the review', (
+      tester,
+    ) async {
+      await pump(tester);
+      final element = tester.element(find.byType(VenueStudioPage));
+      ProviderScope.containerOf(element)
+          .read(venueStudioProvider(null).notifier)
+          .edit((_) => _ready);
+      await tester.pump();
 
       for (var i = 0; i < 5; i++) {
         await tester.tap(find.text('Next'));
         await tester.pump();
       }
 
-      expect(find.text('Still to fill in'), findsOneWidget);
-      expect(find.text('Venue name'), findsOneWidget);
-      expect(find.text('A pin on the map'), findsOneWidget);
-      expect(find.text('At least one photo'), findsOneWidget);
+      expect(find.text('Ready to send for review'), findsOneWidget);
       expect(find.text('Save as draft'), findsOneWidget);
       final submit = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, 'Send for review'),
       );
-      expect(submit.onPressed, isNull);
+      expect(submit.onPressed, isNotNull);
     });
 
     testWidgets('the location step offers dropdowns and the phone location', (
       tester,
     ) async {
       await pump(tester);
+      final element = tester.element(find.byType(VenueStudioPage));
+      ProviderScope.containerOf(element)
+          .read(venueStudioProvider(null).notifier)
+          .edit(
+            (d) => d.copyWith(
+              name: 'Sky Hall',
+              category: 'indoor',
+              description: 'A hall',
+              capacity: 100,
+            ),
+          );
+      await tester.pump();
       await tester.tap(find.text('Next'));
       await tester.pump();
       await tester.pump();

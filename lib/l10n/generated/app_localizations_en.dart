@@ -2370,6 +2370,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioMissingPrice => 'A price';
 
   @override
+  String get studioRequiredField => 'Required';
+
+  @override
+  String studioStepNeeds(String items) {
+    return 'Fill in to continue: $items';
+  }
+
+  @override
   String get studioNext => 'Next';
 
   @override

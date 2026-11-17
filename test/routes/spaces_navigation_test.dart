@@ -213,7 +213,7 @@ void main() {
     await settle(tester);
 
     expect(find.text('New venue'), findsOneWidget);
-    expect(find.text('Venue name'), findsOneWidget);
+    expect(find.text('Venue name *'), findsOneWidget);
 
     router.pop();
     await settle(tester);
