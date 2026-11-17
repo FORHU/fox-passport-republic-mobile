@@ -7666,6 +7666,12 @@ abstract class AppLocalizations {
   /// **'Removed from saved'**
   String get republicUnsaved;
 
+  /// No description provided for @republicUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get republicUndo;
+
   /// No description provided for @republicHidden.
   ///
   /// In en, this message translates to:
