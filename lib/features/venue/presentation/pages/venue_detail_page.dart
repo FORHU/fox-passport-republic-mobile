@@ -6,7 +6,6 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/reviews/presentation/widgets/reviews_section.dart';
 import 'package:flutter_template/features/venue/data/venue_repository.dart';
 import 'package:flutter_template/features/venue/domain/venue_detail.dart';
-import 'package:flutter_template/features/venue/presentation/widgets/venue_apply_strip.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
@@ -22,10 +21,15 @@ import 'package:go_router/go_router.dart';
 /// One venue: photos, what it holds and costs, what is included, and the
 /// rules, with "Book now" pinned to the bottom.
 class VenueDetailPage extends ConsumerWidget {
-  const VenueDetailPage({required this.item, super.key});
+  const VenueDetailPage({required this.item, this.hostActions, super.key});
 
   /// The row the citizen tapped; it names the venue while the rest loads.
   final CatalogItem item;
+
+  /// Something a host can do here, given the venue's id and name, shown above
+  /// Book now. Passed in by the route, so this feature does not import the one
+  /// that supplies it.
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,17 +76,19 @@ class VenueDetailPage extends ConsumerWidget {
             ],
           ),
         ),
-        data: (venue) => _Loaded(item: item, venue: venue),
+        data: (venue) =>
+            _Loaded(item: item, venue: venue, hostActions: hostActions),
       ),
     );
   }
 }
 
 class _Loaded extends ConsumerWidget {
-  const _Loaded({required this.item, required this.venue});
+  const _Loaded({required this.item, required this.venue, this.hostActions});
 
   final CatalogItem item;
   final VenueDetail venue;
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -260,8 +266,7 @@ class _Loaded extends ConsumerWidget {
             ],
           ),
         ),
-        // Only for an Event Foxer: apply to host here, or where that stands.
-        VenueApplyStrip(venueId: venue.id, venueName: venue.name),
+        if (hostActions != null) hostActions!(venue.id, venue.name),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           decoration: const BoxDecoration(

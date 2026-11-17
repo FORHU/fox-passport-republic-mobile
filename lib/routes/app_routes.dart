@@ -90,6 +90,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_studio
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/venue_apply_strip.dart';
 import 'package:flutter_template/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
@@ -514,8 +515,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.venueDetail,
         redirect: (context, state) =>
             state.extra is CatalogItem ? null : RouteNames.search,
-        builder: (context, state) =>
-            VenueDetailPage(item: state.extra! as CatalogItem),
+        builder: (context, state) => VenueDetailPage(
+          item: state.extra! as CatalogItem,
+          // For an Event Foxer: apply to host here, or where that stands.
+          hostActions: (id, name) =>
+              VenueApplyStrip(venueId: id, venueName: name),
+        ),
       ),
       GoRoute(
         path: RouteNames.eventDetail,

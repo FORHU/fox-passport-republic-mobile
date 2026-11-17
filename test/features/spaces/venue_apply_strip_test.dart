@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
-import 'package:flutter_template/features/venue/presentation/widgets/venue_apply_strip.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/venue_apply_strip.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
