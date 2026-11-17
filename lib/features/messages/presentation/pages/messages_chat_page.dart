@@ -1020,11 +1020,11 @@ class _Composer extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,

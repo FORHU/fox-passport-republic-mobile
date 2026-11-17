@@ -562,7 +562,7 @@ class _QuantityStepperState extends State<_QuantityStepper> {
     final border = OutlineInputBorder(
       borderRadius: AppRadius.brSm,
       borderSide: BorderSide(
-        color: _invalid ? AppColors.error : AppColors.borderStrong,
+        color: _invalid ? AppColors.error : AppColors.inputBorder,
       ),
     );
     return Column(
