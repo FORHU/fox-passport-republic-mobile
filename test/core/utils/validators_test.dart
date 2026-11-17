@@ -101,10 +101,10 @@ void main() {
   });
 
   group('the web rules, stated plainly', () {
-    test('sign-up needs 16+ chars with upper, lower, digit and special', () {
+    test('sign-up needs 12+ chars with upper, lower, digit and special', () {
       expect(
-        Validators.signupPassword('Abcdefghijklmn1'),
-        'Password must be at least 16 characters',
+        Validators.signupPassword('Abcdefghij1'),
+        'Password must be at least 12 characters',
       );
       expect(
         Validators.signupPassword('abcdefghijklmn1!'),
@@ -125,11 +125,48 @@ void main() {
       expect(Validators.signupPassword('Abcdefghijklmn1!'), isNull);
     });
 
-    test('reset needs only 8+ chars with upper, lower and a digit', () {
-      expect(Validators.resetNewPassword('Abcdefg1'), isNull);
+    test('any special character counts, not only a fixed few', () {
+      for (final special in ['#', '_', '-', '.', '~', '^', '(', '+']) {
+        expect(
+          Validators.signupPassword('Abcdefghij1$special'),
+          isNull,
+          reason: special,
+        );
+      }
+      // Whitespace is not a special character.
       expect(
-        Validators.resetNewPassword('Abcdef1'),
-        'Password must be at least 8 characters',
+        Validators.signupPassword('Abcdefghij1 '),
+        'Password must contain at least one special character',
+      );
+    });
+
+    test('there is a longest password too', () {
+      final longest = 'Aa1!${'x' * 124}';
+      expect(longest.length, 128);
+      expect(Validators.signupPassword(longest), isNull);
+      expect(
+        Validators.signupPassword('${longest}x'),
+        'Password must be at most 128 characters',
+      );
+    });
+
+    test('reset uses the same policy as sign-up, so they cannot disagree', () {
+      for (final password in [
+        'Abcdefghij1!',
+        'Abcdefghi1!',
+        'abcdefghijk1!',
+        'Abcdefghijkl1',
+      ]) {
+        expect(
+          Validators.resetNewPassword(password),
+          Validators.signupPassword(password),
+          reason: password,
+        );
+      }
+      expect(Validators.resetNewPassword('Abcdefghij1!'), isNull);
+      expect(
+        Validators.resetNewPassword('Abcdefghi1!'),
+        'Password must be at least 12 characters',
       );
     });
 

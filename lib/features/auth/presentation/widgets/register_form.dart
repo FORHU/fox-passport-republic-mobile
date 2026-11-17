@@ -30,6 +30,8 @@ class RegisterForm extends ConsumerStatefulWidget {
 
 class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+  // No errors until the first submit; after that they follow the input.
+  bool _submitted = false;
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -48,6 +50,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   }
 
   Future<void> _submit() async {
+    if (!_submitted) setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
 
     final success = await ref.read(authControllerProvider.notifier).register(
@@ -96,7 +99,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: _submitted
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -131,8 +136,8 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
             obscureText: _obscurePassword,
             autofillHints: const [AutofillHints.newPassword],
             textInputAction: TextInputAction.next,
-            helperText: 'At least 16 characters with upper and lower case '
-                r'letters, a number and one of @$!%*?&',
+            helperText: 'At least 12 characters with upper and lower case '
+                'letters, a number and a special character',
             validator: Validators.signupPassword,
             suffixIcon: eye,
           ),

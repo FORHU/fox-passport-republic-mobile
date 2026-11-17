@@ -124,7 +124,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Password must be at least 16 characters'),
+        find.text('Password must be at least 12 characters'),
         findsOneWidget,
       );
       verifyNever(
