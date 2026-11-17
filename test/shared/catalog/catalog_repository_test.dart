@@ -293,4 +293,28 @@ void main() {
       expect(query.containsKey(key), isFalse, reason: key);
     }
   });
+
+  test('one event package it cannot read does not take the list down',
+      () async {
+    when(
+      () => api.get(
+        ApiEndpoints.eventsBrowse,
+        query: any(named: 'query'),
+      ),
+    ).thenAnswer(
+      (_) async => {
+        'success': true,
+        'data': [
+          {'id': 'e1', 'name': 'Birthday', 'targetCity': 'Davao City'},
+          // A capacity that is text, not a number, which the parser rejects.
+          {'id': 'e2', 'name': 'Broken', 'guestCount': 'many'},
+          {'id': 'e3', 'name': 'Reunion', 'targetCity': 'Manila'},
+        ],
+      },
+    );
+
+    final result = await repository.fetch(CatalogKind.events);
+
+    expect(result.items.map((i) => i.id), ['e1', 'e3']);
+  });
 }
