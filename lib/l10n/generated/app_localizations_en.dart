@@ -3481,6 +3481,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsNeedsYou => 'Needs you';
 
   @override
+  String get bookingsThisMonth => 'This month';
+
+  @override
   String get searchList => 'List';
 
   @override

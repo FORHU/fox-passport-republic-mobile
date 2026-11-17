@@ -6334,6 +6334,12 @@ abstract class AppLocalizations {
   /// **'Needs you'**
   String get bookingsNeedsYou;
 
+  /// No description provided for @bookingsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get bookingsThisMonth;
+
   /// No description provided for @searchList.
   ///
   /// In en, this message translates to:
