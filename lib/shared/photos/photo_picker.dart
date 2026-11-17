@@ -54,6 +54,14 @@ abstract class PhotoPicker {
   Future<PickedPhoto?> pick();
 }
 
+/// A picker that can return several photos at once. Separate from
+/// [PhotoPicker] so a screen that wants one photo, and the fakes that stand in
+/// for it, are unaffected.
+abstract class MultiPhotoPicker {
+  /// Up to [limit] photos from the gallery; empty when the user backs out.
+  Future<List<PickedPhoto>> pickMany({required int limit});
+}
+
 /// Takes a photo from the camera or the gallery, for the screens that need
 /// the choice and a plain answer when the camera is refused (the role
 /// applications' documents and selfie).
@@ -66,10 +74,28 @@ abstract class PhotoCapture {
   });
 }
 
-class DevicePhotoPicker implements PhotoPicker, PhotoCapture {
+class DevicePhotoPicker implements PhotoPicker, PhotoCapture, MultiPhotoPicker {
   DevicePhotoPicker([ImagePicker? picker]) : _picker = picker ?? ImagePicker();
 
   final ImagePicker _picker;
+
+  @override
+  Future<List<PickedPhoto>> pickMany({required int limit}) async {
+    // The platform needs at least two to offer a multiple choice.
+    if (limit < 2) {
+      final one = await pick();
+      return [if (one != null) one];
+    }
+    final files = await _picker.pickMultiImage(
+      limit: limit,
+      maxWidth: 1600,
+      imageQuality: 85,
+    );
+    return [
+      for (final file in files.take(limit))
+        PickedPhoto(bytes: await file.readAsBytes(), name: file.name),
+    ];
+  }
 
   @override
   Future<PickedPhoto?> pick() async {
