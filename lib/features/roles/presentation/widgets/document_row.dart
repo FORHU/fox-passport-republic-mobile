@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
+import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
@@ -13,6 +14,7 @@ class DocumentRow extends ConsumerWidget {
     required this.photo,
     required this.onPicked,
     required this.onRemove,
+    this.frontCamera = false,
     super.key,
   });
 
@@ -20,6 +22,63 @@ class DocumentRow extends ConsumerWidget {
   final PickedPhoto? photo;
   final ValueChanged<PickedPhoto> onPicked;
   final VoidCallback onRemove;
+
+  /// The selfie: the camera opens on the front lens.
+  final bool frontCamera;
+
+  /// Asks where the photo comes from, then gets it. A refused or missing
+  /// camera is said plainly, and the gallery stays available.
+  Future<void> _choose(BuildContext context, WidgetRef ref) async {
+    final source = await showModalBottomSheet<PhotoSource>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheet) {
+        final l10n = sheet.l10n;
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera_outlined),
+                title: Text(l10n.roleApplyTakePhoto),
+                onTap: () => Navigator.of(sheet).pop(PhotoSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(l10n.roleApplyFromGallery),
+                onTap: () => Navigator.of(sheet).pop(PhotoSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (source == null) return;
+    final result = await ref
+        .read(photoCaptureProvider)
+        .take(source: source, frontCamera: frontCamera);
+    if (!context.mounted) return;
+    final l10n = context.l10n;
+    switch (result) {
+      case PhotoPicked(:final photo):
+        onPicked(photo);
+      case PhotoPickCancelled():
+        break;
+      case PhotoPickFailed(:final reason):
+        showTopToast(
+          context,
+          switch (reason) {
+            PhotoPickFailure.cameraDenied => l10n.roleApplyCameraDenied,
+            PhotoPickFailure.cameraUnavailable =>
+              l10n.roleApplyCameraUnavailable,
+            PhotoPickFailure.other => l10n.roleApplyPhotoFailed,
+          },
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,10 +124,7 @@ class DocumentRow extends ConsumerWidget {
               minimumSize: const Size(0, 40),
               padding: const EdgeInsets.symmetric(horizontal: 14),
             ),
-            onPressed: () async {
-              final p = await ref.read(photoPickerProvider).pick();
-              if (p != null) onPicked(p);
-            },
+            onPressed: () => _choose(context, ref),
             child: Text(
               picked == null ? l10n.roleApplyChoose : l10n.roleApplyChange,
             ),

@@ -5302,6 +5302,30 @@ abstract class AppLocalizations {
   /// **'Continue on the web'**
   String get rolesContinueOnWeb;
 
+  /// No description provided for @rolesApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get rolesApply;
+
+  /// No description provided for @rolesAlreadyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have this role.'**
+  String get rolesAlreadyActive;
+
+  /// No description provided for @rolesApplicationInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application is in review. We will let you know when it is decided.'**
+  String get rolesApplicationInReview;
+
+  /// No description provided for @rolesClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get rolesClose;
+
   /// No description provided for @venueBookNow.
   ///
   /// In en, this message translates to:
@@ -9394,6 +9418,36 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get roleApplyRemoveDoc;
 
+  /// No description provided for @roleApplyTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get roleApplyTakePhoto;
+
+  /// No description provided for @roleApplyFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get roleApplyFromGallery;
+
+  /// No description provided for @roleApplyCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in Settings, or choose a photo from the gallery.'**
+  String get roleApplyCameraDenied;
+
+  /// No description provided for @roleApplyCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No camera found on this device. Choose a photo from the gallery.'**
+  String get roleApplyCameraUnavailable;
+
+  /// No description provided for @roleApplyPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get that photo. Try again.'**
+  String get roleApplyPhotoFailed;
+
   /// No description provided for @roleApplySubmit.
   ///
   /// In en, this message translates to:
@@ -11310,9 +11364,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }
