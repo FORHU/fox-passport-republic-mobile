@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/reviews/presentation/widgets/reviews_section.dart';
 import 'package:flutter_template/features/venue/data/venue_repository.dart';
 import 'package:flutter_template/features/venue/domain/venue_detail.dart';
+import 'package:flutter_template/features/venue/presentation/widgets/venue_apply_strip.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
@@ -259,6 +260,8 @@ class _Loaded extends ConsumerWidget {
             ],
           ),
         ),
+        // Only for an Event Foxer: apply to host here, or where that stands.
+        VenueApplyStrip(venueId: venue.id, venueName: venue.name),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           decoration: const BoxDecoration(

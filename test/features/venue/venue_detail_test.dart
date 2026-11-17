@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/features/spaces/data/active_space.dart';
 import 'package:flutter_template/features/venue/data/venue_repository.dart';
 import 'package:flutter_template/features/venue/domain/venue_detail.dart';
 import 'package:flutter_template/features/venue/presentation/pages/venue_detail_page.dart';
@@ -136,6 +137,8 @@ void main() {
             (ref, item) async => VenueDetail.fromJson(_json),
           ),
           displayCurrencyProvider.overrideWithValue('PHP'),
+          // Not signed in here, so no roles.
+          heldRolesProvider.overrideWithValue(const <String>[]),
           fxRatesProvider.overrideWith((ref) async => null),
           profileLocationProvider
               .overrideWith((ref) async => const ProfileLocation()),

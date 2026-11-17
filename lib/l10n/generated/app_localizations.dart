@@ -3856,6 +3856,18 @@ abstract class AppLocalizations {
   /// **'Ended'**
   String get partnersStatusRevoked;
 
+  /// No description provided for @venueApplyToHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to host events here'**
+  String get venueApplyToHost;
+
+  /// No description provided for @venueHostingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'You host events here'**
+  String get venueHostingHere;
+
   /// No description provided for @partnersOpenRow.
   ///
   /// In en, this message translates to:

@@ -697,6 +697,8 @@
   "partnersActionFailed": "That didn't go through. Try again.",
   "partnersStatusRejected": "Declined",
   "partnersStatusRevoked": "Ended",
+  "venueApplyToHost": "Apply to host events here",
+  "venueHostingHere": "You host events here",
   "partnersOpenRow": "Venue partners",
   "partnersInvite": "Invite an Event Foxer",
   "partnersInviteTitle": "Choose an Event Foxer",
