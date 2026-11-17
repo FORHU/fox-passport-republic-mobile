@@ -141,7 +141,7 @@ class CatalogRepository {
     final wantedCity = _norm(byPoint ? '' : city ?? '');
     final normalizedQuery = query.toLowerCase();
     final filteredItems = rows
-        .map((row) => _item(kind, row))
+        .map((row) => _itemOrNull(kind, row))
         .whereType<CatalogItem>()
         .where((item) {
       if (query.isNotEmpty &&
@@ -219,6 +219,17 @@ class CatalogRepository {
       for (final row in list)
         if (row is Map) row.cast<String, dynamic>(),
     ];
+  }
+
+  /// [_item], but a row it cannot read is left out of the list instead of
+  /// failing the whole page: one package with an odd value should not take the
+  /// Events list down with it.
+  static CatalogItem? _itemOrNull(CatalogKind kind, Map<String, dynamic> row) {
+    try {
+      return _item(kind, row);
+    } on Object {
+      return null;
+    }
   }
 
   /// A catalog row from any endpoint, or null when it has no id or name.
