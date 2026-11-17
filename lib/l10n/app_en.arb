@@ -1137,6 +1137,7 @@
   "calendarOpenDay": "Open this day",
   "bookings": "Bookings",
   "bookingsNeedsYou": "Needs you",
+  "bookingsThisMonth": "This month",
   "searchList": "List",
   "homePlanning": "What are you planning?",
   "homeGreeting": "Hi, {name}",

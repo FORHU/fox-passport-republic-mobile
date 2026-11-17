@@ -200,15 +200,12 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
                           _empty(l10n.ticketsEmptyPast, icon: Icons.history),
                       ];
                     }
-                    if (_segment == _Segment.past) {
-                      return _groupedByMonth(list);
-                    }
                     final saved = list.map((t) => t.cachedAt).nonNulls;
                     return [
                       // Saved on the phone, not just fetched: say so.
-                      if (saved.isNotEmpty)
+                      if (_segment == _Segment.upcoming && saved.isNotEmpty)
                         OfflineTicketsNote(savedAt: saved.first),
-                      for (final t in list) _item(t),
+                      ..._groupedByMonth(list),
                     ];
                   },
                 ),
@@ -252,28 +249,40 @@ class _TicketsPageState extends ConsumerState<TicketsPage> {
     ];
   }
 
+  /// A ticket with its date beside it: the month in lime, the day large.
   Widget _item(Ticket ticket) => Padding(
         padding: const EdgeInsets.only(bottom: 16),
-        child: TicketCard(ticket: ticket),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _DateBlock(date: ticket.startAt),
+            const SizedBox(width: 8),
+            Expanded(child: TicketCard(ticket: ticket)),
+          ],
+        ),
       );
 
-  /// Groups past tickets under month headers, newest month first.
+  /// Groups tickets under month headers, in the order they come: this month
+  /// reads "This month", any other "November 2026". The year is part of the
+  /// group, so the same month of two years is never mixed.
   List<Widget> _groupedByMonth(List<Ticket> tickets) {
     final locale = Localizations.localeOf(context).toString();
-    final grouped = <String, List<Ticket>>{};
+    final l10n = context.l10n;
+    final now = DateTime.now();
+    final grouped = <(int, int), List<Ticket>>{};
     for (final t in tickets) {
-      final key = DateFormat.MMMM(locale).format(t.startAt);
-      grouped.putIfAbsent(key, () => []).add(t);
+      grouped.putIfAbsent((t.startAt.year, t.startAt.month), () => []).add(t);
     }
     final widgets = <Widget>[];
     for (final entry in grouped.entries) {
+      final (year, month) = entry.key;
+      final label = year == now.year && month == now.month
+          ? l10n.bookingsThisMonth
+          : DateFormat.yMMMM(locale).format(DateTime(year, month));
       widgets.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            entry.key.toUpperCase(),
-            style: AppTypography.label(),
-          ),
+          child: Text(label.toUpperCase(), style: AppTypography.label()),
         ),
       );
       for (final t in entry.value) {
@@ -394,6 +403,35 @@ class _ViewToggle extends StatelessWidget {
             label: l10n.ticketsViewCalendar,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The date of a booking, beside it in the list: the month in lime, the day
+/// large (the Bookings mockup).
+class _DateBlock extends StatelessWidget {
+  const _DateBlock({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    return SizedBox(
+      width: 40,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 14),
+        child: Column(
+          children: [
+            Text(
+              DateFormat.MMM(locale).format(date).toUpperCase(),
+              style: AppTypography.label(color: AppColors.accent),
+            ),
+            const SizedBox(height: 2),
+            Text('${date.day}', style: AppTypography.display(size: 20)),
+          ],
+        ),
       ),
     );
   }
