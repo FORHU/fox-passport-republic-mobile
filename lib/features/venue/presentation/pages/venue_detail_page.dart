@@ -24,6 +24,7 @@ class VenueDetailPage extends ConsumerWidget {
   const VenueDetailPage({
     required this.item,
     this.previewOnly = false,
+    this.hostActions,
     super.key,
   });
 
@@ -33,6 +34,11 @@ class VenueDetailPage extends ConsumerWidget {
   /// True when a Mayor opens their own venue's public page: it shows what
   /// guests see, but "Book now" is off.
   final bool previewOnly;
+
+  /// Something a host can do here, given the venue's id and name, shown above
+  /// Book now. Passed in by the route, so this feature does not import the one
+  /// that supplies it.
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,8 +85,12 @@ class VenueDetailPage extends ConsumerWidget {
             ],
           ),
         ),
-        data: (venue) =>
-            _Loaded(item: item, venue: venue, previewOnly: previewOnly),
+        data: (venue) => _Loaded(
+          item: item,
+          venue: venue,
+          previewOnly: previewOnly,
+          hostActions: hostActions,
+        ),
       ),
     );
   }
@@ -91,11 +101,13 @@ class _Loaded extends ConsumerWidget {
     required this.item,
     required this.venue,
     required this.previewOnly,
+    this.hostActions,
   });
 
   final CatalogItem item;
   final VenueDetail venue;
   final bool previewOnly;
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -273,6 +285,7 @@ class _Loaded extends ConsumerWidget {
             ],
           ),
         ),
+        if (hostActions != null) hostActions!(venue.id, venue.name),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           decoration: const BoxDecoration(

@@ -2114,6 +2114,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersStatusRevoked => 'Ended';
 
   @override
+  String get venueApplyToHost => 'Apply to host events here';
+
+  @override
+  String get venueHostingHere => 'You host events here';
+
+  @override
   String get partnersOpenRow => 'Venue partners';
 
   @override
