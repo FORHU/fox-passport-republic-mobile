@@ -1339,6 +1339,7 @@
   "@reviewsSeeAll": {"placeholders":{"count":{"type":"int"}}},
   "reviewsLoadFailed": "We couldn't load the reviews.",
   "reviewWrite": "Leave a review",
+  "ticketReviewed": "Reviewed",
   "ticketBookAgain": "Book again",
   "reviewTitle": "How was it?",
   "reviewHint": "Tell others what it was like (optional)",

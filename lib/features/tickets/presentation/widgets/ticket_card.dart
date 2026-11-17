@@ -88,6 +88,13 @@ class TicketCard extends ConsumerWidget {
       (ticket.status == 'confirmed' || ticket.status == 'completed') &&
       ticket.endAt.isBefore(DateTime.now());
 
+  /// A booking that took place and that the person already reviewed.
+  bool get _isReviewed =>
+      !ticket.isSample &&
+      ticket.hasReview &&
+      (ticket.status == 'confirmed' || ticket.status == 'completed') &&
+      ticket.endAt.isBefore(DateTime.now());
+
   Future<void> _review(BuildContext context, WidgetRef ref) async {
     final posted = await showWriteReviewSheet(
       context,
@@ -193,8 +200,30 @@ class TicketCard extends ConsumerWidget {
             style: AppTypography.body(size: 12, color: AppColors.textMuted),
           ),
         ],
-        if (_canReview || _canRebook || _canRequestChange)
+        if (_canReview || _isReviewed || _canRebook || _canRequestChange)
           const SizedBox(height: 12),
+        if (_isReviewed)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 18,
+                  color: AppColors.accent,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.ticketReviewed,
+                  style: AppTypography.display(
+                    size: 14,
+                    color: AppColors.accent,
+                  ),
+                ),
+              ],
+            ),
+          ),
         if (_canReview)
           TextButton.icon(
             onPressed: () => unawaited(_review(context, ref)),
