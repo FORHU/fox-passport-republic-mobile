@@ -4038,6 +4038,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewWrite => 'Leave a review';
 
   @override
+  String get ticketReviewed => 'Reviewed';
+
+  @override
   String get ticketBookAgain => 'Book again';
 
   @override
