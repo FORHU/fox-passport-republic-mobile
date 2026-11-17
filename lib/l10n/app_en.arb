@@ -1308,6 +1308,12 @@
   "allCategoriesNone": "None yet",
   "itemBookDays": "How many days?",
   "itemBookQuantity": "How many?",
+  "itemBookQuantityInvalid": "Enter a number from 1 to {max}",
+  "@itemBookQuantityInvalid": {
+    "placeholders": {
+      "max": {"type": "int"}
+    }
+  },
   "itemBookPickup": "Pick up",
   "itemBookDelivery": "Delivery",
   "itemBookAddress": "Delivery address",

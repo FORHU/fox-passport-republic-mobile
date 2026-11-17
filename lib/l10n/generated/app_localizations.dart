@@ -7150,6 +7150,12 @@ abstract class AppLocalizations {
   /// **'How many?'**
   String get itemBookQuantity;
 
+  /// No description provided for @itemBookQuantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number from 1 to {max}'**
+  String itemBookQuantityInvalid(int max);
+
   /// No description provided for @itemBookPickup.
   ///
   /// In en, this message translates to:
