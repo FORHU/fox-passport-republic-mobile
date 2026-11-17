@@ -37,7 +37,14 @@ class RolesPage extends ConsumerWidget {
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
-        onRefresh: () async => ref.invalidate(myRoleRequestsProvider),
+        onRefresh: () async {
+          ref.invalidate(myRoleRequestsProvider);
+          try {
+            await ref.read(myRoleRequestsProvider.future);
+          } on Object {
+            // The page shows its own error state with a retry.
+          }
+        },
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
