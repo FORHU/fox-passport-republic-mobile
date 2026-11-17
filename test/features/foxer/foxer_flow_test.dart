@@ -288,6 +288,53 @@ void main() {
       expect(find.text('MATCH FORM'), findsOneWidget);
       expect(sentTo?.id, 'f1');
     });
+
+    testWidgets('a service they offer opens its booking page', (tester) async {
+      tester.view
+        ..physicalSize = const Size(800, 2000)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      CatalogItem? opened;
+      final router = GoRouter(
+        initialLocation: RouteNames.foxer,
+        routes: [
+          GoRoute(
+            path: RouteNames.foxer,
+            builder: (_, __) => const FoxerProfilePage(item: _row),
+          ),
+          GoRoute(
+            path: RouteNames.itemBooking,
+            builder: (_, state) {
+              opened = state.extra as CatalogItem?;
+              return const Scaffold(body: Text('ITEM BOOKING'));
+            },
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: _overrides(
+            FoxerProfile.fromJson(
+              Map<String, dynamic>.of(_json)..['venues'] = <Object>[],
+            ),
+          ),
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Photographer'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ITEM BOOKING'), findsOneWidget);
+      expect(opened?.id, 's1');
+      expect(opened?.kind, CatalogKind.services);
+    });
   });
 
   group('match request page', () {

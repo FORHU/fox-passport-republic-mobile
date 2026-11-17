@@ -165,8 +165,14 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
                   return RefreshIndicator(
                     color: AppColors.accent,
                     backgroundColor: AppColors.surface,
-                    onRefresh: () async =>
-                        ref.invalidate(conversationsProvider),
+                    onRefresh: () async {
+                      ref.invalidate(conversationsProvider);
+                      try {
+                        await ref.read(conversationsProvider.future);
+                      } on Object {
+                        // The page shows its own error state with a retry.
+                      }
+                    },
                     child: ListView.separated(
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                       itemCount: visible.length,

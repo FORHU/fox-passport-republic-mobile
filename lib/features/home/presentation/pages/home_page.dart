@@ -142,6 +142,16 @@ class HomePage extends ConsumerWidget {
                   (category: tiles.first.occasion.name, city: area.city),
                 ),
               );
+            // Wait for the first things on the page, so the spinner stays until
+            // they are back. Each row shows its own error if one fails.
+            try {
+              await Future.wait([
+                ref.read(upcomingTicketsProvider.future),
+                ref.read(catalogProvider(soonQuery).future),
+              ]);
+            } on Object {
+              // Ignored: the rows below have their own retry.
+            }
           },
           child: ListView(
             // Always scrollable, so a short page can still be pulled down.

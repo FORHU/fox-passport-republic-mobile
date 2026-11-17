@@ -161,9 +161,14 @@ class _LoadedState extends ConsumerState<_Loaded> {
         unawaited(context.push(RouteNames.venueDetail, extra: offer));
       case CatalogKind.gear:
       case CatalogKind.services:
+        // A sample row has no real item behind it to book.
+        if (offer.isSample) {
+          showTopToast(context, context.l10n.comingSoonDetails);
+        } else {
+          unawaited(context.push(RouteNames.itemBooking, extra: offer));
+        }
       case CatalogKind.foxers:
-        // Gear and service pages are not built yet; a Match request covers
-        // asking for them.
+        // An offer is something to book, never a person.
         showTopToast(context, context.l10n.comingSoonDetails);
     }
   }

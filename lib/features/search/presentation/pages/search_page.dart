@@ -76,6 +76,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         oldWidget.initialMinCapacity != widget.initialMinCapacity ||
         oldWidget.initialDate != widget.initialDate) {
       setState(() {
+        // A new kind starts from its own default order and specialty, not the
+        // ones left over from the kind before.
+        if (oldWidget.initialKind != widget.initialKind) {
+          _sortBy = '';
+          _specialty = null;
+        }
         _kind = widget.initialKind;
         _city = widget.initialCity;
         _minCapacity = widget.initialMinCapacity;
