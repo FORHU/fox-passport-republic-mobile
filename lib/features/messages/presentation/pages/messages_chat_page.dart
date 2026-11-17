@@ -12,6 +12,7 @@ import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/realtime/realtime_service.dart';
 import 'package:flutter_template/shared/widgets/avatar_image.dart';
+import 'package:flutter_template/shared/widgets/media_viewer.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -19,6 +20,9 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+/// Photos in one message: the most the API takes as attachments.
+const _maxPhotos = 10;
 
 /// The emoji offered on a long press.
 const _reactionEmoji = ['👍', '❤️', '😂', '🎉', '🙏'];
@@ -47,8 +51,8 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
   ChatMessage? _replyTo;
   ChatMessage? _editing;
 
-  /// A photo chosen but not yet sent.
-  PickedPhoto? _photo;
+  /// Photos chosen but not yet sent.
+  final List<PickedPhoto> _photos = [];
 
   DateTime _lastTypingSent = DateTime.fromMillisecondsSinceEpoch(0);
 
@@ -312,10 +316,10 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
                   text: (_editing ?? _replyTo)!.content,
                   onCancel: _clearComposerMode,
                 ),
-              if (_photo != null)
-                _PhotoBanner(
-                  photo: _photo!,
-                  onRemove: () => setState(() => _photo = null),
+              if (_photos.isNotEmpty)
+                _PhotosStrip(
+                  photos: _photos,
+                  onRemove: (i) => setState(() => _photos.removeAt(i)),
                 ),
               _Composer(
                 controller: _messageController,
@@ -340,11 +344,20 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
   }
 
   Future<void> _pickPhoto() async {
+    final room = _maxPhotos - _photos.length;
+    if (room <= 0) return;
     try {
-      final photo = await ref.read(photoPickerProvider).pick();
-      if (photo != null && mounted) {
+      final picker = ref.read(photoPickerProvider);
+      final List<PickedPhoto> chosen;
+      if (picker is MultiPhotoPicker) {
+        chosen = await (picker as MultiPhotoPicker).pickMany(limit: room);
+      } else {
+        final one = await picker.pick();
+        chosen = [if (one != null) one];
+      }
+      if (chosen.isNotEmpty && mounted) {
         setState(() {
-          _photo = photo;
+          _photos.addAll(chosen.take(room));
           _editing = null;
         });
       }
@@ -367,8 +380,8 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
 
   Future<void> _send() async {
     final content = _messageController.text.trim();
-    final photo = _photo;
-    if ((content.isEmpty && photo == null) || _sending) return;
+    final photos = List<PickedPhoto>.of(_photos);
+    if ((content.isEmpty && photos.isEmpty) || _sending) return;
     final repository = ref.read(messagesRepositoryProvider);
     final editing = _editing;
     final replyTo = _replyTo;
@@ -381,12 +394,16 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
           content,
         );
       } else {
-        final url = photo == null ? null : await repository.uploadPhoto(photo);
+        // In order, so the photos arrive in the order they were chosen.
+        final urls = <String>[];
+        for (final photo in photos) {
+          urls.add(await repository.uploadPhoto(photo));
+        }
         await repository.sendMessage(
           widget.conversationId,
           content,
           replyToId: replyTo?.id,
-          attachmentUrls: [if (url != null) url],
+          attachmentUrls: urls,
         );
       }
       _messageController.clear();
@@ -394,7 +411,7 @@ class _MessagesChatPageState extends ConsumerState<MessagesChatPage> {
         setState(() {
           _replyTo = null;
           _editing = null;
-          _photo = null;
+          _photos.clear();
         });
       }
       ref
@@ -806,17 +823,8 @@ class _MessageBubble extends StatelessWidget {
                   ],
                 ),
               ],
-              for (final url in message.attachmentUrls)
-                ClipRRect(
-                  borderRadius: AppRadius.brSm,
-                  child: Container(
-                    width: 150,
-                    height: 90,
-                    margin: const EdgeInsets.only(top: 6),
-                    color: AppColors.surfaceRaised,
-                    child: NetworkImageBox(url: url, width: 150, height: 90),
-                  ),
-                ),
+              if (message.attachmentUrls.isNotEmpty)
+                _Attachments(urls: message.attachmentUrls),
               const SizedBox(height: 4),
               Text(
                 message.isEdited ? '$time · ${l10n.messageEditedSuffix}' : time,
@@ -856,48 +864,121 @@ class _ActionTile extends StatelessWidget {
   }
 }
 
-class _PhotoBanner extends StatelessWidget {
-  const _PhotoBanner({required this.photo, required this.onRemove});
+/// The photos chosen for the next message, each with a way to take it out.
+class _PhotosStrip extends StatelessWidget {
+  const _PhotosStrip({required this.photos, required this.onRemove});
 
-  final PickedPhoto photo;
-  final VoidCallback onRemove;
+  final List<PickedPhoto> photos;
+  final ValueChanged<int> onRemove;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 104,
       margin: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppRadius.brSm,
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: photos.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, i) => SizedBox(
+          width: 72,
+          child: Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(
+                      photos[i].bytes,
+                      width: 72,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: -6,
+                    right: -6,
+                    child: Semantics(
+                      button: true,
+                      label: context.l10n.messageCancel,
+                      child: GestureDetector(
+                        onTap: () => onRemove(i),
+                        child: Container(
+                          width: 22,
+                          height: 22,
+                          decoration: const BoxDecoration(
+                            color: AppColors.surfaceRaised,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close_rounded, size: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                photos[i].name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.body(size: 10),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The photos in a message, as tiles that open full screen: one photo is shown
+/// larger, several in a grid of two.
+class _Attachments extends StatelessWidget {
+  const _Attachments({required this.urls});
+
+  final List<String> urls;
+
+  @override
+  Widget build(BuildContext context) {
+    final single = urls.length == 1;
+    final width = single ? 200.0 : 110.0;
+    final height = single ? 150.0 : 110.0;
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.memory(
-              photo.bytes,
-              width: 56,
-              height: 56,
-              fit: BoxFit.cover,
+          for (var i = 0; i < urls.length; i++)
+            GestureDetector(
+              onTap: () => Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => MediaViewer(urls: urls, initialIndex: i),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: AppRadius.brSm,
+                child: Container(
+                  width: width,
+                  height: height,
+                  color: AppColors.surfaceRaised,
+                  child: NetworkImageBox(
+                    url: urls[i],
+                    width: width,
+                    height: height,
+                  ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              photo.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.body(size: 13),
-            ),
-          ),
-          IconButton(
-            tooltip: context.l10n.messageCancel,
-            onPressed: onRemove,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            icon: const Icon(Icons.close_rounded, size: 18),
-          ),
         ],
       ),
     );
@@ -1020,11 +1101,11 @@ class _Composer extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: const BorderSide(color: AppColors.inputBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: AppRadius.brPill,

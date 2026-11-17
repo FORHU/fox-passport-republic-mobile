@@ -16,6 +16,8 @@ class StudioField extends StatefulWidget {
     this.maxLines = 1,
     this.number = false,
     this.formatters = const [],
+    this.required = false,
+    this.errorText,
     super.key,
   });
 
@@ -24,6 +26,12 @@ class StudioField extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final int maxLines;
   final bool number;
+
+  /// Marks the label with an asterisk.
+  final bool required;
+
+  /// Shown under the field, with a red border, when it is not filled in right.
+  final String? errorText;
 
   /// Limits on what can be typed.
   final List<TextInputFormatter> formatters;
@@ -61,7 +69,10 @@ class _StudioFieldState extends State<StudioField> {
           keyboardType: widget.number
               ? const TextInputType.numberWithOptions(decimal: true)
               : null,
-          decoration: InputDecoration(labelText: widget.label),
+          decoration: InputDecoration(
+            labelText: widget.required ? '${widget.label} *' : widget.label,
+            errorText: widget.errorText,
+          ),
           onChanged: widget.onChanged,
         ),
       );

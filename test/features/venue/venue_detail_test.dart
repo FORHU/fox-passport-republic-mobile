@@ -170,4 +170,64 @@ void main() {
     expect(booked?.id, 'v1');
     expect(booked?.capacity, 150);
   });
+
+  testWidgets('a preview of the public page shows the venue, Book now is off', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(800, 2200)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    var bookingOpened = false;
+    final router = GoRouter(
+      initialLocation: '${RouteNames.venueDetail}?preview=1',
+      routes: [
+        GoRoute(
+          path: RouteNames.venueDetail,
+          builder: (_, state) => VenueDetailPage(
+            item: _row,
+            previewOnly: state.uri.queryParameters['preview'] == '1',
+          ),
+        ),
+        GoRoute(
+          path: RouteNames.book,
+          builder: (_, __) {
+            bookingOpened = true;
+            return const Scaffold(body: Text('BOOKING'));
+          },
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          venueDetailProvider.overrideWith(
+            (ref, item) async => VenueDetail.fromJson(_json),
+          ),
+          displayCurrencyProvider.overrideWithValue('PHP'),
+          fxRatesProvider.overrideWith((ref) async => null),
+          profileLocationProvider
+              .overrideWith((ref) async => const ProfileLocation()),
+        ],
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('averie'), findsOneWidget);
+    final button = tester.widget<ElevatedButton>(
+      find.widgetWithText(ElevatedButton, 'Book now'),
+    );
+    expect(button.onPressed, isNull);
+
+    await tester.tap(find.text('Book now'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(bookingOpened, isFalse);
+    expect(find.text('BOOKING'), findsNothing);
+  });
 }

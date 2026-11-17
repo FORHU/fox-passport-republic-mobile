@@ -25,6 +25,8 @@ class LoginForm extends ConsumerStatefulWidget {
 
 class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  // No errors until the first submit; after that they follow the input.
+  bool _submitted = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -37,6 +39,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   }
 
   Future<void> _submit() async {
+    if (!_submitted) setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
 
     final success = await ref
@@ -64,7 +67,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: _submitted
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

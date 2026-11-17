@@ -233,26 +233,30 @@ void main() {
     });
   });
 
-  test('sends event filters to public scheduled-event browse', () async {
+  test('lists events from the published package browse (mobile#416)', () async {
     when(
-      () =>
-          api.get(ApiEndpoints.publicEventsBrowse, query: any(named: 'query')),
+      () => api.get(ApiEndpoints.eventsBrowse, query: any(named: 'query')),
     ).thenAnswer(
       (_) async => {
         'data': [
           {
-            'id': 'e1',
+            'id': 't1',
             'name': 'Garden Party',
             'targetCity': 'Baguio City',
-            'startAt': '2026-11-01T10:00:00.000Z',
-            'guestCount': 40,
-            'totalAmount': 5000,
+            'price': 5000,
+          },
+          {
+            'id': 't2',
+            'name': 'Budget Picnic',
+            'targetCity': 'Baguio City',
+            'price': 1000,
           },
         ],
-        'pagination': {'total': 1},
+        'pagination': {'total': 2},
       },
     );
 
+    // A package has no date or guest count: those filters must not drop it.
     final result = await repository.fetch(
       CatalogKind.events,
       city: 'Baguio',
@@ -264,19 +268,53 @@ void main() {
       sortBy: 'date_asc',
     );
 
-    expect(result.items.map((e) => e.id), ['e1']);
-    final query = verify(
+    expect(result.items.map((e) => e.id), ['t1']);
+    verifyNever(
       () => api.get(
         ApiEndpoints.publicEventsBrowse,
+        query: any(named: 'query'),
+      ),
+    );
+    final query = verify(
+      () => api.get(
+        ApiEndpoints.eventsBrowse,
         query: captureAny(named: 'query'),
       ),
     ).captured.single as Map<String, dynamic>;
     expect(query['city'], 'Baguio');
-    expect(query['minPrice'], 3000);
     expect(query['maxPrice'], 6000);
-    expect(query['minCapacity'], 20);
-    expect(query['sortBy'], 'date_asc');
-    expect(query['fromDate'], isA<String>());
-    expect(query['toDate'], isA<String>());
+    for (final key in const [
+      'minPrice',
+      'minCapacity',
+      'sortBy',
+      'fromDate',
+      'toDate',
+    ]) {
+      expect(query.containsKey(key), isFalse, reason: key);
+    }
+  });
+
+  test('one event package it cannot read does not take the list down',
+      () async {
+    when(
+      () => api.get(
+        ApiEndpoints.eventsBrowse,
+        query: any(named: 'query'),
+      ),
+    ).thenAnswer(
+      (_) async => {
+        'success': true,
+        'data': [
+          {'id': 'e1', 'name': 'Birthday', 'targetCity': 'Davao City'},
+          // A capacity that is text, not a number, which the parser rejects.
+          {'id': 'e2', 'name': 'Broken', 'guestCount': 'many'},
+          {'id': 'e3', 'name': 'Reunion', 'targetCity': 'Manila'},
+        ],
+      },
+    );
+
+    final result = await repository.fetch(CatalogKind.events);
+
+    expect(result.items.map((i) => i.id), ['e1', 'e3']);
   });
 }

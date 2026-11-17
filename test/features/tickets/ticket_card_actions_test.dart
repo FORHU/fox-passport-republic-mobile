@@ -94,6 +94,7 @@ void main() {
       await tester.pump();
 
       expect(_reviewText, findsOneWidget);
+      expect(find.text('Reviewed'), findsNothing);
       expect(_cancelText, findsNothing);
       expect(_changeText, findsNothing);
     });
@@ -119,6 +120,7 @@ void main() {
       await tester.pump();
 
       expect(_reviewText, findsNothing);
+      expect(find.text('Reviewed'), findsOneWidget);
     });
 
     testWidgets('cancelled booking offers no booking actions', (tester) async {

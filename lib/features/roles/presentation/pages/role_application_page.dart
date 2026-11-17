@@ -224,6 +224,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                   DocumentRow(
                     label: _documentLabel(l10n, slot),
                     photo: d.documents[slot],
+                    frontCamera: slot == KycDocument.selfie,
                     onPicked: (p) => controller.setDocument(slot, p),
                     onRemove: () => controller.removeDocument(slot),
                   ),

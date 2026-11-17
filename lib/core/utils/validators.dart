@@ -70,12 +70,23 @@ class Validators {
     return null;
   }
 
-  /// At least 16 characters, one upper-case letter, one lower-case letter, one
-  /// digit and one of `@$!%*?&`. As in zod, the first rule that fails is the
-  /// one reported, in this order.
-  static String? signupPassword(String? value) {
+  /// The one password policy, the API's `src/utils/password-policy.ts` (keep
+  /// them in step): 12 to 128 characters, an upper-case letter, a lower-case
+  /// letter, a digit and a special character (anything but a letter, digit or
+  /// whitespace). The first rule that fails is the one reported, in this order.
+  /// Sign-up, change password and reset all use it, so they cannot disagree.
+  static const passwordMinLength = 12;
+  static const passwordMaxLength = 128;
+
+  static String? _passwordPolicy(String? value, String emptyMessage) {
     final v = value ?? '';
-    if (v.length < 16) return 'Password must be at least 16 characters';
+    if (v.isEmpty) return emptyMessage;
+    if (v.length < passwordMinLength) {
+      return 'Password must be at least $passwordMinLength characters';
+    }
+    if (v.length > passwordMaxLength) {
+      return 'Password must be at most $passwordMaxLength characters';
+    }
     if (!RegExp('[A-Z]').hasMatch(v)) {
       return 'Password must contain at least one uppercase letter';
     }
@@ -85,11 +96,14 @@ class Validators {
     if (!RegExp(r'\d').hasMatch(v)) {
       return 'Password must contain at least one digit';
     }
-    if (!RegExp(r'[@$!%*?&]').hasMatch(v)) {
+    if (!RegExp(r'[^A-Za-z0-9\s]').hasMatch(v)) {
       return 'Password must contain at least one special character';
     }
     return null;
   }
+
+  static String? signupPassword(String? value) =>
+      _passwordPolicy(value, 'Password is required');
 
   /// `refine(password === confirmPassword)`.
   static String? signupConfirmPassword(String? value, String password) =>
@@ -107,23 +121,10 @@ class Validators {
   static String? otpCode(String? value) =>
       (value ?? '').length == 6 ? null : 'Code must be 6 digits';
 
-  /// `resetPasswordSchema.newPassword`: at least 8 characters, one upper-case
-  /// letter, one lower-case letter and one digit. Note: unlike sign-up, no
-  /// special character is required here — that is how the web behaves.
-  static String? resetNewPassword(String? value) {
-    final v = value ?? '';
-    if (v.length < 8) return 'Password must be at least 8 characters';
-    if (!RegExp('[A-Z]').hasMatch(v)) {
-      return 'Password must contain at least one uppercase letter';
-    }
-    if (!RegExp('[a-z]').hasMatch(v)) {
-      return 'Password must contain at least one lowercase letter';
-    }
-    if (!RegExp(r'\d').hasMatch(v)) {
-      return 'Password must contain at least one digit';
-    }
-    return null;
-  }
+  /// The same policy as sign-up: the API enforces one policy on every route
+  /// that sets a password, reset included.
+  static String? resetNewPassword(String? value) =>
+      _passwordPolicy(value, 'New password is required');
 
   static String? resetConfirmPassword(String? value, String newPassword) =>
       (value ?? '') == newPassword ? null : 'Passwords do not match';

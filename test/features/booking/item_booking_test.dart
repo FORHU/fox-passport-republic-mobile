@@ -200,6 +200,105 @@ void main() {
     expect(find.byTooltip('Increase How many?'), findsOneWidget);
   });
 
+  group('the gear quantity can be typed (mobile#382)', () {
+    Future<void> openGear(WidgetTester tester) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [itemBookingRepositoryProvider.overrideWithValue(repo)],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: ItemBookingPage(item: _sample),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    // The quantity is the one field that starts at "1".
+    Finder field() => find.widgetWithText(TextField, '1');
+    String shown(WidgetTester tester) =>
+        tester.widget<TextField>(find.byType(TextField).first).controller!.text;
+    const invalid = 'Enter a number from 1 to 999';
+
+    testWidgets('a typed number is the quantity, and the buttons follow it', (
+      tester,
+    ) async {
+      await openGear(tester);
+
+      await tester.enterText(field(), '25');
+      await tester.pumpAndSettle();
+      expect(shown(tester), '25');
+
+      await tester.tap(find.byTooltip('Increase How many?'));
+      await tester.pumpAndSettle();
+      expect(shown(tester), '26');
+
+      await tester.tap(find.byTooltip('Decrease How many?'));
+      await tester.pumpAndSettle();
+      expect(shown(tester), '25');
+    });
+
+    testWidgets('999 is the most, and a bigger number is refused', (
+      tester,
+    ) async {
+      await openGear(tester);
+
+      await tester.enterText(field(), '999');
+      await tester.pumpAndSettle();
+      expect(shown(tester), '999');
+      // The days stepper has a plus too; this is the quantity's.
+      final plus = tester.widget<IconButton>(
+        find.byWidgetPredicate(
+          (w) => w is IconButton && w.tooltip == 'Increase How many?',
+        ),
+      );
+      expect(plus.onPressed, isNull);
+
+      // One more digit would make 9999: the entry stays at 999.
+      await tester.enterText(find.byType(TextField).first, '9999');
+      await tester.pumpAndSettle();
+      expect(shown(tester), '999');
+      expect(find.text(invalid), findsNothing);
+    });
+
+    testWidgets('letters and a decimal point are not accepted', (tester) async {
+      await openGear(tester);
+
+      await tester.enterText(field(), '2.5');
+      await tester.pumpAndSettle();
+      expect(shown(tester), '25');
+
+      await tester.enterText(find.byType(TextField).first, '-3');
+      await tester.pumpAndSettle();
+      expect(shown(tester), '3');
+    });
+
+    testWidgets('empty or zero says what is allowed, and leaving restores it', (
+      tester,
+    ) async {
+      await openGear(tester);
+
+      await tester.enterText(field(), '0');
+      await tester.pumpAndSettle();
+      expect(find.text(invalid), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).first, '');
+      await tester.pumpAndSettle();
+      expect(find.text(invalid), findsOneWidget);
+
+      // Leaving the field shows the quantity that is really booked.
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      expect(shown(tester), '1');
+      expect(find.text(invalid), findsNothing);
+    });
+  });
+
   testWidgets('a sample item shows its price once a day is picked', (
     tester,
   ) async {

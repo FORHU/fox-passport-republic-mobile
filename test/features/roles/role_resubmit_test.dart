@@ -18,6 +18,17 @@ class _MockApi extends Mock implements ApiService {}
 
 class _MockRepo extends Mock implements RoleApplicationRepository {}
 
+class _FakeCapture implements PhotoCapture {
+  @override
+  Future<PhotoPickResult> take({
+    required PhotoSource source,
+    bool frontCamera = false,
+  }) async =>
+      PhotoPicked(
+        PickedPhoto(bytes: Uint8List.fromList([1]), name: 'scan.jpg'),
+      );
+}
+
 class _FakePicker implements PhotoPicker {
   @override
   Future<PickedPhoto?> pick() async =>
@@ -175,6 +186,7 @@ void main() {
           overrides: [
             myRoleRequestsProvider.overrideWith((ref) async => requests),
             photoPickerProvider.overrideWithValue(_FakePicker()),
+            photoCaptureProvider.overrideWithValue(_FakeCapture()),
           ],
           child: MaterialApp(
             theme: AppTheme.dark,
@@ -210,6 +222,8 @@ void main() {
 
       for (final choose in find.text('Choose').evaluate().toList()) {
         await tester.tap(find.byWidget(choose.widget).first);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Choose from gallery'));
         await tester.pumpAndSettle();
       }
       expect(tester.widget<ElevatedButton>(send).onPressed, isNotNull);

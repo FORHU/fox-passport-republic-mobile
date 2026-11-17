@@ -3856,6 +3856,18 @@ abstract class AppLocalizations {
   /// **'Ended'**
   String get partnersStatusRevoked;
 
+  /// No description provided for @venueApplyToHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to host events here'**
+  String get venueApplyToHost;
+
+  /// No description provided for @venueHostingHere.
+  ///
+  /// In en, this message translates to:
+  /// **'You host events here'**
+  String get venueHostingHere;
+
   /// No description provided for @partnersOpenRow.
   ///
   /// In en, this message translates to:
@@ -4341,6 +4353,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A price'**
   String get studioMissingPrice;
+
+  /// No description provided for @studioRequiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get studioRequiredField;
+
+  /// No description provided for @studioStepNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in to continue: {items}'**
+  String studioStepNeeds(String items);
 
   /// No description provided for @studioNext.
   ///
@@ -5301,6 +5325,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue on the web'**
   String get rolesContinueOnWeb;
+
+  /// No description provided for @rolesApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get rolesApply;
+
+  /// No description provided for @rolesAlreadyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have this role.'**
+  String get rolesAlreadyActive;
+
+  /// No description provided for @rolesApplicationInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application is in review. We will let you know when it is decided.'**
+  String get rolesApplicationInReview;
+
+  /// No description provided for @rolesClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get rolesClose;
 
   /// No description provided for @venueBookNow.
   ///
@@ -6286,6 +6334,12 @@ abstract class AppLocalizations {
   /// **'Needs you'**
   String get bookingsNeedsYou;
 
+  /// No description provided for @bookingsThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get bookingsThisMonth;
+
   /// No description provided for @searchList.
   ///
   /// In en, this message translates to:
@@ -6769,7 +6823,7 @@ abstract class AppLocalizations {
   /// No description provided for @foxerScorePrivate.
   ///
   /// In en, this message translates to:
-  /// **'Only you see this score. Guests see your star rating, the facts and your labels.'**
+  /// **'Only you see this score. Guests see your Paws, the facts and your labels.'**
   String get foxerScorePrivate;
 
   /// No description provided for @pawsNew.
@@ -6817,7 +6871,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeHappeningSoon.
   ///
   /// In en, this message translates to:
-  /// **'Happening soon near you'**
+  /// **'Events near you'**
   String get homeHappeningSoon;
 
   /// No description provided for @homeContinue.
@@ -7126,6 +7180,12 @@ abstract class AppLocalizations {
   /// **'How many?'**
   String get itemBookQuantity;
 
+  /// No description provided for @itemBookQuantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number from 1 to {max}'**
+  String itemBookQuantityInvalid(int max);
+
   /// No description provided for @itemBookPickup.
   ///
   /// In en, this message translates to:
@@ -7245,6 +7305,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Leave a review'**
   String get reviewWrite;
+
+  /// No description provided for @ticketReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed'**
+  String get ticketReviewed;
 
   /// No description provided for @ticketBookAgain.
   ///
@@ -7605,6 +7671,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Removed from saved'**
   String get republicUnsaved;
+
+  /// No description provided for @republicUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get republicUndo;
 
   /// No description provided for @republicHidden.
   ///
@@ -9393,6 +9465,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove'**
   String get roleApplyRemoveDoc;
+
+  /// No description provided for @roleApplyTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get roleApplyTakePhoto;
+
+  /// No description provided for @roleApplyFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get roleApplyFromGallery;
+
+  /// No description provided for @roleApplyCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off. Allow it in Settings, or choose a photo from the gallery.'**
+  String get roleApplyCameraDenied;
+
+  /// No description provided for @roleApplyCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No camera found on this device. Choose a photo from the gallery.'**
+  String get roleApplyCameraUnavailable;
+
+  /// No description provided for @roleApplyPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get that photo. Try again.'**
+  String get roleApplyPhotoFailed;
 
   /// No description provided for @roleApplySubmit.
   ///

@@ -441,6 +441,21 @@ void main() {
       expect(find.byType(TextField), findsNothing);
     });
 
+    testWidgets('New event is a filled button with a plus, not a list row', (
+      tester,
+    ) async {
+      api_();
+      await pump(tester, const EventsPage());
+
+      final button = find.widgetWithText(FilledButton, 'New event');
+      expect(button, findsOneWidget);
+      expect(
+        find.descendant(of: button, matching: find.byIcon(Icons.add_rounded)),
+        findsOneWidget,
+      );
+      expect(tester.getSize(button).height, greaterThanOrEqualTo(48));
+    });
+
     testWidgets('says so when the events cannot be loaded', (tester) async {
       when(() => api.get(ApiEndpoints.events, query: any(named: 'query')))
           .thenThrow(Exception('down'));

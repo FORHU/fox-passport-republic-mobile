@@ -207,14 +207,12 @@ void authValidationTests() {
         find.text('Username must be at least 3 characters'),
         findsOneWidget,
       );
-      expect(
-        find.text('Password must be at least 16 characters'),
-        findsOneWidget,
-      );
+      expect(find.text('Password is required'), findsOneWidget);
       expect(find.text(termsMessage), findsOneWidget);
     });
 
-    testWidgets('flags bad input as the user types, before submitting',
+    testWidgets(
+        'stays quiet while the user types, and flags bad input on submit',
         (tester) async {
       await show(tester, const RegisterPage());
 
@@ -224,6 +222,19 @@ void authValidationTests() {
       await tester.enterText(field('Password'), 'short');
       await tester.pumpAndSettle();
 
+      // Nothing is flagged before the first attempt to submit.
+      expect(find.text('Name can only contain letters'), findsNothing);
+      expect(find.text('Invalid email address'), findsNothing);
+      expect(find.text('Username must be at least 3 characters'), findsNothing);
+      expect(
+        find.text('Password must be at least 12 characters'),
+        findsNothing,
+      );
+
+      await scrollTo(tester, find.text('Create account'));
+      await tester.tap(find.text('Create account'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Name can only contain letters'), findsOneWidget);
       expect(find.text('Invalid email address'), findsOneWidget);
       expect(
@@ -231,13 +242,18 @@ void authValidationTests() {
         findsOneWidget,
       );
       expect(
-        find.text('Password must be at least 16 characters'),
+        find.text('Password must be at least 12 characters'),
         findsOneWidget,
       );
     });
 
     testWidgets("walks the password rules in the web's order", (tester) async {
       await show(tester, const RegisterPage());
+
+      // After the first submit the rules follow the input as it is corrected.
+      await scrollTo(tester, find.text('Create account'));
+      await tester.tap(find.text('Create account'));
+      await tester.pumpAndSettle();
 
       Future<void> expectFor(String password, String message) async {
         await tester.enterText(field('Password'), password);
@@ -263,14 +279,44 @@ void authValidationTests() {
       );
     });
 
-    testWidgets('a mismatched confirmation is flagged', (tester) async {
+    testWidgets('a mismatched confirmation is flagged on submit',
+        (tester) async {
       await show(tester, const RegisterPage());
 
       await tester.enterText(field('Password'), 'Abcdefghijklmn1!');
       await tester.enterText(field('Confirm password'), 'Abcdefghijklmn1?');
       await tester.pumpAndSettle();
+      expect(find.text('Passwords do not match'), findsNothing);
 
+      await scrollTo(tester, find.text('Create account'));
+      await tester.tap(find.text('Create account'));
+      await tester.pumpAndSettle();
       expect(find.text('Passwords do not match'), findsOneWidget);
+
+      // And it clears as soon as the confirmation is corrected.
+      await tester.enterText(field('Confirm password'), 'Abcdefghijklmn1!');
+      await tester.pumpAndSettle();
+      expect(find.text('Passwords do not match'), findsNothing);
+    });
+
+    testWidgets('shows no error on a fresh screen, nor after tapping through',
+        (tester) async {
+      await show(tester, const RegisterPage());
+
+      for (final hint in ['Full name', 'Email address', 'Username']) {
+        await tester.tap(field(hint));
+        await tester.pumpAndSettle();
+      }
+
+      for (final msg in [
+        'Name is required',
+        'Invalid email address',
+        'Username must be at least 3 characters',
+        'Passwords do not match',
+        termsMessage,
+      ]) {
+        expect(find.text(msg), findsNothing, reason: msg);
+      }
     });
 
     testWidgets('valid input shows no errors', (tester) async {
@@ -288,7 +334,7 @@ void authValidationTests() {
         'Name can only contain letters',
         'Invalid email address',
         'Username must be at least 3 characters',
-        'Password must be at least 16 characters',
+        'Password must be at least 12 characters',
         'Passwords do not match',
       ]) {
         expect(find.text(msg), findsNothing, reason: msg);
@@ -312,7 +358,7 @@ void authValidationTests() {
     testWidgets('tells the user the password rules up front', (tester) async {
       await show(tester, const RegisterPage());
 
-      expect(find.textContaining('At least 16 characters'), findsOneWidget);
+      expect(find.textContaining('At least 12 characters'), findsOneWidget);
     });
   });
 
@@ -343,16 +389,38 @@ void authValidationTests() {
       expect(find.text('Please enter your password'), findsNothing);
     });
 
-    testWidgets('flags a malformed email live', (tester) async {
+    testWidgets(
+        'does not flag an email while it is typed, only after Log in is tapped',
+        (tester) async {
       await show(tester, const LoginPage());
 
       await tester.enterText(field('Email address'), 'ada@');
       await tester.pumpAndSettle();
+      expect(find.text('Please enter a valid email address'), findsNothing);
 
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
       expect(
         find.text('Please enter a valid email address'),
         findsOneWidget,
       );
+    });
+
+    testWidgets('clears the email error once the email is corrected',
+        (tester) async {
+      await show(tester, const LoginPage());
+
+      await tester.enterText(field('Email address'), 'ada@');
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Please enter a valid email address'),
+        findsOneWidget,
+      );
+
+      await tester.enterText(field('Email address'), 'ada@example.com');
+      await tester.pumpAndSettle();
+      expect(find.text('Please enter a valid email address'), findsNothing);
     });
   });
 }

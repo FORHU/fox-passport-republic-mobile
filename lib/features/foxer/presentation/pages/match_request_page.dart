@@ -244,11 +244,11 @@ class _Form extends StatelessWidget {
                   contentPadding: const EdgeInsets.all(14),
                   border: OutlineInputBorder(
                     borderRadius: AppRadius.brMd,
-                    borderSide: const BorderSide(color: AppColors.border),
+                    borderSide: const BorderSide(color: AppColors.inputBorder),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: AppRadius.brMd,
-                    borderSide: const BorderSide(color: AppColors.border),
+                    borderSide: const BorderSide(color: AppColors.inputBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: AppRadius.brMd,

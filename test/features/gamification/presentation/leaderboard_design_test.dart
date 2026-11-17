@@ -35,6 +35,7 @@ class _EmptyBoards implements LeaderboardRepository {
     LeaderboardRole role, {
     FoxerTab tab = FoxerTab.topRated,
     String? city,
+    String? specialty,
   }) async =>
       FoxerBoard(role: role, tab: tab, rows: const []);
 }

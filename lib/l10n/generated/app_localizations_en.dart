@@ -2114,6 +2114,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partnersStatusRevoked => 'Ended';
 
   @override
+  String get venueApplyToHost => 'Apply to host events here';
+
+  @override
+  String get venueHostingHere => 'You host events here';
+
+  @override
   String get partnersOpenRow => 'Venue partners';
 
   @override
@@ -2368,6 +2374,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studioMissingPrice => 'A price';
+
+  @override
+  String get studioRequiredField => 'Required';
+
+  @override
+  String studioStepNeeds(String items) {
+    return 'Fill in to continue: $items';
+  }
 
   @override
   String get studioNext => 'Next';
@@ -2905,6 +2919,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rolesContinueOnWeb => 'Continue on the web';
+
+  @override
+  String get rolesApply => 'Apply';
+
+  @override
+  String get rolesAlreadyActive => 'You already have this role.';
+
+  @override
+  String get rolesApplicationInReview =>
+      'Your application is in review. We will let you know when it is decided.';
+
+  @override
+  String get rolesClose => 'Close';
 
   @override
   String get venueBookNow => 'Book now';
@@ -3454,6 +3481,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingsNeedsYou => 'Needs you';
 
   @override
+  String get bookingsThisMonth => 'This month';
+
+  @override
   String get searchList => 'List';
 
   @override
@@ -3739,7 +3769,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foxerScorePrivate =>
-      'Only you see this score. Guests see your star rating, the facts and your labels.';
+      'Only you see this score. Guests see your Paws, the facts and your labels.';
 
   @override
   String get pawsNew => 'New';
@@ -3773,7 +3803,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookOne => 'Or book just one thing';
 
   @override
-  String get homeHappeningSoon => 'Happening soon near you';
+  String get homeHappeningSoon => 'Events near you';
 
   @override
   String homeContinue(String occasion) {
@@ -3950,6 +3980,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get itemBookQuantity => 'How many?';
 
   @override
+  String itemBookQuantityInvalid(int max) {
+    return 'Enter a number from 1 to $max';
+  }
+
+  @override
   String get itemBookPickup => 'Pick up';
 
   @override
@@ -4018,6 +4053,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reviewWrite => 'Leave a review';
+
+  @override
+  String get ticketReviewed => 'Reviewed';
 
   @override
   String get ticketBookAgain => 'Book again';
@@ -4209,6 +4247,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get republicUnsaved => 'Removed from saved';
+
+  @override
+  String get republicUndo => 'Undo';
 
   @override
   String get republicHidden => 'Post hidden';
@@ -5208,6 +5249,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleApplyRemoveDoc => 'Remove';
+
+  @override
+  String get roleApplyTakePhoto => 'Take a photo';
+
+  @override
+  String get roleApplyFromGallery => 'Choose from gallery';
+
+  @override
+  String get roleApplyCameraDenied =>
+      'Camera access is off. Allow it in Settings, or choose a photo from the gallery.';
+
+  @override
+  String get roleApplyCameraUnavailable =>
+      'No camera found on this device. Choose a photo from the gallery.';
+
+  @override
+  String get roleApplyPhotoFailed => 'Could not get that photo. Try again.';
 
   @override
   String get roleApplySubmit => 'Send application';

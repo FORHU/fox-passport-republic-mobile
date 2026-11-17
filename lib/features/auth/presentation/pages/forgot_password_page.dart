@@ -21,6 +21,8 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
 
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  // No errors until the first submit; after that they follow the input.
+  bool _submitted = false;
   final _emailController = TextEditingController();
 
   @override
@@ -30,6 +32,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   }
 
   Future<void> _submit() async {
+    if (!_submitted) setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     final email = _emailController.text.trim();
     final ok =
@@ -56,7 +59,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       onBack: () => context.go(RouteNames.login),
       child: Form(
         key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: _submitted
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

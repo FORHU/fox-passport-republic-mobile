@@ -29,6 +29,10 @@ class AppColors {
   /// Outlined buttons, chips.
   static const borderStrong = Color(0xFF2A2D3A);
 
+  /// The edge of a text field: 3.8:1 against the surface it sits on, so a field
+  /// can be told from the page (the hairline [border] is about 1.2:1).
+  static const inputBorder = Color(0xFF6B7080);
+
   // ── Accent (lime) ───────────────────────────────────────────────────────
 
   /// Primary button, active tab, key labels.

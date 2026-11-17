@@ -7,6 +7,7 @@ import 'package:flutter_template/features/gamification/presentation/pages/leader
 import 'package:flutter_template/features/gamification/presentation/widgets/board_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/location/area.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,13 +49,18 @@ class _FakeRepository implements LeaderboardRepository {
 
   final List<(LeaderboardRole, FoxerTab, String?)> foxerCalls = [];
 
+  /// The specialty each call asked for, in the same order as [foxerCalls].
+  final List<String?> specialtyCalls = [];
+
   @override
   Future<FoxerBoard> foxers(
     LeaderboardRole role, {
     FoxerTab tab = FoxerTab.topRated,
     String? city,
+    String? specialty,
   }) {
     foxerCalls.add((role, tab, city));
+    specialtyCalls.add(specialty);
     return foxerAnswer!(role, tab, city);
   }
 }
@@ -90,6 +96,12 @@ void main() {
           leaderboardRepositoryProvider.overrideWithValue(repository),
           currentUserIdProvider.overrideWithValue(me),
           profileCityProvider.overrideWith((ref) async => profileCity),
+          providerSpecialtiesProvider.overrideWith(
+            (ref) async => const [
+              ProviderSpecialty(slug: 'dj', name: 'DJ'),
+              ProviderSpecialty(slug: 'photographer', name: 'Photographer'),
+            ],
+          ),
         ],
         child: MaterialApp.router(
           theme: AppTheme.dark,
@@ -284,6 +296,64 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.foxerCalls.last.$3, isNull);
+    });
+  });
+
+  group('Provider specialties', () {
+    FoxerBoard answer(LeaderboardRole role, FoxerTab tab) =>
+        _foxerBoard(role, [_foxer(1, 'Someone', role: role)], tab: tab);
+
+    testWidgets('only the Providers board offers them', (tester) async {
+      final repository =
+          foxersOnly((role, tab, city) async => answer(role, tab));
+      await show(tester, repository);
+      expect(find.widgetWithText(FilterChip, 'DJ'), findsNothing);
+
+      await tester.tap(find.widgetWithText(BoardChip, 'Providers'));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(FilterChip, 'DJ'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Photographer'), findsOneWidget);
+    });
+
+    testWidgets('asks for no specialty until one is picked', (tester) async {
+      final repository =
+          foxersOnly((role, tab, city) async => answer(role, tab));
+      await show(tester, repository, role: LeaderboardRole.providers);
+
+      expect(repository.specialtyCalls.last, isNull);
+    });
+
+    testWidgets('picking one asks for its slug, and again drops it', (
+      tester,
+    ) async {
+      final repository =
+          foxersOnly((role, tab, city) async => answer(role, tab));
+      await show(tester, repository, role: LeaderboardRole.providers);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'DJ'));
+      await tester.pumpAndSettle();
+      expect(repository.specialtyCalls.last, 'dj');
+
+      await tester.tap(find.widgetWithText(FilterChip, 'DJ'));
+      await tester.pumpAndSettle();
+      expect(repository.specialtyCalls.last, isNull);
+    });
+
+    testWidgets('leaving Providers sends no specialty to the other boards', (
+      tester,
+    ) async {
+      final repository =
+          foxersOnly((role, tab, city) async => answer(role, tab));
+      await show(tester, repository, role: LeaderboardRole.providers);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'Photographer'));
+      await tester.pumpAndSettle();
+      expect(repository.specialtyCalls.last, 'photographer');
+
+      await tester.tap(find.widgetWithText(BoardChip, 'Venues'));
+      await tester.pumpAndSettle();
+      expect(repository.foxerCalls.last.$1, LeaderboardRole.venue);
+      expect(repository.specialtyCalls.last, isNull);
     });
   });
 }

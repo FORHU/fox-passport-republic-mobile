@@ -37,7 +37,14 @@ class RolesPage extends ConsumerWidget {
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
-        onRefresh: () async => ref.invalidate(myRoleRequestsProvider),
+        onRefresh: () async {
+          ref.invalidate(myRoleRequestsProvider);
+          try {
+            await ref.read(myRoleRequestsProvider.future);
+          } on Object {
+            // The page shows its own error state with a retry.
+          }
+        },
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
@@ -89,11 +96,15 @@ class RolesPage extends ConsumerWidget {
     if (sentBack != null && !held.contains(role.roleType)) {
       unawaited(context.push(RouteNames.roleResubmit(sentBack.id)));
     } else {
-      unawaited(_open(context, role));
+      unawaited(_open(context, role, _statusOf(role, held, requests)));
     }
   }
 
-  Future<void> _open(BuildContext context, RoleCatalogEntry role) async {
+  Future<void> _open(
+    BuildContext context,
+    RoleCatalogEntry role,
+    _RoleStatus status,
+  ) async {
     final proceed = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -101,7 +112,7 @@ class RolesPage extends ConsumerWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => _RoleSheet(role: role),
+      builder: (_) => _RoleSheet(role: role, status: status),
     );
     if (proceed != true || !context.mounted) return;
     // The roles with a form on the phone open it; the rest apply on the web.
@@ -199,9 +210,10 @@ class _RoleCard extends StatelessWidget {
 }
 
 class _RoleSheet extends StatelessWidget {
-  const _RoleSheet({required this.role});
+  const _RoleSheet({required this.role, required this.status});
 
   final RoleCatalogEntry role;
+  final _RoleStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -228,49 +240,83 @@ class _RoleSheet extends StatelessWidget {
               _Bullet(item, Icons.description_outlined, AppColors.textMuted),
             const SizedBox(height: 12),
             Text(
-              l10n.onboardingReviewNote,
-              style: AppTypography.body(size: 12, color: AppColors.textMuted),
+              switch (status) {
+                _RoleStatus.active => l10n.rolesAlreadyActive,
+                _RoleStatus.review => l10n.rolesApplicationInReview,
+                _ => l10n.onboardingReviewNote,
+              },
+              style: AppTypography.body(
+                size: 12,
+                color: switch (status) {
+                  _RoleStatus.active => AppColors.success,
+                  _RoleStatus.review => AppColors.warning,
+                  _ => AppColors.textMuted,
+                },
+              ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 48,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(0, 48),
-                        side: const BorderSide(color: AppColors.borderStrong),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.brSm,
-                        ),
-                      ),
-                      child: Text(l10n.onboardingNotNow),
+            // A role you already hold, or have applied for, has nothing to
+            // apply for: the sheet only shows its details.
+            if (status == _RoleStatus.active || status == _RoleStatus.review)
+              SizedBox(
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 48),
+                    side: const BorderSide(color: AppColors.borderStrong),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: AppRadius.brSm,
                     ),
                   ),
+                  child: Text(l10n.rolesClose),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 48),
-                        backgroundColor: AppColors.accent,
-                        foregroundColor: AppColors.onAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.brSm,
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 48),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.brSm,
+                          ),
                         ),
+                        child: Text(l10n.onboardingNotNow),
                       ),
-                      child: Text(l10n.rolesContinueOnWeb),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 48),
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: AppColors.onAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.brSm,
+                          ),
+                        ),
+                        // Only roles with no form on the phone go to the web.
+                        child: Text(
+                          appliesInApp.contains(role.roleType)
+                              ? l10n.rolesApply
+                              : l10n.rolesContinueOnWeb,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

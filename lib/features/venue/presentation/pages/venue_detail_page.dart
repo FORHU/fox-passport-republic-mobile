@@ -21,10 +21,24 @@ import 'package:go_router/go_router.dart';
 /// One venue: photos, what it holds and costs, what is included, and the
 /// rules, with "Book now" pinned to the bottom.
 class VenueDetailPage extends ConsumerWidget {
-  const VenueDetailPage({required this.item, super.key});
+  const VenueDetailPage({
+    required this.item,
+    this.previewOnly = false,
+    this.hostActions,
+    super.key,
+  });
 
   /// The row the citizen tapped; it names the venue while the rest loads.
   final CatalogItem item;
+
+  /// True when a Mayor opens their own venue's public page: it shows what
+  /// guests see, but "Book now" is off.
+  final bool previewOnly;
+
+  /// Something a host can do here, given the venue's id and name, shown above
+  /// Book now. Passed in by the route, so this feature does not import the one
+  /// that supplies it.
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,17 +85,29 @@ class VenueDetailPage extends ConsumerWidget {
             ],
           ),
         ),
-        data: (venue) => _Loaded(item: item, venue: venue),
+        data: (venue) => _Loaded(
+          item: item,
+          venue: venue,
+          previewOnly: previewOnly,
+          hostActions: hostActions,
+        ),
       ),
     );
   }
 }
 
 class _Loaded extends ConsumerWidget {
-  const _Loaded({required this.item, required this.venue});
+  const _Loaded({
+    required this.item,
+    required this.venue,
+    required this.previewOnly,
+    this.hostActions,
+  });
 
   final CatalogItem item;
   final VenueDetail venue;
+  final bool previewOnly;
+  final Widget Function(String venueId, String venueName)? hostActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -259,6 +285,7 @@ class _Loaded extends ConsumerWidget {
             ],
           ),
         ),
+        if (hostActions != null) hostActions!(venue.id, venue.name),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           decoration: const BoxDecoration(
@@ -280,24 +307,28 @@ class _Loaded extends ConsumerWidget {
                 SizedBox(
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () => context.push(
-                      RouteNames.book,
-                      extra: CatalogItem(
-                        id: venue.id,
-                        kind: CatalogKind.venues,
-                        title: venue.name,
-                        city: venue.city,
-                        capacity: venue.capacity,
-                        price: venue.price,
-                        currency: venue.currency,
-                        billingRate: venue.billingRate,
-                        imageUrl: venue.imageUrls.isEmpty
-                            ? item.imageUrl
-                            : venue.imageUrls.first,
-                        isSample: venue.isSample,
-                      ),
-                    ),
+                    onPressed: previewOnly
+                        ? null
+                        : () => context.push(
+                              RouteNames.book,
+                              extra: CatalogItem(
+                                id: venue.id,
+                                kind: CatalogKind.venues,
+                                title: venue.name,
+                                city: venue.city,
+                                capacity: venue.capacity,
+                                price: venue.price,
+                                currency: venue.currency,
+                                billingRate: venue.billingRate,
+                                imageUrl: venue.imageUrls.isEmpty
+                                    ? item.imageUrl
+                                    : venue.imageUrls.first,
+                                isSample: venue.isSample,
+                              ),
+                            ),
                     style: ElevatedButton.styleFrom(
+                      disabledBackgroundColor: AppColors.surfaceRaised,
+                      disabledForegroundColor: AppColors.textFaint,
                       // The theme makes buttons full width; a Row cannot hold
                       // that, so size it here.
                       minimumSize: const Size(140, 52),

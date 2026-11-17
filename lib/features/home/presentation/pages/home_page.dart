@@ -18,6 +18,7 @@ import 'package:flutter_template/features/notifications/data/notifications_repos
 import 'package:flutter_template/features/occasion/data/packages_repository.dart';
 import 'package:flutter_template/features/occasion/presentation/widgets/packages_row.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
@@ -57,15 +58,12 @@ class HomePage extends ConsumerWidget {
       ref.watch(authControllerProvider.select((s) => s.user?.name)),
     );
 
-    // The start of today, not "now": the query is a provider key, and a key
-    // that changes every build would make Home rebuild without end.
-    final now = DateTime.now();
+    // Events are published packages (mobile#416), which have no date to
+    // filter or sort by.
     final soonQuery = CatalogQuery(
       CatalogKind.events,
       limit: 6,
       city: area.city,
-      fromDate: DateTime(now.year, now.month, now.day),
-      sortBy: 'date_asc',
     );
     final soon = ref.watch(catalogProvider(soonQuery));
     // No bookings at all (and both lists have answered): offer the checklist.
@@ -90,12 +88,7 @@ class HomePage extends ConsumerWidget {
         booked;
     // Nothing on in the chosen city: look for events anywhere, so the row is
     // not simply missing. Only asked once the city's own answer is empty.
-    final anywhereQuery = CatalogQuery(
-      CatalogKind.events,
-      limit: 6,
-      fromDate: DateTime(now.year, now.month, now.day),
-      sortBy: 'date_asc',
-    );
+    const anywhereQuery = CatalogQuery(CatalogKind.events, limit: 6);
     final nothingHere =
         area.city != null && (soon.asData?.value.items.isEmpty ?? false);
     final elsewhere =
@@ -149,6 +142,16 @@ class HomePage extends ConsumerWidget {
                   (category: tiles.first.occasion.name, city: area.city),
                 ),
               );
+            // Wait for the first things on the page, so the spinner stays until
+            // they are back. Each row shows its own error if one fails.
+            try {
+              await Future.wait([
+                ref.read(upcomingTicketsProvider.future),
+                ref.read(catalogProvider(soonQuery).future),
+              ]);
+            } on Object {
+              // Ignored: the rows below have their own retry.
+            }
           },
           child: ListView(
             // Always scrollable, so a short page can still be pulled down.
@@ -277,30 +280,38 @@ class HomePage extends ConsumerWidget {
                     ? context.l10n.homeVenuesTitle
                     : context.l10n.homeVenuesTitleIn(area.city!),
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('venues', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('venues', city: area.city),
+                  ),
                 ),
               ),
               HomeFoxers(
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('foxers', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('foxers', city: area.city),
+                  ),
                 ),
               ),
               HomeItems(
                 kind: CatalogKind.gear,
                 title: context.l10n.homeGearTitle,
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('gear', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('gear', city: area.city),
+                  ),
                 ),
               ),
               HomeItems(
                 kind: CatalogKind.services,
                 title: context.l10n.homeServicesTitle,
                 city: area.city,
-                onSeeAll: () => context.go(
-                  RouteNames.searchFor('services', city: area.city),
+                onSeeAll: () => unawaited(
+                  context.push(
+                    RouteNames.searchFor('services', city: area.city),
+                  ),
                 ),
               ),
               RepublicTeaser(
@@ -484,6 +495,12 @@ class _Header extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        // Only for someone who holds a role to switch to; shows the space they
+        // are in.
+        const SpaceSwitchButton(
+          compact: true,
+          padding: EdgeInsets.only(left: 6, right: 8),
         ),
         const CoinsChip(trailingGap: 8),
         _RoundButton(
@@ -724,10 +741,7 @@ class _SoonRow extends StatelessWidget {
           final start = item.eventStartAt;
           return InkWell(
             borderRadius: AppRadius.brMd,
-            onTap: () => context.push(
-              RouteNames.scheduledEventDetail,
-              extra: item,
-            ),
+            onTap: () => context.push(RouteNames.eventDetail, extra: item),
             child: SizedBox(
               width: 176,
               child: Column(

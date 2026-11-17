@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -299,15 +300,10 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
                         ),
                         if (_isGear) ...[
                           const SizedBox(height: 12),
-                          _Stepper(
+                          _QuantityStepper(
                             label: l10n.itemBookQuantity,
-                            value: '$_quantity',
-                            onMinus: _quantity > 1
-                                ? () => _change(() => _quantity--)
-                                : null,
-                            onPlus: _quantity < 99
-                                ? () => _change(() => _quantity++)
-                                : null,
+                            value: _quantity,
+                            onChanged: (v) => _change(() => _quantity = v),
                           ),
                           const SizedBox(height: 20),
                           SegmentedButton<bool>(
@@ -461,6 +457,166 @@ class _Stepper extends StatelessWidget {
           onPressed: onPlus,
           icon: const Icon(Icons.add_rounded),
         ),
+      ],
+    );
+  }
+}
+
+/// Refuses a number above [max] as it is typed, keeping what was there.
+class _MaxIntFormatter extends TextInputFormatter {
+  const _MaxIntFormatter(this.max);
+
+  final int max;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final n = int.tryParse(newValue.text);
+    return n != null && n > max ? oldValue : newValue;
+  }
+}
+
+/// The gear quantity: type it, or use the buttons (mobile#382). A whole number
+/// from [min] to [max]. The field refuses letters, decimals and anything above
+/// the maximum as it is typed; an empty or zero entry says what is allowed, and
+/// leaving the field shows the quantity that is really booked.
+class _QuantityStepper extends StatefulWidget {
+  const _QuantityStepper({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  /// Matches the API's limit (`BOOKING_QUANTITY_MAX`).
+  static const min = 1;
+  static const max = 999;
+
+  final String label;
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  @override
+  State<_QuantityStepper> createState() => _QuantityStepperState();
+}
+
+class _QuantityStepperState extends State<_QuantityStepper> {
+  late final _controller = TextEditingController(text: '${widget.value}');
+  final _focus = FocusNode();
+  bool _invalid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() {
+      if (!_focus.hasFocus) _settle();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_QuantityStepper old) {
+    super.didUpdateWidget(old);
+    if (widget.value != old.value &&
+        widget.value != int.tryParse(_controller.text)) {
+      _controller.text = '${widget.value}';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  /// Leaving the field: show the quantity that is really booked.
+  void _settle() {
+    setState(() {
+      _controller.text = '${widget.value}';
+      _invalid = false;
+    });
+  }
+
+  void _typed(String text) {
+    final n = int.tryParse(text);
+    final ok =
+        n != null && n >= _QuantityStepper.min && n <= _QuantityStepper.max;
+    setState(() => _invalid = !ok);
+    if (ok && n != widget.value) widget.onChanged(n);
+  }
+
+  void _step(int by) {
+    final next = (widget.value + by).clamp(
+      _QuantityStepper.min,
+      _QuantityStepper.max,
+    );
+    _controller.text = '$next';
+    setState(() => _invalid = false);
+    widget.onChanged(next);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final border = OutlineInputBorder(
+      borderRadius: AppRadius.brSm,
+      borderSide: BorderSide(
+        color: _invalid ? AppColors.error : AppColors.inputBorder,
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text(widget.label, style: AppTypography.body())),
+            IconButton.outlined(
+              tooltip: l10n.a11yDecrease(widget.label),
+              onPressed:
+                  widget.value > _QuantityStepper.min ? () => _step(-1) : null,
+              icon: const Icon(Icons.remove_rounded),
+            ),
+            SizedBox(
+              width: 80,
+              child: Semantics(
+                label: widget.label,
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focus,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.display(),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    const _MaxIntFormatter(_QuantityStepper.max),
+                  ],
+                  onChanged: _typed,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    enabledBorder: border,
+                    focusedBorder: border,
+                  ),
+                ),
+              ),
+            ),
+            IconButton.outlined(
+              tooltip: l10n.a11yIncrease(widget.label),
+              onPressed:
+                  widget.value < _QuantityStepper.max ? () => _step(1) : null,
+              icon: const Icon(Icons.add_rounded),
+            ),
+          ],
+        ),
+        if (_invalid)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              l10n.itemBookQuantityInvalid(_QuantityStepper.max),
+              style: AppTypography.body(size: 12, color: AppColors.error),
+            ),
+          ),
       ],
     );
   }
