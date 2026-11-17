@@ -80,6 +80,13 @@ class VenueStudioPage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           if (state.live) _LiveNote(text: l10n.studioLiveNote),
+          if (state.showErrors && state.missingIn(step).isNotEmpty)
+            _StepNeeds(
+              items: [
+                for (final key in state.missingIn(step))
+                  _missingLabels(l10n)[key] ?? key,
+              ],
+            ),
           switch (step) {
             StudioStep.basics => StudioCard(
                 child: _BasicsStep(state: state, ref: ref, id: venueId),
@@ -156,6 +163,43 @@ String _stepLabel(AppLocalizations l10n, StudioStep step) => switch (step) {
       StudioStep.pricing => l10n.studioStepPricing,
       StudioStep.review => l10n.studioStepReview,
     };
+
+/// What each key of `VenueDraft.missing` is called to the host.
+Map<String, String> _missingLabels(AppLocalizations l10n) => {
+      'name': l10n.studioMissingName,
+      'category': l10n.studioMissingCategory,
+      'description': l10n.studioMissingDescription,
+      'capacity': l10n.studioMissingCapacity,
+      'address': l10n.studioMissingAddress,
+      'district': l10n.studioMissingDistrict,
+      'location': l10n.studioMissingLocation,
+      'photos': l10n.studioMissingPhotos,
+      'price': l10n.studioMissingPrice,
+    };
+
+/// Shown on a step the host tried to leave before it was complete: names
+/// what is still needed, including what has no field of its own to flag (the
+/// pin, the barangay, the photos).
+class _StepNeeds extends StatelessWidget {
+  const _StepNeeds({required this.items});
+
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brCard,
+          border: Border.all(color: AppColors.error),
+        ),
+        child: Text(
+          context.l10n.studioStepNeeds(items.join(', ')),
+          style: AppTypography.body(size: 13),
+        ),
+      );
+}
 
 class _LiveNote extends StatelessWidget {
   const _LiveNote({required this.text});
@@ -257,6 +301,11 @@ class _BasicsStep extends StatelessWidget {
     final l10n = context.l10n;
     final d = state.draft;
     final edit = ref.read(venueStudioProvider(id).notifier).edit;
+    final missing = state.showErrors
+        ? state.missingIn(StudioStep.basics)
+        : const <String>[];
+    String? errorFor(String key) =>
+        missing.contains(key) ? l10n.studioRequiredField : null;
     final categories = {
       'indoor': l10n.studioCategoryIndoor,
       'outdoor': l10n.studioCategoryOutdoor,
@@ -271,17 +320,23 @@ class _BasicsStep extends StatelessWidget {
       children: [
         StudioField(
           label: l10n.studioName,
+          required: true,
+          errorText: errorFor('name'),
           value: d.name,
           onChanged: (v) => edit((x) => x.copyWith(name: v)),
         ),
         StudioField(
           label: l10n.studioDescription,
+          required: true,
+          errorText: errorFor('description'),
           value: d.description,
           maxLines: 4,
           onChanged: (v) => edit((x) => x.copyWith(description: v)),
         ),
         StudioField(
           label: l10n.studioCapacity,
+          required: true,
+          errorText: errorFor('capacity'),
           value: d.capacity?.toString() ?? '',
           number: true,
           onChanged: (v) {
@@ -294,7 +349,15 @@ class _BasicsStep extends StatelessWidget {
           },
         ),
         const SizedBox(height: 8),
-        Text(l10n.studioCategory, style: AppTypography.label()),
+        Text('${l10n.studioCategory} *', style: AppTypography.label()),
+        if (errorFor('category') != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              errorFor('category')!,
+              style: AppTypography.body(size: 12, color: AppColors.error),
+            ),
+          ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -340,6 +403,10 @@ class _LocationStep extends StatelessWidget {
             children: [
               StudioField(
                 label: l10n.studioAddress,
+                required: true,
+                errorText: state.showErrors && d.address.trim().isEmpty
+                    ? l10n.studioRequiredField
+                    : null,
                 value: d.address,
                 onChanged: (v) => edit((x) => x.copyWith(address: v)),
               ),
@@ -730,6 +797,11 @@ class _PricingStep extends StatelessWidget {
           label: l10n.studioPrice,
           value: d.price?.toString() ?? '',
           number: true,
+          required: true,
+          errorText:
+              state.showErrors && state.missingIn(StudioStep.pricing).isNotEmpty
+                  ? l10n.studioRequiredField
+                  : null,
           onChanged: (v) {
             final n = double.tryParse(v);
             edit(
@@ -795,17 +867,7 @@ class _ReviewStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final missing = state.draft.missing;
-    final labels = {
-      'name': l10n.studioMissingName,
-      'category': l10n.studioMissingCategory,
-      'description': l10n.studioMissingDescription,
-      'capacity': l10n.studioMissingCapacity,
-      'address': l10n.studioMissingAddress,
-      'district': l10n.studioMissingDistrict,
-      'location': l10n.studioMissingLocation,
-      'photos': l10n.studioMissingPhotos,
-      'price': l10n.studioMissingPrice,
-    };
+    final labels = _missingLabels(l10n);
     final overlapping = state.overlapping;
     if (missing.isEmpty && overlapping.isEmpty) {
       return Row(
