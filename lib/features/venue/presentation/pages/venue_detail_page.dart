@@ -85,7 +85,6 @@ class VenueDetailPage extends ConsumerWidget {
             ],
           ),
         ),
-        data: (venue) =>
         data: (venue) => _Loaded(
           item: item,
           venue: venue,
