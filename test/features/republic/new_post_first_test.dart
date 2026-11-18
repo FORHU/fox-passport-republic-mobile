@@ -201,7 +201,8 @@ void main() {
       verify(
         () => api.get(
           ApiEndpoints.feed,
-          query: {'limit': 10, 'tab': 'community'},
+          // The main feed always says its order now (app#308).
+          query: {'limit': 10, 'tab': 'community', 'mode': 'foryou'},
         ),
       ).called(1);
       expect(find.text('MY NEW POST'), findsOneWidget);

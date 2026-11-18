@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
@@ -133,9 +134,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('the sections are in a filter menu, and there is no sort', (
-      tester,
-    ) async {
+    testWidgets('the sections are in a filter menu', (tester) async {
       await pumpPage(tester);
 
       // Closed, only the button shows.
@@ -149,8 +148,27 @@ void main() {
       for (final label in ['All', 'Community', 'Marketplace', 'Partners']) {
         expect(find.text(label), findsOneWidget, reason: label);
       }
-      expect(find.byIcon(Icons.swap_vert_rounded), findsNothing);
+      // The order is its own menu, not one of the sections.
       expect(find.text('Recent'), findsNothing);
+    });
+
+    // app#308: For you (the default) or Recent, like the web.
+    testWidgets('a sort menu offers For you and Recent', (tester) async {
+      await pumpPage(tester);
+      expect(find.byTooltip('Sort posts'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Sort posts'));
+      await tester.pumpAndSettle();
+      expect(find.text('For you'), findsOneWidget);
+      expect(find.text('Recent'), findsOneWidget);
+
+      await tester.tap(find.text('Recent'));
+      await tester.pumpAndSettle();
+      final queries = verify(
+        () => api.get(ApiEndpoints.feed, query: captureAny(named: 'query')),
+      ).captured.cast<Map<String, dynamic>>();
+      expect(queries.first['mode'], 'foryou');
+      expect(queries.last['mode'], 'recent');
     });
 
     testWidgets('there is room between the pill and the feed', (tester) async {

@@ -47,6 +47,8 @@ class Post extends Equatable {
     this.isSavedByMe = false,
     this.type = 'citizen_experience',
     this.isPinned = false,
+    this.resurfaced = false,
+    this.isFeatured,
     this.poll,
     this.listing,
     this.review,
@@ -74,6 +76,9 @@ class Post extends Equatable {
         isSavedByMe: json['isSavedByMe'] == true,
         type: _text(json['type']) ?? 'citizen_experience',
         isPinned: json['isPinned'] == true,
+        resurfaced: json['resurfaced'] == true,
+        isFeatured:
+            json['isFeatured'] is bool ? json['isFeatured'] as bool : null,
         poll: PostPoll.tryParse(json['poll']),
         listing: listingOf(_text(json['type']) ?? '', json),
         review: PostReview.tryParse(json['review']),
@@ -125,6 +130,17 @@ class Post extends Equatable {
   /// `citizen_experience`, `poll`, `venue_spotlight`... see [PostTypes].
   final String type;
   final bool isPinned;
+
+  /// For you only: an older post brought back into the mix ("From earlier").
+  final bool resurfaced;
+
+  /// For you only: whether this is the session's one featured post. Null in
+  /// other lists, which fall back to [isPinned].
+  final bool? isFeatured;
+
+  /// Whether to show the "Featured in Republic" banner.
+  bool get showsFeatured => isFeatured ?? isPinned;
+
   final PostPoll? poll;
 
   /// The venue, gear, service or event a marketplace post points at.
@@ -161,6 +177,8 @@ class Post extends Equatable {
         isSavedByMe: isSavedByMe ?? this.isSavedByMe,
         type: type,
         isPinned: isPinned,
+        resurfaced: resurfaced,
+        isFeatured: isFeatured,
         poll: poll ?? this.poll,
         listing: listing,
         review: review,
@@ -184,6 +202,8 @@ class Post extends Equatable {
         isSavedByMe,
         type,
         isPinned,
+        resurfaced,
+        isFeatured,
         poll,
         listing,
         review,
@@ -244,11 +264,29 @@ class PostComment extends Equatable {
 
 /// One page of the feed and where the next one starts (null at the end).
 class FeedPage extends Equatable {
-  const FeedPage({required this.posts, this.nextCursor});
+  const FeedPage({required this.posts, this.nextCursor, this.anchor});
 
   final List<Post> posts;
   final String? nextCursor;
 
+  /// For you only: when the session started, in server time. Posts after it
+  /// are not in the session; they come through the "New posts" pill.
+  final DateTime? anchor;
+
   @override
-  List<Object?> get props => [posts, nextCursor];
+  List<Object?> get props => [posts, nextCursor, anchor];
+}
+
+/// How the main feed is ordered (app#308).
+enum FeedMode {
+  /// Fresh posts first, a new mix each visit, with older posts brought back.
+  forYou('foryou'),
+
+  /// Strictly newest first.
+  recent('recent');
+
+  const FeedMode(this.apiName);
+
+  /// The API's `mode` value.
+  final String apiName;
 }

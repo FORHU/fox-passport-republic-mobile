@@ -162,6 +162,27 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
     }
   }
 
+  /// "New posts": puts them on top, then scrolls up to them.
+  Future<void> _showNewPosts() async {
+    await ref.read(feedControllerProvider(_tab).notifier).showNewPosts();
+    if (!mounted || !_scroll.hasClients) return;
+    await _scroll.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _selectMode(FeedMode mode) {
+    ref.read(feedModeProvider.notifier).select(mode);
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+  }
+
+  String _modeLabel(FeedMode mode) => switch (mode) {
+        FeedMode.forYou => context.l10n.republicSortForYou,
+        FeedMode.recent => context.l10n.republicSortRecent,
+      };
+
   String _tabLabel(String? tab) {
     final l10n = context.l10n;
     return switch (tab) {
@@ -201,13 +222,13 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
             ],
           ),
           // Over both views, so it stays put as they slide. It keeps clear of
-          // the header buttons on each side (a back arrow, or filter and
-          // search): 100 is room for two buttons, and it shrinks to fit
+          // the header buttons on each side (a back arrow, or sort, filter
+          // and search): 132 is room for three buttons, and it shrinks to fit
           // rather than run under them on a narrow phone.
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.only(left: 100, top: 8, right: 100),
+              padding: const EdgeInsets.only(left: 132, top: 8, right: 132),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: FittedBox(
@@ -224,6 +245,7 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
   /// The Posts view: the header, the sections and the feed.
   Widget _posts(BuildContext context, AsyncValue<FeedState> feed, String term) {
     final l10n = context.l10n;
+    final mode = ref.watch(feedModeProvider);
     return Column(
       children: [
         Padding(
@@ -246,6 +268,30 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
                 ),
               // Where the Posts | Reels switch floats.
               const Expanded(child: SizedBox(height: 48)),
+              // For you or Recent: lit while Recent is picked, since For you
+              // is the default (app#308).
+              PopupMenuButton<FeedMode>(
+                tooltip: l10n.republicSortPosts,
+                style: const ButtonStyle(
+                  minimumSize: WidgetStatePropertyAll(Size(40, 40)),
+                  padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                icon: Icon(
+                  Icons.swap_vert_rounded,
+                  size: 26,
+                  color: mode == FeedMode.recent ? AppColors.accent : null,
+                ),
+                onSelected: _selectMode,
+                itemBuilder: (context) => [
+                  for (final m in FeedMode.values)
+                    CheckedPopupMenuItem<FeedMode>(
+                      value: m,
+                      checked: m == mode,
+                      child: Text(_modeLabel(m)),
+                    ),
+                ],
+              ),
               // The sections (All, Community, Marketplace, Partners): lit
               // while one is picked.
               PopupMenuButton<String>(
@@ -334,97 +380,164 @@ class _RepublicPageState extends ConsumerState<RepublicPage> {
               actionLabel: l10n.retry,
               onAction: () => ref.invalidate(feedControllerProvider(_tab)),
             ),
-            data: (state) => RefreshIndicator(
-              color: AppColors.accent,
-              onRefresh: () =>
-                  ref.read(feedControllerProvider(_tab).notifier).refresh(),
-              // The composer is the first row, then the posts, each one
-              // full width and split by a thick rule, like a feed.
-              child: ListView.separated(
-                controller: _scroll,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 24),
-                itemCount: state.posts.length + 2,
-                separatorBuilder: (_, __) => const Divider(
-                  height: 8,
-                  thickness: 8,
-                  color: AppColors.surface,
-                ),
-                itemBuilder: (context, i) {
-                  if (i == 0) {
-                    return Column(
-                      children: [
-                        _ComposerRow(onTap: _compose),
-                        // Videos right under the composer, but not while
-                        // searching: the words are what is wanted then.
-                        if (term.isEmpty)
-                          VideosShelf(
-                            posts: state.posts,
-                            onOpen: (p) => _openVideos(postId: p.id),
-                            onSeeAll: _openVideos,
-                          ),
-                      ],
-                    );
-                  }
-                  if (i == state.posts.length + 1) {
-                    return state.posts.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(32),
-                            child: Column(
-                              children: [
-                                Text(
-                                  term.isEmpty
-                                      ? l10n.republicEmpty
-                                      : l10n.republicSearchEmpty(term),
-                                  textAlign: TextAlign.center,
-                                  style: AppTypography.body(
-                                    color: AppColors.textMuted,
-                                  ),
-                                ),
-                                if (term.isNotEmpty)
-                                  TextButton(
-                                    onPressed: _clearSearch,
-                                    child: Text(l10n.republicClearSearch),
-                                  ),
-                              ],
-                            ),
-                          )
-                        : _Footer(
-                            state: state,
-                            onRetry: () => unawaited(
-                              ref
-                                  .read(
-                                    feedControllerProvider(_tab).notifier,
-                                  )
-                                  .loadMore(),
-                            ),
-                          );
-                  }
-                  final post = state.posts[i - 1];
-                  return PostCard(
-                    post: post,
-                    onLike: () => unawaited(_actions.like(post.id)),
-                    onComments: () => unawaited(_actions.comments(post.id)),
-                    onMore: () => unawaited(_actions.menu(post)),
-                    onAuthor: () => unawaited(
-                      context.push(RouteNames.citizen(post.author.id)),
+            data: (state) => Stack(
+              children: [
+                _feedList(context, state, term),
+                // Floats over the list, so nothing moves until it is tapped.
+                if (state.newCount > 0)
+                  Positioned(
+                    top: 8,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: _NewPostsPill(
+                        count: state.newCount,
+                        onTap: () => unawaited(_showNewPosts()),
+                      ),
                     ),
-                    onReact: (r) => unawaited(_actions.react(post.id, r)),
-                    onReactions: () => unawaited(_actions.reactions(post.id)),
-                    myUserId: ref.read(authControllerProvider).user?.id,
-                    onVote: (o) => unawaited(_actions.vote(post.id, o)),
-                    onOpenListing: () => _actions.openListing(post),
-                    onMessage: () => unawaited(_actions.messageAuthor(post)),
-                    onShare: () => unawaited(_actions.share(post)),
-                    onHashtag: _searchFor,
-                    onOpenVideo: () => _openVideos(postId: post.id),
-                  );
-                },
-              ),
+                  ),
+              ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  /// The composer, the videos shelf, the posts and the footer; pull it down
+  /// for a new mix.
+  Widget _feedList(BuildContext context, FeedState state, String term) {
+    final l10n = context.l10n;
+    return RefreshIndicator(
+      color: AppColors.accent,
+      onRefresh: () =>
+          ref.read(feedControllerProvider(_tab).notifier).refresh(),
+      // The composer is the first row, then the posts, each one
+      // full width and split by a thick rule, like a feed.
+      child: ListView.separated(
+        controller: _scroll,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 24),
+        itemCount: state.posts.length + 2,
+        separatorBuilder: (_, __) => const Divider(
+          height: 8,
+          thickness: 8,
+          color: AppColors.surface,
+        ),
+        itemBuilder: (context, i) {
+          if (i == 0) {
+            return Column(
+              children: [
+                _ComposerRow(onTap: _compose),
+                // Videos right under the composer, but not while
+                // searching: the words are what is wanted then.
+                if (term.isEmpty)
+                  VideosShelf(
+                    posts: state.posts,
+                    onOpen: (p) => _openVideos(postId: p.id),
+                    onSeeAll: _openVideos,
+                  ),
+              ],
+            );
+          }
+          if (i == state.posts.length + 1) {
+            return state.posts.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      children: [
+                        Text(
+                          term.isEmpty
+                              ? l10n.republicEmpty
+                              : l10n.republicSearchEmpty(term),
+                          textAlign: TextAlign.center,
+                          style: AppTypography.body(
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                        if (term.isNotEmpty)
+                          TextButton(
+                            onPressed: _clearSearch,
+                            child: Text(l10n.republicClearSearch),
+                          ),
+                      ],
+                    ),
+                  )
+                : _Footer(
+                    state: state,
+                    onRetry: () => unawaited(
+                      ref
+                          .read(
+                            feedControllerProvider(_tab).notifier,
+                          )
+                          .loadMore(),
+                    ),
+                  );
+          }
+          final post = state.posts[i - 1];
+          return PostCard(
+            post: post,
+            onLike: () => unawaited(_actions.like(post.id)),
+            onComments: () => unawaited(_actions.comments(post.id)),
+            onMore: () => unawaited(_actions.menu(post)),
+            onAuthor: () => unawaited(
+              context.push(RouteNames.citizen(post.author.id)),
+            ),
+            onReact: (r) => unawaited(_actions.react(post.id, r)),
+            onReactions: () => unawaited(_actions.reactions(post.id)),
+            myUserId: ref.read(authControllerProvider).user?.id,
+            onVote: (o) => unawaited(_actions.vote(post.id, o)),
+            onOpenListing: () => _actions.openListing(post),
+            onMessage: () => unawaited(_actions.messageAuthor(post)),
+            onShare: () => unawaited(_actions.share(post)),
+            onHashtag: _searchFor,
+            onOpenVideo: () => _openVideos(postId: post.id),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// "↑ N new posts": floats at the top of the feed while posts are waiting.
+class _NewPostsPill extends StatelessWidget {
+  const _NewPostsPill({required this.count, required this.onTap});
+
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.accent,
+      elevation: 6,
+      shape: const StadiumBorder(),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.arrow_upward_rounded,
+                size: 16,
+                color: AppColors.onAccent,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                context.l10n.republicNewPosts(count),
+                style: AppTypography.body(
+                  size: 13,
+                  weight: FontWeight.w700,
+                  color: AppColors.onAccent,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
