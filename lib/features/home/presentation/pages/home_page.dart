@@ -12,6 +12,7 @@ import 'package:flutter_template/features/home/presentation/widgets/foxers_row.d
 import 'package:flutter_template/features/home/presentation/widgets/getting_started_card.dart';
 import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
 import 'package:flutter_template/features/home/presentation/widgets/occasion_showcase.dart';
+import 'package:flutter_template/features/home/presentation/widgets/offline_note.dart';
 import 'package:flutter_template/features/home/presentation/widgets/republic_teaser.dart';
 import 'package:flutter_template/features/home/presentation/widgets/section_title.dart';
 import 'package:flutter_template/features/notifications/data/notifications_repository.dart';
@@ -93,6 +94,10 @@ class HomePage extends ConsumerWidget {
         area.city != null && (soon.asData?.value.items.isEmpty ?? false);
     final elsewhere =
         nothingHere ? ref.watch(catalogProvider(anywhereQuery)) : null;
+    // The lists are the copy saved on the phone when the server cannot be
+    // reached; they are all read together, so one of them says so for all.
+    final savedAt =
+        soon.asData?.value.savedAt ?? elsewhere?.asData?.value.savedAt;
 
     final tiles = occasionTiles(categories, preferred: last);
     final oneThing = singleBookings(categories);
@@ -184,6 +189,10 @@ class HomePage extends ConsumerWidget {
                 onPick: (kind) =>
                     unawaited(context.push(RouteNames.searchFor(kind.name))),
               ),
+              if (savedAt != null) ...[
+                const SizedBox(height: 12),
+                HomeOfflineNote(savedAt: savedAt),
+              ],
               // Today's daily login: in the same place every day, under the
               // search Home is for and in view without scrolling. Takes no
               // room (and leaves no gap) until the server has answered.
