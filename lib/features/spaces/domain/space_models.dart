@@ -121,6 +121,88 @@ class VenueRequest extends Equatable {
       ];
 }
 
+/// Why a booked event needs a replacement Supplier.
+enum AttentionReason {
+  /// The Supplier declined the booked event.
+  declined,
+
+  /// The Mayor blocked a day the event falls on.
+  dateBlocked,
+
+  /// The gear or service was paused, archived or removed.
+  unavailable;
+
+  static AttentionReason parse(Object? raw) => switch (raw) {
+        'declined' => declined,
+        'date_blocked' => dateBlocked,
+        _ => unavailable,
+      };
+}
+
+/// One Supplier of a booked event that needs replacing, and why.
+class AttentionIssue extends Equatable {
+  const AttentionIssue({
+    required this.kind,
+    required this.supplierName,
+    required this.itemName,
+    required this.reason,
+  });
+
+  final RequestKind kind;
+  final String supplierName;
+  final String itemName;
+  final AttentionReason reason;
+
+  @override
+  List<Object?> get props => [kind, supplierName, itemName, reason];
+}
+
+/// A booked event of the person's that has lost a Supplier (a row of
+/// `GET /event-transactions/needs-attention`).
+class EventNeedingAttention extends Equatable {
+  const EventNeedingAttention({
+    required this.eventId,
+    required this.eventName,
+    required this.issues,
+    this.startAt,
+  });
+
+  /// Reads one event of the response; null when it has no id or no issue.
+  static EventNeedingAttention? tryParse(Object? row) {
+    if (row is! Map || row['id'] == null && row['eventId'] == null) return null;
+    final raw = row['issues'];
+    final issues = [
+      if (raw is List)
+        for (final i in raw)
+          if (i is Map)
+            AttentionIssue(
+              kind: RequestKind.values.firstWhere(
+                (k) => k.name == i['kind'],
+                orElse: () => RequestKind.venue,
+              ),
+              supplierName: '${i['supplierName'] ?? ''}',
+              itemName: '${i['itemName'] ?? ''}',
+              reason: AttentionReason.parse(i['reason']),
+            ),
+    ];
+    if (issues.isEmpty) return null;
+    return EventNeedingAttention(
+      eventId: '${row['eventId'] ?? row['id']}',
+      eventName: '${row['eventName'] ?? ''}',
+      startAt: DateTime.tryParse('${row['startAt']}')?.toLocal(),
+      issues: issues,
+    );
+  }
+
+  final String eventId;
+  final String eventName;
+  final DateTime? startAt;
+  final List<AttentionIssue> issues;
+
+  @override
+  List<Object?> get props => [eventId, eventName, startAt, issues];
+}
+
 /// One of your listings: a venue or an event template.
 class SpaceListing extends Equatable {
   const SpaceListing({

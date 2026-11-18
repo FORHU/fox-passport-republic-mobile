@@ -1760,6 +1760,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String eventNeedsDeclined(String supplier, String event) {
+    return '$supplier declined $event. Pick a replacement.';
+  }
+
+  @override
+  String eventNeedsDateBlocked(String supplier, String event) {
+    return '$supplier blocked a day of $event. Pick another venue or date.';
+  }
+
+  @override
+  String eventNeedsUnavailable(String item, String event) {
+    return '$item is no longer available for $event. Pick a replacement.';
+  }
+
+  @override
+  String eventNeedsMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more need a replacement',
+      one: 'and 1 more event needs a replacement',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String eventsDeclined(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

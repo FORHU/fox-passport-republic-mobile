@@ -7,6 +7,7 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
@@ -463,6 +464,145 @@ void main() {
 
       expect(find.text("We couldn't load this right now."), findsOneWidget);
       expect(find.text('Try again'), findsOneWidget);
+    });
+  });
+
+  group('booked events that lost a Supplier', () {
+    Map<String, Object?> needing(
+      String id,
+      String name,
+      List<Map<String, Object?>> issues,
+    ) =>
+        {
+          'eventId': id,
+          'eventName': name,
+          'startAt': '2026-12-05T10:00:00Z',
+          'issues': issues,
+        };
+
+    Map<String, Object?> issue(
+      String reason, {
+      String kind = 'asset',
+      String supplier = 'Maria Provider',
+      String item = 'Sound system',
+    }) =>
+        {
+          'kind': kind,
+          'transactionId': 't-$reason',
+          'supplierName': supplier,
+          'itemName': item,
+          'reason': reason,
+        };
+
+    void stubHome(List<Map<String, Object?>> needs) {
+      when(() => api.get(ApiEndpoints.events, query: any(named: 'query')))
+          .thenAnswer((_) async => {'templates': <Object>[], 'total': 0});
+      when(() => api.get(ApiEndpoints.venueAffiliationsMine)).thenAnswer(
+        (_) async => {
+          'data': {'asVenueMayor': <Object>[], 'asEventFoxer': <Object>[]},
+        },
+      );
+      when(
+        () => api.get(ApiEndpoints.payoutsMe, query: any(named: 'query')),
+      ).thenAnswer(
+        (_) async => {
+          'data': <Object>[],
+          'totals': {'pending': 0, 'paid': 0},
+        },
+      );
+      when(() => api.get(ApiEndpoints.eventsNeedingAttention))
+          .thenAnswer((_) async => {'success': true, 'data': needs});
+    }
+
+    test('an event reads its issues and ignores one with none', () {
+      final e = EventNeedingAttention.tryParse(
+        needing('e1', 'Garden wedding', [
+          issue('declined'),
+          issue('date_blocked', kind: 'venue', supplier: 'Mayor Cruz'),
+          issue('anything_else'),
+        ]),
+      )!;
+
+      expect(e.eventName, 'Garden wedding');
+      expect(e.issues.map((i) => i.reason), [
+        AttentionReason.declined,
+        AttentionReason.dateBlocked,
+        AttentionReason.unavailable,
+      ]);
+      expect(e.issues[1].kind, RequestKind.venue);
+      expect(EventNeedingAttention.tryParse(needing('e2', 'x', [])), isNull);
+      expect(EventNeedingAttention.tryParse('nonsense'), isNull);
+    });
+
+    testWidgets('names the Supplier and the event for each way it can happen', (
+      tester,
+    ) async {
+      stubHome([
+        needing('e1', 'Garden wedding', [issue('declined')]),
+        needing('e2', 'Reunion', [
+          issue('date_blocked', kind: 'venue', supplier: 'Mayor Cruz'),
+        ]),
+        needing('e3', 'Launch', [
+          issue('unavailable', kind: 'service', item: 'Photographer'),
+        ]),
+      ]);
+
+      await pump(tester, const EventOverviewPage());
+
+      expect(
+        find.text(
+          'Maria Provider declined Garden wedding. Pick a replacement.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Mayor Cruz blocked a day of Reunion. Pick another venue or date.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Photographer is no longer available for Launch. Pick a replacement.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.text("You're all caught up."), findsNothing);
+    });
+
+    testWidgets('shows five and says how many more', (tester) async {
+      stubHome([
+        for (var i = 1; i <= 7; i++)
+          needing('e$i', 'Event $i', [issue('declined')]),
+      ]);
+
+      await pump(tester, const EventOverviewPage());
+
+      expect(find.textContaining('declined Event'), findsNWidgets(5));
+      expect(find.text('and 2 more need a replacement'), findsOneWidget);
+    });
+
+    testWidgets('is all clear when no event has lost a Supplier', (
+      tester,
+    ) async {
+      stubHome([]);
+
+      await pump(tester, const EventOverviewPage());
+
+      expect(find.text("You're all caught up."), findsOneWidget);
+    });
+
+    testWidgets('a failure reading it does not hide the rest of the home', (
+      tester,
+    ) async {
+      stubHome([]);
+      when(() => api.get(ApiEndpoints.eventsNeedingAttention))
+          .thenThrow(const NetworkException());
+
+      await pump(tester, const EventOverviewPage());
+
+      expect(find.text('NEEDS YOUR ATTENTION'), findsOneWidget);
+      expect(find.textContaining('Pick a replacement'), findsNothing);
     });
   });
 

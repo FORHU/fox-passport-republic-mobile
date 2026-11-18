@@ -3334,6 +3334,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 event is in review} other{{count} events are in review}}'**
   String eventsInReview(int count);
 
+  /// No description provided for @eventNeedsDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} declined {event}. Pick a replacement.'**
+  String eventNeedsDeclined(String supplier, String event);
+
+  /// No description provided for @eventNeedsDateBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} blocked a day of {event}. Pick another venue or date.'**
+  String eventNeedsDateBlocked(String supplier, String event);
+
+  /// No description provided for @eventNeedsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{item} is no longer available for {event}. Pick a replacement.'**
+  String eventNeedsUnavailable(String item, String event);
+
+  /// No description provided for @eventNeedsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{and 1 more event needs a replacement} other{and {count} more need a replacement}}'**
+  String eventNeedsMore(int count);
+
   /// No description provided for @eventsDeclined.
   ///
   /// In en, this message translates to:

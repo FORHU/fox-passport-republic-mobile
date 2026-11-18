@@ -72,6 +72,20 @@ class SpacesRepository {
     });
   }
 
+  /// The person's upcoming booked events that lost a Supplier (it declined, a
+  /// day was blocked, or gear or a service was taken down), and which one.
+  Future<List<EventNeedingAttention>> eventsNeedingAttention() async {
+    final body = await _api.get(ApiEndpoints.eventsNeedingAttention);
+    final data = body is Map ? body['data'] : null;
+    if (data is! List) {
+      throw const FormatException('Needs-attention response is not a list');
+    }
+    return [
+      for (final row in data)
+        if (EventNeedingAttention.tryParse(row) case final e?) e,
+    ];
+  }
+
   /// Leaves an event that is already booked (not a request still waiting for
   /// a reply). The event host and the citizen are told. The API refuses it once
   /// the booking is paid, and says so.
@@ -819,6 +833,13 @@ final FutureProvider<List<SpaceListing>> myServicesProvider =
 final FutureProvider<List<SpaceListing>> myVenuesProvider =
     FutureProvider.autoDispose<List<SpaceListing>>(
   (ref) => ref.watch(spacesRepositoryProvider).myVenues(),
+);
+
+/// Booked events that need a replacement Supplier.
+final FutureProvider<List<EventNeedingAttention>>
+    eventsNeedingAttentionProvider =
+    FutureProvider.autoDispose<List<EventNeedingAttention>>(
+  (ref) => ref.watch(spacesRepositoryProvider).eventsNeedingAttention(),
 );
 
 final FutureProvider<List<SpaceListing>> myEventsProvider =
