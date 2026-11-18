@@ -10840,6 +10840,300 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get rewardsDone;
 
+  /// No description provided for @perksMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My perks'**
+  String get perksMine;
+
+  /// No description provided for @perksMineReady.
+  ///
+  /// In en, this message translates to:
+  /// **'My perks · {count} ready'**
+  String perksMineReady(int count);
+
+  /// No description provided for @perksOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered perks'**
+  String get perksOffered;
+
+  /// No description provided for @perksOfferedByVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered by venue'**
+  String get perksOfferedByVenue;
+
+  /// No description provided for @perksOfferedByHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered by host'**
+  String get perksOfferedByHost;
+
+  /// No description provided for @perksLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String perksLeft(int count);
+
+  /// No description provided for @perksView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get perksView;
+
+  /// No description provided for @perksEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No perks yet. Venues and event hosts add them here.'**
+  String get perksEmpty;
+
+  /// No description provided for @perksHeldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens held until your first paid booking'**
+  String perksHeldNote(String count);
+
+  /// No description provided for @perkUseItOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it on'**
+  String get perkUseItOn;
+
+  /// No description provided for @perkChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get perkChange;
+
+  /// No description provided for @perkHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get perkHowItWorks;
+
+  /// No description provided for @perkStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm, and your code appears.'**
+  String get perkStep1;
+
+  /// No description provided for @perkStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Show it to staff when you arrive.'**
+  String get perkStep2;
+
+  /// No description provided for @perkStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff scan it and the perk is yours.'**
+  String get perkStep3;
+
+  /// No description provided for @perkRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Only works for the booking you pick. If you cancel that booking or it goes unused, your Tokens come back.'**
+  String get perkRule;
+
+  /// No description provided for @perkYouHave.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count}'**
+  String perkYouHave(String count);
+
+  /// No description provided for @perkRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get perkRedeem;
+
+  /// No description provided for @perkPickBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a booking'**
+  String get perkPickBooking;
+
+  /// No description provided for @perkNoBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'No booking this perk works for yet. Book it first, then come back to use this perk.'**
+  String get perkNoBooking;
+
+  /// No description provided for @perkUseTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {count} Tokens?'**
+  String perkUseTokens(String count);
+
+  /// No description provided for @perkUseTokensBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You get a code for {title}, for the booking below.'**
+  String perkUseTokensBody(String title);
+
+  /// No description provided for @perkBookingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get perkBookingLabel;
+
+  /// No description provided for @perkCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get perkCostLabel;
+
+  /// No description provided for @perkLeftAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Left after'**
+  String get perkLeftAfter;
+
+  /// No description provided for @perkConfirmNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If the booking is cancelled or the perk goes unused, your Tokens come back.'**
+  String get perkConfirmNote;
+
+  /// No description provided for @perkConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {count} Tokens'**
+  String perkConfirmButton(String count);
+
+  /// No description provided for @perkCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get perkCancel;
+
+  /// No description provided for @perkRedeemFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not redeem that perk. Try again.'**
+  String get perkRedeemFailed;
+
+  /// No description provided for @perkYourPerk.
+  ///
+  /// In en, this message translates to:
+  /// **'Your perk'**
+  String get perkYourPerk;
+
+  /// No description provided for @perkReadyToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to use'**
+  String get perkReadyToUse;
+
+  /// No description provided for @perkNewCodeIn.
+  ///
+  /// In en, this message translates to:
+  /// **'New code in {time}'**
+  String perkNewCodeIn(String time);
+
+  /// No description provided for @perkCodeChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'The code changes every 30 seconds, so a screenshot will not work.'**
+  String get perkCodeChanges;
+
+  /// No description provided for @perkValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get perkValidUntil;
+
+  /// No description provided for @perkPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get perkPaid;
+
+  /// No description provided for @perkPaidTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens'**
+  String perkPaidTokens(String count);
+
+  /// No description provided for @perkShowStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this to staff when you arrive. If it expires unused, your {count} Tokens come back.'**
+  String perkShowStaff(String count);
+
+  /// No description provided for @perkBackToRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Rewards'**
+  String get perkBackToRewards;
+
+  /// No description provided for @perkCodeUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This perk can no longer be used.'**
+  String get perkCodeUnavailable;
+
+  /// No description provided for @perksSectionReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to use'**
+  String get perksSectionReady;
+
+  /// No description provided for @perksSectionUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get perksSectionUsed;
+
+  /// No description provided for @perksSectionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get perksSectionExpired;
+
+  /// No description provided for @perkUsedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {date}'**
+  String perkUsedOn(String date);
+
+  /// No description provided for @perkExpiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {date}'**
+  String perkExpiredOn(String date);
+
+  /// No description provided for @perkUseBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by {date}'**
+  String perkUseBy(String date);
+
+  /// No description provided for @perkTokensReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens returned to your wallet'**
+  String perkTokensReturned(String count);
+
+  /// No description provided for @perkShowCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Show code'**
+  String get perkShowCode;
+
+  /// No description provided for @perkReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get perkReady;
+
+  /// No description provided for @perksMineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no perks yet.'**
+  String get perksMineEmpty;
+
   /// No description provided for @rewardsLifeRelease.
   ///
   /// In en, this message translates to:
