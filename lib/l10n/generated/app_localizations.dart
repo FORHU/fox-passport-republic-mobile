@@ -10138,6 +10138,12 @@ abstract class AppLocalizations {
   /// **'No connection. Showing the tickets saved {when}.'**
   String ticketsOfflineNote(String when);
 
+  /// No description provided for @homeOfflineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Showing what was saved {when}. Pull down to refresh.'**
+  String homeOfflineNote(String when);
+
   /// No description provided for @tourSkip.
   ///
   /// In en, this message translates to:

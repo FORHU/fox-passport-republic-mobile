@@ -1863,6 +1863,8 @@
   "providerRequestsWaiting": "{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}",
   "@providerRequestsWaiting": {"placeholders":{"count":{"type":"int"}}},
   "ticketsOfflineNote": "No connection. Showing the tickets saved {when}.",
+  "homeOfflineNote": "No connection. Showing what was saved {when}. Pull down to refresh.",
+  "@homeOfflineNote": {"placeholders":{"when":{"type":"String"}}},
   "@ticketsOfflineNote": {"placeholders":{"when":{"type":"String"}}},
   "tourSkip": "Skip",
   "tourNext": "Next",

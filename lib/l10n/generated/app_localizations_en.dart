@@ -5612,6 +5612,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String homeOfflineNote(String when) {
+    return 'No connection. Showing what was saved $when. Pull down to refresh.';
+  }
+
+  @override
   String get tourSkip => 'Skip';
 
   @override

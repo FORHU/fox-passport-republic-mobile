@@ -2,7 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/shared/offline/response_cache.dart';
 import 'package:flutter_template/theme/tokens/occasion_colors.dart';
 
 /// The five things people plan for. They are built into the app so Home can
@@ -85,7 +87,12 @@ class CategorySummary extends Equatable {
 /// out too. Home reads it for the occasion counts and the single-booking row.
 final FutureProvider<List<CategorySummary>> categoriesProvider =
     FutureProvider.autoDispose<List<CategorySummary>>((ref) async {
-  final body = await ref.watch(apiServiceProvider).get(ApiEndpoints.categories);
+  final answer = await ResponseCache.get(
+    ref.watch(apiServiceProvider),
+    ResponseCache(ref.watch(storageServiceProvider)),
+    ApiEndpoints.categories,
+  );
+  final body = answer.body;
   final data = body is Map ? body['data'] : null;
   if (data is! List) return const [];
   return [
