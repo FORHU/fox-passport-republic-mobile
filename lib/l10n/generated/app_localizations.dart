@@ -10132,6 +10132,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
   String providerRequestsWaiting(int count);
 
+  /// No description provided for @openByIdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'That page is not available any more.'**
+  String get openByIdNotFound;
+
+  /// No description provided for @openByIdToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Search'**
+  String get openByIdToSearch;
+
   /// No description provided for @ticketsOfflineNote.
   ///
   /// In en, this message translates to:

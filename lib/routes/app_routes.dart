@@ -96,6 +96,7 @@ import 'package:flutter_template/features/venue/presentation/pages/venue_detail_
 import 'package:flutter_template/features/welcome/presentation/pages/welcome_page.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/catalog/open_by_id_page.dart';
 import 'package:flutter_template/shared/categories/category_summary.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/widgets/achievements_row.dart';
@@ -530,6 +531,36 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             state.extra is CatalogItem ? null : RouteNames.search,
         builder: (context, state) =>
             EventDetailPage(item: state.extra! as CatalogItem),
+      ),
+      // By id, for a link, a notification or a restored back stack: the row is
+      // loaded instead of being passed in.
+      GoRoute(
+        path: '${RouteNames.venueDetail}/:id',
+        builder: (context, state) => OpenByIdPage(
+          kind: CatalogKind.venues,
+          id: state.pathParameters['id']!,
+          builder: (item) => VenueDetailPage(
+            item: item,
+            hostActions: (id, name) =>
+                VenueApplyStrip(venueId: id, venueName: name),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '${RouteNames.eventDetail}/:id',
+        builder: (context, state) => OpenByIdPage(
+          kind: CatalogKind.events,
+          id: state.pathParameters['id']!,
+          builder: (item) => EventDetailPage(item: item),
+        ),
+      ),
+      GoRoute(
+        path: '${RouteNames.foxer}/:id',
+        builder: (context, state) => OpenByIdPage(
+          kind: CatalogKind.foxers,
+          id: state.pathParameters['id']!,
+          builder: (item) => FoxerProfilePage(item: item),
+        ),
       ),
       GoRoute(
         path: RouteNames.scheduledEventDetail,
