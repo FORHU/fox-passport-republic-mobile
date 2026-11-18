@@ -8470,6 +8470,12 @@ abstract class AppLocalizations {
   /// **'Earn'**
   String get passportTabEarn;
 
+  /// No description provided for @passportEarnAsFoxerRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn as a Foxer'**
+  String get passportEarnAsFoxerRow;
+
   /// No description provided for @passportSavedEmpty.
   ///
   /// In en, this message translates to:
