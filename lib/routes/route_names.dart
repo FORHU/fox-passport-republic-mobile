@@ -163,6 +163,14 @@ class RouteNames {
   /// Token perks: the person's own (`/perks/mine`), one perk by id, and the
   /// live code to show at the door for a redemption.
   static const String perksMine = '/perks/mine';
+
+  /// The perks a host or Mayor offers, adding one, and checking a perk code at
+  /// the door; plus the perks of one event package, for someone booked on it.
+  static const String perksOffered = '/perks/offered';
+  static const String perkNew = '/perks/new';
+  static const String perkScan = '/perks/scan';
+  static String packagePerks(String templateId) =>
+      '/perks/package/${Uri.encodeComponent(templateId)}';
   static String perkDetail(String id) => '/perks/${Uri.encodeComponent(id)}';
   static String perkCode(String redemptionId) =>
       '/perk-code/${Uri.encodeComponent(redemptionId)}';

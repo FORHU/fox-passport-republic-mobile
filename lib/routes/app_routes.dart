@@ -34,9 +34,14 @@ import 'package:flutter_template/features/occasion/presentation/pages/occasion_p
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/foxer_passport_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/perks/domain/perk.dart';
+import 'package:flutter_template/features/perks/presentation/pages/add_perk_page.dart';
 import 'package:flutter_template/features/perks/presentation/pages/my_perks_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/offered_perks_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/package_perks_page.dart';
 import 'package:flutter_template/features/perks/presentation/pages/perk_code_page.dart';
 import 'package:flutter_template/features/perks/presentation/pages/perk_detail_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/perk_scan_page.dart';
 import 'package:flutter_template/features/perks/presentation/widgets/perks_section.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
@@ -64,6 +69,7 @@ import 'package:flutter_template/features/spaces/domain/app_space.dart';
 import 'package:flutter_template/features/spaces/domain/appointment_models.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
@@ -85,6 +91,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/provider_mor
 import 'package:flutter_template/features/spaces/presentation/pages/provider_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/team_detail_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/team_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/ticket_scanner_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_calendar_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_hub_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_more_page.dart';
@@ -109,6 +116,23 @@ import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:flutter_template/shared/widgets/milestones_row.dart';
 import 'package:go_router/go_router.dart';
+
+/// The places a perk can be offered, from the person's own event packages
+/// and venues: loading until both are in, an error if either fails.
+AsyncValue<List<PerkTarget>> _perkTargets(
+  AsyncValue<List<SpaceListing>> events,
+  AsyncValue<List<SpaceListing>> venues,
+) {
+  if (events.hasError) return AsyncError(events.error!, events.stackTrace!);
+  if (venues.hasError) return AsyncError(venues.error!, venues.stackTrace!);
+  final e = events.asData?.value;
+  final v = venues.asData?.value;
+  if (e == null || v == null) return const AsyncLoading();
+  return AsyncData([
+    for (final l in e) PerkTarget(id: l.id, name: l.name, isVenue: false),
+    for (final l in v) PerkTarget(id: l.id, name: l.name, isVenue: true),
+  ]);
+}
 
 /// Listenable helper to notify GoRouter whenever auth state changes.
 class RouterNotifier extends ChangeNotifier {
@@ -483,6 +507,36 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.perksMine,
         builder: (context, state) => const MyPerksPage(),
+      ),
+      GoRoute(
+        path: RouteNames.perksOffered,
+        builder: (context, state) => const OfferedPerksPage(),
+      ),
+      GoRoute(
+        path: RouteNames.perkNew,
+        // Where a perk can go: the person's own event packages and venues,
+        // read here so Perks does not import the spaces feature.
+        builder: (context, state) => Consumer(
+          builder: (context, ref, _) {
+            final events = ref.watch(myEventsProvider);
+            final venues = ref.watch(myVenuesProvider);
+            final targets = _perkTargets(events, venues);
+            return AddPerkPage(targets: targets);
+          },
+        ),
+      ),
+      GoRoute(
+        path: RouteNames.perkScan,
+        // The same camera the ticket check-in uses.
+        builder: (context, state) => Consumer(
+          builder: (context, ref, _) =>
+              PerkScanPage(scan: ref.watch(ticketScannerProvider)),
+        ),
+      ),
+      GoRoute(
+        path: '/perks/package/:id',
+        builder: (context, state) =>
+            PackagePerksPage(templateId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/perks/:id',

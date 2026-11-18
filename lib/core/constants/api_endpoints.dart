@@ -235,6 +235,12 @@ class ApiEndpoints {
   // ── Token perks: a drink, a starter or a +1, bought with Tokens
   static const String perks = '/perks';
   static const String perksMine = '/perks/mine';
+  static const String perksOffered = '/perks/offered';
+  static const String perksCheck = '/perks/check';
+  static String perkTakeDown(String id) =>
+      '/perks/${Uri.encodeComponent(id)}/take-down';
+  static String perkUse(String redemptionId) =>
+      '/perks/redemptions/${Uri.encodeComponent(redemptionId)}/use';
   static String perk(String id) => '/perks/${Uri.encodeComponent(id)}';
   static String perkRedeem(String id) =>
       '/perks/${Uri.encodeComponent(id)}/redeem';
