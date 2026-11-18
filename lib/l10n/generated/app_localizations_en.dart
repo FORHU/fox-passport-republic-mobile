@@ -4702,6 +4702,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportTabEarn => 'Earn';
 
   @override
+  String get passportEarnAsFoxerRow => 'Earn as a Foxer';
+
+  @override
   String get passportSavedEmpty => 'No saved posts yet.';
 
   @override

@@ -104,6 +104,7 @@ import 'package:flutter_template/shared/widgets/coins_chip.dart';
 import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:flutter_template/shared/widgets/milestones_row.dart';
+import 'package:flutter_template/shared/widgets/passport_link_rows.dart';
 import 'package:go_router/go_router.dart';
 
 /// Listenable helper to notify GoRouter whenever auth state changes.
@@ -609,6 +610,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                             MilestonesRow(),
                             ChallengesRow(),
                             AchievementsRow(),
+                            SavedRow(),
+                            EarnAsFoxerRow(),
                           ],
                         ),
                         activityBuilder: (context, profile) =>
