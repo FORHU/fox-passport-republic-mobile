@@ -80,7 +80,7 @@ Future<void> declineBookedRequest(
   VenueRequest request,
 ) async {
   final l10n = context.l10n;
-  final sure = await showDialog<bool>(
+  final cause = await showDialog<DeclineCause>(
     context: context,
     builder: (_) => AlertDialog(
       backgroundColor: AppColors.surface,
@@ -88,11 +88,15 @@ Future<void> declineBookedRequest(
       content: Text(l10n.requestDeclineBookedBody),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(l10n.messageCancel),
         ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: () => Navigator.of(context).pop(DeclineCause.busy),
+          child: Text(l10n.requestDeclineBusy),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(DeclineCause.other),
           child: Text(
             l10n.requestDeclineBooked,
             style: const TextStyle(color: AppColors.error),
@@ -101,11 +105,11 @@ Future<void> declineBookedRequest(
       ],
     ),
   );
-  if (sure != true || !context.mounted) return;
+  if (cause == null || !context.mounted) return;
   try {
     await ref
         .read(spacesRepositoryProvider)
-        .declineBookedItem(request.id, kind: request.kind);
+        .declineBookedItem(request.id, kind: request.kind, cause: cause);
     ref
       ..invalidate(venueRequestsProvider)
       ..invalidate(supplyRequestsProvider);

@@ -1770,6 +1770,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String eventNeedsBusy(String supplier, String event) {
+    return '$supplier is busy with another booking and left $event. Pick a replacement.';
+  }
+
+  @override
   String eventNeedsUnavailable(String item, String event) {
     return '$item is no longer available for $event. Pick a replacement.';
   }
@@ -1806,6 +1811,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookedReasonDateBlocked => 'Blocked a day of this event';
+
+  @override
+  String get bookedReasonBusy => 'Busy with another booking';
 
   @override
   String get bookedReasonUnavailable => 'No longer available';
@@ -2612,6 +2620,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestDeclineBooked => 'Decline this booking';
+
+  @override
+  String get requestDeclineBusy => 'I\'m busy then';
 
   @override
   String get requestDeclineBookedTitle => 'Decline this booking?';

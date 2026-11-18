@@ -161,8 +161,13 @@ class _SupplierRow extends StatelessWidget {
         RequestStatus.other => '',
       };
 
-  static String _reason(AppLocalizations l10n, AttentionReason r) =>
+  static String _reason(
+    AppLocalizations l10n,
+    AttentionReason r, {
+    required bool busy,
+  }) =>
       switch (r) {
+        AttentionReason.declined when busy => l10n.bookedReasonBusy,
         AttentionReason.declined => l10n.bookedReasonDeclined,
         AttentionReason.dateBlocked => l10n.bookedReasonDateBlocked,
         AttentionReason.unavailable => l10n.bookedReasonUnavailable,
@@ -208,7 +213,7 @@ class _SupplierRow extends StatelessWidget {
                 if (problem != null) ...[
                   const SizedBox(height: 6),
                   Text(
-                    _reason(l10n, problem),
+                    _reason(l10n, problem, busy: supplier.busy),
                     style: AppTypography.body(
                       size: 13,
                       color: AppColors.error,

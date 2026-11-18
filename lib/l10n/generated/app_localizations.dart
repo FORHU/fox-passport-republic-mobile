@@ -3346,6 +3346,12 @@ abstract class AppLocalizations {
   /// **'{supplier} blocked a day of {event}. Pick another venue or date.'**
   String eventNeedsDateBlocked(String supplier, String event);
 
+  /// No description provided for @eventNeedsBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} is busy with another booking and left {event}. Pick a replacement.'**
+  String eventNeedsBusy(String supplier, String event);
+
   /// No description provided for @eventNeedsUnavailable.
   ///
   /// In en, this message translates to:
@@ -3399,6 +3405,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blocked a day of this event'**
   String get bookedReasonDateBlocked;
+
+  /// No description provided for @bookedReasonBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy with another booking'**
+  String get bookedReasonBusy;
 
   /// No description provided for @bookedReasonUnavailable.
   ///
@@ -4761,6 +4773,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Decline this booking'**
   String get requestDeclineBooked;
+
+  /// No description provided for @requestDeclineBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m busy then'**
+  String get requestDeclineBusy;
 
   /// No description provided for @requestDeclineBookedTitle.
   ///
