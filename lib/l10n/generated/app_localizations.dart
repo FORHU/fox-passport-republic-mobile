@@ -3418,6 +3418,36 @@ abstract class AppLocalizations {
   /// **'No longer available'**
   String get bookedReasonUnavailable;
 
+  /// No description provided for @hostDeclineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t run this event'**
+  String get hostDeclineButton;
+
+  /// No description provided for @hostDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this event?'**
+  String get hostDeclineTitle;
+
+  /// No description provided for @hostDeclineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen and every Supplier are told, and the booking ends. Nothing was charged. You cannot undo this.'**
+  String get hostDeclineBody;
+
+  /// No description provided for @hostDeclineDone.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined. The citizen and the Suppliers were told.'**
+  String get hostDeclineDone;
+
+  /// No description provided for @hostDeclineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this event'**
+  String get hostDeclineAction;
+
   /// No description provided for @bookedEventNotFound.
   ///
   /// In en, this message translates to:

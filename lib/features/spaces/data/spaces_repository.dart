@@ -112,6 +112,18 @@ class SpacesRepository {
     });
   }
 
+  /// The event's host leaves a booking they cannot attend. Only an unpaid
+  /// booking can be left; the API refuses a paid one and says so. The citizen
+  /// and every Supplier on it are told.
+  Future<void> declineAsHost(
+    String bookingId, {
+    DeclineCause cause = DeclineCause.other,
+  }) async {
+    await _api.post(ApiEndpoints.bookingDecline(bookingId), {
+      'cause': cause.name,
+    });
+  }
+
   /// The gear the person lists. The API gives at most 50 at a time, so this
   /// asks page by page.
   Future<List<SpaceListing>> myAssets() =>

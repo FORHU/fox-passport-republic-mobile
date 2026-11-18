@@ -252,6 +252,7 @@ class BookedEvent extends Equatable {
     required this.eventId,
     required this.eventName,
     required this.suppliers,
+    this.declinableBookingId,
     this.startAt,
     this.endAt,
   });
@@ -265,6 +266,9 @@ class BookedEvent extends Equatable {
       eventName: '${data['eventName'] ?? ''}',
       startAt: DateTime.tryParse('${data['startAt']}')?.toLocal(),
       endAt: DateTime.tryParse('${data['endAt']}')?.toLocal(),
+      declinableBookingId: data['declinableBookingId'] is String
+          ? data['declinableBookingId'] as String
+          : null,
       suppliers: [
         if (raw is List)
           for (final s in raw)
@@ -292,10 +296,20 @@ class BookedEvent extends Equatable {
   final DateTime? endAt;
   final List<BookedSupplier> suppliers;
 
+  /// The unpaid booking the host may still decline; null once it is paid.
+  final String? declinableBookingId;
+
   bool get needsReplacement => suppliers.any((s) => s.problem != null);
 
   @override
-  List<Object?> get props => [eventId, eventName, startAt, endAt, suppliers];
+  List<Object?> get props => [
+        eventId,
+        eventName,
+        startAt,
+        endAt,
+        suppliers,
+        declinableBookingId,
+      ];
 }
 
 /// One of your listings: a venue or an event template.
