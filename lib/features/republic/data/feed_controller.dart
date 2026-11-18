@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/republic/data/feed_realtime.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
@@ -21,6 +22,24 @@ class FeedSearchNotifier extends Notifier<String> {
 final feedSearchProvider =
     NotifierProvider<FeedSearchNotifier, String>(FeedSearchNotifier.new);
 
+class FeedModeNotifier extends Notifier<FeedMode> {
+  @override
+  FeedMode build() => FeedMode.forYou;
+
+  // A method, like FeedSearchNotifier.set: picking an order is an action the
+  // page calls, and a setter on a notifier reads as a field.
+  // ignore: use_setters_to_change_properties
+  void select(FeedMode mode) => state = mode;
+}
+
+/// How the main feed is ordered: For you (the default) or Recent. Changing it
+/// reloads every feed tab (app#308).
+final feedModeProvider =
+    NotifierProvider<FeedModeNotifier, FeedMode>(FeedModeNotifier.new);
+
+/// Posts this many or fewer are put on top by "New posts"; more reload.
+const newPostsBatch = 20;
+
 /// The posts loaded so far for one tab, and whether more can be loaded.
 class FeedState extends Equatable {
   const FeedState({
@@ -28,12 +47,21 @@ class FeedState extends Equatable {
     this.nextCursor,
     this.loadingMore = false,
     this.loadMoreFailed = false,
+    this.since,
+    this.newCount = 0,
   });
 
   final List<Post> posts;
   final String? nextCursor;
   final bool loadingMore;
   final bool loadMoreFailed;
+
+  /// Posts after this moment are not in the list: For you's session start, or
+  /// Recent's newest post. Null where there is no "New posts" pill.
+  final DateTime? since;
+
+  /// How many posts the viewer may see arrived after [since].
+  final int newCount;
 
   bool get hasMore => nextCursor != null;
 
@@ -43,16 +71,21 @@ class FeedState extends Equatable {
     bool? loadingMore,
     bool? loadMoreFailed,
     bool clearCursor = false,
+    DateTime? since,
+    int? newCount,
   }) =>
       FeedState(
         posts: posts ?? this.posts,
         nextCursor: clearCursor ? null : nextCursor ?? this.nextCursor,
         loadingMore: loadingMore ?? this.loadingMore,
         loadMoreFailed: loadMoreFailed ?? this.loadMoreFailed,
+        since: since ?? this.since,
+        newCount: newCount ?? this.newCount,
       );
 
   @override
-  List<Object?> get props => [posts, nextCursor, loadingMore, loadMoreFailed];
+  List<Object?> get props =>
+      [posts, nextCursor, loadingMore, loadMoreFailed, since, newCount];
 }
 
 /// The feed for one tab (`null` is all). Loads the first page, then more on
@@ -75,13 +108,38 @@ class FeedController extends AsyncNotifier<FeedState> {
           tab: tab,
           cursor: cursor,
           search: search,
+          mode: _plain ? null : ref.read(feedModeProvider),
         );
   }
 
+  /// A first page: for For you, a new session (a new mix).
+  Future<FeedState> _firstPage() async {
+    final page = await _page();
+    final DateTime? since;
+    if (_plain) {
+      since = null;
+    } else if (ref.read(feedModeProvider) == FeedMode.forYou) {
+      since = page.anchor;
+    } else {
+      since = page.posts.firstOrNull?.createdAt;
+    }
+    return FeedState(
+      posts: page.posts,
+      nextCursor: page.nextCursor,
+      since: since,
+    );
+  }
+
+  Timer? _coalesce;
+
   @override
   Future<FeedState> build() async {
-    // Watched, so a search reloads the list.
-    if (!_plain) ref.watch(feedSearchProvider);
+    // Watched, so a search or a new order reloads the list.
+    if (!_plain) {
+      ref
+        ..watch(feedSearchProvider)
+        ..watch(feedModeProvider);
+    }
     // Someone commented, or deleted one, on a post this list may show.
     ref.listen(postCommentsCountProvider, (_, next) {
       final change = next.value;
@@ -91,8 +149,103 @@ class FeedController extends AsyncNotifier<FeedState> {
         (p) => p.copyWith(commentsCount: change.commentsCount),
       );
     });
-    final page = await _page();
-    return FeedState(posts: page.posts, nextCursor: page.nextCursor);
+    if (!_plain) _watchForNewPosts();
+    return _firstPage();
+  }
+
+  /// Keeps [FeedState.newCount] current: on each `feed:new` for this tab (a
+  /// burst becomes one request), or every minute when no socket will say.
+  void _watchForNewPosts() {
+    ref.listen(feedNewProvider, (_, next) {
+      final event = next.value;
+      if (event == null) return;
+      if (tab != null && event.tab != tab) return;
+      _coalesce?.cancel();
+      _coalesce = Timer(const Duration(milliseconds: 1500), _checkNew);
+    });
+    // Listened, not watched: signing in or out restarts the timer without
+    // reloading the list, and a provider that can't tell (no session store,
+    // as in tests) just means no polling rather than a broken feed.
+    ref.listen<Duration?>(
+      feedNewPollIntervalProvider,
+      (_, interval) => _poll(interval),
+      onError: (_, __) => _poll(null),
+      fireImmediately: true,
+    );
+    ref.onDispose(() {
+      _pollTimer?.cancel();
+      _coalesce?.cancel();
+    });
+  }
+
+  Timer? _pollTimer;
+
+  void _poll(Duration? interval) {
+    _pollTimer?.cancel();
+    _pollTimer = interval == null
+        ? null
+        : Timer.periodic(interval, (_) {
+            final life = WidgetsBinding.instance.lifecycleState;
+            if (life != null && life != AppLifecycleState.resumed) return;
+            unawaited(_checkNew());
+          });
+  }
+
+  Future<void> _checkNew() async {
+    final since = state.value?.since;
+    // The count can't be filtered by words, so searches get no pill.
+    if (since == null || ref.read(feedSearchProvider).isNotEmpty) return;
+    try {
+      final count = await ref
+          .read(republicRepositoryProvider)
+          .newPostsCount(since: since, tab: tab);
+      if (!ref.mounted) return;
+      final latest = state.value;
+      if (latest == null || latest.since != since) return;
+      state = AsyncData(latest.copyWith(newCount: count));
+    } on Object {
+      // Best-effort: the next event or poll tries again.
+    }
+  }
+
+  /// "New posts": puts the posts that arrived after [FeedState.since] on top,
+  /// leaving the rest of the list (and For you's session) as it was.
+  Future<void> showNewPosts() async {
+    final current = state.value;
+    final since = current?.since;
+    if (current == null || since == null) return;
+    if (current.newCount > newPostsBatch) return refresh();
+    try {
+      final page = await ref.read(republicRepositoryProvider).feed(
+            tab: tab,
+            mode: FeedMode.recent,
+            limit: newPostsBatch,
+          );
+      if (!ref.mounted) return;
+      final latest = state.value;
+      if (latest == null) return;
+      final known = {for (final p in latest.posts) p.id};
+      final newer = [
+        for (final p in page.posts)
+          if (p.createdAt != null &&
+              p.createdAt!.isAfter(since) &&
+              !known.contains(p.id))
+            p,
+      ];
+      var newest = since;
+      for (final p in newer) {
+        if (p.createdAt!.isAfter(newest)) newest = p.createdAt!;
+      }
+      state = AsyncData(
+        latest.copyWith(
+          posts: [...newer, ...latest.posts],
+          since: newest,
+          newCount: 0,
+        ),
+      );
+    } on Object {
+      // The pill stays; tapping it again tries again.
+    }
   }
 
   Future<void> loadMore() async {
@@ -121,15 +274,14 @@ class FeedController extends AsyncNotifier<FeedState> {
     }
   }
 
+  /// Pull to refresh: the first page again, so For you starts a new session
+  /// and shows a new mix.
   Future<void> refresh() async {
-    state = await AsyncValue.guard(() async {
-      final page = await _page();
-      return FeedState(posts: page.posts, nextCursor: page.nextCursor);
-    });
+    state = await AsyncValue.guard(_firstPage);
   }
 
-  /// Puts a post first in the list, for one you have just written: the feed
-  /// lists featured posts first, so it would otherwise be a screen or two down.
+  /// Puts a post first in the list, for one you have just written: For you
+  /// ranks it among the rest, so it would otherwise be a screen or two down.
   void addFirst(Post post) {
     final latest = state.value;
     if (latest == null) return;

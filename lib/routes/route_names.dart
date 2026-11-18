@@ -160,6 +160,21 @@ class RouteNames {
   /// What Coins can buy.
   static const String rewards = '/rewards';
 
+  /// Token perks: the person's own (`/perks/mine`), one perk by id, and the
+  /// live code to show at the door for a redemption.
+  static const String perksMine = '/perks/mine';
+
+  /// The perks a host or Mayor offers, adding one, and checking a perk code at
+  /// the door; plus the perks of one event package, for someone booked on it.
+  static const String perksOffered = '/perks/offered';
+  static const String perkNew = '/perks/new';
+  static const String perkScan = '/perks/scan';
+  static String packagePerks(String templateId) =>
+      '/perks/package/${Uri.encodeComponent(templateId)}';
+  static String perkDetail(String id) => '/perks/${Uri.encodeComponent(id)}';
+  static String perkCode(String redemptionId) =>
+      '/perk-code/${Uri.encodeComponent(redemptionId)}';
+
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.
   static String republicPost(String id, {bool comments = false}) => Uri(
@@ -227,6 +242,11 @@ class RouteNames {
   static const String spaceBidDetail = '/space/event/bids/detail';
 
   static const String spaceEventStudio = '/space/event/studio';
+
+  /// One booked event of the Event Foxer's, with its Suppliers and any that
+  /// need replacing. Pushed from Overview and from a notification.
+  static String bookedEvent(String eventId) =>
+      '/space/event/booked/${Uri.encodeComponent(eventId)}';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';
   static const String spaceEventCheckIn = '/space/event/more/check-in';
@@ -242,6 +262,14 @@ class RouteNames {
 
   /// One event package: what is in it, customised and booked.
   static const String eventDetail = '/event';
+
+  /// The same three pages from a link that carries only the id:
+  /// `/venue/<id>`, `/event/<id>`, `/foxer/<id>`. The page loads the row.
+  static String venueById(String id) =>
+      '$venueDetail/${Uri.encodeComponent(id)}';
+  static String eventById(String id) =>
+      '$eventDetail/${Uri.encodeComponent(id)}';
+  static String foxerById(String id) => '$foxer/${Uri.encodeComponent(id)}';
 
   /// An event that its owner chose to publish.
   static const String scheduledEventDetail = '/scheduled-event';

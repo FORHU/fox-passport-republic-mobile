@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/domain/entities/user_entity.dart';
@@ -984,6 +985,193 @@ void main() {
       await tester.tap(find.text('Check-in'));
       await tester.pumpAndSettle();
       expect(find.text('AT ${RouteNames.spaceVenueCheckIn}'), findsOneWidget);
+    });
+  });
+
+  group('Declining a booked event', () {
+    VenueRequest booked(
+      String id, {
+      RequestStatus status = RequestStatus.approved,
+      String? bookingStatus = 'pending',
+    }) =>
+        VenueRequest(
+          id: id,
+          venueName: 'Sky Hall',
+          eventName: 'Ada Birthday',
+          status: status,
+          bookingStatus: bookingStatus,
+        );
+
+    test('a request reads the booking status and who declined', () {
+      final r = VenueRequest.tryParse({
+        'id': 'r1',
+        'status': 'rejected',
+        'rejectionReason': 'supplier_declined',
+        'booking': {'status': 'pending'},
+        'event': {'name': 'Ada Birthday'},
+        'venue': {'name': 'Sky Hall'},
+      })!;
+
+      expect(r.bookingStatus, 'pending');
+      expect(r.declinedBySupplier, isTrue);
+      // A provider turning down a request is not the same thing.
+      expect(
+        VenueRequest.tryParse({
+          'id': 'r2',
+          'status': 'rejected',
+          'rejectionReason': 'provider_declined',
+        })!
+            .declinedBySupplier,
+        isFalse,
+      );
+    });
+
+    test('only an unpaid, still-live booked item can be declined', () {
+      expect(booked('a').canDecline, isTrue);
+      expect(booked('a', status: RequestStatus.pending).canDecline, isTrue);
+      // Not yet attached to a booking: nothing has been paid.
+      expect(booked('a', bookingStatus: null).canDecline, isTrue);
+      // Paid, or past paid.
+      expect(booked('a', bookingStatus: 'confirmed').canDecline, isFalse);
+      expect(booked('a', bookingStatus: 'completed').canDecline, isFalse);
+      // Already gone, or still waiting for a first answer.
+      expect(booked('a', status: RequestStatus.rejected).canDecline, isFalse);
+      expect(booked('a', status: RequestStatus.cancelled).canDecline, isFalse);
+      expect(
+        booked('a', status: RequestStatus.awaitingYou).canDecline,
+        isFalse,
+      );
+    });
+
+    testWidgets('offers it on an unpaid booked item, and not on a paid one', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [
+          booked('r1'),
+          booked('r2', bookingStatus: 'confirmed'),
+          booked('r3', status: RequestStatus.rejected),
+        ],
+      );
+
+      expect(find.text('Decline this booking'), findsOneWidget);
+    });
+
+    testWidgets('asks first, then declines and says so', (tester) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      expect(find.text('Decline this booking?'), findsOneWidget);
+      verifyNever(
+        () => api.patch(ApiEndpoints.requestReview('r1'), any()),
+      );
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text('Decline this booking'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.patch(
+          ApiEndpoints.requestReview('r1'),
+          {'type': 'venue', 'action': 'decline', 'cause': 'other'},
+        ),
+      ).called(1);
+      expect(
+        find.text('You declined. The host and the citizen were told.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('can say the Supplier is busy with another booking', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text("I'm busy then"));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.patch(
+          ApiEndpoints.requestReview('r1'),
+          {'type': 'venue', 'action': 'decline', 'cause': 'busy'},
+        ),
+      ).called(1);
+    });
+
+    testWidgets('backing out of the question declines nothing', (tester) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => api.patch(any(), any()));
+    });
+
+    testWidgets("shows the server's reason when it refuses", (tester) async {
+      when(() => api.patch(any(), any())).thenThrow(
+        const ServerException(
+          'This booking is already paid, so it can no longer be declined.',
+        ),
+      );
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text('Decline this booking'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'This booking is already paid, so it can no longer be declined.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a waiting request still has its own Accept and Decline', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [_request('r1')],
+      );
+
+      expect(find.text('Accept'), findsOneWidget);
+      expect(find.text('Decline'), findsOneWidget);
+      expect(find.text('Decline this booking'), findsNothing);
     });
   });
 }

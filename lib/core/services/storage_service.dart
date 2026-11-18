@@ -74,9 +74,13 @@ class StorageService {
     await _secure.delete(key: _refreshTokenKey);
     await _prefs.remove(_userModelKey);
     await _prefs.remove(_onboardingKey);
-    // Saved tickets are the account's: they do not stay for the next one.
+    // Saved tickets are the account's: they do not stay for the next one. The
+    // saved Home lists (`ResponseCache`) go too, so a new sign-in starts clean.
     for (final key in _prefs.getKeys().toList()) {
-      if (key.startsWith('tickets_cache_')) await _prefs.remove(key);
+      if (key.startsWith('tickets_cache_') ||
+          key.startsWith('response_cache_')) {
+        await _prefs.remove(key);
+      }
     }
   }
 }

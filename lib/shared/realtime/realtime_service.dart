@@ -24,6 +24,9 @@ class RealtimeEvents {
   static const groupRemoved = 'group:removed';
   static const postCommentsCount = 'post:comments_count';
 
+  /// A public Republic post was just created; carries only its `tab`.
+  static const feedNew = 'feed:new';
+
   static const List<String> all = [
     newNotification,
     dataInvalidate,
@@ -37,6 +40,7 @@ class RealtimeEvents {
     presenceUpdate,
     groupRemoved,
     postCommentsCount,
+    feedNew,
   ];
 }
 

@@ -1760,6 +1760,85 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String eventNeedsDeclined(String supplier, String event) {
+    return '$supplier declined $event. Pick a replacement.';
+  }
+
+  @override
+  String eventNeedsDateBlocked(String supplier, String event) {
+    return '$supplier blocked a day of $event. Pick another venue or date.';
+  }
+
+  @override
+  String eventNeedsBusy(String supplier, String event) {
+    return '$supplier is busy with another booking and left $event. Pick a replacement.';
+  }
+
+  @override
+  String eventNeedsUnavailable(String item, String event) {
+    return '$item is no longer available for $event. Pick a replacement.';
+  }
+
+  @override
+  String eventNeedsMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more need a replacement',
+      one: 'and 1 more event needs a replacement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookedEventTitle => 'Booked event';
+
+  @override
+  String get bookedEventNeeds => 'This event needs a replacement';
+
+  @override
+  String get bookedEventNeedsBody =>
+      'A Supplier is no longer available for it. Pick a replacement, or ask the Supplier.';
+
+  @override
+  String get bookedEventSuppliers => 'Suppliers';
+
+  @override
+  String get bookedEventNone => 'No Suppliers are booked for this event yet.';
+
+  @override
+  String get bookedReasonDeclined => 'Declined this event';
+
+  @override
+  String get bookedReasonDateBlocked => 'Blocked a day of this event';
+
+  @override
+  String get bookedReasonBusy => 'Busy with another booking';
+
+  @override
+  String get bookedReasonUnavailable => 'No longer available';
+
+  @override
+  String get hostDeclineButton => 'I can\'t run this event';
+
+  @override
+  String get hostDeclineTitle => 'Decline this event?';
+
+  @override
+  String get hostDeclineBody =>
+      'The citizen and every Supplier are told, and the booking ends. Nothing was charged. You cannot undo this.';
+
+  @override
+  String get hostDeclineDone =>
+      'You declined. The citizen and the Suppliers were told.';
+
+  @override
+  String get hostDeclineAction => 'Decline this event';
+
+  @override
+  String get bookedEventNotFound => 'We could not find that event.';
+
+  @override
   String eventsDeclined(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -2555,6 +2634,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestDeclined => 'Request declined.';
+
+  @override
+  String get requestDeclineBooked => 'Decline this booking';
+
+  @override
+  String get requestDeclineBusy => 'I\'m busy then';
+
+  @override
+  String get requestDeclineBookedTitle => 'Decline this booking?';
+
+  @override
+  String get requestDeclineBookedBody =>
+      'The event host and the citizen are told, and the host is asked to replace you. You cannot undo this.';
+
+  @override
+  String get requestDeclinedBooked =>
+      'You declined. The host and the citizen were told.';
 
   @override
   String get requestActionFailed =>
@@ -4571,6 +4667,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicPinned => 'Featured in Republic';
 
   @override
+  String get republicFromEarlier => 'From earlier';
+
+  @override
+  String get republicSortPosts => 'Sort posts';
+
+  @override
+  String get republicSortForYou => 'For you';
+
+  @override
+  String get republicSortRecent => 'Recent';
+
+  @override
+  String republicNewPosts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new posts',
+      one: '1 new post',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get republicBookVenue => 'Book venue';
 
   @override
@@ -4700,6 +4819,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportTabEarn => 'Earn';
+
+  @override
+  String get passportEarnAsFoxerRow => 'Earn as a Foxer';
 
   @override
   String get passportSavedEmpty => 'No saved posts yet.';
@@ -5604,8 +5726,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get openByIdNotFound => 'That page is not available any more.';
+
+  @override
+  String get openByIdToSearch => 'Go to Search';
+
+  @override
   String ticketsOfflineNote(String when) {
     return 'No connection. Showing the tickets saved $when.';
+  }
+
+  @override
+  String homeOfflineNote(String when) {
+    return 'No connection. Showing what was saved $when. Pull down to refresh.';
   }
 
   @override
@@ -5999,6 +6132,336 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardsDone => 'Done';
+
+  @override
+  String get perksMine => 'My perks';
+
+  @override
+  String perksMineReady(int count) {
+    return 'My perks · $count ready';
+  }
+
+  @override
+  String get perksOffered => 'Offered perks';
+
+  @override
+  String get perksOfferedByVenue => 'Offered by venue';
+
+  @override
+  String get perksOfferedByHost => 'Offered by host';
+
+  @override
+  String perksLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String get perksView => 'View';
+
+  @override
+  String get perksEmpty =>
+      'No perks yet. Venues and event hosts add them here.';
+
+  @override
+  String perksHeldNote(String count) {
+    return '$count Tokens held until your first paid booking';
+  }
+
+  @override
+  String get perkUseItOn => 'Use it on';
+
+  @override
+  String get perkChange => 'Change';
+
+  @override
+  String get perkHowItWorks => 'How it works';
+
+  @override
+  String get perkStep1 => 'Confirm, and your code appears.';
+
+  @override
+  String get perkStep2 => 'Show it to staff when you arrive.';
+
+  @override
+  String get perkStep3 => 'Staff scan it and the perk is yours.';
+
+  @override
+  String get perkRule =>
+      'Only works for the booking you pick. If you cancel that booking or it goes unused, your Tokens come back.';
+
+  @override
+  String perkYouHave(String count) {
+    return 'You have $count';
+  }
+
+  @override
+  String get perkRedeem => 'Redeem';
+
+  @override
+  String get perkPickBooking => 'Pick a booking';
+
+  @override
+  String get perkNoBooking =>
+      'No booking this perk works for yet. Book it first, then come back to use this perk.';
+
+  @override
+  String perkUseTokens(String count) {
+    return 'Use $count Tokens?';
+  }
+
+  @override
+  String perkUseTokensBody(String title) {
+    return 'You get a code for $title, for the booking below.';
+  }
+
+  @override
+  String get perkBookingLabel => 'Booking';
+
+  @override
+  String get perkCostLabel => 'Cost';
+
+  @override
+  String get perkLeftAfter => 'Left after';
+
+  @override
+  String get perkConfirmNote =>
+      'If the booking is cancelled or the perk goes unused, your Tokens come back.';
+
+  @override
+  String perkConfirmButton(String count) {
+    return 'Use $count Tokens';
+  }
+
+  @override
+  String get perkCancel => 'Cancel';
+
+  @override
+  String get perkRedeemFailed => 'We could not redeem that perk. Try again.';
+
+  @override
+  String get perkYourPerk => 'Your perk';
+
+  @override
+  String get perkReadyToUse => 'Ready to use';
+
+  @override
+  String perkNewCodeIn(String time) {
+    return 'New code in $time';
+  }
+
+  @override
+  String get perkCodeChanges =>
+      'The code changes every 30 seconds, so a screenshot will not work.';
+
+  @override
+  String get perkValidUntil => 'Valid until';
+
+  @override
+  String get perkPaid => 'Paid';
+
+  @override
+  String perkPaidTokens(String count) {
+    return '$count Tokens';
+  }
+
+  @override
+  String perkShowStaff(String count) {
+    return 'Show this to staff when you arrive. If it expires unused, your $count Tokens come back.';
+  }
+
+  @override
+  String get perkBackToRewards => 'Back to Rewards';
+
+  @override
+  String get perkCodeUnavailable => 'This perk can no longer be used.';
+
+  @override
+  String get perksSectionReady => 'Ready to use';
+
+  @override
+  String get perksSectionUsed => 'Used';
+
+  @override
+  String get perksSectionExpired => 'Expired';
+
+  @override
+  String perkUsedOn(String date) {
+    return 'Used $date';
+  }
+
+  @override
+  String perkExpiredOn(String date) {
+    return 'Expired $date';
+  }
+
+  @override
+  String perkUseBy(String date) {
+    return 'Use by $date';
+  }
+
+  @override
+  String perkTokensReturned(String count) {
+    return '$count Tokens returned to your wallet';
+  }
+
+  @override
+  String get perkShowCode => 'Show code';
+
+  @override
+  String get perkReady => 'Ready';
+
+  @override
+  String get perksMineEmpty => 'You have no perks yet.';
+
+  @override
+  String get perksYours => 'Your perks';
+
+  @override
+  String get perksAdd => 'Add a perk';
+
+  @override
+  String get perksOfferedEmpty => 'You are not offering any perks yet.';
+
+  @override
+  String perksBought(int count) {
+    return '$count bought';
+  }
+
+  @override
+  String get perksOff => 'Taken down';
+
+  @override
+  String get perksTakeDown => 'Take down';
+
+  @override
+  String get perksTakeDownTitle => 'Take this perk down?';
+
+  @override
+  String get perksTakeDownBody =>
+      'No one can buy it any more. Anyone who bought it and has not used it gets their Tokens back.';
+
+  @override
+  String get perksTakenDown =>
+      'Taken down. Tokens went back to anyone holding it.';
+
+  @override
+  String get perksTakeDownFailed => 'We could not take that down. Try again.';
+
+  @override
+  String get perkAddTitle => 'Add a perk';
+
+  @override
+  String get perkForWhich => 'For which event or venue';
+
+  @override
+  String get perkWhatYouGive => 'What you give';
+
+  @override
+  String get perkTitleHint => 'Free welcome drink';
+
+  @override
+  String get perkDescriptionHint => 'One drink at the bar when you arrive.';
+
+  @override
+  String get perkWorthLabel => 'Worth (₱)';
+
+  @override
+  String get perkHowManyLabel => 'How many';
+
+  @override
+  String get perkCitizensPay => 'Citizens pay';
+
+  @override
+  String get perkRateNote =>
+      'Set from the peso value, at 5 Tokens = ₱1, so the price is fair at every event.';
+
+  @override
+  String get perkHostNote =>
+      'You provide this perk, so it costs you and not the platform. If you cancel the event or take the perk down, anyone who bought it gets their Tokens back.';
+
+  @override
+  String get perkAddButton => 'Add perk';
+
+  @override
+  String get perkAddFailed => 'We could not add that perk. Try again.';
+
+  @override
+  String get perkNoTargets =>
+      'You have no event packages or venues to add a perk to yet.';
+
+  @override
+  String get perkRequired => 'Required';
+
+  @override
+  String get perkScanTitle => 'Scan a perk code';
+
+  @override
+  String get perkScanIntro =>
+      'Point the camera at the customer\'s code, or type it.';
+
+  @override
+  String get perkScanCamera => 'Scan with the camera';
+
+  @override
+  String get perkScanType => 'or type the code';
+
+  @override
+  String get perkCodeHint => 'FP-XXXX-XXXX';
+
+  @override
+  String get perkCheck => 'Check';
+
+  @override
+  String get perkScanFailed => 'We could not check that code. Try again.';
+
+  @override
+  String get perkValidTitle => 'Valid perk';
+
+  @override
+  String get perkValidBody => 'Safe to give. Mark it used once you have.';
+
+  @override
+  String get perkUsedTitle => 'Already used';
+
+  @override
+  String get perkUsedBody => 'Do not give the perk. This code was used before.';
+
+  @override
+  String get perkExpiredTitle => 'Expired';
+
+  @override
+  String get perkExpiredBody =>
+      'Do not give the perk. This code can no longer be used.';
+
+  @override
+  String get perkFieldPerk => 'Perk';
+
+  @override
+  String get perkFieldGuest => 'Guest';
+
+  @override
+  String get perkFieldUsed => 'Used';
+
+  @override
+  String get perkFieldAt => 'At';
+
+  @override
+  String get perkMarkUsed => 'Mark as used';
+
+  @override
+  String get perkMarkUsedNote => 'Once marked, this code cannot be used again.';
+
+  @override
+  String get perkMarkedUsed => 'Marked as used';
+
+  @override
+  String get perkScanAnother => 'Scan another';
+
+  @override
+  String get perkForThisEvent => 'Perks for this event';
+
+  @override
+  String get perkForEventEmpty => 'No perks for this event yet.';
 
   @override
   String get rewardsLifeRelease => 'Tokens released';

@@ -19,7 +19,11 @@ enum _Filter { all, discounts, perks }
 /// What Tokens can buy: discount vouchers and perks, with what you can afford
 /// now and what is almost within reach.
 class RewardsPage extends ConsumerStatefulWidget {
-  const RewardsPage({super.key});
+  const RewardsPage({this.perksSection, super.key});
+
+  /// The Token perks on offer, drawn by the Perks feature (passed in by the
+  /// route, so Rewards does not import it). Shown under All and Perks.
+  final Widget? perksSection;
 
   @override
   ConsumerState<RewardsPage> createState() => _RewardsPageState();
@@ -101,7 +105,14 @@ class _RewardsPageState extends ConsumerState<RewardsPage> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                if (items.isEmpty)
+                if (widget.perksSection != null &&
+                    _filter != _Filter.discounts) ...[
+                  widget.perksSection!,
+                  const SizedBox(height: 4),
+                ],
+                if (items.isEmpty &&
+                    (widget.perksSection == null ||
+                        _filter == _Filter.discounts))
                   Padding(
                     padding: const EdgeInsets.only(top: 48),
                     child: Text(

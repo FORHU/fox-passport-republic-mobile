@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
@@ -67,6 +68,60 @@ Future<void> answerVenueRequest(
     }
   } on Object {
     if (context.mounted) showTopToast(context, l10n.requestActionFailed);
+  }
+}
+
+/// Leaves an event that is already booked: asks first, then tells the event
+/// host and the citizen. Only offered while the booking is not paid; if it has
+/// been paid since, the API refuses and its reason is shown.
+Future<void> declineBookedRequest(
+  BuildContext context,
+  WidgetRef ref,
+  VenueRequest request,
+) async {
+  final l10n = context.l10n;
+  final cause = await showDialog<DeclineCause>(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: AppColors.surface,
+      title: Text(l10n.requestDeclineBookedTitle),
+      content: Text(l10n.requestDeclineBookedBody),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.messageCancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(DeclineCause.busy),
+          child: Text(l10n.requestDeclineBusy),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(DeclineCause.other),
+          child: Text(
+            l10n.requestDeclineBooked,
+            style: const TextStyle(color: AppColors.error),
+          ),
+        ),
+      ],
+    ),
+  );
+  if (cause == null || !context.mounted) return;
+  try {
+    await ref
+        .read(spacesRepositoryProvider)
+        .declineBookedItem(request.id, kind: request.kind, cause: cause);
+    ref
+      ..invalidate(venueRequestsProvider)
+      ..invalidate(supplyRequestsProvider);
+    if (context.mounted) showTopToast(context, l10n.requestDeclinedBooked);
+  } on Object catch (e) {
+    if (!context.mounted) return;
+    showTopToast(
+      context,
+      e is AppException && e.message.isNotEmpty
+          ? e.message
+          : l10n.requestActionFailed,
+    );
   }
 }
 
@@ -140,6 +195,11 @@ class VenueRequestsPage extends ConsumerWidget {
                     onDecline: () => unawaited(
                       answerVenueRequest(context, ref, request, accept: false),
                     ),
+                    onDeclineBooked: request.canDecline
+                        ? () => unawaited(
+                              declineBookedRequest(context, ref, request),
+                            )
+                        : null,
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -158,12 +218,17 @@ class VenueRequestCard extends ConsumerWidget {
     required this.request,
     required this.onAccept,
     required this.onDecline,
+    this.onDeclineBooked,
     super.key,
   });
 
   final VenueRequest request;
   final VoidCallback onAccept;
   final VoidCallback onDecline;
+
+  /// Leaving an event that is already booked. Null when it is not offered
+  /// (the request is still waiting for a reply, or the booking is paid).
+  final VoidCallback? onDeclineBooked;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -269,6 +334,24 @@ class VenueRequestCard extends ConsumerWidget {
                   ),
                 ),
               ],
+            ),
+          ],
+          if (onDeclineBooked != null) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: onDeclineBooked,
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(0, 44),
+                  foregroundColor: AppColors.error,
+                  side: const BorderSide(color: AppColors.error),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.brPill,
+                  ),
+                ),
+                child: Text(l10n.requestDeclineBooked),
+              ),
             ),
           ],
         ],

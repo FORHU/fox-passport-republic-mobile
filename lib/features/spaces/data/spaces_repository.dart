@@ -72,6 +72,58 @@ class SpacesRepository {
     });
   }
 
+  /// The person's upcoming booked events that lost a Supplier (it declined, a
+  /// day was blocked, or gear or a service was taken down), and which one.
+  Future<List<EventNeedingAttention>> eventsNeedingAttention() async {
+    final body = await _api.get(ApiEndpoints.eventsNeedingAttention);
+    final data = body is Map ? body['data'] : null;
+    if (data is! List) {
+      throw const FormatException('Needs-attention response is not a list');
+    }
+    return [
+      for (final row in data)
+        if (EventNeedingAttention.tryParse(row) case final e?) e,
+    ];
+  }
+
+  /// One of the person's booked events with every Supplier on it. Throws when
+  /// the event is not theirs or does not exist.
+  Future<BookedEvent> bookedEvent(String eventId) async {
+    final body = await _api.get(ApiEndpoints.bookedEvent(eventId));
+    final event = BookedEvent.tryParse(body is Map ? body['data'] : null);
+    if (event == null) {
+      throw const FormatException('Booked event response has no event');
+    }
+    return event;
+  }
+
+  /// Leaves an event that is already booked (not a request still waiting for
+  /// a reply). The event host and the citizen are told. The API refuses it once
+  /// the booking is paid, and says so.
+  Future<void> declineBookedItem(
+    String id, {
+    required RequestKind kind,
+    DeclineCause cause = DeclineCause.other,
+  }) async {
+    await _api.patch(ApiEndpoints.requestReview(id), {
+      'type': kind.name,
+      'action': 'decline',
+      'cause': cause.name,
+    });
+  }
+
+  /// The event's host leaves a booking they cannot attend. Only an unpaid
+  /// booking can be left; the API refuses a paid one and says so. The citizen
+  /// and every Supplier on it are told.
+  Future<void> declineAsHost(
+    String bookingId, {
+    DeclineCause cause = DeclineCause.other,
+  }) async {
+    await _api.post(ApiEndpoints.bookingDecline(bookingId), {
+      'cause': cause.name,
+    });
+  }
+
   /// The gear the person lists. The API gives at most 50 at a time, so this
   /// asks page by page.
   Future<List<SpaceListing>> myAssets() =>
@@ -806,6 +858,21 @@ final FutureProvider<List<SpaceListing>> myServicesProvider =
 final FutureProvider<List<SpaceListing>> myVenuesProvider =
     FutureProvider.autoDispose<List<SpaceListing>>(
   (ref) => ref.watch(spacesRepositoryProvider).myVenues(),
+);
+
+/// Booked events that need a replacement Supplier.
+final FutureProvider<List<EventNeedingAttention>>
+    eventsNeedingAttentionProvider =
+    FutureProvider.autoDispose<List<EventNeedingAttention>>(
+  (ref) => ref.watch(spacesRepositoryProvider).eventsNeedingAttention(),
+);
+
+/// One booked event with its Suppliers.
+// The family type is long and adds nothing here, so it is left inferred.
+// ignore: specify_nonobvious_property_types
+final bookedEventProvider =
+    FutureProvider.autoDispose.family<BookedEvent, String>(
+  (ref, eventId) => ref.watch(spacesRepositoryProvider).bookedEvent(eventId),
 );
 
 final FutureProvider<List<SpaceListing>> myEventsProvider =

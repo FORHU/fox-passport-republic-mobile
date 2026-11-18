@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
+import 'package:flutter_template/shared/offline/response_cache.dart';
 
 /// What to look up: the occasion's API name and, optionally, a city.
 typedef PackageQuery = ({String category, String? city});
@@ -13,7 +15,9 @@ typedef PackageQuery = ({String category, String? city});
 // ignore: specify_nonobvious_property_types
 final packagesProvider = FutureProvider.autoDispose
     .family<List<CatalogItem>, PackageQuery>((ref, query) async {
-  final body = await ref.watch(apiServiceProvider).get(
+  final answer = await ResponseCache.get(
+    ref.watch(apiServiceProvider),
+    ResponseCache(ref.watch(storageServiceProvider)),
     ApiEndpoints.eventsBrowse,
     query: {
       'category': query.category,
@@ -21,6 +25,7 @@ final packagesProvider = FutureProvider.autoDispose
       'limit': 12,
     },
   );
+  final body = answer.body;
   final data = body is Map ? body['data'] : null;
   if (data is! List) return const [];
   return [
