@@ -243,6 +243,14 @@ class RouteNames {
   /// One event package: what is in it, customised and booked.
   static const String eventDetail = '/event';
 
+  /// The same three pages from a link that carries only the id:
+  /// `/venue/<id>`, `/event/<id>`, `/foxer/<id>`. The page loads the row.
+  static String venueById(String id) =>
+      '$venueDetail/${Uri.encodeComponent(id)}';
+  static String eventById(String id) =>
+      '$eventDetail/${Uri.encodeComponent(id)}';
+  static String foxerById(String id) => '$foxer/${Uri.encodeComponent(id)}';
+
   /// An event that its owner chose to publish.
   static const String scheduledEventDetail = '/scheduled-event';
 

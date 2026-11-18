@@ -232,6 +232,25 @@ class CatalogRepository {
     }
   }
 
+  /// One venue, event package or Foxer by id, as the row Search would have
+  /// listed, for a link that carries only the id. Null when the answer has
+  /// nothing usable in it. The id comes from a link, so it is encoded.
+  Future<CatalogItem?> byId(CatalogKind kind, String id) async {
+    final safe = Uri.encodeComponent(id);
+    final path = switch (kind) {
+      CatalogKind.venues => ApiEndpoints.venueById(safe),
+      CatalogKind.events => ApiEndpoints.eventBrowseById(safe),
+      CatalogKind.foxers => ApiEndpoints.foxerById(safe),
+      CatalogKind.gear ||
+      CatalogKind.services =>
+        throw ArgumentError.value(kind, 'kind', 'has no page by id'),
+    };
+    final body = await _api.get(path);
+    final data = body is Map ? (body['venue'] ?? body['data'] ?? body) : null;
+    if (data is! Map) return null;
+    return _item(kind, data.cast<String, dynamic>());
+  }
+
   /// A catalog row from any endpoint, or null when it has no id or name.
   static CatalogItem? parse(CatalogKind kind, Map<String, dynamic> row) =>
       _item(kind, row);
@@ -451,4 +470,15 @@ final catalogProvider =
         sortBy: q.sortBy,
         specialty: q.specialty,
       ),
+);
+
+/// What to open by id: the kind of page and the id from the link.
+typedef CatalogRef = ({CatalogKind kind, String id});
+
+/// The row for one id, null when it is not there (removed, or not public).
+// The family type is long and adds nothing here, so it is left inferred.
+// ignore: specify_nonobvious_property_types
+final catalogItemByIdProvider =
+    FutureProvider.autoDispose.family<CatalogItem?, CatalogRef>(
+  (ref, r) => ref.watch(catalogRepositoryProvider).byId(r.kind, r.id),
 );

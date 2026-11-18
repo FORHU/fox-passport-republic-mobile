@@ -5604,6 +5604,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get openByIdNotFound => 'That page is not available any more.';
+
+  @override
+  String get openByIdToSearch => 'Go to Search';
+
+  @override
   String ticketsOfflineNote(String when) {
     return 'No connection. Showing the tickets saved $when.';
   }

@@ -1861,6 +1861,8 @@
   "providerNothingComing": "Nothing confirmed yet.",
   "providerRequestsWaiting": "{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}",
   "@providerRequestsWaiting": {"placeholders":{"count":{"type":"int"}}},
+  "openByIdNotFound": "That page is not available any more.",
+  "openByIdToSearch": "Go to Search",
   "ticketsOfflineNote": "No connection. Showing the tickets saved {when}.",
   "@ticketsOfflineNote": {"placeholders":{"when":{"type":"String"}}},
   "tourSkip": "Skip",
