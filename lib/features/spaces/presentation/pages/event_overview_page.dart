@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -51,13 +52,26 @@ class EventOverviewPage extends ConsumerWidget {
     final isNew =
         ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
 
+    // Booked events that lost a Supplier. A failure here must not hide the
+    // rest of the Overview, so it reads as "none".
+    final needsAsync = ref.watch(eventsNeedingAttentionProvider);
+    final needs = [
+      for (final e
+          in needsAsync.asData?.value ?? const <EventNeedingAttention>[])
+        for (final i in e.issues) (event: e, issue: i),
+    ];
+    const maxNeedRows = 5;
+
     final all = events.asData?.value ?? const [];
     int inGroup(String group) => all.where((e) => e.group == group).length;
     final inReview = inGroup('pending');
     final declined = inGroup('rejected');
     final drafts = inGroup('draft');
-    final somethingToDo =
-        invites > 0 || inReview > 0 || declined > 0 || drafts > 0;
+    final somethingToDo = needs.isNotEmpty ||
+        invites > 0 ||
+        inReview > 0 ||
+        declined > 0 ||
+        drafts > 0;
 
     // Opens the Events tab on one status group.
     void showGroup(String group) =>
@@ -98,6 +112,7 @@ class EventOverviewPage extends ConsumerWidget {
           ref
             ..invalidate(partnersProvider)
             ..invalidate(stripeStatusProvider)
+            ..invalidate(eventsNeedingAttentionProvider)
             ..invalidate(myEventsProvider);
           try {
             await ref.read(myEventsProvider.future);
@@ -141,8 +156,47 @@ class EventOverviewPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HomeSectionHeader(title: l10n.overviewAttention),
-                  if (partners.hasValue && events.hasValue && !somethingToDo)
+                  if (partners.hasValue &&
+                      events.hasValue &&
+                      !needsAsync.isLoading &&
+                      !somethingToDo)
                     AllClearCard(text: l10n.overviewAllClear),
+                  // The most urgent first: a booked, paying event that has
+                  // lost a Supplier.
+                  for (final n in needs.take(maxNeedRows))
+                    AttentionRow(
+                      icon: Icons.swap_horiz_rounded,
+                      color: AppColors.error,
+                      text: switch (n.issue.reason) {
+                        AttentionReason.declined => l10n.eventNeedsDeclined(
+                            n.issue.supplierName,
+                            n.event.eventName,
+                          ),
+                        AttentionReason.dateBlocked =>
+                          l10n.eventNeedsDateBlocked(
+                            n.issue.supplierName,
+                            n.event.eventName,
+                          ),
+                        AttentionReason.unavailable =>
+                          l10n.eventNeedsUnavailable(
+                            n.issue.itemName,
+                            n.event.eventName,
+                          ),
+                      },
+                      onTap: () =>
+                          context.push(RouteNames.bookedEvent(n.event.eventId)),
+                    ),
+                  if (needs.length > maxNeedRows)
+                    AttentionRow(
+                      icon: Icons.more_horiz_rounded,
+                      color: AppColors.error,
+                      text: l10n.eventNeedsMore(needs.length - maxNeedRows),
+                      onTap: () => context.push(
+                        RouteNames.bookedEvent(
+                          needs[maxNeedRows].event.eventId,
+                        ),
+                      ),
+                    ),
                   if (invites > 0)
                     AttentionRow(
                       icon: Icons.mail_outline_rounded,

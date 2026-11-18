@@ -97,6 +97,10 @@ class ApiEndpoints {
   // ── Venues ──────────────────────────────────────────────────────────────
   /// What suppliers are asked to confirm for other people's events.
   static const String providerRequests = '/event-transactions/provider';
+  static const String eventsNeedingAttention =
+      '/event-transactions/needs-attention';
+  static String bookedEvent(String eventId) =>
+      '/event-transactions/event/${Uri.encodeComponent(eventId)}';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
   /// What the person has been paid and is owed, newest first.
