@@ -336,6 +336,33 @@ void main() {
       expect(inVideos(find.text('Cy')), findsOneWidget);
     });
 
+    for (final width in [320.0, 360.0, 412.0]) {
+      testWidgets('the Reels buttons clear the pill and the edge at $width', (
+        tester,
+      ) async {
+        await open(tester, posts);
+        tester.view
+          ..physicalSize = Size(width, 2400)
+          ..devicePixelRatio = 1;
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('See all'));
+        await tester.pumpAndSettle();
+
+        // The pill's labels with its padding ('Reels' is also the shelf title).
+        final pill = tester
+            .getRect(find.text('Posts'))
+            .expandToInclude(tester.getRect(find.text('Reels').last))
+            .inflate(3);
+        final post = tester.getRect(find.byTooltip('Post a reel'));
+        final sound = tester.getRect(find.byTooltip('Turn sound on'));
+
+        expect(post.left, greaterThanOrEqualTo(pill.right));
+        expect(sound.left - post.right, greaterThanOrEqualTo(8));
+        expect(width - sound.right, greaterThanOrEqualTo(12));
+      });
+    }
+
     testWidgets('the shelf steps aside while searching', (tester) async {
       await open(tester, posts);
 
