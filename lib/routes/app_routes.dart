@@ -34,6 +34,10 @@ import 'package:flutter_template/features/occasion/presentation/pages/occasion_p
 import 'package:flutter_template/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/foxer_passport_page.dart';
 import 'package:flutter_template/features/passport/presentation/pages/passport_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/my_perks_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/perk_code_page.dart';
+import 'package:flutter_template/features/perks/presentation/pages/perk_detail_page.dart';
+import 'package:flutter_template/features/perks/presentation/widgets/perks_section.dart';
 import 'package:flutter_template/features/profile/presentation/pages/citizen_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_template/features/profile/presentation/pages/identity_page.dart';
@@ -471,7 +475,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.rewards,
-        builder: (context, state) => const RewardsPage(),
+        builder: (context, state) =>
+            const RewardsPage(perksSection: PerksSection()),
+      ),
+      // Token perks. `/perks/mine` comes before `/perks/:id` so it is not read
+      // as a perk id.
+      GoRoute(
+        path: RouteNames.perksMine,
+        builder: (context, state) => const MyPerksPage(),
+      ),
+      GoRoute(
+        path: '/perks/:id',
+        builder: (context, state) =>
+            PerkDetailPage(perkId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/perk-code/:id',
+        builder: (context, state) =>
+            PerkCodePage(redemptionId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: RouteNames.itemBooking,

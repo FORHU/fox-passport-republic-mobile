@@ -232,6 +232,15 @@ class ApiEndpoints {
   /// Today's daily login (GET) and claiming it (POST).
   static const String rewardsDailyLogin = '/rewards/daily-login';
 
+  // ── Token perks: a drink, a starter or a +1, bought with Tokens
+  static const String perks = '/perks';
+  static const String perksMine = '/perks/mine';
+  static String perk(String id) => '/perks/${Uri.encodeComponent(id)}';
+  static String perkRedeem(String id) =>
+      '/perks/${Uri.encodeComponent(id)}/redeem';
+  static String perkCode(String redemptionId) =>
+      '/perks/redemptions/${Uri.encodeComponent(redemptionId)}/code';
+
   static const String achievementsMe = '/achievements/me';
 
   /// The signed-in citizen's milestone tracks and their progress.

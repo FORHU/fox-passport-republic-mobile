@@ -6001,6 +6001,186 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardsDone => 'Done';
 
   @override
+  String get perksMine => 'My perks';
+
+  @override
+  String perksMineReady(int count) {
+    return 'My perks · $count ready';
+  }
+
+  @override
+  String get perksOffered => 'Offered perks';
+
+  @override
+  String get perksOfferedByVenue => 'Offered by venue';
+
+  @override
+  String get perksOfferedByHost => 'Offered by host';
+
+  @override
+  String perksLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String get perksView => 'View';
+
+  @override
+  String get perksEmpty =>
+      'No perks yet. Venues and event hosts add them here.';
+
+  @override
+  String perksHeldNote(String count) {
+    return '$count Tokens held until your first paid booking';
+  }
+
+  @override
+  String get perkUseItOn => 'Use it on';
+
+  @override
+  String get perkChange => 'Change';
+
+  @override
+  String get perkHowItWorks => 'How it works';
+
+  @override
+  String get perkStep1 => 'Confirm, and your code appears.';
+
+  @override
+  String get perkStep2 => 'Show it to staff when you arrive.';
+
+  @override
+  String get perkStep3 => 'Staff scan it and the perk is yours.';
+
+  @override
+  String get perkRule =>
+      'Only works for the booking you pick. If you cancel that booking or it goes unused, your Tokens come back.';
+
+  @override
+  String perkYouHave(String count) {
+    return 'You have $count';
+  }
+
+  @override
+  String get perkRedeem => 'Redeem';
+
+  @override
+  String get perkPickBooking => 'Pick a booking';
+
+  @override
+  String get perkNoBooking =>
+      'No booking this perk works for yet. Book it first, then come back to use this perk.';
+
+  @override
+  String perkUseTokens(String count) {
+    return 'Use $count Tokens?';
+  }
+
+  @override
+  String perkUseTokensBody(String title) {
+    return 'You get a code for $title, for the booking below.';
+  }
+
+  @override
+  String get perkBookingLabel => 'Booking';
+
+  @override
+  String get perkCostLabel => 'Cost';
+
+  @override
+  String get perkLeftAfter => 'Left after';
+
+  @override
+  String get perkConfirmNote =>
+      'If the booking is cancelled or the perk goes unused, your Tokens come back.';
+
+  @override
+  String perkConfirmButton(String count) {
+    return 'Use $count Tokens';
+  }
+
+  @override
+  String get perkCancel => 'Cancel';
+
+  @override
+  String get perkRedeemFailed => 'We could not redeem that perk. Try again.';
+
+  @override
+  String get perkYourPerk => 'Your perk';
+
+  @override
+  String get perkReadyToUse => 'Ready to use';
+
+  @override
+  String perkNewCodeIn(String time) {
+    return 'New code in $time';
+  }
+
+  @override
+  String get perkCodeChanges =>
+      'The code changes every 30 seconds, so a screenshot will not work.';
+
+  @override
+  String get perkValidUntil => 'Valid until';
+
+  @override
+  String get perkPaid => 'Paid';
+
+  @override
+  String perkPaidTokens(String count) {
+    return '$count Tokens';
+  }
+
+  @override
+  String perkShowStaff(String count) {
+    return 'Show this to staff when you arrive. If it expires unused, your $count Tokens come back.';
+  }
+
+  @override
+  String get perkBackToRewards => 'Back to Rewards';
+
+  @override
+  String get perkCodeUnavailable => 'This perk can no longer be used.';
+
+  @override
+  String get perksSectionReady => 'Ready to use';
+
+  @override
+  String get perksSectionUsed => 'Used';
+
+  @override
+  String get perksSectionExpired => 'Expired';
+
+  @override
+  String perkUsedOn(String date) {
+    return 'Used $date';
+  }
+
+  @override
+  String perkExpiredOn(String date) {
+    return 'Expired $date';
+  }
+
+  @override
+  String perkUseBy(String date) {
+    return 'Use by $date';
+  }
+
+  @override
+  String perkTokensReturned(String count) {
+    return '$count Tokens returned to your wallet';
+  }
+
+  @override
+  String get perkShowCode => 'Show code';
+
+  @override
+  String get perkReady => 'Ready';
+
+  @override
+  String get perksMineEmpty => 'You have no perks yet.';
+
+  @override
   String get rewardsLifeRelease => 'Tokens released';
 
   @override

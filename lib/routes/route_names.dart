@@ -160,6 +160,13 @@ class RouteNames {
   /// What Coins can buy.
   static const String rewards = '/rewards';
 
+  /// Token perks: the person's own (`/perks/mine`), one perk by id, and the
+  /// live code to show at the door for a redemption.
+  static const String perksMine = '/perks/mine';
+  static String perkDetail(String id) => '/perks/${Uri.encodeComponent(id)}';
+  static String perkCode(String redemptionId) =>
+      '/perk-code/${Uri.encodeComponent(redemptionId)}';
+
   /// One post on its own: `/republic/post/<id>`. With `?comments=1` its
   /// comments open at once.
   static String republicPost(String id, {bool comments = false}) => Uri(
