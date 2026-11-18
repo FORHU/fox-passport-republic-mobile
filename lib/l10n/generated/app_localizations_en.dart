@@ -6218,6 +6218,156 @@ class AppLocalizationsEn extends AppLocalizations {
   String get perksMineEmpty => 'You have no perks yet.';
 
   @override
+  String get perksYours => 'Your perks';
+
+  @override
+  String get perksAdd => 'Add a perk';
+
+  @override
+  String get perksOfferedEmpty => 'You are not offering any perks yet.';
+
+  @override
+  String perksBought(int count) {
+    return '$count bought';
+  }
+
+  @override
+  String get perksOff => 'Taken down';
+
+  @override
+  String get perksTakeDown => 'Take down';
+
+  @override
+  String get perksTakeDownTitle => 'Take this perk down?';
+
+  @override
+  String get perksTakeDownBody =>
+      'No one can buy it any more. Anyone who bought it and has not used it gets their Tokens back.';
+
+  @override
+  String get perksTakenDown =>
+      'Taken down. Tokens went back to anyone holding it.';
+
+  @override
+  String get perksTakeDownFailed => 'We could not take that down. Try again.';
+
+  @override
+  String get perkAddTitle => 'Add a perk';
+
+  @override
+  String get perkForWhich => 'For which event or venue';
+
+  @override
+  String get perkWhatYouGive => 'What you give';
+
+  @override
+  String get perkTitleHint => 'Free welcome drink';
+
+  @override
+  String get perkDescriptionHint => 'One drink at the bar when you arrive.';
+
+  @override
+  String get perkWorthLabel => 'Worth (₱)';
+
+  @override
+  String get perkHowManyLabel => 'How many';
+
+  @override
+  String get perkCitizensPay => 'Citizens pay';
+
+  @override
+  String get perkRateNote =>
+      'Set from the peso value, at 5 Tokens = ₱1, so the price is fair at every event.';
+
+  @override
+  String get perkHostNote =>
+      'You provide this perk, so it costs you and not the platform. If you cancel the event or take the perk down, anyone who bought it gets their Tokens back.';
+
+  @override
+  String get perkAddButton => 'Add perk';
+
+  @override
+  String get perkAddFailed => 'We could not add that perk. Try again.';
+
+  @override
+  String get perkNoTargets =>
+      'You have no event packages or venues to add a perk to yet.';
+
+  @override
+  String get perkRequired => 'Required';
+
+  @override
+  String get perkScanTitle => 'Scan a perk code';
+
+  @override
+  String get perkScanIntro =>
+      'Point the camera at the customer\'s code, or type it.';
+
+  @override
+  String get perkScanCamera => 'Scan with the camera';
+
+  @override
+  String get perkScanType => 'or type the code';
+
+  @override
+  String get perkCodeHint => 'FP-XXXX-XXXX';
+
+  @override
+  String get perkCheck => 'Check';
+
+  @override
+  String get perkScanFailed => 'We could not check that code. Try again.';
+
+  @override
+  String get perkValidTitle => 'Valid perk';
+
+  @override
+  String get perkValidBody => 'Safe to give. Mark it used once you have.';
+
+  @override
+  String get perkUsedTitle => 'Already used';
+
+  @override
+  String get perkUsedBody => 'Do not give the perk. This code was used before.';
+
+  @override
+  String get perkExpiredTitle => 'Expired';
+
+  @override
+  String get perkExpiredBody =>
+      'Do not give the perk. This code can no longer be used.';
+
+  @override
+  String get perkFieldPerk => 'Perk';
+
+  @override
+  String get perkFieldGuest => 'Guest';
+
+  @override
+  String get perkFieldUsed => 'Used';
+
+  @override
+  String get perkFieldAt => 'At';
+
+  @override
+  String get perkMarkUsed => 'Mark as used';
+
+  @override
+  String get perkMarkUsedNote => 'Once marked, this code cannot be used again.';
+
+  @override
+  String get perkMarkedUsed => 'Marked as used';
+
+  @override
+  String get perkScanAnother => 'Scan another';
+
+  @override
+  String get perkForThisEvent => 'Perks for this event';
+
+  @override
+  String get perkForEventEmpty => 'No perks for this event yet.';
+
+  @override
   String get rewardsLifeRelease => 'Tokens released';
 
   @override

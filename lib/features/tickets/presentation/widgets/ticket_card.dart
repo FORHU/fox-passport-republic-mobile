@@ -60,6 +60,14 @@ class TicketCard extends ConsumerWidget {
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
 
+  /// A confirmed, upcoming booking of an event package can spend Tokens on the
+  /// perks its host offers.
+  bool get _canPerks =>
+      !ticket.isSample &&
+      ticket.templateId != null &&
+      ticket.status == 'confirmed' &&
+      ticket.endAt.isAfter(DateTime.now());
+
   /// A finished or cancelled booking that came from an event package can be
   /// booked again; a live one cannot (it is already booked).
   bool get _canRebook =>
@@ -193,6 +201,16 @@ class TicketCard extends ConsumerWidget {
             label: l10n.ticketDirections,
             onTap: () => _directions(context),
           ),
+        if (_canPerks) ...[
+          const SizedBox(height: 8),
+          _Action(
+            icon: Icons.redeem_outlined,
+            label: l10n.perkForThisEvent,
+            onTap: () => unawaited(
+              context.push(RouteNames.packagePerks(ticket.templateId!)),
+            ),
+          ),
+        ],
         if (_showPendingQr) ...[
           Text(
             l10n.ticketDirectionsAfterConfirm,

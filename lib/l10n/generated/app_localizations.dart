@@ -11164,6 +11164,288 @@ abstract class AppLocalizations {
   /// **'You have no perks yet.'**
   String get perksMineEmpty;
 
+  /// No description provided for @perksYours.
+  ///
+  /// In en, this message translates to:
+  /// **'Your perks'**
+  String get perksYours;
+
+  /// No description provided for @perksAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a perk'**
+  String get perksAdd;
+
+  /// No description provided for @perksOfferedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not offering any perks yet.'**
+  String get perksOfferedEmpty;
+
+  /// No description provided for @perksBought.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bought'**
+  String perksBought(int count);
+
+  /// No description provided for @perksOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken down'**
+  String get perksOff;
+
+  /// No description provided for @perksTakeDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Take down'**
+  String get perksTakeDown;
+
+  /// No description provided for @perksTakeDownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Take this perk down?'**
+  String get perksTakeDownTitle;
+
+  /// No description provided for @perksTakeDownBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No one can buy it any more. Anyone who bought it and has not used it gets their Tokens back.'**
+  String get perksTakeDownBody;
+
+  /// No description provided for @perksTakenDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken down. Tokens went back to anyone holding it.'**
+  String get perksTakenDown;
+
+  /// No description provided for @perksTakeDownFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not take that down. Try again.'**
+  String get perksTakeDownFailed;
+
+  /// No description provided for @perkAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a perk'**
+  String get perkAddTitle;
+
+  /// No description provided for @perkForWhich.
+  ///
+  /// In en, this message translates to:
+  /// **'For which event or venue'**
+  String get perkForWhich;
+
+  /// No description provided for @perkWhatYouGive.
+  ///
+  /// In en, this message translates to:
+  /// **'What you give'**
+  String get perkWhatYouGive;
+
+  /// No description provided for @perkTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Free welcome drink'**
+  String get perkTitleHint;
+
+  /// No description provided for @perkDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One drink at the bar when you arrive.'**
+  String get perkDescriptionHint;
+
+  /// No description provided for @perkWorthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth (₱)'**
+  String get perkWorthLabel;
+
+  /// No description provided for @perkHowManyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How many'**
+  String get perkHowManyLabel;
+
+  /// No description provided for @perkCitizensPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizens pay'**
+  String get perkCitizensPay;
+
+  /// No description provided for @perkRateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Set from the peso value, at 5 Tokens = ₱1, so the price is fair at every event.'**
+  String get perkRateNote;
+
+  /// No description provided for @perkHostNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You provide this perk, so it costs you and not the platform. If you cancel the event or take the perk down, anyone who bought it gets their Tokens back.'**
+  String get perkHostNote;
+
+  /// No description provided for @perkAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add perk'**
+  String get perkAddButton;
+
+  /// No description provided for @perkAddFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not add that perk. Try again.'**
+  String get perkAddFailed;
+
+  /// No description provided for @perkNoTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no event packages or venues to add a perk to yet.'**
+  String get perkNoTargets;
+
+  /// No description provided for @perkRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get perkRequired;
+
+  /// No description provided for @perkScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a perk code'**
+  String get perkScanTitle;
+
+  /// No description provided for @perkScanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the customer\'s code, or type it.'**
+  String get perkScanIntro;
+
+  /// No description provided for @perkScanCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with the camera'**
+  String get perkScanCamera;
+
+  /// No description provided for @perkScanType.
+  ///
+  /// In en, this message translates to:
+  /// **'or type the code'**
+  String get perkScanType;
+
+  /// No description provided for @perkCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'FP-XXXX-XXXX'**
+  String get perkCodeHint;
+
+  /// No description provided for @perkCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get perkCheck;
+
+  /// No description provided for @perkScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not check that code. Try again.'**
+  String get perkScanFailed;
+
+  /// No description provided for @perkValidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid perk'**
+  String get perkValidTitle;
+
+  /// No description provided for @perkValidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to give. Mark it used once you have.'**
+  String get perkValidBody;
+
+  /// No description provided for @perkUsedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used'**
+  String get perkUsedTitle;
+
+  /// No description provided for @perkUsedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not give the perk. This code was used before.'**
+  String get perkUsedBody;
+
+  /// No description provided for @perkExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get perkExpiredTitle;
+
+  /// No description provided for @perkExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not give the perk. This code can no longer be used.'**
+  String get perkExpiredBody;
+
+  /// No description provided for @perkFieldPerk.
+  ///
+  /// In en, this message translates to:
+  /// **'Perk'**
+  String get perkFieldPerk;
+
+  /// No description provided for @perkFieldGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get perkFieldGuest;
+
+  /// No description provided for @perkFieldUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get perkFieldUsed;
+
+  /// No description provided for @perkFieldAt.
+  ///
+  /// In en, this message translates to:
+  /// **'At'**
+  String get perkFieldAt;
+
+  /// No description provided for @perkMarkUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as used'**
+  String get perkMarkUsed;
+
+  /// No description provided for @perkMarkUsedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Once marked, this code cannot be used again.'**
+  String get perkMarkUsedNote;
+
+  /// No description provided for @perkMarkedUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as used'**
+  String get perkMarkedUsed;
+
+  /// No description provided for @perkScanAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another'**
+  String get perkScanAnother;
+
+  /// No description provided for @perkForThisEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks for this event'**
+  String get perkForThisEvent;
+
+  /// No description provided for @perkForEventEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No perks for this event yet.'**
+  String get perkForEventEmpty;
+
   /// No description provided for @rewardsLifeRelease.
   ///
   /// In en, this message translates to:

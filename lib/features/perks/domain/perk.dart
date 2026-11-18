@@ -223,3 +223,108 @@ class PerkCode extends Equatable {
   @override
   List<Object?> get props => [code, live, refreshInSeconds, title, expiresAt];
 }
+
+/// A perk the person offers (as an Event Foxer or a Mayor), with how many were
+/// bought and whether it is still on.
+class OfferedPerk extends Equatable {
+  const OfferedPerk({
+    required this.perk,
+    required this.active,
+    required this.redeemed,
+    this.quantity,
+  });
+
+  factory OfferedPerk.fromJson(Map<String, dynamic> json) => OfferedPerk(
+        perk: Perk.fromJson(json),
+        active: json['active'] != false,
+        quantity: (json['quantity'] as num?)?.toInt(),
+        redeemed: (json['redeemed'] as num?)?.toInt() ?? 0,
+      );
+
+  final Perk perk;
+  final bool active;
+  final int? quantity;
+  final int redeemed;
+
+  @override
+  List<Object?> get props => [perk, active, quantity, redeemed];
+}
+
+/// What a staff check of a perk code found.
+enum PerkCheckState { valid, used, expired }
+
+class PerkCheck extends Equatable {
+  const PerkCheck({
+    required this.state,
+    required this.redemptionId,
+    required this.title,
+    required this.guestFirstName,
+    this.bookingName,
+    this.bookingStartAt,
+    this.validUntil,
+    this.usedAt,
+    this.venueName,
+  });
+
+  factory PerkCheck.fromJson(Map<String, dynamic> json) {
+    final perk = json['perk'];
+    final booking = json['booking'];
+    return PerkCheck(
+      state: switch ('${json['result']}') {
+        'valid' => PerkCheckState.valid,
+        'used' => PerkCheckState.used,
+        _ => PerkCheckState.expired,
+      },
+      redemptionId: '${json['redemptionId']}',
+      title: perk is Map ? '${perk['title'] ?? ''}' : '',
+      guestFirstName: '${json['guestFirstName'] ?? ''}',
+      bookingName: booking is Map ? booking['name'] as String? : null,
+      bookingStartAt: booking is Map
+          ? DateTime.tryParse('${booking['startAt']}')?.toLocal()
+          : null,
+      validUntil: DateTime.tryParse('${json['validUntil']}')?.toLocal(),
+      usedAt: DateTime.tryParse('${json['usedAt']}')?.toLocal(),
+      venueName: json['venueName'] as String?,
+    );
+  }
+
+  final PerkCheckState state;
+  final String redemptionId;
+  final String title;
+  final String guestFirstName;
+  final String? bookingName;
+  final DateTime? bookingStartAt;
+  final DateTime? validUntil;
+  final DateTime? usedAt;
+  final String? venueName;
+
+  @override
+  List<Object?> get props => [
+        state,
+        redemptionId,
+        title,
+        guestFirstName,
+        bookingName,
+        bookingStartAt,
+        validUntil,
+        usedAt,
+        venueName,
+      ];
+}
+
+/// Somewhere a perk can be offered: one of the person's event packages or
+/// venues.
+class PerkTarget extends Equatable {
+  const PerkTarget({
+    required this.id,
+    required this.name,
+    required this.isVenue,
+  });
+
+  final String id;
+  final String name;
+  final bool isVenue;
+
+  @override
+  List<Object?> get props => [id, name, isVenue];
+}
