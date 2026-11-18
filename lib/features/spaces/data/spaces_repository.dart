@@ -103,10 +103,12 @@ class SpacesRepository {
   Future<void> declineBookedItem(
     String id, {
     required RequestKind kind,
+    DeclineCause cause = DeclineCause.other,
   }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
       'type': kind.name,
       'action': 'decline',
+      'cause': cause.name,
     });
   }
 

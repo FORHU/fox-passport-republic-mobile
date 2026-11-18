@@ -168,6 +168,11 @@ class EventOverviewPage extends ConsumerWidget {
                       icon: Icons.swap_horiz_rounded,
                       color: AppColors.error,
                       text: switch (n.issue.reason) {
+                        AttentionReason.declined when n.issue.busy =>
+                          l10n.eventNeedsBusy(
+                            n.issue.supplierName,
+                            n.event.eventName,
+                          ),
                         AttentionReason.declined => l10n.eventNeedsDeclined(
                             n.issue.supplierName,
                             n.event.eventName,

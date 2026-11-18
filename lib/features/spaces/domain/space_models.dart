@@ -122,6 +122,15 @@ class VenueRequest extends Equatable {
 }
 
 /// Why a booked event needs a replacement Supplier.
+/// Why a Supplier leaves a booked event.
+enum DeclineCause {
+  /// It has another booking at that time.
+  busy,
+
+  /// Any other reason.
+  other,
+}
+
 enum AttentionReason {
   /// The Supplier declined the booked event.
   declined,
@@ -146,6 +155,7 @@ class AttentionIssue extends Equatable {
     required this.supplierName,
     required this.itemName,
     required this.reason,
+    this.busy = false,
   });
 
   final RequestKind kind;
@@ -153,8 +163,11 @@ class AttentionIssue extends Equatable {
   final String itemName;
   final AttentionReason reason;
 
+  /// A declining Supplier said it has another booking at that time.
+  final bool busy;
+
   @override
-  List<Object?> get props => [kind, supplierName, itemName, reason];
+  List<Object?> get props => [kind, supplierName, itemName, reason, busy];
 }
 
 /// A booked event of the person's that has lost a Supplier (a row of
@@ -183,6 +196,7 @@ class EventNeedingAttention extends Equatable {
               supplierName: '${i['supplierName'] ?? ''}',
               itemName: '${i['itemName'] ?? ''}',
               reason: AttentionReason.parse(i['reason']),
+              busy: i['cause'] == 'busy',
             ),
     ];
     if (issues.isEmpty) return null;
@@ -212,6 +226,7 @@ class BookedSupplier extends Equatable {
     required this.itemName,
     required this.status,
     this.problem,
+    this.busy = false,
   });
 
   final RequestKind kind;
@@ -222,8 +237,12 @@ class BookedSupplier extends Equatable {
   /// Set when this Supplier needs replacing.
   final AttentionReason? problem;
 
+  /// It declined because it has another booking at that time.
+  final bool busy;
+
   @override
-  List<Object?> get props => [kind, supplierName, itemName, status, problem];
+  List<Object?> get props =>
+      [kind, supplierName, itemName, status, problem, busy];
 }
 
 /// A booked event of the person's with every Supplier on it (the answer of
@@ -261,6 +280,7 @@ class BookedEvent extends Equatable {
                 problem: s['reason'] == null
                     ? null
                     : AttentionReason.parse(s['reason']),
+                busy: s['cause'] == 'busy',
               ),
       ],
     );

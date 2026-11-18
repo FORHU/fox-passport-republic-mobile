@@ -143,6 +143,15 @@ void main() {
             'Photographer',
             reason: 'unavailable',
           ),
+          {
+            ..._supplier(
+              'asset',
+              'Lights',
+              status: 'rejected',
+              reason: 'declined',
+            ),
+            'cause': 'busy',
+          },
         ]),
       );
 
@@ -152,6 +161,7 @@ void main() {
       expect(find.text('Declined this event'), findsOneWidget);
       expect(find.text('Blocked a day of this event'), findsOneWidget);
       expect(find.text('No longer available'), findsOneWidget);
+      expect(find.text('Busy with another booking'), findsOneWidget);
     });
 
     testWidgets('says so when no Supplier is booked yet', (tester) async {
