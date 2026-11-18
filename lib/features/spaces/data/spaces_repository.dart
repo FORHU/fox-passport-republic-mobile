@@ -72,6 +72,19 @@ class SpacesRepository {
     });
   }
 
+  /// Leaves an event that is already booked (not a request still waiting for
+  /// a reply). The event host and the citizen are told. The API refuses it once
+  /// the booking is paid, and says so.
+  Future<void> declineBookedItem(
+    String id, {
+    required RequestKind kind,
+  }) async {
+    await _api.patch(ApiEndpoints.requestReview(id), {
+      'type': kind.name,
+      'action': 'decline',
+    });
+  }
+
   /// The gear the person lists. The API gives at most 50 at a time, so this
   /// asks page by page.
   Future<List<SpaceListing>> myAssets() =>

@@ -37,6 +37,8 @@ class VenueRequest extends Equatable {
     this.price,
     this.replyBy,
     this.imageUrl,
+    this.bookingStatus,
+    this.declinedBySupplier = false,
   });
 
   /// Reads one entry of the response's `venues`; null when it has no id.
@@ -49,6 +51,7 @@ class VenueRequest extends Equatable {
     final venue = row[kind.name];
     final client = event is Map ? event['client'] : null;
     final price = row['agreedPrice'];
+    final booking = row['booking'];
     return VenueRequest(
       id: '${row['id']}',
       kind: kind,
@@ -63,6 +66,8 @@ class VenueRequest extends Equatable {
       replyBy:
           DateTime.tryParse('${row['confirmationDeadline'] ?? ''}')?.toLocal(),
       imageUrl: _firstImage(venue is Map ? venue['images'] : null),
+      bookingStatus: booking is Map ? booking['status'] as String? : null,
+      declinedBySupplier: row['rejectionReason'] == 'supplier_declined',
     );
   }
 
@@ -83,7 +88,21 @@ class VenueRequest extends Equatable {
   final DateTime? replyBy;
   final String? imageUrl;
 
+  /// The booking's own status (`pending` until it is paid); null when the item
+  /// is not attached to a booking yet.
+  final String? bookingStatus;
+
+  /// This Supplier left the event after taking it (not a turned-down request).
+  final bool declinedBySupplier;
+
   bool get needsReply => status == RequestStatus.awaitingYou;
+
+  /// A booked item can be declined until its booking is paid: while it is
+  /// still pending or approved and nobody has paid. After payment the way out
+  /// is the cancellation policy.
+  bool get canDecline =>
+      (status == RequestStatus.pending || status == RequestStatus.approved) &&
+      (bookingStatus == null || bookingStatus == 'pending');
 
   @override
   List<Object?> get props => [
@@ -97,6 +116,8 @@ class VenueRequest extends Equatable {
         price,
         replyBy,
         imageUrl,
+        bookingStatus,
+        declinedBySupplier,
       ];
 }
 
