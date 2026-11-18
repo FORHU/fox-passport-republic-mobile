@@ -30,7 +30,11 @@ Map<String, Object?> _supplier(
       'reason': reason,
     };
 
-Map<String, Object?> _event(List<Map<String, Object?>> suppliers) => {
+Map<String, Object?> _event(
+  List<Map<String, Object?>> suppliers, {
+  String? declinable,
+}) =>
+    {
       'success': true,
       'data': {
         'eventId': 'e1',
@@ -38,6 +42,7 @@ Map<String, Object?> _event(List<Map<String, Object?>> suppliers) => {
         'startAt': '2026-12-05T10:00:00Z',
         'endAt': '2026-12-05T15:00:00Z',
         'eventStatus': 'pending',
+        'declinableBookingId': declinable,
         'suppliers': suppliers,
       },
     };
@@ -174,6 +179,60 @@ void main() {
         find.text('No Suppliers are booked for this event yet.'),
         findsOneWidget,
       );
+    });
+
+    group('the host declining', () {
+      testWidgets('is not offered once the booking is paid', (tester) async {
+        when(() => api.get(ApiEndpoints.bookedEvent('e1')))
+            .thenAnswer((_) async => _event([_supplier('asset', 'Lights')]));
+
+        await show(tester);
+
+        expect(find.text("I can't run this event"), findsNothing);
+      });
+
+      testWidgets('asks first, then says the host is busy', (tester) async {
+        when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+          (_) async => _event([_supplier('asset', 'Lights')], declinable: 'b1'),
+        );
+        when(
+          () => api.post(ApiEndpoints.bookingDecline('b1'), any()),
+        ).thenAnswer((_) async => {'success': true});
+
+        await show(tester);
+        await tester.tap(find.text("I can't run this event"));
+        await tester.pumpAndSettle();
+        expect(find.text('Decline this event?'), findsOneWidget);
+        verifyNever(() => api.post(ApiEndpoints.bookingDecline('b1'), any()));
+
+        await tester.tap(find.text("I'm busy then"));
+        await tester.pumpAndSettle();
+
+        verify(
+          () => api.post(ApiEndpoints.bookingDecline('b1'), {'cause': 'busy'}),
+        ).called(1);
+        expect(
+          find.text('You declined. The citizen and the Suppliers were told.'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('shows the reason when the API refuses', (tester) async {
+        when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+          (_) async => _event([_supplier('asset', 'Lights')], declinable: 'b1'),
+        );
+        when(
+          () => api.post(ApiEndpoints.bookingDecline('b1'), any()),
+        ).thenThrow(const ServerException('This booking is already paid.'));
+
+        await show(tester);
+        await tester.tap(find.text("I can't run this event"));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Decline this event'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('This booking is already paid.'), findsOneWidget);
+      });
     });
 
     testWidgets('offers a retry when the event cannot be read', (tester) async {

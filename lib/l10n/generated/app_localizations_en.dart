@@ -1819,6 +1819,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookedReasonUnavailable => 'No longer available';
 
   @override
+  String get hostDeclineButton => 'I can\'t run this event';
+
+  @override
+  String get hostDeclineTitle => 'Decline this event?';
+
+  @override
+  String get hostDeclineBody =>
+      'The citizen and every Supplier are told, and the booking ends. Nothing was charged. You cannot undo this.';
+
+  @override
+  String get hostDeclineDone =>
+      'You declined. The citizen and the Suppliers were told.';
+
+  @override
+  String get hostDeclineAction => 'Decline this event';
+
+  @override
   String get bookedEventNotFound => 'We could not find that event.';
 
   @override

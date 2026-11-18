@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
+import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
@@ -52,17 +54,87 @@ class BookedEventPage extends ConsumerWidget {
               ..invalidate(eventsNeedingAttentionProvider);
             await ref.read(bookedEventProvider(eventId).future);
           },
-          child: _Body(event: e),
+          child: _Body(
+            event: e,
+            onDecline: e.declinableBookingId == null
+                ? null
+                : () => _declineAsHost(
+                      context,
+                      ref,
+                      e.declinableBookingId!,
+                      eventId,
+                    ),
+          ),
         ),
       ),
     );
   }
 }
 
+/// The host leaves a booking they cannot attend: asks why first, then the
+/// citizen and the Suppliers are told. Only offered while the booking is not
+/// paid; if it was paid since, the API refuses and its reason is shown.
+Future<void> _declineAsHost(
+  BuildContext context,
+  WidgetRef ref,
+  String bookingId,
+  String eventId,
+) async {
+  final l10n = context.l10n;
+  final cause = await showDialog<DeclineCause>(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: AppColors.surface,
+      title: Text(l10n.hostDeclineTitle),
+      content: Text(l10n.hostDeclineBody),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.messageCancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(DeclineCause.busy),
+          child: Text(l10n.requestDeclineBusy),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(DeclineCause.other),
+          child: Text(
+            l10n.hostDeclineAction,
+            style: const TextStyle(color: AppColors.error),
+          ),
+        ),
+      ],
+    ),
+  );
+  if (cause == null || !context.mounted) return;
+  try {
+    await ref
+        .read(spacesRepositoryProvider)
+        .declineAsHost(bookingId, cause: cause);
+    ref
+      ..invalidate(bookedEventProvider(eventId))
+      ..invalidate(eventsNeedingAttentionProvider)
+      ..invalidate(myEventsProvider);
+    if (!context.mounted) return;
+    showTopToast(context, l10n.hostDeclineDone);
+  } on Object catch (e) {
+    if (!context.mounted) return;
+    showTopToast(
+      context,
+      e is AppException && e.message.isNotEmpty
+          ? e.message
+          : l10n.requestActionFailed,
+    );
+  }
+}
+
 class _Body extends StatelessWidget {
-  const _Body({required this.event});
+  const _Body({required this.event, this.onDecline});
 
   final BookedEvent event;
+
+  /// Set while the booking is unpaid and the host may still leave it.
+  final VoidCallback? onDecline;
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +214,17 @@ class _Body extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: _SupplierRow(supplier: s),
             ),
+        if (onDecline != null) ...[
+          const SizedBox(height: 24),
+          OutlinedButton(
+            onPressed: onDecline,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.error,
+              side: const BorderSide(color: AppColors.error),
+            ),
+            child: Text(l10n.hostDeclineButton),
+          ),
+        ],
       ],
     );
   }

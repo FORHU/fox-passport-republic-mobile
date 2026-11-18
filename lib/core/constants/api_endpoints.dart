@@ -101,6 +101,8 @@ class ApiEndpoints {
       '/event-transactions/needs-attention';
   static String bookedEvent(String eventId) =>
       '/event-transactions/event/${Uri.encodeComponent(eventId)}';
+  static String bookingDecline(String bookingId) =>
+      '/bookings/${Uri.encodeComponent(bookingId)}/decline';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
   /// What the person has been paid and is owed, newest first.
