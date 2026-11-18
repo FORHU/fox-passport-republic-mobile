@@ -13,7 +13,9 @@ import 'package:flutter_template/features/spaces/presentation/pages/event_overvi
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -603,6 +605,48 @@ void main() {
 
       expect(find.text('NEEDS YOUR ATTENTION'), findsOneWidget);
       expect(find.textContaining('Pick a replacement'), findsNothing);
+    });
+
+    testWidgets('tapping a row opens that booked event', (tester) async {
+      stubHome([
+        needing('e1', 'Garden wedding', [issue('declined')]),
+        needing('e2', 'Reunion', [issue('unavailable', item: 'Photographer')]),
+      ]);
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final router = GoRouter(
+        routes: [
+          GoRoute(path: '/', builder: (_, __) => const EventOverviewPage()),
+          GoRoute(
+            path: '${RouteNames.spaceEvent}/booked/:eventId',
+            builder: (_, s) =>
+                Scaffold(body: Text('booked ${s.pathParameters['eventId']}')),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          retry: (_, __) => null,
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            authControllerProvider.overrideWith(_Session.new),
+            spacesRepositoryProvider.overrideWithValue(
+              SpacesRepository(api, 'u1'),
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.textContaining('Reunion'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('booked e2'), findsOneWidget);
     });
   });
 

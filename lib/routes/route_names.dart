@@ -227,6 +227,11 @@ class RouteNames {
   static const String spaceBidDetail = '/space/event/bids/detail';
 
   static const String spaceEventStudio = '/space/event/studio';
+
+  /// One booked event of the Event Foxer's, with its Suppliers and any that
+  /// need replacing. Pushed from Overview and from a notification.
+  static String bookedEvent(String eventId) =>
+      '/space/event/booked/${Uri.encodeComponent(eventId)}';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';
   static const String spaceEventCheckIn = '/space/event/more/check-in';

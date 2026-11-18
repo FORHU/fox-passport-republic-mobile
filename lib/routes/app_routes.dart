@@ -61,6 +61,7 @@ import 'package:flutter_template/features/spaces/domain/appointment_models.dart'
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/team_models.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/booked_event_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/check_in_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/earnings_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/event_bids_page.dart';
@@ -378,6 +379,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.spaceEventStudio,
         builder: (context, state) => const EventStudioPage(),
+      ),
+      // One booked event with its Suppliers, from Overview or a notification.
+      GoRoute(
+        path: '${RouteNames.spaceEvent}/booked/:eventId',
+        builder: (context, state) =>
+            BookedEventPage(eventId: state.pathParameters['eventId']!),
       ),
       GoRoute(
         path: '${RouteNames.spaceEventStudio}/:eventId',

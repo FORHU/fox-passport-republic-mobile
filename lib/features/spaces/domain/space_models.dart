@@ -203,6 +203,81 @@ class EventNeedingAttention extends Equatable {
   List<Object?> get props => [eventId, eventName, startAt, issues];
 }
 
+/// One Supplier of a booked event: what it is, who provides it, where it
+/// stands, and why it needs replacing if it does.
+class BookedSupplier extends Equatable {
+  const BookedSupplier({
+    required this.kind,
+    required this.supplierName,
+    required this.itemName,
+    required this.status,
+    this.problem,
+  });
+
+  final RequestKind kind;
+  final String supplierName;
+  final String itemName;
+  final RequestStatus status;
+
+  /// Set when this Supplier needs replacing.
+  final AttentionReason? problem;
+
+  @override
+  List<Object?> get props => [kind, supplierName, itemName, status, problem];
+}
+
+/// A booked event of the person's with every Supplier on it (the answer of
+/// `GET /event-transactions/event/:id`).
+class BookedEvent extends Equatable {
+  const BookedEvent({
+    required this.eventId,
+    required this.eventName,
+    required this.suppliers,
+    this.startAt,
+    this.endAt,
+  });
+
+  /// Reads the answer; null when it has no event in it.
+  static BookedEvent? tryParse(Object? data) {
+    if (data is! Map || data['eventId'] == null) return null;
+    final raw = data['suppliers'];
+    return BookedEvent(
+      eventId: '${data['eventId']}',
+      eventName: '${data['eventName'] ?? ''}',
+      startAt: DateTime.tryParse('${data['startAt']}')?.toLocal(),
+      endAt: DateTime.tryParse('${data['endAt']}')?.toLocal(),
+      suppliers: [
+        if (raw is List)
+          for (final s in raw)
+            if (s is Map)
+              BookedSupplier(
+                kind: RequestKind.values.firstWhere(
+                  (k) => k.name == s['kind'],
+                  orElse: () => RequestKind.venue,
+                ),
+                supplierName: '${s['supplierName'] ?? ''}',
+                itemName: '${s['itemName'] ?? ''}',
+                status: RequestStatus.parse(s['status']),
+                problem: s['reason'] == null
+                    ? null
+                    : AttentionReason.parse(s['reason']),
+              ),
+      ],
+    );
+  }
+
+  final String eventId;
+  final String eventName;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final List<BookedSupplier> suppliers;
+
+  bool get needsReplacement => suppliers.any((s) => s.problem != null);
+
+  @override
+  List<Object?> get props => [eventId, eventName, startAt, endAt, suppliers];
+}
+
 /// One of your listings: a venue or an event template.
 class SpaceListing extends Equatable {
   const SpaceListing({

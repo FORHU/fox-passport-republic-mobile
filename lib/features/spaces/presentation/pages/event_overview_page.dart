@@ -183,14 +183,19 @@ class EventOverviewPage extends ConsumerWidget {
                             n.event.eventName,
                           ),
                       },
-                      onTap: () => context.go(RouteNames.spaceEventCalendar),
+                      onTap: () =>
+                          context.push(RouteNames.bookedEvent(n.event.eventId)),
                     ),
                   if (needs.length > maxNeedRows)
                     AttentionRow(
                       icon: Icons.more_horiz_rounded,
                       color: AppColors.error,
                       text: l10n.eventNeedsMore(needs.length - maxNeedRows),
-                      onTap: () => context.go(RouteNames.spaceEventCalendar),
+                      onTap: () => context.push(
+                        RouteNames.bookedEvent(
+                          needs[maxNeedRows].event.eventId,
+                        ),
+                      ),
                     ),
                   if (invites > 0)
                     AttentionRow(

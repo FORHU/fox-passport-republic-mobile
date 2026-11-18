@@ -3358,6 +3358,60 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{and 1 more event needs a replacement} other{and {count} more need a replacement}}'**
   String eventNeedsMore(int count);
 
+  /// No description provided for @bookedEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked event'**
+  String get bookedEventTitle;
+
+  /// No description provided for @bookedEventNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'This event needs a replacement'**
+  String get bookedEventNeeds;
+
+  /// No description provided for @bookedEventNeedsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A Supplier is no longer available for it. Pick a replacement, or ask the Supplier.'**
+  String get bookedEventNeedsBody;
+
+  /// No description provided for @bookedEventSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get bookedEventSuppliers;
+
+  /// No description provided for @bookedEventNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No Suppliers are booked for this event yet.'**
+  String get bookedEventNone;
+
+  /// No description provided for @bookedReasonDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined this event'**
+  String get bookedReasonDeclined;
+
+  /// No description provided for @bookedReasonDateBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked a day of this event'**
+  String get bookedReasonDateBlocked;
+
+  /// No description provided for @bookedReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No longer available'**
+  String get bookedReasonUnavailable;
+
+  /// No description provided for @bookedEventNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not find that event.'**
+  String get bookedEventNotFound;
+
   /// No description provided for @eventsDeclined.
   ///
   /// In en, this message translates to:

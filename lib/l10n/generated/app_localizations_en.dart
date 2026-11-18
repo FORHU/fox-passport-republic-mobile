@@ -1786,6 +1786,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get bookedEventTitle => 'Booked event';
+
+  @override
+  String get bookedEventNeeds => 'This event needs a replacement';
+
+  @override
+  String get bookedEventNeedsBody =>
+      'A Supplier is no longer available for it. Pick a replacement, or ask the Supplier.';
+
+  @override
+  String get bookedEventSuppliers => 'Suppliers';
+
+  @override
+  String get bookedEventNone => 'No Suppliers are booked for this event yet.';
+
+  @override
+  String get bookedReasonDeclined => 'Declined this event';
+
+  @override
+  String get bookedReasonDateBlocked => 'Blocked a day of this event';
+
+  @override
+  String get bookedReasonUnavailable => 'No longer available';
+
+  @override
+  String get bookedEventNotFound => 'We could not find that event.';
+
+  @override
   String eventsDeclined(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
