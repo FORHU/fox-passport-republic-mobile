@@ -34,10 +34,15 @@ class RepublicRepository {
   /// null is all of them.
   ///
   /// [search] keeps posts that mention the words (a `#tag` works too).
+  ///
+  /// [mode] orders the main feed (For you or Recent). Left out, the server
+  /// keeps its original order, which the saved list and profiles still use.
   Future<FeedPage> feed({
     String? tab,
     String? cursor,
     String? search,
+    FeedMode? mode,
+    int limit = pageSize,
   }) async {
     if (tab != null && tab.startsWith(_postPrefix)) {
       final one = await post(tab.substring(_postPrefix.length));
@@ -49,23 +54,41 @@ class RepublicRepository {
     final body = await _api.get(
       tab == savedTab ? ApiEndpoints.feedSaved : ApiEndpoints.feed,
       query: {
-        'limit': pageSize,
+        'limit': limit,
         if (author != null) 'authorId': author,
         if (tab != null && tab != savedTab && author == null) 'tab': tab,
         if (cursor != null) 'cursor': cursor,
         if (search != null && search.isNotEmpty) 'search': search,
+        if (mode != null && tab != savedTab) 'mode': mode.apiName,
       },
     );
     if (body is! Map) return const FeedPage(posts: []);
     final data = body['data'];
     final next = body['nextCursor'];
+    final anchor = body['anchor'];
     return FeedPage(
       posts: [
         for (final p in data as List? ?? const [])
           if (p is Map) Post.fromJson(p.cast<String, dynamic>()),
       ],
       nextCursor: next is String && next.isNotEmpty ? next : null,
+      anchor: anchor is String ? DateTime.tryParse(anchor) : null,
     );
+  }
+
+  /// How many posts the viewer may see were created after [since] on [tab]
+  /// (null is all), not counting their own. Drives the "New posts" pill.
+  Future<int> newPostsCount({required DateTime since, String? tab}) async {
+    final body = await _api.get(
+      ApiEndpoints.feedNewCount,
+      query: {
+        'since': since.toUtc().toIso8601String(),
+        if (tab != null) 'tab': tab,
+      },
+    );
+    final data = body is Map ? body['data'] : null;
+    final count = data is Map ? data['count'] : null;
+    return count is num ? count.toInt() : 0;
   }
 
   /// Reacts to a post, or takes the reaction back (`type: null`).

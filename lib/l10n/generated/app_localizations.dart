@@ -8242,6 +8242,36 @@ abstract class AppLocalizations {
   /// **'Featured in Republic'**
   String get republicPinned;
 
+  /// No description provided for @republicFromEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'From earlier'**
+  String get republicFromEarlier;
+
+  /// No description provided for @republicSortPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort posts'**
+  String get republicSortPosts;
+
+  /// No description provided for @republicSortForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get republicSortForYou;
+
+  /// No description provided for @republicSortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get republicSortRecent;
+
+  /// No description provided for @republicNewPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new post} other{{count} new posts}}'**
+  String republicNewPosts(int count);
+
   /// No description provided for @republicBookVenue.
   ///
   /// In en, this message translates to:

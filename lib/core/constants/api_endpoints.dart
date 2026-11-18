@@ -204,6 +204,7 @@ class ApiEndpoints {
   static String feedPollVote(String id) => '/feed/$id/poll/vote';
   static String feedHide(String id) => '/feed/$id/hide';
   static const String feedSaved = '/feed/saved';
+  static const String feedNewCount = '/feed/new-count';
   static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
 

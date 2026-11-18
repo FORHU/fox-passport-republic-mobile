@@ -4571,6 +4571,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicPinned => 'Featured in Republic';
 
   @override
+  String get republicFromEarlier => 'From earlier';
+
+  @override
+  String get republicSortPosts => 'Sort posts';
+
+  @override
+  String get republicSortForYou => 'For you';
+
+  @override
+  String get republicSortRecent => 'Recent';
+
+  @override
+  String republicNewPosts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new posts',
+      one: '1 new post',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get republicBookVenue => 'Book venue';
 
   @override
