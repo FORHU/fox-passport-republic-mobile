@@ -2557,6 +2557,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestDeclined => 'Request declined.';
 
   @override
+  String get requestDeclineBooked => 'Decline this booking';
+
+  @override
+  String get requestDeclineBookedTitle => 'Decline this booking?';
+
+  @override
+  String get requestDeclineBookedBody =>
+      'The event host and the citizen are told, and the host is asked to replace you. You cannot undo this.';
+
+  @override
+  String get requestDeclinedBooked =>
+      'You declined. The host and the citizen were told.';
+
+  @override
   String get requestActionFailed =>
       'We couldn\'t update that request. Try again.';
 

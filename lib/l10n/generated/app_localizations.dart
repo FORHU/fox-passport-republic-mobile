@@ -4678,6 +4678,30 @@ abstract class AppLocalizations {
   /// **'Request declined.'**
   String get requestDeclined;
 
+  /// No description provided for @requestDeclineBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this booking'**
+  String get requestDeclineBooked;
+
+  /// No description provided for @requestDeclineBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this booking?'**
+  String get requestDeclineBookedTitle;
+
+  /// No description provided for @requestDeclineBookedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The event host and the citizen are told, and the host is asked to replace you. You cannot undo this.'**
+  String get requestDeclineBookedBody;
+
+  /// No description provided for @requestDeclinedBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined. The host and the citizen were told.'**
+  String get requestDeclinedBooked;
+
   /// No description provided for @requestActionFailed.
   ///
   /// In en, this message translates to:
