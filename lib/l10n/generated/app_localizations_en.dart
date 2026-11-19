@@ -6890,4 +6890,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String challengesOpen(String name) {
     return 'Open $name';
   }
+
+  @override
+  String get replacementFind => 'Find a replacement';
+
+  @override
+  String replacementPickTitle(String item) {
+    return 'Replace $item';
+  }
+
+  @override
+  String get replacementPickBody =>
+      'Listings like it that are free on the event\'s dates. The citizen accepts or declines your choice.';
+
+  @override
+  String get replacementNone => 'Nothing like it is free on those dates.';
+
+  @override
+  String get replacementPartner => 'Partner';
+
+  @override
+  String replacementPriceBeforeFees(String price) {
+    return '$price before fees';
+  }
+
+  @override
+  String replacementConfirmTitle(String item) {
+    return 'Propose $item?';
+  }
+
+  @override
+  String get replacementConfirmBody =>
+      'The citizen is told and answers. Nothing changes until they accept.';
+
+  @override
+  String get replacementPropose => 'Propose';
+
+  @override
+  String get replacementProposed => 'Sent. The citizen will answer.';
+
+  @override
+  String get replacementWaiting => 'Replacement sent, waiting for the citizen';
+
+  @override
+  String get replacementWithdraw => 'Withdraw';
+
+  @override
+  String get replacementWithdrawn => 'Proposal withdrawn.';
+
+  @override
+  String get proposalTitle => 'Your host proposes a change';
+
+  @override
+  String proposalBody(String old, String replacement) {
+    return '$old can\'t be part of your event. Your host proposes $replacement instead.';
+  }
+
+  @override
+  String proposalPriceUp(String amount) {
+    return 'Your total goes up by $amount.';
+  }
+
+  @override
+  String proposalPriceDown(String amount) {
+    return 'Your total goes down by $amount.';
+  }
+
+  @override
+  String get proposalPriceSame => 'Your total stays the same.';
+
+  @override
+  String get proposalAccept => 'Accept';
+
+  @override
+  String get proposalDecline => 'Decline';
+
+  @override
+  String get proposalAccepted => 'Accepted. The new Supplier will confirm.';
+
+  @override
+  String get proposalDeclined => 'Declined. Your host was told.';
 }

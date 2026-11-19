@@ -124,6 +124,46 @@ class SpacesRepository {
     });
   }
 
+  /// Listings of the same kind and category that are free on the event's
+  /// dates and could replace the Supplier on line [transactionId].
+  Future<List<ReplacementCandidate>> replacements(
+    String transactionId, {
+    required RequestKind kind,
+  }) async {
+    final body = await _api.get(
+      ApiEndpoints.eventReplacements(transactionId),
+      query: {'kind': kind.name},
+    );
+    final data = body is Map ? body['data'] : null;
+    if (data is! List) {
+      throw const FormatException('Replacements response is not a list');
+    }
+    return [
+      for (final row in data)
+        if (ReplacementCandidate.tryParse(row) case final c?) c,
+    ];
+  }
+
+  /// Proposes [itemId] in place of the Supplier on line [transactionId]. The
+  /// citizen is told and answers; nothing changes until they accept.
+  Future<void> proposeReplacement(
+    String transactionId, {
+    required RequestKind kind,
+    required String itemId,
+  }) async {
+    await _api.post(ApiEndpoints.eventReplace(transactionId), {
+      'kind': kind.name,
+      'itemId': itemId,
+    });
+  }
+
+  /// Takes back a proposal the citizen has not answered.
+  Future<void> withdrawProposal(String proposalId) async {
+    await _api.post(
+      ApiEndpoints.eventEditProposalAnswer(proposalId, 'withdraw'),
+    );
+  }
+
   /// The gear the person lists. The API gives at most 50 at a time, so this
   /// asks page by page.
   Future<List<SpaceListing>> myAssets() =>
@@ -873,6 +913,15 @@ final FutureProvider<List<EventNeedingAttention>>
 final bookedEventProvider =
     FutureProvider.autoDispose.family<BookedEvent, String>(
   (ref, eventId) => ref.watch(spacesRepositoryProvider).bookedEvent(eventId),
+);
+
+/// What could replace one Supplier, keyed by its line and kind.
+// The family type is long and adds nothing here, so it is left inferred.
+// ignore: specify_nonobvious_property_types
+final replacementsProvider = FutureProvider.autoDispose
+    .family<List<ReplacementCandidate>, (String, RequestKind)>(
+  (ref, key) =>
+      ref.watch(spacesRepositoryProvider).replacements(key.$1, kind: key.$2),
 );
 
 final FutureProvider<List<SpaceListing>> myEventsProvider =

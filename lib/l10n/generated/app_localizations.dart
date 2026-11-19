@@ -12165,6 +12165,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open {name}'**
   String challengesOpen(String name);
+
+  /// No description provided for @replacementFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a replacement'**
+  String get replacementFind;
+
+  /// No description provided for @replacementPickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace {item}'**
+  String replacementPickTitle(String item);
+
+  /// No description provided for @replacementPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings like it that are free on the event\'s dates. The citizen accepts or declines your choice.'**
+  String get replacementPickBody;
+
+  /// No description provided for @replacementNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing like it is free on those dates.'**
+  String get replacementNone;
+
+  /// No description provided for @replacementPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get replacementPartner;
+
+  /// No description provided for @replacementPriceBeforeFees.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} before fees'**
+  String replacementPriceBeforeFees(String price);
+
+  /// No description provided for @replacementConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose {item}?'**
+  String replacementConfirmTitle(String item);
+
+  /// No description provided for @replacementConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen is told and answers. Nothing changes until they accept.'**
+  String get replacementConfirmBody;
+
+  /// No description provided for @replacementPropose.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose'**
+  String get replacementPropose;
+
+  /// No description provided for @replacementProposed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. The citizen will answer.'**
+  String get replacementProposed;
+
+  /// No description provided for @replacementWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement sent, waiting for the citizen'**
+  String get replacementWaiting;
+
+  /// No description provided for @replacementWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get replacementWithdraw;
+
+  /// No description provided for @replacementWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposal withdrawn.'**
+  String get replacementWithdrawn;
+
+  /// No description provided for @proposalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host proposes a change'**
+  String get proposalTitle;
+
+  /// No description provided for @proposalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{old} can\'t be part of your event. Your host proposes {replacement} instead.'**
+  String proposalBody(String old, String replacement);
+
+  /// No description provided for @proposalPriceUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes up by {amount}.'**
+  String proposalPriceUp(String amount);
+
+  /// No description provided for @proposalPriceDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}.'**
+  String proposalPriceDown(String amount);
+
+  /// No description provided for @proposalPriceSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total stays the same.'**
+  String get proposalPriceSame;
+
+  /// No description provided for @proposalAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get proposalAccept;
+
+  /// No description provided for @proposalDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get proposalDecline;
+
+  /// No description provided for @proposalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted. The new Supplier will confirm.'**
+  String get proposalAccepted;
+
+  /// No description provided for @proposalDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined. Your host was told.'**
+  String get proposalDeclined;
 }
 
 class _AppLocalizationsDelegate

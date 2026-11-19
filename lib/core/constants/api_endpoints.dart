@@ -105,6 +105,16 @@ class ApiEndpoints {
       '/bookings/${Uri.encodeComponent(bookingId)}/decline';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
+  /// Replacing a Supplier on a booked event (API ADR 0010): what could take a
+  /// line's place, the host's proposal, and the citizen's answer.
+  static String eventReplacements(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replacements';
+  static String eventReplace(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replace';
+  static const String eventEditProposals = '/event-transactions/proposals';
+  static String eventEditProposalAnswer(String proposalId, String action) =>
+      '/event-transactions/proposals/${Uri.encodeComponent(proposalId)}/$action';
+
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
 
