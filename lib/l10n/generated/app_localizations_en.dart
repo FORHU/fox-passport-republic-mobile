@@ -7031,4 +7031,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ticketPaid => 'Paid. You\'re booked.';
+
+  @override
+  String proposalAcceptAndPay(String amount) {
+    return 'Accept and pay $amount';
+  }
+
+  @override
+  String proposalPayDifference(String amount) {
+    return 'Pay $amount to confirm';
+  }
+
+  @override
+  String proposalRefundBack(String amount) {
+    return 'Your total goes down by $amount, refunded to your card.';
+  }
 }

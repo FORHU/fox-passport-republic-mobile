@@ -15,6 +15,22 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
 
+class _FakeGateway implements PaymentGateway {
+  final calls = <String>[];
+  Exception? fails;
+
+  @override
+  Future<String> pay({
+    required String? clientSecret,
+    required num amount,
+    required String currency,
+  }) async {
+    calls.add('$clientSecret $amount $currency');
+    if (fails != null) throw fails!;
+    return 'pi_delta';
+  }
+}
+
 class _FakePayments extends PaymentsRepository {
   _FakePayments() : super(_MockApi(), StubPaymentGateway());
 
@@ -58,10 +74,12 @@ Map<String, dynamic> _row({
 void main() {
   late _MockApi api;
   late _FakePayments payments;
+  late _FakeGateway gateway;
 
   setUp(() {
     api = _MockApi();
     payments = _FakePayments();
+    gateway = _FakeGateway();
   });
 
   /// The booking's replacement status: by default one item, with a proposal
@@ -118,6 +136,7 @@ void main() {
             EventEditProposalsRepository(api),
           ),
           paymentsRepositoryProvider.overrideWithValue(payments),
+          paymentGatewayProvider.overrideWithValue(gateway),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -360,6 +379,137 @@ void main() {
 
       expect(find.textContaining('Pay '), findsNothing);
       expect(find.textContaining('Waiting for'), findsNothing);
+    });
+  });
+
+  group('a paid booking (slice 3)', () {
+    // Old 19440, new 20000: 560 more.
+    void paidUp({bool awaiting = false}) {
+      answers([
+        {..._row(proposedPrice: '20000.00'), 'awaitingPayment': awaiting},
+      ]);
+    }
+
+    testWidgets('asks to pay the difference when accepting', (tester) async {
+      paidUp();
+      when(
+        () => api.post(ApiEndpoints.eventEditProposalAnswer('p1', 'accept')),
+      ).thenAnswer(
+        (_) async => {
+          'success': true,
+          'data': {
+            'paymentRequired': true,
+            'clientSecret': 'cs_d',
+            'amount': '560.00',
+            'paid': false,
+          },
+        },
+      );
+      when(
+        () => api.post(
+          ApiEndpoints.eventEditProposalAnswer('p1', 'confirm-payment'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
+
+      await show(tester);
+      expect(find.textContaining('Accept and pay'), findsOneWidget);
+      await tester.tap(find.textContaining('Accept and pay'));
+      await tester.pumpAndSettle();
+
+      expect(gateway.calls, ['cs_d 560.0 PHP']);
+      verify(
+        () => api.post(
+          ApiEndpoints.eventEditProposalAnswer('p1', 'confirm-payment'),
+        ),
+      ).called(1);
+      expect(
+        find.text('Accepted. The new Supplier will confirm.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('closing the payment sheet leaves it to pay later', (
+      tester,
+    ) async {
+      paidUp();
+      gateway.fails = const PaymentCancelled();
+      when(
+        () => api.post(ApiEndpoints.eventEditProposalAnswer('p1', 'accept')),
+      ).thenAnswer(
+        (_) async => {
+          'data': {
+            'paymentRequired': true,
+            'clientSecret': 'cs_d',
+            'amount': '560.00',
+          },
+        },
+      );
+
+      await show(tester);
+      await tester.tap(find.textContaining('Accept and pay'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Payment cancelled. You were not charged.'),
+        findsOneWidget,
+      );
+      verifyNever(
+        () => api.post(
+          ApiEndpoints.eventEditProposalAnswer('p1', 'confirm-payment'),
+        ),
+      );
+    });
+
+    testWidgets('offers to finish paying a difference already started', (
+      tester,
+    ) async {
+      paidUp(awaiting: true);
+
+      await show(tester);
+
+      expect(find.textContaining('to confirm'), findsOneWidget);
+    });
+
+    testWidgets('confirms without charging again when it was already paid', (
+      tester,
+    ) async {
+      paidUp(awaiting: true);
+      when(
+        () => api.post(ApiEndpoints.eventEditProposalAnswer('p1', 'accept')),
+      ).thenAnswer(
+        (_) async => {
+          'data': {
+            'paymentRequired': true,
+            'clientSecret': 'cs_d',
+            'amount': '560.00',
+            'paid': true,
+          },
+        },
+      );
+      when(
+        () => api.post(
+          ApiEndpoints.eventEditProposalAnswer('p1', 'confirm-payment'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
+
+      await show(tester);
+      await tester.tap(find.textContaining('to confirm'));
+      await tester.pumpAndSettle();
+
+      expect(gateway.calls, isEmpty);
+      verify(
+        () => api.post(
+          ApiEndpoints.eventEditProposalAnswer('p1', 'confirm-payment'),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('says a lower price is refunded to the card', (tester) async {
+      answers([_row()]);
+
+      await show(tester);
+
+      expect(find.textContaining('refunded to your card'), findsOneWidget);
     });
   });
 }

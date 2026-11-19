@@ -312,6 +312,7 @@ class BookedEvent extends Equatable {
     required this.eventName,
     required this.suppliers,
     this.declinableBookingId,
+    this.editableBookingId,
     this.startAt,
     this.endAt,
   });
@@ -328,6 +329,12 @@ class BookedEvent extends Equatable {
       declinableBookingId: data['declinableBookingId'] is String
           ? data['declinableBookingId'] as String
           : null,
+      // An API from before paid edits sends only the unpaid booking.
+      editableBookingId: data['editableBookingId'] is String
+          ? data['editableBookingId'] as String
+          : data['declinableBookingId'] is String
+              ? data['declinableBookingId'] as String
+              : null,
       suppliers: [
         if (raw is List)
           for (final s in raw)
@@ -363,6 +370,10 @@ class BookedEvent extends Equatable {
   /// The unpaid booking the host may still decline; null once it is paid.
   final String? declinableBookingId;
 
+  /// The booking a Supplier can still be replaced on: unpaid, or paid and to
+  /// come (a paid one settles the difference).
+  final String? editableBookingId;
+
   bool get needsReplacement => suppliers.any((s) => s.problem != null);
 
   @override
@@ -373,6 +384,7 @@ class BookedEvent extends Equatable {
         endAt,
         suppliers,
         declinableBookingId,
+        editableBookingId,
       ];
 }
 
