@@ -6,6 +6,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/formatting/money.dart';
+import 'package:flutter_template/shared/payments/payments_repository.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposal.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposals_repository.dart';
 import 'package:flutter_template/shared/tickets/replacement_status.dart';
@@ -71,12 +72,101 @@ class _ReplacementProposalCardState
     }
   }
 
+  /// Pays an unpaid booking once no Supplier is left to answer.
+  Future<void> _pay(ReplacementStatus status) async {
+    final l10n = context.l10n;
+    setState(() => _busy = true);
+    try {
+      await ref.read(paymentsRepositoryProvider).payBooking(
+            bookingId: widget.bookingId,
+            amount: status.totalAmount,
+            currency: kBaseCurrency,
+          );
+      ref
+        ..invalidate(replacementStatusProvider(widget.bookingId))
+        ..invalidate(upcomingTicketsProvider);
+      if (mounted) showTopToast(context, l10n.ticketPaid);
+    } on PaymentsUnavailable {
+      if (mounted) showTopToast(context, l10n.bookPaymentsSoon);
+    } on PaymentCancelled {
+      if (mounted) showTopToast(context, l10n.bookPaymentCancelled);
+    } on Object catch (e) {
+      // A Supplier may have been asked since; show the booking as it is now.
+      ref.invalidate(replacementStatusProvider(widget.bookingId));
+      if (mounted) {
+        showTopToast(
+          context,
+          e is AppException && e.message.isNotEmpty
+              ? e.message
+              : l10n.bookFailed,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final status = ref.watch(replacementStatusProvider(widget.bookingId)).value;
-    if (status == null || !status.needsReplacement) {
-      return const SizedBox.shrink();
-    }
+    if (status == null) return const SizedBox.shrink();
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (status.needsReplacement) _replacement(status),
+        // ADR 0010: Suppliers asked first answer before the citizen can pay.
+        if (status.unpaid && status.awaitingConfirmation > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.hourglass_bottom_rounded,
+                  size: 18,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.ticketAwaitingSuppliers(status.awaitingConfirmation),
+                    style: AppTypography.body(
+                      size: 13,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else if (status.payable)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: FilledButton(
+              onPressed: _busy ? null : () => unawaited(_pay(status)),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(0, 48),
+                backgroundColor: AppColors.accent,
+                foregroundColor: AppColors.canvas,
+              ),
+              child: Text(
+                l10n.ticketPayNow(
+                  formatMoney(
+                    status.totalAmount,
+                    kBaseCurrency,
+                    locale: locale,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _replacement(ReplacementStatus status) {
     // Proposals are only asked for when the status says one is waiting.
     final proposal = status.hasProposal
         ? ref.watch(openProposalProvider(widget.bookingId)).value
