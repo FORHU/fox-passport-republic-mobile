@@ -166,13 +166,19 @@ void main() {
 
 /// Records every booking it creates and never completes a payment.
 class _FailingPayRepository extends BookingRepository {
-  _FailingPayRepository({this.failure = const PaymentsUnavailable()})
-      : super(_MockApi(), StubPaymentGateway());
+  _FailingPayRepository({
+    this.failure = const PaymentsUnavailable(),
+    this.awaiting = 0,
+  }) : super(_MockApi(), StubPaymentGateway());
 
   /// What paying throws: no card payments, or a sheet that was closed.
   final Exception failure;
 
+  /// Suppliers asked first on each booking it creates.
+  final int awaiting;
+
   final created = <BookingSelection>[];
+  int payAttempts = 0;
 
   @override
   Future<Set<DateTime>> unavailableDates(
@@ -198,20 +204,25 @@ class _FailingPayRepository extends BookingRepository {
       totalAmount: p.totalAmount,
       currency: 'PHP',
       needsApproval: false,
+      awaitingSuppliers: awaiting,
     );
   }
 
   @override
-  Future<void> pay(BookingReceipt booking) async => throw failure;
+  Future<void> pay(BookingReceipt booking) async {
+    payAttempts++;
+    throw failure;
+  }
 }
 
 void stalePaymentTests() {
   Future<_FailingPayRepository> reachPayStep(
     WidgetTester tester, {
     Exception failure = const PaymentsUnavailable(),
+    int awaiting = 0,
   }) async {
     _bigScreen(tester);
-    final repo = _FailingPayRepository(failure: failure);
+    final repo = _FailingPayRepository(failure: failure, awaiting: awaiting);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [bookingRepositoryProvider.overrideWithValue(repo)],
@@ -294,5 +305,25 @@ void stalePaymentTests() {
 
     expect(repo.created, hasLength(2));
     expect(repo.created.last.guests, 199);
+  });
+
+  testWidgets('a booking with Suppliers to answer is not charged yet', (
+    tester,
+  ) async {
+    final repo = await reachPayStep(tester, awaiting: 2);
+
+    await tester.tap(find.textContaining('Pay ₱'));
+    await tester.pumpAndSettle();
+
+    expect(repo.created, hasLength(1));
+    expect(repo.payAttempts, 0);
+    expect(find.text('Waiting for Suppliers'), findsOneWidget);
+    expect(
+      find.textContaining('2 Suppliers in this package confirm first'),
+      findsOneWidget,
+    );
+    expect(find.text('To pay once confirmed'), findsOneWidget);
+    expect(find.text('View ticket'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

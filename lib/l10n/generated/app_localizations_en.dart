@@ -6991,4 +6991,44 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get replacementNoticeFullRefund =>
       'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.';
+
+  @override
+  String get bookAwaitingTitle => 'Waiting for Suppliers';
+
+  @override
+  String bookAwaitingSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Suppliers in this package confirm first',
+      one: '1 Supplier in this package confirms first',
+    );
+    return '$_temp0. Nothing has been charged yet.';
+  }
+
+  @override
+  String get bookAwaitingNext =>
+      'Each has 24 hours to answer, and you\'ll be told. Once they confirm, pay from your booking in Bookings.';
+
+  @override
+  String get bookAmountToPay => 'To pay once confirmed';
+
+  @override
+  String ticketAwaitingSuppliers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Waiting for $count Suppliers to confirm',
+      one: 'Waiting for 1 Supplier to confirm',
+    );
+    return '$_temp0. You can pay once they do.';
+  }
+
+  @override
+  String ticketPayNow(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get ticketPaid => 'Paid. You\'re booked.';
 }

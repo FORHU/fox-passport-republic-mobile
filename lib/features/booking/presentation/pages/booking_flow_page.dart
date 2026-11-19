@@ -212,7 +212,9 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
           : await repo.create(selection, price);
       _receipt = receipt;
       _receiptFor = selection;
-      await repo.pay(receipt);
+      // Suppliers asked first answer before it can be paid; it is paid later
+      // from the booking, once they have.
+      if (receipt.awaitingSuppliers == 0) await repo.pay(receipt);
       if (mounted) setState(() => _step = _Step.done);
     } on PaymentsUnavailable {
       if (mounted) showTopToast(context, l10n.bookPaymentsSoon);
@@ -243,19 +245,25 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
           child: switch (_step) {
             _Step.done => _receipt == null
                 ? const SizedBox.shrink()
-                : _receipt!.needsApproval
-                    ? BookingRequestSentView(
-                        selection: _selection,
+                : _receipt!.awaitingSuppliers > 0
+                    ? BookingAwaitingSuppliersView(
                         receipt: _receipt!,
-                        onMessageOwner: _messageOwner,
+                        onViewBooking: () => context.go(RouteNames.tickets),
                         onBackHome: () => context.go(RouteNames.home),
                       )
-                    : BookingConfirmedView(
-                        selection: _selection,
-                        receipt: _receipt!,
-                        onViewTicket: () => context.go(RouteNames.tickets),
-                        onMessageOwner: _messageOwner,
-                      ),
+                    : _receipt!.needsApproval
+                        ? BookingRequestSentView(
+                            selection: _selection,
+                            receipt: _receipt!,
+                            onMessageOwner: _messageOwner,
+                            onBackHome: () => context.go(RouteNames.home),
+                          )
+                        : BookingConfirmedView(
+                            selection: _selection,
+                            receipt: _receipt!,
+                            onViewTicket: () => context.go(RouteNames.tickets),
+                            onMessageOwner: _messageOwner,
+                          ),
             _ => Column(
                 children: [
                   _Header(

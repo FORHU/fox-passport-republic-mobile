@@ -337,6 +337,38 @@ void main() {
       expect(sent['excludedAssetIds'], ['ta1']);
       expect(sent['excludedServiceIds'], isEmpty);
       expect(sent['excludedVenueIds'], isEmpty);
+      expect(receipt.awaitingSuppliers, 0);
+    });
+
+    test('says how many Suppliers must confirm before it can be paid',
+        () async {
+      when(() => api.post(ApiEndpoints.bookingFromTemplate, any())).thenAnswer(
+        (_) async => {
+          'data': {
+            'eventId': 'e1',
+            'booking': {'id': 'b1', 'ticketCode': 'BKG-AAA'},
+            'awaitingConfirmation': 2,
+          },
+        },
+      );
+      when(() => api.get(ApiEndpoints.bookingById('b1'))).thenAnswer(
+        (_) async => {
+          'data': {'totalAmount': '17999'},
+        },
+      );
+      final selection = BookingSelection(
+        venue: _item,
+        package: package,
+        guests: 4,
+        date: DateTime(2026, 10, 20),
+      );
+
+      final receipt = await repository.create(
+        selection,
+        await repository.price(selection),
+      );
+
+      expect(receipt.awaitingSuppliers, 2);
     });
   });
 

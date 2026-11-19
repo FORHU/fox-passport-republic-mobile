@@ -2303,5 +2303,15 @@
   "replacementNoticeTitle": "A Supplier can't make it",
   "replacementNoticeBody": "{items} can't be part of your event. Your host has until {when} to find a replacement. If they don't, you can cancel for a full refund.",
   "@replacementNoticeBody": {"placeholders": {"items": {"type": "String"}, "when": {"type": "String"}}},
-  "replacementNoticeFullRefund": "Your host didn't find a replacement in time. You can cancel this booking for a full refund."
+  "replacementNoticeFullRefund": "Your host didn't find a replacement in time. You can cancel this booking for a full refund.",
+  "bookAwaitingTitle": "Waiting for Suppliers",
+  "bookAwaitingSub": "{count, plural, =1{1 Supplier in this package confirms first} other{{count} Suppliers in this package confirm first}}. Nothing has been charged yet.",
+  "@bookAwaitingSub": {"placeholders": {"count": {"type": "int"}}},
+  "bookAwaitingNext": "Each has 24 hours to answer, and you'll be told. Once they confirm, pay from your booking in Bookings.",
+  "bookAmountToPay": "To pay once confirmed",
+  "ticketAwaitingSuppliers": "{count, plural, =1{Waiting for 1 Supplier to confirm} other{Waiting for {count} Suppliers to confirm}}. You can pay once they do.",
+  "@ticketAwaitingSuppliers": {"placeholders": {"count": {"type": "int"}}},
+  "ticketPayNow": "Pay {amount}",
+  "@ticketPayNow": {"placeholders": {"amount": {"type": "String"}}},
+  "ticketPaid": "Paid. You're booked."
 }

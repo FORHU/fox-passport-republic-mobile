@@ -12327,6 +12327,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.'**
   String get replacementNoticeFullRefund;
+
+  /// No description provided for @bookAwaitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Suppliers'**
+  String get bookAwaitingTitle;
+
+  /// No description provided for @bookAwaitingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Supplier in this package confirms first} other{{count} Suppliers in this package confirm first}}. Nothing has been charged yet.'**
+  String bookAwaitingSub(int count);
+
+  /// No description provided for @bookAwaitingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Each has 24 hours to answer, and you\'ll be told. Once they confirm, pay from your booking in Bookings.'**
+  String get bookAwaitingNext;
+
+  /// No description provided for @bookAmountToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay once confirmed'**
+  String get bookAmountToPay;
+
+  /// No description provided for @ticketAwaitingSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Waiting for 1 Supplier to confirm} other{Waiting for {count} Suppliers to confirm}}. You can pay once they do.'**
+  String ticketAwaitingSuppliers(int count);
+
+  /// No description provided for @ticketPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String ticketPayNow(String amount);
+
+  /// No description provided for @ticketPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid. You\'re booked.'**
+  String get ticketPaid;
 }
 
 class _AppLocalizationsDelegate

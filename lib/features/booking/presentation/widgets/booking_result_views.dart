@@ -207,6 +207,77 @@ class BookingRequestSentView extends StatelessWidget {
   }
 }
 
+/// "Waiting for Suppliers": a package whose host isn't matched with some of
+/// its Suppliers asks them first (API ADR 0010). Nothing is charged; the
+/// booking is paid from Bookings once they confirm.
+class BookingAwaitingSuppliersView extends StatelessWidget {
+  const BookingAwaitingSuppliersView({
+    required this.receipt,
+    required this.onViewBooking,
+    required this.onBackHome,
+    super.key,
+  });
+
+  final BookingReceipt receipt;
+  final VoidCallback onViewBooking;
+  final VoidCallback onBackHome;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+
+    return _ResultScaffold(
+      icon: const _StatusBadge(
+        color: AppColors.warning,
+        child: Icon(
+          Icons.hourglass_bottom_rounded,
+          size: 30,
+          color: AppColors.warning,
+        ),
+      ),
+      title: l10n.bookAwaitingTitle,
+      subtitle: l10n.bookAwaitingSub(receipt.awaitingSuppliers),
+      body: [
+        _Step(
+          icon: Icons.notifications_none_rounded,
+          title: l10n.bookNotified,
+          body: l10n.bookAwaitingNext,
+        ),
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: _cardDecoration,
+          child: Column(
+            children: [
+              _KeyValue(
+                label: l10n.bookReference,
+                value: receipt.reference,
+                mono: true,
+              ),
+              const SizedBox(height: 8),
+              _KeyValue(
+                label: l10n.bookAmountToPay,
+                value: formatMoney(
+                  receipt.totalAmount,
+                  receipt.currency,
+                  locale: locale,
+                ),
+                strong: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+      actions: [
+        _PrimaryButton(label: l10n.bookViewTicket, onTap: onViewBooking),
+        const SizedBox(height: 10),
+        _OutlineButton(label: l10n.bookBackHome, onTap: onBackHome),
+      ],
+    );
+  }
+}
+
 final _cardDecoration = BoxDecoration(
   color: AppColors.surface,
   borderRadius: AppRadius.brMd,

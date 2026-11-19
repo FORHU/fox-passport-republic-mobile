@@ -7,12 +7,28 @@ import 'package:flutter_template/features/auth/domain/entities/user_entity.dart'
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/replacement_proposal_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/payments/payments_repository.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposal.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposals_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockApi extends Mock implements ApiService {}
+
+class _FakePayments extends PaymentsRepository {
+  _FakePayments() : super(_MockApi(), StubPaymentGateway());
+
+  final paid = <String>[];
+
+  @override
+  Future<void> payBooking({
+    required String bookingId,
+    required num amount,
+    required String currency,
+  }) async {
+    paid.add('$bookingId $amount $currency');
+  }
+}
 
 class _Session extends AuthController {
   @override
@@ -41,8 +57,12 @@ Map<String, dynamic> _row({
 
 void main() {
   late _MockApi api;
+  late _FakePayments payments;
 
-  setUp(() => api = _MockApi());
+  setUp(() {
+    api = _MockApi();
+    payments = _FakePayments();
+  });
 
   /// The booking's replacement status: by default one item, with a proposal
   /// waiting so the card goes on to read the proposals.
@@ -51,6 +71,8 @@ void main() {
     String? proposal = 'p1',
     String replaceBy = '2099-01-01T12:00:00Z',
     bool fullRefund = false,
+    int awaiting = 0,
+    bool unpaid = false,
   }) {
     when(() => api.get(ApiEndpoints.bookingReplacement('b1'))).thenAnswer(
       (_) async => {
@@ -68,6 +90,9 @@ void main() {
           ],
           'replaceBy': needs ? replaceBy : null,
           'fullRefund': fullRefund,
+          'awaitingConfirmation': awaiting,
+          'unpaid': unpaid,
+          'totalAmount': '21240.00',
         },
       },
     );
@@ -92,6 +117,7 @@ void main() {
           eventEditProposalsRepositoryProvider.overrideWithValue(
             EventEditProposalsRepository(api),
           ),
+          paymentsRepositoryProvider.overrideWithValue(payments),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -293,6 +319,47 @@ void main() {
 
       expect(find.text('Your host proposes a change'), findsNothing);
       expect(find.text("A Supplier can't make it"), findsOneWidget);
+    });
+  });
+
+  group('paying once Suppliers have answered (ADR 0010)', () {
+    testWidgets(
+        'says how many Suppliers are still to answer, with no pay button', (
+      tester,
+    ) async {
+      status(needs: false, awaiting: 2, unpaid: true);
+
+      await show(tester);
+
+      expect(
+        find.text(
+          'Waiting for 2 Suppliers to confirm. You can pay once they do.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Pay '), findsNothing);
+    });
+
+    testWidgets('offers to pay once none is left, and pays the booking', (
+      tester,
+    ) async {
+      status(needs: false, unpaid: true);
+
+      await show(tester);
+      await tester.tap(find.textContaining('Pay '));
+      await tester.pumpAndSettle();
+
+      expect(payments.paid, ['b1 21240.0 PHP']);
+      expect(find.text("Paid. You're booked."), findsOneWidget);
+    });
+
+    testWidgets('offers nothing on a booking already paid', (tester) async {
+      status(needs: false);
+
+      await show(tester);
+
+      expect(find.textContaining('Pay '), findsNothing);
+      expect(find.textContaining('Waiting for'), findsNothing);
     });
   });
 }
