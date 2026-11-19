@@ -112,6 +112,8 @@ class ApiEndpoints {
   static String eventReplace(String transactionId) =>
       '/event-transactions/${Uri.encodeComponent(transactionId)}/replace';
   static const String eventEditProposals = '/event-transactions/proposals';
+  static String bookingReplacement(String bookingId) =>
+      '/event-transactions/booking/${Uri.encodeComponent(bookingId)}/replacement';
   static String eventEditProposalAnswer(String proposalId, String action) =>
       '/event-transactions/proposals/${Uri.encodeComponent(proposalId)}/$action';
 

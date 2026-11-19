@@ -229,6 +229,7 @@ class BookedSupplier extends Equatable {
     this.problem,
     this.busy = false,
     this.pendingProposalId,
+    this.replaceBy,
   });
 
   final RequestKind kind;
@@ -248,6 +249,9 @@ class BookedSupplier extends Equatable {
   /// A replacement the host proposed, waiting for the citizen's answer.
   final String? pendingProposalId;
 
+  /// Past this, the citizen may cancel for a full refund unless it is replaced.
+  final DateTime? replaceBy;
+
   @override
   List<Object?> get props => [
         kind,
@@ -258,6 +262,7 @@ class BookedSupplier extends Equatable {
         problem,
         busy,
         pendingProposalId,
+        replaceBy,
       ];
 }
 
@@ -343,6 +348,7 @@ class BookedEvent extends Equatable {
                 pendingProposalId: s['pendingProposalId'] is String
                     ? s['pendingProposalId'] as String
                     : null,
+                replaceBy: DateTime.tryParse('${s['replaceBy']}')?.toLocal(),
               ),
       ],
     );

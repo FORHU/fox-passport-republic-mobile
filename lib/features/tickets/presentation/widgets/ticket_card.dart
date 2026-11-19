@@ -48,12 +48,13 @@ class TicketCard extends ConsumerWidget {
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
 
-  /// An unpaid, upcoming event-package booking: its host may propose a
-  /// replacement for a Supplier that dropped out, for the citizen to answer.
+  /// A live, upcoming event-package booking can lose a Supplier: the host's
+  /// proposed replacement, or the deadline for one, is shown on it. A paid
+  /// booking can too (a blocked day or a listing taken down).
   bool get _mayHaveProposal =>
       !ticket.isSample &&
       ticket.templateId != null &&
-      ticket.status == 'pending' &&
+      (ticket.status == 'pending' || ticket.status == 'confirmed') &&
       ticket.startAt.isAfter(DateTime.now());
 
   /// A live booking still waiting to be confirmed has no QR yet; this says

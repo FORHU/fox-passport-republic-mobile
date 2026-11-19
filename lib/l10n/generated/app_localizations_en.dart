@@ -6970,4 +6970,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proposalDeclined => 'Declined. Your host was told.';
+
+  @override
+  String bookedReplaceBy(String when) {
+    return 'Replace by $when, or the citizen can cancel for a full refund.';
+  }
+
+  @override
+  String get bookedReplacePast =>
+      'Past the deadline. The citizen can cancel for a full refund.';
+
+  @override
+  String get replacementNoticeTitle => 'A Supplier can\'t make it';
+
+  @override
+  String replacementNoticeBody(String items, String when) {
+    return '$items can\'t be part of your event. Your host has until $when to find a replacement. If they don\'t, you can cancel for a full refund.';
+  }
+
+  @override
+  String get replacementNoticeFullRefund =>
+      'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.';
 }

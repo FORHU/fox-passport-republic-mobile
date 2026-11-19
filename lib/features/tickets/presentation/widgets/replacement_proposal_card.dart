@@ -8,15 +8,19 @@ import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/formatting/money.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposal.dart';
 import 'package:flutter_template/shared/tickets/event_edit_proposals_repository.dart';
+import 'package:flutter_template/shared/tickets/replacement_status.dart';
 import 'package:flutter_template/shared/tickets/tickets_repository.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:intl/intl.dart';
 
-/// A replacement the event's host proposed on booking [bookingId], for the
-/// citizen to accept or decline. Shows nothing when none is waiting, and
-/// stays out of the way while it loads or if it can't be read.
+/// A booked event that lost a Supplier: the host's proposed replacement for
+/// the citizen to accept or decline, or, with none waiting, by when the host
+/// must replace it before a full-refund cancel opens. Shows nothing when
+/// nothing needs replacing, and stays out of the way while it loads or if it
+/// can't be read.
 class ReplacementProposalCard extends ConsumerStatefulWidget {
   const ReplacementProposalCard({required this.bookingId, super.key});
 
@@ -43,6 +47,7 @@ class _ReplacementProposalCardState
       }
       ref
         ..invalidate(openProposalProvider(widget.bookingId))
+        ..invalidate(replacementStatusProvider(widget.bookingId))
         ..invalidate(upcomingTicketsProvider);
       if (!mounted) return;
       showTopToast(
@@ -51,7 +56,9 @@ class _ReplacementProposalCardState
       );
     } on Object catch (e) {
       // It may have expired or been withdrawn meanwhile; show it as it is now.
-      ref.invalidate(openProposalProvider(widget.bookingId));
+      ref
+        ..invalidate(openProposalProvider(widget.bookingId))
+        ..invalidate(replacementStatusProvider(widget.bookingId));
       if (!mounted) return;
       showTopToast(
         context,
@@ -66,8 +73,15 @@ class _ReplacementProposalCardState
 
   @override
   Widget build(BuildContext context) {
-    final proposal = ref.watch(openProposalProvider(widget.bookingId)).value;
-    if (proposal == null) return const SizedBox.shrink();
+    final status = ref.watch(replacementStatusProvider(widget.bookingId)).value;
+    if (status == null || !status.needsReplacement) {
+      return const SizedBox.shrink();
+    }
+    // Proposals are only asked for when the status says one is waiting.
+    final proposal = status.hasProposal
+        ? ref.watch(openProposalProvider(widget.bookingId)).value
+        : null;
+    if (proposal == null) return _ReplacementNotice(status: status);
 
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
@@ -156,6 +170,65 @@ class _ReplacementProposalCardState
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A Supplier dropped out and no proposal is waiting: says by when the host
+/// must replace it, or that the citizen may now cancel for a full refund.
+class _ReplacementNotice extends StatelessWidget {
+  const _ReplacementNotice({required this.status});
+
+  final ReplacementStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+    final items = status.items.map((i) => i.itemName).join(', ');
+    final when = status.replaceBy == null
+        ? null
+        : DateFormat('EEE d MMM, h:mm a', locale).format(status.replaceBy!);
+    final color = status.fullRefund ? AppColors.error : AppColors.warning;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brMd,
+          border: Border.all(color: color),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.schedule_rounded, size: 20, color: color),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.replacementNoticeTitle,
+                    style: AppTypography.display(size: 15),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    status.fullRefund || when == null
+                        ? l10n.replacementNoticeFullRefund
+                        : l10n.replacementNoticeBody(items, when),
+                    style: AppTypography.body(
+                      size: 13,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

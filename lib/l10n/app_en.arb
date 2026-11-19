@@ -2296,5 +2296,12 @@
   "proposalAccept": "Accept",
   "proposalDecline": "Decline",
   "proposalAccepted": "Accepted. The new Supplier will confirm.",
-  "proposalDeclined": "Declined. Your host was told."
+  "proposalDeclined": "Declined. Your host was told.",
+  "bookedReplaceBy": "Replace by {when}, or the citizen can cancel for a full refund.",
+  "@bookedReplaceBy": {"placeholders": {"when": {"type": "String"}}},
+  "bookedReplacePast": "Past the deadline. The citizen can cancel for a full refund.",
+  "replacementNoticeTitle": "A Supplier can't make it",
+  "replacementNoticeBody": "{items} can't be part of your event. Your host has until {when} to find a replacement. If they don't, you can cancel for a full refund.",
+  "@replacementNoticeBody": {"placeholders": {"items": {"type": "String"}, "when": {"type": "String"}}},
+  "replacementNoticeFullRefund": "Your host didn't find a replacement in time. You can cancel this booking for a full refund."
 }
