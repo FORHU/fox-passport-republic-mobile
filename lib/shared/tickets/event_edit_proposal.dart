@@ -11,6 +11,7 @@ class EventEditProposal {
     required this.proposedPrice,
     this.note,
     this.expiresAt,
+    this.awaitingPayment = false,
   });
 
   factory EventEditProposal.fromJson(Map<String, dynamic> json) {
@@ -26,6 +27,7 @@ class EventEditProposal {
       proposedPrice: money('proposedPrice'),
       note: note == null || note.isEmpty ? null : note,
       expiresAt: DateTime.tryParse('${json['expiresAt']}')?.toLocal(),
+      awaitingPayment: json['awaitingPayment'] == true,
     );
   }
 
@@ -44,6 +46,9 @@ class EventEditProposal {
   final num proposedPrice;
   final String? note;
   final DateTime? expiresAt;
+
+  /// Accepted on a paid booking, with the difference still to pay.
+  final bool awaitingPayment;
 
   num get priceDelta => proposedPrice - currentPrice;
 

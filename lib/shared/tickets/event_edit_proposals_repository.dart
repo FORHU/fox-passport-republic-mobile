@@ -38,9 +38,31 @@ class EventEditProposalsRepository {
     return ReplacementStatus.fromJson(data.cast<String, dynamic>());
   }
 
-  /// The new Supplier is asked to confirm; the old one is let go.
-  Future<void> accept(String proposalId) async {
-    await _api.post(ApiEndpoints.eventEditProposalAnswer(proposalId, 'accept'));
+  /// The new Supplier is asked to confirm; the old one is let go. On a paid
+  /// booking whose total goes up, nothing changes yet: the result carries
+  /// what is needed to pay the difference, then [confirmPayment] applies it.
+  Future<AcceptResult> accept(String proposalId) async {
+    final body = await _api.post(
+      ApiEndpoints.eventEditProposalAnswer(proposalId, 'accept'),
+    );
+    final data = body is Map ? body['data'] : null;
+    if (data is Map && data['paymentRequired'] == true) {
+      return AcceptResult(
+        paymentRequired: true,
+        clientSecret: data['clientSecret']?.toString(),
+        amount: num.tryParse('${data['amount']}') ?? 0,
+        alreadyPaid: data['paid'] == true,
+      );
+    }
+    return const AcceptResult();
+  }
+
+  /// After the difference was paid: the API checks it and applies the change,
+  /// or refunds it if the change can no longer apply (and says so).
+  Future<void> confirmPayment(String proposalId) async {
+    await _api.post(
+      ApiEndpoints.eventEditProposalAnswer(proposalId, 'confirm-payment'),
+    );
   }
 
   /// The host is told and may propose another.
@@ -49,6 +71,24 @@ class EventEditProposalsRepository {
       ApiEndpoints.eventEditProposalAnswer(proposalId, 'decline'),
     );
   }
+}
+
+/// What accepting a proposal needs next.
+class AcceptResult {
+  const AcceptResult({
+    this.paymentRequired = false,
+    this.clientSecret,
+    this.amount = 0,
+    this.alreadyPaid = false,
+  });
+
+  /// A paid booking whose total goes up: the difference is paid first.
+  final bool paymentRequired;
+  final String? clientSecret;
+  final num amount;
+
+  /// The difference went through earlier (the app closed before confirming).
+  final bool alreadyPaid;
 }
 
 final eventEditProposalsRepositoryProvider =

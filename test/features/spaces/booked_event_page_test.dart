@@ -33,6 +33,7 @@ Map<String, Object?> _supplier(
 Map<String, Object?> _event(
   List<Map<String, Object?>> suppliers, {
   String? declinable,
+  String? editable,
 }) =>
     {
       'success': true,
@@ -43,6 +44,7 @@ Map<String, Object?> _event(
         'endAt': '2026-12-05T15:00:00Z',
         'eventStatus': 'pending',
         'declinableBookingId': declinable,
+        if (editable != null) 'editableBookingId': editable,
         'suppliers': suppliers,
       },
     };
@@ -471,6 +473,24 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+  });
+
+  group('a paid booking (slice 3)', () {
+    testWidgets('can still have a Supplier replaced, but not be declined', (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event(
+          [_supplier('asset', 'Sound system', reason: 'declined')],
+          editable: 'b1',
+        ),
+      );
+
+      await show(tester);
+
+      expect(find.text('Find a replacement'), findsOneWidget);
+      expect(find.text("I can't run this event"), findsNothing);
     });
   });
 }

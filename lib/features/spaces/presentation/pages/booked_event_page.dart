@@ -18,7 +18,7 @@ import 'package:intl/intl.dart';
 /// with where each stands. A Supplier that declined, whose day was blocked or
 /// whose listing is gone is marked and says why, so it is clear what to
 /// replace, and the host can propose a replacement there for the citizen to
-/// accept (only while the booking is unpaid).
+/// accept (unpaid, or paid and still to come).
 class BookedEventPage extends ConsumerWidget {
   const BookedEventPage({required this.eventId, super.key});
 
@@ -59,8 +59,9 @@ class BookedEventPage extends ConsumerWidget {
           },
           child: _Body(
             event: e,
-            // Replacing is for an unpaid booking only, like declining it.
-            onReplace: e.declinableBookingId == null
+            // Unpaid, or paid and to come: a paid booking settles the
+            // difference when the citizen accepts.
+            onReplace: e.editableBookingId == null
                 ? null
                 : (s) => _findReplacement(context, ref, s, eventId),
             onWithdraw: (proposalId) =>

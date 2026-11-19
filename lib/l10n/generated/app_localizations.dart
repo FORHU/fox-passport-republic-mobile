@@ -12369,6 +12369,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paid. You\'re booked.'**
   String get ticketPaid;
+
+  /// No description provided for @proposalAcceptAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and pay {amount}'**
+  String proposalAcceptAndPay(String amount);
+
+  /// No description provided for @proposalPayDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount} to confirm'**
+  String proposalPayDifference(String amount);
+
+  /// No description provided for @proposalRefundBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}, refunded to your card.'**
+  String proposalRefundBack(String amount);
 }
 
 class _AppLocalizationsDelegate

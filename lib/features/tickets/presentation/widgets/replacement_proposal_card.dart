@@ -36,13 +36,29 @@ class _ReplacementProposalCardState
     extends ConsumerState<ReplacementProposalCard> {
   bool _busy = false;
 
+  void _refresh() => ref
+    ..invalidate(openProposalProvider(widget.bookingId))
+    ..invalidate(replacementStatusProvider(widget.bookingId));
+
   Future<void> _answer(EventEditProposal p, {required bool accept}) async {
     final l10n = context.l10n;
     final repo = ref.read(eventEditProposalsRepositoryProvider);
     setState(() => _busy = true);
     try {
       if (accept) {
-        await repo.accept(p.id);
+        final result = await repo.accept(p.id);
+        // A paid booking whose total goes up pays the difference first; the
+        // change applies once the API has checked that payment.
+        if (result.paymentRequired) {
+          if (!result.alreadyPaid) {
+            await ref.read(paymentGatewayProvider).pay(
+                  clientSecret: result.clientSecret,
+                  amount: result.amount,
+                  currency: kBaseCurrency,
+                );
+          }
+          await repo.confirmPayment(p.id);
+        }
       } else {
         await repo.decline(p.id);
       }
@@ -55,6 +71,13 @@ class _ReplacementProposalCardState
         context,
         accept ? l10n.proposalAccepted : l10n.proposalDeclined,
       );
+    } on PaymentsUnavailable {
+      _refresh();
+      if (mounted) showTopToast(context, l10n.bookPaymentsSoon);
+    } on PaymentCancelled {
+      // Nothing was charged; the proposal waits, ready to pay again.
+      _refresh();
+      if (mounted) showTopToast(context, l10n.bookPaymentCancelled);
     } on Object catch (e) {
       // It may have expired or been withdrawn meanwhile; show it as it is now.
       ref
@@ -177,11 +200,20 @@ class _ReplacementProposalCardState
     final locale = Localizations.localeOf(context).toString();
     final delta = proposal.priceDelta;
     final amount = formatMoney(delta.abs(), kBaseCurrency, locale: locale);
+    // A paid booking settles the difference: paid on accepting, or refunded.
+    final paid = !status.unpaid;
     final price = delta > 0
         ? l10n.proposalPriceUp(amount)
         : delta < 0
-            ? l10n.proposalPriceDown(amount)
+            ? (paid
+                ? l10n.proposalRefundBack(amount)
+                : l10n.proposalPriceDown(amount))
             : l10n.proposalPriceSame;
+    final acceptLabel = paid && delta > 0
+        ? (proposal.awaitingPayment
+            ? l10n.proposalPayDifference(amount)
+            : l10n.proposalAcceptAndPay(amount))
+        : l10n.proposalAccept;
 
     return Padding(
       padding: const EdgeInsets.only(top: 12),
@@ -256,7 +288,10 @@ class _ReplacementProposalCardState
                       backgroundColor: AppColors.accent,
                       foregroundColor: AppColors.canvas,
                     ),
-                    child: Text(l10n.proposalAccept),
+                    child: Text(
+                      acceptLabel,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ],
