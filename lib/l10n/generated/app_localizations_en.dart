@@ -2494,7 +2494,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get earningsSetupHint =>
-      'Opens on the web. It asks for your bank and identity details.';
+      'Opens Stripe\'s secure form. It asks for your bank and identity details.';
+
+  @override
+  String get payoutSetupFailed =>
+      'Couldn\'t open payout setup. Check your connection and try again.';
 
   @override
   String get payoutPending => 'Pending';

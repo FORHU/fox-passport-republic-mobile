@@ -142,6 +142,9 @@ class ApiEndpoints {
   /// How far the person's payout account (Stripe) is set up.
   static const String stripeStatus = '/stripe-connect/status';
 
+  /// Stripe's hosted payout setup link; creates the account the first time.
+  static const String stripeOnboard = '/stripe-connect/onboard';
+
   /// Checks a guest in by the code on their ticket.
   static const String bookingCheckIn = '/bookings/check-in';
   static const String venues = '/venues';

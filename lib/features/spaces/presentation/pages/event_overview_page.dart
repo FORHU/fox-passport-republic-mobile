@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
+import 'package:flutter_template/features/spaces/presentation/controllers/payout_setup_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -30,11 +30,11 @@ import 'package:go_router/go_router.dart';
 class EventOverviewPage extends ConsumerWidget {
   const EventOverviewPage({super.key});
 
-  /// Setting up payouts takes bank and identity details, so it is finished on
-  /// the web, as it is from Earnings.
-  Future<void> _setUpPayouts(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard/stripe-onboard');
+  /// Setting up payouts takes bank and identity details, entered in Stripe's
+  /// own form inside the app, as from Earnings.
+  Future<void> _setUpPayouts(BuildContext context, WidgetRef ref) async {
+    final message = context.l10n.payoutSetupFailed;
+    final opened = await ref.read(payoutSetupControllerProvider).open();
     if (!opened && context.mounted) showTopToast(context, message);
   }
 
@@ -82,7 +82,7 @@ class EventOverviewPage extends ConsumerWidget {
       FirstStep(
         label: l10n.firstStepPayout,
         done: stripe.asData?.value.onboardingComplete ?? false,
-        onTap: () => unawaited(_setUpPayouts(context)),
+        onTap: () => unawaited(_setUpPayouts(context, ref)),
       ),
     ];
     final stepsLoaded =
