@@ -269,4 +269,161 @@ void main() {
       expect(notificationRoute('/creator-dashboard'), isNull);
     });
   });
+
+  group('replacing a Supplier', () {
+    Map<String, Object?> declined({String? proposal}) => {
+          ..._supplier('asset', 'Sound system', reason: 'declined'),
+          'pendingProposalId': proposal,
+        };
+
+    test('a Supplier reads its line and any proposal waiting on it', () {
+      final e = BookedEvent.tryParse(
+        _event([declined(proposal: 'p1')])['data'],
+      )!;
+
+      expect(e.suppliers.single.transactionId, 't-Sound system');
+      expect(e.suppliers.single.pendingProposalId, 'p1');
+    });
+
+    test('a candidate reads its price and whether it is a partner', () {
+      final c = ReplacementCandidate.tryParse({
+        'itemId': 'a2',
+        'name': 'Bigger speakers',
+        'supplierName': 'Ana Audio',
+        'price': '5500',
+        'partner': true,
+      })!;
+
+      expect(c.price, 5500);
+      expect(c.partner, isTrue);
+      expect(ReplacementCandidate.tryParse({'name': 'x'}), isNull);
+    });
+
+    testWidgets('is not offered once the booking is paid', (tester) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1')))
+          .thenAnswer((_) async => _event([declined()]));
+
+      await show(tester);
+
+      expect(find.text('Find a replacement'), findsNothing);
+    });
+
+    testWidgets('is offered only on the Supplier that needs replacing', (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event(
+          [declined(), _supplier('service', 'Photographer')],
+          declinable: 'b1',
+        ),
+      );
+
+      await show(tester);
+
+      expect(find.text('Find a replacement'), findsOneWidget);
+    });
+
+    testWidgets('lists candidates, asks first, then sends the proposal', (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([declined()], declinable: 'b1'),
+      );
+      when(
+        () => api.get(
+          ApiEndpoints.eventReplacements('t-Sound system'),
+          query: {'kind': 'asset'},
+        ),
+      ).thenAnswer(
+        (_) async => {
+          'success': true,
+          'data': [
+            {
+              'itemId': 'a2',
+              'name': 'Bigger speakers',
+              'supplierName': 'Ana Audio',
+              'price': '5500',
+              'partner': false,
+            },
+          ],
+        },
+      );
+      when(
+        () => api.post(ApiEndpoints.eventReplace('t-Sound system'), any()),
+      ).thenAnswer((_) async => {'success': true});
+
+      await show(tester);
+      await tester.tap(find.text('Find a replacement'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Replace Sound system'), findsOneWidget);
+      expect(find.text('Ana Audio'), findsOneWidget);
+
+      await tester.tap(find.text('Bigger speakers'));
+      await tester.pumpAndSettle();
+      expect(find.text('Propose Bigger speakers?'), findsOneWidget);
+      verifyNever(
+        () => api.post(ApiEndpoints.eventReplace('t-Sound system'), any()),
+      );
+
+      await tester.tap(find.text('Propose'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.post(ApiEndpoints.eventReplace('t-Sound system'), {
+          'kind': 'asset',
+          'itemId': 'a2',
+        }),
+      ).called(1);
+      expect(find.text('Sent. The citizen will answer.'), findsOneWidget);
+    });
+
+    testWidgets('says so when nothing like it is free', (tester) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([declined()], declinable: 'b1'),
+      );
+      when(
+        () => api.get(
+          ApiEndpoints.eventReplacements('t-Sound system'),
+          query: {'kind': 'asset'},
+        ),
+      ).thenAnswer((_) async => {'success': true, 'data': <Object>[]});
+
+      await show(tester);
+      await tester.tap(find.text('Find a replacement'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Nothing like it is free on those dates.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('shows a waiting proposal, which can be withdrawn', (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([declined(proposal: 'p1')], declinable: 'b1'),
+      );
+      when(
+        () => api.post(ApiEndpoints.eventEditProposalAnswer('p1', 'withdraw')),
+      ).thenAnswer((_) async => {'success': true});
+
+      await show(tester);
+
+      expect(find.text('Find a replacement'), findsNothing);
+      expect(
+        find.text('Replacement sent, waiting for the citizen'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Withdraw'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.post(ApiEndpoints.eventEditProposalAnswer('p1', 'withdraw')),
+      ).called(1);
+      expect(find.text('Proposal withdrawn.'), findsOneWidget);
+    });
+  });
 }
