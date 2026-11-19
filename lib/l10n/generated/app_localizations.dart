@@ -12297,6 +12297,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Declined. Your host was told.'**
   String get proposalDeclined;
+
+  /// No description provided for @bookedReplaceBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace by {when}, or the citizen can cancel for a full refund.'**
+  String bookedReplaceBy(String when);
+
+  /// No description provided for @bookedReplacePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past the deadline. The citizen can cancel for a full refund.'**
+  String get bookedReplacePast;
+
+  /// No description provided for @replacementNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A Supplier can\'t make it'**
+  String get replacementNoticeTitle;
+
+  /// No description provided for @replacementNoticeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{items} can\'t be part of your event. Your host has until {when} to find a replacement. If they don\'t, you can cancel for a full refund.'**
+  String replacementNoticeBody(String items, String when);
+
+  /// No description provided for @replacementNoticeFullRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.'**
+  String get replacementNoticeFullRefund;
 }
 
 class _AppLocalizationsDelegate

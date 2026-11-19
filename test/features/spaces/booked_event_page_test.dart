@@ -426,4 +426,51 @@ void main() {
       expect(find.text('Proposal withdrawn.'), findsOneWidget);
     });
   });
+
+  group('the replacement deadline', () {
+    Map<String, Object?> declined(String replaceBy) => {
+          ..._supplier('asset', 'Sound system', reason: 'declined'),
+          'replaceBy': replaceBy,
+        };
+
+    test('a Supplier reads by when it must be replaced', () {
+      final e = BookedEvent.tryParse(
+        _event([declined('2026-11-20T10:00:00Z')])['data'],
+      )!;
+
+      expect(
+        e.suppliers.single.replaceBy,
+        DateTime.utc(2026, 11, 20, 10).toLocal(),
+      );
+    });
+
+    testWidgets('says by when, before the deadline', (tester) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([declined('2099-01-01T12:00:00Z')]),
+      );
+
+      await show(tester);
+
+      expect(find.textContaining('Replace by '), findsOneWidget);
+      expect(
+        find.textContaining('or the citizen can cancel for a full refund'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('says a full refund is open, once past it', (tester) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([declined('2000-01-01T00:00:00Z')]),
+      );
+
+      await show(tester);
+
+      expect(
+        find.text(
+          'Past the deadline. The citizen can cancel for a full refund.',
+        ),
+        findsOneWidget,
+      );
+    });
+  });
 }

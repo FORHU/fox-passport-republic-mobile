@@ -570,6 +570,23 @@ class _SupplierRow extends StatelessWidget {
                       color: AppColors.error,
                     ),
                   ),
+                  if (supplier.replaceBy case final due?) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      due.isAfter(DateTime.now())
+                          ? l10n.bookedReplaceBy(
+                              DateFormat(
+                                'EEE d MMM, h:mm a',
+                                Localizations.localeOf(context).toString(),
+                              ).format(due),
+                            )
+                          : l10n.bookedReplacePast,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                   if (onWithdraw != null) ...[
                     const SizedBox(height: 6),
                     Text(

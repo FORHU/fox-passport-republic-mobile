@@ -44,7 +44,37 @@ void main() {
 
   setUp(() => api = _MockApi());
 
+  /// The booking's replacement status: by default one item, with a proposal
+  /// waiting so the card goes on to read the proposals.
+  void status({
+    bool needs = true,
+    String? proposal = 'p1',
+    String replaceBy = '2099-01-01T12:00:00Z',
+    bool fullRefund = false,
+  }) {
+    when(() => api.get(ApiEndpoints.bookingReplacement('b1'))).thenAnswer(
+      (_) async => {
+        'success': true,
+        'data': {
+          'items': [
+            if (needs)
+              {
+                'kind': 'asset',
+                'itemName': 'Sound system',
+                'reason': 'declined',
+                'replaceBy': replaceBy,
+                'pendingProposalId': proposal,
+              },
+          ],
+          'replaceBy': needs ? replaceBy : null,
+          'fullRefund': fullRefund,
+        },
+      },
+    );
+  }
+
   void answers(List<Map<String, dynamic>> rows) {
+    status();
     when(
       () => api.get(
         ApiEndpoints.eventEditProposals,
@@ -104,6 +134,7 @@ void main() {
     testWidgets('shows nothing when the proposals cannot be read', (
       tester,
     ) async {
+      status();
       when(
         () => api.get(
           ApiEndpoints.eventEditProposals,
@@ -191,6 +222,77 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('This proposal has expired'), findsOneWidget);
+    });
+  });
+
+  group('the replacement deadline', () {
+    testWidgets('shows nothing when no Supplier needs replacing', (
+      tester,
+    ) async {
+      status(needs: false);
+
+      await show(tester);
+
+      expect(find.text("A Supplier can't make it"), findsNothing);
+      verifyNever(
+        () => api.get(
+          ApiEndpoints.eventEditProposals,
+          query: any(named: 'query'),
+        ),
+      );
+    });
+
+    testWidgets(
+        'says by when the host must replace it, without asking for proposals', (
+      tester,
+    ) async {
+      status(proposal: null);
+
+      await show(tester);
+
+      expect(find.text("A Supplier can't make it"), findsOneWidget);
+      expect(
+        find.textContaining("Sound system can't be part of your event. "
+            'Your host has until'),
+        findsOneWidget,
+      );
+      verifyNever(
+        () => api.get(
+          ApiEndpoints.eventEditProposals,
+          query: any(named: 'query'),
+        ),
+      );
+    });
+
+    testWidgets('says a full-refund cancel is open once the deadline passed', (
+      tester,
+    ) async {
+      status(
+        proposal: null,
+        replaceBy: '2000-01-01T00:00:00Z',
+        fullRefund: true,
+      );
+
+      await show(tester);
+
+      expect(
+        find.text(
+          "Your host didn't find a replacement in time. "
+          'You can cancel this booking for a full refund.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('shows the deadline when the proposal is no longer open', (
+      tester,
+    ) async {
+      answers([_row(status: 'withdrawn')]);
+
+      await show(tester);
+
+      expect(find.text('Your host proposes a change'), findsNothing);
+      expect(find.text("A Supplier can't make it"), findsOneWidget);
     });
   });
 }
