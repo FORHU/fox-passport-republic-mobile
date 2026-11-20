@@ -439,15 +439,13 @@ void main() {
       });
     });
 
-    testWidgets('puts the buttons first, then what needs the person', (
+    testWidgets('what needs the person comes before the numbers', (
       tester,
     ) async {
       await pump(tester, const VenueOverviewPage());
 
-      final actions = tester.getTopLeft(find.text('Add a venue')).dy;
       final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
       final numbers = tester.getTopLeft(find.text('NUMBERS')).dy;
-      expect(actions, lessThan(attention));
       expect(attention, lessThan(numbers));
     });
 
@@ -510,12 +508,17 @@ void main() {
       }
     });
 
-    testWidgets('the Calendar button opens the calendar', (tester) async {
+    testWidgets('has no Calendar button: the calendar is a tab', (
+      tester,
+    ) async {
       await pump(tester, const VenueOverviewPage());
 
-      await tester.tap(find.text('Calendar').first);
-      await tester.pumpAndSettle();
-      expect(find.text('AT ${RouteNames.spaceVenueCalendar}'), findsOneWidget);
+      expect(find.text('Calendar'), findsNothing);
+      // The same floating Add venue as the Venues tab.
+      expect(
+        find.widgetWithText(FloatingActionButton, 'Add venue'),
+        findsOneWidget,
+      );
     });
 
     PayoutRow paid(int daysAgo, num amount) => PayoutRow(

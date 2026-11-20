@@ -227,6 +227,9 @@ class _ApplyFormState extends State<_ApplyForm> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _listingId,
+              // A long listing name shortens with "…" instead of pushing the
+              // arrow off a narrow phone.
+              isExpanded: true,
               decoration: InputDecoration(
                 labelText: widget.slot.isGear
                     ? l10n.openSlotsGear
@@ -234,7 +237,10 @@ class _ApplyFormState extends State<_ApplyForm> {
               ),
               items: [
                 for (final s in widget.listings)
-                  DropdownMenuItem(value: s.id, child: Text(s.name)),
+                  DropdownMenuItem(
+                    value: s.id,
+                    child: Text(s.name, overflow: TextOverflow.ellipsis),
+                  ),
               ],
               onChanged: (id) => setState(() => _listingId = id ?? _listingId),
             ),
