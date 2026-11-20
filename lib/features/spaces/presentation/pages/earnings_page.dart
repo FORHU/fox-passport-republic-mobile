@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/controllers/payout_setup_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
@@ -18,14 +18,16 @@ import 'package:intl/intl.dart';
 
 /// What the person has been paid, what is still owed, the latest payouts, and
 /// whether their payout account is set up. Setting it up takes bank and
-/// identity details, so that part is finished on the web.
+/// identity details, entered in Stripe's own form, opened inside the app.
 class EarningsPage extends ConsumerWidget {
   const EarningsPage({super.key});
 
-  Future<void> _setUp(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard/stripe-onboard');
-    if (!opened && context.mounted) showTopToast(context, message);
+  Future<void> _setUp(BuildContext context, WidgetRef ref) async {
+    final message = context.l10n.payoutSetupFailed;
+    final result = await ref.read(payoutSetupControllerProvider).open();
+    if (result == PayoutSetupResult.failed && context.mounted) {
+      showTopToast(context, message);
+    }
   }
 
   @override
@@ -89,7 +91,7 @@ class EarningsPage extends ConsumerWidget {
               const SizedBox(height: 20),
               _SetupCard(
                 status: stripe.asData?.value,
-                onSetUp: () => _setUp(context),
+                onSetUp: () => _setUp(context, ref),
               ),
               const SizedBox(height: 24),
               Text(

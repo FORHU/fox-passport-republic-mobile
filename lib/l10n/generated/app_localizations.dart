@@ -4687,8 +4687,14 @@ abstract class AppLocalizations {
   /// No description provided for @earningsSetupHint.
   ///
   /// In en, this message translates to:
-  /// **'Opens on the web. It asks for your bank and identity details.'**
+  /// **'Opens Stripe\'s secure form. It asks for your bank and identity details.'**
   String get earningsSetupHint;
+
+  /// No description provided for @payoutSetupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open payout setup. Check your connection and try again.'**
+  String get payoutSetupFailed;
 
   /// No description provided for @payoutPending.
   ///
