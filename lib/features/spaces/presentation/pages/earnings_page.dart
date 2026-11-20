@@ -24,8 +24,10 @@ class EarningsPage extends ConsumerWidget {
 
   Future<void> _setUp(BuildContext context, WidgetRef ref) async {
     final message = context.l10n.payoutSetupFailed;
-    final opened = await ref.read(payoutSetupControllerProvider).open();
-    if (!opened && context.mounted) showTopToast(context, message);
+    final result = await ref.read(payoutSetupControllerProvider).open();
+    if (result == PayoutSetupResult.failed && context.mounted) {
+      showTopToast(context, message);
+    }
   }
 
   @override

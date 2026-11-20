@@ -193,8 +193,15 @@ class SpacesRepository {
   /// A single-use link to Stripe's payout setup form for the person's own
   /// account, which the API creates on the first call. Reads
   /// `{ data: { url } }`; throws [FormatException] without an https link.
-  Future<Uri> payoutSetupLink() async {
-    final body = await _api.post(ApiEndpoints.stripeOnboard);
+  ///
+  /// [returnToApp] asks for Stripe to send the person back to the app when
+  /// they finish or the link expires (`client: mobile`, mobile#476), instead
+  /// of to the web app's dashboard.
+  Future<Uri> payoutSetupLink({bool returnToApp = false}) async {
+    final body = await _api.post(
+      ApiEndpoints.stripeOnboard,
+      returnToApp ? const {'client': 'mobile'} : null,
+    );
     final data =
         body is Map && body['data'] is Map ? body['data'] as Map : body;
     final url = data is Map ? data['url'] : null;

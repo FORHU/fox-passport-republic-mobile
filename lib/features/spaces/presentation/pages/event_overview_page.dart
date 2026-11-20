@@ -31,11 +31,20 @@ class EventOverviewPage extends ConsumerWidget {
   const EventOverviewPage({super.key});
 
   /// Setting up payouts takes bank and identity details, entered in Stripe's
-  /// own form inside the app, as from Earnings.
+  /// own form inside the app, as from Earnings. Back from a finished form,
+  /// Earnings shows the new status (mobile#476).
   Future<void> _setUpPayouts(BuildContext context, WidgetRef ref) async {
     final message = context.l10n.payoutSetupFailed;
-    final opened = await ref.read(payoutSetupControllerProvider).open();
-    if (!opened && context.mounted) showTopToast(context, message);
+    final result = await ref.read(payoutSetupControllerProvider).open();
+    if (!context.mounted) return;
+    switch (result) {
+      case PayoutSetupResult.failed:
+        showTopToast(context, message);
+      case PayoutSetupResult.returned:
+        context.go(RouteNames.spaceEventEarnings);
+      case PayoutSetupResult.left:
+        break;
+    }
   }
 
   @override
