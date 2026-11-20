@@ -7,7 +7,6 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/home/data/last_occasion.dart';
 import 'package:flutter_template/features/home/domain/home_categories.dart';
 import 'package:flutter_template/features/home/presentation/widgets/category_labels.dart';
-import 'package:flutter_template/features/home/presentation/widgets/first_event_checklist.dart';
 import 'package:flutter_template/features/home/presentation/widgets/foxers_row.dart';
 import 'package:flutter_template/features/home/presentation/widgets/getting_started_card.dart';
 import 'package:flutter_template/features/home/presentation/widgets/items_row.dart';
@@ -67,10 +66,7 @@ class HomePage extends ConsumerWidget {
       city: area.city,
     );
     final soon = ref.watch(catalogProvider(soonQuery));
-    // No bookings at all (and both lists have answered): offer the checklist.
     final pastTickets = ref.watch(pastTicketsProvider);
-    final noBookings = (upcomingTickets.asData?.value.isEmpty ?? false) &&
-        (pastTickets.asData?.value.isEmpty ?? false);
     final hasBooking = (upcomingTickets.asData?.value.isNotEmpty ?? false) ||
         (pastTickets.asData?.value.isNotEmpty ?? false);
     // The steps the server has on record; null until it has answered (and if
@@ -204,7 +200,8 @@ class HomePage extends ConsumerWidget {
                 _NextNight(ticket: ticket),
               ],
               // Getting started: nothing until the server has answered, and
-              // gone once every step is done.
+              // gone once every step is done. Its last step is the first
+              // booking, so there is no second "plan your first event" card.
               if (finished != null && !allStepsDone) ...[
                 const SizedBox(height: 16),
                 GettingStartedCard(
@@ -235,13 +232,6 @@ class HomePage extends ConsumerWidget {
                       onTap: () => openOccasion(last ?? tiles.first.occasion),
                     ),
                   ],
-                ),
-              ],
-              if (noBookings) ...[
-                const SizedBox(height: 16),
-                FirstEventChecklist(
-                  pickedOccasion: last != null,
-                  onStart: () => openOccasion(last ?? tiles.first.occasion),
                 ),
               ],
               const SizedBox(height: 22),
