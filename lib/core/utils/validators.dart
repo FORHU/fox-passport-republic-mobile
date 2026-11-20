@@ -70,6 +70,21 @@ class Validators {
     return null;
   }
 
+  /// The API's username rule (`src/utils/username.ts`, keep them in step):
+  /// 3–30 letters, numbers, dots and underscores, checked after trimming and
+  /// lowercasing, the way the API saves it. Account setup (api#419) uses it.
+  static String? username(String? value) {
+    final v = (value ?? '').trim().toLowerCase();
+    if (v.isEmpty) return 'Username is required';
+    if (v.length < 3 || v.length > 30) {
+      return 'Usernames need 3–30 characters.';
+    }
+    if (!RegExp(r'^[a-z0-9._]+$').hasMatch(v)) {
+      return 'Usernames can only use letters, numbers, dots and underscores.';
+    }
+    return null;
+  }
+
   /// The one password policy, the API's `src/utils/password-policy.ts` (keep
   /// them in step): 12 to 128 characters, an upper-case letter, a lower-case
   /// letter, a digit and a special character (anything but a letter, digit or

@@ -44,6 +44,15 @@ void main() {
     when(() => social.signOut()).thenAnswer((_) async {});
     when(() => storage.saveToken(any())).thenAnswer((_) async {});
     when(() => storage.saveUserModel(any())).thenAnswer((_) async {});
+    // /profile has no token of its own; the repository keeps the session's.
+    when(() => remote.checkAuth(any())).thenAnswer(
+      (_) async => const UserModel(
+        id: 'u1',
+        email: 'g@example.com',
+        name: 'G',
+        token: '',
+      ),
+    );
   });
 
   group('AuthRepositoryImpl.loginWithSocial', () {
@@ -144,6 +153,121 @@ void main() {
       await repository.loginWithSocial(SocialProvider.google);
 
       verifyNever(() => social.signOut());
+    });
+
+    // api#419: the sign-in payload can't say what the account still lacks.
+    test('reads /profile, so a Google account without a password sets up',
+        () async {
+      when(() => social.obtain(any()))
+          .thenAnswer((_) async => const SocialToken('google-id-token'));
+      when(() => remote.loginWithSocialToken(any(), any()))
+          .thenAnswer((_) async => tUser);
+      when(() => remote.checkAuth('access')).thenAnswer(
+        (_) async => const UserModel(
+          id: 'u1',
+          email: 'g@example.com',
+          name: 'G',
+          token: '',
+          hasPassword: false,
+          needsCredentialSetup: true,
+        ),
+      );
+
+      final user = (await repository.loginWithSocial(SocialProvider.google))
+          .getRight()
+          .toNullable();
+
+      expect(user?.needsCredentialSetup, isTrue);
+      expect(user?.hasPassword, isFalse);
+      expect((user as UserModel?)?.token, 'access');
+      final saved = verify(() => storage.saveUserModel(captureAny()))
+          .captured
+          .last as UserModel;
+      expect(saved.needsCredentialSetup, isTrue);
+      expect(saved.token, 'access');
+    });
+
+    test('keeps the sign-in when the /profile read fails', () async {
+      when(() => social.obtain(any()))
+          .thenAnswer((_) async => const SocialToken('google-id-token'));
+      when(() => remote.loginWithSocialToken(any(), any()))
+          .thenAnswer((_) async => tUser);
+      when(() => remote.checkAuth(any())).thenThrow(const NetworkException());
+
+      final result = await repository.loginWithSocial(SocialProvider.google);
+
+      expect(result.getRight().toNullable(), tUser);
+      verifyNever(() => social.signOut());
+    });
+  });
+
+  group('AuthRepositoryImpl account setup (api#419)', () {
+    test('sets what is missing and keeps the fresh user with the session',
+        () async {
+      when(() => storage.readToken()).thenAnswer((_) async => 'access');
+      when(
+        () => remote.setUpCredentials(
+          username: 'new.name',
+          password: 'Str0ng!Passw0rd',
+        ),
+      ).thenAnswer(
+        (_) async => const UserModel(
+          id: 'u1',
+          email: 'g@example.com',
+          name: 'G',
+          token: '',
+          username: 'new.name',
+        ),
+      );
+
+      final user = (await repository.setUpCredentials(
+        username: 'new.name',
+        password: 'Str0ng!Passw0rd',
+      ))
+          .getRight()
+          .toNullable();
+
+      expect(user?.username, 'new.name');
+      expect(user?.needsCredentialSetup, isFalse);
+      final saved = verify(() => storage.saveUserModel(captureAny()))
+          .captured
+          .single as UserModel;
+      expect(saved.token, 'access');
+    });
+
+    test("passes on the API's refusal", () async {
+      when(() => storage.readToken()).thenAnswer((_) async => 'access');
+      when(
+        () => remote.setUpCredentials(
+          username: any(named: 'username'),
+          password: any(named: 'password'),
+        ),
+      ).thenThrow(
+        const ServerException('Username already taken', statusCode: 400),
+      );
+
+      final result = await repository.setUpCredentials(username: 'taken');
+
+      expect(result.getLeft().toNullable()?.message, 'Username already taken');
+      verifyNever(() => storage.saveUserModel(any()));
+    });
+
+    test('says whether a username is free', () async {
+      when(() => remote.isUsernameAvailable('free.name'))
+          .thenAnswer((_) async => true);
+      when(() => remote.isUsernameAvailable('taken'))
+          .thenAnswer((_) async => false);
+
+      expect(
+        (await repository.isUsernameAvailable('free.name'))
+            .getRight()
+            .toNullable(),
+        isTrue,
+      );
+      expect(
+        (await repository.isUsernameAvailable('taken')).getRight().toNullable(),
+        isFalse,
+      );
     });
   });
 

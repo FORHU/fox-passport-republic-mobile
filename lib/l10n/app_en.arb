@@ -2319,5 +2319,18 @@
   "proposalPayDifference": "Pay {amount} to confirm",
   "@proposalPayDifference": {"placeholders": {"amount": {"type": "String"}}},
   "proposalRefundBack": "Your total goes down by {amount}, refunded to your card.",
-  "@proposalRefundBack": {"placeholders": {"amount": {"type": "String"}}}
+  "@proposalRefundBack": {"placeholders": {"amount": {"type": "String"}}},
+  "accountSetupEyebrow": "Almost there",
+  "accountSetupHeadline": "Finish setting up your account",
+  "accountSetupBodyBoth": "Choose a username and a password. You can then also sign in with your email and password.",
+  "accountSetupBodyUsername": "Choose a username to continue.",
+  "accountSetupBodyPassword": "Choose a password, so you can also sign in with your email and password.",
+  "accountSetupUsernameHelper": "3–30 characters: letters, numbers, dots and underscores",
+  "accountSetupChecking": "Checking…",
+  "accountSetupAvailable": "Available",
+  "accountSetupTaken": "Already taken",
+  "accountSetupPassword": "Password",
+  "accountSetupPasswordHelper": "At least 12 characters with upper and lower case letters, a number and a special character.",
+  "accountSetupContinue": "Continue",
+  "accountSetupDone": "Your account is all set"
 }

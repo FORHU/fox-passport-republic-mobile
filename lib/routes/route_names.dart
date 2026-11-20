@@ -11,6 +11,9 @@ class RouteNames {
   static const String forgotPassword = '/forgot-password';
   static const String resetPassword = '/reset-password';
 
+  /// A Google account picks the username and password it lacks (api#419).
+  static const String accountSetup = '/account-setup';
+
   /// Builds `/verify-email?email=...` (email is query-encoded).
   static String verifyEmailFor(String email) =>
       Uri(path: verifyEmail, queryParameters: {'email': email}).toString();

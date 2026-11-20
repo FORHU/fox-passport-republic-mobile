@@ -53,5 +53,51 @@ void main() {
 
       expect(restored, original);
     });
+
+    // api#419: /profile says whether a Google account must still set up.
+    test('reads account setup from /profile', () {
+      final user = UserModel.fromJson(const {
+        'success': true,
+        'data': {
+          'id': 'u1',
+          'email': 'g@example.com',
+          'name': 'G',
+          'username': null,
+          'hasPassword': false,
+          'needsCredentialSetup': true,
+        },
+      });
+
+      expect(user.hasPassword, isFalse);
+      expect(user.needsCredentialSetup, isTrue);
+      expect(user.username, '');
+    });
+
+    test('asks nothing when a sign-in payload leaves the fields out', () {
+      final user = UserModel.fromJson(const {
+        'token': 't',
+        'user': {'id': 'u1', 'email': 'g@example.com', 'name': 'G'},
+      });
+
+      expect(user.hasPassword, isTrue);
+      expect(user.needsCredentialSetup, isFalse);
+    });
+
+    test('keeps account setup through the local cache and a new token', () {
+      const original = UserModel(
+        id: 'u1',
+        email: 'g@example.com',
+        name: 'G',
+        token: '',
+        hasPassword: false,
+        needsCredentialSetup: true,
+      );
+
+      final restored = UserModel.fromJson(original.toJson()).withToken('t');
+
+      expect(restored.needsCredentialSetup, isTrue);
+      expect(restored.hasPassword, isFalse);
+      expect(restored.token, 't');
+    });
   });
 }
