@@ -74,10 +74,16 @@ class _PromotionFormState extends State<_PromotionForm> {
             if (widget.venues.length > 1) ...[
               DropdownButtonFormField<String>(
                 initialValue: _venueId,
+                // A long venue name shortens with "…" instead of pushing the
+                // arrow off a narrow phone.
+                isExpanded: true,
                 decoration: InputDecoration(labelText: l10n.promotionVenue),
                 items: [
                   for (final v in widget.venues)
-                    DropdownMenuItem(value: v.id, child: Text(v.name)),
+                    DropdownMenuItem(
+                      value: v.id,
+                      child: Text(v.name, overflow: TextOverflow.ellipsis),
+                    ),
                 ],
                 onChanged: (id) => setState(() => _venueId = id ?? _venueId),
               ),

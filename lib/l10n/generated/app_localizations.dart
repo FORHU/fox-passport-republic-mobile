@@ -10735,7 +10735,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourActionsBody.
   ///
   /// In en, this message translates to:
-  /// **'Open your calendar, or add something new, from here.'**
+  /// **'Add something new from here. Your calendar is in the bar below.'**
   String get tourActionsBody;
 
   /// No description provided for @tourNeedsTitle.

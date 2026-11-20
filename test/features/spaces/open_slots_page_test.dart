@@ -194,6 +194,35 @@ void main() {
     expect(repo.sent.single['eventTemplateAssetId'], 'g1');
   });
 
+  testWidgets('a long gear name fits a narrow phone with large text', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(320, 640)
+      ..devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(
+      tester,
+      [_gearEvent],
+      gear: const [
+        SpaceListing(
+          id: 'a1',
+          name: 'Professional line array PA speaker set with subwoofers',
+          status: 'ok',
+        ),
+      ],
+    );
+
+    await tester.tap(find.text('Apply'));
+    await tester.pumpAndSettle();
+
+    // The dropdown shortens the name instead of overflowing.
+    expect(find.text('Your gear'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('asks for gear first when there is none', (tester) async {
     final repo = await _pump(tester, [_gearEvent], gear: const []);
 
