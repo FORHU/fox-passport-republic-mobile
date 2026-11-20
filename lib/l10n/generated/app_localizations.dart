@@ -5890,6 +5890,24 @@ abstract class AppLocalizations {
   /// **'Selected'**
   String get bookSelected;
 
+  /// No description provided for @bookCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered'**
+  String get bookCovered;
+
+  /// No description provided for @bookRangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a first day, then a later one: every day between is booked too, up to 60 days. Tap again to start over.'**
+  String get bookRangeHint;
+
+  /// No description provided for @bookMaxDays.
+  ///
+  /// In en, this message translates to:
+  /// **'You can book up to {count} days at a time.'**
+  String bookMaxDays(int count);
+
   /// No description provided for @bookBooked.
   ///
   /// In en, this message translates to:
@@ -6039,12 +6057,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay'**
   String get bookPayTitle;
-
-  /// No description provided for @bookOrPayByCard.
-  ///
-  /// In en, this message translates to:
-  /// **'Or pay by card'**
-  String get bookOrPayByCard;
 
   /// No description provided for @bookCardNumber.
   ///

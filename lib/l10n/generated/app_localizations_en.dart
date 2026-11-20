@@ -3252,6 +3252,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookSelected => 'Selected';
 
   @override
+  String get bookCovered => 'Covered';
+
+  @override
+  String get bookRangeHint =>
+      'Tap a first day, then a later one: every day between is booked too, up to 60 days. Tap again to start over.';
+
+  @override
+  String bookMaxDays(int count) {
+    return 'You can book up to $count days at a time.';
+  }
+
+  @override
   String get bookBooked => 'Booked';
 
   @override
@@ -3339,9 +3351,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookPayTitle => 'Pay';
-
-  @override
-  String get bookOrPayByCard => 'Or pay by card';
 
   @override
   String get bookCardNumber => 'Card number';

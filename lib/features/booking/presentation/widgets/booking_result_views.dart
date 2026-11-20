@@ -5,7 +5,6 @@ import 'package:flutter_template/shared/formatting/money.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
-import 'package:intl/intl.dart';
 
 /// "You're booked": the booking is paid and the ticket is in the Tickets tab.
 class BookingConfirmedView extends StatelessWidget {
@@ -26,9 +25,7 @@ class BookingConfirmedView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final date = selection.date;
-    final when =
-        date == null ? '' : DateFormat('EEE d MMM', locale).format(date);
+    final when = selection.dateLabel(locale) ?? '';
 
     return _ResultScaffold(
       icon: const _StatusBadge(
