@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -23,7 +24,6 @@ import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 enum _Step { dates, guests, review, pay, done }
 
@@ -49,6 +49,9 @@ class BookingFlowPage extends ConsumerStatefulWidget {
 
 class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
   static const _maxGuests = 100000;
+
+  /// The longest range that can be booked at once, both ends counted.
+  static const _maxDays = 60;
 
   late BookingSelection _selection = BookingSelection(
     venue: widget.venue,
@@ -121,6 +124,32 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
     } finally {
       if (mounted) setState(() => _priceLoading = false);
     }
+  }
+
+  /// The first tap picks a day. A second, later tap makes it a range covering
+  /// every day between, unless a booked day is in the way. Tapping again
+  /// after a range, or an earlier day, starts over from that day. A range
+  /// longer than [_maxDays] is refused: the days picked stay, and a toast
+  /// says why.
+  void _pickDate(DateTime day) {
+    final start = _selection.date;
+    final makesRange = start != null &&
+        _selection.endDate == null &&
+        day.isAfter(start) &&
+        !_unavailable.any((u) {
+          final d = DateTime(u.year, u.month, u.day);
+          return d.isAfter(start) && !d.isAfter(day);
+        });
+    if (!makesRange) {
+      setState(() => _selection = _selection.withDates(day, null));
+      return;
+    }
+    final range = _selection.withDates(start, day);
+    if (range.days > _maxDays) {
+      showTopToast(context, context.l10n.bookMaxDays(_maxDays));
+      return;
+    }
+    setState(() => _selection = range);
   }
 
   void _go(_Step step) {
@@ -311,10 +340,23 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
               month: _month,
               today: _today,
               selected: _selection.date,
+              rangeEnd: _selection.endDate,
               unavailable: _unavailable,
-              onSelect: (d) =>
-                  setState(() => _selection = _selection.copyWith(date: d)),
+              onSelect: _pickDate,
               onMonthChanged: (m) => setState(() => _month = m),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: AppRadius.brSm,
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Text(
+                l10n.bookRangeHint,
+                style: AppTypography.body(size: 12),
+              ),
             ),
           ],
         ),
@@ -361,7 +403,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
           total: _pricing?.totalAmount ?? 0,
           currency: _selection.venue.currency,
           venue: _selection.venue.title,
-          date: _selection.date,
+          when: _selection.dateLabel(locale) ?? '',
           locale: locale,
           formatter: ref.watch(moneyFormatterProvider),
           onTap: _pay,
@@ -372,8 +414,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
 
   Widget _bottomBar(AppLocalizations l10n, String locale) {
     final date = _selection.date;
-    final shortDate =
-        date == null ? null : DateFormat('EEE d MMM', locale).format(date);
+    final shortDate = _selection.dateLabel(locale);
 
     Widget wide(String label, VoidCallback? onTap, {bool loading = false}) =>
         _PillButton(label: label, onTap: onTap, loading: loading, wide: true);
@@ -381,7 +422,7 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
     final body = switch (_step) {
       _Step.dates => _SummaryRow(
           title: shortDate ?? l10n.bookPickDate,
-          subtitle: date == null ? null : l10n.bookDayCount(1),
+          subtitle: date == null ? null : l10n.bookDayCount(_selection.days),
           button: _PillButton(
             label: l10n.bookNext,
             onTap: date == null ? null : () => _go(_Step.guests),
@@ -624,6 +665,43 @@ class _GuestStepper extends StatefulWidget {
 class _GuestStepperState extends State<_GuestStepper> {
   Timer? _repeat;
 
+  /// The count can also be typed, so 1 to 150 is not 150 taps.
+  late final _text = TextEditingController(text: '${widget.count}');
+  final _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Left empty (or at 0): back to the count it still holds.
+    _focus.addListener(() {
+      if (!_focus.hasFocus) _show(widget.count);
+    });
+  }
+
+  @override
+  void didUpdateWidget(_GuestStepper old) {
+    super.didUpdateWidget(old);
+    // The buttons changed it: show the new count.
+    if (int.tryParse(_text.text) != widget.count) _show(widget.count);
+  }
+
+  void _show(int n) {
+    final s = '$n';
+    if (_text.text == s) return;
+    _text.value = TextEditingValue(
+      text: s,
+      selection: TextSelection.collapsed(offset: s.length),
+    );
+  }
+
+  void _typed(String s) {
+    final n = int.tryParse(s);
+    if (n == null || n < 1) return; // Still typing; kept on blur.
+    final clamped = n.clamp(1, widget.max);
+    if (clamped != n) _show(clamped);
+    if (clamped != widget.count) widget.onChanged(clamped);
+  }
+
   void _step(int delta) {
     final next = (widget.count + delta).clamp(1, widget.max);
     if (next != widget.count) widget.onChanged(next);
@@ -646,6 +724,8 @@ class _GuestStepperState extends State<_GuestStepper> {
   @override
   void dispose() {
     _repeat?.cancel();
+    _text.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -653,6 +733,9 @@ class _GuestStepperState extends State<_GuestStepper> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final capacity = widget.capacity;
+    const underline = UnderlineInputBorder(
+      borderSide: BorderSide(color: AppColors.borderStrong),
+    );
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -672,9 +755,40 @@ class _GuestStepperState extends State<_GuestStepper> {
           Expanded(
             child: Column(
               children: [
-                Text(
-                  '${widget.count}',
-                  style: AppTypography.display(size: 32),
+                SizedBox(
+                  width: 140,
+                  // Read out as "How many guests?", not a bare number field.
+                  child: Semantics(
+                    label: l10n.bookGuestsTitle,
+                    child: TextField(
+                      key: const ValueKey('guest-count'),
+                      controller: _text,
+                      focusNode: _focus,
+                      onChanged: _typed,
+                      onSubmitted: (_) => _focus.unfocus(),
+                      onTapOutside: (_) => _focus.unfocus(),
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                          '${widget.max}'.length,
+                        ),
+                      ],
+                      style: AppTypography.display(size: 32),
+                      cursorColor: AppColors.accent,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.only(bottom: 2),
+                        border: underline,
+                        enabledBorder: underline,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.accent),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 if (capacity != null)
                   Text(
@@ -850,7 +964,6 @@ class _Review extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final venue = selection.venue;
-    final date = selection.date;
     final price = pricing;
     final currency = venue.currency;
     String money(num v) => formatter.format(v, currency, locale: locale);
@@ -888,9 +1001,7 @@ class _Review extends StatelessWidget {
             children: [
               _EditRow(
                 label: l10n.bookDate,
-                value: date == null
-                    ? ''
-                    : DateFormat('EEE d MMM y', locale).format(date),
+                value: selection.dateLabel(locale, withYear: true) ?? '',
                 onEdit: onEditDate,
               ),
               const SizedBox(height: 4),
@@ -920,7 +1031,12 @@ class _Review extends StatelessWidget {
                       children: [
                         _PriceLine(
                           label: selection.package != null
-                              ? l10n.bookPackage
+                              ? price.days > 1
+                                  ? l10n.bookRateLine(
+                                      money(price.itemsTotal / price.days),
+                                      l10n.bookDayCount(price.days),
+                                    )
+                                  : l10n.bookPackage
                               : l10n.bookRateLine(
                                   money(venue.price ?? price.itemsTotal),
                                   l10n.bookDayCount(price.days),
@@ -1101,15 +1217,15 @@ class _PriceLine extends StatelessWidget {
 
 // ── Pay ────────────────────────────────────────────────────────────────────
 
-/// Wallets first, card as the fallback. The card tiles are a preview of the
-/// layout: card numbers are never typed into our own fields, they belong to
-/// Stripe's payment sheet, so every tile here opens the same payment action.
+/// Card payment. The card tiles are a preview of the layout: card numbers are
+/// never typed into our own fields, they belong to Stripe's payment sheet, so
+/// every tile here opens the same payment action.
 class _Pay extends StatelessWidget {
   const _Pay({
     required this.total,
     required this.currency,
     required this.venue,
-    required this.date,
+    required this.when,
     required this.locale,
     required this.formatter,
     required this.onTap,
@@ -1119,14 +1235,15 @@ class _Pay extends StatelessWidget {
   final num total;
   final String currency;
   final String venue;
-  final DateTime? date;
+
+  /// The days booked, already formatted.
+  final String when;
   final String locale;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final when = date == null ? '' : DateFormat('d MMM', locale).format(date!);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -1163,26 +1280,6 @@ class _Pay extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        _WalletButton(
-          label: 'Pay',
-          icon: Icons.apple,
-          light: true,
-          onTap: onTap,
-        ),
-        const SizedBox(height: 10),
-        _WalletButton(
-          label: 'Pay',
-          icon: Icons.g_mobiledata_rounded,
-          onTap: onTap,
-        ),
-        const SizedBox(height: 18),
-        Center(
-          child: Text(
-            l10n.bookOrPayByCard.toUpperCase(),
-            style: AppTypography.label(color: AppColors.roleTalent),
-          ),
-        ),
-        const SizedBox(height: 14),
         _FieldTile(
           icon: Icons.credit_card_rounded,
           text: l10n.bookCardNumber,
@@ -1209,47 +1306,6 @@ class _Pay extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _WalletButton extends StatelessWidget {
-  const _WalletButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.light = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool light;
-
-  @override
-  Widget build(BuildContext context) {
-    final fg = light ? AppColors.onLightSurface : AppColors.textPrimary;
-    return SizedBox(
-      height: 52,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: light ? AppColors.lightSurface : AppColors.canvas,
-          foregroundColor: fg,
-          elevation: 0,
-          side: light ? null : const BorderSide(color: AppColors.borderStrong),
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.brSm),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 22, color: fg),
-            const SizedBox(width: 4),
-            Text(label, style: AppTypography.display(color: fg)),
-          ],
-        ),
-      ),
     );
   }
 }

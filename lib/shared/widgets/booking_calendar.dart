@@ -5,7 +5,9 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
 /// A one-month calendar, Monday first. Unavailable and past days are struck
-/// out and cannot be chosen; the chosen day is a lime circle.
+/// out and cannot be chosen; the chosen day is a lime circle. With
+/// [rangeEnd], both ends are lime circles joined by a band over the days
+/// between them.
 class BookingCalendar extends StatelessWidget {
   const BookingCalendar({
     required this.month,
@@ -14,6 +16,7 @@ class BookingCalendar extends StatelessWidget {
     required this.unavailable,
     required this.onSelect,
     required this.onMonthChanged,
+    this.rangeEnd,
     this.monthsAhead = 11,
     super.key,
   });
@@ -21,13 +24,21 @@ class BookingCalendar extends StatelessWidget {
   /// Any day in the month shown.
   final DateTime month;
   final DateTime today;
+
+  /// The chosen day, or the first day of a range.
   final DateTime? selected;
+
+  /// The last day of a range, after [selected]; null for a single day.
+  final DateTime? rangeEnd;
   final Set<DateTime> unavailable;
   final ValueChanged<DateTime> onSelect;
   final ValueChanged<DateTime> onMonthChanged;
 
   /// How many months past the current one can be browsed.
   final int monthsAhead;
+
+  /// The band behind the days a range covers.
+  static final Color rangeBand = AppColors.accent.withValues(alpha: 0.24);
 
   static DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
 
@@ -105,15 +116,28 @@ class BookingCalendar extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
+              width: 12,
+              height: 12,
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.accent, width: 1.5),
+                color: AppColors.accent,
               ),
             ),
             const SizedBox(width: 6),
             Text(l10n.bookSelected, style: AppTypography.body(size: 12)),
+            if (rangeEnd != null) ...[
+              const SizedBox(width: 16),
+              Container(
+                width: 18,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: rangeBand,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(l10n.bookCovered, style: AppTypography.body(size: 12)),
+            ],
             const SizedBox(width: 16),
             Text(
               l10n.bookBooked,
@@ -135,42 +159,94 @@ class BookingCalendar extends StatelessWidget {
     final isPast = date.isBefore(_day(today));
     final isTaken = taken.contains(date);
     final enabled = !isPast && !isTaken;
-    final isSelected = selected != null && _day(selected!) == date;
+    final start = selected == null ? null : _day(selected!);
+    final end = rangeEnd == null ? null : _day(rangeEnd!);
+    final isStart = start == date;
+    final isEnd = end == date;
+    final isSelected = isStart || isEnd;
+    final isRange = start != null && end != null && end.isAfter(start);
+    final isBetween = isRange && date.isAfter(start) && date.isBefore(end);
+    // The band runs from the first day's centre to the last day's. It breaks
+    // at the end of a week row and of the month: rounded there, and an end
+    // day sitting at a break has no band on that side to join.
+    final rowStart = date.weekday == DateTime.monday || dayOfMonth == 1;
+    final rowEnd = date.weekday == DateTime.sunday || dayOfMonth == daysInMonth;
+    final bandLeft = isRange && (isBetween || (isEnd && !rowStart));
+    final bandRight = isRange && (isBetween || (isStart && !rowEnd));
+    const round = Radius.circular(22);
 
     return Semantics(
       button: true,
       enabled: enabled,
-      selected: isSelected,
+      selected: isSelected || isBetween,
       label: DateFormat.yMMMMd().format(date),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: enabled ? () => onSelect(date) : null,
         child: SizedBox(
           height: 44,
-          child: Center(
-            child: Container(
-              width: 40,
-              height: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? AppColors.accent : Colors.transparent,
-              ),
-              child: Text(
-                '$dayOfMonth',
-                style: AppTypography.display(
-                  size: 14,
-                  color: isSelected
-                      ? AppColors.onAccent
-                      : enabled
-                          ? AppColors.textPrimary
-                          : AppColors.textFaint,
-                ).copyWith(
-                  decoration: enabled ? null : TextDecoration.lineThrough,
-                  decorationColor: AppColors.textFaint,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (bandLeft || bandRight)
+                Positioned.fill(
+                  top: 2,
+                  bottom: 2,
+                  // Stretch, or the childless halves collapse to no height.
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: DecoratedBox(
+                          key: bandLeft ? const ValueKey('band') : null,
+                          decoration: BoxDecoration(
+                            color: bandLeft ? rangeBand : Colors.transparent,
+                            borderRadius: isBetween && rowStart
+                                ? const BorderRadius.horizontal(left: round)
+                                : null,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: DecoratedBox(
+                          key: bandRight ? const ValueKey('band') : null,
+                          decoration: BoxDecoration(
+                            color: bandRight ? rangeBand : Colors.transparent,
+                            borderRadius: isBetween && rowEnd
+                                ? const BorderRadius.horizontal(right: round)
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? AppColors.accent : Colors.transparent,
+                ),
+                child: Text(
+                  '$dayOfMonth',
+                  style: AppTypography.display(
+                    size: 14,
+                    color: isSelected
+                        ? AppColors.onAccent
+                        : isBetween
+                            ? AppColors.accent
+                            : enabled
+                                ? AppColors.textPrimary
+                                : AppColors.textFaint,
+                  ).copyWith(
+                    decoration: enabled ? null : TextDecoration.lineThrough,
+                    decorationColor: AppColors.textFaint,
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

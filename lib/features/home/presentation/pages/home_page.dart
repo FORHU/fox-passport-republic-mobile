@@ -599,7 +599,7 @@ class _NextNight extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final date = DateFormat('EEE d MMM', locale).format(ticket.startAt);
+    final date = ticket.dateLabel(locale);
     final days = ticket.daysUntil();
     final when = switch (days) {
       <= 0 => l10n.ticketToday,
