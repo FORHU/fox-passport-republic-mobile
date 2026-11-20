@@ -6580,47 +6580,11 @@ abstract class AppLocalizations {
   /// **'From the Republic'**
   String get homeRepublicTitle;
 
-  /// No description provided for @homeChecklistTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Plan your first event'**
-  String get homeChecklistTitle;
-
   /// No description provided for @homeChecklistProgress.
   ///
   /// In en, this message translates to:
   /// **'{done} of {total} done'**
   String homeChecklistProgress(int done, int total);
-
-  /// No description provided for @homeChecklistStep1.
-  ///
-  /// In en, this message translates to:
-  /// **'Pick what you\'re planning'**
-  String get homeChecklistStep1;
-
-  /// No description provided for @homeChecklistStep2.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a package or venue'**
-  String get homeChecklistStep2;
-
-  /// No description provided for @homeChecklistStep3.
-  ///
-  /// In en, this message translates to:
-  /// **'Book it and get your ticket'**
-  String get homeChecklistStep3;
-
-  /// No description provided for @homeChecklistStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Start'**
-  String get homeChecklistStart;
-
-  /// No description provided for @homeChecklistContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get homeChecklistContinue;
 
   /// No description provided for @gettingStartedTitle.
   ///
@@ -8649,12 +8613,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Earn'**
   String get passportTabEarn;
-
-  /// No description provided for @passportEarnAsFoxerRow.
-  ///
-  /// In en, this message translates to:
-  /// **'Earn as a Foxer'**
-  String get passportEarnAsFoxerRow;
 
   /// No description provided for @passportSavedEmpty.
   ///

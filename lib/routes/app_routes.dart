@@ -118,6 +118,7 @@ import 'package:flutter_template/shared/widgets/leaderboard_row.dart';
 import 'package:flutter_template/shared/widgets/main_layout.dart';
 import 'package:flutter_template/shared/widgets/milestones_row.dart';
 import 'package:flutter_template/shared/widgets/passport_link_rows.dart';
+import 'package:flutter_template/shared/widgets/reward_tile.dart';
 import 'package:go_router/go_router.dart';
 
 /// The places a perk can be offered, from the person's own event packages
@@ -713,18 +714,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                         initialTab: state.uri.queryParameters['tab'] == 'badges'
                             ? 1
                             : 0,
-                        // Milestones are the tiered counts that pay Tokens;
-                        // Achievements stay for everyone, as badges and the
-                        // Foxer ones that live nowhere else.
+                        // The Wallet, then the four rewards as a 2x2 grid,
+                        // then Saved. Milestones are the tiered counts that
+                        // pay Tokens; Achievements stay for everyone, as
+                        // badges and the Foxer ones that live nowhere else.
+                        // Earning a role is the Earn tab below, so it has no
+                        // row here too.
                         heroFooter: const Column(
                           children: [
                             WalletRow(),
-                            LeaderboardRow(),
-                            MilestonesRow(),
-                            ChallengesRow(),
-                            AchievementsRow(),
+                            RewardGrid(
+                              children: [
+                                LeaderboardRow(),
+                                MilestonesRow(),
+                                ChallengesRow(),
+                                AchievementsRow(),
+                              ],
+                            ),
                             SavedRow(),
-                            EarnAsFoxerRow(),
                           ],
                         ),
                         activityBuilder: (context, profile) =>

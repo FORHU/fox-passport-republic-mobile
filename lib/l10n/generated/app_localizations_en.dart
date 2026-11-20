@@ -3635,27 +3635,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRepublicTitle => 'From the Republic';
 
   @override
-  String get homeChecklistTitle => 'Plan your first event';
-
-  @override
   String homeChecklistProgress(int done, int total) {
     return '$done of $total done';
   }
-
-  @override
-  String get homeChecklistStep1 => 'Pick what you\'re planning';
-
-  @override
-  String get homeChecklistStep2 => 'Choose a package or venue';
-
-  @override
-  String get homeChecklistStep3 => 'Book it and get your ticket';
-
-  @override
-  String get homeChecklistStart => 'Start';
-
-  @override
-  String get homeChecklistContinue => 'Continue';
 
   @override
   String get gettingStartedTitle => 'Getting started';
@@ -4819,9 +4801,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passportTabEarn => 'Earn';
-
-  @override
-  String get passportEarnAsFoxerRow => 'Earn as a Foxer';
 
   @override
   String get passportSavedEmpty => 'No saved posts yet.';
