@@ -21,6 +21,13 @@ abstract class AuthRemoteDataSource {
   Future<void> resendVerificationOtp(String email);
   Future<void> forgotPassword(String email);
   Future<void> resetPassword(String email, String otpCode, String newPassword);
+
+  /// Whether nobody else uses [username] (api#419).
+  Future<bool> isUsernameAvailable(String username);
+
+  /// Sets the username and password a Google account lacks; answers with the
+  /// fresh profile (api#419).
+  Future<UserModel> setUpCredentials({String? username, String? password});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -92,6 +99,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       'idToken': {
         'token': token,
         if (provider == SocialProvider.facebook) 'accessToken': token,
+      },
+    });
+    return UserModel.fromJson((data as Map).cast<String, dynamic>());
+  }
+
+  @override
+  Future<bool> isUsernameAvailable(String username) async {
+    final body = await _api.get(
+      ApiEndpoints.usernameAvailability,
+      query: {'username': username},
+    );
+    final data = body is Map ? body['data'] : null;
+    return data is Map && data['available'] == true;
+  }
+
+  @override
+  Future<UserModel> setUpCredentials({
+    String? username,
+    String? password,
+  }) async {
+    final data = await _api.post(ApiEndpoints.credentials, {
+      if (username != null) 'username': username,
+      if (password != null) ...{
+        'password': password,
+        // The form already checked the two match; the API asks for both.
+        'confirmPassword': password,
       },
     });
     return UserModel.fromJson((data as Map).cast<String, dynamic>());

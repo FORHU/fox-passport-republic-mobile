@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/auth/presentation/pages/account_setup_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_template/features/auth/presentation/pages/register_page.dart';
@@ -143,7 +144,11 @@ class RouterNotifier extends ChangeNotifier {
     _ref.listen<AuthState>(
       authControllerProvider,
       (previous, next) {
-        if (previous?.isAuthenticated != next.isAuthenticated) {
+        // Account setup (api#419) opens and closes with the same user signed
+        // in, so the router listens for that too.
+        if (previous?.isAuthenticated != next.isAuthenticated ||
+            previous?.user?.needsCredentialSetup !=
+                next.user?.needsCredentialSetup) {
           notifyListeners();
         }
       },
@@ -199,6 +204,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ? null
             : RouteNames.login;
       }
+
+      // A Google account picks a username and a password before anything
+      // else, onboarding included (api#419).
+      final mustSetUp =
+          ref.read(authControllerProvider).user?.needsCredentialSetup ?? false;
+      if (mustSetUp) {
+        return at == RouteNames.accountSetup ? null : RouteNames.accountSetup;
+      }
+      if (at == RouteNames.accountSetup) return RouteNames.home;
 
       // Onboarding gate: new users see it once.
       final seenOnboarding = ref.read(storageServiceProvider).onboardingSeen;
@@ -266,6 +280,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.resetPassword,
         builder: (context, state) =>
             ResetPasswordPage(email: state.uri.queryParameters['email']),
+      ),
+      GoRoute(
+        path: RouteNames.accountSetup,
+        builder: (context, state) => const AccountSetupPage(),
       ),
       GoRoute(
         path: RouteNames.onboarding,

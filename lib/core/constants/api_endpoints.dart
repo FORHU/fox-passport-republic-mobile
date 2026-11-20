@@ -23,6 +23,10 @@ class ApiEndpoints {
   static const String me = '/profile';
   static const String profile = '/profile';
   static const String changePassword = '/profile/change-password';
+
+  /// A Google account sets the username and password it lacks (api#419).
+  static const String usernameAvailability = '/profile/username-availability';
+  static const String credentials = '/profile/credentials';
   static const String users = '/users';
 
   /// The optional government-ID check (multipart on POST).

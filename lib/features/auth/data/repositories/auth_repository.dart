@@ -37,6 +37,16 @@ abstract class AuthRepository {
     String otpCode,
     String newPassword,
   );
+
+  /// Whether nobody else uses [username] (api#419).
+  Future<Either<Failure, bool>> isUsernameAvailable(String username);
+
+  /// Sets the username and password a Google account lacks (api#419) and
+  /// keeps the fresh user, which no longer needs setup.
+  Future<Either<Failure, UserEntity>> setUpCredentials({
+    String? username,
+    String? password,
+  });
 }
 
 /// Coordinates the remote data source and local token storage. Catches the
@@ -91,7 +101,10 @@ class AuthRepositoryImpl implements AuthRepository {
         rethrow;
       }
       await _persistSession(user);
-      return Right(user);
+      // The sign-in payload doesn't say whether the account still needs a
+      // username or password (api#419); /profile does.
+      final full = await _withProfile(user);
+      return Right(full);
     } on SocialSignInCancelled {
       return const Left(SocialSignInCancelledFailure());
     } on UnauthorizedException catch (e) {
@@ -100,6 +113,61 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.message.trim().toLowerCase() == _accountNotLinked) {
         return const Left(SocialAccountNotLinkedFailure());
       }
+      return Left(UnauthorizedFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on Object catch (e) {
+      return Left(ServerFailure.unexpected(e));
+    }
+  }
+
+  /// [user] as /profile describes them now, kept on the device. When that
+  /// read fails the sign-in still stands with [user]; the next refresh reads
+  /// it again.
+  Future<UserModel> _withProfile(UserModel user) async {
+    try {
+      final profile = (await _remote.checkAuth(user.token)).withToken(
+        user.token,
+      );
+      await _storage.saveUserModel(profile);
+      return profile;
+    } on AppException {
+      return user;
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isUsernameAvailable(String username) async {
+    try {
+      return Right(await _remote.isUsernameAvailable(username));
+    } on UnauthorizedException catch (e) {
+      return Left(UnauthorizedFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on Object catch (e) {
+      return Left(ServerFailure.unexpected(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> setUpCredentials({
+    String? username,
+    String? password,
+  }) async {
+    try {
+      final token = await _storage.readToken() ?? '';
+      final user = (await _remote.setUpCredentials(
+        username: username,
+        password: password,
+      ))
+          .withToken(token);
+      await _storage.saveUserModel(user);
+      return Right(user);
+    } on UnauthorizedException catch (e) {
       return Left(UnauthorizedFailure(e.message));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
