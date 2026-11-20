@@ -97,7 +97,25 @@ class ApiEndpoints {
   // ── Venues ──────────────────────────────────────────────────────────────
   /// What suppliers are asked to confirm for other people's events.
   static const String providerRequests = '/event-transactions/provider';
+  static const String eventsNeedingAttention =
+      '/event-transactions/needs-attention';
+  static String bookedEvent(String eventId) =>
+      '/event-transactions/event/${Uri.encodeComponent(eventId)}';
+  static String bookingDecline(String bookingId) =>
+      '/bookings/${Uri.encodeComponent(bookingId)}/decline';
   static String requestReview(String id) => '/event-transactions/$id/review';
+
+  /// Replacing a Supplier on a booked event (API ADR 0010): what could take a
+  /// line's place, the host's proposal, and the citizen's answer.
+  static String eventReplacements(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replacements';
+  static String eventReplace(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replace';
+  static const String eventEditProposals = '/event-transactions/proposals';
+  static String bookingReplacement(String bookingId) =>
+      '/event-transactions/booking/${Uri.encodeComponent(bookingId)}/replacement';
+  static String eventEditProposalAnswer(String proposalId, String action) =>
+      '/event-transactions/proposals/${Uri.encodeComponent(proposalId)}/$action';
 
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
@@ -207,6 +225,7 @@ class ApiEndpoints {
   static String feedPollVote(String id) => '/feed/$id/poll/vote';
   static String feedHide(String id) => '/feed/$id/hide';
   static const String feedSaved = '/feed/saved';
+  static const String feedNewCount = '/feed/new-count';
   static const String feedMentionSearch = '/feed/mentions/search';
   static const String reports = '/reports';
 
@@ -234,6 +253,21 @@ class ApiEndpoints {
 
   /// Today's daily login (GET) and claiming it (POST).
   static const String rewardsDailyLogin = '/rewards/daily-login';
+
+  // ── Token perks: a drink, a starter or a +1, bought with Tokens
+  static const String perks = '/perks';
+  static const String perksMine = '/perks/mine';
+  static const String perksOffered = '/perks/offered';
+  static const String perksCheck = '/perks/check';
+  static String perkTakeDown(String id) =>
+      '/perks/${Uri.encodeComponent(id)}/take-down';
+  static String perkUse(String redemptionId) =>
+      '/perks/redemptions/${Uri.encodeComponent(redemptionId)}/use';
+  static String perk(String id) => '/perks/${Uri.encodeComponent(id)}';
+  static String perkRedeem(String id) =>
+      '/perks/${Uri.encodeComponent(id)}/redeem';
+  static String perkCode(String redemptionId) =>
+      '/perks/redemptions/${Uri.encodeComponent(redemptionId)}/code';
 
   static const String achievementsMe = '/achievements/me';
 

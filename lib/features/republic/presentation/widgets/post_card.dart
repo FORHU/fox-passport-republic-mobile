@@ -146,7 +146,9 @@ class _PostCardState extends State<PostCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (post.isPinned)
+          // For you marks its one rotating featured post; other lists fall
+          // back to the pin.
+          if (post.showsFeatured)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
@@ -163,6 +165,29 @@ class _PostCardState extends State<PostCard> {
                       size: 12,
                       weight: FontWeight.w700,
                       color: AppColors.accent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // An older post For you brought back into the mix (app#308).
+          if (post.resurfaced)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.history_rounded,
+                    size: 15,
+                    color: AppColors.textMuted,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.republicFromEarlier,
+                    style: AppTypography.body(
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.textMuted,
                     ),
                   ),
                 ],

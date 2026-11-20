@@ -150,6 +150,7 @@ class BookingReceipt extends Equatable {
     required this.currency,
     required this.needsApproval,
     this.isSample = false,
+    this.awaitingSuppliers = 0,
   });
 
   final String id;
@@ -163,7 +164,18 @@ class BookingReceipt extends Equatable {
   final bool needsApproval;
   final bool isSample;
 
+  /// Package Suppliers asked first (API ADR 0010): the booking can be paid
+  /// once every one of them has confirmed.
+  final int awaitingSuppliers;
+
   @override
-  List<Object?> get props =>
-      [id, reference, totalAmount, currency, needsApproval, isSample];
+  List<Object?> get props => [
+        id,
+        reference,
+        totalAmount,
+        currency,
+        needsApproval,
+        isSample,
+        awaitingSuppliers,
+      ];
 }

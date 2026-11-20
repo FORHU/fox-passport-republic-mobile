@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
+import 'package:flutter_template/shared/offline/response_cache.dart';
 
 /// Reads the public browse endpoints and returns one shape for all of them.
 ///
@@ -13,9 +15,10 @@ import 'package:flutter_template/shared/currency/currency.dart';
 /// has nothing to list or can't be reached, so a screen is never blank while
 /// the backend is still being filled in.
 class CatalogRepository {
-  CatalogRepository(this._api);
+  CatalogRepository(this._api, [this._cache]);
 
   final ApiService _api;
+  final ResponseCache? _cache;
 
   Future<CatalogPage> fetch(
     CatalogKind kind, {
@@ -136,7 +139,25 @@ class CatalogRepository {
       CatalogKind.gear => ApiEndpoints.assetsBrowse,
       CatalogKind.services => ApiEndpoints.servicesBrowse,
     };
-    final body = await _api.get(path, query: params);
+    // A plain browse (no search, no filters, no position) is what Home lists:
+    // its last answer is saved for when there is no signal. Anything narrower
+    // is not, so the saved copies stay few.
+    final plain = query.isEmpty &&
+        !byPoint &&
+        minPrice == null &&
+        maxPrice == null &&
+        minCapacity == null &&
+        fromDate == null &&
+        toDate == null &&
+        sortBy == null &&
+        specialty == null;
+    final answer = await ResponseCache.get(
+      _api,
+      plain ? _cache : null,
+      path,
+      query: params,
+    );
+    final body = answer.body;
     final rows = _rows(body);
     final wantedCity = _norm(byPoint ? '' : city ?? '');
     final normalizedQuery = query.toLowerCase();
@@ -190,7 +211,11 @@ class CatalogRepository {
                 ? ((body['pagination'] as Map)['total'] as num?)?.toInt() ??
                     filteredItems.length
                 : filteredItems.length;
-    return CatalogPage(items: filteredItems, total: total);
+    return CatalogPage(
+      items: filteredItems,
+      total: total,
+      savedAt: answer.savedAt,
+    );
   }
 
   static String _norm(String s) =>
@@ -230,6 +255,25 @@ class CatalogRepository {
     } on Object {
       return null;
     }
+  }
+
+  /// One venue, event package or Foxer by id, as the row Search would have
+  /// listed, for a link that carries only the id. Null when the answer has
+  /// nothing usable in it. The id comes from a link, so it is encoded.
+  Future<CatalogItem?> byId(CatalogKind kind, String id) async {
+    final safe = Uri.encodeComponent(id);
+    final path = switch (kind) {
+      CatalogKind.venues => ApiEndpoints.venueById(safe),
+      CatalogKind.events => ApiEndpoints.eventBrowseById(safe),
+      CatalogKind.foxers => ApiEndpoints.foxerById(safe),
+      CatalogKind.gear ||
+      CatalogKind.services =>
+        throw ArgumentError.value(kind, 'kind', 'has no page by id'),
+    };
+    final body = await _api.get(path);
+    final data = body is Map ? (body['venue'] ?? body['data'] ?? body) : null;
+    if (data is! Map) return null;
+    return _item(kind, data.cast<String, dynamic>());
   }
 
   /// A catalog row from any endpoint, or null when it has no id or name.
@@ -373,7 +417,10 @@ class CatalogRepository {
 }
 
 final catalogRepositoryProvider = Provider<CatalogRepository>(
-  (ref) => CatalogRepository(ref.watch(apiServiceProvider)),
+  (ref) => CatalogRepository(
+    ref.watch(apiServiceProvider),
+    ResponseCache(ref.watch(storageServiceProvider)),
+  ),
 );
 
 /// What a results list asks for. Equatable so the provider family caches it.
@@ -451,4 +498,15 @@ final catalogProvider =
         sortBy: q.sortBy,
         specialty: q.specialty,
       ),
+);
+
+/// What to open by id: the kind of page and the id from the link.
+typedef CatalogRef = ({CatalogKind kind, String id});
+
+/// The row for one id, null when it is not there (removed, or not public).
+// The family type is long and adds nothing here, so it is left inferred.
+// ignore: specify_nonobvious_property_types
+final catalogItemByIdProvider =
+    FutureProvider.autoDispose.family<CatalogItem?, CatalogRef>(
+  (ref, r) => ref.watch(catalogRepositoryProvider).byId(r.kind, r.id),
 );

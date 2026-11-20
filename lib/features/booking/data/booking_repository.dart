@@ -172,6 +172,10 @@ class BookingRepository {
       throw StateError('No booking in the response');
     }
     final id = '${booking['id']}';
+    // Suppliers asked first must confirm before it can be paid.
+    final awaiting = data is Map && data['awaitingConfirmation'] is num
+        ? (data['awaitingConfirmation'] as num).toInt()
+        : 0;
 
     // Charge what the server worked out, not the on-screen preview.
     var total = p.totalAmount;
@@ -196,6 +200,7 @@ class BookingRepository {
       totalAmount: total,
       currency: package.currency,
       needsApproval: false,
+      awaitingSuppliers: awaiting,
     );
   }
 

@@ -3334,6 +3334,126 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 event is in review} other{{count} events are in review}}'**
   String eventsInReview(int count);
 
+  /// No description provided for @eventNeedsDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} declined {event}. Pick a replacement.'**
+  String eventNeedsDeclined(String supplier, String event);
+
+  /// No description provided for @eventNeedsDateBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} blocked a day of {event}. Pick another venue or date.'**
+  String eventNeedsDateBlocked(String supplier, String event);
+
+  /// No description provided for @eventNeedsBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'{supplier} is busy with another booking and left {event}. Pick a replacement.'**
+  String eventNeedsBusy(String supplier, String event);
+
+  /// No description provided for @eventNeedsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{item} is no longer available for {event}. Pick a replacement.'**
+  String eventNeedsUnavailable(String item, String event);
+
+  /// No description provided for @eventNeedsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{and 1 more event needs a replacement} other{and {count} more need a replacement}}'**
+  String eventNeedsMore(int count);
+
+  /// No description provided for @bookedEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked event'**
+  String get bookedEventTitle;
+
+  /// No description provided for @bookedEventNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'This event needs a replacement'**
+  String get bookedEventNeeds;
+
+  /// No description provided for @bookedEventNeedsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A Supplier is no longer available for it. Pick a replacement, or ask the Supplier.'**
+  String get bookedEventNeedsBody;
+
+  /// No description provided for @bookedEventSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppliers'**
+  String get bookedEventSuppliers;
+
+  /// No description provided for @bookedEventNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No Suppliers are booked for this event yet.'**
+  String get bookedEventNone;
+
+  /// No description provided for @bookedReasonDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined this event'**
+  String get bookedReasonDeclined;
+
+  /// No description provided for @bookedReasonDateBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked a day of this event'**
+  String get bookedReasonDateBlocked;
+
+  /// No description provided for @bookedReasonBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy with another booking'**
+  String get bookedReasonBusy;
+
+  /// No description provided for @bookedReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No longer available'**
+  String get bookedReasonUnavailable;
+
+  /// No description provided for @hostDeclineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t run this event'**
+  String get hostDeclineButton;
+
+  /// No description provided for @hostDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this event?'**
+  String get hostDeclineTitle;
+
+  /// No description provided for @hostDeclineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen and every Supplier are told, and the booking ends. Nothing was charged. You cannot undo this.'**
+  String get hostDeclineBody;
+
+  /// No description provided for @hostDeclineDone.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined. The citizen and the Suppliers were told.'**
+  String get hostDeclineDone;
+
+  /// No description provided for @hostDeclineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this event'**
+  String get hostDeclineAction;
+
+  /// No description provided for @bookedEventNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not find that event.'**
+  String get bookedEventNotFound;
+
   /// No description provided for @eventsDeclined.
   ///
   /// In en, this message translates to:
@@ -4683,6 +4803,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Request declined.'**
   String get requestDeclined;
+
+  /// No description provided for @requestDeclineBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this booking'**
+  String get requestDeclineBooked;
+
+  /// No description provided for @requestDeclineBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m busy then'**
+  String get requestDeclineBusy;
+
+  /// No description provided for @requestDeclineBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this booking?'**
+  String get requestDeclineBookedTitle;
+
+  /// No description provided for @requestDeclineBookedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The event host and the citizen are told, and the host is asked to replace you. You cannot undo this.'**
+  String get requestDeclineBookedBody;
+
+  /// No description provided for @requestDeclinedBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined. The host and the citizen were told.'**
+  String get requestDeclinedBooked;
 
   /// No description provided for @requestActionFailed.
   ///
@@ -8248,6 +8398,36 @@ abstract class AppLocalizations {
   /// **'Featured in Republic'**
   String get republicPinned;
 
+  /// No description provided for @republicFromEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'From earlier'**
+  String get republicFromEarlier;
+
+  /// No description provided for @republicSortPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort posts'**
+  String get republicSortPosts;
+
+  /// No description provided for @republicSortForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get republicSortForYou;
+
+  /// No description provided for @republicSortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get republicSortRecent;
+
+  /// No description provided for @republicNewPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new post} other{{count} new posts}}'**
+  String republicNewPosts(int count);
+
   /// No description provided for @republicBookVenue.
   ///
   /// In en, this message translates to:
@@ -8475,6 +8655,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Earn'**
   String get passportTabEarn;
+
+  /// No description provided for @passportEarnAsFoxerRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn as a Foxer'**
+  String get passportEarnAsFoxerRow;
 
   /// No description provided for @passportSavedEmpty.
   ///
@@ -10132,11 +10318,29 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 request needs your reply} other{{count} requests need your reply}}'**
   String providerRequestsWaiting(int count);
 
+  /// No description provided for @openByIdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'That page is not available any more.'**
+  String get openByIdNotFound;
+
+  /// No description provided for @openByIdToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Search'**
+  String get openByIdToSearch;
+
   /// No description provided for @ticketsOfflineNote.
   ///
   /// In en, this message translates to:
   /// **'No connection. Showing the tickets saved {when}.'**
   String ticketsOfflineNote(String when);
+
+  /// No description provided for @homeOfflineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Showing what was saved {when}. Pull down to refresh.'**
+  String homeOfflineNote(String when);
 
   /// No description provided for @tourSkip.
   ///
@@ -10822,6 +11026,582 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get rewardsDone;
 
+  /// No description provided for @perksMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My perks'**
+  String get perksMine;
+
+  /// No description provided for @perksMineReady.
+  ///
+  /// In en, this message translates to:
+  /// **'My perks · {count} ready'**
+  String perksMineReady(int count);
+
+  /// No description provided for @perksOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered perks'**
+  String get perksOffered;
+
+  /// No description provided for @perksOfferedByVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered by venue'**
+  String get perksOfferedByVenue;
+
+  /// No description provided for @perksOfferedByHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered by host'**
+  String get perksOfferedByHost;
+
+  /// No description provided for @perksLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String perksLeft(int count);
+
+  /// No description provided for @perksView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get perksView;
+
+  /// No description provided for @perksEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No perks yet. Venues and event hosts add them here.'**
+  String get perksEmpty;
+
+  /// No description provided for @perksHeldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens held until your first paid booking'**
+  String perksHeldNote(String count);
+
+  /// No description provided for @perkUseItOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it on'**
+  String get perkUseItOn;
+
+  /// No description provided for @perkChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get perkChange;
+
+  /// No description provided for @perkHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get perkHowItWorks;
+
+  /// No description provided for @perkStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm, and your code appears.'**
+  String get perkStep1;
+
+  /// No description provided for @perkStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Show it to staff when you arrive.'**
+  String get perkStep2;
+
+  /// No description provided for @perkStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff scan it and the perk is yours.'**
+  String get perkStep3;
+
+  /// No description provided for @perkRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Only works for the booking you pick. If you cancel that booking or it goes unused, your Tokens come back.'**
+  String get perkRule;
+
+  /// No description provided for @perkYouHave.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count}'**
+  String perkYouHave(String count);
+
+  /// No description provided for @perkRedeem.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get perkRedeem;
+
+  /// No description provided for @perkPickBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a booking'**
+  String get perkPickBooking;
+
+  /// No description provided for @perkNoBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'No booking this perk works for yet. Book it first, then come back to use this perk.'**
+  String get perkNoBooking;
+
+  /// No description provided for @perkUseTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {count} Tokens?'**
+  String perkUseTokens(String count);
+
+  /// No description provided for @perkUseTokensBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You get a code for {title}, for the booking below.'**
+  String perkUseTokensBody(String title);
+
+  /// No description provided for @perkBookingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get perkBookingLabel;
+
+  /// No description provided for @perkCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get perkCostLabel;
+
+  /// No description provided for @perkLeftAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Left after'**
+  String get perkLeftAfter;
+
+  /// No description provided for @perkConfirmNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If the booking is cancelled or the perk goes unused, your Tokens come back.'**
+  String get perkConfirmNote;
+
+  /// No description provided for @perkConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {count} Tokens'**
+  String perkConfirmButton(String count);
+
+  /// No description provided for @perkCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get perkCancel;
+
+  /// No description provided for @perkRedeemFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not redeem that perk. Try again.'**
+  String get perkRedeemFailed;
+
+  /// No description provided for @perkYourPerk.
+  ///
+  /// In en, this message translates to:
+  /// **'Your perk'**
+  String get perkYourPerk;
+
+  /// No description provided for @perkReadyToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to use'**
+  String get perkReadyToUse;
+
+  /// No description provided for @perkNewCodeIn.
+  ///
+  /// In en, this message translates to:
+  /// **'New code in {time}'**
+  String perkNewCodeIn(String time);
+
+  /// No description provided for @perkCodeChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'The code changes every 30 seconds, so a screenshot will not work.'**
+  String get perkCodeChanges;
+
+  /// No description provided for @perkValidUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until'**
+  String get perkValidUntil;
+
+  /// No description provided for @perkPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get perkPaid;
+
+  /// No description provided for @perkPaidTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens'**
+  String perkPaidTokens(String count);
+
+  /// No description provided for @perkShowStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this to staff when you arrive. If it expires unused, your {count} Tokens come back.'**
+  String perkShowStaff(String count);
+
+  /// No description provided for @perkBackToRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Rewards'**
+  String get perkBackToRewards;
+
+  /// No description provided for @perkCodeUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This perk can no longer be used.'**
+  String get perkCodeUnavailable;
+
+  /// No description provided for @perksSectionReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to use'**
+  String get perksSectionReady;
+
+  /// No description provided for @perksSectionUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get perksSectionUsed;
+
+  /// No description provided for @perksSectionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get perksSectionExpired;
+
+  /// No description provided for @perkUsedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {date}'**
+  String perkUsedOn(String date);
+
+  /// No description provided for @perkExpiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {date}'**
+  String perkExpiredOn(String date);
+
+  /// No description provided for @perkUseBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by {date}'**
+  String perkUseBy(String date);
+
+  /// No description provided for @perkTokensReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Tokens returned to your wallet'**
+  String perkTokensReturned(String count);
+
+  /// No description provided for @perkShowCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Show code'**
+  String get perkShowCode;
+
+  /// No description provided for @perkReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get perkReady;
+
+  /// No description provided for @perksMineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no perks yet.'**
+  String get perksMineEmpty;
+
+  /// No description provided for @perksYours.
+  ///
+  /// In en, this message translates to:
+  /// **'Your perks'**
+  String get perksYours;
+
+  /// No description provided for @perksAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a perk'**
+  String get perksAdd;
+
+  /// No description provided for @perksOfferedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not offering any perks yet.'**
+  String get perksOfferedEmpty;
+
+  /// No description provided for @perksBought.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bought'**
+  String perksBought(int count);
+
+  /// No description provided for @perksOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken down'**
+  String get perksOff;
+
+  /// No description provided for @perksTakeDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Take down'**
+  String get perksTakeDown;
+
+  /// No description provided for @perksTakeDownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Take this perk down?'**
+  String get perksTakeDownTitle;
+
+  /// No description provided for @perksTakeDownBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No one can buy it any more. Anyone who bought it and has not used it gets their Tokens back.'**
+  String get perksTakeDownBody;
+
+  /// No description provided for @perksTakenDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken down. Tokens went back to anyone holding it.'**
+  String get perksTakenDown;
+
+  /// No description provided for @perksTakeDownFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not take that down. Try again.'**
+  String get perksTakeDownFailed;
+
+  /// No description provided for @perkAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a perk'**
+  String get perkAddTitle;
+
+  /// No description provided for @perkForWhich.
+  ///
+  /// In en, this message translates to:
+  /// **'For which event or venue'**
+  String get perkForWhich;
+
+  /// No description provided for @perkWhatYouGive.
+  ///
+  /// In en, this message translates to:
+  /// **'What you give'**
+  String get perkWhatYouGive;
+
+  /// No description provided for @perkTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Free welcome drink'**
+  String get perkTitleHint;
+
+  /// No description provided for @perkDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One drink at the bar when you arrive.'**
+  String get perkDescriptionHint;
+
+  /// No description provided for @perkWorthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth (₱)'**
+  String get perkWorthLabel;
+
+  /// No description provided for @perkHowManyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How many'**
+  String get perkHowManyLabel;
+
+  /// No description provided for @perkCitizensPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizens pay'**
+  String get perkCitizensPay;
+
+  /// No description provided for @perkRateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Set from the peso value, at 5 Tokens = ₱1, so the price is fair at every event.'**
+  String get perkRateNote;
+
+  /// No description provided for @perkHostNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You provide this perk, so it costs you and not the platform. If you cancel the event or take the perk down, anyone who bought it gets their Tokens back.'**
+  String get perkHostNote;
+
+  /// No description provided for @perkAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add perk'**
+  String get perkAddButton;
+
+  /// No description provided for @perkAddFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not add that perk. Try again.'**
+  String get perkAddFailed;
+
+  /// No description provided for @perkNoTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no event packages or venues to add a perk to yet.'**
+  String get perkNoTargets;
+
+  /// No description provided for @perkRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get perkRequired;
+
+  /// No description provided for @perkScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a perk code'**
+  String get perkScanTitle;
+
+  /// No description provided for @perkScanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the customer\'s code, or type it.'**
+  String get perkScanIntro;
+
+  /// No description provided for @perkScanCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with the camera'**
+  String get perkScanCamera;
+
+  /// No description provided for @perkScanType.
+  ///
+  /// In en, this message translates to:
+  /// **'or type the code'**
+  String get perkScanType;
+
+  /// No description provided for @perkCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'FP-XXXX-XXXX'**
+  String get perkCodeHint;
+
+  /// No description provided for @perkCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get perkCheck;
+
+  /// No description provided for @perkScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not check that code. Try again.'**
+  String get perkScanFailed;
+
+  /// No description provided for @perkValidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid perk'**
+  String get perkValidTitle;
+
+  /// No description provided for @perkValidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to give. Mark it used once you have.'**
+  String get perkValidBody;
+
+  /// No description provided for @perkUsedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used'**
+  String get perkUsedTitle;
+
+  /// No description provided for @perkUsedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not give the perk. This code was used before.'**
+  String get perkUsedBody;
+
+  /// No description provided for @perkExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get perkExpiredTitle;
+
+  /// No description provided for @perkExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not give the perk. This code can no longer be used.'**
+  String get perkExpiredBody;
+
+  /// No description provided for @perkFieldPerk.
+  ///
+  /// In en, this message translates to:
+  /// **'Perk'**
+  String get perkFieldPerk;
+
+  /// No description provided for @perkFieldGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get perkFieldGuest;
+
+  /// No description provided for @perkFieldUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get perkFieldUsed;
+
+  /// No description provided for @perkFieldAt.
+  ///
+  /// In en, this message translates to:
+  /// **'At'**
+  String get perkFieldAt;
+
+  /// No description provided for @perkMarkUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as used'**
+  String get perkMarkUsed;
+
+  /// No description provided for @perkMarkUsedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Once marked, this code cannot be used again.'**
+  String get perkMarkUsedNote;
+
+  /// No description provided for @perkMarkedUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as used'**
+  String get perkMarkedUsed;
+
+  /// No description provided for @perkScanAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another'**
+  String get perkScanAnother;
+
+  /// No description provided for @perkForThisEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks for this event'**
+  String get perkForThisEvent;
+
+  /// No description provided for @perkForEventEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No perks for this event yet.'**
+  String get perkForEventEmpty;
+
   /// No description provided for @rewardsLifeRelease.
   ///
   /// In en, this message translates to:
@@ -11391,6 +12171,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open {name}'**
   String challengesOpen(String name);
+
+  /// No description provided for @replacementFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a replacement'**
+  String get replacementFind;
+
+  /// No description provided for @replacementPickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace {item}'**
+  String replacementPickTitle(String item);
+
+  /// No description provided for @replacementPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings like it that are free on the event\'s dates. The citizen accepts or declines your choice.'**
+  String get replacementPickBody;
+
+  /// No description provided for @replacementNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing like it is free on those dates.'**
+  String get replacementNone;
+
+  /// No description provided for @replacementPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get replacementPartner;
+
+  /// No description provided for @replacementPriceBeforeFees.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} before fees'**
+  String replacementPriceBeforeFees(String price);
+
+  /// No description provided for @replacementConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose {item}?'**
+  String replacementConfirmTitle(String item);
+
+  /// No description provided for @replacementConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen is told and answers. Nothing changes until they accept.'**
+  String get replacementConfirmBody;
+
+  /// No description provided for @replacementPropose.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose'**
+  String get replacementPropose;
+
+  /// No description provided for @replacementProposed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. The citizen will answer.'**
+  String get replacementProposed;
+
+  /// No description provided for @replacementWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement sent, waiting for the citizen'**
+  String get replacementWaiting;
+
+  /// No description provided for @replacementWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get replacementWithdraw;
+
+  /// No description provided for @replacementWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposal withdrawn.'**
+  String get replacementWithdrawn;
+
+  /// No description provided for @proposalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host proposes a change'**
+  String get proposalTitle;
+
+  /// No description provided for @proposalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{old} can\'t be part of your event. Your host proposes {replacement} instead.'**
+  String proposalBody(String old, String replacement);
+
+  /// No description provided for @proposalPriceUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes up by {amount}.'**
+  String proposalPriceUp(String amount);
+
+  /// No description provided for @proposalPriceDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}.'**
+  String proposalPriceDown(String amount);
+
+  /// No description provided for @proposalPriceSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total stays the same.'**
+  String get proposalPriceSame;
+
+  /// No description provided for @proposalAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get proposalAccept;
+
+  /// No description provided for @proposalDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get proposalDecline;
+
+  /// No description provided for @proposalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted. The new Supplier will confirm.'**
+  String get proposalAccepted;
+
+  /// No description provided for @proposalDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined. Your host was told.'**
+  String get proposalDeclined;
+
+  /// No description provided for @bookedReplaceBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace by {when}, or the citizen can cancel for a full refund.'**
+  String bookedReplaceBy(String when);
+
+  /// No description provided for @bookedReplacePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past the deadline. The citizen can cancel for a full refund.'**
+  String get bookedReplacePast;
+
+  /// No description provided for @replacementNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A Supplier can\'t make it'**
+  String get replacementNoticeTitle;
+
+  /// No description provided for @replacementNoticeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{items} can\'t be part of your event. Your host has until {when} to find a replacement. If they don\'t, you can cancel for a full refund.'**
+  String replacementNoticeBody(String items, String when);
+
+  /// No description provided for @replacementNoticeFullRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.'**
+  String get replacementNoticeFullRefund;
+
+  /// No description provided for @bookAwaitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Suppliers'**
+  String get bookAwaitingTitle;
+
+  /// No description provided for @bookAwaitingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Supplier in this package confirms first} other{{count} Suppliers in this package confirm first}}. Nothing has been charged yet.'**
+  String bookAwaitingSub(int count);
+
+  /// No description provided for @bookAwaitingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Each has 24 hours to answer, and you\'ll be told. Once they confirm, pay from your booking in Bookings.'**
+  String get bookAwaitingNext;
+
+  /// No description provided for @bookAmountToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay once confirmed'**
+  String get bookAmountToPay;
+
+  /// No description provided for @ticketAwaitingSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Waiting for 1 Supplier to confirm} other{Waiting for {count} Suppliers to confirm}}. You can pay once they do.'**
+  String ticketAwaitingSuppliers(int count);
+
+  /// No description provided for @ticketPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String ticketPayNow(String amount);
+
+  /// No description provided for @ticketPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid. You\'re booked.'**
+  String get ticketPaid;
+
+  /// No description provided for @proposalAcceptAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and pay {amount}'**
+  String proposalAcceptAndPay(String amount);
+
+  /// No description provided for @proposalPayDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount} to confirm'**
+  String proposalPayDifference(String amount);
+
+  /// No description provided for @proposalRefundBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}, refunded to your card.'**
+  String proposalRefundBack(String amount);
 }
 
 class _AppLocalizationsDelegate

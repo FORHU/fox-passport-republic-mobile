@@ -13,6 +13,7 @@ import 'package:flutter_template/routes/route_names.dart';
 /// | `/user/passport` | Passport |
 /// | `/calendar` | Bookings, on the Calendar switch |
 /// | `/republic?postId=<id>` | that post, with its comments when `&comments=1` |
+/// | `/creator-dashboard/events?eventId=<id>` | that booked event, with its Suppliers |
 String? notificationRoute(String? link) {
   if (link == null || link.isEmpty) return null;
   final uri = Uri.tryParse(link);
@@ -42,6 +43,16 @@ String? notificationRoute(String? link) {
             );
     case 'calendar':
       return RouteNames.ticketsCalendar;
+    case 'creator-dashboard':
+      // An event that lost a Supplier: `/creator-dashboard/events?eventId=<id>`
+      // (a valid page on the web too). The plain list has no screen here.
+      final eventId = uri.queryParameters['eventId'];
+      return segments.length == 2 &&
+              segments[1] == 'events' &&
+              eventId != null &&
+              eventId.isNotEmpty
+          ? RouteNames.bookedEvent(eventId)
+          : null;
     default:
       return null;
   }

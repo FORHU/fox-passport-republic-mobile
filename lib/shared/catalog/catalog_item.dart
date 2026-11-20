@@ -105,13 +105,17 @@ class CatalogItem extends Equatable {
 
 /// A page of results and how many there are in total.
 class CatalogPage extends Equatable {
-  const CatalogPage({required this.items, required this.total});
+  const CatalogPage({required this.items, required this.total, this.savedAt});
 
   final List<CatalogItem> items;
   final int total;
 
+  /// When this page was saved on the phone, if the server could not be reached
+  /// and the saved copy is what is shown; null for a fresh answer.
+  final DateTime? savedAt;
+
   bool get isSample => items.isNotEmpty && items.every((i) => i.isSample);
 
   @override
-  List<Object?> get props => [items, total];
+  List<Object?> get props => [items, total, savedAt];
 }

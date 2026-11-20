@@ -7,6 +7,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/reviews/presentation/widgets/write_review_sheet.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/cancel_sheet.dart';
 import 'package:flutter_template/features/tickets/presentation/widgets/edit_request_sheet.dart';
+import 'package:flutter_template/features/tickets/presentation/widgets/replacement_proposal_card.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -47,6 +48,15 @@ class TicketCard extends ConsumerWidget {
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
 
+  /// A live, upcoming event-package booking can lose a Supplier: the host's
+  /// proposed replacement, or the deadline for one, is shown on it. A paid
+  /// booking can too (a blocked day or a listing taken down).
+  bool get _mayHaveProposal =>
+      !ticket.isSample &&
+      ticket.templateId != null &&
+      (ticket.status == 'pending' || ticket.status == 'confirmed') &&
+      ticket.startAt.isAfter(DateTime.now());
+
   /// A live booking still waiting to be confirmed has no QR yet; this says
   /// when it will, so the ticket does not look like it is missing one.
   bool get _showPendingQr =>
@@ -59,6 +69,14 @@ class TicketCard extends ConsumerWidget {
   bool get _canDirections =>
       ticket.isSample ||
       (ticket.status == 'confirmed' && ticket.endAt.isAfter(DateTime.now()));
+
+  /// A confirmed, upcoming booking of an event package can spend Tokens on the
+  /// perks its host offers.
+  bool get _canPerks =>
+      !ticket.isSample &&
+      ticket.templateId != null &&
+      ticket.status == 'confirmed' &&
+      ticket.endAt.isAfter(DateTime.now());
 
   /// A finished or cancelled booking that came from an event package can be
   /// booked again; a live one cannot (it is already booked).
@@ -186,6 +204,7 @@ class TicketCard extends ConsumerWidget {
             ),
           ),
         ),
+        if (_mayHaveProposal) ReplacementProposalCard(bookingId: ticket.id),
         const SizedBox(height: 12),
         if (_canDirections)
           _Action(
@@ -193,6 +212,16 @@ class TicketCard extends ConsumerWidget {
             label: l10n.ticketDirections,
             onTap: () => _directions(context),
           ),
+        if (_canPerks) ...[
+          const SizedBox(height: 8),
+          _Action(
+            icon: Icons.redeem_outlined,
+            label: l10n.perkForThisEvent,
+            onTap: () => unawaited(
+              context.push(RouteNames.packagePerks(ticket.templateId!)),
+            ),
+          ),
+        ],
         if (_showPendingQr) ...[
           Text(
             l10n.ticketDirectionsAfterConfirm,

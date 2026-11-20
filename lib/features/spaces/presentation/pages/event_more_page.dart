@@ -52,6 +52,18 @@ class EventMorePage extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           MoreRow(
+            icon: Icons.qr_code_2_rounded,
+            title: l10n.perkScanTitle,
+            onTap: () => context.push(RouteNames.perkScan),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.redeem_outlined,
+            title: l10n.perksYours,
+            onTap: () => context.push(RouteNames.perksOffered),
+          ),
+          const SizedBox(height: 8),
+          MoreRow(
             icon: Icons.chat_bubble_outline_rounded,
             title: l10n.messages,
             onTap: () => context.push(RouteNames.spaceEventMessages),
