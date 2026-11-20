@@ -588,18 +588,11 @@ void main() {
     await finish(tester);
   });
 
-  testWidgets('the switcher is on Home too, with no trip to Passport', (
-    tester,
-  ) async {
+  testWidgets('Home has no switcher: it is on Passport only', (tester) async {
     await boot(tester, roles: const ['eventFoxer']);
     expect(where(), RouteNames.home);
 
-    await tester.tap(find.byIcon(Icons.expand_more_rounded));
-    await settle(tester);
-    await tester.tap(find.text('Event'));
-    await settle(tester);
-
-    expect(where(), RouteNames.spaceEvent);
+    expect(find.byIcon(Icons.expand_more_rounded), findsNothing);
     await finish(tester);
   });
 }
