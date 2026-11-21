@@ -30,6 +30,38 @@ enum KycDocument {
   final String field;
 }
 
+/// The name the API reads a portfolio or resume under, in an application and
+/// in a resubmission. A PDF or Word document only (app#371).
+const portfolioFileField = 'portfolioFile';
+
+/// How many portfolio links an application may give, and how long each may
+/// be. The API checks the same.
+const maxPortfolioLinks = 5;
+const _maxPortfolioLinkLength = 2048;
+
+/// What is wrong with the portfolio links field.
+sealed class PortfolioLinksProblem extends Equatable {
+  const PortfolioLinksProblem();
+}
+
+/// This link isn't a full http(s) web address.
+class PortfolioLinkInvalid extends PortfolioLinksProblem {
+  const PortfolioLinkInvalid(this.link);
+
+  final String link;
+
+  @override
+  List<Object?> get props => [link];
+}
+
+/// More than [maxPortfolioLinks].
+class PortfolioLinksTooMany extends PortfolioLinksProblem {
+  const PortfolioLinksTooMany();
+
+  @override
+  List<Object?> get props => [];
+}
+
 /// What a person fills in to apply as a Talent, Performer, Gear, Venue or
 /// Event Foxer, or as an Organizer.
 class RoleApplicationDraft extends Equatable {
@@ -70,14 +102,15 @@ class RoleApplicationDraft extends Equatable {
   final String state;
   final String city;
 
-  /// Event only, optional: a portfolio or resume.
+  /// Event only, optional: a portfolio or resume, a PDF or Word document
+  /// (app#371) picked with the document picker.
   final PickedPhoto? portfolioFile;
 
   /// What they offer, as the person typed it, separated by commas: the kinds
   /// of service, performance or gear.
   final String types;
 
-  /// Links to their work, separated by commas. Not for gear.
+  /// Links to their work, separated by commas: Provider and Event Foxer.
   final String portfolio;
 
   /// Years, as typed. Not for gear.
@@ -127,6 +160,30 @@ class RoleApplicationDraft extends Equatable {
           if (s.trim().isNotEmpty) s.trim(),
       ];
 
+  /// The portfolio links, without repeats.
+  List<String> get portfolioLinks => split(portfolio).toSet().toList();
+
+  /// What is wrong with the portfolio links, or null. Same rules as the API:
+  /// full http(s) addresses with a real host, at most [maxPortfolioLinks].
+  PortfolioLinksProblem? get portfolioProblem {
+    final links = portfolioLinks;
+    for (final link in links) {
+      if (!_isWebAddress(link)) return PortfolioLinkInvalid(link);
+    }
+    if (links.length > maxPortfolioLinks) return const PortfolioLinksTooMany();
+    return null;
+  }
+
+  static bool _isWebAddress(String link) {
+    if (link.length > _maxPortfolioLinkLength) return false;
+    final uri = Uri.tryParse(link);
+    if (uri == null || !uri.hasAuthority) return false;
+    if (uri.scheme != 'https' && uri.scheme != 'http') return false;
+    if (uri.userInfo.isNotEmpty) return false;
+    final host = uri.host;
+    return host.contains('.') && !host.endsWith('.');
+  }
+
   /// Digits only, and no more of them than the API takes.
   static String digits(String value, int max) {
     final d = value.replaceAll(RegExp(r'\D'), '');
@@ -158,6 +215,7 @@ class RoleApplicationDraft extends Equatable {
                   : businessName.trim().isNotEmpty &&
                       split(types).isNotEmpty &&
                       specializations.isNotEmpty) &&
+      portfolioProblem == null &&
       requiredDocuments.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({
@@ -215,13 +273,14 @@ class RoleApplicationDraft extends Equatable {
           'bio': bio.trim(),
           'location': location,
           if (experience.trim().isNotEmpty) 'experience': experience.trim(),
+          if (portfolioLinks.isNotEmpty) 'portfolioUrls': portfolioLinks,
         } else if (isProvider) ...{
           'businessName': businessName.trim(),
           'assetTypes': split(types),
           'serviceTypes': split(types),
           if (years != null) 'experience': years,
           if (nbiNumber.isNotEmpty) 'nbiClearanceIdNumber': nbiNumber,
-          if (portfolio.isNotEmpty) 'portfolioUrls': split(portfolio),
+          if (portfolioLinks.isNotEmpty) 'portfolioUrls': portfolioLinks,
         },
         if (tinNumber.isNotEmpty) 'tinNumber': tinNumber,
         'specializations': specializations,
@@ -238,7 +297,7 @@ class RoleApplicationDraft extends Equatable {
             filename: e.value.name,
           ),
         if (portfolioFile != null)
-          'portfolioFile': MultipartFile.fromBytes(
+          portfolioFileField: MultipartFile.fromBytes(
             portfolioFile!.bytes,
             filename: portfolioFile!.name,
           ),

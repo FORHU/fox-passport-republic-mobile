@@ -220,6 +220,53 @@ void main() {
       expect(event.copyWith(documents: const {}).isComplete, isFalse);
     });
 
+    test('an event can link to its work, sent trimmed and once (app#371)', () {
+      final event = RoleApplicationDraft(
+        roleType: 'eventFoxer',
+        bio: 'Planner',
+        city: 'Cebu',
+        country: 'Philippines',
+        portfolio: ' https://behance.net/fox , https://behance.net/fox,',
+        documents: _allDocuments(),
+      );
+      expect(event.toData()['portfolioUrls'], ['https://behance.net/fox']);
+      expect(event.portfolioProblem, isNull);
+      expect(event.isComplete, isTrue);
+      expect(
+        event.copyWith(portfolio: '').toData().containsKey('portfolioUrls'),
+        isFalse,
+      );
+    });
+
+    test('a link that is not a full web address holds the application back',
+        () {
+      final event = RoleApplicationDraft(
+        roleType: 'eventFoxer',
+        bio: 'Planner',
+        city: 'Cebu',
+        country: 'Philippines',
+        documents: _allDocuments(),
+      );
+      for (final bad in [
+        'behance.net/fox',
+        'javascript:alert(1)',
+        'ftp://files.example.com',
+        'https://portfolio',
+        'https://me:pw@example.com',
+      ]) {
+        final draft = event.copyWith(portfolio: bad);
+        expect(draft.portfolioProblem, PortfolioLinkInvalid(bad), reason: bad);
+        expect(draft.isComplete, isFalse, reason: bad);
+      }
+      final six = [
+        for (var i = 1; i <= 6; i++) 'https://s$i.example.com',
+      ].join(',');
+      expect(
+        event.copyWith(portfolio: six).portfolioProblem,
+        const PortfolioLinksTooMany(),
+      );
+    });
+
     test('the portfolio file is optional and goes under its own name', () {
       final event = RoleApplicationDraft(
         roleType: 'eventFoxer',
@@ -229,7 +276,7 @@ void main() {
         event.toForm().files.map((f) => f.key),
         isNot(contains('portfolioFile')),
       );
-      final withPortfolio = event.copyWith(portfolioFile: _photo('cv.jpg'));
+      final withPortfolio = event.copyWith(portfolioFile: _photo('cv.pdf'));
       expect(
         withPortfolio.toForm().files.map((f) => f.key),
         contains('portfolioFile'),
@@ -536,7 +583,8 @@ void main() {
       expect(find.text('City'), findsOneWidget);
       expect(find.text('Wedding'), findsOneWidget);
       expect(find.text('Services you offer'), findsNothing);
-      expect(find.text('Links to your work'), findsNothing);
+      // Links to their work, like a Provider (app#371).
+      expect(find.text('Links to your work'), findsOneWidget);
       expect(find.text('NBI clearance ID number'), findsNothing);
       await tester.scrollUntilVisible(
         find.text('Portfolio or resume (optional)'),
@@ -544,7 +592,27 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('Portfolio or resume (optional)'), findsOneWidget);
+      expect(find.text('PDF, DOC or DOCX, up to 15 MB'), findsOneWidget);
       expect(find.text('TIN number (optional)'), findsNothing);
+    });
+
+    testWidgets('says which portfolio link is not a web address', (
+      tester,
+    ) async {
+      await open(tester, 'eventFoxer');
+
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Links to your work'),
+        'behance.net/fox',
+      );
+      await tester.pump();
+
+      expect(
+        find.text(
+          '"behance.net/fox" isn\'t a full web address. Start it with https://',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Send waits until it is complete', (tester) async {

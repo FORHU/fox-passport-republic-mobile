@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/shared/documents/document_picker.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -15,6 +16,7 @@ class DocumentRow extends ConsumerWidget {
     required this.onPicked,
     required this.onRemove,
     this.frontCamera = false,
+    this.document = false,
     super.key,
   });
 
@@ -25,6 +27,32 @@ class DocumentRow extends ConsumerWidget {
 
   /// The selfie: the camera opens on the front lens.
   final bool frontCamera;
+
+  /// A portfolio or resume: a PDF or Word file from the device's files, not
+  /// a photo (app#371).
+  final bool document;
+
+  /// Gets a PDF or Word file; one that can't be used is said plainly.
+  Future<void> _chooseDocument(BuildContext context, WidgetRef ref) async {
+    final result = await ref.read(documentPickerProvider).pick();
+    if (!context.mounted) return;
+    final l10n = context.l10n;
+    switch (result) {
+      case DocumentPicked(:final file):
+        onPicked(file);
+      case DocumentPickCancelled():
+        break;
+      case DocumentPickFailed(:final reason):
+        showTopToast(
+          context,
+          switch (reason) {
+            DocumentPickFailure.unsupported => l10n.roleApplyDocUnsupported,
+            DocumentPickFailure.tooLarge => l10n.roleApplyDocTooLarge,
+            DocumentPickFailure.other => l10n.roleApplyDocFailed,
+          },
+        );
+    }
+  }
 
   /// Asks where the photo comes from, then gets it. A refused or missing
   /// camera is said plainly, and the gallery stays available.
@@ -100,6 +128,14 @@ class DocumentRow extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label, style: AppTypography.body()),
+                if (picked == null && document)
+                  Text(
+                    l10n.roleApplyPortfolioFormats,
+                    style: AppTypography.body(
+                      size: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
                 if (picked != null)
                   Text(
                     picked.name,
@@ -124,7 +160,9 @@ class DocumentRow extends ConsumerWidget {
               minimumSize: const Size(0, 40),
               padding: const EdgeInsets.symmetric(horizontal: 14),
             ),
-            onPressed: () => _choose(context, ref),
+            onPressed: () => document
+                ? _chooseDocument(context, ref)
+                : _choose(context, ref),
             child: Text(
               picked == null ? l10n.roleApplyChoose : l10n.roleApplyChange,
             ),
