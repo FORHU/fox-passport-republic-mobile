@@ -32,6 +32,8 @@ class RoleApplicationRepository {
             entry.value.bytes,
             filename: entry.value.name,
           ),
+          // A portfolio is a PDF or Word document, checked as one (app#371).
+          if (entry.key == portfolioFileField) 'purpose': 'portfolio',
         }),
       );
       final id = body is Map ? body['fileId'] : null;

@@ -9712,6 +9712,48 @@ abstract class AppLocalizations {
   /// **'Portfolio or resume (optional)'**
   String get roleApplyPortfolioFile;
 
+  /// No description provided for @roleApplyPortfolioFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, DOC or DOCX, up to 15 MB'**
+  String get roleApplyPortfolioFormats;
+
+  /// No description provided for @roleApplyDocUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a PDF or Word document (.pdf, .doc, .docx).'**
+  String get roleApplyDocUnsupported;
+
+  /// No description provided for @roleApplyDocTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'That file is over 15 MB. Choose a smaller one.'**
+  String get roleApplyDocTooLarge;
+
+  /// No description provided for @roleApplyDocFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That file couldn\'t be opened. Try again.'**
+  String get roleApplyDocFailed;
+
+  /// No description provided for @roleApplyPortfolioLinksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full web addresses, separated by commas'**
+  String get roleApplyPortfolioLinksHint;
+
+  /// No description provided for @roleApplyPortfolioLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{link}\" isn\'t a full web address. Start it with https://'**
+  String roleApplyPortfolioLinkInvalid(String link);
+
+  /// No description provided for @roleApplyPortfolioTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at most {max} links.'**
+  String roleApplyPortfolioTooMany(int max);
+
   /// No description provided for @roleSpecCorporate.
   ///
   /// In en, this message translates to:

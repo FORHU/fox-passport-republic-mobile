@@ -5405,6 +5405,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyPortfolioFile => 'Portfolio or resume (optional)';
 
   @override
+  String get roleApplyPortfolioFormats => 'PDF, DOC or DOCX, up to 15 MB';
+
+  @override
+  String get roleApplyDocUnsupported =>
+      'Use a PDF or Word document (.pdf, .doc, .docx).';
+
+  @override
+  String get roleApplyDocTooLarge =>
+      'That file is over 15 MB. Choose a smaller one.';
+
+  @override
+  String get roleApplyDocFailed => 'That file couldn\'t be opened. Try again.';
+
+  @override
+  String get roleApplyPortfolioLinksHint =>
+      'Full web addresses, separated by commas';
+
+  @override
+  String roleApplyPortfolioLinkInvalid(String link) {
+    return '\"$link\" isn\'t a full web address. Start it with https://';
+  }
+
+  @override
+  String roleApplyPortfolioTooMany(int max) {
+    return 'Add at most $max links.';
+  }
+
+  @override
   String get roleSpecCorporate => 'Corporate';
 
   @override

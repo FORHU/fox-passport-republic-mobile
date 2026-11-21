@@ -151,7 +151,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(types: v)),
                   ),
-                if (d.isProvider) ...[
+                if (d.isProvider)
                   _Field(
                     label: l10n.roleApplyExperience,
                     value: d.experience,
@@ -160,14 +160,16 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(experience: v)),
                   ),
+                if (d.isProvider || d.isEvent)
                   _Field(
                     label: l10n.roleApplyPortfolio,
-                    hint: l10n.roleApplyCommaHint,
+                    hint: l10n.roleApplyPortfolioLinksHint,
                     value: d.portfolio,
+                    url: true,
+                    error: _portfolioError(l10n, d.portfolioProblem),
                     onChanged: (v) =>
                         controller.edit((x) => x.copyWith(portfolio: v)),
                   ),
-                ],
                 if (d.isProvider)
                   _ProviderSpecializations(
                     picked: d.specializations,
@@ -231,6 +233,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                 if (d.isEvent)
                   DocumentRow(
                     label: l10n.roleApplyPortfolioFile,
+                    document: true,
                     photo: d.portfolioFile,
                     onPicked: (p) =>
                         controller.edit((x) => x.copyWith(portfolioFile: p)),
@@ -271,6 +274,18 @@ String _documentLabel(AppLocalizations l10n, KycDocument slot) =>
       KycDocument.birPermit => l10n.roleApplyDocBir,
       KycDocument.selfie => l10n.roleApplyDocSelfie,
       KycDocument.backgroundClearance => l10n.roleApplyDocClearance,
+    };
+
+String? _portfolioError(
+  AppLocalizations l10n,
+  PortfolioLinksProblem? problem,
+) =>
+    switch (problem) {
+      null => null,
+      PortfolioLinkInvalid(:final link) =>
+        l10n.roleApplyPortfolioLinkInvalid(link),
+      PortfolioLinksTooMany() =>
+        l10n.roleApplyPortfolioTooMany(maxPortfolioLinks),
     };
 
 String specializationLabel(AppLocalizations l10n, String code) =>
@@ -340,17 +355,23 @@ class _Field extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.hint,
+    this.error,
     this.number = false,
     this.phone = false,
+    this.url = false,
     this.lines = 1,
     this.formatters = const [],
   });
 
   final String label;
   final String? hint;
+
+  /// Shown under the field in place of [hint]; the field then reads invalid.
+  final String? error;
   final String value;
   final bool number;
   final bool phone;
+  final bool url;
   final int lines;
   final List<TextInputFormatter> formatters;
   final ValueChanged<String> onChanged;
@@ -378,13 +399,17 @@ class _FieldState extends State<_Field> {
               ? TextInputType.number
               : widget.phone
                   ? TextInputType.phone
-                  : null,
+                  : widget.url
+                      ? TextInputType.url
+                      : null,
           minLines: widget.lines,
           maxLines: widget.lines,
           decoration: InputDecoration(
             labelText: widget.label,
             helperText: widget.hint,
             helperMaxLines: 2,
+            errorText: widget.error,
+            errorMaxLines: 3,
           ),
           onChanged: widget.onChanged,
         ),
