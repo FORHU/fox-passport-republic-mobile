@@ -796,6 +796,7 @@ class _PricingStep extends StatelessWidget {
         StudioField(
           label: l10n.studioPrice,
           value: d.price?.toString() ?? '',
+          hintText: 'e.g. 15000',
           number: true,
           required: true,
           errorText:

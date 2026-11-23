@@ -18,6 +18,7 @@ class StudioField extends StatefulWidget {
     this.formatters = const [],
     this.required = false,
     this.errorText,
+    this.hintText,
     super.key,
   });
 
@@ -32,6 +33,9 @@ class StudioField extends StatefulWidget {
 
   /// Shown under the field, with a red border, when it is not filled in right.
   final String? errorText;
+
+  /// Placeholder shown inside an empty field (e.g. a base price reference).
+  final String? hintText;
 
   /// Limits on what can be typed.
   final List<TextInputFormatter> formatters;
@@ -71,6 +75,7 @@ class _StudioFieldState extends State<StudioField> {
               : null,
           decoration: InputDecoration(
             labelText: widget.required ? '${widget.label} *' : widget.label,
+            hintText: widget.hintText,
             errorText: widget.errorText,
           ),
           onChanged: widget.onChanged,
