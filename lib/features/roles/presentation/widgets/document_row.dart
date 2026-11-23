@@ -17,8 +17,17 @@ class DocumentRow extends ConsumerWidget {
     required this.onRemove,
     this.frontCamera = false,
     this.document = false,
+    this.boxed = false,
+    this.optional = false,
     super.key,
   });
+
+  /// The Provider wizard's card look (mobile#487): a boxed row saying
+  /// "Required" until chosen, with Upload, Take or Replace.
+  final bool boxed;
+
+  /// Boxed only: says "Optional" instead of "Required" until chosen.
+  final bool optional;
 
   final String label;
   final PickedPhoto? photo;
@@ -112,6 +121,86 @@ class DocumentRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final picked = photo;
+    if (boxed) {
+      final action = picked != null
+          ? l10n.provApplyReplace
+          : frontCamera
+              ? l10n.provApplyTake
+              : l10n.provApplyUpload;
+      return Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              picked == null
+                  ? Icons.radio_button_unchecked_rounded
+                  : Icons.check_rounded,
+              size: 20,
+              color: picked == null ? AppColors.inputBorder : AppColors.success,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: AppTypography.body(color: AppColors.textPrimary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    picked?.name ??
+                        (optional
+                            ? l10n.provApplyOptional
+                            : l10n.provApplyRequired),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.body(
+                      size: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 40),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                foregroundColor: AppColors.textPrimary,
+                shape: const StadiumBorder(),
+                side: BorderSide(
+                  color: picked == null
+                      ? AppColors.textPrimary
+                      : AppColors.borderStrong,
+                ),
+              ),
+              onPressed: () => document
+                  ? _chooseDocument(context, ref)
+                  : _choose(context, ref),
+              child: Semantics(
+                label: '$action $label',
+                excludeSemantics: true,
+                child: Text(
+                  action,
+                  style: AppTypography.body(
+                    size: 13,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(

@@ -44,6 +44,13 @@ class ProviderSpecialtiesRepository {
         if (row is Map) ProviderSpecialty.fromJson(row.cast<String, dynamic>()),
     ];
   }
+
+  /// Asks for a specialty the catalog lacks (api#440). It stays out of
+  /// [list] until a reviewer approves it, so it is never picked or sent with
+  /// an application.
+  Future<void> suggest(String name) async {
+    await _api.post(ApiEndpoints.providerSpecialtySuggestions, {'name': name});
+  }
 }
 
 final providerSpecialtiesRepositoryProvider =
