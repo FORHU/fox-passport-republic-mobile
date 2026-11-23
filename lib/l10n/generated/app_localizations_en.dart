@@ -5961,7 +5961,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tourActionsBody =>
-      'Open your calendar, or add something new, from here.';
+      'Add something new from here. Your calendar is in the bar below.';
 
   @override
   String get tourNeedsTitle => 'Needs you';

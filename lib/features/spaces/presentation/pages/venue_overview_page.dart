@@ -137,40 +137,28 @@ class VenueOverviewPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
+      // The same floating "Add venue" as the Venues tab. The calendar is a
+      // tab in the bar below, so it has no button here.
+      floatingActionButton: tourTarget(
+        'dash-actions',
+        FloatingActionButton.extended(
+          onPressed: () => context.push(RouteNames.spaceVenueStudio),
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.onAccent,
+          icon: const Icon(Icons.add_rounded),
+          label: Text(l10n.venueAddVenue),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
         onRefresh: () => _refresh(ref, range),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          // Room at the end so the floating button never covers a card.
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
           children: [
             const OverviewGreeting(),
-            const SizedBox(height: 4),
-            tourTarget(
-              'dash-actions',
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () =>
-                          context.go(RouteNames.spaceVenueCalendar),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: Text(l10n.spaceTabCalendar),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: () =>
-                          context.push(RouteNames.spaceVenueStudio),
-                      icon: const Icon(Icons.add_business_outlined),
-                      label: Text(l10n.venueQuickAddVenue),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             tourTarget(
               'dash-needs',
               Column(

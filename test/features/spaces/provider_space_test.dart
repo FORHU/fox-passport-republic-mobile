@@ -281,16 +281,15 @@ void main() {
       expect(find.text('Getting started'), findsNothing);
     });
 
-    testWidgets('has Calendar and a role-named add button at the top', (
+    testWidgets('has a floating role-named add button, no Calendar button', (
       tester,
     ) async {
       await pump(tester, const ProviderOverviewPage(kind: ProviderKind.gear));
 
-      expect(find.text('Calendar'), findsOneWidget);
-      expect(find.text('Add gear'), findsOneWidget);
+      expect(find.text('Calendar'), findsNothing);
       expect(
-        tester.getTopLeft(find.text('Add gear')).dy,
-        lessThan(tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy),
+        find.widgetWithText(FloatingActionButton, 'Add gear'),
+        findsOneWidget,
       );
     });
 

@@ -114,6 +114,18 @@ class EventOverviewPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
+      // A floating "New event", as the Venue dashboard's "Add venue". The
+      // calendar is a tab in the bar below, so it has no button here.
+      floatingActionButton: tourTarget(
+        'dash-actions',
+        FloatingActionButton.extended(
+          onPressed: () => context.push(RouteNames.spaceEventStudio),
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.onAccent,
+          icon: const Icon(Icons.add_rounded),
+          label: Text(l10n.eventsNewOnWeb),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
@@ -131,34 +143,10 @@ class EventOverviewPage extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          // Room at the end so the floating button never covers a card.
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
           children: [
             const OverviewGreeting(),
-            const SizedBox(height: 4),
-            tourTarget(
-              'dash-actions',
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () =>
-                          context.go(RouteNames.spaceEventCalendar),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: Text(l10n.spaceTabCalendar),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: () =>
-                          context.push(RouteNames.spaceEventStudio),
-                      icon: const Icon(Icons.add_circle_outline_rounded),
-                      label: Text(l10n.eventsNewOnWeb),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             tourTarget(
               'dash-needs',
               Column(

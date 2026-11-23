@@ -306,16 +306,18 @@ void main() {
       expect(find.text('2 events'), findsOneWidget);
     });
 
-    testWidgets('puts the buttons first, then what needs the person', (
+    testWidgets('New event floats at the bottom, with no Calendar button', (
       tester,
     ) async {
       api_(events: [event('e1', 'Bonfire Night', 'published')]);
       await pump(tester, const EventOverviewPage());
 
-      final actions = tester.getTopLeft(find.text('New event')).dy;
-      final attention = tester.getTopLeft(find.text('NEEDS YOUR ATTENTION')).dy;
-      expect(actions, lessThan(attention));
-      expect(find.text('Calendar'), findsWidgets);
+      expect(
+        find.widgetWithText(FloatingActionButton, 'New event'),
+        findsOneWidget,
+      );
+      // The calendar is a tab, not a button here too.
+      expect(find.text('Calendar'), findsNothing);
     });
 
     testWidgets('shows events live and in review, and My events', (
@@ -329,16 +331,21 @@ void main() {
         ],
       );
       await pump(tester, const EventOverviewPage());
+      // The live count, in the numbers above My events.
       await tester.scrollUntilVisible(
-        find.text('MY EVENTS'),
-        200,
+        find.text('1 of 3'),
+        100,
         scrollable: find.byType(Scrollable).first,
       );
+      expect(find.text('1 of 3'), findsOneWidget);
 
-      await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
+      await tester.scrollUntilVisible(
+        find.text('Waiting One'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('1 of 3'), findsOneWidget);
       expect(find.text('Live One'), findsOneWidget);
       expect(find.text('Waiting One'), findsOneWidget);
       // Two at most.

@@ -91,27 +91,13 @@ class OrganizerOverviewPage extends ConsumerWidget {
           children: [
             const OverviewGreeting(),
             const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () =>
-                        context.go(RouteNames.spaceOrganizerCalendar),
-                    icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text(l10n.spaceTabCalendar),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => unawaited(
-                      context.push(RouteNames.spaceOrganizerInvitations),
-                    ),
-                    icon: const Icon(Icons.mail_outline_rounded),
-                    label: Text(l10n.organizerInvitations),
-                  ),
-                ),
-              ],
+            // The calendar is a tab in the bar below, so no button for it.
+            FilledButton.icon(
+              onPressed: () => unawaited(
+                context.push(RouteNames.spaceOrganizerInvitations),
+              ),
+              icon: const Icon(Icons.mail_outline_rounded),
+              label: Text(l10n.organizerInvitations),
             ),
             HomeSectionHeader(title: l10n.overviewAttention),
             if (appointments.hasError)

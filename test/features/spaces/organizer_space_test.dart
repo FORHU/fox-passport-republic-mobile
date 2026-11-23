@@ -149,7 +149,8 @@ void main() {
       await pump(tester, const OrganizerOverviewPage());
 
       expect(find.textContaining(', Sam'), findsOneWidget);
-      expect(find.text('Calendar'), findsOneWidget);
+      // The calendar is a tab, not a button here too.
+      expect(find.text('Calendar'), findsNothing);
       expect(find.text('Invitations'), findsOneWidget);
       expect(find.text("You're all caught up."), findsOneWidget);
       expect(find.text('Nothing coming up yet.'), findsOneWidget);
