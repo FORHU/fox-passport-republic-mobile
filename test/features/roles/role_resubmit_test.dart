@@ -225,7 +225,10 @@ void main() {
     ) async {
       await open(tester, const [_flagged]);
 
-      expect(find.text('Fix your Organizer application'), findsOneWidget);
+      expect(
+        find.text('Fix your Event Coordinator application'),
+        findsOneWidget,
+      );
       expect(find.text('The photo is blurry'), findsOneWidget);
       expect(find.text('Primary valid ID'), findsOneWidget);
       expect(find.text('Verification selfie'), findsOneWidget);
