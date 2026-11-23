@@ -100,6 +100,27 @@ void main() {
       ).called(1);
     });
 
+    test('stores a portfolio as a portfolio, and an ID as a document (app#371)',
+        () async {
+      final api = _MockApi();
+      final forms = <FormData>[];
+      when(() => api.upload(any(), any())).thenAnswer((call) async {
+        forms.add(call.positionalArguments[1] as FormData);
+        return {'fileId': 'file-${forms.length}'};
+      });
+      when(() => api.patch(any(), any())).thenAnswer((_) async => {});
+
+      await RoleApplicationRepository(api).resubmit('r1', {
+        'validId1': _photo('id.jpg'),
+        'portfolioFile': _photo('cv.pdf'),
+      });
+
+      Map<String, String> fields(FormData f) =>
+          {for (final e in f.fields) e.key: e.value};
+      expect(fields(forms[0]).containsKey('purpose'), isFalse);
+      expect(fields(forms[1])['purpose'], 'portfolio');
+    });
+
     test('stops when an upload gives no file id, and sends nothing', () async {
       final api = _MockApi();
       when(() => api.upload(any(), any())).thenAnswer((_) async => {});
