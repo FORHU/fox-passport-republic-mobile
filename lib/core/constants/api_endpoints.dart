@@ -23,6 +23,10 @@ class ApiEndpoints {
   static const String me = '/profile';
   static const String profile = '/profile';
   static const String changePassword = '/profile/change-password';
+
+  /// A Google account sets the username and password it lacks (api#419).
+  static const String usernameAvailability = '/profile/username-availability';
+  static const String credentials = '/profile/credentials';
   static const String users = '/users';
 
   /// The optional government-ID check (multipart on POST).
@@ -105,6 +109,18 @@ class ApiEndpoints {
       '/bookings/${Uri.encodeComponent(bookingId)}/decline';
   static String requestReview(String id) => '/event-transactions/$id/review';
 
+  /// Replacing a Supplier on a booked event (API ADR 0010): what could take a
+  /// line's place, the host's proposal, and the citizen's answer.
+  static String eventReplacements(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replacements';
+  static String eventReplace(String transactionId) =>
+      '/event-transactions/${Uri.encodeComponent(transactionId)}/replace';
+  static const String eventEditProposals = '/event-transactions/proposals';
+  static String bookingReplacement(String bookingId) =>
+      '/event-transactions/booking/${Uri.encodeComponent(bookingId)}/replacement';
+  static String eventEditProposalAnswer(String proposalId, String action) =>
+      '/event-transactions/proposals/${Uri.encodeComponent(proposalId)}/$action';
+
   /// What the person has been paid and is owed, newest first.
   static const String venueAffiliationsMine = '/venue-affiliations/mine';
 
@@ -147,6 +163,9 @@ class ApiEndpoints {
 
   /// How far the person's payout account (Stripe) is set up.
   static const String stripeStatus = '/stripe-connect/status';
+
+  /// Stripe's hosted payout setup link; creates the account the first time.
+  static const String stripeOnboard = '/stripe-connect/onboard';
 
   /// Checks a guest in by the code on their ticket.
   static const String bookingCheckIn = '/bookings/check-in';

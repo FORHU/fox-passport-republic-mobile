@@ -114,38 +114,28 @@ class ProviderOverviewPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
+      // A floating "Add gear" / "Add service", as the Venue dashboard's "Add
+      // venue". The calendar is a tab in the bar below, so it has no button.
+      floatingActionButton: tourTarget(
+        'dash-actions',
+        FloatingActionButton.extended(
+          onPressed: () => unawaited(context.push(kind.studio)),
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.onAccent,
+          icon: const Icon(Icons.add_rounded),
+          label: Text(addLabel),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
         onRefresh: refresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          // Room at the end so the floating button never covers a card.
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
           children: [
             const OverviewGreeting(),
-            const SizedBox(height: 4),
-            tourTarget(
-              'dash-actions',
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.go(kind.calendar),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: Text(l10n.spaceTabCalendar),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: () => unawaited(context.push(kind.studio)),
-                      icon: const Icon(Icons.add_circle_outline_rounded),
-                      label: Text(addLabel),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             tourTarget(
               'dash-needs',
               Column(

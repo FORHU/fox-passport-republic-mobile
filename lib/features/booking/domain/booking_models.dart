@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:intl/intl.dart';
 
 export 'package:flutter_template/shared/payments/payments_repository.dart'
     show PaymentCancelled, PaymentsUnavailable;
@@ -10,6 +11,7 @@ class BookingSelection extends Equatable {
   const BookingSelection({
     required this.venue,
     this.date,
+    this.endDate,
     this.guests = 1,
     this.notes = '',
     this.voucherCode = '',
@@ -26,8 +28,12 @@ class BookingSelection extends Equatable {
   /// Optional items of [package] the citizen left out.
   final Set<String> excluded;
 
-  /// The day booked, as a calendar date with no time of day.
+  /// The first day booked, as a calendar date with no time of day.
   final DateTime? date;
+
+  /// The last day booked when it runs over more than one day; null for one
+  /// day. Always after [date].
+  final DateTime? endDate;
   final int guests;
   final String notes;
   final String voucherCode;
@@ -43,13 +49,58 @@ class BookingSelection extends Equatable {
 
   bool get isOverCapacity => overCapacity > 0;
 
-  /// The whole day, in the user's local time, as the web app sends it.
+  /// The last day booked: [endDate], or [date] for a single day.
+  DateTime? get lastDate => endDate ?? date;
+
+  /// How many days the booking covers, both ends included.
+  int get days {
+    final first = date;
+    final last = lastDate;
+    if (first == null || last == null) return 1;
+    final a = DateTime.utc(first.year, first.month, first.day);
+    final b = DateTime.utc(last.year, last.month, last.day);
+    return b.difference(a).inDays + 1;
+  }
+
+  /// From the first day's start to the last day's end, in the user's local
+  /// time, as the web app sends it.
   DateTime? get startAt =>
       date == null ? null : DateTime(date!.year, date!.month, date!.day);
 
-  DateTime? get endAt => date == null
-      ? null
-      : DateTime(date!.year, date!.month, date!.day, 23, 59, 59);
+  DateTime? get endAt {
+    final last = lastDate;
+    return last == null
+        ? null
+        : DateTime(last.year, last.month, last.day, 23, 59, 59);
+  }
+
+  /// The days picked, for display: "Fri 20 Nov", or "Fri 20 – Sun 22 Nov".
+  String? dateLabel(String locale, {bool withYear = false}) {
+    final first = date;
+    if (first == null) return null;
+    final full = DateFormat(withYear ? 'EEE d MMM y' : 'EEE d MMM', locale);
+    final last = endDate;
+    if (last == null) return full.format(first);
+    final sameMonth = first.year == last.year && first.month == last.month;
+    final head = sameMonth
+        ? DateFormat('EEE d', locale).format(first)
+        : DateFormat('EEE d MMM', locale).format(first);
+    return '$head – ${full.format(last)}';
+  }
+
+  /// [date] and [endDate] are always set together through [withDates], so
+  /// a new first day never keeps an old last day.
+  BookingSelection withDates(DateTime date, DateTime? endDate) =>
+      BookingSelection(
+        venue: venue,
+        date: date,
+        endDate: endDate,
+        guests: guests,
+        notes: notes,
+        voucherCode: voucherCode,
+        package: package,
+        excluded: excluded,
+      );
 
   BookingSelection copyWith({
     DateTime? date,
@@ -60,6 +111,7 @@ class BookingSelection extends Equatable {
       BookingSelection(
         venue: venue,
         date: date ?? this.date,
+        endDate: date == null ? endDate : null,
         guests: guests ?? this.guests,
         notes: notes ?? this.notes,
         voucherCode: voucherCode ?? this.voucherCode,
@@ -69,7 +121,7 @@ class BookingSelection extends Equatable {
 
   @override
   List<Object?> get props =>
-      [venue, date, guests, notes, voucherCode, package, excluded];
+      [venue, date, endDate, guests, notes, voucherCode, package, excluded];
 }
 
 /// The price of a booking as the API works it out. The app never computes the
@@ -150,6 +202,7 @@ class BookingReceipt extends Equatable {
     required this.currency,
     required this.needsApproval,
     this.isSample = false,
+    this.awaitingSuppliers = 0,
   });
 
   final String id;
@@ -163,7 +216,18 @@ class BookingReceipt extends Equatable {
   final bool needsApproval;
   final bool isSample;
 
+  /// Package Suppliers asked first (API ADR 0010): the booking can be paid
+  /// once every one of them has confirmed.
+  final int awaitingSuppliers;
+
   @override
-  List<Object?> get props =>
-      [id, reference, totalAmount, currency, needsApproval, isSample];
+  List<Object?> get props => [
+        id,
+        reference,
+        totalAmount,
+        currency,
+        needsApproval,
+        isSample,
+        awaitingSuppliers,
+      ];
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 /// A booking the user holds, as the Tickets and Home screens show it.
 class Ticket extends Equatable {
@@ -106,6 +107,29 @@ class Ticket extends Equatable {
 
   /// Both coordinates are known.
   bool get hasPin => lat != null && lng != null;
+
+  /// The last calendar day the booking runs on. The end is exclusive, so an
+  /// evening ending at midnight is still the same day.
+  DateTime get lastDay {
+    final end = endAt.isAfter(startAt)
+        ? endAt.subtract(const Duration(milliseconds: 1))
+        : startAt;
+    return DateTime(end.year, end.month, end.day);
+  }
+
+  /// It runs over more than one calendar day.
+  bool get isMultiDay =>
+      lastDay.isAfter(DateTime(startAt.year, startAt.month, startAt.day));
+
+  /// The day for a ticket's Date: "Fri 20 Nov", or "20 – 22 Nov" (short, to
+  /// fit) when it runs over several days.
+  String dateLabel(String locale) {
+    if (!isMultiDay) return DateFormat('EEE d MMM', locale).format(startAt);
+    final last = lastDay;
+    final sameMonth = startAt.year == last.year && startAt.month == last.month;
+    final head = DateFormat(sameMonth ? 'd' : 'd MMM', locale).format(startAt);
+    return '$head – ${DateFormat('d MMM', locale).format(last)}';
+  }
 
   /// Set when this is the copy saved on the phone, not what the server just
   /// said: when it was saved.

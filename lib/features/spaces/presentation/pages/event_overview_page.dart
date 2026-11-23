@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
-import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/controllers/payout_setup_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -31,12 +31,21 @@ import 'package:go_router/go_router.dart';
 class EventOverviewPage extends ConsumerWidget {
   const EventOverviewPage({super.key});
 
-  /// Setting up payouts takes bank and identity details, so it is finished on
-  /// the web, as it is from Earnings.
-  Future<void> _setUpPayouts(BuildContext context) async {
-    final message = context.l10n.onboardingWebNotConfigured;
-    final opened = await openWebApp('/creator-dashboard/stripe-onboard');
-    if (!opened && context.mounted) showTopToast(context, message);
+  /// Setting up payouts takes bank and identity details, entered in Stripe's
+  /// own form inside the app, as from Earnings. Back from a finished form,
+  /// Earnings shows the new status (mobile#476).
+  Future<void> _setUpPayouts(BuildContext context, WidgetRef ref) async {
+    final message = context.l10n.payoutSetupFailed;
+    final result = await ref.read(payoutSetupControllerProvider).open();
+    if (!context.mounted) return;
+    switch (result) {
+      case PayoutSetupResult.failed:
+        showTopToast(context, message);
+      case PayoutSetupResult.returned:
+        context.go(RouteNames.spaceEventEarnings);
+      case PayoutSetupResult.left:
+        break;
+    }
   }
 
   @override
@@ -96,7 +105,7 @@ class EventOverviewPage extends ConsumerWidget {
       FirstStep(
         label: l10n.firstStepPayout,
         done: stripe.asData?.value.onboardingComplete ?? false,
-        onTap: () => unawaited(_setUpPayouts(context)),
+        onTap: () => unawaited(_setUpPayouts(context, ref)),
       ),
     ];
     final stepsLoaded =
@@ -105,6 +114,18 @@ class EventOverviewPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.spaceTabOverview),
+      // A floating "New event", as the Venue dashboard's "Add venue". The
+      // calendar is a tab in the bar below, so it has no button here.
+      floatingActionButton: tourTarget(
+        'dash-actions',
+        FloatingActionButton.extended(
+          onPressed: () => context.push(RouteNames.spaceEventStudio),
+          backgroundColor: AppColors.accent,
+          foregroundColor: AppColors.onAccent,
+          icon: const Icon(Icons.add_rounded),
+          label: Text(l10n.eventsNewOnWeb),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.accent,
         backgroundColor: AppColors.surface,
@@ -122,34 +143,10 @@ class EventOverviewPage extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          // Room at the end so the floating button never covers a card.
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
           children: [
             const OverviewGreeting(),
-            const SizedBox(height: 4),
-            tourTarget(
-              'dash-actions',
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () =>
-                          context.go(RouteNames.spaceEventCalendar),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: Text(l10n.spaceTabCalendar),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: () =>
-                          context.push(RouteNames.spaceEventStudio),
-                      icon: const Icon(Icons.add_circle_outline_rounded),
-                      label: Text(l10n.eventsNewOnWeb),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             tourTarget(
               'dash-needs',
               Column(

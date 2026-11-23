@@ -4687,8 +4687,14 @@ abstract class AppLocalizations {
   /// No description provided for @earningsSetupHint.
   ///
   /// In en, this message translates to:
-  /// **'Opens on the web. It asks for your bank and identity details.'**
+  /// **'Opens Stripe\'s secure form. It asks for your bank and identity details.'**
   String get earningsSetupHint;
+
+  /// No description provided for @payoutSetupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open payout setup. Check your connection and try again.'**
+  String get payoutSetupFailed;
 
   /// No description provided for @payoutPending.
   ///
@@ -5890,6 +5896,24 @@ abstract class AppLocalizations {
   /// **'Selected'**
   String get bookSelected;
 
+  /// No description provided for @bookCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered'**
+  String get bookCovered;
+
+  /// No description provided for @bookRangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a first day, then a later one: every day between is booked too, up to 60 days. Tap again to start over.'**
+  String get bookRangeHint;
+
+  /// No description provided for @bookMaxDays.
+  ///
+  /// In en, this message translates to:
+  /// **'You can book up to {count} days at a time.'**
+  String bookMaxDays(int count);
+
   /// No description provided for @bookBooked.
   ///
   /// In en, this message translates to:
@@ -6039,12 +6063,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay'**
   String get bookPayTitle;
-
-  /// No description provided for @bookOrPayByCard.
-  ///
-  /// In en, this message translates to:
-  /// **'Or pay by card'**
-  String get bookOrPayByCard;
 
   /// No description provided for @bookCardNumber.
   ///
@@ -6580,47 +6598,11 @@ abstract class AppLocalizations {
   /// **'From the Republic'**
   String get homeRepublicTitle;
 
-  /// No description provided for @homeChecklistTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Plan your first event'**
-  String get homeChecklistTitle;
-
   /// No description provided for @homeChecklistProgress.
   ///
   /// In en, this message translates to:
   /// **'{done} of {total} done'**
   String homeChecklistProgress(int done, int total);
-
-  /// No description provided for @homeChecklistStep1.
-  ///
-  /// In en, this message translates to:
-  /// **'Pick what you\'re planning'**
-  String get homeChecklistStep1;
-
-  /// No description provided for @homeChecklistStep2.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a package or venue'**
-  String get homeChecklistStep2;
-
-  /// No description provided for @homeChecklistStep3.
-  ///
-  /// In en, this message translates to:
-  /// **'Book it and get your ticket'**
-  String get homeChecklistStep3;
-
-  /// No description provided for @homeChecklistStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Start'**
-  String get homeChecklistStart;
-
-  /// No description provided for @homeChecklistContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get homeChecklistContinue;
 
   /// No description provided for @gettingStartedTitle.
   ///
@@ -8650,12 +8632,6 @@ abstract class AppLocalizations {
   /// **'Earn'**
   String get passportTabEarn;
 
-  /// No description provided for @passportEarnAsFoxerRow.
-  ///
-  /// In en, this message translates to:
-  /// **'Earn as a Foxer'**
-  String get passportEarnAsFoxerRow;
-
   /// No description provided for @passportSavedEmpty.
   ///
   /// In en, this message translates to:
@@ -9712,6 +9688,48 @@ abstract class AppLocalizations {
   /// **'Portfolio or resume (optional)'**
   String get roleApplyPortfolioFile;
 
+  /// No description provided for @roleApplyPortfolioFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, DOC or DOCX, up to 15 MB'**
+  String get roleApplyPortfolioFormats;
+
+  /// No description provided for @roleApplyDocUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a PDF or Word document (.pdf, .doc, .docx).'**
+  String get roleApplyDocUnsupported;
+
+  /// No description provided for @roleApplyDocTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'That file is over 15 MB. Choose a smaller one.'**
+  String get roleApplyDocTooLarge;
+
+  /// No description provided for @roleApplyDocFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That file couldn\'t be opened. Try again.'**
+  String get roleApplyDocFailed;
+
+  /// No description provided for @roleApplyPortfolioLinksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full web addresses, separated by commas'**
+  String get roleApplyPortfolioLinksHint;
+
+  /// No description provided for @roleApplyPortfolioLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{link}\" isn\'t a full web address. Start it with https://'**
+  String roleApplyPortfolioLinkInvalid(String link);
+
+  /// No description provided for @roleApplyPortfolioTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at most {max} links.'**
+  String roleApplyPortfolioTooMany(int max);
+
   /// No description provided for @roleSpecCorporate.
   ///
   /// In en, this message translates to:
@@ -10735,7 +10753,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourActionsBody.
   ///
   /// In en, this message translates to:
-  /// **'Open your calendar, or add something new, from here.'**
+  /// **'Add something new from here. Your calendar is in the bar below.'**
   String get tourActionsBody;
 
   /// No description provided for @tourNeedsTitle.
@@ -12165,6 +12183,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open {name}'**
   String challengesOpen(String name);
+
+  /// No description provided for @replacementFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a replacement'**
+  String get replacementFind;
+
+  /// No description provided for @replacementPickTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace {item}'**
+  String replacementPickTitle(String item);
+
+  /// No description provided for @replacementPickBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings like it that are free on the event\'s dates. The citizen accepts or declines your choice.'**
+  String get replacementPickBody;
+
+  /// No description provided for @replacementNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing like it is free on those dates.'**
+  String get replacementNone;
+
+  /// No description provided for @replacementPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get replacementPartner;
+
+  /// No description provided for @replacementPriceBeforeFees.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} before fees'**
+  String replacementPriceBeforeFees(String price);
+
+  /// No description provided for @replacementConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose {item}?'**
+  String replacementConfirmTitle(String item);
+
+  /// No description provided for @replacementConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The citizen is told and answers. Nothing changes until they accept.'**
+  String get replacementConfirmBody;
+
+  /// No description provided for @replacementPropose.
+  ///
+  /// In en, this message translates to:
+  /// **'Propose'**
+  String get replacementPropose;
+
+  /// No description provided for @replacementProposed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. The citizen will answer.'**
+  String get replacementProposed;
+
+  /// No description provided for @replacementWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement sent, waiting for the citizen'**
+  String get replacementWaiting;
+
+  /// No description provided for @replacementWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get replacementWithdraw;
+
+  /// No description provided for @replacementWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Proposal withdrawn.'**
+  String get replacementWithdrawn;
+
+  /// No description provided for @proposalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host proposes a change'**
+  String get proposalTitle;
+
+  /// No description provided for @proposalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{old} can\'t be part of your event. Your host proposes {replacement} instead.'**
+  String proposalBody(String old, String replacement);
+
+  /// No description provided for @proposalPriceUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes up by {amount}.'**
+  String proposalPriceUp(String amount);
+
+  /// No description provided for @proposalPriceDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}.'**
+  String proposalPriceDown(String amount);
+
+  /// No description provided for @proposalPriceSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total stays the same.'**
+  String get proposalPriceSame;
+
+  /// No description provided for @proposalAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get proposalAccept;
+
+  /// No description provided for @proposalDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get proposalDecline;
+
+  /// No description provided for @proposalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted. The new Supplier will confirm.'**
+  String get proposalAccepted;
+
+  /// No description provided for @proposalDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined. Your host was told.'**
+  String get proposalDeclined;
+
+  /// No description provided for @bookedReplaceBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace by {when}, or the citizen can cancel for a full refund.'**
+  String bookedReplaceBy(String when);
+
+  /// No description provided for @bookedReplacePast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past the deadline. The citizen can cancel for a full refund.'**
+  String get bookedReplacePast;
+
+  /// No description provided for @replacementNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A Supplier can\'t make it'**
+  String get replacementNoticeTitle;
+
+  /// No description provided for @replacementNoticeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{items} can\'t be part of your event. Your host has until {when} to find a replacement. If they don\'t, you can cancel for a full refund.'**
+  String replacementNoticeBody(String items, String when);
+
+  /// No description provided for @replacementNoticeFullRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.'**
+  String get replacementNoticeFullRefund;
+
+  /// No description provided for @bookAwaitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Suppliers'**
+  String get bookAwaitingTitle;
+
+  /// No description provided for @bookAwaitingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Supplier in this package confirms first} other{{count} Suppliers in this package confirm first}}. Nothing has been charged yet.'**
+  String bookAwaitingSub(int count);
+
+  /// No description provided for @bookAwaitingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Each has 24 hours to answer, and you\'ll be told. Once they confirm, pay from your booking in Bookings.'**
+  String get bookAwaitingNext;
+
+  /// No description provided for @bookAmountToPay.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay once confirmed'**
+  String get bookAmountToPay;
+
+  /// No description provided for @ticketAwaitingSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Waiting for 1 Supplier to confirm} other{Waiting for {count} Suppliers to confirm}}. You can pay once they do.'**
+  String ticketAwaitingSuppliers(int count);
+
+  /// No description provided for @ticketPayNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String ticketPayNow(String amount);
+
+  /// No description provided for @ticketPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid. You\'re booked.'**
+  String get ticketPaid;
+
+  /// No description provided for @proposalAcceptAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and pay {amount}'**
+  String proposalAcceptAndPay(String amount);
+
+  /// No description provided for @proposalPayDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount} to confirm'**
+  String proposalPayDifference(String amount);
+
+  /// No description provided for @proposalRefundBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total goes down by {amount}, refunded to your card.'**
+  String proposalRefundBack(String amount);
+
+  /// No description provided for @accountSetupEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there'**
+  String get accountSetupEyebrow;
+
+  /// No description provided for @accountSetupHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish setting up your account'**
+  String get accountSetupHeadline;
+
+  /// No description provided for @accountSetupBodyBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username and a password. You can then also sign in with your email and password.'**
+  String get accountSetupBodyBoth;
+
+  /// No description provided for @accountSetupBodyUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username to continue.'**
+  String get accountSetupBodyUsername;
+
+  /// No description provided for @accountSetupBodyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a password, so you can also sign in with your email and password.'**
+  String get accountSetupBodyPassword;
+
+  /// No description provided for @accountSetupUsernameHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'3–30 characters: letters, numbers, dots and underscores'**
+  String get accountSetupUsernameHelper;
+
+  /// No description provided for @accountSetupChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get accountSetupChecking;
+
+  /// No description provided for @accountSetupAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get accountSetupAvailable;
+
+  /// No description provided for @accountSetupTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Already taken'**
+  String get accountSetupTaken;
+
+  /// No description provided for @accountSetupPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountSetupPassword;
+
+  /// No description provided for @accountSetupPasswordHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 12 characters with upper and lower case letters, a number and a special character.'**
+  String get accountSetupPasswordHelper;
+
+  /// No description provided for @accountSetupContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accountSetupContinue;
+
+  /// No description provided for @accountSetupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is all set'**
+  String get accountSetupDone;
 }
 
 class _AppLocalizationsDelegate

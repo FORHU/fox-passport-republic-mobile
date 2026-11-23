@@ -13,6 +13,8 @@ class UserModel extends UserEntity {
     super.roleType,
     super.isEmailVerified,
     super.imageUrl,
+    super.hasPassword,
+    super.needsCredentialSetup,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -47,8 +49,28 @@ class UserModel extends UserEntity {
       // unverified account — so a user we received at all is verified.
       isEmailVerified: user['isEmailVerified'] != false,
       imageUrl: _photo(user),
+      // Sent by /profile (api#419). The sign-in payloads leave them out, so
+      // a missing field means nothing is asked of the account.
+      hasPassword: user['hasPassword'] != false,
+      needsCredentialSetup: user['needsCredentialSetup'] == true,
     );
   }
+
+  /// The same user carrying the session [token] — for a /profile read, whose
+  /// response has no token of its own.
+  UserModel withToken(String token) => UserModel(
+        id: id,
+        email: email,
+        name: name,
+        token: token,
+        username: username,
+        systemRole: systemRole,
+        roleType: roleType,
+        isEmailVerified: isEmailVerified,
+        imageUrl: imageUrl,
+        hasPassword: hasPassword,
+        needsCredentialSetup: needsCredentialSetup,
+      );
 
   /// The profile photo, from whichever field the response carries it in.
   static String? _photo(Map<String, dynamic> user) {
@@ -72,6 +94,8 @@ class UserModel extends UserEntity {
         'isEmailVerified': isEmailVerified,
         'imgId': imageUrl,
         'token': token,
+        'hasPassword': hasPassword,
+        'needsCredentialSetup': needsCredentialSetup,
       };
 
   @override

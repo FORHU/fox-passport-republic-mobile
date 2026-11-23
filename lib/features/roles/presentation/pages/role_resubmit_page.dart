@@ -171,6 +171,7 @@ class _ResubmitForm extends ConsumerWidget {
                   label: resubmitDocumentLabel(l10n, field),
                   photo: state.files[field],
                   frontCamera: field == KycDocument.selfie.field,
+                  document: field == portfolioFileField,
                   onPicked: (p) => controller.setFile(field, p),
                   onRemove: () => controller.removeFile(field),
                 ),

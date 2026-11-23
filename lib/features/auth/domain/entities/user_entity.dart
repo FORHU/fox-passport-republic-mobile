@@ -12,6 +12,8 @@ class UserEntity extends Equatable {
     this.roleType = const [],
     this.isEmailVerified = false,
     this.imageUrl,
+    this.hasPassword = true,
+    this.needsCredentialSetup = false,
   });
 
   final String id;
@@ -31,6 +33,13 @@ class UserEntity extends Equatable {
   /// Profile photo (the API's `imgId`), or null when they have none.
   final String? imageUrl;
 
+  /// Whether email and password sign-in works for this account.
+  final bool hasPassword;
+
+  /// A Google account still without a username or a password (api#419): the
+  /// router keeps it on account setup until both are set.
+  final bool needsCredentialSetup;
+
   /// The same user with another [name], as after they edit their profile.
   UserEntity withName(String name) => withProfile(name: name);
 
@@ -46,6 +55,8 @@ class UserEntity extends Equatable {
         roleType: roleType,
         isEmailVerified: isEmailVerified,
         imageUrl: imageUrl ?? this.imageUrl,
+        hasPassword: hasPassword,
+        needsCredentialSetup: needsCredentialSetup,
       );
 
   /// A Citizen holds no RoleType.
@@ -63,5 +74,7 @@ class UserEntity extends Equatable {
         roleType,
         isEmailVerified,
         imageUrl,
+        hasPassword,
+        needsCredentialSetup,
       ];
 }

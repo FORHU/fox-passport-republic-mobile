@@ -225,11 +225,17 @@ class BookedSupplier extends Equatable {
     required this.supplierName,
     required this.itemName,
     required this.status,
+    this.transactionId = '',
     this.problem,
     this.busy = false,
+    this.pendingProposalId,
+    this.replaceBy,
   });
 
   final RequestKind kind;
+
+  /// The event's line for this Supplier; what a replacement replaces.
+  final String transactionId;
   final String supplierName;
   final String itemName;
   final RequestStatus status;
@@ -240,9 +246,62 @@ class BookedSupplier extends Equatable {
   /// It declined because it has another booking at that time.
   final bool busy;
 
+  /// A replacement the host proposed, waiting for the citizen's answer.
+  final String? pendingProposalId;
+
+  /// Past this, the citizen may cancel for a full refund unless it is replaced.
+  final DateTime? replaceBy;
+
   @override
-  List<Object?> get props =>
-      [kind, supplierName, itemName, status, problem, busy];
+  List<Object?> get props => [
+        kind,
+        transactionId,
+        supplierName,
+        itemName,
+        status,
+        problem,
+        busy,
+        pendingProposalId,
+        replaceBy,
+      ];
+}
+
+/// A listing that could take the place of a Supplier on a booked event (the
+/// answer of `GET /event-transactions/:id/replacements`), cheapest first with
+/// the venues the host works with ahead.
+class ReplacementCandidate extends Equatable {
+  const ReplacementCandidate({
+    required this.itemId,
+    required this.name,
+    required this.supplierName,
+    required this.price,
+    this.partner = false,
+  });
+
+  /// Reads one row; null when it has no listing in it.
+  static ReplacementCandidate? tryParse(Object? row) {
+    if (row is! Map || row['itemId'] == null) return null;
+    return ReplacementCandidate(
+      itemId: '${row['itemId']}',
+      name: '${row['name'] ?? ''}',
+      supplierName: '${row['supplierName'] ?? ''}',
+      price: num.tryParse('${row['price']}') ?? 0,
+      partner: row['partner'] == true,
+    );
+  }
+
+  final String itemId;
+  final String name;
+  final String supplierName;
+
+  /// The Supplier's price for the line, before the host's commission and fees.
+  final num price;
+
+  /// A venue whose Mayor works with this host.
+  final bool partner;
+
+  @override
+  List<Object?> get props => [itemId, name, supplierName, price, partner];
 }
 
 /// A booked event of the person's with every Supplier on it (the answer of
@@ -253,6 +312,7 @@ class BookedEvent extends Equatable {
     required this.eventName,
     required this.suppliers,
     this.declinableBookingId,
+    this.editableBookingId,
     this.startAt,
     this.endAt,
   });
@@ -269,6 +329,12 @@ class BookedEvent extends Equatable {
       declinableBookingId: data['declinableBookingId'] is String
           ? data['declinableBookingId'] as String
           : null,
+      // An API from before paid edits sends only the unpaid booking.
+      editableBookingId: data['editableBookingId'] is String
+          ? data['editableBookingId'] as String
+          : data['declinableBookingId'] is String
+              ? data['declinableBookingId'] as String
+              : null,
       suppliers: [
         if (raw is List)
           for (final s in raw)
@@ -285,6 +351,11 @@ class BookedEvent extends Equatable {
                     ? null
                     : AttentionReason.parse(s['reason']),
                 busy: s['cause'] == 'busy',
+                transactionId: '${s['transactionId'] ?? ''}',
+                pendingProposalId: s['pendingProposalId'] is String
+                    ? s['pendingProposalId'] as String
+                    : null,
+                replaceBy: DateTime.tryParse('${s['replaceBy']}')?.toLocal(),
               ),
       ],
     );
@@ -299,6 +370,10 @@ class BookedEvent extends Equatable {
   /// The unpaid booking the host may still decline; null once it is paid.
   final String? declinableBookingId;
 
+  /// The booking a Supplier can still be replaced on: unpaid, or paid and to
+  /// come (a paid one settles the difference).
+  final String? editableBookingId;
+
   bool get needsReplacement => suppliers.any((s) => s.problem != null);
 
   @override
@@ -309,6 +384,7 @@ class BookedEvent extends Equatable {
         endAt,
         suppliers,
         declinableBookingId,
+        editableBookingId,
       ];
 }
 

@@ -2573,7 +2573,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get earningsSetupHint =>
-      'Opens on the web. It asks for your bank and identity details.';
+      'Opens Stripe\'s secure form. It asks for your bank and identity details.';
+
+  @override
+  String get payoutSetupFailed =>
+      'Couldn\'t open payout setup. Check your connection and try again.';
 
   @override
   String get payoutPending => 'Pending';
@@ -3252,6 +3256,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookSelected => 'Selected';
 
   @override
+  String get bookCovered => 'Covered';
+
+  @override
+  String get bookRangeHint =>
+      'Tap a first day, then a later one: every day between is booked too, up to 60 days. Tap again to start over.';
+
+  @override
+  String bookMaxDays(int count) {
+    return 'You can book up to $count days at a time.';
+  }
+
+  @override
   String get bookBooked => 'Booked';
 
   @override
@@ -3339,9 +3355,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookPayTitle => 'Pay';
-
-  @override
-  String get bookOrPayByCard => 'Or pay by card';
 
   @override
   String get bookCardNumber => 'Card number';
@@ -3635,27 +3648,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRepublicTitle => 'From the Republic';
 
   @override
-  String get homeChecklistTitle => 'Plan your first event';
-
-  @override
   String homeChecklistProgress(int done, int total) {
     return '$done of $total done';
   }
-
-  @override
-  String get homeChecklistStep1 => 'Pick what you\'re planning';
-
-  @override
-  String get homeChecklistStep2 => 'Choose a package or venue';
-
-  @override
-  String get homeChecklistStep3 => 'Book it and get your ticket';
-
-  @override
-  String get homeChecklistStart => 'Start';
-
-  @override
-  String get homeChecklistContinue => 'Continue';
 
   @override
   String get gettingStartedTitle => 'Getting started';
@@ -4821,9 +4816,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passportTabEarn => 'Earn';
 
   @override
-  String get passportEarnAsFoxerRow => 'Earn as a Foxer';
-
-  @override
   String get passportSavedEmpty => 'No saved posts yet.';
 
   @override
@@ -5405,6 +5397,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyPortfolioFile => 'Portfolio or resume (optional)';
 
   @override
+  String get roleApplyPortfolioFormats => 'PDF, DOC or DOCX, up to 15 MB';
+
+  @override
+  String get roleApplyDocUnsupported =>
+      'Use a PDF or Word document (.pdf, .doc, .docx).';
+
+  @override
+  String get roleApplyDocTooLarge =>
+      'That file is over 15 MB. Choose a smaller one.';
+
+  @override
+  String get roleApplyDocFailed => 'That file couldn\'t be opened. Try again.';
+
+  @override
+  String get roleApplyPortfolioLinksHint =>
+      'Full web addresses, separated by commas';
+
+  @override
+  String roleApplyPortfolioLinkInvalid(String link) {
+    return '\"$link\" isn\'t a full web address. Start it with https://';
+  }
+
+  @override
+  String roleApplyPortfolioTooMany(int max) {
+    return 'Add at most $max links.';
+  }
+
+  @override
   String get roleSpecCorporate => 'Corporate';
 
   @override
@@ -5969,7 +5989,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tourActionsBody =>
-      'Open your calendar, or add something new, from here.';
+      'Add something new from here. Your calendar is in the bar below.';
 
   @override
   String get tourNeedsTitle => 'Needs you';
@@ -6890,4 +6910,203 @@ class AppLocalizationsEn extends AppLocalizations {
   String challengesOpen(String name) {
     return 'Open $name';
   }
+
+  @override
+  String get replacementFind => 'Find a replacement';
+
+  @override
+  String replacementPickTitle(String item) {
+    return 'Replace $item';
+  }
+
+  @override
+  String get replacementPickBody =>
+      'Listings like it that are free on the event\'s dates. The citizen accepts or declines your choice.';
+
+  @override
+  String get replacementNone => 'Nothing like it is free on those dates.';
+
+  @override
+  String get replacementPartner => 'Partner';
+
+  @override
+  String replacementPriceBeforeFees(String price) {
+    return '$price before fees';
+  }
+
+  @override
+  String replacementConfirmTitle(String item) {
+    return 'Propose $item?';
+  }
+
+  @override
+  String get replacementConfirmBody =>
+      'The citizen is told and answers. Nothing changes until they accept.';
+
+  @override
+  String get replacementPropose => 'Propose';
+
+  @override
+  String get replacementProposed => 'Sent. The citizen will answer.';
+
+  @override
+  String get replacementWaiting => 'Replacement sent, waiting for the citizen';
+
+  @override
+  String get replacementWithdraw => 'Withdraw';
+
+  @override
+  String get replacementWithdrawn => 'Proposal withdrawn.';
+
+  @override
+  String get proposalTitle => 'Your host proposes a change';
+
+  @override
+  String proposalBody(String old, String replacement) {
+    return '$old can\'t be part of your event. Your host proposes $replacement instead.';
+  }
+
+  @override
+  String proposalPriceUp(String amount) {
+    return 'Your total goes up by $amount.';
+  }
+
+  @override
+  String proposalPriceDown(String amount) {
+    return 'Your total goes down by $amount.';
+  }
+
+  @override
+  String get proposalPriceSame => 'Your total stays the same.';
+
+  @override
+  String get proposalAccept => 'Accept';
+
+  @override
+  String get proposalDecline => 'Decline';
+
+  @override
+  String get proposalAccepted => 'Accepted. The new Supplier will confirm.';
+
+  @override
+  String get proposalDeclined => 'Declined. Your host was told.';
+
+  @override
+  String bookedReplaceBy(String when) {
+    return 'Replace by $when, or the citizen can cancel for a full refund.';
+  }
+
+  @override
+  String get bookedReplacePast =>
+      'Past the deadline. The citizen can cancel for a full refund.';
+
+  @override
+  String get replacementNoticeTitle => 'A Supplier can\'t make it';
+
+  @override
+  String replacementNoticeBody(String items, String when) {
+    return '$items can\'t be part of your event. Your host has until $when to find a replacement. If they don\'t, you can cancel for a full refund.';
+  }
+
+  @override
+  String get replacementNoticeFullRefund =>
+      'Your host didn\'t find a replacement in time. You can cancel this booking for a full refund.';
+
+  @override
+  String get bookAwaitingTitle => 'Waiting for Suppliers';
+
+  @override
+  String bookAwaitingSub(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Suppliers in this package confirm first',
+      one: '1 Supplier in this package confirms first',
+    );
+    return '$_temp0. Nothing has been charged yet.';
+  }
+
+  @override
+  String get bookAwaitingNext =>
+      'Each has 24 hours to answer, and you\'ll be told. Once they confirm, pay from your booking in Bookings.';
+
+  @override
+  String get bookAmountToPay => 'To pay once confirmed';
+
+  @override
+  String ticketAwaitingSuppliers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Waiting for $count Suppliers to confirm',
+      one: 'Waiting for 1 Supplier to confirm',
+    );
+    return '$_temp0. You can pay once they do.';
+  }
+
+  @override
+  String ticketPayNow(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get ticketPaid => 'Paid. You\'re booked.';
+
+  @override
+  String proposalAcceptAndPay(String amount) {
+    return 'Accept and pay $amount';
+  }
+
+  @override
+  String proposalPayDifference(String amount) {
+    return 'Pay $amount to confirm';
+  }
+
+  @override
+  String proposalRefundBack(String amount) {
+    return 'Your total goes down by $amount, refunded to your card.';
+  }
+
+  @override
+  String get accountSetupEyebrow => 'Almost there';
+
+  @override
+  String get accountSetupHeadline => 'Finish setting up your account';
+
+  @override
+  String get accountSetupBodyBoth =>
+      'Choose a username and a password. You can then also sign in with your email and password.';
+
+  @override
+  String get accountSetupBodyUsername => 'Choose a username to continue.';
+
+  @override
+  String get accountSetupBodyPassword =>
+      'Choose a password, so you can also sign in with your email and password.';
+
+  @override
+  String get accountSetupUsernameHelper =>
+      '3–30 characters: letters, numbers, dots and underscores';
+
+  @override
+  String get accountSetupChecking => 'Checking…';
+
+  @override
+  String get accountSetupAvailable => 'Available';
+
+  @override
+  String get accountSetupTaken => 'Already taken';
+
+  @override
+  String get accountSetupPassword => 'Password';
+
+  @override
+  String get accountSetupPasswordHelper =>
+      'At least 12 characters with upper and lower case letters, a number and a special character.';
+
+  @override
+  String get accountSetupContinue => 'Continue';
+
+  @override
+  String get accountSetupDone => 'Your account is all set';
 }

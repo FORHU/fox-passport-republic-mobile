@@ -76,11 +76,14 @@ class BookingRepository {
     if (package != null) {
       // The server computes the real total when the booking is made; this is
       // the same arithmetic the web shows before that.
+      // A package costs its price for each day booked, as the server charges.
       final quote = package.quote(s.excluded);
+      final days = s.days;
       return VenuePricing(
-        itemsTotal: quote.package,
-        platformFeeAmount: quote.fee,
-        totalAmount: quote.total,
+        itemsTotal: quote.package * days,
+        platformFeeAmount: quote.fee * days,
+        totalAmount: quote.total * days,
+        days: days,
         isSample: package.isSample,
       );
     }
@@ -90,6 +93,7 @@ class BookingRepository {
         rate: venue.price ?? 0,
         guests: s.guests,
         capacity: venue.capacity,
+        days: s.days,
       );
     }
     final body = await _api.get(
@@ -104,7 +108,7 @@ class BookingRepository {
     );
     final data = body is Map ? body['data'] : null;
     if (data is! Map) throw StateError('No price in the response');
-    return VenuePricing.fromJson(data.cast<String, dynamic>());
+    return VenuePricing.fromJson(data.cast<String, dynamic>(), days: s.days);
   }
 
   /// Creates the booking. When [VenuePricing.needsApproval] it is a request and
@@ -153,9 +157,12 @@ class BookingRepository {
   ) async {
     final package = s.package!;
     final day = s.date!;
-    // The web books evenings: from 18:00 for six hours.
+    final last = s.lastDate!;
+    // The web books evenings: from 18:00 on the first day to six hours after
+    // 18:00 on the last.
     final start = DateTime(day.year, day.month, day.day, 18);
-    final end = start.add(const Duration(hours: 6));
+    final end = DateTime(last.year, last.month, last.day, 18)
+        .add(const Duration(hours: 6));
     final body = await _api.post(ApiEndpoints.bookingFromTemplate, {
       'templateId': package.id,
       'guestCount': s.guests,
@@ -172,6 +179,10 @@ class BookingRepository {
       throw StateError('No booking in the response');
     }
     final id = '${booking['id']}';
+    // Suppliers asked first must confirm before it can be paid.
+    final awaiting = data is Map && data['awaitingConfirmation'] is num
+        ? (data['awaitingConfirmation'] as num).toInt()
+        : 0;
 
     // Charge what the server worked out, not the on-screen preview.
     var total = p.totalAmount;
@@ -196,6 +207,7 @@ class BookingRepository {
       totalAmount: total,
       currency: package.currency,
       needsApproval: false,
+      awaitingSuppliers: awaiting,
     );
   }
 

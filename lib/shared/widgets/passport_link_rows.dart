@@ -19,19 +19,6 @@ class SavedRow extends StatelessWidget {
       );
 }
 
-/// "Earn as a Foxer", a row that opens the roles to apply for and where each
-/// stands. For the citizen Passport, under the Saved row.
-class EarnAsFoxerRow extends StatelessWidget {
-  const EarnAsFoxerRow({super.key});
-
-  @override
-  Widget build(BuildContext context) => _LinkRow(
-        icon: Icons.workspace_premium_outlined,
-        title: context.l10n.passportEarnAsFoxerRow,
-        route: RouteNames.roles,
-      );
-}
-
 class _LinkRow extends StatelessWidget {
   const _LinkRow({
     required this.icon,
