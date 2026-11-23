@@ -80,7 +80,7 @@ class AppColors {
   static const roleInvestor = Color(0xFF10B981);
 
   // ── Light surfaces ──────────────────────────────────────────────────────
-  // The few places that are white on the dark app: the Apple Pay button, a QR
+  // The few places that are white on the dark app: a QR
   // code (scanners need contrast), and the selected filter pill.
 
   /// A white tile or button on the dark canvas.

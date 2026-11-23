@@ -126,7 +126,7 @@ class TicketCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
-    final date = DateFormat('EEE d MMM', locale).format(ticket.startAt);
+    final date = ticket.dateLabel(locale);
     final doors = DateFormat.jm(locale).format(ticket.startAt);
 
     return Column(
