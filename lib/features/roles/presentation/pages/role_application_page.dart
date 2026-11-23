@@ -5,6 +5,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
+import 'package:flutter_template/features/roles/presentation/widgets/suggest_specialty.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
@@ -30,14 +31,24 @@ class RoleApplicationPage extends ConsumerStatefulWidget {
 }
 
 class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
+  late String _activeRoleType = widget.roleType;
+
+  @override
+  void didUpdateWidget(covariant RoleApplicationPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.roleType != widget.roleType) {
+      _activeRoleType = widget.roleType;
+    }
+  }
+
   Future<void> _submit() async {
     final l10n = context.l10n;
     final ok = await ref
-        .read(roleApplicationProvider(widget.roleType).notifier)
+        .read(roleApplicationProvider(_activeRoleType).notifier)
         .submit();
     if (!mounted) return;
     if (!ok) {
-      final why = ref.read(roleApplicationProvider(widget.roleType)).error;
+      final why = ref.read(roleApplicationProvider(_activeRoleType)).error;
       showTopToast(
         context,
         why == null || why.isEmpty ? l10n.roleApplyFailed : why,
@@ -51,14 +62,13 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final state = ref.watch(roleApplicationProvider(widget.roleType));
+    final state = ref.watch(roleApplicationProvider(_activeRoleType));
     final controller =
-        ref.read(roleApplicationProvider(widget.roleType).notifier);
+        ref.read(roleApplicationProvider(_activeRoleType).notifier);
     final d = state.draft;
-    final title = roleCatalog
-        .where((r) => r.roleType == widget.roleType)
-        .map((r) => r.title)
-        .firstOrNull;
+    final title = roleTitleFor(_activeRoleType);
+    final isProviderFamily =
+        _activeRoleType == 'providerFoxer' || _activeRoleType == 'organizer';
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -71,6 +81,49 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
+          if (isProviderFamily) ...[
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: AppRadius.brMd,
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  for (final tab in const [
+                    ('providerFoxer', 'Provider Foxer'),
+                    ('organizer', 'Event Coordinator'),
+                  ])
+                    Expanded(
+                      child: InkWell(
+                        borderRadius: AppRadius.brSm,
+                        onTap: () => setState(() => _activeRoleType = tab.$1),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: _activeRoleType == tab.$1
+                                ? AppColors.roleProvider
+                                : Colors.transparent,
+                            borderRadius: AppRadius.brSm,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            tab.$2,
+                            style: AppTypography.label(
+                              color: _activeRoleType == tab.$1
+                                  ? AppColors.onAccent
+                                  : AppColors.textMuted,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           _Card(
             title: l10n.roleApplyAbout,
             child: Column(
@@ -142,7 +195,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                   ),
                 ] else
                   _Field(
-                    label: switch (widget.roleType) {
+                    label: switch (_activeRoleType) {
                       'providerFoxer' => l10n.roleApplyProviderTypes,
                       _ => l10n.roleApplyServiceTypes,
                     },
@@ -438,7 +491,7 @@ class _Specializations extends StatelessWidget {
       children: [
         Text(
           maxPicks == null
-              ? l10n.roleApplySpecializationsProvider
+              ? l10n.profileSpecialtiesHint
               : l10n.roleApplySpecializationsOther,
           style: AppTypography.label(),
         ),
@@ -489,10 +542,37 @@ class _ProviderSpecializations extends ConsumerWidget {
             actionLabel: l10n.retry,
             onAction: () => ref.invalidate(providerSpecialtiesProvider),
           ),
-          data: (list) => _Specializations(
-            options: [for (final s in list) (code: s.slug, label: s.name)],
-            picked: picked,
-            onToggle: onToggle,
+          data: (list) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Specializations(
+                options: [for (final s in list) (code: s.slug, label: s.name)],
+                picked: picked,
+                onToggle: onToggle,
+              ),
+              if (picked.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.profileSpecialties,
+                  style: AppTypography.label(),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final specialty in list)
+                      if (picked.contains(specialty.slug))
+                        InputChip(
+                          label: Text(specialty.name),
+                          onDeleted: () => onToggle(specialty.slug),
+                        ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 8),
+              const SuggestSpecialty(),
+            ],
           ),
         );
   }

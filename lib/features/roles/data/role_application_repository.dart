@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
@@ -14,6 +15,31 @@ class RoleApplicationRepository {
 
   Future<void> submit(RoleApplicationDraft draft) async {
     await _api.post(ApiEndpoints.roleRequestsApply, draft.toForm());
+  }
+
+  /// Sends a Provider's wizard application (mobile#487). The work photos are
+  /// stored privately first, which gives their ids; then the application
+  /// names them per specialty, with the documents attached as files.
+  Future<void> submitProvider(ProviderApplicationDraft draft) async {
+    final photoIds = <String, List<String>>{};
+    for (final slug in draft.specializations) {
+      final ids = <String>[];
+      for (final photo in draft.detailFor(slug).photos) {
+        final body = await _api.upload(
+          ApiEndpoints.uploadPrivate,
+          FormData.fromMap({
+            'file': MultipartFile.fromBytes(photo.bytes, filename: photo.name),
+          }),
+        );
+        final id = body is Map ? body['fileId'] : null;
+        if (id == null) {
+          throw const FormatException('The upload gave no file id');
+        }
+        ids.add('$id');
+      }
+      photoIds[slug] = ids;
+    }
+    await _api.post(ApiEndpoints.roleRequestsApply, draft.toForm(photoIds));
   }
 
   /// Replaces the documents an admin flagged. Each file is stored privately

@@ -474,9 +474,11 @@ class _LikeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final color = reaction != null ? AppColors.accent : AppColors.textMuted;
+    final reacted = reaction != null;
+    final color = reacted ? AppColors.accent : AppColors.textMuted;
     return Builder(
       builder: (anchor) => InkWell(
+        borderRadius: BorderRadius.circular(10),
         onTap: onTap,
         onLongPress: onPick == null
             ? null
@@ -485,23 +487,36 @@ class _LikeButton extends StatelessWidget {
                     await showReactionPicker(anchor, current: reaction);
                 if (picked != null) onPick!(picked);
               },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          decoration: BoxDecoration(
+            color: reacted
+                ? AppColors.accent.withValues(alpha: 0.14)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: reacted
+                  ? AppColors.accent.withValues(alpha: 0.45)
+                  : Colors.transparent,
+            ),
+          ),
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (reaction != null)
+                if (reacted)
                   Text(reaction!.emoji, style: const TextStyle(fontSize: 18))
                 else
                   Icon(Icons.favorite_border_rounded, color: color),
                 const SizedBox(width: 8),
                 Text(
-                  reaction == null
-                      ? l10n.republicLike
-                      : reactionLabel(l10n, reaction!),
-                  style: AppTypography.body(color: color),
+                  !reacted ? l10n.republicLike : reactionLabel(l10n, reaction!),
+                  style: AppTypography.body(
+                    color: color,
+                    weight: reacted ? FontWeight.w700 : FontWeight.w400,
+                  ),
                 ),
               ],
             ),

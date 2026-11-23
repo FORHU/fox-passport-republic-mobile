@@ -9496,6 +9496,708 @@ abstract class AppLocalizations {
   /// **'Specializations (up to 3)'**
   String get roleApplySpecializationsOther;
 
+  /// No description provided for @roleApplySuggestSpecialtyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a category'**
+  String get roleApplySuggestSpecialtyPrompt;
+
+  /// No description provided for @roleApplySuggestSpecialtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get roleApplySuggestSpecialtyLabel;
+
+  /// No description provided for @roleApplySuggestSpecialtySend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for review'**
+  String get roleApplySuggestSpecialtySend;
+
+  /// No description provided for @roleApplySuggestSpecialtySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks! \"{name}\" was sent for review. Pick from the list for now.'**
+  String roleApplySuggestSpecialtySent(String name);
+
+  /// No description provided for @roleApplySuggestSpecialtyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your suggestion. Try again.'**
+  String get roleApplySuggestSpecialtyFailed;
+
+  /// No description provided for @roleApplySuggestLead.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t see yours?'**
+  String get roleApplySuggestLead;
+
+  /// No description provided for @roleApplySuggestClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get roleApplySuggestClose;
+
+  /// No description provided for @roleApplySuggestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Drone photography'**
+  String get roleApplySuggestHint;
+
+  /// No description provided for @roleApplySuggestHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team reviews it. It\'s not added to your picks.'**
+  String get roleApplySuggestHelp;
+
+  /// No description provided for @provApplyEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider Foxer'**
+  String get provApplyEyebrow;
+
+  /// No description provided for @provApplyIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent out gear or offer a service at events'**
+  String get provApplyIntroTitle;
+
+  /// No description provided for @provApplyIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what you do. Citizens and Event Foxers find you by the categories you pick, so choose every one you really work in.'**
+  String get provApplyIntroBody;
+
+  /// No description provided for @provApplyStepBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Your business'**
+  String get provApplyStepBusiness;
+
+  /// No description provided for @provApplyStepBusinessHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, area, experience'**
+  String get provApplyStepBusinessHint;
+
+  /// No description provided for @provApplyStepCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Your categories'**
+  String get provApplyStepCategories;
+
+  /// No description provided for @provApplyStepCategoriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer, and your main one'**
+  String get provApplyStepCategoriesHint;
+
+  /// No description provided for @provApplyStepDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'About each category'**
+  String get provApplyStepDetails;
+
+  /// No description provided for @provApplyStepDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A short line and photos of your work'**
+  String get provApplyStepDetailsHint;
+
+  /// No description provided for @provApplyStepDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get provApplyStepDocuments;
+
+  /// No description provided for @provApplyStepDocumentsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'ID, NBI, TIN, BIR permit, selfie'**
+  String get provApplyStepDocumentsHint;
+
+  /// No description provided for @provApplyDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes about 10 minutes.'**
+  String get provApplyDuration;
+
+  /// No description provided for @provApplyStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get provApplyStart;
+
+  /// No description provided for @provApplyClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get provApplyClose;
+
+  /// No description provided for @provApplyBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get provApplyBack;
+
+  /// No description provided for @provApplyStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {number} of {total}'**
+  String provApplyStepOf(int number, int total);
+
+  /// No description provided for @provApplyBusinessNameHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on your profile and listings. Your own name is fine.'**
+  String get provApplyBusinessNameHelp;
+
+  /// No description provided for @provApplyBasedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you\'re based'**
+  String get provApplyBasedIn;
+
+  /// No description provided for @provApplyBasedInHint.
+  ///
+  /// In en, this message translates to:
+  /// **'City, Province'**
+  String get provApplyBasedInHint;
+
+  /// No description provided for @provApplyLocateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find your city. Try again, or type it.'**
+  String get provApplyLocateFailed;
+
+  /// No description provided for @provApplyTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'How far you\'ll travel for an event'**
+  String get provApplyTravel;
+
+  /// No description provided for @provApplyTravelCity.
+  ///
+  /// In en, this message translates to:
+  /// **'My city only'**
+  String get provApplyTravelCity;
+
+  /// No description provided for @provApplyTravelProvince.
+  ///
+  /// In en, this message translates to:
+  /// **'My province'**
+  String get provApplyTravelProvince;
+
+  /// No description provided for @provApplyTravelAnywhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Anywhere'**
+  String get provApplyTravelAnywhere;
+
+  /// No description provided for @provApplyYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Years doing events'**
+  String get provApplyYears;
+
+  /// No description provided for @provApplyYearsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 0 to 100'**
+  String get provApplyYearsInvalid;
+
+  /// No description provided for @provApplyLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Links to your work (optional)'**
+  String get provApplyLinks;
+
+  /// No description provided for @provApplyNextCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: categories'**
+  String get provApplyNextCategories;
+
+  /// No description provided for @provApplyCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you offer?'**
+  String get provApplyCategoriesTitle;
+
+  /// No description provided for @provApplyCategoriesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap every category you work in. Use the star to mark your main one.'**
+  String get provApplyCategoriesBody;
+
+  /// No description provided for @provApplyMain.
+  ///
+  /// In en, this message translates to:
+  /// **'MAIN'**
+  String get provApplyMain;
+
+  /// No description provided for @provApplyPicked.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked'**
+  String get provApplyPicked;
+
+  /// No description provided for @provApplyMakeMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Make {name} your main category'**
+  String provApplyMakeMain(String name);
+
+  /// No description provided for @provApplyIsMain.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is your main category'**
+  String provApplyIsMain(String name);
+
+  /// No description provided for @provApplyNothingPicked.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing picked yet'**
+  String get provApplyNothingPicked;
+
+  /// No description provided for @provApplyPickedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} picked · {main} is your main'**
+  String provApplyPickedSummary(int count, String main);
+
+  /// No description provided for @provApplyNextDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: about each one'**
+  String get provApplyNextDetails;
+
+  /// No description provided for @provApplyPickOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick at least one'**
+  String get provApplyPickOne;
+
+  /// No description provided for @provApplyDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about each one'**
+  String get provApplyDetailsTitle;
+
+  /// No description provided for @provApplyDetailsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A line and a few photos per category help us approve it.'**
+  String get provApplyDetailsBody;
+
+  /// No description provided for @provApplyWhatYouOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'What you offer'**
+  String get provApplyWhatYouOffer;
+
+  /// No description provided for @provApplyPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos of your work'**
+  String get provApplyPhotos;
+
+  /// No description provided for @provApplyPhotosMax.
+  ///
+  /// In en, this message translates to:
+  /// **'(up to {max})'**
+  String provApplyPhotosMax(int max);
+
+  /// No description provided for @provApplyAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get provApplyAddPhoto;
+
+  /// No description provided for @provApplyRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get provApplyRemovePhoto;
+
+  /// No description provided for @provApplyDetailDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Done · 1 photo} other{Done · {count} photos}}'**
+  String provApplyDetailDone(num count);
+
+  /// No description provided for @provApplyDetailTodo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a line and at least 1 photo'**
+  String get provApplyDetailTodo;
+
+  /// No description provided for @provApplyNextDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: documents'**
+  String get provApplyNextDocuments;
+
+  /// No description provided for @provApplyDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get provApplyDocumentsTitle;
+
+  /// No description provided for @provApplyDocumentsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only our review team sees these. Clear photos speed up approval.'**
+  String get provApplyDocumentsBody;
+
+  /// No description provided for @provApplyDocId.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid government ID'**
+  String get provApplyDocId;
+
+  /// No description provided for @provApplyDocNbi.
+  ///
+  /// In en, this message translates to:
+  /// **'NBI clearance'**
+  String get provApplyDocNbi;
+
+  /// No description provided for @provApplyDocTin.
+  ///
+  /// In en, this message translates to:
+  /// **'TIN ID'**
+  String get provApplyDocTin;
+
+  /// No description provided for @provApplyDocBir.
+  ///
+  /// In en, this message translates to:
+  /// **'BIR permit'**
+  String get provApplyDocBir;
+
+  /// No description provided for @provApplyDocSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie holding your ID'**
+  String get provApplyDocSelfie;
+
+  /// No description provided for @provApplyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get provApplyRequired;
+
+  /// No description provided for @provApplyUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get provApplyUpload;
+
+  /// No description provided for @provApplyReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get provApplyReplace;
+
+  /// No description provided for @provApplyTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take'**
+  String get provApplyTake;
+
+  /// No description provided for @provApplyForCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'For your categories'**
+  String get provApplyForCategories;
+
+  /// No description provided for @provApplyForCategoriesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Some categories ask for more, like a food safety permit for catering. We\'ll tell you if yours do.'**
+  String get provApplyForCategoriesBody;
+
+  /// No description provided for @provApplyDocsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 document still to add} other{{count} documents still to add}}'**
+  String provApplyDocsLeft(num count);
+
+  /// No description provided for @provApplyReviewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Review application'**
+  String get provApplyReviewButton;
+
+  /// No description provided for @provApplyReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get provApplyReview;
+
+  /// No description provided for @provApplyCheckAndSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and send'**
+  String get provApplyCheckAndSend;
+
+  /// No description provided for @provApplyBusinessSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get provApplyBusinessSection;
+
+  /// No description provided for @provApplyCategoriesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get provApplyCategoriesSection;
+
+  /// No description provided for @provApplyDocumentsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get provApplyDocumentsSection;
+
+  /// No description provided for @provApplyEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get provApplyEdit;
+
+  /// No description provided for @provApplyYearsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String provApplyYearsCount(num count);
+
+  /// No description provided for @provApplyEachDescribed.
+  ///
+  /// In en, this message translates to:
+  /// **'Each with a description and photos.'**
+  String get provApplyEachDescribed;
+
+  /// No description provided for @provApplyAllDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} added'**
+  String provApplyAllDocs(int count);
+
+  /// No description provided for @provApplyAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Provider Terms and confirm my details and documents are true.'**
+  String get provApplyAgree;
+
+  /// No description provided for @provApplyReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team checks your documents and categories before you go live.'**
+  String get provApplyReviewNote;
+
+  /// No description provided for @provApplySentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent'**
+  String get provApplySentTitle;
+
+  /// No description provided for @provApplySentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We usually reply within 1 to 3 days. We\'ll notify you when it\'s checked.'**
+  String get provApplySentBody;
+
+  /// No description provided for @provApplySentStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get provApplySentStep1;
+
+  /// No description provided for @provApplySentToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today, {time}'**
+  String provApplySentToday(String time);
+
+  /// No description provided for @provApplySentStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'We check your documents and each category'**
+  String get provApplySentStep2;
+
+  /// No description provided for @provApplyInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get provApplyInProgress;
+
+  /// No description provided for @provApplySentStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved categories go live'**
+  String get provApplySentStep3;
+
+  /// No description provided for @provApplySentStep3Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'You show up in search, and can list items in them'**
+  String get provApplySentStep3Hint;
+
+  /// No description provided for @provApplyUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get provApplyUnderReview;
+
+  /// No description provided for @provApplyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get provApplyDone;
+
+  /// No description provided for @provApplyOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get provApplyOptional;
+
+  /// No description provided for @roleWizStepAboutYou.
+  ///
+  /// In en, this message translates to:
+  /// **'About you'**
+  String get roleWizStepAboutYou;
+
+  /// No description provided for @roleWizAboutYouHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your experience and where you work'**
+  String get roleWizAboutYouHint;
+
+  /// No description provided for @roleWizAboutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'About you'**
+  String get roleWizAboutSection;
+
+  /// No description provided for @roleWizDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes about 5 minutes.'**
+  String get roleWizDuration;
+
+  /// No description provided for @roleWizVenueIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'List your venue for events'**
+  String get roleWizVenueIntroTitle;
+
+  /// No description provided for @roleWizVenueIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your business. Citizens and Event Foxers find your venues by the categories you pick.'**
+  String get roleWizVenueIntroBody;
+
+  /// No description provided for @roleWizVenueAboutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, contact, address, TIN'**
+  String get roleWizVenueAboutHint;
+
+  /// No description provided for @roleWizVenueCategoriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The kinds of venue you run, up to 3'**
+  String get roleWizVenueCategoriesHint;
+
+  /// No description provided for @roleWizVenueCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of venues?'**
+  String get roleWizVenueCategoriesTitle;
+
+  /// No description provided for @roleWizEventIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and run events on FoxPassport'**
+  String get roleWizEventIntroTitle;
+
+  /// No description provided for @roleWizEventIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your experience. Citizens find your events by the categories you pick.'**
+  String get roleWizEventIntroBody;
+
+  /// No description provided for @roleWizEventCategoriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The events you run, up to 3'**
+  String get roleWizEventCategoriesHint;
+
+  /// No description provided for @roleWizEventCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What events do you run?'**
+  String get roleWizEventCategoriesTitle;
+
+  /// No description provided for @roleWizEventDocsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'ID, NBI, TIN, BIR permit, selfie, portfolio'**
+  String get roleWizEventDocsHint;
+
+  /// No description provided for @roleWizCoordIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run the logistics on event day'**
+  String get roleWizCoordIntroTitle;
+
+  /// No description provided for @roleWizCoordIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your experience. Hosts and Event Foxers bring you in to manage on-site operations.'**
+  String get roleWizCoordIntroBody;
+
+  /// No description provided for @roleWizCoordCategoriesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Events and venues you\'ve helped run, up to 3'**
+  String get roleWizCoordCategoriesHint;
+
+  /// No description provided for @roleWizCoordCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What have you helped run?'**
+  String get roleWizCoordCategoriesTitle;
+
+  /// No description provided for @roleWizCoordDocsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'ID, background clearance, selfie'**
+  String get roleWizCoordDocsHint;
+
+  /// No description provided for @roleWizCategoriesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up to {max}.'**
+  String roleWizCategoriesBody(int max);
+
+  /// No description provided for @roleWizPickedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} picked'**
+  String roleWizPickedOf(int count, int max);
+
+  /// No description provided for @roleWizYearsOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Years doing events (optional)'**
+  String get roleWizYearsOptional;
+
+  /// No description provided for @roleWizPortfolioFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio or resume'**
+  String get roleWizPortfolioFile;
+
   /// No description provided for @roleApplyIds.
   ///
   /// In en, this message translates to:

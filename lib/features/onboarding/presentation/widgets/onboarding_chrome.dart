@@ -534,6 +534,37 @@ class RoleCard extends StatelessWidget {
                       : OnboardingPalette.white(dim ? 0.25 : 0.4),
                 ),
               ),
+              if (role.subsections.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final sub in role.subsections)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: OnboardingPalette.white(0.05),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: OnboardingPalette.white(0.1),
+                          ),
+                        ),
+                        child: Text(
+                          sub.title,
+                          style: OnboardingPalette.body(
+                            size: 10,
+                            weight: FontWeight.w700,
+                            color: OnboardingPalette.white(0.6),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
               if (status == RoleStatus.available) ...[
                 const SizedBox(height: 12),
                 Row(

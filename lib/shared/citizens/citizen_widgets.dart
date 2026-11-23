@@ -24,12 +24,14 @@ TextStyle citizenTiny(
       letterSpacing: 0.5 * context.fit,
     );
 
-/// How a role is named on a chip: `EVENT FOXER`, and Partner Foxer for an
-/// investor.
+/// How a role is named on a chip: `EVENT FOXER`, `EVENT COORDINATOR` for an
+/// organizer, and Partner Foxer for an investor.
 String citizenRoleLabel(AppLocalizations l10n, String role) =>
     (role == 'investor'
             ? l10n.citizenPartner
-            : role.replaceAll('Foxer', ' Foxer'))
+            : role == 'organizer'
+                ? 'Event Coordinator'
+                : role.replaceAll('Foxer', ' Foxer'))
         .toUpperCase();
 
 /// Their photo, or their initial, in a rounded square with a ring. Gold for a

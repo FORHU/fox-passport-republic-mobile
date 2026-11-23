@@ -620,7 +620,7 @@ const _presets = <String, List<String>>{
   'spaceType': ['Main hall', 'Garden', 'Rooftop', 'Poolside', 'Function room'],
   'amenities': ['Wi-Fi', 'Parking', 'Air conditioning', 'Restrooms', 'Kitchen'],
   'techAv': ['Sound system', 'Projector', 'Microphones', 'Stage lighting'],
-  'staffing': ['Security', 'Ushers', 'Cleaning crew', 'Event coordinator'],
+  'staffing': ['Security', 'Ushers', 'Cleaning crew'],
   'policies': ['No smoking', 'No outside alcohol', 'Quiet after 10pm'],
 };
 
@@ -796,6 +796,7 @@ class _PricingStep extends StatelessWidget {
         StudioField(
           label: l10n.studioPrice,
           value: d.price?.toString() ?? '',
+          hintText: 'e.g. 15000',
           number: true,
           required: true,
           errorText:
