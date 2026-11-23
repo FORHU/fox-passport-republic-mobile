@@ -7050,4 +7050,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String proposalRefundBack(String amount) {
     return 'Your total goes down by $amount, refunded to your card.';
   }
+
+  @override
+  String get accountSetupEyebrow => 'Almost there';
+
+  @override
+  String get accountSetupHeadline => 'Finish setting up your account';
+
+  @override
+  String get accountSetupBodyBoth =>
+      'Choose a username and a password. You can then also sign in with your email and password.';
+
+  @override
+  String get accountSetupBodyUsername => 'Choose a username to continue.';
+
+  @override
+  String get accountSetupBodyPassword =>
+      'Choose a password, so you can also sign in with your email and password.';
+
+  @override
+  String get accountSetupUsernameHelper =>
+      '3–30 characters: letters, numbers, dots and underscores';
+
+  @override
+  String get accountSetupChecking => 'Checking…';
+
+  @override
+  String get accountSetupAvailable => 'Available';
+
+  @override
+  String get accountSetupTaken => 'Already taken';
+
+  @override
+  String get accountSetupPassword => 'Password';
+
+  @override
+  String get accountSetupPasswordHelper =>
+      'At least 12 characters with upper and lower case letters, a number and a special character.';
+
+  @override
+  String get accountSetupContinue => 'Continue';
+
+  @override
+  String get accountSetupDone => 'Your account is all set';
 }

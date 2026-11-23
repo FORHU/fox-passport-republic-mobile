@@ -12393,6 +12393,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your total goes down by {amount}, refunded to your card.'**
   String proposalRefundBack(String amount);
+
+  /// No description provided for @accountSetupEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there'**
+  String get accountSetupEyebrow;
+
+  /// No description provided for @accountSetupHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish setting up your account'**
+  String get accountSetupHeadline;
+
+  /// No description provided for @accountSetupBodyBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username and a password. You can then also sign in with your email and password.'**
+  String get accountSetupBodyBoth;
+
+  /// No description provided for @accountSetupBodyUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username to continue.'**
+  String get accountSetupBodyUsername;
+
+  /// No description provided for @accountSetupBodyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a password, so you can also sign in with your email and password.'**
+  String get accountSetupBodyPassword;
+
+  /// No description provided for @accountSetupUsernameHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'3–30 characters: letters, numbers, dots and underscores'**
+  String get accountSetupUsernameHelper;
+
+  /// No description provided for @accountSetupChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get accountSetupChecking;
+
+  /// No description provided for @accountSetupAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get accountSetupAvailable;
+
+  /// No description provided for @accountSetupTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Already taken'**
+  String get accountSetupTaken;
+
+  /// No description provided for @accountSetupPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountSetupPassword;
+
+  /// No description provided for @accountSetupPasswordHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 12 characters with upper and lower case letters, a number and a special character.'**
+  String get accountSetupPasswordHelper;
+
+  /// No description provided for @accountSetupContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accountSetupContinue;
+
+  /// No description provided for @accountSetupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is all set'**
+  String get accountSetupDone;
 }
 
 class _AppLocalizationsDelegate

@@ -259,6 +259,36 @@ class AuthController extends Notifier<AuthState> {
             .resetPassword(email, otpCode, newPassword),
       );
 
+  /// Whether nobody else uses [username], or null when that couldn't be
+  /// checked (api#419).
+  Future<bool?> isUsernameAvailable(String username) async {
+    final result =
+        await ref.read(authRepositoryProvider).isUsernameAvailable(username);
+    return result.fold((_) => null, (free) => free);
+  }
+
+  /// Sets the username and password the Google account lacks (api#419). On
+  /// success the user no longer needs setup, and the router moves on.
+  Future<bool> setUpCredentials({String? username, String? password}) async {
+    final user = state.user;
+    state = AuthState(isLoading: true, user: user);
+
+    final result = await ref
+        .read(authRepositoryProvider)
+        .setUpCredentials(username: username, password: password);
+
+    return result.fold(
+      (failure) {
+        state = AuthState(user: user, error: failure.message);
+        return false;
+      },
+      (fresh) {
+        state = AuthState(user: fresh);
+        return true;
+      },
+    );
+  }
+
   /// Shared loading/error handling for the void OTP and recovery calls.
   Future<bool> _run(
     Future<Either<Failure, void>> Function() call, {
