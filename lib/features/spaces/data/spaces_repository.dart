@@ -282,6 +282,28 @@ class SpacesRepository {
     return StripeStatus.fromJson(body);
   }
 
+  /// A single-use link to Stripe's payout setup form for the person's own
+  /// account, which the API creates on the first call. Reads
+  /// `{ data: { url } }`; throws [FormatException] without an https link.
+  ///
+  /// [returnToApp] asks for Stripe to send the person back to the app when
+  /// they finish or the link expires (`client: mobile`, mobile#476), instead
+  /// of to the web app's dashboard.
+  Future<Uri> payoutSetupLink({bool returnToApp = false}) async {
+    final body = await _api.post(
+      ApiEndpoints.stripeOnboard,
+      returnToApp ? const {'client': 'mobile'} : null,
+    );
+    final data =
+        body is Map && body['data'] is Map ? body['data'] as Map : body;
+    final url = data is Map ? data['url'] : null;
+    final uri = url is String ? Uri.tryParse(url) : null;
+    if (uri == null || uri.scheme != 'https' || uri.host.isEmpty) {
+      throw const FormatException('Payout setup response has no link');
+    }
+    return uri;
+  }
+
   /// Closes a day of a venue: nobody can book it until it is opened again.
   Future<void> blockDay(String venueId, DateTime day) async {
     await _api.post(ApiEndpoints.venueBlockedDates(venueId), {
