@@ -620,7 +620,7 @@ const _presets = <String, List<String>>{
   'spaceType': ['Main hall', 'Garden', 'Rooftop', 'Poolside', 'Function room'],
   'amenities': ['Wi-Fi', 'Parking', 'Air conditioning', 'Restrooms', 'Kitchen'],
   'techAv': ['Sound system', 'Projector', 'Microphones', 'Stage lighting'],
-  'staffing': ['Security', 'Ushers', 'Cleaning crew', 'Event coordinator'],
+  'staffing': ['Security', 'Ushers', 'Cleaning crew'],
   'policies': ['No smoking', 'No outside alcohol', 'Quiet after 10pm'],
 };
 

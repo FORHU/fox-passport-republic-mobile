@@ -118,11 +118,7 @@ class _ResubmitForm extends ConsumerWidget {
     final l10n = context.l10n;
     final state = ref.watch(roleResubmitProvider(request));
     final controller = ref.read(roleResubmitProvider(request).notifier);
-    final role = roleCatalog
-            .where((r) => r.roleType == request.roleType)
-            .map((r) => r.title)
-            .firstOrNull ??
-        request.roleType;
+    final role = roleTitleFor(request.roleType) ?? request.roleType;
     final note = request.revisionNote;
 
     return Column(

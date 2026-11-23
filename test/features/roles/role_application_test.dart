@@ -521,7 +521,7 @@ void main() {
     ) async {
       await open(tester, 'providerFoxer');
 
-      expect(find.text('Provider'), findsOneWidget);
+      expect(find.text('Provider Foxer'), findsAtLeastNWidgets(1));
       expect(find.text('Business or trade name'), findsOneWidget);
       expect(find.text('Years of experience'), findsOneWidget);
     });
@@ -552,7 +552,7 @@ void main() {
     ) async {
       await open(tester, 'organizer');
 
-      expect(find.text('Organizer'), findsOneWidget);
+      expect(find.text('Event Coordinator'), findsAtLeastNWidgets(1));
       expect(find.text('About you and your event experience'), findsOneWidget);
       expect(find.text('Country'), findsOneWidget);
       expect(find.text('City'), findsOneWidget);
