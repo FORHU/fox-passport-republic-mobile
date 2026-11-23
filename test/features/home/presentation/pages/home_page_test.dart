@@ -612,68 +612,15 @@ void main() {
       expect(loads, greaterThan(before));
     });
 
-    group('first event checklist', () {
-      testWidgets('shows for someone with no bookings', (tester) async {
-        _phone(tester);
-        await tester.pumpWidget(_app());
-        await tester.pumpAndSettle();
+    testWidgets('no second "Plan your first event" card under Getting started',
+        (
+      tester,
+    ) async {
+      _phone(tester);
+      await tester.pumpWidget(_app());
+      await tester.pumpAndSettle();
 
-        expect(find.text('Plan your first event'), findsOneWidget);
-        expect(find.text('0 of 3 done'), findsOneWidget);
-        expect(find.text("Pick what you're planning"), findsOneWidget);
-        expect(find.text('Choose a package or venue'), findsOneWidget);
-        expect(find.text('Book it and get your ticket'), findsOneWidget);
-        expect(find.text('Start'), findsOneWidget);
-      });
-
-      testWidgets('ticks step one once an occasion has been opened', (
-        tester,
-      ) async {
-        _phone(tester);
-        await tester.pumpWidget(_app(last: Occasion.wedding));
-        await tester.pumpAndSettle();
-
-        expect(find.text('1 of 3 done'), findsOneWidget);
-        expect(find.text('Continue'), findsOneWidget);
-        expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
-      });
-
-      testWidgets('is gone once there is a booking, upcoming or past', (
-        tester,
-      ) async {
-        _phone(tester);
-        await tester.pumpWidget(_app(tickets: [Ticket.sample()]));
-        await tester.pumpAndSettle();
-        expect(find.text('Plan your first event'), findsNothing);
-
-        await tester.pumpWidget(_app(past: [Ticket.sample()]));
-        await tester.pumpAndSettle();
-        expect(find.text('Plan your first event'), findsNothing);
-      });
-
-      testWidgets('Start opens the occasion on the big card', (tester) async {
-        _phone(tester);
-        await tester.pumpWidget(_app(router: routerFor()));
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('Start'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('OCCASION birthday'), findsOneWidget);
-      });
-
-      testWidgets('Continue reopens the occasion they were on', (tester) async {
-        _phone(tester);
-        await tester.pumpWidget(
-          _app(last: Occasion.wedding, router: routerFor()),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('Continue'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('OCCASION wedding'), findsOneWidget);
-      });
+      expect(find.text('Plan your first event'), findsNothing);
     });
 
     group('venues, Foxers and the Republic', () {

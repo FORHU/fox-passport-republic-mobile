@@ -11,16 +11,12 @@ Future<void> _pump(WidgetTester tester) async {
       GoRoute(
         path: '/',
         builder: (_, __) => const Scaffold(
-          body: Column(children: [SavedRow(), EarnAsFoxerRow()]),
+          body: Column(children: [SavedRow()]),
         ),
       ),
       GoRoute(
         path: RouteNames.republicSaved,
         builder: (_, __) => const Text('saved screen'),
-      ),
-      GoRoute(
-        path: RouteNames.roles,
-        builder: (_, __) => const Text('roles screen'),
       ),
     ],
   );
@@ -41,14 +37,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('saved screen'), findsOneWidget);
-  });
-
-  testWidgets('Earn as a Foxer opens the roles to apply for', (tester) async {
-    await _pump(tester);
-
-    await tester.tap(find.text('Earn as a Foxer'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('roles screen'), findsOneWidget);
   });
 }
