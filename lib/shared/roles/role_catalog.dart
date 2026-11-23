@@ -4,6 +4,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 
+/// A dedicated subsection under Provider Foxer (Equipment, Services,
+/// Performers, or Event Coordinator).
+class RoleCatalogSubsection {
+  const RoleCatalogSubsection({
+    required this.key,
+    required this.roleType,
+    required this.title,
+    required this.desc,
+    required this.href,
+  });
+
+  final String key;
+  final String roleType;
+  final String title;
+  final String desc;
+  final String href;
+}
+
 /// A role a Citizen can apply for from onboarding. Port of the web app's
 /// `features/onboarding/roleCatalog.ts` — keep the copy in step with it.
 class RoleCatalogEntry {
@@ -17,6 +35,7 @@ class RoleCatalogEntry {
     required this.desc,
     required this.responsibilities,
     required this.requirements,
+    this.subsections = const [],
   });
 
   final String type;
@@ -31,11 +50,58 @@ class RoleCatalogEntry {
   final String title;
   final String desc;
 
+  /// Subsections under Provider Foxer.
+  final List<RoleCatalogSubsection> subsections;
+
   /// What someone holding this role does day to day.
   final List<String> responsibilities;
 
   /// What the application form will ask for.
   final List<String> requirements;
+}
+
+const providerSubsections = <RoleCatalogSubsection>[
+  RoleCatalogSubsection(
+    key: 'gear',
+    roleType: 'providerFoxer',
+    title: 'Equipment & Gear',
+    desc: 'Rent out sound systems, lighting, furniture, staging, and decor.',
+    href: '/foxer/apply?type=provider',
+  ),
+  RoleCatalogSubsection(
+    key: 'services',
+    roleType: 'providerFoxer',
+    title: 'Talent & Services',
+    desc: 'Provide catering, event design, photography, videography, or staff.',
+    href: '/foxer/apply?type=provider',
+  ),
+  RoleCatalogSubsection(
+    key: 'performers',
+    roleType: 'providerFoxer',
+    title: 'Live Entertainment',
+    desc: 'Perform live as a DJ, band, MC, or stage act for events.',
+    href: '/foxer/apply?type=provider',
+  ),
+  RoleCatalogSubsection(
+    key: 'coordinator',
+    roleType: 'organizer',
+    title: 'Event Coordinator',
+    desc: 'Execute event logistics and manage on-site operations.',
+    href: '/foxer/apply?type=organizer',
+  ),
+];
+
+/// Display title for any `roleType`, including sub-roles not listed as
+/// top-level cards in [roleCatalog].
+String? roleTitleFor(String roleType) {
+  for (final r in roleCatalog) {
+    if (r.roleType == roleType) return r.title;
+  }
+  return switch (roleType) {
+    'organizer' => 'Event Coordinator',
+    'investor' => 'Partner Foxer',
+    _ => null,
+  };
 }
 
 const _businessDocuments =
@@ -49,19 +115,23 @@ const roleCatalog = <RoleCatalogEntry>[
     href: '/foxer/apply?type=provider',
     color: AppColors.roleProvider,
     icon: Icons.build_rounded,
-    title: 'Provider',
-    desc: 'Rent out equipment, provide staffing, or perform live.',
+    title: 'Provider Foxer',
+    desc: 'Supply equipment, talent services, live entertainment, or on-site '
+        'event coordination.',
+    subsections: providerSubsections,
     responsibilities: [
       'List equipment, professional services, or performances with your own '
           'packages and pricing.',
-      'Get booked directly by citizens, or bid on open supplier slots in '
-          'published events.',
-      'Message clients and manage your listings, bookings, and payouts from '
-          'your dashboard.',
+      'Serve as an Event Coordinator to execute event logistics and manage '
+          'on-site operations.',
+      'Get booked directly by citizens, bid on open supplier slots, or join '
+          'venue and event teams.',
+      'Message clients and manage your listings, bookings, appointments, and '
+          'payouts from your dashboard.',
     ],
     requirements: [
-      'Your business or trade name and what you offer (gear, service, or '
-          'performance)',
+      'Your business or trade name and what you offer (gear, service, '
+          'performance, or event coordination)',
       'Your specializations, years of experience, or portfolio links',
       _businessDocuments,
     ],
@@ -78,8 +148,8 @@ const roleCatalog = <RoleCatalogEntry>[
       'List your venues with photos, capacity, availability, and pricing, and '
           'take bookings.',
       'Approve the Event Foxers who want to host events at your space.',
-      'Build a team: invite Organizers and Check-in Helpers to help run your '
-          'venues.',
+      'Build a team: invite Event Coordinators and Check-in Helpers to help '
+          'run your venues.',
     ],
     requirements: [
       'Your business or venue name, contact number, and full address',
@@ -108,50 +178,6 @@ const roleCatalog = <RoleCatalogEntry>[
           'experience',
       _businessDocuments,
       'A portfolio or resume (optional)',
-    ],
-  ),
-  RoleCatalogEntry(
-    type: 'organizer',
-    roleType: 'organizer',
-    href: '/foxer/apply?type=organizer',
-    color: AppColors.roleOrganizer,
-    icon: Icons.assignment_ind_rounded,
-    title: 'Organizer',
-    desc: 'Help Mayors and Event Owners run their venues and events, once '
-        'they invite you.',
-    responsibilities: [
-      "Help run the venues and events you're appointed to: check guests in, "
-          'handle bookings, and message attendees and suppliers.',
-      'Get appointed when a Mayor or Event Owner invites you, or request to '
-          'join venues and events that are open to Organizers.',
-      'The role alone grants no access. Each appointment sets what you can do '
-          'there, and prices always stay with the owner.',
-    ],
-    requirements: [
-      'A little about you, your years of experience, and your location',
-      'Government ID, police or background clearance, and a verification '
-          'selfie (no business documents)',
-    ],
-  ),
-  RoleCatalogEntry(
-    type: 'investor',
-    roleType: 'investor',
-    href: '/foxer/apply-investor',
-    color: AppColors.roleInvestor,
-    icon: Icons.diamond_rounded,
-    title: 'Partner Foxer',
-    desc: 'Deploy equipment inventory or capital, and earn a revenue share.',
-    responsibilities: [
-      'Register the equipment inventory or capital you want to put to work.',
-      'Propose partnerships to events and venues, and earn a revenue share on '
-          'the ones they accept.',
-      'Track your partnerships and payouts from your dashboard.',
-    ],
-    requirements: [
-      'Your investment range and interests (equipment inventory, capital, or '
-          'both)',
-      "A company name, if you're applying as one (optional)",
-      'Proof of funds (optional)',
     ],
   ),
 ];

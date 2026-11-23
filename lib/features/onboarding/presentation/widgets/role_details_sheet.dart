@@ -70,6 +70,38 @@ class _RoleDetailsSheet extends StatelessWidget {
                   color: OnboardingPalette.white(0.5),
                 ),
               ),
+              if (role.subsections.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                const _Heading('PROVIDER SUBSECTIONS'),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final sub in role.subsections)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: OnboardingPalette.white(0.04),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: OnboardingPalette.white(0.1),
+                          ),
+                        ),
+                        child: Text(
+                          sub.title,
+                          style: OnboardingPalette.body(
+                            size: 12,
+                            weight: FontWeight.w700,
+                            color: OnboardingPalette.white(0.8),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 12),
               _Heading(context.l10n.onboardingWhatYoullDo),
               for (final item in role.responsibilities)

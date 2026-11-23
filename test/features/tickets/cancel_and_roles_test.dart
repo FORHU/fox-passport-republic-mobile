@@ -243,11 +243,10 @@ void main() {
       expect(find.text('NEEDS REVISION'), findsOneWidget);
     });
 
-    // The button says what it does: roles with a form on the phone say Apply,
-    // and only the one that still applies on the web says so.
+    // The button says what it does: all 3 main roles apply in the app.
     for (final (title, button, other) in const [
-      ('Organizer', 'Apply', 'Continue on the web'),
-      ('Partner Foxer', 'Continue on the web', 'Apply'),
+      ('Venue Foxer', 'Apply', 'Continue on the web'),
+      ('Event Foxer', 'Apply', 'Continue on the web'),
     ]) {
       testWidgets('$title opens its details with a "$button" button', (
         tester,
@@ -283,13 +282,13 @@ void main() {
 
     // A role you already hold, or have applied for, has nothing to apply for.
     for (final (title, requests, note) in const [
-      ('Provider', <RoleRequestSummary>[], 'You already have this role.'),
+      ('Provider Foxer', <RoleRequestSummary>[], 'You already have this role.'),
       (
-        'Organizer',
+        'Venue Foxer',
         [
           RoleRequestSummary(
             id: 'r1',
-            roleType: 'organizer',
+            roleType: 'venueFoxer',
             status: 'pending',
           ),
         ],
