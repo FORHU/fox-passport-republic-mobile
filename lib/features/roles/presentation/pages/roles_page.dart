@@ -69,14 +69,23 @@ class RolesPage extends ConsumerWidget {
     );
   }
 
+  static List<String> _coveredRoles(RoleCatalogEntry role) => [
+        role.roleType,
+        for (final sub in role.subsections)
+          if (sub.roleType != role.roleType) sub.roleType,
+      ];
+
   static _RoleStatus _statusOf(
     RoleCatalogEntry role,
     List<String> held,
     List<RoleRequestSummary> requests,
   ) {
+    final covered = _coveredRoles(role);
     if (held.contains(role.roleType)) return _RoleStatus.active;
-    final mine = requests.where((r) => r.roleType == role.roleType);
-    if (mine.any((r) => r.isApproved)) return _RoleStatus.active;
+    final mine = requests.where((r) => covered.contains(r.roleType));
+    if (mine.any((r) => r.roleType == role.roleType && r.isApproved)) {
+      return _RoleStatus.active;
+    }
     if (mine.any((r) => r.needsRevision)) return _RoleStatus.revision;
     if (mine.any((r) => r.isPending)) return _RoleStatus.review;
     return _RoleStatus.none;
@@ -90,10 +99,11 @@ class RolesPage extends ConsumerWidget {
     List<String> held,
     List<RoleRequestSummary> requests,
   ) {
+    final covered = _coveredRoles(role);
     final sentBack = requests
-        .where((r) => r.roleType == role.roleType && r.needsRevision)
+        .where((r) => covered.contains(r.roleType) && r.needsRevision)
         .firstOrNull;
-    if (sentBack != null && !held.contains(role.roleType)) {
+    if (sentBack != null && !held.contains(sentBack.roleType)) {
       unawaited(context.push(RouteNames.roleResubmit(sentBack.id)));
     } else {
       unawaited(_open(context, role, _statusOf(role, held, requests)));
@@ -230,6 +240,34 @@ class _RoleSheet extends StatelessWidget {
             Text(role.title, style: AppTypography.display(size: 20)),
             const SizedBox(height: 4),
             Text(role.desc, style: AppTypography.body()),
+            if (role.subsections.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              const _Heading('Provider Subsections'),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final sub in role.subsections)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.canvas,
+                        borderRadius: AppRadius.brSm,
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Text(
+                        sub.title,
+                        style: AppTypography.label(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
             const SizedBox(height: 16),
             _Heading(l10n.onboardingWhatYoullDo),
             for (final item in role.responsibilities)
