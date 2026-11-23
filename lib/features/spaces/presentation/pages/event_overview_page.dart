@@ -9,6 +9,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/check_in_today.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/space_home
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
 import 'package:flutter_template/routes/route_names.dart';
+import 'package:flutter_template/shared/calendar/calendar_entry.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -30,6 +32,14 @@ import 'package:go_router/go_router.dart';
 /// declined or unfinished). The events themselves are on the Events tab.
 class EventOverviewPage extends ConsumerWidget {
   const EventOverviewPage({super.key});
+
+  /// Today, from midnight to midnight. A stable key, so the calendar is
+  /// fetched once however often this rebuilds.
+  static CalendarRange _today() {
+    final now = DateTime.now();
+    final from = DateTime(now.year, now.month, now.day);
+    return (from: from, to: from.add(const Duration(days: 1)));
+  }
 
   /// Setting up payouts takes bank and identity details, so it is finished on
   /// the web, as it is from Earnings.
@@ -51,6 +61,9 @@ class EventOverviewPage extends ConsumerWidget {
     final locale = Localizations.localeOf(context).toString();
     final isNew =
         ref.watch(newFoxerProvider(NewFoxerSpace.event)).asData?.value ?? false;
+    // Today's calendar, for the Check-in card on event day. A failure reads as
+    // nothing today: More still has Check-in.
+    final today = ref.watch(calendarEntriesProvider(_today()));
 
     // Booked events that lost a Supplier. A failure here must not hide the
     // rest of the Overview, so it reads as "none".
@@ -138,6 +151,12 @@ class EventOverviewPage extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
           children: [
             const OverviewGreeting(),
+            // On event day, Check-in is here, not only a row in More.
+            CheckInToday(
+              entries: today.asData?.value ?? const [],
+              role: CalendarRole.host,
+              checkInRoute: RouteNames.spaceEventCheckIn,
+            ),
             tourTarget(
               'dash-needs',
               Column(

@@ -1395,6 +1395,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spaceTabCheckIn => 'Check-in';
 
   @override
+  String get checkInTodayButton => 'Check in guests';
+
+  @override
+  String get checkInTodayOn => 'On now';
+
+  @override
+  String checkInTodayAt(String time) {
+    return 'Today at $time';
+  }
+
+  @override
   String get spaceTabOverview => 'Dashboard';
 
   @override

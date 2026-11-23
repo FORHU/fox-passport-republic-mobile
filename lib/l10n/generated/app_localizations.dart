@@ -2704,6 +2704,24 @@ abstract class AppLocalizations {
   /// **'Check-in'**
   String get spaceTabCheckIn;
 
+  /// No description provided for @checkInTodayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in guests'**
+  String get checkInTodayButton;
+
+  /// No description provided for @checkInTodayOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On now'**
+  String get checkInTodayOn;
+
+  /// No description provided for @checkInTodayAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Today at {time}'**
+  String checkInTodayAt(String time);
+
   /// No description provided for @spaceTabOverview.
   ///
   /// In en, this message translates to:

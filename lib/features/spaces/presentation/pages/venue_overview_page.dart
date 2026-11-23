@@ -10,6 +10,7 @@ import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/check_in_today.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/earnings_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/featured_photo_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/first_steps_card.dart';
@@ -231,6 +232,12 @@ class VenueOverviewPage extends ConsumerWidget {
               title: l10n.overviewTodayAhead,
               action: ahead.isEmpty ? null : l10n.venueSeeAll,
               onAction: () => context.go(RouteNames.spaceVenueCalendar),
+            ),
+            // On event day, Check-in is here, not only a row in More.
+            CheckInToday(
+              entries: calendar.asData?.value ?? const [],
+              role: CalendarRole.venue,
+              checkInRoute: RouteNames.spaceVenueCheckIn,
             ),
             if (ahead.isEmpty)
               Text(
