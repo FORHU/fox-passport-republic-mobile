@@ -5293,6 +5293,421 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplySpecializationsOther => 'Specializations (up to 3)';
 
   @override
+  String get roleApplySuggestSpecialtyPrompt => 'Suggest a category';
+
+  @override
+  String get roleApplySuggestSpecialtyLabel => 'Category name';
+
+  @override
+  String get roleApplySuggestSpecialtySend => 'Send for review';
+
+  @override
+  String roleApplySuggestSpecialtySent(String name) {
+    return 'Thanks! \"$name\" was sent for review. Pick from the list for now.';
+  }
+
+  @override
+  String get roleApplySuggestSpecialtyFailed =>
+      'Couldn\'t send your suggestion. Try again.';
+
+  @override
+  String get roleApplySuggestLead => 'Don\'t see yours?';
+
+  @override
+  String get roleApplySuggestClose => 'Close';
+
+  @override
+  String get roleApplySuggestHint => 'e.g. Drone photography';
+
+  @override
+  String get roleApplySuggestHelp =>
+      'Our team reviews it. It\'s not added to your picks.';
+
+  @override
+  String get provApplyEyebrow => 'Provider Foxer';
+
+  @override
+  String get provApplyIntroTitle =>
+      'Rent out gear or offer a service at events';
+
+  @override
+  String get provApplyIntroBody =>
+      'Tell us what you do. Citizens and Event Foxers find you by the categories you pick, so choose every one you really work in.';
+
+  @override
+  String get provApplyStepBusiness => 'Your business';
+
+  @override
+  String get provApplyStepBusinessHint => 'Name, area, experience';
+
+  @override
+  String get provApplyStepCategories => 'Your categories';
+
+  @override
+  String get provApplyStepCategoriesHint => 'What you offer, and your main one';
+
+  @override
+  String get provApplyStepDetails => 'About each category';
+
+  @override
+  String get provApplyStepDetailsHint => 'A short line and photos of your work';
+
+  @override
+  String get provApplyStepDocuments => 'Documents';
+
+  @override
+  String get provApplyStepDocumentsHint => 'ID, NBI, TIN, BIR permit, selfie';
+
+  @override
+  String get provApplyDuration => 'Takes about 10 minutes.';
+
+  @override
+  String get provApplyStart => 'Start';
+
+  @override
+  String get provApplyClose => 'Close';
+
+  @override
+  String get provApplyBack => 'Back';
+
+  @override
+  String provApplyStepOf(int number, int total) {
+    return 'Step $number of $total';
+  }
+
+  @override
+  String get provApplyBusinessNameHelp =>
+      'Shown on your profile and listings. Your own name is fine.';
+
+  @override
+  String get provApplyBasedIn => 'Where you\'re based';
+
+  @override
+  String get provApplyBasedInHint => 'City, Province';
+
+  @override
+  String get provApplyLocateFailed =>
+      'We couldn\'t find your city. Try again, or type it.';
+
+  @override
+  String get provApplyTravel => 'How far you\'ll travel for an event';
+
+  @override
+  String get provApplyTravelCity => 'My city only';
+
+  @override
+  String get provApplyTravelProvince => 'My province';
+
+  @override
+  String get provApplyTravelAnywhere => 'Anywhere';
+
+  @override
+  String get provApplyYears => 'Years doing events';
+
+  @override
+  String get provApplyYearsInvalid => 'Enter 0 to 100';
+
+  @override
+  String get provApplyLinks => 'Links to your work (optional)';
+
+  @override
+  String get provApplyNextCategories => 'Next: categories';
+
+  @override
+  String get provApplyCategoriesTitle => 'What do you offer?';
+
+  @override
+  String get provApplyCategoriesBody =>
+      'Tap every category you work in. Use the star to mark your main one.';
+
+  @override
+  String get provApplyMain => 'MAIN';
+
+  @override
+  String get provApplyPicked => 'Picked';
+
+  @override
+  String provApplyMakeMain(String name) {
+    return 'Make $name your main category';
+  }
+
+  @override
+  String provApplyIsMain(String name) {
+    return '$name is your main category';
+  }
+
+  @override
+  String get provApplyNothingPicked => 'Nothing picked yet';
+
+  @override
+  String provApplyPickedSummary(int count, String main) {
+    return '$count picked · $main is your main';
+  }
+
+  @override
+  String get provApplyNextDetails => 'Next: about each one';
+
+  @override
+  String get provApplyPickOne => 'Pick at least one';
+
+  @override
+  String get provApplyDetailsTitle => 'Tell us about each one';
+
+  @override
+  String get provApplyDetailsBody =>
+      'A line and a few photos per category help us approve it.';
+
+  @override
+  String get provApplyWhatYouOffer => 'What you offer';
+
+  @override
+  String get provApplyPhotos => 'Photos of your work';
+
+  @override
+  String provApplyPhotosMax(int max) {
+    return '(up to $max)';
+  }
+
+  @override
+  String get provApplyAddPhoto => 'Add a photo';
+
+  @override
+  String get provApplyRemovePhoto => 'Remove photo';
+
+  @override
+  String provApplyDetailDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Done · $count photos',
+      one: 'Done · 1 photo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get provApplyDetailTodo => 'Add a line and at least 1 photo';
+
+  @override
+  String get provApplyNextDocuments => 'Next: documents';
+
+  @override
+  String get provApplyDocumentsTitle => 'Documents';
+
+  @override
+  String get provApplyDocumentsBody =>
+      'Only our review team sees these. Clear photos speed up approval.';
+
+  @override
+  String get provApplyDocId => 'Valid government ID';
+
+  @override
+  String get provApplyDocNbi => 'NBI clearance';
+
+  @override
+  String get provApplyDocTin => 'TIN ID';
+
+  @override
+  String get provApplyDocBir => 'BIR permit';
+
+  @override
+  String get provApplyDocSelfie => 'Selfie holding your ID';
+
+  @override
+  String get provApplyRequired => 'Required';
+
+  @override
+  String get provApplyUpload => 'Upload';
+
+  @override
+  String get provApplyReplace => 'Replace';
+
+  @override
+  String get provApplyTake => 'Take';
+
+  @override
+  String get provApplyForCategories => 'For your categories';
+
+  @override
+  String get provApplyForCategoriesBody =>
+      'Some categories ask for more, like a food safety permit for catering. We\'ll tell you if yours do.';
+
+  @override
+  String provApplyDocsLeft(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents still to add',
+      one: '1 document still to add',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get provApplyReviewButton => 'Review application';
+
+  @override
+  String get provApplyReview => 'Review';
+
+  @override
+  String get provApplyCheckAndSend => 'Check and send';
+
+  @override
+  String get provApplyBusinessSection => 'Business';
+
+  @override
+  String get provApplyCategoriesSection => 'Categories';
+
+  @override
+  String get provApplyDocumentsSection => 'Documents';
+
+  @override
+  String get provApplyEdit => 'Edit';
+
+  @override
+  String provApplyYearsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get provApplyEachDescribed => 'Each with a description and photos.';
+
+  @override
+  String provApplyAllDocs(int count) {
+    return 'All $count added';
+  }
+
+  @override
+  String get provApplyAgree =>
+      'I agree to the Provider Terms and confirm my details and documents are true.';
+
+  @override
+  String get provApplyReviewNote =>
+      'Our team checks your documents and categories before you go live.';
+
+  @override
+  String get provApplySentTitle => 'Application sent';
+
+  @override
+  String get provApplySentBody =>
+      'We usually reply within 1 to 3 days. We\'ll notify you when it\'s checked.';
+
+  @override
+  String get provApplySentStep1 => 'Sent';
+
+  @override
+  String provApplySentToday(String time) {
+    return 'Today, $time';
+  }
+
+  @override
+  String get provApplySentStep2 => 'We check your documents and each category';
+
+  @override
+  String get provApplyInProgress => 'In progress';
+
+  @override
+  String get provApplySentStep3 => 'Approved categories go live';
+
+  @override
+  String get provApplySentStep3Hint =>
+      'You show up in search, and can list items in them';
+
+  @override
+  String get provApplyUnderReview => 'Under review';
+
+  @override
+  String get provApplyDone => 'Done';
+
+  @override
+  String get provApplyOptional => 'Optional';
+
+  @override
+  String get roleWizStepAboutYou => 'About you';
+
+  @override
+  String get roleWizAboutYouHint => 'Your experience and where you work';
+
+  @override
+  String get roleWizAboutSection => 'About you';
+
+  @override
+  String get roleWizDuration => 'Takes about 5 minutes.';
+
+  @override
+  String get roleWizVenueIntroTitle => 'List your venue for events';
+
+  @override
+  String get roleWizVenueIntroBody =>
+      'Tell us about your business. Citizens and Event Foxers find your venues by the categories you pick.';
+
+  @override
+  String get roleWizVenueAboutHint => 'Name, contact, address, TIN';
+
+  @override
+  String get roleWizVenueCategoriesHint =>
+      'The kinds of venue you run, up to 3';
+
+  @override
+  String get roleWizVenueCategoriesTitle => 'What kind of venues?';
+
+  @override
+  String get roleWizEventIntroTitle => 'Create and run events on FoxPassport';
+
+  @override
+  String get roleWizEventIntroBody =>
+      'Tell us about your experience. Citizens find your events by the categories you pick.';
+
+  @override
+  String get roleWizEventCategoriesHint => 'The events you run, up to 3';
+
+  @override
+  String get roleWizEventCategoriesTitle => 'What events do you run?';
+
+  @override
+  String get roleWizEventDocsHint =>
+      'ID, NBI, TIN, BIR permit, selfie, portfolio';
+
+  @override
+  String get roleWizCoordIntroTitle => 'Run the logistics on event day';
+
+  @override
+  String get roleWizCoordIntroBody =>
+      'Tell us about your experience. Hosts and Event Foxers bring you in to manage on-site operations.';
+
+  @override
+  String get roleWizCoordCategoriesHint =>
+      'Events and venues you\'ve helped run, up to 3';
+
+  @override
+  String get roleWizCoordCategoriesTitle => 'What have you helped run?';
+
+  @override
+  String get roleWizCoordDocsHint => 'ID, background clearance, selfie';
+
+  @override
+  String roleWizCategoriesBody(int max) {
+    return 'Pick up to $max.';
+  }
+
+  @override
+  String roleWizPickedOf(int count, int max) {
+    return '$count of $max picked';
+  }
+
+  @override
+  String get roleWizYearsOptional => 'Years doing events (optional)';
+
+  @override
+  String get roleWizPortfolioFile => 'Portfolio or resume';
+
+  @override
   String get roleApplyIds => 'Documents';
 
   @override

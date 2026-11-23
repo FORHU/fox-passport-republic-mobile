@@ -18,11 +18,14 @@ class LocateResult {
   bool get isOk => outcome == LocateOutcome.ok && lat != null && lng != null;
 }
 
-/// The town or city, and the country, at a position.
+/// The town or city, its province or state, and the country, at a position.
 class DevicePlace {
-  const DevicePlace({this.city, this.countryCode});
+  const DevicePlace({this.city, this.province, this.countryCode});
 
   final String? city;
+
+  /// The province, state or region, such as Cebu.
+  final String? province;
 
   /// ISO 3166 alpha-2, such as `PH`.
   final String? countryCode;
@@ -77,10 +80,15 @@ class GeolocatorDeviceLocator implements DeviceLocator {
     // devices return nothing, so Mapbox (the app already has a token for the
     // globe) answers when it does not.
     final native = kIsWeb ? const DevicePlace() : await _native(lat, lng);
-    if (native.city != null && native.countryCode != null) return native;
+    if (native.city != null &&
+        native.province != null &&
+        native.countryCode != null) {
+      return native;
+    }
     final mapbox = await _mapbox(lat, lng);
     return DevicePlace(
       city: native.city ?? mapbox.city,
+      province: native.province ?? mapbox.province,
       countryCode: native.countryCode ?? mapbox.countryCode,
     );
   }
@@ -89,12 +97,14 @@ class GeolocatorDeviceLocator implements DeviceLocator {
     try {
       final marks = await Geocoding().placemarkFromCoordinates(lat, lng);
       String? city;
+      String? province;
       String? country;
       for (final mark in marks) {
         city ??= _clean(mark.locality) ?? _clean(mark.subAdministrativeArea);
+        province ??= _clean(mark.administrativeArea);
         country ??= _clean(mark.isoCountryCode);
       }
-      return DevicePlace(city: city, countryCode: country);
+      return DevicePlace(city: city, province: province, countryCode: country);
     } on Object {
       return const DevicePlace();
     }
@@ -119,16 +129,22 @@ class GeolocatorDeviceLocator implements DeviceLocator {
       final feature = features.first;
       if (feature is! Map) return const DevicePlace();
       String? country;
+      String? province;
       final context = feature['context'];
       if (context is List) {
         for (final entry in context) {
-          if (entry is Map && '${entry['id']}'.startsWith('country')) {
+          if (entry is! Map) continue;
+          final id = '${entry['id']}';
+          if (id.startsWith('country')) {
             country = _clean(entry['short_code'] as String?)?.toUpperCase();
+          } else if (id.startsWith('region')) {
+            province = _clean(entry['text'] as String?);
           }
         }
       }
       return DevicePlace(
         city: _clean(feature['text'] as String?),
+        province: province,
         countryCode: country,
       );
     } on Object {

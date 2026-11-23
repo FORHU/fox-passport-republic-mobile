@@ -17,6 +17,9 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockRepo extends Mock implements RoleApplicationRepository {}
 
+class _MockSpecialtiesRepo extends Mock
+    implements ProviderSpecialtiesRepository {}
+
 class _FakePicker implements PhotoPicker {
   @override
   Future<PickedPhoto?> pick() async =>
@@ -49,6 +52,7 @@ const _catalog = [
 
 void main() {
   late _MockRepo repo;
+  late _MockSpecialtiesRepo specialtiesRepo;
 
   setUpAll(() {
     registerFallbackValue(
@@ -56,7 +60,10 @@ void main() {
     );
   });
 
-  setUp(() => repo = _MockRepo());
+  setUp(() {
+    repo = _MockRepo();
+    specialtiesRepo = _MockSpecialtiesRepo();
+  });
 
   group('RoleApplicationDraft', () {
     test(
@@ -462,6 +469,8 @@ void main() {
               (ref) => (specialties ?? () async => _catalog)(),
             ),
             roleApplicationRepositoryProvider.overrideWithValue(repo),
+            providerSpecialtiesRepositoryProvider
+                .overrideWithValue(specialtiesRepo),
             photoPickerProvider.overrideWithValue(_FakePicker()),
           ],
           child: MaterialApp(
@@ -483,7 +492,118 @@ void main() {
 
       expect(find.text('Photography'), findsOneWidget);
       expect(find.text('Sound system'), findsOneWidget);
-      expect(find.text('Specializations (choose at least one)'), findsOne);
+      expect(find.text('What you offer. Choose at least one.'), findsOne);
+    });
+
+    testWidgets('selected Provider categories appear as removable tags', (
+      tester,
+    ) async {
+      // The Provider / Event Coordinator switch (mobile#488) pushes the
+      // chips below the default test screen.
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await open(tester, 'providerFoxer');
+      await tester.pumpAndSettle();
+
+      final specialty = find.widgetWithText(FilterChip, 'Sound system');
+      await tester.ensureVisible(specialty);
+      await tester.tap(specialty);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Specialties'), findsOneWidget);
+      final selectedTag = find.widgetWithText(InputChip, 'Sound system');
+      expect(selectedTag, findsOneWidget);
+      final removeTag = tester.widget<InputChip>(selectedTag).onDeleted;
+      expect(removeTag, isNotNull);
+
+      removeTag?.call();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Specialties'), findsNothing);
+      expect(tester.widget<FilterChip>(specialty).selected, isFalse);
+    });
+
+    Future<void> openSuggestion(WidgetTester tester) async {
+      tester.view
+        ..physicalSize = const Size(800, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await open(tester, 'providerFoxer');
+      await tester.pumpAndSettle();
+      final prompt = find.text('Suggest a category');
+      await tester.ensureVisible(prompt);
+      await tester.tap(prompt);
+      await tester.pumpAndSettle();
+    }
+
+    Finder sendButton() => find.text('Send for review');
+
+    testWidgets('a Provider can suggest a missing specialty without picking it',
+        (
+      tester,
+    ) async {
+      when(() => specialtiesRepo.suggest(any())).thenAnswer((_) async {});
+      await openSuggestion(tester);
+
+      await tester.enterText(
+        find.byKey(const Key('suggest-specialty-name')),
+        '  Drone photography ',
+      );
+      await tester.pump();
+      await tester.ensureVisible(sendButton());
+      await tester.tap(sendButton());
+      await tester.pumpAndSettle();
+
+      verify(() => specialtiesRepo.suggest('Drone photography')).called(1);
+      expect(
+        find.textContaining('"Drone photography" was sent for review'),
+        findsOneWidget,
+      );
+      // It is a request for review, not a pick sent with the application.
+      expect(find.byType(InputChip), findsNothing);
+      expect(sendButton(), findsNothing);
+    });
+
+    testWidgets('a refused suggestion shows what the API said', (
+      tester,
+    ) async {
+      when(() => specialtiesRepo.suggest(any())).thenThrow(
+        const ServerException('This specialty is already in the list'),
+      );
+      await openSuggestion(tester);
+
+      await tester.enterText(
+        find.byKey(const Key('suggest-specialty-name')),
+        'Photography',
+      );
+      await tester.pump();
+      await tester.ensureVisible(sendButton());
+      await tester.tap(sendButton());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('This specialty is already in the list'),
+        findsOneWidget,
+      );
+      expect(sendButton(), findsOneWidget);
+    });
+
+    testWidgets('a suggestion needs at least two characters', (tester) async {
+      await openSuggestion(tester);
+
+      await tester.enterText(
+        find.byKey(const Key('suggest-specialty-name')),
+        'x',
+      );
+      await tester.pump();
+
+      final button = tester.widget<OutlinedButton>(
+        find.widgetWithText(OutlinedButton, 'Send for review'),
+      );
+      expect(button.onPressed, isNull);
+      verifyNever(() => specialtiesRepo.suggest(any()));
     });
 
     testWidgets('a Provider whose specialties cannot load can try again', (

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -57,8 +57,9 @@ import 'package:flutter_template/features/republic/presentation/widgets/profile_
 import 'package:flutter_template/features/rewards/presentation/pages/rewards_page.dart';
 import 'package:flutter_template/features/rewards/presentation/pages/wallet_page.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
-import 'package:flutter_template/features/roles/presentation/pages/role_application_page.dart';
+import 'package:flutter_template/features/roles/presentation/pages/provider_application_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_resubmit_page.dart';
+import 'package:flutter_template/features/roles/presentation/pages/role_wizard_page.dart';
 import 'package:flutter_template/features/roles/presentation/pages/roles_page.dart';
 import 'package:flutter_template/features/search/presentation/pages/search_page.dart';
 import 'package:flutter_template/features/settings/presentation/pages/change_password_page.dart';
@@ -368,7 +369,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ? null
                 : RouteNames.roles,
         builder: (context, state) =>
-            RoleApplicationPage(roleType: state.pathParameters['roleType']!),
+            state.pathParameters['roleType'] == 'providerFoxer'
+                ? const ProviderApplicationPage()
+                : RoleWizardPage(
+                    roleType: state.pathParameters['roleType']!,
+                  ),
       ),
       GoRoute(
         path: '/roles/resubmit/:id',

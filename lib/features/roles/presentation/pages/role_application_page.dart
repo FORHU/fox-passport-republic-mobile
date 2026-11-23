@@ -5,6 +5,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
+import 'package:flutter_template/features/roles/presentation/widgets/suggest_specialty.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
@@ -490,7 +491,7 @@ class _Specializations extends StatelessWidget {
       children: [
         Text(
           maxPicks == null
-              ? l10n.roleApplySpecializationsProvider
+              ? l10n.profileSpecialtiesHint
               : l10n.roleApplySpecializationsOther,
           style: AppTypography.label(),
         ),
@@ -541,10 +542,37 @@ class _ProviderSpecializations extends ConsumerWidget {
             actionLabel: l10n.retry,
             onAction: () => ref.invalidate(providerSpecialtiesProvider),
           ),
-          data: (list) => _Specializations(
-            options: [for (final s in list) (code: s.slug, label: s.name)],
-            picked: picked,
-            onToggle: onToggle,
+          data: (list) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Specializations(
+                options: [for (final s in list) (code: s.slug, label: s.name)],
+                picked: picked,
+                onToggle: onToggle,
+              ),
+              if (picked.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.profileSpecialties,
+                  style: AppTypography.label(),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final specialty in list)
+                      if (picked.contains(specialty.slug))
+                        InputChip(
+                          label: Text(specialty.name),
+                          onDeleted: () => onToggle(specialty.slug),
+                        ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 8),
+              const SuggestSpecialty(),
+            ],
           ),
         );
   }
