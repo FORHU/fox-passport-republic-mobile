@@ -28,6 +28,9 @@ enum InviteStatus {
   pending,
   accepted,
   declined,
+
+  /// Not answered in 3 days (api#462); the spot is free again.
+  expired,
   other;
 
   /// A line's `matchRequestStatus`; `secured` (booked) counts as accepted.
@@ -35,6 +38,7 @@ enum InviteStatus {
         'pending' => pending,
         'accepted' || 'secured' => accepted,
         'declined' => declined,
+        'expired' => expired,
         _ => other,
       };
 }
@@ -42,7 +46,15 @@ enum InviteStatus {
 /// The Provider's answer to one invited line of the host's own package, as
 /// the event studio shows it (api#447): waiting, joined, or declined and why.
 class LineInvite extends Equatable {
-  const LineInvite({required this.status, this.reason, this.note});
+  const LineInvite({
+    required this.status,
+    this.reason,
+    this.note,
+    this.requestedAt,
+  });
+
+  /// How long a request has to be answered (api#462).
+  static const Duration answerWindow = Duration(days: 3);
 
   /// A `templateVenues` / `templateAssets` / `templateServices` row of
   /// `GET /event-templates/:id`; null when the line is not an invite (only a
@@ -54,6 +66,9 @@ class LineInvite extends Equatable {
       status: InviteStatus.fromApi(row['matchRequestStatus']),
       reason: InviteDeclineReason.fromApi(row['declineReason']),
       note: note is String && note.trim().isNotEmpty ? note.trim() : null,
+      requestedAt: row['requestedAt'] is String
+          ? DateTime.tryParse(row['requestedAt'] as String)
+          : null,
     );
   }
 
@@ -61,8 +76,24 @@ class LineInvite extends Equatable {
   final InviteDeclineReason? reason;
   final String? note;
 
+  /// When the Supplier was asked.
+  final DateTime? requestedAt;
+
+  /// Whole days left to answer a waiting request (0 on its last day); null
+  /// when not waiting or the request time is unknown.
+  int? daysLeft(DateTime now) {
+    final asked = requestedAt;
+    if (status != InviteStatus.pending || asked == null) return null;
+    final left = asked.add(answerWindow).difference(now);
+    return left.isNegative ? 0 : left.inDays;
+  }
+
+  /// Declined or expired: the Event Foxer swaps or removes it.
+  bool get needsAction =>
+      status == InviteStatus.declined || status == InviteStatus.expired;
+
   @override
-  List<Object?> get props => [status, reason, note];
+  List<Object?> get props => [status, reason, note, requestedAt];
 }
 
 /// An Event Foxer asking for one of this person's items (a venue, gear or a

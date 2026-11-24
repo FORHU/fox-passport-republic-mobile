@@ -118,7 +118,22 @@ class EventStudioState {
 
   /// Only a draft (or an event not saved yet) can be sent for review.
   bool get canSubmit =>
-      draft.readyToSubmit && (eventId == null || status == 'draft');
+      draft.readyToSubmit &&
+      (eventId == null || status == 'draft') &&
+      suppliersNotReady.isEmpty;
+
+  /// Required items whose Supplier is known not to have accepted: waiting,
+  /// declined or expired. A package goes for review only once every required
+  /// Supplier accepted (api#461). Items not saved yet aren't counted: saving
+  /// adds the host's own listings and partners as accepted, and the API
+  /// refuses the submit, naming who, if anyone is still waiting.
+  List<PackageItem> get suppliersNotReady => [
+        for (final i in draft.items)
+          if (!i.isOptional)
+            if (invites[i.id] case final answer?
+                when answer.status != InviteStatus.accepted)
+              i,
+      ];
 
   /// Whether the host may put this venue in the event.
   VenueAccess accessFor(String venueId) {

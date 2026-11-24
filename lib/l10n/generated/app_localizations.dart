@@ -3016,6 +3016,66 @@ abstract class AppLocalizations {
   /// **'Optional'**
   String get esOptional;
 
+  /// No description provided for @inviteLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get inviteLeave;
+
+  /// No description provided for @inviteLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why leave this package?'**
+  String get inviteLeaveTitle;
+
+  /// No description provided for @inviteLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'You left {package}.'**
+  String inviteLeft(String package);
+
+  /// No description provided for @esExpiresIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day left to answer} other{{count} days left to answer}}'**
+  String esExpiresIn(int count);
+
+  /// No description provided for @esExpiresToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day to answer'**
+  String get esExpiresToday;
+
+  /// No description provided for @esInviteExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get esInviteExpired;
+
+  /// No description provided for @esSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap'**
+  String get esSwap;
+
+  /// No description provided for @esRemoveShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get esRemoveShort;
+
+  /// No description provided for @esReadySuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Every required Supplier accepted'**
+  String get esReadySuppliers;
+
+  /// No description provided for @esWaitingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting on {names}. Save, and send for review once they accept.'**
+  String esWaitingOn(String names);
+
   /// No description provided for @openPackagesTitle.
   ///
   /// In en, this message translates to:

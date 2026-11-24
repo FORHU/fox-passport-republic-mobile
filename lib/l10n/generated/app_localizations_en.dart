@@ -1562,6 +1562,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esOptional => 'Optional';
 
   @override
+  String get inviteLeave => 'Leave';
+
+  @override
+  String get inviteLeaveTitle => 'Why leave this package?';
+
+  @override
+  String inviteLeft(String package) {
+    return 'You left $package.';
+  }
+
+  @override
+  String esExpiresIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left to answer',
+      one: '1 day left to answer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get esExpiresToday => 'Last day to answer';
+
+  @override
+  String get esInviteExpired => 'Expired';
+
+  @override
+  String get esSwap => 'Swap';
+
+  @override
+  String get esRemoveShort => 'Remove';
+
+  @override
+  String get esReadySuppliers => 'Every required Supplier accepted';
+
+  @override
+  String esWaitingOn(String names) {
+    return 'Waiting on $names. Save, and send for review once they accept.';
+  }
+
+  @override
   String get openPackagesTitle => 'Open packages';
 
   @override

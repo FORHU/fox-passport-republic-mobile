@@ -92,6 +92,10 @@ class ApiEndpoints {
   static String packageInviteRespond(String id) =>
       '/event-templates/matches/$id/respond';
 
+  /// Leave a package you joined (api#461).
+  static String packageInviteLeave(String id) =>
+      '/event-templates/matches/$id/leave';
+
   /// Open packages and applications (api#460).
   static const String openPackages = '/package-applications/open';
   static String openPackage(String id) => '/package-applications/open/$id';
