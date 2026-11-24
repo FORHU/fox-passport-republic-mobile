@@ -957,6 +957,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) =>
                         const MessagesPage(showBack: true),
                   ),
+                  GoRoute(
+                    path: 'open-packages',
+                    builder: (context, state) => const OpenPackagesPage(),
+                  ),
                 ],
               ),
             ],

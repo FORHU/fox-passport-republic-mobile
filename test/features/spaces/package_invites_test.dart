@@ -57,7 +57,10 @@ List<PackageInvite> get _invites => [
 void main() {
   late _MockRepo repo;
 
-  setUpAll(() => registerFallbackValue(_invites.first));
+  setUpAll(() {
+    registerFallbackValue(_invites.first);
+    registerFallbackValue(InviteDeclineReason.other);
+  });
 
   setUp(() {
     repo = _MockRepo();
@@ -153,6 +156,39 @@ void main() {
       findsNothing,
       reason: 'service',
     );
+  });
+
+  testWidgets('a Provider leaves a package they joined, with a reason', (
+    tester,
+  ) async {
+    when(
+      () => repo.leave(
+        any(),
+        reason: any(named: 'reason'),
+        note: any(named: 'note'),
+      ),
+    ).thenAnswer((_) async {});
+    await pump(
+      tester,
+      const Scaffold(body: PackageInvitesView(kind: RequestKind.asset)),
+    );
+
+    await tester.tap(find.text('Leave'));
+    await tester.pumpAndSettle();
+    expect(find.text('Why leave this package?'), findsOneWidget);
+    await tester.tap(find.text("I can't take on more packages"));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Decline request'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => repo.leave(
+        any(that: predicate<PackageInvite>((i) => i.id == 'line-2')),
+        reason: InviteDeclineReason.noCapacity,
+        note: '',
+      ),
+    ).called(1);
+    expect(find.text('You left Fiesta Birthday Cebu.'), findsOneWidget);
   });
 
   testWidgets('says so when the space has no invites', (tester) async {

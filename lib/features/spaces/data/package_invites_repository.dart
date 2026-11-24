@@ -39,6 +39,21 @@ class PackageInvitesRepository {
         'note': note.trim(),
     });
   }
+
+  /// Leaves a package this person joined, with [reason] (and [note],
+  /// required for Other). If the package is live and the item was required,
+  /// it goes back to being built (api#461).
+  Future<void> leave(
+    PackageInvite invite, {
+    required InviteDeclineReason reason,
+    String? note,
+  }) async {
+    await _api.post(ApiEndpoints.packageInviteLeave(invite.id), {
+      'type': invite.type,
+      'reason': reason.api,
+      if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+    });
+  }
 }
 
 final Provider<PackageInvitesRepository> packageInvitesRepositoryProvider =

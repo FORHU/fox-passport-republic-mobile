@@ -497,7 +497,9 @@ void main() {
       expect(find.text('Venue chosen'), findsOneWidget);
       expect(find.text('5 photos'), findsOneWidget);
       expect(find.text('100+ word description'), findsOneWidget);
-      expect(find.text('Required'), findsNWidgets(3));
+      // api#461: every required Supplier must accept before review.
+      expect(find.text('Every required Supplier accepted'), findsOneWidget);
+      expect(find.text('Required'), findsNWidgets(4));
       expect(find.text('Recommended'), findsNWidgets(2));
       expect(find.text('0% ready'), findsOneWidget);
     });
@@ -762,14 +764,49 @@ void main() {
       await pump(tester, eventId: 't1');
       await goToStep(tester, 'Package');
 
-      expect(find.text('Accepted'), findsOneWidget);
-      expect(find.text('Declined'), findsOneWidget);
+      // Each word twice: once in the counts row, once on the item's chip.
+      expect(find.text('Accepted'), findsNWidgets(2));
+      expect(find.text('Declined'), findsNWidgets(2));
       expect(
         find.text('Too far from where I work: “Two hours away”'),
         findsOneWidget,
       );
-      // Sound was added without an invite, so it has no answer to show.
-      expect(find.text('Waiting'), findsNothing);
+      // Sound was added without an invite: only the counts row says Waiting.
+      expect(find.text('Waiting'), findsOneWidget);
+
+      // A declined Supplier is swapped or removed (api#462).
+      expect(find.text('Swap'), findsOneWidget);
+      await tester.ensureVisible(find.text('Remove'));
+      await tester.tap(find.text('Remove'));
+      await tester.pumpAndSettle();
+      expect(find.text('DJ Kai'), findsNothing);
+    });
+
+    testWidgets('a waiting Supplier shows the days left to answer', (
+      tester,
+    ) async {
+      when(() => repo.eventDetail('t1')).thenAnswer(
+        (_) async => EventDetail(
+          id: 't1',
+          status: 'draft',
+          draft: const EventDraft(title: 'Bonfire', items: [_skyHall]),
+          invites: {
+            'v1': LineInvite(
+              status: InviteStatus.pending,
+              requestedAt: DateTime.now().subtract(const Duration(hours: 30)),
+            ),
+          },
+        ),
+      );
+      await pump(tester, eventId: 't1');
+      await goToStep(tester, 'Package');
+
+      expect(find.text('1 day left to answer'), findsOneWidget);
+      await goToStep(tester, 'Review');
+      expect(
+        find.textContaining('Waiting on Sky Hall'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('says so when the event will not load', (tester) async {

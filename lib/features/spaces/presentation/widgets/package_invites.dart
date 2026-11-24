@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/package_invites_repository.dart';
 import 'package:flutter_template/features/spaces/domain/package_invite.dart';
@@ -163,13 +164,41 @@ class _PendingCard extends ConsumerWidget {
   }
 }
 
-class _JoinedRow extends StatelessWidget {
+class _JoinedRow extends ConsumerWidget {
   const _JoinedRow({required this.invite});
 
   final PackageInvite invite;
 
+  /// Leaves the package, with a reason the Event Foxer sees (api#461).
+  Future<void> _leave(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final repo = ref.read(packageInvitesRepositoryProvider);
+    final left = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      builder: (_) => DeclineReasonSheet(
+        title: l10n.inviteLeaveTitle,
+        subtitle: '${invite.packageName} · ${invite.itemName}',
+        seenBy: l10n.inviteDeclineSeen,
+        onDecline: (reason, note) async {
+          try {
+            await repo.leave(invite, reason: reason, note: note);
+            return null;
+          } on Object catch (e) {
+            return e is AppException ? e.message : '';
+          }
+        },
+      ),
+    );
+    if (left != true || !context.mounted) return;
+    ref.invalidate(packageInvitesProvider);
+    showTopToast(context, l10n.inviteLeft(invite.packageName));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -177,17 +206,30 @@ class _JoinedRow extends StatelessWidget {
         borderRadius: AppRadius.brCard,
         border: Border.all(color: AppColors.border),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            invite.packageName,
-            style: AppTypography.body(color: AppColors.textPrimary),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  invite.packageName,
+                  style: AppTypography.body(color: AppColors.textPrimary),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  invite.itemName,
+                  style: AppTypography.body(
+                    size: 12,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            invite.itemName,
-            style: AppTypography.body(size: 12, color: AppColors.textMuted),
+          TextButton(
+            onPressed: () => _leave(context, ref),
+            child: Text(l10n.inviteLeave),
           ),
         ],
       ),
