@@ -1636,13 +1636,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esAdded => 'Added';
 
   @override
-  String get esAccessApproved => 'Approved';
+  String get esAccessApproved => 'Joins at once';
 
   @override
-  String get esAccessPending => 'Pending';
-
-  @override
-  String get esAccessApply => 'Apply first';
+  String get esAccessRequest => 'Sends a request';
 
   @override
   String esToastAdded(String name) {
@@ -1659,14 +1656,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only one venue can be in the package. Remove the existing venue first.';
 
   @override
-  String get esToastVenuePending =>
-      'Your affiliation with this venue is still pending approval.';
-
-  @override
-  String get esToastVenueApply =>
-      'Apply to this venue first. You need an approved affiliation to host here.';
-
-  @override
   String get esReadyTitle => 'Event title';
 
   @override
@@ -1676,7 +1665,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esReadyOther => 'Say what kind of event it is';
 
   @override
-  String get esReadyVenue => 'Approved venue attached';
+  String get esReadyVenue => 'Venue chosen';
 
   @override
   String get esReadyGallery => '5 photos';

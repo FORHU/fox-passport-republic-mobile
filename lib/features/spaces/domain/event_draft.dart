@@ -271,9 +271,9 @@ class EventDraft {
 
   PackageItem? get venue => items.where((i) => i.isVenue).firstOrNull;
 
-  /// The host may submit only with a venue they are approved for.
-  bool get hasApprovedVenue =>
-      items.any((i) => i.isVenue && i.access == VenueAccess.approved);
+  /// The host may submit only with a venue chosen. Any venue can be chosen:
+  /// its Mayor is asked to join, as any Provider is (api#459).
+  bool get hasVenue => venue != null;
 
   int get words => countWords(description);
 
@@ -299,7 +299,7 @@ class EventDraft {
           required: true,
         ),
         ReadinessItem(id: 'category', met: category != null, required: true),
-        ReadinessItem(id: 'venue', met: hasApprovedVenue, required: true),
+        ReadinessItem(id: 'venue', met: hasVenue, required: true),
         ReadinessItem(
           id: 'gallery',
           met: photos.length >= maxEventPhotos,

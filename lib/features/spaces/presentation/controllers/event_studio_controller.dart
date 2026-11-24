@@ -21,12 +21,6 @@ enum AddResult {
 
   /// There is a venue already; only one is allowed.
   alreadyHasVenue,
-
-  /// The host's affiliation with that venue is still waiting for an answer.
-  venuePending,
-
-  /// The host has no affiliation with that venue; they must apply first.
-  venueNotApplied,
 }
 
 /// What came of saving.
@@ -443,17 +437,15 @@ class EventStudioController extends Notifier<EventStudioState> {
   // -- Package -------------------------------------------------------------
 
   /// Puts something in the package. As on the web, an item already there is
-  /// not added twice, only one venue is allowed, and a venue needs the host
-  /// to run it or hold an approved affiliation.
+  /// not added twice and only one venue is allowed. Any venue can be added,
+  /// as any Provider can: saving asks its Mayor to join, and a partner (an
+  /// approved affiliation) joins at once (api#459).
   AddResult addItem(PackageItem item) {
     final d = state.draft;
     if (d.items.any((i) => i.id == item.id)) return AddResult.duplicate;
 
     var toAdd = item;
     if (item.isVenue) {
-      final access = state.accessFor(item.id);
-      if (access == VenueAccess.pending) return AddResult.venuePending;
-      if (access == VenueAccess.none) return AddResult.venueNotApplied;
       if (d.venue != null) return AddResult.alreadyHasVenue;
       toAdd = PackageItem(
         id: item.id,
@@ -530,6 +522,20 @@ class EventStudioController extends Notifier<EventStudioState> {
 
   // -- Saving --------------------------------------------------------------
 
+  /// Reads each package line's answer again after a save: new items have
+  /// just asked their Supplier (Waiting), or joined at once when they are the
+  /// host's own or a partner's (Accepted) (api#459). If it can't be read, the
+  /// answers shown stay as they were; the save itself went through.
+  Future<void> _reloadInvites(String id) async {
+    try {
+      final detail = await _repo.eventDetail(id);
+      if (!ref.mounted) return;
+      state = state.copyWith(invites: detail.invites);
+    } on Object {
+      // Shown again the next time the event is opened.
+    }
+  }
+
   /// Saves the event, and with [submit] sends it for review. It is created
   /// once and updated after, so a retry never makes a second event. Nothing is
   /// submitted if the API refused any package item, so an event never goes for
@@ -559,11 +565,10 @@ class EventStudioController extends Notifier<EventStudioState> {
         if (!ref.mounted) return SaveOutcome.failed;
       }
 
-      final before = state.baseline;
       final problems = await _repo.syncEventPackage(
         id,
         draft.items,
-        before: before,
+        before: state.baseline,
       );
       if (!ref.mounted) return SaveOutcome.failed;
       // What the API took is now what is saved.
@@ -574,8 +579,9 @@ class EventStudioController extends Notifier<EventStudioState> {
             if (!refused.contains(i.name)) i,
         ],
         problems: problems,
-        invites: keptInvites(state.invites, draft.items, before),
       );
+      await _reloadInvites(id);
+      if (!ref.mounted) return SaveOutcome.failed;
 
       if (problems.isNotEmpty) {
         state = state.copyWith(saving: false);
@@ -599,29 +605,6 @@ class EventStudioController extends Notifier<EventStudioState> {
       return SaveOutcome.failed;
     }
   }
-}
-
-/// The invites still true after a save. Saving re-attaches a line whose price
-/// or optional flag changed, and the studio attaches without inviting, so
-/// such a line (and any removed or new one) no longer has a Provider's
-/// answer. Lines saved exactly as loaded keep theirs.
-Map<String, LineInvite> keptInvites(
-  Map<String, LineInvite> invites,
-  List<PackageItem> saved,
-  List<PackageItem> before,
-) {
-  bool unchanged(PackageItem item) {
-    final was = before.where((b) => b.id == item.id).firstOrNull;
-    return was != null &&
-        was.price == item.price &&
-        was.isOptional == item.isOptional;
-  }
-
-  return {
-    for (final item in saved)
-      if (invites[item.id] case final invite? when unchanged(item))
-        item.id: invite,
-  };
 }
 
 // The family type is not exported by flutter_riverpod, so it is inferred.

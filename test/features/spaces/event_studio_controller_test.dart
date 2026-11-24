@@ -6,6 +6,7 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -246,23 +247,14 @@ void main() {
       expect(read(c).draft.venue!.id, 'v1');
     });
 
-    test('a venue with no affiliation is refused, and one pending too',
+    test('any venue can be added; its Mayor is asked on save (api#459)',
         () async {
-      partners = PartnerLists(asEventFoxer: [_partner('v3', 'pending')]);
       final c = open();
       await settle();
-      final s = studio(c);
-      const pending = PackageItem(
-        id: 'v3',
-        name: 'Pending Hall',
-        kind: PackageKind.venue,
-        cost: 1,
-        icon: 'location_city',
-      );
 
-      expect(s.addItem(_barn), AddResult.venueNotApplied);
-      expect(s.addItem(pending), AddResult.venuePending);
-      expect(read(c).draft.items, isEmpty);
+      expect(studio(c).addItem(_barn), AddResult.added);
+      expect(read(c).draft.venue?.id, _barn.id);
+      expect(read(c).draft.hasVenue, isTrue);
     });
 
     test('only one venue is allowed', () async {
@@ -514,6 +506,27 @@ void main() {
 
       verify(() => repo.updateEvent('t1', any())).called(1);
       verifyNever(() => repo.submitEvent(any()));
+    });
+
+    test("after saving, each item shows its Supplier's answer (api#459)",
+        () async {
+      final c = open();
+      await settle();
+      studio(c).edit((_) => ready());
+      when(() => repo.eventDetail('t1')).thenAnswer(
+        (_) async => EventDetail(
+          id: 't1',
+          status: 'draft',
+          draft: ready(),
+          invites: const {
+            'v1': LineInvite(status: InviteStatus.accepted),
+          },
+        ),
+      );
+
+      await studio(c).save(submit: false);
+
+      expect(read(c).invites['v1']?.status, InviteStatus.accepted);
     });
 
     test('a refused item is reported and stops the submit', () async {

@@ -707,8 +707,9 @@ class SpacesRepository {
   }
 
   /// Makes the saved event's package match [items]: what was taken out is
-  /// removed, what is new is attached, and what the host changed the price or
-  /// optional flag of (compared with [before]) is attached again. Each attach
+  /// removed, what is new is attached (which asks its Supplier to join,
+  /// api#459), and what the host made optional or required (compared with
+  /// [before]) is updated in place, keeping its Supplier's answer. Each call
   /// is checked by the API (a venue needs an approved affiliation and a
   /// matching place), so a refusal is reported, not hidden.
   Future<List<PackageProblem>> syncEventPackage(
@@ -728,10 +729,12 @@ class SpacesRepository {
               if (row is Map && row[idKey] != null) '${row[idKey]}',
         };
 
-    bool changed(PackageItem item) {
+    // A kept item whose optional flag changed is updated in place, so the
+    // line and its Supplier's answer stay (api#459). Its price is always the
+    // listing's own (#264 C6), so a price change has nothing to send.
+    bool optionalChanged(PackageItem item) {
       final was = before.where((b) => b.id == item.id).firstOrNull;
-      return was != null &&
-          (was.price != item.price || was.isOptional != item.isOptional);
+      return was != null && was.isOptional != item.isOptional;
     }
 
     Future<void> run(PackageItem item, Future<void> Function() call) async {
@@ -744,15 +747,25 @@ class SpacesRepository {
       }
     }
 
+    Future<void> setOptional(PackageItem item, String path) => run(
+          item,
+          () => _api.patch(path, {'isOptional': item.isOptional}),
+        );
+
     // The venue: only one, and it replaces any other.
     final venue = items.where((i) => i.isVenue).firstOrNull;
     final venueIds = ids('templateVenues', 'venueId');
     for (final old in venueIds) {
-      if (old != venue?.id || changed(venue!)) {
+      if (old != venue?.id) {
         await _api.delete(ApiEndpoints.eventVenue(id, old));
       }
     }
-    if (venue != null && (!venueIds.contains(venue.id) || changed(venue))) {
+    if (venue != null &&
+        venueIds.contains(venue.id) &&
+        optionalChanged(venue)) {
+      await setOptional(venue, ApiEndpoints.eventVenue(id, venue.id));
+    }
+    if (venue != null && !venueIds.contains(venue.id)) {
       await run(
         venue,
         () => _api.post(ApiEndpoints.eventVenues(id), {
@@ -771,12 +784,14 @@ class SpacesRepository {
     final assetIds = ids('templateAssets', 'assetId');
     for (final old in assetIds) {
       final kept = assets.where((a) => a.id == old).firstOrNull;
-      if (kept == null || changed(kept)) {
+      if (kept == null) {
         await _api.delete(ApiEndpoints.eventAsset(id, old));
+      } else if (optionalChanged(kept)) {
+        await setOptional(kept, ApiEndpoints.eventAsset(id, old));
       }
     }
     for (final asset in assets) {
-      if (!assetIds.contains(asset.id) || changed(asset)) {
+      if (!assetIds.contains(asset.id)) {
         await run(
           asset,
           () => _api.post(ApiEndpoints.eventAssets(id), {
@@ -796,12 +811,14 @@ class SpacesRepository {
     final serviceIds = ids('templateServices', 'serviceId');
     for (final old in serviceIds) {
       final kept = services.where((s) => s.id == old).firstOrNull;
-      if (kept == null || changed(kept)) {
+      if (kept == null) {
         await _api.delete(ApiEndpoints.eventService(id, old));
+      } else if (optionalChanged(kept)) {
+        await setOptional(kept, ApiEndpoints.eventService(id, old));
       }
     }
     for (final service in services) {
-      if (!serviceIds.contains(service.id) || changed(service)) {
+      if (!serviceIds.contains(service.id)) {
         await run(
           service,
           () => _api.post(ApiEndpoints.eventServices(id), {

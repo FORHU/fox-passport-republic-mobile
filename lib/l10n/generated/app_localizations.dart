@@ -3157,20 +3157,14 @@ abstract class AppLocalizations {
   /// No description provided for @esAccessApproved.
   ///
   /// In en, this message translates to:
-  /// **'Approved'**
+  /// **'Joins at once'**
   String get esAccessApproved;
 
-  /// No description provided for @esAccessPending.
+  /// No description provided for @esAccessRequest.
   ///
   /// In en, this message translates to:
-  /// **'Pending'**
-  String get esAccessPending;
-
-  /// No description provided for @esAccessApply.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply first'**
-  String get esAccessApply;
+  /// **'Sends a request'**
+  String get esAccessRequest;
 
   /// No description provided for @esToastAdded.
   ///
@@ -3189,18 +3183,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only one venue can be in the package. Remove the existing venue first.'**
   String get esToastOneVenue;
-
-  /// No description provided for @esToastVenuePending.
-  ///
-  /// In en, this message translates to:
-  /// **'Your affiliation with this venue is still pending approval.'**
-  String get esToastVenuePending;
-
-  /// No description provided for @esToastVenueApply.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply to this venue first. You need an approved affiliation to host here.'**
-  String get esToastVenueApply;
 
   /// No description provided for @esReadyTitle.
   ///
@@ -3223,7 +3205,7 @@ abstract class AppLocalizations {
   /// No description provided for @esReadyVenue.
   ///
   /// In en, this message translates to:
-  /// **'Approved venue attached'**
+  /// **'Venue chosen'**
   String get esReadyVenue;
 
   /// No description provided for @esReadyGallery.

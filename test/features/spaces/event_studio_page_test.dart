@@ -306,50 +306,27 @@ void main() {
       await tester.tap(find.text('Choose a venue'));
       await tester.pumpAndSettle();
       expect(find.text('Sky Hall'), findsOneWidget);
-      expect(find.text('Approved'), findsOneWidget);
+      expect(find.text('Joins at once'), findsOneWidget);
 
       await tester.tap(find.text('Sky Hall'));
       await tester.pumpAndSettle();
       expect(find.text('Added Sky Hall to your package'), findsOneWidget);
     });
 
-    testWidgets('a venue with no affiliation says to apply first', (
-      tester,
-    ) async {
+    testWidgets(
+        'any venue can be added: one without an affiliation sends a request '
+        '(api#459)', (tester) async {
       await pump(tester);
       await openPackage(tester);
       await tester.tap(find.text('Choose a venue'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply first'), findsOneWidget);
+      // Old Barn (no affiliation) and Grand Hotel (affiliation pending).
+      expect(find.text('Sends a request'), findsNWidgets(2));
       await tester.tap(find.text('Old Barn'));
       await tester.pumpAndSettle();
 
-      expect(
-        find.text(
-          'Apply to this venue first. '
-          'You need an approved affiliation to host here.',
-        ),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('a venue still pending says so', (tester) async {
-      await pump(tester);
-      await openPackage(tester);
-      await tester.tap(find.text('Choose a venue'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Pending'), findsOneWidget);
-      await tester.tap(find.text('Grand Hotel'));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(
-          'Your affiliation with this venue is still pending approval.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('Added Old Barn to your package'), findsOneWidget);
     });
 
     testWidgets('only live venues the API sent are listed, with their town', (
@@ -517,7 +494,7 @@ void main() {
 
       expect(find.text('Event title'), findsOneWidget);
       expect(find.text('Category selected'), findsOneWidget);
-      expect(find.text('Approved venue attached'), findsOneWidget);
+      expect(find.text('Venue chosen'), findsOneWidget);
       expect(find.text('5 photos'), findsOneWidget);
       expect(find.text('100+ word description'), findsOneWidget);
       expect(find.text('Required'), findsNWidgets(3));
