@@ -6,7 +6,9 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/package_invites.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_picker_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
@@ -592,6 +594,7 @@ class _PackageStep extends ConsumerWidget {
                 )
               : _ItemTile(
                   item: venue,
+                  invite: state.invites[venue.id],
                   price: fmt(venue.price),
                   listed: venue.agreedPrice == null ? null : fmt(venue.cost),
                   onTap: () => _editItem(context, id, venue.id),
@@ -606,6 +609,7 @@ class _PackageStep extends ConsumerWidget {
               for (final item in others) ...[
                 _ItemTile(
                   item: item,
+                  invite: state.invites[item.id],
                   price: fmt(item.price),
                   listed: item.agreedPrice == null ? null : fmt(item.cost),
                   onTap: () => _editItem(context, id, item.id),
@@ -712,9 +716,13 @@ class _ItemTile extends StatelessWidget {
     required this.price,
     required this.listed,
     required this.onTap,
+    this.invite,
   });
 
   final PackageItem item;
+
+  /// The Provider's answer when this line is an invite (api#447).
+  final LineInvite? invite;
   final String price;
 
   /// The listed price, shown when a different one was agreed.
@@ -724,6 +732,9 @@ class _ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final answer = invite;
+    final declined = answer?.status == InviteStatus.declined;
+    final why = declined ? _declineText(l10n, answer!) : null;
     return Material(
       color: AppColors.canvas,
       borderRadius: AppRadius.brCard,
@@ -734,42 +745,129 @@ class _ItemTile extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: AppRadius.brCard,
-            border: Border.all(color: AppColors.border),
+            // A declined Supplier is the one to act on (canvas "Package
+            // builder").
+            border: Border.all(
+              color: declined ? AppColors.error : AppColors.border,
+            ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PhotoBox(url: item.imageUrl, width: 48, height: 48, radius: 12),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.body(),
-                    ),
-                    if (item.isOptional)
-                      Text(l10n.esOptional, style: AppTypography.label()),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
                 children: [
-                  Text(price, style: AppTypography.body(size: 13)),
-                  if (listed != null)
-                    Text(
-                      l10n.esListed(listed!),
-                      style: AppTypography.label(),
+                  PhotoBox(
+                    url: item.imageUrl,
+                    width: 48,
+                    height: 48,
+                    radius: 12,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.body(),
+                        ),
+                        if (item.isOptional)
+                          Text(l10n.esOptional, style: AppTypography.label()),
+                        if (answer != null) _InviteChip(answer.status),
+                      ],
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(price, style: AppTypography.body(size: 13)),
+                      if (listed != null)
+                        Text(
+                          l10n.esListed(listed!),
+                          style: AppTypography.label(),
+                        ),
+                    ],
+                  ),
                 ],
               ),
+              if (why != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceRaised,
+                    borderRadius: AppRadius.brMd,
+                  ),
+                  child: Text(
+                    why,
+                    style: AppTypography.body(
+                      size: 13,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The Provider's reason and note, as the builder shows a decline:
+/// `Price too low: "…"`. Null when they gave neither.
+String? _declineText(AppLocalizations l10n, LineInvite answer) {
+  final reason = answer.reason;
+  final note = answer.note;
+  final label = reason == null ? null : inviteReasonLabel(l10n, reason);
+  if (label != null && note != null) {
+    return l10n.esInviteReasonNote(label, note);
+  }
+  return label ?? (note == null ? null : '“$note”');
+}
+
+/// Where an invited line stands: Accepted, Waiting or Declined (api#447).
+class _InviteChip extends StatelessWidget {
+  const _InviteChip(this.status);
+
+  final InviteStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final (label, icon, color) = switch (status) {
+      InviteStatus.accepted => (
+          l10n.esInviteAccepted,
+          Icons.check_rounded,
+          AppColors.success,
+        ),
+      InviteStatus.pending => (
+          l10n.esInviteWaiting,
+          Icons.schedule_rounded,
+          AppColors.warning,
+        ),
+      InviteStatus.declined => (
+          l10n.esInviteDeclined,
+          Icons.close_rounded,
+          AppColors.error,
+        ),
+      InviteStatus.other => (null, null, AppColors.textMuted),
+    };
+    if (label == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(label, style: AppTypography.body(size: 12, color: color)),
+        ],
       ),
     );
   }

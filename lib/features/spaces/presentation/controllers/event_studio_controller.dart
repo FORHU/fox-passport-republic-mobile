@@ -5,6 +5,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 
@@ -71,6 +72,7 @@ class EventStudioState {
     this.locateProblem,
     this.ownedVenueIds = const {},
     this.affiliations = const {},
+    this.invites = const {},
   });
 
   final EventDraft draft;
@@ -114,6 +116,10 @@ class EventStudioState {
   /// The host's affiliations with other people's venues.
   final Map<String, VenueAccess> affiliations;
 
+  /// The Provider's answer to each invited package line, by item id
+  /// (api#447). Only lines saved as they are keep one.
+  final Map<String, LineInvite> invites;
+
   bool get isNew => eventId == null;
 
   /// Only a draft (or an event not saved yet) can be sent for review.
@@ -152,6 +158,7 @@ class EventStudioState {
     bool clearLocateProblem = false,
     Set<String>? ownedVenueIds,
     Map<String, VenueAccess>? affiliations,
+    Map<String, LineInvite>? invites,
   }) =>
       EventStudioState(
         draft: draft ?? this.draft,
@@ -177,6 +184,7 @@ class EventStudioState {
             clearLocateProblem ? null : locateProblem ?? this.locateProblem,
         ownedVenueIds: ownedVenueIds ?? this.ownedVenueIds,
         affiliations: affiliations ?? this.affiliations,
+        invites: invites ?? this.invites,
       );
 }
 
@@ -209,6 +217,7 @@ class EventStudioController extends Notifier<EventStudioState> {
       state = state.copyWith(
         draft: detail.draft,
         baseline: detail.draft.items,
+        invites: detail.invites,
         eventId: detail.id,
         status: detail.status,
         loading: false,
@@ -550,10 +559,11 @@ class EventStudioController extends Notifier<EventStudioState> {
         if (!ref.mounted) return SaveOutcome.failed;
       }
 
+      final before = state.baseline;
       final problems = await _repo.syncEventPackage(
         id,
         draft.items,
-        before: state.baseline,
+        before: before,
       );
       if (!ref.mounted) return SaveOutcome.failed;
       // What the API took is now what is saved.
@@ -564,6 +574,7 @@ class EventStudioController extends Notifier<EventStudioState> {
             if (!refused.contains(i.name)) i,
         ],
         problems: problems,
+        invites: keptInvites(state.invites, draft.items, before),
       );
 
       if (problems.isNotEmpty) {
@@ -588,6 +599,29 @@ class EventStudioController extends Notifier<EventStudioState> {
       return SaveOutcome.failed;
     }
   }
+}
+
+/// The invites still true after a save. Saving re-attaches a line whose price
+/// or optional flag changed, and the studio attaches without inviting, so
+/// such a line (and any removed or new one) no longer has a Provider's
+/// answer. Lines saved exactly as loaded keep theirs.
+Map<String, LineInvite> keptInvites(
+  Map<String, LineInvite> invites,
+  List<PackageItem> saved,
+  List<PackageItem> before,
+) {
+  bool unchanged(PackageItem item) {
+    final was = before.where((b) => b.id == item.id).firstOrNull;
+    return was != null &&
+        was.price == item.price &&
+        was.isOptional == item.isOptional;
+  }
+
+  return {
+    for (final item in saved)
+      if (invites[item.id] case final invite? when unchanged(item))
+        item.id: invite,
+  };
 }
 
 // The family type is not exported by flutter_riverpod, so it is inferred.

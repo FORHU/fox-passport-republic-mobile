@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -747,6 +748,51 @@ void main() {
       verify(() => repo.updateEvent('t1', any())).called(1);
       verifyNever(() => repo.submitEvent(any()));
       expect(find.text('Changes saved.'), findsOneWidget);
+    });
+
+    testWidgets("each invited line shows the Provider's answer (api#447)", (
+      tester,
+    ) async {
+      const dj = PackageItem(
+        id: 's1',
+        name: 'DJ Kai',
+        kind: PackageKind.talent,
+        cost: 8000,
+        icon: 'music_note',
+      );
+      const sound = PackageItem(
+        id: 'a1',
+        name: 'Sound',
+        kind: PackageKind.asset,
+        cost: 5000,
+        icon: 'speaker',
+      );
+      when(() => repo.eventDetail('t1')).thenAnswer(
+        (_) async => const EventDetail(
+          id: 't1',
+          status: 'draft',
+          draft: EventDraft(title: 'Bonfire', items: [_skyHall, dj, sound]),
+          invites: {
+            'v1': LineInvite(status: InviteStatus.accepted),
+            's1': LineInvite(
+              status: InviteStatus.declined,
+              reason: InviteDeclineReason.tooFar,
+              note: 'Two hours away',
+            ),
+          },
+        ),
+      );
+      await pump(tester, eventId: 't1');
+      await goToStep(tester, 'Package');
+
+      expect(find.text('Accepted'), findsOneWidget);
+      expect(find.text('Declined'), findsOneWidget);
+      expect(
+        find.text('Too far from where I work: “Two hours away”'),
+        findsOneWidget,
+      );
+      // Sound was added without an invite, so it has no answer to show.
+      expect(find.text('Waiting'), findsNothing);
     });
 
     testWidgets('says so when the event will not load', (tester) async {

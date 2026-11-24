@@ -85,6 +85,12 @@ class ApiEndpoints {
   static const String waitlist = '/waitlist';
   static String waitlistEntry(String id) => '/waitlist/$id';
   static String eventById(String id) => '/event-templates/$id';
+
+  /// Package invites a Provider received, and their answer (api#447).
+  static const String packageInvitesIncoming =
+      '/event-templates/matches/incoming';
+  static String packageInviteRespond(String id) =>
+      '/event-templates/matches/$id/respond';
   static const String assets = '/asset';
   static const String services = '/service';
   static String eventSubmit(String id) => '/event-templates/$id/submit';
