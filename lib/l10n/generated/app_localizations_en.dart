@@ -1562,6 +1562,122 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esOptional => 'Optional';
 
   @override
+  String get openPackagesTitle => 'Open packages';
+
+  @override
+  String get openPackagesHint =>
+      'Packages Event Foxers are putting together. Apply with one of your listings.';
+
+  @override
+  String get openPackagesEmpty =>
+      'No open packages right now. When an Event Foxer starts one, it shows up here.';
+
+  @override
+  String openUpToGuests(int count) {
+    return 'up to $count guests';
+  }
+
+  @override
+  String get openSpotVenue => 'Venue';
+
+  @override
+  String openSpotTaken(String spot) {
+    return '$spot · taken';
+  }
+
+  @override
+  String get openTaken => 'Taken';
+
+  @override
+  String get openYouApplied => 'You applied · waiting for the Event Foxer';
+
+  @override
+  String get openPackageTitle => 'Open package';
+
+  @override
+  String get openSpotsTitle => 'In this package';
+
+  @override
+  String get openNoLines => 'Nothing in it yet.';
+
+  @override
+  String get openSpotFrees =>
+      'A taken spot opens again if its Supplier declines or is removed.';
+
+  @override
+  String get openApply => 'Apply';
+
+  @override
+  String get openNoListings => 'No live listing to apply with';
+
+  @override
+  String get openWithdraw => 'Withdraw application';
+
+  @override
+  String get openWithdrawn => 'Application withdrawn.';
+
+  @override
+  String get openApplyTitle => 'Apply to this package';
+
+  @override
+  String get openYourListing => 'Your listing';
+
+  @override
+  String openChoiceTaken(String spot) {
+    return '$spot already taken';
+  }
+
+  @override
+  String get openChoiceApplied => 'Already applied with this';
+
+  @override
+  String get openPriceIsYours =>
+      'The price is your listing\'s own. Change it on the listing.';
+
+  @override
+  String get openMessageLabel => 'Message to the Event Foxer (optional)';
+
+  @override
+  String get openSend => 'Send application';
+
+  @override
+  String get openApplied => 'Application sent.';
+
+  @override
+  String get openApplications => 'Applications';
+
+  @override
+  String get openApplicationsTitle => 'Applications';
+
+  @override
+  String get openAcceptCloses =>
+      'Accepting one fills its spot and closes the others for it.';
+
+  @override
+  String get openNoApplications =>
+      'No applications yet. Providers and venues see your package in Open packages.';
+
+  @override
+  String get openAccept => 'Accept';
+
+  @override
+  String openAccepted(String name) {
+    return '$name joined your package.';
+  }
+
+  @override
+  String get openDeclineTitle => 'Why not this one?';
+
+  @override
+  String get openDeclineSeen => 'The applicant sees your reason.';
+
+  @override
+  String get openSpotFilled => 'Spot filled by another';
+
+  @override
+  String get openWithdrawnStatus => 'Withdrawn';
+
+  @override
   String get esInviteAccepted => 'Accepted';
 
   @override

@@ -3016,6 +3016,210 @@ abstract class AppLocalizations {
   /// **'Optional'**
   String get esOptional;
 
+  /// No description provided for @openPackagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open packages'**
+  String get openPackagesTitle;
+
+  /// No description provided for @openPackagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages Event Foxers are putting together. Apply with one of your listings.'**
+  String get openPackagesHint;
+
+  /// No description provided for @openPackagesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No open packages right now. When an Event Foxer starts one, it shows up here.'**
+  String get openPackagesEmpty;
+
+  /// No description provided for @openUpToGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'up to {count} guests'**
+  String openUpToGuests(int count);
+
+  /// No description provided for @openSpotVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get openSpotVenue;
+
+  /// No description provided for @openSpotTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'{spot} · taken'**
+  String openSpotTaken(String spot);
+
+  /// No description provided for @openTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken'**
+  String get openTaken;
+
+  /// No description provided for @openYouApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'You applied · waiting for the Event Foxer'**
+  String get openYouApplied;
+
+  /// No description provided for @openPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open package'**
+  String get openPackageTitle;
+
+  /// No description provided for @openSpotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In this package'**
+  String get openSpotsTitle;
+
+  /// No description provided for @openNoLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in it yet.'**
+  String get openNoLines;
+
+  /// No description provided for @openSpotFrees.
+  ///
+  /// In en, this message translates to:
+  /// **'A taken spot opens again if its Supplier declines or is removed.'**
+  String get openSpotFrees;
+
+  /// No description provided for @openApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get openApply;
+
+  /// No description provided for @openNoListings.
+  ///
+  /// In en, this message translates to:
+  /// **'No live listing to apply with'**
+  String get openNoListings;
+
+  /// No description provided for @openWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw application'**
+  String get openWithdraw;
+
+  /// No description provided for @openWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Application withdrawn.'**
+  String get openWithdrawn;
+
+  /// No description provided for @openApplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this package'**
+  String get openApplyTitle;
+
+  /// No description provided for @openYourListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Your listing'**
+  String get openYourListing;
+
+  /// No description provided for @openChoiceTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'{spot} already taken'**
+  String openChoiceTaken(String spot);
+
+  /// No description provided for @openChoiceApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Already applied with this'**
+  String get openChoiceApplied;
+
+  /// No description provided for @openPriceIsYours.
+  ///
+  /// In en, this message translates to:
+  /// **'The price is your listing\'s own. Change it on the listing.'**
+  String get openPriceIsYours;
+
+  /// No description provided for @openMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message to the Event Foxer (optional)'**
+  String get openMessageLabel;
+
+  /// No description provided for @openSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send application'**
+  String get openSend;
+
+  /// No description provided for @openApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent.'**
+  String get openApplied;
+
+  /// No description provided for @openApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get openApplications;
+
+  /// No description provided for @openApplicationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get openApplicationsTitle;
+
+  /// No description provided for @openAcceptCloses.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting one fills its spot and closes the others for it.'**
+  String get openAcceptCloses;
+
+  /// No description provided for @openNoApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'No applications yet. Providers and venues see your package in Open packages.'**
+  String get openNoApplications;
+
+  /// No description provided for @openAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get openAccept;
+
+  /// No description provided for @openAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} joined your package.'**
+  String openAccepted(String name);
+
+  /// No description provided for @openDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why not this one?'**
+  String get openDeclineTitle;
+
+  /// No description provided for @openDeclineSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'The applicant sees your reason.'**
+  String get openDeclineSeen;
+
+  /// No description provided for @openSpotFilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Spot filled by another'**
+  String get openSpotFilled;
+
+  /// No description provided for @openWithdrawnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get openWithdrawnStatus;
+
   /// No description provided for @esInviteAccepted.
   ///
   /// In en, this message translates to:

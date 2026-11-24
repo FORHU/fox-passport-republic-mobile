@@ -57,6 +57,12 @@ class ProviderMorePage extends ConsumerWidget {
             onTap: () => context.push(kind.requests),
           ),
           const SizedBox(height: 8),
+          MoreRow(
+            icon: Icons.inventory_2_outlined,
+            title: l10n.openPackagesTitle,
+            onTap: () => context.push(kind.openPackages),
+          ),
+          const SizedBox(height: 8),
           if (!kind.isGear) ...[
             MoreRow(
               icon: Icons.event_available_outlined,

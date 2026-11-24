@@ -78,6 +78,15 @@ class VenueMorePage extends ConsumerWidget {
                   onTap: () => context.push(RouteNames.spaceVenueMessages),
                 ),
               ),
+              const SizedBox(width: 8),
+              // Packages being put together, to apply to (api#460).
+              Expanded(
+                child: MoreQuickTile(
+                  icon: Icons.inventory_2_outlined,
+                  title: l10n.openPackagesTitle,
+                  onTap: () => context.push(RouteNames.spaceVenueOpenPackages),
+                ),
+              ),
             ],
           ),
           MoreSectionLabel(l10n.moreSectionGrow),

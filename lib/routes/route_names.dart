@@ -212,6 +212,8 @@ class RouteNames {
 
   /// Opened from More: requests for their venues, check-in and messages.
   static const String spaceVenueRequests = '/space/venue/more/requests';
+  static const String spaceVenueOpenPackages =
+      '/space/venue/more/open-packages';
   static const String spaceVenueCheckIn = '/space/venue/more/check-in';
   static const String spaceVenueMessages = '/space/venue/more/messages';
 

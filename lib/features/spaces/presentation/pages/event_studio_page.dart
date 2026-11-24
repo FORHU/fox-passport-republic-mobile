@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/open_packages.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_invites.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_picker_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
@@ -581,9 +582,31 @@ class _PackageStep extends ConsumerWidget {
           ),
         );
 
+    final savedId = state.eventId;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Providers and venues apply to a saved package from Open packages
+        // (api#460); the Event Foxer answers them here.
+        if (savedId != null) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => PackageApplicationsPage(
+                    templateId: savedId,
+                    packageName: d.title,
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.inbox_outlined, size: 18),
+              label: Text(l10n.openApplications),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
         StudioCard(
           title: l10n.esVenueSlot,
           child: venue == null

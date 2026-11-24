@@ -423,21 +423,51 @@ Future<bool?> showDeclineInviteSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      builder: (_) => _DeclineSheet(invite: invite),
+      builder: (_) => Consumer(
+        builder: (context, ref, _) => DeclineReasonSheet(
+          title: context.l10n.inviteDeclineTitle,
+          subtitle: '${invite.packageName} · ${invite.itemName}',
+          seenBy: context.l10n.inviteDeclineSeen,
+          onDecline: (reason, note) async {
+            final ok = await ref
+                .read(packageInviteControllerProvider.notifier)
+                .respond(invite, accept: false, reason: reason, note: note);
+            return ok ? null : ref.read(packageInviteControllerProvider).error;
+          },
+        ),
+      ),
     );
 
-class _DeclineSheet extends ConsumerStatefulWidget {
-  const _DeclineSheet({required this.invite});
+/// Asks why, from the decline reasons, and sends it with [onDecline]: a
+/// Provider declining an invite, or an Event Foxer declining an application
+/// (api#460). [onDecline] returns null when it was taken, else what went
+/// wrong ('' when unknown). Pops true once taken.
+class DeclineReasonSheet extends StatefulWidget {
+  const DeclineReasonSheet({
+    required this.title,
+    required this.subtitle,
+    required this.seenBy,
+    required this.onDecline,
+    super.key,
+  });
 
-  final PackageInvite invite;
+  final String title;
+  final String subtitle;
+
+  /// Who sees the reason.
+  final String seenBy;
+  final Future<String?> Function(InviteDeclineReason reason, String note)
+      onDecline;
 
   @override
-  ConsumerState<_DeclineSheet> createState() => _DeclineSheetState();
+  State<DeclineReasonSheet> createState() => _DeclineReasonSheetState();
 }
 
-class _DeclineSheetState extends ConsumerState<_DeclineSheet> {
+class _DeclineReasonSheetState extends State<DeclineReasonSheet> {
   InviteDeclineReason? _reason;
   final _note = TextEditingController();
+  bool _sending = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -446,21 +476,28 @@ class _DeclineSheetState extends ConsumerState<_DeclineSheet> {
   }
 
   Future<void> _send() async {
-    final ok = await ref.read(packageInviteControllerProvider.notifier).respond(
-          widget.invite,
-          accept: false,
-          reason: _reason,
-          note: _note.text,
-        );
-    if (ok && mounted) Navigator.of(context).pop(true);
+    final reason = _reason;
+    if (reason == null) return;
+    setState(() {
+      _sending = true;
+      _error = null;
+    });
+    final error = await widget.onDecline(reason, _note.text);
+    if (!mounted) return;
+    if (error == null) {
+      Navigator.of(context).pop(true);
+      return;
+    }
+    setState(() {
+      _sending = false;
+      _error = error;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final state = ref.watch(packageInviteControllerProvider);
-    final error = state.error;
-    final invite = widget.invite;
+    final error = _error;
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewInsetsOf(context).bottom,
@@ -472,19 +509,13 @@ class _DeclineSheetState extends ConsumerState<_DeclineSheet> {
           builder: (context, note, _) {
             final needsNote = _reason == InviteDeclineReason.other &&
                 note.text.trim().isEmpty;
-            final canSend = _reason != null && !needsNote && !state.sending;
+            final canSend = _reason != null && !needsNote && !_sending;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  l10n.inviteDeclineTitle,
-                  style: AppTypography.display(size: 20),
-                ),
+                Text(widget.title, style: AppTypography.display(size: 20)),
                 const SizedBox(height: 6),
-                Text(
-                  '${invite.packageName} · ${invite.itemName}',
-                  style: AppTypography.body(size: 13),
-                ),
+                Text(widget.subtitle, style: AppTypography.body(size: 13)),
                 const SizedBox(height: 14),
                 RadioGroup<InviteDeclineReason>(
                   groupValue: _reason,
@@ -531,7 +562,7 @@ class _DeclineSheetState extends ConsumerState<_DeclineSheet> {
                 ],
                 const SizedBox(height: 8),
                 Text(
-                  l10n.inviteDeclineSeen,
+                  widget.seenBy,
                   style: AppTypography.body(
                     size: 12,
                     color: AppColors.textMuted,
