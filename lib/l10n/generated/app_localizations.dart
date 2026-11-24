@@ -3016,6 +3016,48 @@ abstract class AppLocalizations {
   /// **'Optional'**
   String get esOptional;
 
+  /// No description provided for @esInviteAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get esInviteAccepted;
+
+  /// No description provided for @esInviteWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get esInviteWaiting;
+
+  /// No description provided for @esInviteDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get esInviteDeclined;
+
+  /// No description provided for @esInviteReasonNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason}: “{note}”'**
+  String esInviteReasonNote(String reason, String note);
+
+  /// No description provided for @invitesEmptyVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'No package invites for your venues yet. When an Event Foxer wants one in a package, it shows up here.'**
+  String get invitesEmptyVenue;
+
+  /// No description provided for @invitesEmptyGear.
+  ///
+  /// In en, this message translates to:
+  /// **'No package invites for your gear yet. When an Event Foxer wants it in a package, it shows up here.'**
+  String get invitesEmptyGear;
+
+  /// No description provided for @invitesEmptyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No package invites for your services yet. When an Event Foxer wants one in a package, it shows up here.'**
+  String get invitesEmptyServices;
+
   /// No description provided for @esRemove.
   ///
   /// In en, this message translates to:
@@ -10701,6 +10743,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'People adding your gear to their events. Confirm the ones you can supply.'**
   String get requestsIntroGear;
+
+  /// No description provided for @inviteTabBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get inviteTabBookings;
+
+  /// No description provided for @inviteTabInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'Package invites'**
+  String get inviteTabInvites;
+
+  /// No description provided for @inviteTabCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} · {count}'**
+  String inviteTabCount(String label, int count);
+
+  /// No description provided for @invitesInPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages you\'re in'**
+  String get invitesInPackages;
+
+  /// No description provided for @invitePerEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} per event'**
+  String invitePerEvent(String price);
+
+  /// No description provided for @inviteReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review invite'**
+  String get inviteReview;
+
+  /// No description provided for @invitePageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Package request'**
+  String get invitePageTitle;
+
+  /// No description provided for @inviteEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a package'**
+  String get inviteEyebrow;
+
+  /// No description provided for @inviteHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'{host} wants your {item} in {package}'**
+  String inviteHeadline(String host, String item, String package);
+
+  /// No description provided for @inviteHeadlineNoHost.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re invited to add {item} to {package}'**
+  String inviteHeadlineNoHost(String item, String package);
+
+  /// No description provided for @invitePackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get invitePackage;
+
+  /// No description provided for @inviteArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get inviteArea;
+
+  /// No description provided for @inviteDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get inviteDate;
+
+  /// No description provided for @inviteDateGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests choose'**
+  String get inviteDateGuests;
+
+  /// No description provided for @inviteOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered per event'**
+  String get inviteOffered;
+
+  /// No description provided for @inviteTheirNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Their note'**
+  String get inviteTheirNote;
+
+  /// No description provided for @inviteAcceptHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Joining means you\'re booked when a guest books this package on a day you\'re free. Keep your busy days blocked.'**
+  String get inviteAcceptHint;
+
+  /// No description provided for @inviteDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get inviteDecline;
+
+  /// No description provided for @inviteJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join package'**
+  String get inviteJoin;
+
+  /// No description provided for @inviteJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined {package}.'**
+  String inviteJoined(String package);
+
+  /// No description provided for @inviteDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite declined.'**
+  String get inviteDeclined;
+
+  /// No description provided for @inviteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your answer. Try again.'**
+  String get inviteFailed;
+
+  /// No description provided for @inviteDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why not join this package?'**
+  String get inviteDeclineTitle;
+
+  /// No description provided for @inviteDeclineNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional, required for Other)'**
+  String get inviteDeclineNoteLabel;
+
+  /// No description provided for @inviteDeclineNoteRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note for Other.'**
+  String get inviteDeclineNoteRequired;
+
+  /// No description provided for @inviteDeclineSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'The Event Foxer sees your reason.'**
+  String get inviteDeclineSeen;
+
+  /// No description provided for @inviteDeclineSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline request'**
+  String get inviteDeclineSend;
+
+  /// No description provided for @inviteBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get inviteBack;
+
+  /// No description provided for @inviteReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on that day'**
+  String get inviteReasonUnavailable;
+
+  /// No description provided for @inviteReasonPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price too low'**
+  String get inviteReasonPrice;
+
+  /// No description provided for @inviteReasonKind.
+  ///
+  /// In en, this message translates to:
+  /// **'I don\'t do this kind of event'**
+  String get inviteReasonKind;
+
+  /// No description provided for @inviteReasonFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Too far from where I work'**
+  String get inviteReasonFar;
+
+  /// No description provided for @inviteReasonCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t take on more packages'**
+  String get inviteReasonCapacity;
+
+  /// No description provided for @inviteReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get inviteReasonOther;
 
   /// No description provided for @requestsEmptyGear.
   ///

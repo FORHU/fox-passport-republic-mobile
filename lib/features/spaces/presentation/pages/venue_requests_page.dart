@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
+import 'package:flutter_template/features/spaces/data/package_invites_repository.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/package_invites.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
@@ -127,7 +130,7 @@ Future<void> declineBookedRequest(
 
 /// Requests for your venues: people adding a venue of yours to their event.
 /// The ones that need a reply come first, with Accept and Decline.
-class VenueRequestsPage extends ConsumerWidget {
+class VenueRequestsPage extends ConsumerStatefulWidget {
   const VenueRequestsPage({this.provider, super.key});
 
   /// Set in a provider's space, for requests for their gear or services
@@ -135,75 +138,190 @@ class VenueRequestsPage extends ConsumerWidget {
   final ProviderKind? provider;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VenueRequestsPage> createState() => _VenueRequestsPageState();
+}
+
+class _VenueRequestsPageState extends ConsumerState<VenueRequestsPage> {
+  /// Package invites (mobile#491) instead of booking requests.
+  bool _invites = false;
+
+  ProviderKind? get provider => widget.provider;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
     final source = provider == null
         ? venueRequestsProvider
         : supplyRequestsProvider(provider!.request);
     final requests = ref.watch(source);
+    final bookingCount = requests.value?.where((r) => r.needsReply).length;
+    // Each space answers invites for its own kind of listing only.
+    final kind = provider?.request ?? RequestKind.venue;
+    final inviteCount = ref
+        .watch(packageInvitesProvider)
+        .value
+        ?.where((i) => i.isFor(kind) && i.status == InviteStatus.pending)
+        .length;
+
+    String tab(String label, int? count) =>
+        count == null || count == 0 ? label : l10n.inviteTabCount(label, count);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: SpaceAppBar(title: l10n.requestsTitle),
-      body: requests.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+            child: Row(
+              children: [
+                _TabChip(
+                  label: tab(l10n.inviteTabBookings, bookingCount),
+                  selected: !_invites,
+                  onTap: () => setState(() => _invites = false),
+                ),
+                const SizedBox(width: 8),
+                _TabChip(
+                  label: tab(l10n.inviteTabInvites, inviteCount),
+                  selected: _invites,
+                  onTap: () => setState(() => _invites = true),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _invites
+                ? RefreshIndicator(
+                    color: AppColors.accent,
+                    backgroundColor: AppColors.surface,
+                    onRefresh: () => ref.refresh(packageInvitesProvider.future),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                      children: [PackageInvitesView(kind: kind)],
+                    ),
+                  )
+                : _bookings(context, requests),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bookings(
+    BuildContext context,
+    AsyncValue<List<VenueRequest>> requests,
+  ) {
+    final l10n = context.l10n;
+    final refreshable = provider == null
+        ? venueRequestsProvider
+        : supplyRequestsProvider(provider!.request);
+    return requests.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: AppColors.accent),
+      ),
+      error: (_, __) => AppStateView(
+        kind: AppStateKind.error,
+        title: l10n.apiLoadFailed,
+        actionLabel: l10n.retry,
+        onAction: () => ref.invalidate(refreshable),
+      ),
+      data: (list) => RefreshIndicator(
+        color: AppColors.accent,
+        backgroundColor: AppColors.surface,
+        onRefresh: () => ref.refresh(refreshable.future),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          children: [
+            Text(
+              switch (provider) {
+                null => l10n.requestsIntro,
+                ProviderKind.gear => l10n.requestsIntroGear,
+                ProviderKind.services => l10n.requestsIntroServices,
+              },
+              style: AppTypography.body(size: 13),
+            ),
+            const SizedBox(height: 16),
+            if (list.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Text(
+                  switch (provider) {
+                    null => l10n.requestsEmpty,
+                    ProviderKind.gear => l10n.requestsEmptyGear,
+                    ProviderKind.services => l10n.requestsEmptyServices,
+                  },
+                  textAlign: TextAlign.center,
+                  style: AppTypography.body(color: AppColors.textMuted),
+                ),
+              )
+            else
+              for (final request in list) ...[
+                VenueRequestCard(
+                  request: request,
+                  onAccept: () => unawaited(
+                    answerVenueRequest(context, ref, request, accept: true),
+                  ),
+                  onDecline: () => unawaited(
+                    answerVenueRequest(context, ref, request, accept: false),
+                  ),
+                  onDeclineBooked: request.canDecline
+                      ? () => unawaited(
+                            declineBookedRequest(context, ref, request),
+                          )
+                      : null,
+                ),
+                const SizedBox(height: 12),
+              ],
+          ],
         ),
-        error: (_, __) => AppStateView(
-          kind: AppStateKind.error,
-          title: l10n.apiLoadFailed,
-          actionLabel: l10n.retry,
-          onAction: () => ref.invalidate(source),
+      ),
+    );
+  }
+}
+
+/// "Bookings" / "Package invites", as the canvas inbox switches them.
+class _TabChip extends StatelessWidget {
+  const _TabChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: selected ? AppColors.textPrimary : AppColors.clear,
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: selected ? AppColors.textPrimary : AppColors.borderStrong,
+          ),
         ),
-        data: (list) => RefreshIndicator(
-          color: AppColors.accent,
-          backgroundColor: AppColors.surface,
-          onRefresh: () => ref.refresh(source.future),
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            children: [
-              Text(
-                switch (provider) {
-                  null => l10n.requestsIntro,
-                  ProviderKind.gear => l10n.requestsIntroGear,
-                  ProviderKind.services => l10n.requestsIntroServices,
-                },
-                style: AppTypography.body(size: 13),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: AppTypography.body(
+                size: 13,
+                weight: FontWeight.w600,
+                color: selected
+                    ? AppColors.onLightSurface
+                    : AppColors.textSecondary,
               ),
-              const SizedBox(height: 16),
-              if (list.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Text(
-                    switch (provider) {
-                      null => l10n.requestsEmpty,
-                      ProviderKind.gear => l10n.requestsEmptyGear,
-                      ProviderKind.services => l10n.requestsEmptyServices,
-                    },
-                    textAlign: TextAlign.center,
-                    style: AppTypography.body(color: AppColors.textMuted),
-                  ),
-                )
-              else
-                for (final request in list) ...[
-                  VenueRequestCard(
-                    request: request,
-                    onAccept: () => unawaited(
-                      answerVenueRequest(context, ref, request, accept: true),
-                    ),
-                    onDecline: () => unawaited(
-                      answerVenueRequest(context, ref, request, accept: false),
-                    ),
-                    onDeclineBooked: request.canDecline
-                        ? () => unawaited(
-                              declineBookedRequest(context, ref, request),
-                            )
-                        : null,
-                  ),
-                  const SizedBox(height: 12),
-                ],
-            ],
+            ),
           ),
         ),
       ),

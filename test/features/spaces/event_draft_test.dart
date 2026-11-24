@@ -1,6 +1,8 @@
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
+import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 PackageItem _venue({
@@ -374,6 +376,44 @@ void main() {
       expect(d.items[1].isOptional, isTrue);
       expect(d.items[2].agreedPrice, isNull);
       expect(d.items[2].price, 8000);
+    });
+
+    test("reads the Provider's answer for each invited line only", () {
+      final raw = template();
+      ((raw['templateVenues'] as List).first as Map<String, dynamic>)
+        ..['matched'] = true
+        ..['matchRequestStatus'] = 'declined'
+        ..['declineReason'] = 'price_too_low';
+      ((raw['templateServices'] as List).first as Map<String, dynamic>)
+        ..['matched'] = true
+        ..['matchRequestStatus'] = 'pending';
+      final detail = EventDetail.tryParse({'template': raw})!;
+
+      expect(detail.invites.keys, unorderedEquals(['v1', 's1']));
+      expect(detail.invites['v1']!.status, InviteStatus.declined);
+      expect(detail.invites['v1']!.reason, InviteDeclineReason.priceTooLow);
+      expect(detail.invites['s1']!.status, InviteStatus.pending);
+      expect(detail.invites['a1'], isNull, reason: 'attached, not invited');
+    });
+
+    test('a saved line keeps its answer only if saved as it was', () {
+      const item = PackageItem(
+        id: 'v1',
+        name: 'Sky Hall',
+        kind: PackageKind.venue,
+        cost: 50000,
+        icon: 'location_city',
+      );
+      const answer = LineInvite(status: InviteStatus.accepted);
+      const invites = {'v1': answer};
+
+      expect(keptInvites(invites, [item], [item]), {'v1': answer});
+      expect(
+        keptInvites(invites, [item.copyWith(agreedPrice: 40000)], [item]),
+        isEmpty,
+        reason: 're-priced, so re-attached without an invite',
+      );
+      expect(keptInvites(invites, const [], [item]), isEmpty);
     });
 
     test('a venue already on the event is one the host may keep', () {

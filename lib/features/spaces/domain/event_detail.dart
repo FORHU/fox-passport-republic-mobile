@@ -1,4 +1,5 @@
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 
 /// Which list of the picker a package item is shown in.
@@ -137,6 +138,7 @@ class EventDetail {
     required this.id,
     required this.status,
     required this.draft,
+    this.invites = const {},
   });
 
   final String id;
@@ -144,6 +146,10 @@ class EventDetail {
   /// `draft`, `pending`, `published`, `rejected` or `archived`.
   final String status;
   final EventDraft draft;
+
+  /// The Provider's answer to each invited line, by the item's id
+  /// ([PackageItem.id]). Lines that are not invites have none (api#447).
+  final Map<String, LineInvite> invites;
 
   /// Only a draft can be sent for review; anything else can only be edited.
   bool get isDraft => status == 'draft';
@@ -170,6 +176,12 @@ class EventDetail {
     }
 
     final items = <PackageItem>[];
+    final invites = <String, LineInvite>{};
+    void invite(String itemId, Object? row) {
+      final answer = LineInvite.fromLine(row);
+      if (answer != null) invites[itemId] = answer;
+    }
+
     final venues = raw['templateVenues'];
     if (venues is List) {
       for (final row in venues) {
@@ -179,6 +191,7 @@ class EventDetail {
           access: VenueAccess.approved,
         );
         if (item != null) {
+          invite(item.id, row);
           items.add(
             PackageItem(
               id: item.id,
@@ -209,7 +222,10 @@ class EventDetail {
           agreedPrice: _num(row['agreedPrice']),
           isOptional: row['isOptional'] == true,
         );
-        if (item != null) items.add(item);
+        if (item != null) {
+          invite(item.id, row);
+          items.add(item);
+        }
       }
     }
     final services = raw['templateServices'];
@@ -221,7 +237,10 @@ class EventDetail {
           agreedPrice: _num(row['agreedPrice']),
           isOptional: row['isOptional'] == true,
         );
-        if (item != null) items.add(item);
+        if (item != null) {
+          invite(item.id, row);
+          items.add(item);
+        }
       }
     }
 
@@ -254,6 +273,7 @@ class EventDetail {
         photos: photos,
         items: items,
       ),
+      invites: invites,
     );
   }
 }
