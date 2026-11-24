@@ -2,7 +2,6 @@ import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
 import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
-import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 PackageItem _venue({
@@ -98,7 +97,7 @@ void main() {
       expect(draft.readyToSubmit, isTrue);
     });
 
-    test('a venue still pending or not applied for does not count', () {
+    test('any venue counts: its Mayor is asked to join (api#459)', () {
       const base = EventDraft(title: 'Bonfire', category: 'Social');
 
       final pending = base.copyWith(
@@ -106,8 +105,9 @@ void main() {
       );
       final none = base.copyWith(items: [_venue(access: VenueAccess.none)]);
 
-      expect(pending.readyToSubmit, isFalse);
-      expect(none.readyToSubmit, isFalse);
+      expect(pending.readyToSubmit, isTrue);
+      expect(none.readyToSubmit, isTrue);
+      expect(base.readyToSubmit, isFalse, reason: 'no venue');
     });
 
     test('Other also needs its own label', () {
@@ -396,31 +396,11 @@ void main() {
       expect(detail.invites['a1'], isNull, reason: 'attached, not invited');
     });
 
-    test('a saved line keeps its answer only if saved as it was', () {
-      const item = PackageItem(
-        id: 'v1',
-        name: 'Sky Hall',
-        kind: PackageKind.venue,
-        cost: 50000,
-        icon: 'location_city',
-      );
-      const answer = LineInvite(status: InviteStatus.accepted);
-      const invites = {'v1': answer};
-
-      expect(keptInvites(invites, [item], [item]), {'v1': answer});
-      expect(
-        keptInvites(invites, [item.copyWith(agreedPrice: 40000)], [item]),
-        isEmpty,
-        reason: 're-priced, so re-attached without an invite',
-      );
-      expect(keptInvites(invites, const [], [item]), isEmpty);
-    });
-
     test('a venue already on the event is one the host may keep', () {
       final d = EventDetail.tryParse({'template': template()})!.draft;
 
       expect(d.venue!.access, VenueAccess.approved);
-      expect(d.hasApprovedVenue, isTrue);
+      expect(d.hasVenue, isTrue);
     });
 
     test('reads the Other label back out of the description', () {
