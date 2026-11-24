@@ -22,6 +22,9 @@ enum ProviderKind {
   String get earnings => '$root/earnings';
   String get more => '$root/more';
   String get requests => '$root/more/requests';
+
+  /// Packages being put together, to apply to (api#460).
+  String get openPackages => '$root/more/open-packages';
   String get messages => '$root/more/messages';
 
   /// Events looking for a service to apply to. Services only.
