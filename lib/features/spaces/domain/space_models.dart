@@ -40,6 +40,7 @@ class VenueRequest extends Equatable {
     this.imageUrl,
     this.bookingStatus,
     this.declinedBySupplier = false,
+    this.venueId,
   });
 
   /// Reads one entry of the response's `venues`; null when it has no id.
@@ -69,6 +70,9 @@ class VenueRequest extends Equatable {
       imageUrl: _firstImage(venue is Map ? venue['images'] : null),
       bookingStatus: booking is Map ? booking['status'] as String? : null,
       declinedBySupplier: row['rejectionReason'] == 'supplier_declined',
+      venueId: kind == RequestKind.venue && row['venueId'] is String
+          ? row['venueId'] as String
+          : null,
     );
   }
 
@@ -96,6 +100,10 @@ class VenueRequest extends Equatable {
   /// This Supplier left the event after taking it (not a turned-down request).
   final bool declinedBySupplier;
 
+  /// The venue asked for, so declining can block the day on its calendar
+  /// (mobile#511). Null for gear and services.
+  final String? venueId;
+
   bool get needsReply => status == RequestStatus.awaitingYou;
 
   /// A booked item can be declined until its booking is paid: while it is
@@ -119,6 +127,7 @@ class VenueRequest extends Equatable {
         imageUrl,
         bookingStatus,
         declinedBySupplier,
+        venueId,
       ];
 }
 
@@ -130,6 +139,70 @@ enum DeclineCause {
 
   /// Any other reason.
   other,
+}
+
+/// Why a venue (or a Provider) turns down a booking (mobile#511, canvas
+/// "Decline reasons"); stored by the API and shown to the Event Foxer
+/// (api#476, mobile#513).
+enum BookingDeclineReason {
+  alreadyBooked('already_booked'),
+
+  /// Closed that day (venue); not available that day (gear or a service).
+  closed('closed'),
+  notSuitable('not_suitable'),
+  other('other');
+
+  const BookingDeclineReason(this.apiValue);
+
+  /// How the API spells it.
+  final String apiValue;
+
+  /// Reads the API's value; null when missing or unknown.
+  static BookingDeclineReason? parse(Object? value) {
+    for (final r in values) {
+      if (r.apiValue == value) return r;
+    }
+    return null;
+  }
+
+  /// What the API is sent as the cause when leaving a booked event.
+  DeclineCause get cause =>
+      this == alreadyBooked ? DeclineCause.busy : DeclineCause.other;
+
+  /// Whether the day is blocked unless the person says otherwise.
+  bool get blocksDayByDefault => this == alreadyBooked || this == closed;
+
+  /// "Something else" needs a note, so the Event Foxer knows why.
+  bool get needsNote => this == other;
+}
+
+/// The longest note the API stores.
+const bookingDeclineNoteMax = 300;
+
+/// What the person chose in the booking decline sheet.
+class BookingDecline extends Equatable {
+  const BookingDecline({
+    required this.reason,
+    this.blockDay = false,
+    this.note,
+  });
+
+  final BookingDeclineReason reason;
+
+  /// Also block the event's day on the venue's calendar.
+  final bool blockDay;
+
+  /// Their own words for the Event Foxer; null when none was typed.
+  final String? note;
+
+  /// The `reason` and `note` sent with the review.
+  Map<String, Object> get body => {
+        'reason': reason.apiValue,
+        if (note?.trim() case final n? when n.isNotEmpty) 'note': n,
+      };
+
+  @override
+  List<Object?> get props => [reason, blockDay, note];
 }
 
 enum AttentionReason {
@@ -229,6 +302,8 @@ class BookedSupplier extends Equatable {
     this.transactionId = '',
     this.problem,
     this.busy = false,
+    this.declineReason,
+    this.declineNote,
     this.pendingProposalId,
     this.replaceBy,
   });
@@ -247,6 +322,11 @@ class BookedSupplier extends Equatable {
   /// It declined because it has another booking at that time.
   final bool busy;
 
+  /// The Supplier's own reason and words when it declined; null when it gave
+  /// none (or an older API).
+  final BookingDeclineReason? declineReason;
+  final String? declineNote;
+
   /// A replacement the host proposed, waiting for the citizen's answer.
   final String? pendingProposalId;
 
@@ -262,6 +342,8 @@ class BookedSupplier extends Equatable {
         status,
         problem,
         busy,
+        declineReason,
+        declineNote,
         pendingProposalId,
         replaceBy,
       ];
@@ -352,6 +434,11 @@ class BookedEvent extends Equatable {
                     ? null
                     : AttentionReason.parse(s['reason']),
                 busy: s['cause'] == 'busy',
+                declineReason: BookingDeclineReason.parse(s['declineReason']),
+                declineNote: s['declineNote'] is String &&
+                        (s['declineNote'] as String).trim().isNotEmpty
+                    ? (s['declineNote'] as String).trim()
+                    : null,
                 transactionId: '${s['transactionId'] ?? ''}',
                 pendingProposalId: s['pendingProposalId'] is String
                     ? s['pendingProposalId'] as String

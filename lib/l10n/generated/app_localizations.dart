@@ -13965,6 +13965,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{and 1 more package is waiting} other{and {count} more packages are waiting}}'**
   String pkgHomeMore(int count);
+
+  /// No description provided for @bookingDeclineTitleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Why can\'t {venue} host this?'**
+  String bookingDeclineTitleVenue(String venue);
+
+  /// No description provided for @bookingDeclineTitleItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Why can\'t you take this?'**
+  String get bookingDeclineTitleItem;
+
+  /// No description provided for @bookingDeclineReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get bookingDeclineReasonLabel;
+
+  /// No description provided for @bookingReasonAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Already booked that day'**
+  String get bookingReasonAlreadyBooked;
+
+  /// No description provided for @bookingReasonClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed that day'**
+  String get bookingReasonClosed;
+
+  /// No description provided for @bookingReasonClosedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Repairs, a holiday, a private use'**
+  String get bookingReasonClosedHint;
+
+  /// No description provided for @bookingReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available that day'**
+  String get bookingReasonUnavailable;
+
+  /// No description provided for @bookingReasonNotSuitable.
+  ///
+  /// In en, this message translates to:
+  /// **'Doesn\'t suit this event'**
+  String get bookingReasonNotSuitable;
+
+  /// No description provided for @bookingReasonNotSuitableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Size, hours, noise or setup'**
+  String get bookingReasonNotSuitableHint;
+
+  /// No description provided for @bookingReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get bookingReasonOther;
+
+  /// No description provided for @bookingDeclineBlockDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Also block {date} on my calendar'**
+  String bookingDeclineBlockDay(String date);
+
+  /// No description provided for @bookingDeclineKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get bookingDeclineKeep;
+
+  /// No description provided for @bookingDeclineBlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined, but the day wasn\'t blocked. Block it from your calendar.'**
+  String get bookingDeclineBlockFailed;
+
+  /// No description provided for @bookingDeclineNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get bookingDeclineNoteLabel;
+
+  /// No description provided for @bookingDeclineNoteRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell them why'**
+  String get bookingDeclineNoteRequired;
+
+  /// No description provided for @bookingDeclineNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The event host sees this'**
+  String get bookingDeclineNoteHint;
+
+  /// No description provided for @bookedDeclineAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: already booked that day'**
+  String get bookedDeclineAlreadyBooked;
+
+  /// No description provided for @bookedDeclineClosedVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: closed that day'**
+  String get bookedDeclineClosedVenue;
+
+  /// No description provided for @bookedDeclineClosedItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: not available that day'**
+  String get bookedDeclineClosedItem;
+
+  /// No description provided for @bookedDeclineNotSuitable.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: the event doesn\'t suit them'**
+  String get bookedDeclineNotSuitable;
+
+  /// No description provided for @bookedDeclineOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: another reason'**
+  String get bookedDeclineOther;
+
+  /// No description provided for @bookedDeclineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'“{note}”'**
+  String bookedDeclineNote(String note);
 }
 
 class _AppLocalizationsDelegate
