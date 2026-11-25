@@ -152,7 +152,7 @@ void main() {
       verify(
         () => api.patch(
           ApiEndpoints.requestReview('r1'),
-          {'type': 'venue', 'action': 'reject'},
+          {'type': 'venue', 'action': 'reject', 'reason': 'not_suitable'},
         ),
       ).called(1);
       expect(find.text('Request declined.'), findsOneWidget);

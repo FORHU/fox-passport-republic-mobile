@@ -16,6 +16,74 @@ void main() {
     expect(BookingDeclineReason.other.blocksDayByDefault, isFalse);
   });
 
+  test('reasons read and write the API spelling', () {
+    expect(
+      BookingDeclineReason.values.map((r) => r.apiValue),
+      ['already_booked', 'closed', 'not_suitable', 'other'],
+    );
+    for (final r in BookingDeclineReason.values) {
+      expect(BookingDeclineReason.parse(r.apiValue), r);
+    }
+    expect(BookingDeclineReason.parse('too_far'), isNull);
+    expect(BookingDeclineReason.parse(null), isNull);
+  });
+
+  test('only Something else needs a note', () {
+    expect(
+      BookingDeclineReason.values.where((r) => r.needsNote),
+      [BookingDeclineReason.other],
+    );
+  });
+
+  test('sends the reason, and the note only when one was typed', () {
+    expect(
+      const BookingDecline(reason: BookingDeclineReason.closed).body,
+      {'reason': 'closed'},
+    );
+    expect(
+      const BookingDecline(reason: BookingDeclineReason.closed, note: '   ')
+          .body,
+      {'reason': 'closed'},
+    );
+    expect(
+      const BookingDecline(
+        reason: BookingDeclineReason.other,
+        note: '  Private party ',
+      ).body,
+      {'reason': 'other', 'note': 'Private party'},
+    );
+  });
+
+  test("a booked Supplier carries its reason and note; an older API's doesn't",
+      () {
+    Map<String, Object?> event(Map<String, Object?> supplier) => {
+          'eventId': 'e1',
+          'eventName': 'Garden wedding',
+          'suppliers': [
+            {
+              'kind': 'venue',
+              'transactionId': 't1',
+              'supplierName': 'Sky Hall',
+              'itemName': 'Sky Hall',
+              'status': 'rejected',
+              'reason': 'declined',
+              ...supplier,
+            },
+          ],
+        };
+    final withReason = BookedEvent.tryParse(
+      event({'declineReason': 'closed', 'declineNote': ' Repairs '}),
+    )!
+        .suppliers
+        .single;
+    expect(withReason.declineReason, BookingDeclineReason.closed);
+    expect(withReason.declineNote, 'Repairs');
+
+    final old = BookedEvent.tryParse(event({}))!.suppliers.single;
+    expect(old.declineReason, isNull);
+    expect(old.declineNote, isNull);
+  });
+
   test('a venue request keeps its venue id; gear does not', () {
     final row = {
       'id': 'r1',

@@ -7854,4 +7854,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingDeclineBlockFailed =>
       'Declined, but the day wasn\'t blocked. Block it from your calendar.';
+
+  @override
+  String get bookingDeclineNoteLabel => 'Note (optional)';
+
+  @override
+  String get bookingDeclineNoteRequired => 'Tell them why';
+
+  @override
+  String get bookingDeclineNoteHint => 'The event host sees this';
+
+  @override
+  String get bookedDeclineAlreadyBooked => 'Declined: already booked that day';
+
+  @override
+  String get bookedDeclineClosedVenue => 'Declined: closed that day';
+
+  @override
+  String get bookedDeclineClosedItem => 'Declined: not available that day';
+
+  @override
+  String get bookedDeclineNotSuitable =>
+      'Declined: the event doesn\'t suit them';
+
+  @override
+  String get bookedDeclineOther => 'Declined: another reason';
+
+  @override
+  String bookedDeclineNote(String note) {
+    return '“$note”';
+  }
 }

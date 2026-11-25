@@ -61,6 +61,21 @@ class _BookingDeclineSheetState extends State<BookingDeclineSheet> {
   /// Once the person ticks or unticks it, the reason stops changing it.
   bool _blockTouched = false;
 
+  /// Their own words for the Event Foxer; required for "Something else".
+  final _note = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _note.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
   void _pick(BookingDeclineReason? reason) => setState(() {
         _reason = reason;
         if (!_blockTouched && reason != null) {
@@ -73,6 +88,8 @@ class _BookingDeclineSheetState extends State<BookingDeclineSheet> {
     final l10n = context.l10n;
     final reason = _reason;
     final blockDate = widget.blockDate;
+    final note = _note.text.trim();
+    final needsNote = (reason?.needsNote ?? false) && note.isEmpty;
     final reasons = [
       (
         BookingDeclineReason.alreadyBooked,
@@ -155,6 +172,30 @@ class _BookingDeclineSheetState extends State<BookingDeclineSheet> {
                 ],
               ),
             ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.bookingDeclineNoteLabel,
+              style: AppTypography.body(size: 13),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              key: const Key('booking-decline-note'),
+              controller: _note,
+              minLines: 2,
+              maxLines: 4,
+              maxLength: bookingDeclineNoteMax,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                counterText: '',
+                errorText: needsNote ? l10n.bookingDeclineNoteRequired : null,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.bookingDeclineNoteHint,
+              style: AppTypography.body(size: 12, color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 8),
             if (blockDate != null)
               CheckboxListTile(
                 key: const Key('booking-decline-block-day'),
@@ -200,12 +241,13 @@ class _BookingDeclineSheetState extends State<BookingDeclineSheet> {
                   child: SizedBox(
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: reason == null
+                      onPressed: reason == null || needsNote
                           ? null
                           : () => Navigator.of(context).pop(
                                 BookingDecline(
                                   reason: reason,
                                   blockDay: blockDate != null && _blockDay,
+                                  note: note.isEmpty ? null : note,
                                 ),
                               ),
                       style: ElevatedButton.styleFrom(

@@ -13755,6 +13755,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Declined, but the day wasn\'t blocked. Block it from your calendar.'**
   String get bookingDeclineBlockFailed;
+
+  /// No description provided for @bookingDeclineNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get bookingDeclineNoteLabel;
+
+  /// No description provided for @bookingDeclineNoteRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell them why'**
+  String get bookingDeclineNoteRequired;
+
+  /// No description provided for @bookingDeclineNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The event host sees this'**
+  String get bookingDeclineNoteHint;
+
+  /// No description provided for @bookedDeclineAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: already booked that day'**
+  String get bookedDeclineAlreadyBooked;
+
+  /// No description provided for @bookedDeclineClosedVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: closed that day'**
+  String get bookedDeclineClosedVenue;
+
+  /// No description provided for @bookedDeclineClosedItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: not available that day'**
+  String get bookedDeclineClosedItem;
+
+  /// No description provided for @bookedDeclineNotSuitable.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: the event doesn\'t suit them'**
+  String get bookedDeclineNotSuitable;
+
+  /// No description provided for @bookedDeclineOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: another reason'**
+  String get bookedDeclineOther;
+
+  /// No description provided for @bookedDeclineNote.
+  ///
+  /// In en, this message translates to:
+  /// **'“{note}”'**
+  String bookedDeclineNote(String note);
 }
 
 class _AppLocalizationsDelegate
