@@ -9,6 +9,7 @@ import 'package:flutter_template/features/spaces/presentation/controllers/listin
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
@@ -248,11 +249,22 @@ class _BasicsCard extends ConsumerWidget {
     final l10n = context.l10n;
     final d = state.draft;
     final roles = ref.watch(heldRolesProvider);
+    // The catalog's subcategories for this kind, by main category (api#506).
+    final catalog = ref.watch(providerSpecialtiesProvider).value;
+    final names = <String, String>{
+      for (final s in catalog ?? const <ProviderSpecialty>[])
+        s.slug: s.fullName,
+    };
+    final all = listingCategoryOptions(
+      gear: kind.isGear,
+      catalog: catalog,
+      current: d.category,
+    );
     // A service goes under the categories the person is approved for.
     final categories = kind.isGear
-        ? gearCategories
+        ? all
         : [
-            for (final c in serviceCategories)
+            for (final c in all)
               if (c == d.category || roles.contains('providerFoxer')) c,
           ];
     return StudioCard(
@@ -263,7 +275,7 @@ class _BasicsCard extends ConsumerWidget {
             label: l10n.listingCategory,
             value: d.category,
             options: categories,
-            labelOf: (c) => categoryLabel(l10n, c),
+            labelOf: (c) => names[c] ?? categoryLabel(l10n, c),
             onChanged: (v) => controller.edit((x) => x.copyWith(category: v)),
           ),
           StudioField(
