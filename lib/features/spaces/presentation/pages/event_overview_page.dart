@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/spaces/data/new_foxer.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/earnings_trend.dart';
+import 'package:flutter_template/features/spaces/domain/package_standing.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/payout_setup_controller.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/overview_h
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_tour.dart';
+import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
@@ -48,6 +50,45 @@ class EventOverviewPage extends ConsumerWidget {
     }
   }
 
+  /// One package that waits on someone, opening its status (mobile#509).
+  Widget _packageRow(
+    BuildContext context,
+    AppLocalizations l10n,
+    SpaceListing event,
+    PackageStanding package,
+  ) {
+    final swap = package.toSwap.firstOrNull;
+    // Whoever hasn't accepted yet, waiting or with an answer the app doesn't
+    // know.
+    final waiting = package.waiting.firstOrNull ??
+        package.lines.where((l) => l.required && !l.accepted).firstOrNull;
+    final (icon, color, text) = swap != null
+        ? (
+            Icons.swap_horiz_rounded,
+            AppColors.error,
+            l10n.pkgHomeSwap(event.name, swap.name),
+          )
+        : package.stage == PackageStage.ready
+            ? (
+                Icons.send_rounded,
+                AppColors.success,
+                l10n.pkgHomeReady(event.name),
+              )
+            : (
+                Icons.schedule_rounded,
+                AppColors.warning,
+                waiting == null
+                    ? l10n.pkgLineNoSuppliers
+                    : l10n.pkgHomeWaiting(event.name, waiting.name),
+              );
+    return AttentionRow(
+      icon: icon,
+      color: color,
+      text: text,
+      onTap: () => context.push(RouteNames.packageStatus(event.id)),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -75,8 +116,23 @@ class EventOverviewPage extends ConsumerWidget {
     int inGroup(String group) => all.where((e) => e.group == group).length;
     final inReview = inGroup('pending');
     final declined = inGroup('rejected');
-    final drafts = inGroup('draft');
+    // Packages waiting on a Supplier, needing a swap, or ready to send
+    // (mobile#509): the ones to swap first, then ready, then waiting.
+    int urgency(PackageStanding p) => p.toSwap.isNotEmpty
+        ? 0
+        : p.stage == PackageStage.ready
+            ? 1
+            : 2;
+    final waitingPackages = [
+      for (final e in all)
+        if (e.package case final p? when p.needsAttention)
+          (event: e, package: p),
+    ]..sort((a, b) => urgency(a.package).compareTo(urgency(b.package)));
+    const maxPackageRows = 3;
+    // Drafts not already listed as waiting.
+    final drafts = inGroup('draft') - waitingPackages.length;
     final somethingToDo = needs.isNotEmpty ||
+        waitingPackages.isNotEmpty ||
         invites > 0 ||
         inReview > 0 ||
         declined > 0 ||
@@ -198,6 +254,17 @@ class EventOverviewPage extends ConsumerWidget {
                           needs[maxNeedRows].event.eventId,
                         ),
                       ),
+                    ),
+                  for (final w in waitingPackages.take(maxPackageRows))
+                    _packageRow(context, l10n, w.event, w.package),
+                  if (waitingPackages.length > maxPackageRows)
+                    AttentionRow(
+                      icon: Icons.more_horiz_rounded,
+                      color: AppColors.warning,
+                      text: l10n.pkgHomeMore(
+                        waitingPackages.length - maxPackageRows,
+                      ),
+                      onTap: () => showGroup('draft'),
                     ),
                   if (invites > 0)
                     AttentionRow(

@@ -7,6 +7,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_card.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/listing_filters.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/package_status_line.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
@@ -67,6 +68,14 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.display(),
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.fact_check_outlined),
+              title: Text(l10n.pkgSeeStatus),
+              onTap: () {
+                Navigator.of(sheet).pop();
+                unawaited(context.push(RouteNames.packageStatus(event.id)));
+              },
             ),
             ListTile(
               leading: const Icon(Icons.edit_outlined),
@@ -223,10 +232,18 @@ class _EventsPageState extends ConsumerState<EventsPage> {
                     sliver: SliverList.separated(
                       itemCount: shown.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, i) => ListingCard(
-                        listing: shown[i],
-                        onTap: () => _openEvent(context, shown[i]),
-                      ),
+                      itemBuilder: (context, i) {
+                        final package = shown[i].package;
+                        final line = package == null
+                            ? null
+                            : packageStatusLine(l10n, package);
+                        return ListingCard(
+                          listing: shown[i],
+                          detail: line?.text,
+                          detailColor: line?.color ?? AppColors.textSecondary,
+                          onTap: () => _openEvent(context, shown[i]),
+                        );
+                      },
                     ),
                   ),
               ],
