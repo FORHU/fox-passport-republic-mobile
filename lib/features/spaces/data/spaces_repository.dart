@@ -65,10 +65,13 @@ class SpacesRepository {
     String id, {
     required bool accept,
     RequestKind kind = RequestKind.venue,
+    BookingDecline? decline,
   }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
       'type': kind.name,
       'action': accept ? 'confirm' : 'reject',
+      // Why, for the Event Foxer (api#476); only on a decline.
+      if (!accept && decline != null) ...decline.body,
     });
   }
 
@@ -104,11 +107,14 @@ class SpacesRepository {
     String id, {
     required RequestKind kind,
     DeclineCause cause = DeclineCause.other,
+    BookingDecline? decline,
   }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
       'type': kind.name,
       'action': 'decline',
-      'cause': cause.name,
+      'cause': (decline?.reason.cause ?? cause).name,
+      // Why, for the Event Foxer (api#476).
+      if (decline != null) ...decline.body,
     });
   }
 

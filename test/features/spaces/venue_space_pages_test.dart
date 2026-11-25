@@ -1101,7 +1101,12 @@ void main() {
       verify(
         () => api.patch(
           ApiEndpoints.requestReview('r1'),
-          {'type': 'venue', 'action': 'decline', 'cause': 'other'},
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'other',
+            'reason': 'not_suitable',
+          },
         ),
       ).called(1);
       expect(
@@ -1129,7 +1134,51 @@ void main() {
       verify(
         () => api.patch(
           ApiEndpoints.requestReview('r1'),
-          {'type': 'venue', 'action': 'decline', 'cause': 'busy'},
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'busy',
+            'reason': 'already_booked',
+          },
+        ),
+      ).called(1);
+    });
+
+    testWidgets('Something else needs a note, which is sent', (tester) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Something else'));
+      await tester.pumpAndSettle();
+      expect(find.text('Tell them why'), findsOneWidget);
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+      verifyNever(() => api.patch(ApiEndpoints.requestReview('r1'), any()));
+
+      await tester.enterText(
+        find.byKey(const Key('booking-decline-note')),
+        '  Private party that night ',
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Tell them why'), findsNothing);
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.patch(
+          ApiEndpoints.requestReview('r1'),
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'other',
+            'reason': 'other',
+            'note': 'Private party that night',
+          },
         ),
       ).called(1);
     });
@@ -1273,7 +1322,7 @@ void main() {
 
       await tester.tap(find.text('Decline this booking'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Something else'));
+      await tester.tap(find.text("Doesn't suit this event"));
       await tester.pumpAndSettle();
       await tester.tap(inSheet('Decline this booking'));
       await tester.pumpAndSettle();

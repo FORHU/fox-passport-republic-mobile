@@ -171,6 +171,42 @@ void main() {
       expect(find.text('Busy with another booking'), findsOneWidget);
     });
 
+    testWidgets("shows the Supplier's own reason and note (mobile#513)", (
+      tester,
+    ) async {
+      when(() => api.get(ApiEndpoints.bookedEvent('e1'))).thenAnswer(
+        (_) async => _event([
+          {
+            ..._supplier(
+              'venue',
+              'Sky Hall',
+              status: 'rejected',
+              reason: 'declined',
+            ),
+            'declineReason': 'closed',
+            'declineNote': 'Roof repairs that week',
+          },
+          {
+            ..._supplier(
+              'asset',
+              'Lights',
+              status: 'rejected',
+              reason: 'declined',
+            ),
+            'declineReason': 'closed',
+          },
+        ]),
+      );
+
+      await show(tester);
+
+      expect(find.text('Declined: closed that day'), findsOneWidget);
+      expect(find.text('Declined: not available that day'), findsOneWidget);
+      expect(find.text('“Roof repairs that week”'), findsOneWidget);
+      expect(find.byKey(const Key('booked-decline-note')), findsOneWidget);
+      expect(find.text('Declined this event'), findsNothing);
+    });
+
     testWidgets('says so when no Supplier is booked yet', (tester) async {
       when(() => api.get(ApiEndpoints.bookedEvent('e1')))
           .thenAnswer((_) async => _event([]));

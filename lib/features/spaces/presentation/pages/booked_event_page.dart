@@ -516,10 +516,21 @@ class _SupplierRow extends StatelessWidget {
   static String _reason(
     AppLocalizations l10n,
     AttentionReason r, {
-    required bool busy,
+    required BookedSupplier supplier,
   }) =>
       switch (r) {
-        AttentionReason.declined when busy => l10n.bookedReasonBusy,
+        // The Supplier's own reason, when it gave one (api#476).
+        AttentionReason.declined when supplier.declineReason != null => switch (
+              supplier.declineReason!) {
+            BookingDeclineReason.alreadyBooked =>
+              l10n.bookedDeclineAlreadyBooked,
+            BookingDeclineReason.closed => supplier.kind == RequestKind.venue
+                ? l10n.bookedDeclineClosedVenue
+                : l10n.bookedDeclineClosedItem,
+            BookingDeclineReason.notSuitable => l10n.bookedDeclineNotSuitable,
+            BookingDeclineReason.other => l10n.bookedDeclineOther,
+          },
+        AttentionReason.declined when supplier.busy => l10n.bookedReasonBusy,
         AttentionReason.declined => l10n.bookedReasonDeclined,
         AttentionReason.dateBlocked => l10n.bookedReasonDateBlocked,
         AttentionReason.unavailable => l10n.bookedReasonUnavailable,
@@ -565,12 +576,24 @@ class _SupplierRow extends StatelessWidget {
                 if (problem != null) ...[
                   const SizedBox(height: 6),
                   Text(
-                    _reason(l10n, problem, busy: supplier.busy),
+                    _reason(l10n, problem, supplier: supplier),
                     style: AppTypography.body(
                       size: 13,
                       color: AppColors.error,
                     ),
                   ),
+                  if (problem == AttentionReason.declined &&
+                      supplier.declineNote != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.bookedDeclineNote(supplier.declineNote!),
+                      key: const Key('booked-decline-note'),
+                      style: AppTypography.body(
+                        size: 13,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
                   if (supplier.replaceBy case final due?) ...[
                     const SizedBox(height: 4),
                     Text(

@@ -2584,5 +2584,15 @@
   "bookingDeclineBlockDay": "Also block {date} on my calendar",
   "@bookingDeclineBlockDay": {"placeholders":{"date":{"type":"String"}}},
   "bookingDeclineKeep": "Keep it",
-  "bookingDeclineBlockFailed": "Declined, but the day wasn't blocked. Block it from your calendar."
+  "bookingDeclineBlockFailed": "Declined, but the day wasn't blocked. Block it from your calendar.",
+  "bookingDeclineNoteLabel": "Note (optional)",
+  "bookingDeclineNoteRequired": "Tell them why",
+  "bookingDeclineNoteHint": "The event host sees this",
+  "bookedDeclineAlreadyBooked": "Declined: already booked that day",
+  "bookedDeclineClosedVenue": "Declined: closed that day",
+  "bookedDeclineClosedItem": "Declined: not available that day",
+  "bookedDeclineNotSuitable": "Declined: the event doesn't suit them",
+  "bookedDeclineOther": "Declined: another reason",
+  "bookedDeclineNote": "“{note}”",
+  "@bookedDeclineNote": {"placeholders":{"note":{"type":"String"}}}
 }

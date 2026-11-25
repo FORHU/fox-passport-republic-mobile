@@ -84,9 +84,12 @@ Future<void> answerVenueRequest(
     if (decline == null || !context.mounted) return;
   }
   try {
-    await ref
-        .read(spacesRepositoryProvider)
-        .reviewVenueRequest(request.id, accept: accept, kind: request.kind);
+    await ref.read(spacesRepositoryProvider).reviewVenueRequest(
+          request.id,
+          accept: accept,
+          kind: request.kind,
+          decline: decline,
+        );
     final blocked =
         !(decline?.blockDay ?? false) || await _blockDay(ref, request);
     ref
@@ -127,7 +130,7 @@ Future<void> declineBookedRequest(
     await ref.read(spacesRepositoryProvider).declineBookedItem(
           request.id,
           kind: request.kind,
-          cause: decline.reason.cause,
+          decline: decline,
         );
     final blocked = !decline.blockDay || await _blockDay(ref, request);
     ref
