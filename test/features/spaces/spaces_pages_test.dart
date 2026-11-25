@@ -352,6 +352,77 @@ void main() {
       expect(find.text('Draft One'), findsNothing);
     });
 
+    // A draft package with one line per Supplier answer (mobile#509).
+    Map<String, Object?> package(
+      String id,
+      String name,
+      List<(String, String)> lines,
+    ) =>
+        {
+          ...event(id, name, 'draft'),
+          'templateVenues': <Object>[],
+          'templateAssets': [
+            for (final (item, status) in lines)
+              {
+                'matched': true,
+                'matchRequestStatus': status,
+                'asset': {'id': item, 'name': item, 'ownerId': 'o-$item'},
+              },
+          ],
+          'templateServices': <Object>[],
+        };
+
+    testWidgets('Home lists packages waiting on someone, swaps first', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          package('p1', 'Beach Debut', [('Speakers', 'pending')]),
+          package('p2', 'Garden Wedding', [('Photos', 'declined')]),
+          package('p3', 'Corporate Gala', [('Stage', 'accepted')]),
+          event('e4', 'Empty Draft', 'draft'),
+        ],
+      );
+      await pump(tester, const EventOverviewPage());
+
+      final swap = find.text('Garden Wedding: replace Photos');
+      final ready = find.text('Corporate Gala is ready to send for review');
+      final waiting = find.text('Beach Debut: waiting for Speakers');
+      expect(swap, findsOneWidget);
+      expect(ready, findsOneWidget);
+      expect(waiting, findsOneWidget);
+      expect(
+        tester.getTopLeft(swap).dy,
+        lessThan(tester.getTopLeft(ready).dy),
+      );
+      expect(
+        tester.getTopLeft(ready).dy,
+        lessThan(tester.getTopLeft(waiting).dy),
+      );
+      // Only the draft not listed above is counted as a draft.
+      expect(find.text('1 draft to finish'), findsOneWidget);
+    });
+
+    testWidgets('the Events tab says where each package stands', (
+      tester,
+    ) async {
+      api_(
+        events: [
+          package('p1', 'Beach Debut', [
+            ('Speakers', 'accepted'),
+            ('Photos', 'declined'),
+            ('Lights', 'pending'),
+          ]),
+        ],
+      );
+      await pump(tester, const EventsPage());
+
+      expect(
+        find.text('1 of 3 Suppliers agreed · 1 to replace · 1 waiting'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('shows the earnings card with its total', (tester) async {
       api_(events: [event('e1', 'Bonfire Night', 'published')]);
       await pump(tester, const EventOverviewPage());

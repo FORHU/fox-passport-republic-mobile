@@ -10,10 +10,21 @@ import 'package:flutter_template/theme/tokens/typography.dart';
 /// A venue or event in a compact row: its photo, name, and its town and status
 /// on one line, so many of them fit on the screen.
 class ListingCard extends StatelessWidget {
-  const ListingCard({required this.listing, required this.onTap, super.key});
+  const ListingCard({
+    required this.listing,
+    required this.onTap,
+    this.detail,
+    this.detailColor = AppColors.textSecondary,
+    super.key,
+  });
 
   final SpaceListing listing;
   final VoidCallback onTap;
+
+  /// An extra line under the status, such as where an event's package stands
+  /// (mobile#509).
+  final String? detail;
+  final Color detailColor;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +93,15 @@ class ListingCard extends StatelessWidget {
                           ),
                       ],
                     ),
+                    if (detail != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        detail!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.body(size: 12, color: detailColor),
+                      ),
+                    ],
                   ],
                 ),
               ),
