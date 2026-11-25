@@ -10000,6 +10000,84 @@ abstract class AppLocalizations {
   /// **'Links to your work (optional)'**
   String get provApplyLinks;
 
+  /// No description provided for @provApplyLinksHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add any you have. Typing facebook.com/yourpage is enough.'**
+  String get provApplyLinksHelp;
+
+  /// No description provided for @provLinkFacebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get provLinkFacebook;
+
+  /// No description provided for @provLinkInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get provLinkInstagram;
+
+  /// No description provided for @provLinkTiktok.
+  ///
+  /// In en, this message translates to:
+  /// **'TikTok'**
+  String get provLinkTiktok;
+
+  /// No description provided for @provLinkYoutube.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube'**
+  String get provLinkYoutube;
+
+  /// No description provided for @provLinkWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get provLinkWebsite;
+
+  /// No description provided for @provLinkFacebookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'facebook.com/yourpage'**
+  String get provLinkFacebookHint;
+
+  /// No description provided for @provLinkInstagramHint.
+  ///
+  /// In en, this message translates to:
+  /// **'instagram.com/yourname'**
+  String get provLinkInstagramHint;
+
+  /// No description provided for @provLinkTiktokHint.
+  ///
+  /// In en, this message translates to:
+  /// **'tiktok.com/@yourname'**
+  String get provLinkTiktokHint;
+
+  /// No description provided for @provLinkYoutubeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'youtube.com/@yourchannel'**
+  String get provLinkYoutubeHint;
+
+  /// No description provided for @provLinkWebsiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'yourwebsite.com'**
+  String get provLinkWebsiteHint;
+
+  /// No description provided for @provLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a web address'**
+  String get provLinkInvalid;
+
+  /// No description provided for @provLinkWrongSite.
+  ///
+  /// In en, this message translates to:
+  /// **'That link isn\'t on {site}'**
+  String provLinkWrongSite(String site);
+
   /// No description provided for @provApplyNextCategories.
   ///
   /// In en, this message translates to:

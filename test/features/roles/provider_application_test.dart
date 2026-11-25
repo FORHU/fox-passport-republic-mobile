@@ -8,6 +8,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/roles/data/role_application_repository.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/provider_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/pages/provider_application_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -353,6 +354,37 @@ void main() {
 
       expect(next().onPressed, isNotNull);
       expect(draft().travelRange, TravelRange.province);
+    });
+
+    testWidgets('step 1 has a field per link and flags one in the wrong place',
+        (tester) async {
+      c().goTo(ProviderApplyStep.business);
+      c().edit((d) => d.copyWith(businessName: 'X', basedIn: 'Cebu'));
+      await open(tester);
+
+      expect(find.textContaining('separated by commas'), findsNothing);
+      for (final kind in WorkLinkKind.values) {
+        expect(find.byKey(Key('work-link-${kind.name}')), findsOneWidget);
+      }
+
+      final instagram = find.byKey(const Key('work-link-instagram'));
+      await tester.ensureVisible(instagram);
+      await tester.enterText(instagram, 'facebook.com/soundgear');
+      await tester.pumpAndSettle();
+      expect(find.text("That link isn't on Instagram"), findsOneWidget);
+      expect(
+        tester
+            .widget<ElevatedButton>(
+              find.widgetWithText(ElevatedButton, 'Next: categories'),
+            )
+            .onPressed,
+        isNull,
+      );
+
+      await tester.enterText(instagram, 'instagram.com/soundgear');
+      await tester.pumpAndSettle();
+      expect(find.text("That link isn't on Instagram"), findsNothing);
+      expect(draft().portfolioLinks, ['https://instagram.com/soundgear']);
     });
 
     testWidgets('the location button fills where they are based', (

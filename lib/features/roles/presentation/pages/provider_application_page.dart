@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/provider_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/apply_wizard.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 /// Applying to be a Provider, in four steps (mobile#487): business,
@@ -99,14 +101,6 @@ class _BusinessStep extends ConsumerWidget {
       ),
     );
     final c = ref.read(providerApplicationProvider.notifier);
-    final linkProblem = switch (d.portfolioProblem) {
-      PortfolioLinkInvalid(:final link) =>
-        l10n.roleApplyPortfolioLinkInvalid(link),
-      PortfolioLinksTooMany() => l10n.roleApplyPortfolioTooMany(
-          maxPortfolioLinks,
-        ),
-      null => null,
-    };
     final yearsBad = d.experience.trim().isNotEmpty && d.years == null;
     return ApplyScreen(
       header: const _StepHeader(1),
@@ -207,15 +201,96 @@ class _BusinessStep extends ConsumerWidget {
         ),
         ApplyField(
           label: l10n.provApplyLinks,
-          help: linkProblem == null ? l10n.roleApplyPortfolioLinksHint : null,
-          child: TextFormField(
-            initialValue: d.portfolio,
-            keyboardType: TextInputType.url,
-            decoration: InputDecoration(errorText: linkProblem),
-            onChanged: (v) => c.edit((x) => x.copyWith(portfolio: v)),
+          help: l10n.provApplyLinksHelp,
+          child: Column(
+            children: [
+              for (final kind in WorkLinkKind.values)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _WorkLinkField(
+                    kind: kind,
+                    value: d.links[kind] ?? '',
+                    problem: d.linkProblems[kind],
+                    onChanged: (v) => c.edit(
+                      (x) => x.copyWith(links: {...x.links, kind: v}),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// One place a Provider shows their work: its icon and a field for the link
+/// (mobile#519).
+class _WorkLinkField extends StatelessWidget {
+  const _WorkLinkField({
+    required this.kind,
+    required this.value,
+    required this.problem,
+    required this.onChanged,
+  });
+
+  final WorkLinkKind kind;
+  final String value;
+  final WorkLinkProblem? problem;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final (name, hint, icon) = switch (kind) {
+      WorkLinkKind.facebook => (
+          l10n.provLinkFacebook,
+          l10n.provLinkFacebookHint,
+          FontAwesomeIcons.facebook,
+        ),
+      WorkLinkKind.instagram => (
+          l10n.provLinkInstagram,
+          l10n.provLinkInstagramHint,
+          FontAwesomeIcons.instagram,
+        ),
+      WorkLinkKind.tiktok => (
+          l10n.provLinkTiktok,
+          l10n.provLinkTiktokHint,
+          FontAwesomeIcons.tiktok,
+        ),
+      WorkLinkKind.youtube => (
+          l10n.provLinkYoutube,
+          l10n.provLinkYoutubeHint,
+          FontAwesomeIcons.youtube,
+        ),
+      WorkLinkKind.website => (
+          l10n.provLinkWebsite,
+          l10n.provLinkWebsiteHint,
+          FontAwesomeIcons.globe,
+        ),
+    };
+    return TextFormField(
+      key: Key('work-link-${kind.name}'),
+      initialValue: value,
+      keyboardType: TextInputType.url,
+      autocorrect: false,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: name,
+        hintText: hint,
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        prefixIcon: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: FaIcon(icon, size: 18, color: AppColors.textPrimary),
+        ),
+        prefixIconConstraints:
+            const BoxConstraints(minWidth: 48, minHeight: 48),
+        errorText: switch (problem) {
+          WorkLinkProblem.invalid => l10n.provLinkInvalid,
+          WorkLinkProblem.wrongSite => l10n.provLinkWrongSite(name),
+          null => null,
+        },
+      ),
     );
   }
 }
