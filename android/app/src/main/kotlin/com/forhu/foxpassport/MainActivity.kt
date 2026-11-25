@@ -1,4 +1,4 @@
-package com.foxpassport.app
+package com.forhu.foxpassport
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
