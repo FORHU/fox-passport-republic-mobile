@@ -45,6 +45,9 @@ android {
             val releaseSigning = signingConfigs.findByName("release")
             signingConfig = if (releaseSigning?.storeFile?.exists() == true) {
                 releaseSigning
+            } else if (System.getenv("REQUIRE_RELEASE_SIGNING") == "true") {
+                // Play rejects the debug key, so a release build says so here.
+                throw GradleException("The release signing key is missing")
             } else {
                 signingConfigs.getByName("debug")
             }
