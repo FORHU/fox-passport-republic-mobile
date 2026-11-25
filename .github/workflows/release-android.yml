@@ -1,0 +1,100 @@
+name: Release Android (internal testing)
+
+# Started by hand, from main only, and approved in the play-store environment.
+# Uploads a draft to Play internal testing; a person releases it in the Console.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-android
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: play-store
+    timeout-minutes: 45
+
+    steps:
+      # Actions are pinned to a commit: this job holds the signing key.
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Java
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.47.7' # same as flutter_ci.yml
+          cache: true
+
+      - name: Check the secrets are set
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          missing=0
+          for name in ENV_PROD KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_PASSWORD KEY_ALIAS PLAY_JSON; do
+            if [ -z "${!name}" ]; then echo "::error::$name is not set in the play-store environment"; missing=1; fi
+          done
+          exit "$missing"
+
+      - name: Install dependencies
+        run: |
+          cp .env.example .env.dev
+          cp .env.example .env.prod
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Write the configuration and signing key
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          umask 077
+          printf '%s\n' "$ENV_PROD" > .env.prod
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          {
+            printf 'storeFile=upload-keystore.jks\n'
+            printf 'storePassword=%s\n' "$KEYSTORE_PASSWORD"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+          } > android/key.properties
+
+      # Play needs a higher version code each time. The first manual upload was
+      # a low number, so runs start above it.
+      - name: Build the signed app bundle
+        env:
+          REQUIRE_RELEASE_SIGNING: 'true'
+        run: flutter build appbundle --release -t lib/main_prod.dart --build-number "$((100 + GITHUB_RUN_NUMBER))"
+
+      - name: Upload to internal testing as a draft
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.forhu.foxpassport
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: draft
+
+      - name: Remove the signing key
+        if: always()
+        run: rm -f android/app/upload-keystore.jks android/key.properties .env.prod
