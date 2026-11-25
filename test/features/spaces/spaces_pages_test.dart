@@ -12,6 +12,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/check_in_pag
 import 'package:flutter_template/features/spaces/presentation/pages/event_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/events_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/booking_decline_sheet.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -137,8 +138,15 @@ void main() {
 
       await tester.tap(find.text('Decline'));
       await tester.pumpAndSettle();
-      expect(find.text('Decline this request?'), findsOneWidget);
-      await tester.tap(find.widgetWithText(TextButton, 'Decline'));
+      expect(find.text("Why can't Sky Hall host this?"), findsOneWidget);
+      await tester.tap(find.text("Doesn't suit this event"));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(BookingDeclineSheet),
+          matching: find.text('Decline'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       verify(
@@ -158,7 +166,7 @@ void main() {
 
       await tester.tap(find.text('Decline'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.text('Keep it'));
       await tester.pumpAndSettle();
 
       verifyNever(() => api.patch(any(), any()));
