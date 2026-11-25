@@ -13677,6 +13677,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account is all set'**
   String get accountSetupDone;
+
+  /// No description provided for @bookingDeclineTitleVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Why can\'t {venue} host this?'**
+  String bookingDeclineTitleVenue(String venue);
+
+  /// No description provided for @bookingDeclineTitleItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Why can\'t you take this?'**
+  String get bookingDeclineTitleItem;
+
+  /// No description provided for @bookingDeclineReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get bookingDeclineReasonLabel;
+
+  /// No description provided for @bookingReasonAlreadyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Already booked that day'**
+  String get bookingReasonAlreadyBooked;
+
+  /// No description provided for @bookingReasonClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed that day'**
+  String get bookingReasonClosed;
+
+  /// No description provided for @bookingReasonClosedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Repairs, a holiday, a private use'**
+  String get bookingReasonClosedHint;
+
+  /// No description provided for @bookingReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available that day'**
+  String get bookingReasonUnavailable;
+
+  /// No description provided for @bookingReasonNotSuitable.
+  ///
+  /// In en, this message translates to:
+  /// **'Doesn\'t suit this event'**
+  String get bookingReasonNotSuitable;
+
+  /// No description provided for @bookingReasonNotSuitableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Size, hours, noise or setup'**
+  String get bookingReasonNotSuitableHint;
+
+  /// No description provided for @bookingReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get bookingReasonOther;
+
+  /// No description provided for @bookingDeclineBlockDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Also block {date} on my calendar'**
+  String bookingDeclineBlockDay(String date);
+
+  /// No description provided for @bookingDeclineKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get bookingDeclineKeep;
+
+  /// No description provided for @bookingDeclineBlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined, but the day wasn\'t blocked. Block it from your calendar.'**
+  String get bookingDeclineBlockFailed;
 }
 
 class _AppLocalizationsDelegate

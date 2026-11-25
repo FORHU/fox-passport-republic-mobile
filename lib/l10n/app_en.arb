@@ -2569,5 +2569,20 @@
   "accountSetupPassword": "Password",
   "accountSetupPasswordHelper": "At least 12 characters with upper and lower case letters, a number and a special character.",
   "accountSetupContinue": "Continue",
-  "accountSetupDone": "Your account is all set"
+  "accountSetupDone": "Your account is all set",
+  "bookingDeclineTitleVenue": "Why can't {venue} host this?",
+  "@bookingDeclineTitleVenue": {"placeholders":{"venue":{"type":"String"}}},
+  "bookingDeclineTitleItem": "Why can't you take this?",
+  "bookingDeclineReasonLabel": "Reason",
+  "bookingReasonAlreadyBooked": "Already booked that day",
+  "bookingReasonClosed": "Closed that day",
+  "bookingReasonClosedHint": "Repairs, a holiday, a private use",
+  "bookingReasonUnavailable": "Not available that day",
+  "bookingReasonNotSuitable": "Doesn't suit this event",
+  "bookingReasonNotSuitableHint": "Size, hours, noise or setup",
+  "bookingReasonOther": "Something else",
+  "bookingDeclineBlockDay": "Also block {date} on my calendar",
+  "@bookingDeclineBlockDay": {"placeholders":{"date":{"type":"String"}}},
+  "bookingDeclineKeep": "Keep it",
+  "bookingDeclineBlockFailed": "Declined, but the day wasn't blocked. Block it from your calendar."
 }

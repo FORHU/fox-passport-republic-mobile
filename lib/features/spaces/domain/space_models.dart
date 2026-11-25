@@ -39,6 +39,7 @@ class VenueRequest extends Equatable {
     this.imageUrl,
     this.bookingStatus,
     this.declinedBySupplier = false,
+    this.venueId,
   });
 
   /// Reads one entry of the response's `venues`; null when it has no id.
@@ -68,6 +69,9 @@ class VenueRequest extends Equatable {
       imageUrl: _firstImage(venue is Map ? venue['images'] : null),
       bookingStatus: booking is Map ? booking['status'] as String? : null,
       declinedBySupplier: row['rejectionReason'] == 'supplier_declined',
+      venueId: kind == RequestKind.venue && row['venueId'] is String
+          ? row['venueId'] as String
+          : null,
     );
   }
 
@@ -95,6 +99,10 @@ class VenueRequest extends Equatable {
   /// This Supplier left the event after taking it (not a turned-down request).
   final bool declinedBySupplier;
 
+  /// The venue asked for, so declining can block the day on its calendar
+  /// (mobile#511). Null for gear and services.
+  final String? venueId;
+
   bool get needsReply => status == RequestStatus.awaitingYou;
 
   /// A booked item can be declined until its booking is paid: while it is
@@ -118,6 +126,7 @@ class VenueRequest extends Equatable {
         imageUrl,
         bookingStatus,
         declinedBySupplier,
+        venueId,
       ];
 }
 
@@ -129,6 +138,38 @@ enum DeclineCause {
 
   /// Any other reason.
   other,
+}
+
+/// Why a venue (or a Provider) turns down a booking (mobile#511, canvas
+/// "Decline reasons"). The API takes only a [DeclineCause] for now.
+enum BookingDeclineReason {
+  alreadyBooked,
+
+  /// Closed that day (venue); not available that day (gear or a service).
+  closed,
+  notSuitable,
+  other;
+
+  /// What the API is sent when leaving a booked event.
+  DeclineCause get cause =>
+      this == alreadyBooked ? DeclineCause.busy : DeclineCause.other;
+
+  /// Whether the day is blocked unless the person says otherwise.
+  bool get blocksDayByDefault => this == alreadyBooked || this == closed;
+}
+
+/// What the person chose in the booking decline sheet. No note yet: the API
+/// can't store one, so nothing typed would reach the Event Foxer.
+class BookingDecline extends Equatable {
+  const BookingDecline({required this.reason, this.blockDay = false});
+
+  final BookingDeclineReason reason;
+
+  /// Also block the event's day on the venue's calendar.
+  final bool blockDay;
+
+  @override
+  List<Object?> get props => [reason, blockDay];
 }
 
 enum AttentionReason {

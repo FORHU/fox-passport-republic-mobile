@@ -7810,4 +7810,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSetupDone => 'Your account is all set';
+
+  @override
+  String bookingDeclineTitleVenue(String venue) {
+    return 'Why can\'t $venue host this?';
+  }
+
+  @override
+  String get bookingDeclineTitleItem => 'Why can\'t you take this?';
+
+  @override
+  String get bookingDeclineReasonLabel => 'Reason';
+
+  @override
+  String get bookingReasonAlreadyBooked => 'Already booked that day';
+
+  @override
+  String get bookingReasonClosed => 'Closed that day';
+
+  @override
+  String get bookingReasonClosedHint => 'Repairs, a holiday, a private use';
+
+  @override
+  String get bookingReasonUnavailable => 'Not available that day';
+
+  @override
+  String get bookingReasonNotSuitable => 'Doesn\'t suit this event';
+
+  @override
+  String get bookingReasonNotSuitableHint => 'Size, hours, noise or setup';
+
+  @override
+  String get bookingReasonOther => 'Something else';
+
+  @override
+  String bookingDeclineBlockDay(String date) {
+    return 'Also block $date on my calendar';
+  }
+
+  @override
+  String get bookingDeclineKeep => 'Keep it';
+
+  @override
+  String get bookingDeclineBlockFailed =>
+      'Declined, but the day wasn\'t blocked. Block it from your calendar.';
 }
