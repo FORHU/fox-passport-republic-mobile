@@ -7810,4 +7810,275 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSetupDone => 'Your account is all set';
+
+  @override
+  String bookingDeclineTitleVenue(String venue) {
+    return 'Why can\'t $venue host this?';
+  }
+
+  @override
+  String get bookingDeclineTitleItem => 'Why can\'t you take this?';
+
+  @override
+  String get bookingDeclineReasonLabel => 'Reason';
+
+  @override
+  String get bookingReasonAlreadyBooked => 'Already booked that day';
+
+  @override
+  String get bookingReasonClosed => 'Closed that day';
+
+  @override
+  String get bookingReasonClosedHint => 'Repairs, a holiday, a private use';
+
+  @override
+  String get bookingReasonUnavailable => 'Not available that day';
+
+  @override
+  String get bookingReasonNotSuitable => 'Doesn\'t suit this event';
+
+  @override
+  String get bookingReasonNotSuitableHint => 'Size, hours, noise or setup';
+
+  @override
+  String get bookingReasonOther => 'Something else';
+
+  @override
+  String bookingDeclineBlockDay(String date) {
+    return 'Also block $date on my calendar';
+  }
+
+  @override
+  String get bookingDeclineKeep => 'Keep it';
+
+  @override
+  String get bookingDeclineBlockFailed =>
+      'Declined, but the day wasn\'t blocked. Block it from your calendar.';
+
+  @override
+  String get bookingDeclineNoteLabel => 'Note (optional)';
+
+  @override
+  String get bookingDeclineNoteRequired => 'Tell them why';
+
+  @override
+  String get bookingDeclineNoteHint => 'The event host sees this';
+
+  @override
+  String get bookedDeclineAlreadyBooked => 'Declined: already booked that day';
+
+  @override
+  String get bookedDeclineClosedVenue => 'Declined: closed that day';
+
+  @override
+  String get bookedDeclineClosedItem => 'Declined: not available that day';
+
+  @override
+  String get bookedDeclineNotSuitable =>
+      'Declined: the event doesn\'t suit them';
+
+  @override
+  String get bookedDeclineOther => 'Declined: another reason';
+
+  @override
+  String bookedDeclineNote(String note) {
+    return '“$note”';
+  }
+
+  @override
+  String pkgAgreedOf(int accepted, int total) {
+    return '$accepted of $total Suppliers agreed';
+  }
+
+  @override
+  String pkgToSwapCount(int count) {
+    return '$count to replace';
+  }
+
+  @override
+  String pkgWaitingCount(int count) {
+    return '$count waiting';
+  }
+
+  @override
+  String get pkgLineNoSuppliers => 'No Suppliers added yet';
+
+  @override
+  String get pkgLineReady => 'Every Supplier agreed · ready to send for review';
+
+  @override
+  String get pkgLineInReview => 'Sent · the admin is checking it';
+
+  @override
+  String pkgLineLive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Suppliers agreed · live for guests',
+      one: '1 Supplier agreed · live for guests',
+      zero: 'Live for guests',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pkgLineRejected => 'Not approved · edit it and send it again';
+
+  @override
+  String get pkgSeeStatus => 'See status';
+
+  @override
+  String get pkgStatusTitle => 'Package status';
+
+  @override
+  String get pkgStatusNotFound => 'We could not load this package.';
+
+  @override
+  String get pkgStageBuilding => 'Building the team';
+
+  @override
+  String get pkgStageReady => 'Ready';
+
+  @override
+  String get pkgStageInReview => 'In review';
+
+  @override
+  String get pkgStageLive => 'Live';
+
+  @override
+  String get pkgStageRejected => 'Not approved';
+
+  @override
+  String get pkgStageArchived => 'Archived';
+
+  @override
+  String pkgHeadWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Waiting for $count Suppliers',
+      one: 'Waiting for 1 Supplier',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pkgHeadToSwap(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Suppliers to replace',
+      one: '1 Supplier to replace',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pkgHeadEmpty => 'Add your Suppliers';
+
+  @override
+  String get pkgBodyBuilding =>
+      'It can be sent for review once every required Supplier has accepted.';
+
+  @override
+  String get pkgHeadReady => 'Every Supplier agreed';
+
+  @override
+  String get pkgBodyReady =>
+      'Send it for review. The admin checks it, then it goes live for guests.';
+
+  @override
+  String get pkgHeadInReview => 'The admin is checking it';
+
+  @override
+  String get pkgBodyInReview =>
+      'It goes live for guests as soon as it is approved.';
+
+  @override
+  String get pkgHeadLive => 'Guests can book it';
+
+  @override
+  String get pkgBodyLive =>
+      'If a required Supplier leaves, it goes back to building so you can find someone else.';
+
+  @override
+  String get pkgHeadRejected => 'Edit it and send it again';
+
+  @override
+  String get pkgBodyRejected =>
+      'Open it in the builder to fix it, then send it for review again.';
+
+  @override
+  String get pkgHeadArchived => 'Not shown to guests';
+
+  @override
+  String get pkgNoLines =>
+      'No Suppliers yet. Add a venue, gear or a service in the builder.';
+
+  @override
+  String get pkgKindVenue => 'Venue';
+
+  @override
+  String get pkgKindGear => 'Gear';
+
+  @override
+  String get pkgKindService => 'Service';
+
+  @override
+  String get pkgOptionalNote => 'Optional, not needed to publish';
+
+  @override
+  String get pkgExpiredNote => 'Didn\'t answer in 3 days';
+
+  @override
+  String get pkgNextTitle => 'What happens next';
+
+  @override
+  String get pkgStepSuppliers => 'Every required Supplier accepts';
+
+  @override
+  String get pkgStepSend => 'You send it for review';
+
+  @override
+  String get pkgStepReview => 'The admin approves it';
+
+  @override
+  String get pkgStepLive => 'Live for guests';
+
+  @override
+  String pkgMessage(String name) {
+    return 'Message $name';
+  }
+
+  @override
+  String get pkgOpenBuilder => 'Open in builder';
+
+  @override
+  String get pkgSubmitFailed => 'Couldn\'t send it for review. Try again.';
+
+  @override
+  String pkgHomeWaiting(String package, String name) {
+    return '$package: waiting for $name';
+  }
+
+  @override
+  String pkgHomeSwap(String package, String name) {
+    return '$package: replace $name';
+  }
+
+  @override
+  String pkgHomeReady(String package) {
+    return '$package is ready to send for review';
+  }
+
+  @override
+  String pkgHomeMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more packages are waiting',
+      one: 'and 1 more package is waiting',
+    );
+    return '$_temp0';
+  }
 }

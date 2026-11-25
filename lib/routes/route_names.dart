@@ -254,6 +254,12 @@ class RouteNames {
       '/space/event/booked/${Uri.encodeComponent(eventId)}';
   static String spaceEventStudioEdit(String eventId) =>
       '$spaceEventStudio/$eventId';
+
+  /// Where one of the Event Foxer's packages stands (mobile#509): each
+  /// Supplier's answer and what comes next.
+  static String packageStatus(String eventId) =>
+      '/space/event/packages/${Uri.encodeComponent(eventId)}/status';
+  static const String packageStatusPattern = '/space/event/packages/:id/status';
   static const String spaceEventCheckIn = '/space/event/more/check-in';
   static const String spaceEventPartners = '/space/event/partners';
   static const String spaceEventMessages = '/space/event/more/messages';

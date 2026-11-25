@@ -9,6 +9,7 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/booking_decline_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_invites.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_top_actions.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -22,9 +23,50 @@ import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 import 'package:intl/intl.dart';
 
-/// Accepts or declines a request for one of the person's venues, asking first
-/// before a decline, and says how it went. Shared by the Requests list and the
-/// Overview.
+/// Asks why the person turns down [request] and whether to block the day
+/// (mobile#511); null when they keep it.
+Future<BookingDecline?> _askWhy(
+  BuildContext context,
+  VenueRequest request, {
+  required String confirmLabel,
+}) {
+  final l10n = context.l10n;
+  final locale = Localizations.localeOf(context).toString();
+  final start = request.startAt;
+  final day = start == null ? null : DateFormat.MMMEd(locale).format(start);
+  final isVenue = request.kind == RequestKind.venue;
+  return showBookingDeclineSheet(
+    context,
+    title: isVenue
+        ? l10n.bookingDeclineTitleVenue(request.venueName)
+        : l10n.bookingDeclineTitleItem,
+    subtitle: [request.eventName, if (day != null) day].join(' · '),
+    confirmLabel: confirmLabel,
+    isVenue: isVenue,
+    // Only a venue's calendar can be blocked, and only on a known day.
+    blockDate: isVenue && request.venueId != null ? day : null,
+  );
+}
+
+/// Blocks the event's day on the venue's calendar after a decline; false
+/// when it didn't go through (the decline still stands).
+Future<bool> _blockDay(WidgetRef ref, VenueRequest request) async {
+  final venueId = request.venueId;
+  final start = request.startAt;
+  if (venueId == null || start == null) return false;
+  try {
+    await ref
+        .read(spacesRepositoryProvider)
+        .blockDay(venueId, DateTime(start.year, start.month, start.day));
+    return true;
+  } on Object {
+    return false;
+  }
+}
+
+/// Accepts or declines a request for one of the person's venues, asking why
+/// before a decline (and whether to block the day), and says how it went.
+/// Shared by the Requests list and the Overview.
 Future<void> answerVenueRequest(
   BuildContext context,
   WidgetRef ref,
@@ -32,41 +74,35 @@ Future<void> answerVenueRequest(
   required bool accept,
 }) async {
   final l10n = context.l10n;
+  BookingDecline? decline;
   if (!accept) {
-    final sure = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: Text(l10n.requestDeclineTitle),
-        content: Text(l10n.requestDeclineBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.messageCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              l10n.requestDecline,
-              style: const TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
+    decline = await _askWhy(
+      context,
+      request,
+      confirmLabel: l10n.requestDecline,
     );
-    if (sure != true || !context.mounted) return;
+    if (decline == null || !context.mounted) return;
   }
   try {
-    await ref
-        .read(spacesRepositoryProvider)
-        .reviewVenueRequest(request.id, accept: accept, kind: request.kind);
+    await ref.read(spacesRepositoryProvider).reviewVenueRequest(
+          request.id,
+          accept: accept,
+          kind: request.kind,
+          decline: decline,
+        );
+    final blocked =
+        !(decline?.blockDay ?? false) || await _blockDay(ref, request);
     ref
       ..invalidate(venueRequestsProvider)
       ..invalidate(supplyRequestsProvider);
     if (context.mounted) {
       showTopToast(
         context,
-        accept ? l10n.requestAccepted : l10n.requestDeclined,
+        accept
+            ? l10n.requestAccepted
+            : blocked
+                ? l10n.requestDeclined
+                : l10n.bookingDeclineBlockFailed,
       );
     }
   } on Object {
@@ -74,49 +110,38 @@ Future<void> answerVenueRequest(
   }
 }
 
-/// Leaves an event that is already booked: asks first, then tells the event
-/// host and the citizen. Only offered while the booking is not paid; if it has
-/// been paid since, the API refuses and its reason is shown.
+/// Leaves an event that is already booked: asks why first (the reason picks
+/// the cause the API takes), then tells the event host and the citizen. Only
+/// offered while the booking is not paid; if it has been paid since, the API
+/// refuses and its reason is shown.
 Future<void> declineBookedRequest(
   BuildContext context,
   WidgetRef ref,
   VenueRequest request,
 ) async {
   final l10n = context.l10n;
-  final cause = await showDialog<DeclineCause>(
-    context: context,
-    builder: (_) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: Text(l10n.requestDeclineBookedTitle),
-      content: Text(l10n.requestDeclineBookedBody),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.messageCancel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(DeclineCause.busy),
-          child: Text(l10n.requestDeclineBusy),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(DeclineCause.other),
-          child: Text(
-            l10n.requestDeclineBooked,
-            style: const TextStyle(color: AppColors.error),
-          ),
-        ),
-      ],
-    ),
+  final decline = await _askWhy(
+    context,
+    request,
+    confirmLabel: l10n.requestDeclineBooked,
   );
-  if (cause == null || !context.mounted) return;
+  if (decline == null || !context.mounted) return;
   try {
-    await ref
-        .read(spacesRepositoryProvider)
-        .declineBookedItem(request.id, kind: request.kind, cause: cause);
+    await ref.read(spacesRepositoryProvider).declineBookedItem(
+          request.id,
+          kind: request.kind,
+          decline: decline,
+        );
+    final blocked = !decline.blockDay || await _blockDay(ref, request);
     ref
       ..invalidate(venueRequestsProvider)
       ..invalidate(supplyRequestsProvider);
-    if (context.mounted) showTopToast(context, l10n.requestDeclinedBooked);
+    if (context.mounted) {
+      showTopToast(
+        context,
+        blocked ? l10n.requestDeclinedBooked : l10n.bookingDeclineBlockFailed,
+      );
+    }
   } on Object catch (e) {
     if (!context.mounted) return;
     showTopToast(

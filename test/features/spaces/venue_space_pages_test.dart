@@ -17,6 +17,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_more_p
 import 'package:flutter_template/features/spaces/presentation/pages/venue_overview_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/booking_decline_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_home_widgets.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
@@ -996,6 +997,8 @@ void main() {
       String id, {
       RequestStatus status = RequestStatus.approved,
       String? bookingStatus = 'pending',
+      String? venueId,
+      DateTime? startAt,
     }) =>
         VenueRequest(
           id: id,
@@ -1003,6 +1006,14 @@ void main() {
           eventName: 'Ada Birthday',
           status: status,
           bookingStatus: bookingStatus,
+          venueId: venueId,
+          startAt: startAt,
+        );
+
+    // A button inside the decline sheet (mobile#511).
+    Finder inSheet(String text) => find.descendant(
+          of: find.byType(BookingDeclineSheet),
+          matching: find.text(text),
         );
 
     test('a request reads the booking status and who declined', () {
@@ -1071,23 +1082,31 @@ void main() {
 
       await tester.tap(find.text('Decline this booking'));
       await tester.pumpAndSettle();
-      expect(find.text('Decline this booking?'), findsOneWidget);
+      expect(find.text("Why can't Sky Hall host this?"), findsOneWidget);
+      verifyNever(
+        () => api.patch(ApiEndpoints.requestReview('r1'), any()),
+      );
+      // Nothing to send until a reason is picked.
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
       verifyNever(
         () => api.patch(ApiEndpoints.requestReview('r1'), any()),
       );
 
-      await tester.tap(
-        find.descendant(
-          of: find.byType(AlertDialog),
-          matching: find.text('Decline this booking'),
-        ),
-      );
+      await tester.tap(find.text("Doesn't suit this event"));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet('Decline this booking'));
       await tester.pumpAndSettle();
 
       verify(
         () => api.patch(
           ApiEndpoints.requestReview('r1'),
-          {'type': 'venue', 'action': 'decline', 'cause': 'other'},
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'other',
+            'reason': 'not_suitable',
+          },
         ),
       ).called(1);
       expect(
@@ -1107,15 +1126,171 @@ void main() {
 
       await tester.tap(find.text('Decline this booking'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text("I'm busy then"));
+      await tester.tap(find.text('Already booked that day'));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet('Decline this booking'));
       await tester.pumpAndSettle();
 
       verify(
         () => api.patch(
           ApiEndpoints.requestReview('r1'),
-          {'type': 'venue', 'action': 'decline', 'cause': 'busy'},
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'busy',
+            'reason': 'already_booked',
+          },
         ),
       ).called(1);
+    });
+
+    testWidgets('Something else needs a note, which is sent', (tester) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Something else'));
+      await tester.pumpAndSettle();
+      expect(find.text('Tell them why'), findsOneWidget);
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+      verifyNever(() => api.patch(ApiEndpoints.requestReview('r1'), any()));
+
+      await tester.enterText(
+        find.byKey(const Key('booking-decline-note')),
+        '  Private party that night ',
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Tell them why'), findsNothing);
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.patch(
+          ApiEndpoints.requestReview('r1'),
+          {
+            'type': 'venue',
+            'action': 'decline',
+            'cause': 'other',
+            'reason': 'other',
+            'note': 'Private party that night',
+          },
+        ),
+      ).called(1);
+    });
+
+    testWidgets('Already booked blocks the day on the calendar too', (
+      tester,
+    ) async {
+      when(() => api.post(any(), any())).thenAnswer((_) async => {});
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [
+          booked('r1', venueId: 'v1', startAt: DateTime(2099, 12, 25, 18)),
+        ],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Already booked that day'));
+      await tester.pumpAndSettle();
+      // Ticked for Already booked.
+      final box = tester.widget<CheckboxListTile>(
+        find.byKey(const Key('booking-decline-block-day')),
+      );
+      expect(box.value, isTrue);
+      expect(
+        find.text('Also block Fri, Dec 25 on my calendar'),
+        findsOneWidget,
+      );
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => api.post(
+          ApiEndpoints.venueBlockedDates('v1'),
+          {'date': '2099-12-25'},
+        ),
+      ).called(1);
+      expect(
+        find.text('You declined. The host and the citizen were told.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('unticking it leaves the calendar alone', (tester) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [
+          booked('r1', venueId: 'v1', startAt: DateTime(2099, 12, 25, 18)),
+        ],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Closed that day'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('booking-decline-block-day')));
+      await tester.pumpAndSettle();
+      // Picking another reason no longer ticks it again.
+      await tester.tap(find.text('Already booked that day'));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => api.post(any(), any()));
+    });
+
+    testWidgets('a block that fails says so; the decline stands', (
+      tester,
+    ) async {
+      when(() => api.post(any(), any())).thenThrow(
+        const ServerException('Calendar unavailable'),
+      );
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [
+          booked('r1', venueId: 'v1', startAt: DateTime(2099, 12, 25, 18)),
+        ],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Already booked that day'));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      verify(() => api.patch(ApiEndpoints.requestReview('r1'), any()))
+          .called(1);
+      expect(
+        find.text(
+          "Declined, but the day wasn't blocked. Block it from your calendar.",
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('without a known venue and day there is nothing to block', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const VenueRequestsPage(),
+        requests: [booked('r1')],
+      );
+
+      await tester.tap(find.text('Decline this booking'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('booking-decline-block-day')), findsNothing);
     });
 
     testWidgets('backing out of the question declines nothing', (tester) async {
@@ -1127,7 +1302,7 @@ void main() {
 
       await tester.tap(find.text('Decline this booking'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.text('Keep it'));
       await tester.pumpAndSettle();
 
       verifyNever(() => api.patch(any(), any()));
@@ -1147,12 +1322,9 @@ void main() {
 
       await tester.tap(find.text('Decline this booking'));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byType(AlertDialog),
-          matching: find.text('Decline this booking'),
-        ),
-      );
+      await tester.tap(find.text("Doesn't suit this event"));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet('Decline this booking'));
       await tester.pumpAndSettle();
 
       expect(

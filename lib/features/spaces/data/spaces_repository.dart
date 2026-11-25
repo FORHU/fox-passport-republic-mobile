@@ -65,10 +65,13 @@ class SpacesRepository {
     String id, {
     required bool accept,
     RequestKind kind = RequestKind.venue,
+    BookingDecline? decline,
   }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
       'type': kind.name,
       'action': accept ? 'confirm' : 'reject',
+      // Why, for the Event Foxer (api#476); only on a decline.
+      if (!accept && decline != null) ...decline.body,
     });
   }
 
@@ -104,11 +107,14 @@ class SpacesRepository {
     String id, {
     required RequestKind kind,
     DeclineCause cause = DeclineCause.other,
+    BookingDecline? decline,
   }) async {
     await _api.patch(ApiEndpoints.requestReview(id), {
       'type': kind.name,
       'action': 'decline',
-      'cause': cause.name,
+      'cause': (decline?.reason.cause ?? cause).name,
+      // Why, for the Event Foxer (api#476).
+      if (decline != null) ...decline.body,
     });
   }
 
@@ -683,6 +689,20 @@ class SpacesRepository {
     return detail;
   }
 
+  /// One of the person's events with its package's standing (mobile#509),
+  /// read fresh: the list endpoint is cached for a short time.
+  Future<SpaceListing> eventStanding(String id) async {
+    final body = await _api.get(ApiEndpoints.eventById(id));
+    final raw = body is Map
+        ? (body['template'] is Map ? body['template'] : body['data'] ?? body)
+        : null;
+    final listing = SpaceListing.tryParse(raw, cityKey: 'targetCity');
+    if (listing == null || listing.package == null) {
+      throw const FormatException('Event response is bad');
+    }
+    return listing;
+  }
+
   /// Saves a new event as a draft and returns its id.
   Future<String> createEvent(EventDraft draft) async {
     final body = await _api.post(
@@ -966,6 +986,14 @@ final replacementsProvider = FutureProvider.autoDispose
 final FutureProvider<List<SpaceListing>> myEventsProvider =
     FutureProvider.autoDispose<List<SpaceListing>>(
   (ref) => ref.watch(spacesRepositoryProvider).myEvents(),
+);
+
+/// One event and where its package stands, by id (mobile#509).
+// The family type is long and adds nothing here, so it is left inferred.
+// ignore: specify_nonobvious_property_types
+final packageStandingProvider =
+    FutureProvider.autoDispose.family<SpaceListing, String>(
+  (ref, id) => ref.watch(spacesRepositoryProvider).eventStanding(id),
 );
 
 final FutureProvider<PayoutSummary> payoutsProvider =
