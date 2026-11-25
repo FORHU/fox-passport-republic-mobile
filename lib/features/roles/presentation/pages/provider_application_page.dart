@@ -267,32 +267,145 @@ class _CategoriesStep extends ConsumerWidget {
                 actionLabel: l10n.retry,
                 onAction: () => ref.invalidate(providerSpecialtiesProvider),
               ),
-              data: (list) => LayoutBuilder(
-                builder: (context, box) {
-                  final width = (box.maxWidth - 8) / 2;
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final s in list)
-                        SizedBox(
-                          width: width,
-                          child: ApplyCategoryCard(
-                            name: s.name,
-                            picked: d.specializations.contains(s.slug),
-                            isMain: main == s.slug,
-                            onTap: () => c.toggle(s.slug),
-                            onMakeMain: () => c.makeMain(s.slug),
-                          ),
+              data: (list) {
+                Widget cards(List<ProviderSpecialty> items) => LayoutBuilder(
+                      builder: (context, box) {
+                        final width = (box.maxWidth - 8) / 2;
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final s in items)
+                              SizedBox(
+                                width: width,
+                                child: ApplyCategoryCard(
+                                  name: s.name,
+                                  picked: d.specializations.contains(s.slug),
+                                  isMain: main == s.slug,
+                                  onTap: () => c.toggle(s.slug),
+                                  onMakeMain: () => c.makeMain(s.slug),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    );
+                final groups = groupSpecialties(list);
+                // An API from before main categories (api#503): one list.
+                if (groups.every((g) => g.$1 == null)) return cards(list);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final (group, items) in groups)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 22),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _GroupHeading(
+                              group: group,
+                              total: items.length,
+                              picked: items
+                                  .where(
+                                    (s) => d.specializations.contains(s.slug),
+                                  )
+                                  .length,
+                            ),
+                            const SizedBox(height: 10),
+                            cards(items),
+                          ],
                         ),
-                    ],
-                  );
-                },
-              ),
+                      ),
+                  ],
+                );
+              },
             ),
         const SizedBox(height: 18),
         const SuggestSpecialty(),
       ],
+    );
+  }
+}
+
+/// A main category's heading (api#503): an icon, its name, and how many of
+/// its subcategories are picked. Not tappable: only the subcategories under it
+/// are picked, which is what tells the two apart.
+class _GroupHeading extends StatelessWidget {
+  const _GroupHeading({
+    required this.group,
+    required this.total,
+    required this.picked,
+  });
+
+  /// Null for the specialties that have no main category.
+  final ProviderSpecialtyGroup? group;
+  final int total;
+  final int picked;
+
+  static IconData _icon(String? name) => switch (name) {
+        'speaker' => Icons.speaker_outlined,
+        'photo_camera' => Icons.photo_camera_outlined,
+        'music_note' => Icons.music_note_outlined,
+        'restaurant' => Icons.restaurant_outlined,
+        'celebration' => Icons.celebration_outlined,
+        'chair' => Icons.chair_outlined,
+        'support_agent' => Icons.support_agent_outlined,
+        'face' => Icons.face_outlined,
+        'directions_car' => Icons.directions_car_outlined,
+        _ => Icons.category_outlined,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final name = group?.name ?? l10n.provApplyGroupOther;
+    return Semantics(
+      header: true,
+      label: l10n.provApplyGroupSemantics(name, picked),
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.border)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceRaised,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _icon(group?.icon),
+                size: 20,
+                color: AppColors.accent,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  applyEyebrow(l10n.provApplyGroupEyebrow),
+                  const SizedBox(height: 2),
+                  Text(name, style: AppTypography.display(size: 17)),
+                ],
+              ),
+            ),
+            Text(
+              picked > 0
+                  ? l10n.provApplyGroupPicked(picked)
+                  : l10n.provApplyGroupCount(total),
+              style: AppTypography.body(
+                size: 12,
+                color: picked > 0 ? AppColors.accent : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
