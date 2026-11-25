@@ -73,17 +73,23 @@ class AppConfig {
   const AppConfig.prod()
       : environment = Environment.prod,
         appName = 'Fox Passport',
-        baseUrl = 'http://localhost:6002/api/v1',
+        baseUrl = 'https://dev.foxpassport.com/api/v1',
         enableLogging = false,
         useMock = false,
-        googleServerClientId = '',
+        googleServerClientId =
+            '818004697802-ol9gbqln2skakncn1t0ji5mjo9bs8a6s.'
+            'apps.googleusercontent.com',
         googleClientId = '',
         facebookNativeEnabled = false,
         socialRedirectOrigin = 'foxpassport://app',
-        webAppUrl = '',
-        mapboxToken = '',
+        webAppUrl = 'https://dev.foxpassport.com',
+        mapboxToken =
+            'pk.eyJ1IjoianVuZ2t3YW5zaGluIiwiYSI6ImNtb3RrbmhrZjA0eWUyc'
+            '3MzYnJ0aDdlaWIifQ.PkygYuCy9efMS-jANxgRDw',
         assetHostOverride = '',
-        stripePublishableKey = '';
+        stripePublishableKey =
+            'pk_test_51TQkfCANSxp9smLear8QSQ7cVUKEbvkIewgIAVfO5sum'
+            'VGVSmpVdpUSuXJ638qVuMie7DmKlKZ4tsJ7yLZ4fI26y007wvzwq7f';
 
   final Environment environment;
   final String appName;
