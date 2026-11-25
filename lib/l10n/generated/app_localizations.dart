@@ -13809,6 +13809,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'“{note}”'**
   String bookedDeclineNote(String note);
+
+  /// No description provided for @pkgAgreedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{accepted} of {total} Suppliers agreed'**
+  String pkgAgreedOf(int accepted, int total);
+
+  /// No description provided for @pkgToSwapCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} to replace'**
+  String pkgToSwapCount(int count);
+
+  /// No description provided for @pkgWaitingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting'**
+  String pkgWaitingCount(int count);
+
+  /// No description provided for @pkgLineNoSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'No Suppliers added yet'**
+  String get pkgLineNoSuppliers;
+
+  /// No description provided for @pkgLineReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Supplier agreed · ready to send for review'**
+  String get pkgLineReady;
+
+  /// No description provided for @pkgLineInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent · the admin is checking it'**
+  String get pkgLineInReview;
+
+  /// No description provided for @pkgLineLive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Live for guests} =1{1 Supplier agreed · live for guests} other{{count} Suppliers agreed · live for guests}}'**
+  String pkgLineLive(int count);
+
+  /// No description provided for @pkgLineRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved · edit it and send it again'**
+  String get pkgLineRejected;
+
+  /// No description provided for @pkgSeeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'See status'**
+  String get pkgSeeStatus;
+
+  /// No description provided for @pkgStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Package status'**
+  String get pkgStatusTitle;
+
+  /// No description provided for @pkgStatusNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load this package.'**
+  String get pkgStatusNotFound;
+
+  /// No description provided for @pkgStageBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building the team'**
+  String get pkgStageBuilding;
+
+  /// No description provided for @pkgStageReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get pkgStageReady;
+
+  /// No description provided for @pkgStageInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get pkgStageInReview;
+
+  /// No description provided for @pkgStageLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get pkgStageLive;
+
+  /// No description provided for @pkgStageRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved'**
+  String get pkgStageRejected;
+
+  /// No description provided for @pkgStageArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get pkgStageArchived;
+
+  /// No description provided for @pkgHeadWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Waiting for 1 Supplier} other{Waiting for {count} Suppliers}}'**
+  String pkgHeadWaiting(int count);
+
+  /// No description provided for @pkgHeadToSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Supplier to replace} other{{count} Suppliers to replace}}'**
+  String pkgHeadToSwap(int count);
+
+  /// No description provided for @pkgHeadEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your Suppliers'**
+  String get pkgHeadEmpty;
+
+  /// No description provided for @pkgBodyBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'It can be sent for review once every required Supplier has accepted.'**
+  String get pkgBodyBuilding;
+
+  /// No description provided for @pkgHeadReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Supplier agreed'**
+  String get pkgHeadReady;
+
+  /// No description provided for @pkgBodyReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Send it for review. The admin checks it, then it goes live for guests.'**
+  String get pkgBodyReady;
+
+  /// No description provided for @pkgHeadInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'The admin is checking it'**
+  String get pkgHeadInReview;
+
+  /// No description provided for @pkgBodyInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'It goes live for guests as soon as it is approved.'**
+  String get pkgBodyInReview;
+
+  /// No description provided for @pkgHeadLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests can book it'**
+  String get pkgHeadLive;
+
+  /// No description provided for @pkgBodyLive.
+  ///
+  /// In en, this message translates to:
+  /// **'If a required Supplier leaves, it goes back to building so you can find someone else.'**
+  String get pkgBodyLive;
+
+  /// No description provided for @pkgHeadRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit it and send it again'**
+  String get pkgHeadRejected;
+
+  /// No description provided for @pkgBodyRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it in the builder to fix it, then send it for review again.'**
+  String get pkgBodyRejected;
+
+  /// No description provided for @pkgHeadArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Not shown to guests'**
+  String get pkgHeadArchived;
+
+  /// No description provided for @pkgNoLines.
+  ///
+  /// In en, this message translates to:
+  /// **'No Suppliers yet. Add a venue, gear or a service in the builder.'**
+  String get pkgNoLines;
+
+  /// No description provided for @pkgKindVenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue'**
+  String get pkgKindVenue;
+
+  /// No description provided for @pkgKindGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Gear'**
+  String get pkgKindGear;
+
+  /// No description provided for @pkgKindService.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get pkgKindService;
+
+  /// No description provided for @pkgOptionalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional, not needed to publish'**
+  String get pkgOptionalNote;
+
+  /// No description provided for @pkgExpiredNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t answer in 3 days'**
+  String get pkgExpiredNote;
+
+  /// No description provided for @pkgNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What happens next'**
+  String get pkgNextTitle;
+
+  /// No description provided for @pkgStepSuppliers.
+  ///
+  /// In en, this message translates to:
+  /// **'Every required Supplier accepts'**
+  String get pkgStepSuppliers;
+
+  /// No description provided for @pkgStepSend.
+  ///
+  /// In en, this message translates to:
+  /// **'You send it for review'**
+  String get pkgStepSend;
+
+  /// No description provided for @pkgStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'The admin approves it'**
+  String get pkgStepReview;
+
+  /// No description provided for @pkgStepLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live for guests'**
+  String get pkgStepLive;
+
+  /// No description provided for @pkgMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message {name}'**
+  String pkgMessage(String name);
+
+  /// No description provided for @pkgOpenBuilder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in builder'**
+  String get pkgOpenBuilder;
+
+  /// No description provided for @pkgSubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send it for review. Try again.'**
+  String get pkgSubmitFailed;
+
+  /// No description provided for @pkgHomeWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{package}: waiting for {name}'**
+  String pkgHomeWaiting(String package, String name);
+
+  /// No description provided for @pkgHomeSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'{package}: replace {name}'**
+  String pkgHomeSwap(String package, String name);
+
+  /// No description provided for @pkgHomeReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{package} is ready to send for review'**
+  String pkgHomeReady(String package);
+
+  /// No description provided for @pkgHomeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{and 1 more package is waiting} other{and {count} more packages are waiting}}'**
+  String pkgHomeMore(int count);
 }
 
 class _AppLocalizationsDelegate

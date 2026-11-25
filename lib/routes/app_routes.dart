@@ -87,6 +87,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/open_slots_p
 import 'package:flutter_template/features/spaces/presentation/pages/organizer_invitations_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/organizer_more_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/organizer_overview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/package_status_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/partners_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/promotions_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/provider_listings_page.dart';
@@ -445,6 +446,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '${RouteNames.spaceEventStudio}/:eventId',
         builder: (context, state) =>
             EventStudioPage(eventId: state.pathParameters['eventId']),
+      ),
+      // Where a package stands (mobile#509). Messaging is passed in, so the
+      // spaces feature does not import messages.
+      GoRoute(
+        path: RouteNames.packageStatusPattern,
+        builder: (context, state) => PackageStatusPage(
+          eventId: state.pathParameters['id']!,
+          onMessage: (context, userId) async {
+            final id = await ref
+                .read(messagesRepositoryProvider)
+                .startWithUser(userId);
+            if (context.mounted) await context.push<void>(RouteNames.chat(id));
+          },
+        ),
       ),
       // A chat is full screen, outside the shell, so the bottom navigation is
       // not drawn over the composer.

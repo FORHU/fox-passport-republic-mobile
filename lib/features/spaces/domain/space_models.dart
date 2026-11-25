@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/spaces/domain/package_standing.dart';
 
 /// How a request for your venue stands, as the API's `TransactionStatus`.
 enum RequestStatus {
@@ -483,6 +484,7 @@ class SpaceListing extends Equatable {
     required this.status,
     this.city,
     this.imageUrl,
+    this.package,
   });
 
   /// Reads one row of a venues or event-templates list; null when it has no
@@ -501,6 +503,12 @@ class SpaceListing extends Equatable {
       status: text('status') ?? '',
       city: text(cityKey),
       imageUrl: _firstImage(row['images']),
+      // Only an event template has package lines.
+      package: row.containsKey('templateVenues') ||
+              row.containsKey('templateAssets') ||
+              row.containsKey('templateServices')
+          ? PackageStanding.fromTemplate(row)
+          : null,
     );
   }
 
@@ -511,6 +519,10 @@ class SpaceListing extends Equatable {
   final String status;
   final String? city;
   final String? imageUrl;
+
+  /// An event's package: where it stands and its Suppliers' answers
+  /// (mobile#509). Null for a venue.
+  final PackageStanding? package;
 
   /// Which filter group the status belongs to: `live`, `pending`, `draft`,
   /// `rejected` or `archived`. Anything unknown counts as a draft.
@@ -532,7 +544,7 @@ class SpaceListing extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, status, city, imageUrl];
+  List<Object?> get props => [id, name, status, city, imageUrl, package];
 }
 
 /// What checking a guest in came back with.
