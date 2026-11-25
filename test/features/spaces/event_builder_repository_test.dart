@@ -43,6 +43,7 @@ void main() {
     when(() => api.post(any())).thenAnswer((_) async => {});
     when(() => api.put(any(), any())).thenAnswer((_) async => {});
     when(() => api.delete(any())).thenAnswer((_) async => {});
+    when(() => api.patch(any(), any())).thenAnswer((_) async => {});
   });
 
   /// What the API says the event already holds.
@@ -228,29 +229,45 @@ void main() {
       ]);
     });
 
-    test('a changed price is sent again, and an unchanged one is not',
-        () async {
-      holds(assets: ['a1'], services: ['s1']);
+    test(
+        'making an item optional updates it in place, keeping its answer '
+        '(api#459)', () async {
+      holds(venues: ['v1'], assets: ['a1'], services: ['s1']);
 
       await repo.syncEventPackage(
         't1',
-        [_sound.copyWith(agreedPrice: 4000), _dj],
-        before: [_sound, _dj],
+        [
+          _venue.copyWith(isOptional: true),
+          _sound.copyWith(isOptional: true),
+          _dj,
+        ],
+        before: [_venue, _sound, _dj],
       );
 
-      verifyInOrder([
-        () => api.delete('/event-templates/t1/assets/a1'),
-        () => api.post(
-              '/event-templates/t1/assets',
-              {
-                'assetId': 'a1',
-                'quantity': 1,
-                'agreedPrice': 4000.0,
-                'isOptional': false,
-              },
-            ),
-      ]);
-      verifyNever(() => api.delete('/event-templates/t1/services/s1'));
+      verify(
+        () => api.patch('/event-templates/t1/venues/v1', {'isOptional': true}),
+      ).called(1);
+      verify(
+        () => api.patch('/event-templates/t1/assets/a1', {'isOptional': true}),
+      ).called(1);
+      verifyNever(() => api.patch('/event-templates/t1/services/s1', any()));
+      verifyNever(() => api.delete(any()));
+      verifyNever(() => api.post(any(), any()));
+    });
+
+    test("a changed price sends nothing: the price is the listing's own",
+        () async {
+      holds(assets: ['a1']);
+
+      await repo.syncEventPackage(
+        't1',
+        [_sound.copyWith(agreedPrice: 4000)],
+        before: [_sound],
+      );
+
+      verifyNever(() => api.delete(any()));
+      verifyNever(() => api.post(any(), any()));
+      verifyNever(() => api.patch(any(), any()));
     });
 
     test('says which item the API refused, and why', () async {

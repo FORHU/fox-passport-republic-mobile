@@ -5,6 +5,7 @@ import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 
@@ -20,12 +21,6 @@ enum AddResult {
 
   /// There is a venue already; only one is allowed.
   alreadyHasVenue,
-
-  /// The host's affiliation with that venue is still waiting for an answer.
-  venuePending,
-
-  /// The host has no affiliation with that venue; they must apply first.
-  venueNotApplied,
 }
 
 /// What came of saving.
@@ -71,6 +66,7 @@ class EventStudioState {
     this.locateProblem,
     this.ownedVenueIds = const {},
     this.affiliations = const {},
+    this.invites = const {},
   });
 
   final EventDraft draft;
@@ -114,11 +110,30 @@ class EventStudioState {
   /// The host's affiliations with other people's venues.
   final Map<String, VenueAccess> affiliations;
 
+  /// The Provider's answer to each invited package line, by item id
+  /// (api#447). Only lines saved as they are keep one.
+  final Map<String, LineInvite> invites;
+
   bool get isNew => eventId == null;
 
   /// Only a draft (or an event not saved yet) can be sent for review.
   bool get canSubmit =>
-      draft.readyToSubmit && (eventId == null || status == 'draft');
+      draft.readyToSubmit &&
+      (eventId == null || status == 'draft') &&
+      suppliersNotReady.isEmpty;
+
+  /// Required items whose Supplier is known not to have accepted: waiting,
+  /// declined or expired. A package goes for review only once every required
+  /// Supplier accepted (api#461). Items not saved yet aren't counted: saving
+  /// adds the host's own listings and partners as accepted, and the API
+  /// refuses the submit, naming who, if anyone is still waiting.
+  List<PackageItem> get suppliersNotReady => [
+        for (final i in draft.items)
+          if (!i.isOptional)
+            if (invites[i.id] case final answer?
+                when answer.status != InviteStatus.accepted)
+              i,
+      ];
 
   /// Whether the host may put this venue in the event.
   VenueAccess accessFor(String venueId) {
@@ -152,6 +167,7 @@ class EventStudioState {
     bool clearLocateProblem = false,
     Set<String>? ownedVenueIds,
     Map<String, VenueAccess>? affiliations,
+    Map<String, LineInvite>? invites,
   }) =>
       EventStudioState(
         draft: draft ?? this.draft,
@@ -177,6 +193,7 @@ class EventStudioState {
             clearLocateProblem ? null : locateProblem ?? this.locateProblem,
         ownedVenueIds: ownedVenueIds ?? this.ownedVenueIds,
         affiliations: affiliations ?? this.affiliations,
+        invites: invites ?? this.invites,
       );
 }
 
@@ -209,6 +226,7 @@ class EventStudioController extends Notifier<EventStudioState> {
       state = state.copyWith(
         draft: detail.draft,
         baseline: detail.draft.items,
+        invites: detail.invites,
         eventId: detail.id,
         status: detail.status,
         loading: false,
@@ -434,17 +452,15 @@ class EventStudioController extends Notifier<EventStudioState> {
   // -- Package -------------------------------------------------------------
 
   /// Puts something in the package. As on the web, an item already there is
-  /// not added twice, only one venue is allowed, and a venue needs the host
-  /// to run it or hold an approved affiliation.
+  /// not added twice and only one venue is allowed. Any venue can be added,
+  /// as any Provider can: saving asks its Mayor to join, and a partner (an
+  /// approved affiliation) joins at once (api#459).
   AddResult addItem(PackageItem item) {
     final d = state.draft;
     if (d.items.any((i) => i.id == item.id)) return AddResult.duplicate;
 
     var toAdd = item;
     if (item.isVenue) {
-      final access = state.accessFor(item.id);
-      if (access == VenueAccess.pending) return AddResult.venuePending;
-      if (access == VenueAccess.none) return AddResult.venueNotApplied;
       if (d.venue != null) return AddResult.alreadyHasVenue;
       toAdd = PackageItem(
         id: item.id,
@@ -521,6 +537,20 @@ class EventStudioController extends Notifier<EventStudioState> {
 
   // -- Saving --------------------------------------------------------------
 
+  /// Reads each package line's answer again after a save: new items have
+  /// just asked their Supplier (Waiting), or joined at once when they are the
+  /// host's own or a partner's (Accepted) (api#459). If it can't be read, the
+  /// answers shown stay as they were; the save itself went through.
+  Future<void> _reloadInvites(String id) async {
+    try {
+      final detail = await _repo.eventDetail(id);
+      if (!ref.mounted) return;
+      state = state.copyWith(invites: detail.invites);
+    } on Object {
+      // Shown again the next time the event is opened.
+    }
+  }
+
   /// Saves the event, and with [submit] sends it for review. It is created
   /// once and updated after, so a retry never makes a second event. Nothing is
   /// submitted if the API refused any package item, so an event never goes for
@@ -565,6 +595,8 @@ class EventStudioController extends Notifier<EventStudioState> {
         ],
         problems: problems,
       );
+      await _reloadInvites(id);
+      if (!ref.mounted) return SaveOutcome.failed;
 
       if (problems.isNotEmpty) {
         state = state.copyWith(saving: false);

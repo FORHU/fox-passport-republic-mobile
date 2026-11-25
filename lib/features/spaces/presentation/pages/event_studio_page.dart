@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +8,10 @@ import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/event_studio_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/open_packages.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/package_invites.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/package_picker_sheet.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
@@ -579,9 +584,48 @@ class _PackageStep extends ConsumerWidget {
           ),
         );
 
+    final savedId = state.eventId;
+    // Swap: take the declined or expired Supplier out and pick another from
+    // the same list; saving asks the new one (api#462).
+    void swap(PackageItem item) {
+      studio.removeItem(item.id);
+      unawaited(
+        showPackagePicker(context, studioId: id, start: bucketOf(item)),
+      );
+    }
+
+    final answers = [
+      for (final i in d.items)
+        if (state.invites[i.id] case final answer?) answer,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (answers.isNotEmpty) ...[
+          _AnswerCounts(answers),
+          const SizedBox(height: 12),
+        ],
+        // Providers and venues apply to a saved package from Open packages
+        // (api#460); the Event Foxer answers them here.
+        if (savedId != null) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => PackageApplicationsPage(
+                    templateId: savedId,
+                    packageName: d.title,
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.inbox_outlined, size: 18),
+              label: Text(l10n.openApplications),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
         StudioCard(
           title: l10n.esVenueSlot,
           child: venue == null
@@ -592,9 +636,12 @@ class _PackageStep extends ConsumerWidget {
                 )
               : _ItemTile(
                   item: venue,
+                  invite: state.invites[venue.id],
                   price: fmt(venue.price),
                   listed: venue.agreedPrice == null ? null : fmt(venue.cost),
                   onTap: () => _editItem(context, id, venue.id),
+                  onSwap: () => swap(venue),
+                  onRemove: () => studio.removeItem(venue.id),
                 ),
         ),
         StudioCard(
@@ -606,9 +653,12 @@ class _PackageStep extends ConsumerWidget {
               for (final item in others) ...[
                 _ItemTile(
                   item: item,
+                  invite: state.invites[item.id],
                   price: fmt(item.price),
                   listed: item.agreedPrice == null ? null : fmt(item.cost),
                   onTap: () => _editItem(context, id, item.id),
+                  onSwap: () => swap(item),
+                  onRemove: () => studio.removeItem(item.id),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -712,18 +762,35 @@ class _ItemTile extends StatelessWidget {
     required this.price,
     required this.listed,
     required this.onTap,
+    this.invite,
+    this.onSwap,
+    this.onRemove,
   });
 
   final PackageItem item;
+
+  /// The Provider's answer when this line is an invite (api#447).
+  final LineInvite? invite;
   final String price;
 
   /// The listed price, shown when a different one was agreed.
   final String? listed;
   final VoidCallback onTap;
 
+  /// For a declined or expired Supplier: pick another, or take it out
+  /// (api#462; there is no offering a new price, #264 C6).
+  final VoidCallback? onSwap;
+  final VoidCallback? onRemove;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final answer = invite;
+    final declined = answer?.needsAction ?? false;
+    final why = answer?.status == InviteStatus.declined
+        ? _declineText(l10n, answer!)
+        : null;
+    final daysLeft = answer?.daysLeft(DateTime.now());
     return Material(
       color: AppColors.canvas,
       borderRadius: AppRadius.brCard,
@@ -734,42 +801,230 @@ class _ItemTile extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: AppRadius.brCard,
-            border: Border.all(color: AppColors.border),
+            // A declined Supplier is the one to act on (canvas "Package
+            // builder").
+            border: Border.all(
+              color: declined ? AppColors.error : AppColors.border,
+            ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PhotoBox(url: item.imageUrl, width: 48, height: 48, radius: 12),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.body(),
-                    ),
-                    if (item.isOptional)
-                      Text(l10n.esOptional, style: AppTypography.label()),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
                 children: [
-                  Text(price, style: AppTypography.body(size: 13)),
-                  if (listed != null)
-                    Text(
-                      l10n.esListed(listed!),
-                      style: AppTypography.label(),
+                  PhotoBox(
+                    url: item.imageUrl,
+                    width: 48,
+                    height: 48,
+                    radius: 12,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.body(),
+                        ),
+                        Text(
+                          item.isOptional ? l10n.esOptional : l10n.esRequired,
+                          style: AppTypography.label(),
+                        ),
+                        if (answer != null) _InviteChip(answer.status),
+                        if (daysLeft != null)
+                          Text(
+                            daysLeft == 0
+                                ? l10n.esExpiresToday
+                                : l10n.esExpiresIn(daysLeft),
+                            style: AppTypography.body(
+                              size: 12,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                      ],
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(price, style: AppTypography.body(size: 13)),
+                      if (listed != null)
+                        Text(
+                          l10n.esListed(listed!),
+                          style: AppTypography.label(),
+                        ),
+                    ],
+                  ),
                 ],
               ),
+              if (why != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceRaised,
+                    borderRadius: AppRadius.brMd,
+                  ),
+                  child: Text(
+                    why,
+                    style: AppTypography.body(
+                      size: 13,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+              if (declined && (onSwap != null || onRemove != null)) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (onSwap != null)
+                      Expanded(
+                        child: SizedBox(
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: onSwap,
+                            child: Text(l10n.esSwap),
+                          ),
+                        ),
+                      ),
+                    if (onSwap != null && onRemove != null)
+                      const SizedBox(width: 8),
+                    if (onRemove != null)
+                      Expanded(
+                        child: SizedBox(
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: onRemove,
+                            child: Text(l10n.esRemoveShort),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// How the package's Suppliers stand: Accepted, Waiting, Declined (expired
+/// counted with declined), as the canvas "Package builder" shows them.
+class _AnswerCounts extends StatelessWidget {
+  const _AnswerCounts(this.invites);
+
+  final Iterable<LineInvite> invites;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    int count(bool Function(LineInvite) test) => invites.where(test).length;
+    Widget tile(int n, String label, Color color) => Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: AppRadius.brMd,
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$n',
+                  style: AppTypography.display(size: 18, color: color),
+                ),
+                Text(label, style: AppTypography.body(size: 12)),
+              ],
+            ),
+          ),
+        );
+    return Row(
+      children: [
+        tile(
+          count((i) => i.status == InviteStatus.accepted),
+          l10n.esInviteAccepted,
+          AppColors.success,
+        ),
+        const SizedBox(width: 8),
+        tile(
+          count((i) => i.status == InviteStatus.pending),
+          l10n.esInviteWaiting,
+          AppColors.warning,
+        ),
+        const SizedBox(width: 8),
+        tile(
+          count((i) => i.needsAction),
+          l10n.esInviteDeclined,
+          AppColors.error,
+        ),
+      ],
+    );
+  }
+}
+
+/// The Provider's reason and note, as the builder shows a decline:
+/// `Price too low: "…"`. Null when they gave neither.
+String? _declineText(AppLocalizations l10n, LineInvite answer) {
+  final reason = answer.reason;
+  final note = answer.note;
+  final label = reason == null ? null : inviteReasonLabel(l10n, reason);
+  if (label != null && note != null) {
+    return l10n.esInviteReasonNote(label, note);
+  }
+  return label ?? (note == null ? null : '“$note”');
+}
+
+/// Where an invited line stands: Accepted, Waiting or Declined (api#447).
+class _InviteChip extends StatelessWidget {
+  const _InviteChip(this.status);
+
+  final InviteStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final (label, icon, color) = switch (status) {
+      InviteStatus.accepted => (
+          l10n.esInviteAccepted,
+          Icons.check_rounded,
+          AppColors.success,
+        ),
+      InviteStatus.pending => (
+          l10n.esInviteWaiting,
+          Icons.schedule_rounded,
+          AppColors.warning,
+        ),
+      InviteStatus.declined => (
+          l10n.esInviteDeclined,
+          Icons.close_rounded,
+          AppColors.error,
+        ),
+      InviteStatus.expired => (
+          l10n.esInviteExpired,
+          Icons.timer_off_outlined,
+          AppColors.textMuted,
+        ),
+      InviteStatus.other => (null, null, AppColors.textMuted),
+    };
+    if (label == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(label, style: AppTypography.body(size: 12, color: color)),
+        ],
       ),
     );
   }
@@ -1061,9 +1316,25 @@ class _ReviewStep extends ConsumerWidget {
                   met: !d.categoryOtherMissing,
                   required: true,
                 ),
+              // Every required Supplier has accepted (api#461).
+              row(
+                l10n.esReadySuppliers,
+                met: state.suppliersNotReady.isEmpty,
+                required: true,
+              ),
             ],
           ),
         ),
+        if (state.suppliersNotReady.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              l10n.esWaitingOn(
+                state.suppliersNotReady.map((i) => i.name).join(', '),
+              ),
+              style: AppTypography.body(size: 13, color: AppColors.warning),
+            ),
+          ),
         if (!state.isNew && state.status != 'draft')
           Padding(
             padding: const EdgeInsets.only(bottom: 12),

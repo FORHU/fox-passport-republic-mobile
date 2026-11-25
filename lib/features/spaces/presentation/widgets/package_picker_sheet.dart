@@ -37,8 +37,6 @@ String? addToast(AppLocalizations l10n, AddResult result, String name) =>
       AddResult.added => l10n.esToastAdded(name),
       AddResult.duplicate => l10n.esToastDuplicate(name),
       AddResult.alreadyHasVenue => l10n.esToastOneVenue,
-      AddResult.venuePending => l10n.esToastVenuePending,
-      AddResult.venueNotApplied => l10n.esToastVenueApply,
     };
 
 class PackagePickerSheet extends ConsumerStatefulWidget {
@@ -348,14 +346,12 @@ class _Row extends StatelessWidget {
       tagColor = AppColors.success;
     } else {
       switch (access) {
+        // A partner joins at once; any other venue gets a request (api#459).
         case VenueAccess.approved:
           tag = l10n.esAccessApproved;
           tagColor = AppColors.success;
-        case VenueAccess.pending:
-          tag = l10n.esAccessPending;
-          tagColor = AppColors.warning;
-        case VenueAccess.none:
-          tag = l10n.esAccessApply;
+        case VenueAccess.pending || VenueAccess.none:
+          tag = l10n.esAccessRequest;
           tagColor = AppColors.textMuted;
         case null:
           tag = null;

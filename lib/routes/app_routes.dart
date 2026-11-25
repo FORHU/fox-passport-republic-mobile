@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -102,6 +102,7 @@ import 'package:flutter_template/features/spaces/presentation/pages/venue_overvi
 import 'package:flutter_template/features/spaces/presentation/pages/venue_requests_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/features/spaces/presentation/pages/venues_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/open_packages.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_layout.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/space_switcher.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/venue_apply_strip.dart';
@@ -858,6 +859,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => const VenueRequestsPage(),
                   ),
                   GoRoute(
+                    path: 'open-packages',
+                    builder: (context, state) => const OpenPackagesPage(),
+                  ),
+                  GoRoute(
                     path: 'partners',
                     builder: (context, state) =>
                         const PartnersPage(side: PartnerSide.mayor),
@@ -951,6 +956,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     path: 'messages',
                     builder: (context, state) =>
                         const MessagesPage(showBack: true),
+                  ),
+                  GoRoute(
+                    path: 'open-packages',
+                    builder: (context, state) => const OpenPackagesPage(),
                   ),
                 ],
               ),
@@ -1100,6 +1109,10 @@ StatefulShellRoute _providerShell(ProviderKind kind) {
               GoRoute(
                 path: 'slots',
                 builder: (context, state) => const OpenSlotsPage(),
+              ),
+              GoRoute(
+                path: 'open-packages',
+                builder: (context, state) => const OpenPackagesPage(),
               ),
               GoRoute(
                 path: 'messages',

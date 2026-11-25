@@ -85,6 +85,28 @@ class ApiEndpoints {
   static const String waitlist = '/waitlist';
   static String waitlistEntry(String id) => '/waitlist/$id';
   static String eventById(String id) => '/event-templates/$id';
+
+  /// Package invites a Provider received, and their answer (api#447).
+  static const String packageInvitesIncoming =
+      '/event-templates/matches/incoming';
+  static String packageInviteRespond(String id) =>
+      '/event-templates/matches/$id/respond';
+
+  /// Leave a package you joined (api#461).
+  static String packageInviteLeave(String id) =>
+      '/event-templates/matches/$id/leave';
+
+  /// Open packages and applications (api#460).
+  static const String openPackages = '/package-applications/open';
+  static String openPackage(String id) => '/package-applications/open/$id';
+  static String openPackageApply(String id) =>
+      '/package-applications/open/$id/applications';
+  static String openPackageWithdraw(String id, String applicationId) =>
+      '/package-applications/open/$id/applications/$applicationId';
+  static String packageApplications(String templateId) =>
+      '/package-applications/packages/$templateId/applications';
+  static String packageApplication(String templateId, String id) =>
+      '/package-applications/packages/$templateId/applications/$id';
   static const String assets = '/asset';
   static const String services = '/service';
   static String eventSubmit(String id) => '/event-templates/$id/submit';

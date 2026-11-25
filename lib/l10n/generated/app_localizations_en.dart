@@ -1562,6 +1562,190 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esOptional => 'Optional';
 
   @override
+  String get inviteLeave => 'Leave';
+
+  @override
+  String get inviteLeaveTitle => 'Why leave this package?';
+
+  @override
+  String inviteLeft(String package) {
+    return 'You left $package.';
+  }
+
+  @override
+  String esExpiresIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left to answer',
+      one: '1 day left to answer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get esExpiresToday => 'Last day to answer';
+
+  @override
+  String get esInviteExpired => 'Expired';
+
+  @override
+  String get esSwap => 'Swap';
+
+  @override
+  String get esRemoveShort => 'Remove';
+
+  @override
+  String get esReadySuppliers => 'Every required Supplier accepted';
+
+  @override
+  String esWaitingOn(String names) {
+    return 'Waiting on $names. Save, and send for review once they accept.';
+  }
+
+  @override
+  String get openPackagesTitle => 'Open packages';
+
+  @override
+  String get openPackagesHint =>
+      'Packages Event Foxers are putting together. Apply with one of your listings.';
+
+  @override
+  String get openPackagesEmpty =>
+      'No open packages right now. When an Event Foxer starts one, it shows up here.';
+
+  @override
+  String openUpToGuests(int count) {
+    return 'up to $count guests';
+  }
+
+  @override
+  String get openSpotVenue => 'Venue';
+
+  @override
+  String openSpotTaken(String spot) {
+    return '$spot · taken';
+  }
+
+  @override
+  String get openTaken => 'Taken';
+
+  @override
+  String get openYouApplied => 'You applied · waiting for the Event Foxer';
+
+  @override
+  String get openPackageTitle => 'Open package';
+
+  @override
+  String get openSpotsTitle => 'In this package';
+
+  @override
+  String get openNoLines => 'Nothing in it yet.';
+
+  @override
+  String get openSpotFrees =>
+      'A taken spot opens again if its Supplier declines or is removed.';
+
+  @override
+  String get openApply => 'Apply';
+
+  @override
+  String get openNoListings => 'No live listing to apply with';
+
+  @override
+  String get openWithdraw => 'Withdraw application';
+
+  @override
+  String get openWithdrawn => 'Application withdrawn.';
+
+  @override
+  String get openApplyTitle => 'Apply to this package';
+
+  @override
+  String get openYourListing => 'Your listing';
+
+  @override
+  String openChoiceTaken(String spot) {
+    return '$spot already taken';
+  }
+
+  @override
+  String get openChoiceApplied => 'Already applied with this';
+
+  @override
+  String get openPriceIsYours =>
+      'The price is your listing\'s own. Change it on the listing.';
+
+  @override
+  String get openMessageLabel => 'Message to the Event Foxer (optional)';
+
+  @override
+  String get openSend => 'Send application';
+
+  @override
+  String get openApplied => 'Application sent.';
+
+  @override
+  String get openApplications => 'Applications';
+
+  @override
+  String get openApplicationsTitle => 'Applications';
+
+  @override
+  String get openAcceptCloses =>
+      'Accepting one fills its spot and closes the others for it.';
+
+  @override
+  String get openNoApplications =>
+      'No applications yet. Providers and venues see your package in Open packages.';
+
+  @override
+  String get openAccept => 'Accept';
+
+  @override
+  String openAccepted(String name) {
+    return '$name joined your package.';
+  }
+
+  @override
+  String get openDeclineTitle => 'Why not this one?';
+
+  @override
+  String get openDeclineSeen => 'The applicant sees your reason.';
+
+  @override
+  String get openSpotFilled => 'Spot filled by another';
+
+  @override
+  String get openWithdrawnStatus => 'Withdrawn';
+
+  @override
+  String get esInviteAccepted => 'Accepted';
+
+  @override
+  String get esInviteWaiting => 'Waiting';
+
+  @override
+  String get esInviteDeclined => 'Declined';
+
+  @override
+  String esInviteReasonNote(String reason, String note) {
+    return '$reason: “$note”';
+  }
+
+  @override
+  String get invitesEmptyVenue =>
+      'No package invites for your venues yet. When an Event Foxer wants one in a package, it shows up here.';
+
+  @override
+  String get invitesEmptyGear =>
+      'No package invites for your gear yet. When an Event Foxer wants it in a package, it shows up here.';
+
+  @override
+  String get invitesEmptyServices =>
+      'No package invites for your services yet. When an Event Foxer wants one in a package, it shows up here.';
+
+  @override
   String get esRemove => 'Remove from package';
 
   @override
@@ -1610,13 +1794,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esAdded => 'Added';
 
   @override
-  String get esAccessApproved => 'Approved';
+  String get esAccessApproved => 'Joins at once';
 
   @override
-  String get esAccessPending => 'Pending';
-
-  @override
-  String get esAccessApply => 'Apply first';
+  String get esAccessRequest => 'Sends a request';
 
   @override
   String esToastAdded(String name) {
@@ -1633,14 +1814,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only one venue can be in the package. Remove the existing venue first.';
 
   @override
-  String get esToastVenuePending =>
-      'Your affiliation with this venue is still pending approval.';
-
-  @override
-  String get esToastVenueApply =>
-      'Apply to this venue first. You need an approved affiliation to host here.';
-
-  @override
   String get esReadyTitle => 'Event title';
 
   @override
@@ -1650,7 +1823,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get esReadyOther => 'Say what kind of event it is';
 
   @override
-  String get esReadyVenue => 'Approved venue attached';
+  String get esReadyVenue => 'Venue chosen';
 
   @override
   String get esReadyGallery => '5 photos';
@@ -5978,6 +6151,119 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get requestsIntroGear =>
       'People adding your gear to their events. Confirm the ones you can supply.';
+
+  @override
+  String get inviteTabBookings => 'Bookings';
+
+  @override
+  String get inviteTabInvites => 'Package invites';
+
+  @override
+  String inviteTabCount(String label, int count) {
+    return '$label · $count';
+  }
+
+  @override
+  String get invitesInPackages => 'Packages you\'re in';
+
+  @override
+  String invitePerEvent(String price) {
+    return '$price per event';
+  }
+
+  @override
+  String get inviteReview => 'Review invite';
+
+  @override
+  String get invitePageTitle => 'Package request';
+
+  @override
+  String get inviteEyebrow => 'Join a package';
+
+  @override
+  String inviteHeadline(String host, String item, String package) {
+    return '$host wants your $item in $package';
+  }
+
+  @override
+  String inviteHeadlineNoHost(String item, String package) {
+    return 'You\'re invited to add $item to $package';
+  }
+
+  @override
+  String get invitePackage => 'Package';
+
+  @override
+  String get inviteArea => 'Area';
+
+  @override
+  String get inviteDate => 'Date';
+
+  @override
+  String get inviteDateGuests => 'Guests choose';
+
+  @override
+  String get inviteOffered => 'Offered per event';
+
+  @override
+  String get inviteTheirNote => 'Their note';
+
+  @override
+  String get inviteAcceptHint =>
+      'Joining means you\'re booked when a guest books this package on a day you\'re free. Keep your busy days blocked.';
+
+  @override
+  String get inviteDecline => 'Decline';
+
+  @override
+  String get inviteJoin => 'Join package';
+
+  @override
+  String inviteJoined(String package) {
+    return 'You joined $package.';
+  }
+
+  @override
+  String get inviteDeclined => 'Invite declined.';
+
+  @override
+  String get inviteFailed => 'Couldn\'t send your answer. Try again.';
+
+  @override
+  String get inviteDeclineTitle => 'Why not join this package?';
+
+  @override
+  String get inviteDeclineNoteLabel => 'Note (optional, required for Other)';
+
+  @override
+  String get inviteDeclineNoteRequired => 'Add a note for Other.';
+
+  @override
+  String get inviteDeclineSeen => 'The Event Foxer sees your reason.';
+
+  @override
+  String get inviteDeclineSend => 'Decline request';
+
+  @override
+  String get inviteBack => 'Back';
+
+  @override
+  String get inviteReasonUnavailable => 'Not available on that day';
+
+  @override
+  String get inviteReasonPrice => 'Price too low';
+
+  @override
+  String get inviteReasonKind => 'I don\'t do this kind of event';
+
+  @override
+  String get inviteReasonFar => 'Too far from where I work';
+
+  @override
+  String get inviteReasonCapacity => 'I can\'t take on more packages';
+
+  @override
+  String get inviteReasonOther => 'Other';
 
   @override
   String get requestsEmptyGear =>

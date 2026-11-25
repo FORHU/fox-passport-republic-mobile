@@ -87,6 +87,13 @@ class EventMorePage extends ConsumerWidget {
             title: l10n.bidsTitle,
             onTap: () => context.push(RouteNames.spaceBidEvents),
           ),
+          const SizedBox(height: 8),
+          // Other Event Foxers' packages being put together (api#460).
+          MoreRow(
+            icon: Icons.inventory_2_outlined,
+            title: l10n.openPackagesTitle,
+            onTap: () => context.push(RouteNames.spaceEventOpenPackages),
+          ),
           const SizedBox(height: 24),
           MoreRow(
             icon: Icons.swap_horiz_rounded,

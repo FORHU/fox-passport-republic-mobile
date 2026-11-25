@@ -212,6 +212,8 @@ class RouteNames {
 
   /// Opened from More: requests for their venues, check-in and messages.
   static const String spaceVenueRequests = '/space/venue/more/requests';
+  static const String spaceVenueOpenPackages =
+      '/space/venue/more/open-packages';
   static const String spaceVenueCheckIn = '/space/venue/more/check-in';
   static const String spaceVenueMessages = '/space/venue/more/messages';
 
@@ -255,6 +257,8 @@ class RouteNames {
   static const String spaceEventCheckIn = '/space/event/more/check-in';
   static const String spaceEventPartners = '/space/event/partners';
   static const String spaceEventMessages = '/space/event/more/messages';
+  static const String spaceEventOpenPackages =
+      '/space/event/more/open-packages';
 
   /// One piece of gear or one service, with its booking. Takes the row as
   /// `extra`.

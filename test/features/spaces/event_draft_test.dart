@@ -1,5 +1,6 @@
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -96,7 +97,7 @@ void main() {
       expect(draft.readyToSubmit, isTrue);
     });
 
-    test('a venue still pending or not applied for does not count', () {
+    test('any venue counts: its Mayor is asked to join (api#459)', () {
       const base = EventDraft(title: 'Bonfire', category: 'Social');
 
       final pending = base.copyWith(
@@ -104,8 +105,9 @@ void main() {
       );
       final none = base.copyWith(items: [_venue(access: VenueAccess.none)]);
 
-      expect(pending.readyToSubmit, isFalse);
-      expect(none.readyToSubmit, isFalse);
+      expect(pending.readyToSubmit, isTrue);
+      expect(none.readyToSubmit, isTrue);
+      expect(base.readyToSubmit, isFalse, reason: 'no venue');
     });
 
     test('Other also needs its own label', () {
@@ -376,11 +378,29 @@ void main() {
       expect(d.items[2].price, 8000);
     });
 
+    test("reads the Provider's answer for each invited line only", () {
+      final raw = template();
+      ((raw['templateVenues'] as List).first as Map<String, dynamic>)
+        ..['matched'] = true
+        ..['matchRequestStatus'] = 'declined'
+        ..['declineReason'] = 'price_too_low';
+      ((raw['templateServices'] as List).first as Map<String, dynamic>)
+        ..['matched'] = true
+        ..['matchRequestStatus'] = 'pending';
+      final detail = EventDetail.tryParse({'template': raw})!;
+
+      expect(detail.invites.keys, unorderedEquals(['v1', 's1']));
+      expect(detail.invites['v1']!.status, InviteStatus.declined);
+      expect(detail.invites['v1']!.reason, InviteDeclineReason.priceTooLow);
+      expect(detail.invites['s1']!.status, InviteStatus.pending);
+      expect(detail.invites['a1'], isNull, reason: 'attached, not invited');
+    });
+
     test('a venue already on the event is one the host may keep', () {
       final d = EventDetail.tryParse({'template': template()})!.draft;
 
       expect(d.venue!.access, VenueAccess.approved);
-      expect(d.hasApprovedVenue, isTrue);
+      expect(d.hasVenue, isTrue);
     });
 
     test('reads the Other label back out of the description', () {

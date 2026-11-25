@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/event_detail.dart';
 import 'package:flutter_template/features/spaces/domain/event_draft.dart';
+import 'package:flutter_template/features/spaces/domain/package_invite.dart';
 import 'package:flutter_template/features/spaces/domain/partner_models.dart';
 import 'package:flutter_template/features/spaces/domain/space_models.dart';
 import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
@@ -305,50 +306,27 @@ void main() {
       await tester.tap(find.text('Choose a venue'));
       await tester.pumpAndSettle();
       expect(find.text('Sky Hall'), findsOneWidget);
-      expect(find.text('Approved'), findsOneWidget);
+      expect(find.text('Joins at once'), findsOneWidget);
 
       await tester.tap(find.text('Sky Hall'));
       await tester.pumpAndSettle();
       expect(find.text('Added Sky Hall to your package'), findsOneWidget);
     });
 
-    testWidgets('a venue with no affiliation says to apply first', (
-      tester,
-    ) async {
+    testWidgets(
+        'any venue can be added: one without an affiliation sends a request '
+        '(api#459)', (tester) async {
       await pump(tester);
       await openPackage(tester);
       await tester.tap(find.text('Choose a venue'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Apply first'), findsOneWidget);
+      // Old Barn (no affiliation) and Grand Hotel (affiliation pending).
+      expect(find.text('Sends a request'), findsNWidgets(2));
       await tester.tap(find.text('Old Barn'));
       await tester.pumpAndSettle();
 
-      expect(
-        find.text(
-          'Apply to this venue first. '
-          'You need an approved affiliation to host here.',
-        ),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('a venue still pending says so', (tester) async {
-      await pump(tester);
-      await openPackage(tester);
-      await tester.tap(find.text('Choose a venue'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Pending'), findsOneWidget);
-      await tester.tap(find.text('Grand Hotel'));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(
-          'Your affiliation with this venue is still pending approval.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('Added Old Barn to your package'), findsOneWidget);
     });
 
     testWidgets('only live venues the API sent are listed, with their town', (
@@ -516,10 +494,12 @@ void main() {
 
       expect(find.text('Event title'), findsOneWidget);
       expect(find.text('Category selected'), findsOneWidget);
-      expect(find.text('Approved venue attached'), findsOneWidget);
+      expect(find.text('Venue chosen'), findsOneWidget);
       expect(find.text('5 photos'), findsOneWidget);
       expect(find.text('100+ word description'), findsOneWidget);
-      expect(find.text('Required'), findsNWidgets(3));
+      // api#461: every required Supplier must accept before review.
+      expect(find.text('Every required Supplier accepted'), findsOneWidget);
+      expect(find.text('Required'), findsNWidgets(4));
       expect(find.text('Recommended'), findsNWidgets(2));
       expect(find.text('0% ready'), findsOneWidget);
     });
@@ -747,6 +727,86 @@ void main() {
       verify(() => repo.updateEvent('t1', any())).called(1);
       verifyNever(() => repo.submitEvent(any()));
       expect(find.text('Changes saved.'), findsOneWidget);
+    });
+
+    testWidgets("each invited line shows the Provider's answer (api#447)", (
+      tester,
+    ) async {
+      const dj = PackageItem(
+        id: 's1',
+        name: 'DJ Kai',
+        kind: PackageKind.talent,
+        cost: 8000,
+        icon: 'music_note',
+      );
+      const sound = PackageItem(
+        id: 'a1',
+        name: 'Sound',
+        kind: PackageKind.asset,
+        cost: 5000,
+        icon: 'speaker',
+      );
+      when(() => repo.eventDetail('t1')).thenAnswer(
+        (_) async => const EventDetail(
+          id: 't1',
+          status: 'draft',
+          draft: EventDraft(title: 'Bonfire', items: [_skyHall, dj, sound]),
+          invites: {
+            'v1': LineInvite(status: InviteStatus.accepted),
+            's1': LineInvite(
+              status: InviteStatus.declined,
+              reason: InviteDeclineReason.tooFar,
+              note: 'Two hours away',
+            ),
+          },
+        ),
+      );
+      await pump(tester, eventId: 't1');
+      await goToStep(tester, 'Package');
+
+      // Each word twice: once in the counts row, once on the item's chip.
+      expect(find.text('Accepted'), findsNWidgets(2));
+      expect(find.text('Declined'), findsNWidgets(2));
+      expect(
+        find.text('Too far from where I work: “Two hours away”'),
+        findsOneWidget,
+      );
+      // Sound was added without an invite: only the counts row says Waiting.
+      expect(find.text('Waiting'), findsOneWidget);
+
+      // A declined Supplier is swapped or removed (api#462).
+      expect(find.text('Swap'), findsOneWidget);
+      await tester.ensureVisible(find.text('Remove'));
+      await tester.tap(find.text('Remove'));
+      await tester.pumpAndSettle();
+      expect(find.text('DJ Kai'), findsNothing);
+    });
+
+    testWidgets('a waiting Supplier shows the days left to answer', (
+      tester,
+    ) async {
+      when(() => repo.eventDetail('t1')).thenAnswer(
+        (_) async => EventDetail(
+          id: 't1',
+          status: 'draft',
+          draft: const EventDraft(title: 'Bonfire', items: [_skyHall]),
+          invites: {
+            'v1': LineInvite(
+              status: InviteStatus.pending,
+              requestedAt: DateTime.now().subtract(const Duration(hours: 30)),
+            ),
+          },
+        ),
+      );
+      await pump(tester, eventId: 't1');
+      await goToStep(tester, 'Package');
+
+      expect(find.text('1 day left to answer'), findsOneWidget);
+      await goToStep(tester, 'Review');
+      expect(
+        find.textContaining('Waiting on Sky Hall'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('says so when the event will not load', (tester) async {
