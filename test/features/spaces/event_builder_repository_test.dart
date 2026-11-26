@@ -230,7 +230,8 @@ void main() {
     });
 
     test(
-        'making an item optional updates it in place, keeping its answer '
+        'making an item optional updates it in place, keeping its answer; '
+        'never the venue '
         '(api#459)', () async {
       holds(venues: ['v1'], assets: ['a1'], services: ['s1']);
 
@@ -244,9 +245,8 @@ void main() {
         before: [_venue, _sound, _dj],
       );
 
-      verify(
-        () => api.patch('/event-templates/t1/venues/v1', {'isOptional': true}),
-      ).called(1);
+      // Every event has a venue (api#477): it is never made optional.
+      verifyNever(() => api.patch('/event-templates/t1/venues/v1', any()));
       verify(
         () => api.patch('/event-templates/t1/assets/a1', {'isOptional': true}),
       ).called(1);

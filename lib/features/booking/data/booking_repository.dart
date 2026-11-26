@@ -171,7 +171,6 @@ class BookingRepository {
       'excludedAssetIds': package.excludedOf(PackageItemKind.gear, s.excluded),
       'excludedServiceIds':
           package.excludedOf(PackageItemKind.service, s.excluded),
-      'excludedVenueIds': package.excludedOf(PackageItemKind.venue, s.excluded),
     });
     final data = body is Map ? body['data'] : null;
     final booking = data is Map ? data['booking'] : null;

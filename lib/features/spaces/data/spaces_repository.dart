@@ -780,18 +780,15 @@ class SpacesRepository {
         await _api.delete(ApiEndpoints.eventVenue(id, old));
       }
     }
-    if (venue != null &&
-        venueIds.contains(venue.id) &&
-        optionalChanged(venue)) {
-      await setOptional(venue, ApiEndpoints.eventVenue(id, venue.id));
-    }
+    // Every event has a venue (api#477): it is never optional, so its flag is
+    // never sent as anything else.
     if (venue != null && !venueIds.contains(venue.id)) {
       await run(
         venue,
         () => _api.post(ApiEndpoints.eventVenues(id), {
           'venueId': venue.id,
           'agreedPrice': venue.price,
-          'isOptional': venue.isOptional,
+          'isOptional': false,
         }),
       );
     }

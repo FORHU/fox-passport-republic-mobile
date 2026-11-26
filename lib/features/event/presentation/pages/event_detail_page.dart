@@ -183,10 +183,19 @@ class _Loaded extends ConsumerWidget {
     final bookable = package.isPriced && !package.isFull;
     // The only thing left to do on a full event is to wait for a place.
     final waiting = package.isFull && !package.isSample;
-    final place = [package.city, package.state]
+    // Every event has a venue (api#477): name it wherever the place shows.
+    final venueName = package.items
+        .where((i) => i.kind == PackageItemKind.venue && i.name.isNotEmpty)
+        .firstOrNull
+        ?.name;
+    final city = [package.city, package.state]
         .whereType<String>()
         .where((p) => p.isNotEmpty)
         .join(', ');
+    final place = [venueName, city]
+        .whereType<String>()
+        .where((p) => p.isNotEmpty)
+        .join(' · ');
     final category = package.category;
     final required = package.items.where((i) => !i.isOptional).toList();
     final optional = package.optionalItems;
