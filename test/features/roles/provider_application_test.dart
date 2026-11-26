@@ -17,6 +17,7 @@ import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRepo extends Mock implements RoleApplicationRepository {}
@@ -385,6 +386,32 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text("That link isn't on Instagram"), findsNothing);
       expect(draft().portfolioLinks, ['https://instagram.com/soundgear']);
+    });
+
+    testWidgets('each link icon sits in the middle of its field',
+        (tester) async {
+      c().goTo(ProviderApplyStep.business);
+      c().edit((d) => d.copyWith(businessName: 'X', basedIn: 'Cebu'));
+      await open(tester);
+
+      for (final kind in WorkLinkKind.values) {
+        final field = find.byKey(Key('work-link-${kind.name}'));
+        await tester.ensureVisible(field);
+        await tester.pumpAndSettle();
+        final box = find.descendant(
+          of: field,
+          matching: find.byType(InputDecorator),
+        );
+        final icon = find.descendant(of: field, matching: find.byType(FaIcon));
+        // FaIcon is a bare RichText that draws its glyph at the top of
+        // whatever height it is given, so it must keep its own 18px height.
+        expect(tester.getSize(icon).height, lessThan(24), reason: kind.name);
+        expect(
+          tester.getCenter(icon).dy,
+          moreOrLessEquals(tester.getCenter(box).dy, epsilon: 1),
+          reason: kind.name,
+        );
+      }
     });
 
     testWidgets('the location button fills where they are based', (

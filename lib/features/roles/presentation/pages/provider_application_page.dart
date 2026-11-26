@@ -279,9 +279,11 @@ class _WorkLinkField extends StatelessWidget {
         labelText: name,
         hintText: hint,
         floatingLabelBehavior: FloatingLabelBehavior.never,
-        prefixIcon: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: FaIcon(icon, size: 18, color: AppColors.textPrimary),
+        prefixIcon: SizedBox(
+          width: 48,
+          child: Center(
+            child: FaIcon(icon, size: 18, color: AppColors.textPrimary),
+          ),
         ),
         prefixIconConstraints:
             const BoxConstraints(minWidth: 48, minHeight: 48),
