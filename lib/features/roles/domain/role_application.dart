@@ -82,6 +82,7 @@ class RoleApplicationDraft extends Equatable {
     this.nbiNumber = '',
     this.tinNumber = '',
     this.tinCountry = '',
+    this.taxIdIssued = true,
     this.specializations = const [],
     this.documents = const {},
   });
@@ -133,8 +134,12 @@ class RoleApplicationDraft extends Equatable {
   bool get isEvent => roleType == 'eventFoxer';
   bool get isOrganizer => roleType == 'organizer';
 
-  /// The documents the API needs before it takes this application.
-  List<KycDocument> get requiredDocuments => isOrganizer
+  /// False when [tinCountry] issues no tax number (the API's `issuesTin`),
+  /// so the tax document can't be required (mobile#529).
+  final bool taxIdIssued;
+
+  /// The documents the application asks for, in order.
+  List<KycDocument> get askedDocuments => isOrganizer
       ? const [
           KycDocument.validId,
           KycDocument.backgroundClearance,
@@ -147,6 +152,17 @@ class RoleApplicationDraft extends Equatable {
           KycDocument.birPermit,
           KycDocument.selfie,
         ];
+
+  /// The ones it can't be sent without. A business registration is optional,
+  /// since many countries let people work without one, and so is the tax
+  /// document where the country issues no tax number (mobile#529). The API
+  /// requires only an Organizer's.
+  List<KycDocument> get requiredDocuments => [
+        for (final doc in askedDocuments)
+          if (doc != KycDocument.birPermit &&
+              (doc != KycDocument.tinId || taxIdIssued))
+            doc,
+      ];
 
   /// "City, State, Country", as the web sends it, leaving out what is blank.
   String get location => [city, state, country]
@@ -241,6 +257,7 @@ class RoleApplicationDraft extends Equatable {
     String? nbiNumber,
     String? tinNumber,
     String? tinCountry,
+    bool? taxIdIssued,
     List<String>? specializations,
     Map<KycDocument, PickedPhoto>? documents,
   }) =>
@@ -262,6 +279,7 @@ class RoleApplicationDraft extends Equatable {
         nbiNumber: nbiNumber ?? this.nbiNumber,
         tinNumber: tinNumber ?? this.tinNumber,
         tinCountry: tinCountry ?? this.tinCountry,
+        taxIdIssued: taxIdIssued ?? this.taxIdIssued,
         specializations: specializations ?? this.specializations,
         documents: documents ?? this.documents,
       );
@@ -332,6 +350,7 @@ class RoleApplicationDraft extends Equatable {
         nbiNumber,
         tinNumber,
         tinCountry,
+        taxIdIssued,
         specializations,
         documents.keys.toList(),
       ];

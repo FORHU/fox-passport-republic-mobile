@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/domain/tax_id.dart';
+import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// `GET /locations/countries/:code/tin-formats` bodies, as the API answers
@@ -147,5 +151,60 @@ void main() {
       isFalse,
       reason: 'no number, no country',
     );
+  });
+
+  group('documents', () {
+    test('a business registration is asked for but optional', () {
+      const venue = RoleApplicationDraft(roleType: 'venueFoxer');
+      expect(venue.askedDocuments, contains(KycDocument.birPermit));
+      expect(venue.requiredDocuments, [
+        KycDocument.validId,
+        KycDocument.nbi,
+        KycDocument.tinId,
+        KycDocument.selfie,
+      ]);
+      expect(
+        ProviderApplicationDraft.requiredDocuments,
+        isNot(contains(KycDocument.birPermit)),
+      );
+      expect(
+        ProviderApplicationDraft.askedDocuments,
+        contains(KycDocument.birPermit),
+      );
+    });
+
+    test('the tax document is optional where no tax number is issued', () {
+      const venue = RoleApplicationDraft(
+        roleType: 'venueFoxer',
+        taxIdIssued: false,
+      );
+      expect(venue.requiredDocuments, [
+        KycDocument.validId,
+        KycDocument.nbi,
+        KycDocument.selfie,
+      ]);
+    });
+
+    test('a venue is complete without the optional documents', () {
+      final venue = RoleApplicationDraft(
+        roleType: 'venueFoxer',
+        businessName: 'Lounge',
+        contactNumber: '1',
+        address: 'Makati',
+        tinNumber: '123456789',
+        documents: {
+          for (final doc in const RoleApplicationDraft(roleType: 'venueFoxer')
+              .requiredDocuments)
+            doc: PickedPhoto(bytes: Uint8List.fromList([1]), name: 'x.png'),
+        },
+      );
+      expect(venue.isComplete, isTrue);
+      expect(venue.documents.containsKey(KycDocument.birPermit), isFalse);
+    });
+
+    test("an Event Coordinator's documents stay required", () {
+      const organizer = RoleApplicationDraft(roleType: 'organizer');
+      expect(organizer.requiredDocuments, organizer.askedDocuments);
+    });
   });
 }

@@ -5679,7 +5679,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get provApplyDocTin => 'Tax ID card or certificate';
+  String get provApplyDocTin => 'Tax ID document';
+
+  @override
+  String get kycDocTaxNote => 'A card, certificate or official letter is fine.';
 
   @override
   String get provApplyDocBir => 'Business registration or permit';
@@ -5754,7 +5757,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String provApplyAllDocs(int count) {
-    return 'All $count added';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents added',
+      one: '1 document added',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -5901,7 +5910,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get roleApplyDocTin => 'Tax ID card or certificate';
+  String get roleApplyDocTin => 'Tax ID document';
 
   @override
   String get roleApplyDocBir => 'Business registration or permit';

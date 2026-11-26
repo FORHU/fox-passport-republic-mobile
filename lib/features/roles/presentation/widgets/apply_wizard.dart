@@ -623,7 +623,8 @@ class ApplyReviewSection extends StatelessWidget {
   }
 }
 
-/// "All N added" with a check, for the review screen.
+/// "N documents added" with a check, for the review screen. Optional ones
+/// may be left out, so it counts what was added (mobile#529).
 class ApplyAllDocuments extends StatelessWidget {
   const ApplyAllDocuments({required this.count, super.key});
 
@@ -868,3 +869,7 @@ String applyDocumentLabel(AppLocalizations l10n, KycDocument doc) =>
       KycDocument.selfie => l10n.provApplyDocSelfie,
       KycDocument.backgroundClearance => l10n.roleApplyDocClearance,
     };
+
+/// A line under a document saying which papers count for it, or null.
+String? applyDocumentNote(AppLocalizations l10n, KycDocument doc) =>
+    doc == KycDocument.tinId ? l10n.kycDocTaxNote : null;

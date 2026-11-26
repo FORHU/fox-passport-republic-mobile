@@ -144,8 +144,11 @@ class RoleApplicationController extends Notifier<RoleApplicationState> {
       formats = null;
     }
     if (!ref.mounted || state.draft.tinCountry != code) return;
-    state =
-        state.copyWith(tinFormats: formats, clearTinFormats: formats == null);
+    state = state.copyWith(
+      tinFormats: formats,
+      clearTinFormats: formats == null,
+      draft: state.draft.copyWith(taxIdIssued: formats?.issuesTin ?? true),
+    );
   }
 
   /// Fills the city and province from the phone's location (Event Foxer and

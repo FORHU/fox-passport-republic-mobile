@@ -10153,8 +10153,14 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'Tax ID card or certificate'**
+  /// **'Tax ID document'**
   String get provApplyDocTin;
+
+  /// No description provided for @kycDocTaxNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A card, certificate or official letter is fine.'**
+  String get kycDocTaxNote;
 
   /// No description provided for @provApplyDocBir.
   ///
@@ -10267,7 +10273,7 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyAllDocs.
   ///
   /// In en, this message translates to:
-  /// **'All {count} added'**
+  /// **'{count, plural, =1{1 document added} other{{count} documents added}}'**
   String provApplyAllDocs(int count);
 
   /// No description provided for @provApplyAgree.
@@ -10525,7 +10531,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'Tax ID card or certificate'**
+  /// **'Tax ID document'**
   String get roleApplyDocTin;
 
   /// No description provided for @roleApplyDocBir.

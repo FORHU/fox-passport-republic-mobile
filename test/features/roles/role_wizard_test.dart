@@ -137,11 +137,11 @@ void main() {
     expect(find.text('3 of 3 picked'), findsOneWidget);
     await tapText(tester, 'Next: documents');
 
-    expect(find.text('5 documents still to add'), findsOneWidget);
+    expect(find.text('4 documents still to add'), findsOneWidget);
     // Neutral names, not tied to any country (mobile#529).
     for (final name in [
       'Police or background clearance',
-      'Tax ID card or certificate',
+      'Tax ID document',
       'Business registration or permit',
     ]) {
       expect(find.text(name), findsOneWidget, reason: name);
@@ -158,7 +158,7 @@ void main() {
     await tapText(tester, 'Review application');
 
     expect(find.text('Garden Hall'), findsOneWidget);
-    expect(find.text('All 5 added'), findsOneWidget);
+    expect(find.text('5 documents added'), findsOneWidget);
     expect(button(tester, 'Send application').onPressed, isNull);
     await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
@@ -295,8 +295,12 @@ void main() {
     await tapText(tester, 'Next: documents');
 
     expect(find.text('Portfolio or resume'), findsOneWidget);
-    expect(find.text('Optional'), findsOneWidget);
-    expect(find.text('5 documents still to add'), findsOneWidget);
+    expect(
+      find.text('Optional'),
+      findsNWidgets(2),
+      reason: 'portfolio and business registration',
+    );
+    expect(find.text('4 documents still to add'), findsOneWidget);
   });
 
   testWidgets('an Event Coordinator sees the Provider switch and needs years', (

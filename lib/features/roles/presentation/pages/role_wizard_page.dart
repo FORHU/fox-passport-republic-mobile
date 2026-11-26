@@ -449,10 +449,12 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
       ],
       children: [
         ApplyTitle(l10n.provApplyDocumentsTitle, l10n.provApplyDocumentsBody),
-        for (final doc in d.requiredDocuments)
+        for (final doc in d.askedDocuments)
           DocumentRow(
             boxed: true,
+            optional: !d.requiredDocuments.contains(doc),
             label: applyDocumentLabel(l10n, doc),
+            note: applyDocumentNote(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),
@@ -539,7 +541,11 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
         ApplyReviewSection(
           title: l10n.provApplyDocumentsSection,
           onEdit: () => _go(_Step.documents),
-          children: [ApplyAllDocuments(count: d.requiredDocuments.length)],
+          children: [
+            ApplyAllDocuments(
+              count: d.askedDocuments.where(d.documents.containsKey).length,
+            ),
+          ],
         ),
         ApplyAgreement(
           agreed: _agreed,
