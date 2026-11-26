@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/roles/domain/tax_id.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
 /// The roles that apply from the phone. The investor still applies on the
@@ -69,6 +70,7 @@ class RoleApplicationDraft extends Equatable {
     required this.roleType,
     this.businessName = '',
     this.contactNumber = '',
+    this.phoneCode = '',
     this.address = '',
     this.description = '',
     this.bio = '',
@@ -95,6 +97,10 @@ class RoleApplicationDraft extends Equatable {
   /// Venue only: how to reach them, where the venues are, and a few words
   /// about them (optional).
   final String contactNumber;
+
+  /// Venue only: the calling code of the application's country, e.g. "63".
+  /// [contactNumber] is sent with it (mobile#537).
+  final String phoneCode;
   final String address;
   final String description;
 
@@ -243,6 +249,7 @@ class RoleApplicationDraft extends Equatable {
   RoleApplicationDraft copyWith({
     String? businessName,
     String? contactNumber,
+    String? phoneCode,
     String? address,
     String? description,
     String? bio,
@@ -265,6 +272,7 @@ class RoleApplicationDraft extends Equatable {
         roleType: roleType,
         businessName: businessName ?? this.businessName,
         contactNumber: contactNumber ?? this.contactNumber,
+        phoneCode: phoneCode ?? this.phoneCode,
         address: address ?? this.address,
         description: description ?? this.description,
         bio: bio ?? this.bio,
@@ -288,7 +296,7 @@ class RoleApplicationDraft extends Equatable {
   Map<String, dynamic> toData() => {
         if (isVenue) ...{
           'businessName': businessName.trim(),
-          'contactNumber': contactNumber.trim(),
+          'contactNumber': internationalPhone(contactNumber, phoneCode),
           'address': address.trim(),
           if (description.trim().isNotEmpty) 'description': description.trim(),
         } else if (isOrganizer) ...{
@@ -337,6 +345,7 @@ class RoleApplicationDraft extends Equatable {
         roleType,
         businessName,
         contactNumber,
+        phoneCode,
         address,
         description,
         bio,

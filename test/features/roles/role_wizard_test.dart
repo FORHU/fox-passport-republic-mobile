@@ -205,8 +205,8 @@ void main() {
     expect(find.byKey(const Key('tax-country')), findsNothing);
 
     countries.complete(const [
-      TaxCountry(code: 'CA', name: 'Canada'),
-      TaxCountry(code: 'PH', name: 'Philippines'),
+      TaxCountry(code: 'CA', name: 'Canada', phoneCode: '1'),
+      TaxCountry(code: 'PH', name: 'Philippines', phoneCode: '63'),
     ]);
     await tester.pumpAndSettle();
 
@@ -216,7 +216,9 @@ void main() {
     expect(find.text('For example 12345678-9'), findsOneWidget);
 
     await fillField(tester, 'Business or venue name', 'Maple Hall');
-    await fillField(tester, 'Contact number', '+1 416 555 0100');
+    // The contact number takes the country's code (mobile#537).
+    expect(find.text('+1 '), findsOneWidget);
+    await fillField(tester, 'Contact number', '416 555 0100');
     await fillField(tester, 'Complete address', '1 King St, Toronto');
     final tin = find.byKey(const Key('tax-id'));
     await tester.enterText(tin, 'ABC');
@@ -233,6 +235,13 @@ void main() {
     await tester.enterText(tin, '12345678-9');
     await tester.pumpAndSettle();
     expect(button(tester, 'Next: categories').onPressed, isNotNull);
+    expect(
+      container
+          .read(roleApplicationProvider('venueFoxer'))
+          .draft
+          .toData()['contactNumber'],
+      '+14165550100',
+    );
 
     // Another country checks the same number by its own formats.
     await tester.tap(find.byKey(const Key('tax-country')));
@@ -243,6 +252,8 @@ void main() {
     expect(button(tester, 'Next: categories').onPressed, isNull);
     final draft = container.read(roleApplicationProvider('venueFoxer')).draft;
     expect(draft.tinCountry, 'PH');
+    expect(draft.toData()['contactNumber'], '+634165550100');
+    expect(find.text('+63 '), findsOneWidget);
   });
 
   testWidgets('an Event Foxer can fill the city from the location', (

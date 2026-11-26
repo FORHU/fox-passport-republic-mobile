@@ -189,6 +189,7 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
       Key? key,
       Widget? suffix,
       String? note,
+      String? prefix,
     }) =>
         ApplyField(
           label: label,
@@ -206,6 +207,7 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
             decoration: InputDecoration(
               errorText: error,
               errorMaxLines: 2,
+              prefixText: prefix,
               suffixIcon: suffix,
               helperText: note,
               helperMaxLines: 3,
@@ -228,28 +230,13 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
           d.businessName,
           (v) => c.edit((x) => x.copyWith(businessName: v)),
         ),
-        text(
-          l10n.roleApplyContact,
-          d.contactNumber,
-          (v) => c.edit((x) => x.copyWith(contactNumber: v)),
-          keyboard: TextInputType.phone,
-        ),
-        text(
-          l10n.roleApplyAddress,
-          d.address,
-          (v) => c.edit((x) => x.copyWith(address: v)),
-        ),
-        text(
-          l10n.roleApplyDescription,
-          d.description,
-          (v) => c.edit((x) => x.copyWith(description: v)),
-          lines: 3,
-        ),
-        // Any country's tax number, checked against that country's formats
-        // as the API checks it (mobile#529).
+        // One country, before the fields that follow it, as the web has it
+        // (app#330): the contact number takes its calling code (mobile#537)
+        // and the tax number its formats (mobile#529).
         if (state.taxCountries.isNotEmpty)
           ApplyField(
-            label: l10n.roleApplyTaxCountry,
+            label: l10n.onboardingCountry,
+            help: l10n.roleApplyCountryHelp,
             child: DropdownButtonFormField<String>(
               key: const Key('tax-country'),
               initialValue:
@@ -269,6 +256,27 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
               },
             ),
           ),
+        text(
+          l10n.roleApplyContact,
+          d.contactNumber,
+          (v) => c.edit((x) => x.copyWith(contactNumber: v)),
+          key: const Key('contact-number'),
+          keyboard: TextInputType.phone,
+          prefix: d.phoneCode.isEmpty || d.contactNumber.trim().startsWith('+')
+              ? null
+              : '+${d.phoneCode} ',
+        ),
+        text(
+          l10n.roleApplyAddress,
+          d.address,
+          (v) => c.edit((x) => x.copyWith(address: v)),
+        ),
+        text(
+          l10n.roleApplyDescription,
+          d.description,
+          (v) => c.edit((x) => x.copyWith(description: v)),
+          lines: 3,
+        ),
         text(
           switch (state.tinFormats?.label) {
             final name? when name.isNotEmpty => l10n.roleApplyTaxIdNamed(name),

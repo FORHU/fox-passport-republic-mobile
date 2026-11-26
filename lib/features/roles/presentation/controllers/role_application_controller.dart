@@ -119,19 +119,35 @@ class RoleApplicationController extends Notifier<RoleApplicationState> {
         : state.draft.tinCountry;
     state = state.copyWith(
       taxCountries: countries,
-      draft: state.draft.copyWith(tinCountry: code),
+      draft: state.draft.copyWith(
+        tinCountry: code,
+        phoneCode: _phoneCodeOf(code, countries),
+      ),
     );
     await _loadTinFormats(code);
   }
 
-  /// Chooses the country the tax number is from and loads its formats.
+  /// Chooses the application's country. The tax number and the contact
+  /// number both follow it (mobile#529, #537); this loads its tax formats.
   Future<void> setTinCountry(String code) async {
     state = state.copyWith(
-      draft: state.draft.copyWith(tinCountry: code),
+      draft: state.draft.copyWith(
+        tinCountry: code,
+        phoneCode: _phoneCodeOf(code, state.taxCountries),
+      ),
       clearTinFormats: true,
       clearError: true,
     );
     await _loadTinFormats(code);
+  }
+
+  /// [code]'s calling code, or '' when the list doesn't have it. A number
+  /// sent without a code is read as Philippine, as before.
+  static String _phoneCodeOf(String code, List<TaxCountry> countries) {
+    for (final c in countries) {
+      if (c.code == code) return c.phoneCode;
+    }
+    return '';
   }
 
   Future<void> _loadTinFormats(String code) async {
