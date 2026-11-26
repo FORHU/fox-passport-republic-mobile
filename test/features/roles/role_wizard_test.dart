@@ -138,19 +138,19 @@ void main() {
     await tapText(tester, 'Next: documents');
 
     expect(find.text('5 documents still to add'), findsOneWidget);
-    // General names, with the Philippine one as a hint (mobile#529).
+    // Neutral names, not tied to any country (mobile#529).
     for (final name in [
       'Police or background clearance',
       'Tax ID card or certificate',
       'Business registration or permit',
-      'In the Philippines: NBI clearance',
-      'In the Philippines: TIN ID or certificate',
-      'In the Philippines: BIR 2303 or permit',
     ]) {
       expect(find.text(name), findsOneWidget, reason: name);
     }
-    expect(find.text('NBI clearance'), findsNothing);
-    expect(find.text('BIR permit'), findsNothing);
+    final countrySpecific = RegExp(
+      r'\b(NBI|TIN|BIR)\b|Philippines',
+      caseSensitive: false,
+    );
+    expect(find.textContaining(countrySpecific), findsNothing);
     for (final doc in KycDocument.values.take(5)) {
       c('venueFoxer').setDocument(doc, _photo('${doc.name}.jpg'));
     }

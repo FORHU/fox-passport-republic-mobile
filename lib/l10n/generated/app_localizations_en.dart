@@ -6065,15 +6065,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyTaxIdInvalidAny => 'Use 4 to 20 letters or digits.';
 
   @override
-  String get kycDocPhClearance => 'In the Philippines: NBI clearance';
-
-  @override
-  String get kycDocPhTin => 'In the Philippines: TIN ID or certificate';
-
-  @override
-  String get kycDocPhBir => 'In the Philippines: BIR 2303 or permit';
-
-  @override
   String get roleSpecIndoor => 'Indoor';
 
   @override

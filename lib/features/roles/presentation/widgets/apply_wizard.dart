@@ -868,15 +868,3 @@ String applyDocumentLabel(AppLocalizations l10n, KycDocument doc) =>
       KycDocument.selfie => l10n.provApplyDocSelfie,
       KycDocument.backgroundClearance => l10n.roleApplyDocClearance,
     };
-
-/// What a document is called in the Philippines, under its general name, or
-/// null when the general name is the same everywhere (mobile#529).
-String? applyDocumentHint(AppLocalizations l10n, KycDocument doc) =>
-    switch (doc) {
-      KycDocument.nbi ||
-      KycDocument.backgroundClearance =>
-        l10n.kycDocPhClearance,
-      KycDocument.tinId => l10n.kycDocPhTin,
-      KycDocument.birPermit => l10n.kycDocPhBir,
-      KycDocument.validId || KycDocument.selfie => null,
-    };

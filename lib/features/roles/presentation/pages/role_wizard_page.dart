@@ -453,7 +453,6 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
           DocumentRow(
             boxed: true,
             label: applyDocumentLabel(l10n, doc),
-            hint: applyDocumentHint(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),

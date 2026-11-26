@@ -19,13 +19,8 @@ class DocumentRow extends ConsumerWidget {
     this.document = false,
     this.boxed = false,
     this.optional = false,
-    this.hint,
     super.key,
   });
-
-  /// Boxed only: a line under the name, such as what the document is called
-  /// in the Philippines (mobile#529).
-  final String? hint;
 
   /// The Provider wizard's card look (mobile#487): a boxed row saying
   /// "Required" until chosen, with Upload, Take or Replace.
@@ -158,16 +153,6 @@ class DocumentRow extends ConsumerWidget {
                     label,
                     style: AppTypography.body(color: AppColors.textPrimary),
                   ),
-                  if (hint case final hint?) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      hint,
-                      style: AppTypography.body(
-                        size: 12,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
                   const SizedBox(height: 2),
                   Text(
                     picked?.name ??

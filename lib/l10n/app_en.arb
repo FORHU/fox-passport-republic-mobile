@@ -2029,9 +2029,6 @@
     }
   },
   "roleApplyTaxIdInvalidAny": "Use 4 to 20 letters or digits.",
-  "kycDocPhClearance": "In the Philippines: NBI clearance",
-  "kycDocPhTin": "In the Philippines: TIN ID or certificate",
-  "kycDocPhBir": "In the Philippines: BIR 2303 or permit",
   "roleSpecIndoor": "Indoor",
   "roleSpecOutdoor": "Outdoor",
   "roleSpecHotel": "Hotel",

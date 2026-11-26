@@ -10810,24 +10810,6 @@ abstract class AppLocalizations {
   /// **'Use 4 to 20 letters or digits.'**
   String get roleApplyTaxIdInvalidAny;
 
-  /// No description provided for @kycDocPhClearance.
-  ///
-  /// In en, this message translates to:
-  /// **'In the Philippines: NBI clearance'**
-  String get kycDocPhClearance;
-
-  /// No description provided for @kycDocPhTin.
-  ///
-  /// In en, this message translates to:
-  /// **'In the Philippines: TIN ID or certificate'**
-  String get kycDocPhTin;
-
-  /// No description provided for @kycDocPhBir.
-  ///
-  /// In en, this message translates to:
-  /// **'In the Philippines: BIR 2303 or permit'**
-  String get kycDocPhBir;
-
   /// No description provided for @roleSpecIndoor.
   ///
   /// In en, this message translates to:

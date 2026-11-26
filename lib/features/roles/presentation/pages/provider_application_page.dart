@@ -569,7 +569,6 @@ class _DocumentsStep extends ConsumerWidget {
           DocumentRow(
             boxed: true,
             label: applyDocumentLabel(l10n, doc),
-            hint: applyDocumentHint(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),
