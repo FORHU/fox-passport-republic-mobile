@@ -125,7 +125,10 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
             : l10n.provApplyStepDocumentsHint;
     return ApplyIntro(
       top: _isCoordinator ? const ApplyRoleSwitch(current: 'organizer') : null,
-      eyebrow: roleTitleFor(_role) ?? '',
+      // Event coordination is applied for from the Provider Foxer path
+      // (mobile#526), so its intro keeps the Provider Foxer eyebrow.
+      eyebrow:
+          _isCoordinator ? l10n.provApplyEyebrow : roleTitleFor(_role) ?? '',
       eyebrowColor: _isVenue
           ? AppColors.roleVenue
           : _isEvent

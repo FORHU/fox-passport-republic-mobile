@@ -9844,6 +9844,24 @@ abstract class AppLocalizations {
   /// **'Provider Foxer'**
   String get provApplyEyebrow;
 
+  /// Above the switch between the Provider application and the Event Coordinator application, both reached from Provider Foxer.
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of work do you do?'**
+  String get applyWorkKindQuestion;
+
+  /// Switch tab: renting out gear, offering a service or performing (the Provider Foxer application).
+  ///
+  /// In en, this message translates to:
+  /// **'Gear & services'**
+  String get applyWorkKindGear;
+
+  /// Switch tab: running an event's logistics on the day (the Event Coordinator application).
+  ///
+  /// In en, this message translates to:
+  /// **'Event coordination'**
+  String get applyWorkKindCoordination;
+
   /// No description provided for @provApplyIntroTitle.
   ///
   /// In en, this message translates to:
