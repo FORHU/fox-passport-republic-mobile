@@ -307,6 +307,7 @@ class CatalogRepository {
       kind: kind,
       title: title,
       city: (row['city'] ?? row['targetCity'])?.toString(),
+      venueName: _venueName(row),
       capacity: ((row['capacity'] ?? row['guestCount']) as num?)?.toInt(),
       price: _num(row['price'] ?? row['estimatedTotal'] ?? row['totalAmount']),
       eventStartAt: DateTime.tryParse('${row['startAt']}')?.toLocal(),
@@ -324,6 +325,16 @@ class CatalogRepository {
       verified: row['identityVerifiedAt'] != null,
       online: row['isOnline'] == true,
     );
+  }
+
+  /// An event's venue name, from its first venue line (api#511).
+  static String? _venueName(Map<dynamic, dynamic> row) {
+    final lines = row['templateVenues'];
+    if (lines is! List || lines.isEmpty) return null;
+    final line = lines.first;
+    final venue = line is Map ? line['venue'] : null;
+    final name = venue is Map ? venue['name']?.toString().trim() : null;
+    return name == null || name.isEmpty ? null : name;
   }
 
   static List<String> _strings(Object? value) =>
