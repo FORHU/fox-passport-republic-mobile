@@ -2,6 +2,18 @@ import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('reads what a specialty is listed as (api#506)', () {
+    ProviderSpecialty read(Object? kind) => ProviderSpecialty.fromJson({
+          'slug': 'x',
+          'name': 'X',
+          'listingKind': kind,
+        });
+    expect(read('asset').listingKind, 'asset');
+    expect(read('service').listingKind, 'service');
+    expect(read(null).listingKind, isNull);
+    expect(read('venue').listingKind, isNull);
+  });
+
   test('reads a specialty with its main category (api#503)', () {
     final s = ProviderSpecialty.fromJson(const {
       'slug': 'photography',

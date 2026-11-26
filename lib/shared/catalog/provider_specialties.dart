@@ -36,7 +36,12 @@ class ProviderSpecialtyGroup extends Equatable {
 
 /// One thing a Provider can specialise in, named by the catalog.
 class ProviderSpecialty extends Equatable {
-  const ProviderSpecialty({required this.slug, required this.name, this.group});
+  const ProviderSpecialty({
+    required this.slug,
+    required this.name,
+    this.group,
+    this.listingKind,
+  });
 
   factory ProviderSpecialty.fromJson(Map<String, dynamic> json) =>
       ProviderSpecialty(
@@ -45,7 +50,16 @@ class ProviderSpecialty extends Equatable {
             ? (json['name'] as String).trim()
             : '${json['slug']}',
         group: ProviderSpecialtyGroup.tryParse(json['group']),
+        listingKind: switch (json['listingKind']) {
+          'asset' => 'asset',
+          'service' => 'service',
+          _ => null,
+        },
       );
+
+  /// What it is listed as: `asset` (gear) or `service` (api#506); null when no
+  /// listing can carry it yet, or from an older API.
+  final String? listingKind;
 
   /// What the API stores and filters by.
   final String slug;
@@ -58,7 +72,11 @@ class ProviderSpecialty extends Equatable {
   final ProviderSpecialtyGroup? group;
 
   @override
-  List<Object?> get props => [slug, name, group];
+  List<Object?> get props => [slug, name, group, listingKind];
+
+  /// "Photo & Video · Photo booth", or just the name when it has no main
+  /// category.
+  String get fullName => group == null ? name : '${group!.name} · $name';
 }
 
 /// [list] split by main category, in the order the API gave, with the
