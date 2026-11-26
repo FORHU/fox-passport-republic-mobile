@@ -1408,6 +1408,12 @@ abstract class AppLocalizations {
   /// **'One or more documents were flagged — tap to fix and resubmit.'**
   String get onboardingRevisionCaption;
 
+  /// No description provided for @onboardingPendingCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review. Tap to withdraw this application.'**
+  String get onboardingPendingCaption;
+
   /// No description provided for @onboardingLearnApply.
   ///
   /// In en, this message translates to:
@@ -5793,6 +5799,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get rolesClose;
+
+  /// No description provided for @rolesWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw application'**
+  String get rolesWithdraw;
+
+  /// No description provided for @rolesWithdrawNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw {role} application'**
+  String rolesWithdrawNamed(String role);
+
+  /// No description provided for @rolesWithdrawTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw your {role} application?'**
+  String rolesWithdrawTitle(String role);
+
+  /// No description provided for @rolesWithdrawBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves the review queue for good. You can apply for this role again later.'**
+  String get rolesWithdrawBody;
+
+  /// No description provided for @rolesWithdrawKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get rolesWithdrawKeep;
+
+  /// No description provided for @rolesWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Application withdrawn'**
+  String get rolesWithdrawn;
+
+  /// No description provided for @rolesWithdrawFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t withdraw the application. Please try again.'**
+  String get rolesWithdrawFailed;
 
   /// No description provided for @venueBookNow.
   ///

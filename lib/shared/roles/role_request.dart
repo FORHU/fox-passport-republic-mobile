@@ -41,6 +41,12 @@ class RoleRequestSummary extends Equatable {
   bool get needsRevision => status == 'revision_requested';
   bool get isApproved => status == 'approved';
 
+  /// The applicant took it back before a decision (api#367).
+  bool get isWithdrawn => status == 'withdrawn';
+
+  /// No admin has decided it yet, so its applicant can withdraw it.
+  bool get isOpen => isPending || needsRevision;
+
   @override
   List<Object?> get props =>
       [id, roleType, status, flaggedDocuments, revisionNote];

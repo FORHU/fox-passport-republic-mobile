@@ -71,6 +71,12 @@ class RoleApplicationRepository {
       {'documents': ids},
     );
   }
+
+  /// Takes back the applicant's own application while no admin has decided
+  /// it (api#367).
+  Future<void> withdraw(String requestId) async {
+    await _api.patch(ApiEndpoints.roleRequestWithdraw(requestId));
+  }
 }
 
 final roleApplicationRepositoryProvider = Provider<RoleApplicationRepository>(

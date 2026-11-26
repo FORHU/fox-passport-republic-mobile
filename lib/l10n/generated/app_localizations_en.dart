@@ -702,6 +702,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'One or more documents were flagged — tap to fix and resubmit.';
 
   @override
+  String get onboardingPendingCaption =>
+      'Under review. Tap to withdraw this application.';
+
+  @override
   String get onboardingLearnApply => 'Learn more & apply';
 
   @override
@@ -3205,6 +3209,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rolesClose => 'Close';
+
+  @override
+  String get rolesWithdraw => 'Withdraw application';
+
+  @override
+  String rolesWithdrawNamed(String role) {
+    return 'Withdraw $role application';
+  }
+
+  @override
+  String rolesWithdrawTitle(String role) {
+    return 'Withdraw your $role application?';
+  }
+
+  @override
+  String get rolesWithdrawBody =>
+      'It leaves the review queue for good. You can apply for this role again later.';
+
+  @override
+  String get rolesWithdrawKeep => 'Keep it';
+
+  @override
+  String get rolesWithdrawn => 'Application withdrawn';
+
+  @override
+  String get rolesWithdrawFailed =>
+      'Couldn\'t withdraw the application. Please try again.';
 
   @override
   String get venueBookNow => 'Book now';
