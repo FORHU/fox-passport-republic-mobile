@@ -83,21 +83,22 @@ class ProviderApplicationDraft extends Equatable {
   static const maxPhotos = 6;
   static const maxDescription = 500;
 
+  /// The documents it can't be sent without, out of [askedDocuments]. A
+  /// business registration is optional, since many countries let people work
+  /// without one (mobile#529).
+  static const List<KycDocument> requiredDocuments = [
+    KycDocument.validId,
+    KycDocument.nbi,
+    KycDocument.tinId,
+    KycDocument.selfie,
+  ];
+
   /// The documents the wizard asks for, in order.
   static const List<KycDocument> askedDocuments = [
     KycDocument.validId,
     KycDocument.nbi,
     KycDocument.tinId,
     KycDocument.birPermit,
-    KycDocument.selfie,
-  ];
-
-  /// The ones it can't be sent without. A business registration is optional,
-  /// since many countries let people work without one (mobile#529).
-  static const List<KycDocument> requiredDocuments = [
-    KycDocument.validId,
-    KycDocument.nbi,
-    KycDocument.tinId,
     KycDocument.selfie,
   ];
 
