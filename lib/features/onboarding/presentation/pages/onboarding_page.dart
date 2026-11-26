@@ -6,6 +6,7 @@ import 'package:flutter_template/core/services/storage_service.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:flutter_template/features/onboarding/domain/entities/onboarding_models.dart';
 import 'package:flutter_template/features/onboarding/presentation/controllers/onboarding_controller.dart';
 import 'package:flutter_template/features/onboarding/presentation/theme/onboarding_palette.dart';
 import 'package:flutter_template/features/onboarding/presentation/widgets/onboarding_chrome.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_template/features/onboarding/presentation/widgets/onboar
 import 'package:flutter_template/features/onboarding/presentation/widgets/role_details_sheet.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
+import 'package:flutter_template/shared/roles/withdraw_role_dialog.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/spacing.dart';
@@ -73,6 +75,28 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       return;
     }
     await _openOnWeb(role.href);
+  }
+
+  /// Takes back an application still under review (api#367), once the
+  /// applicant confirms.
+  Future<void> _withdraw(
+    RoleCatalogEntry role,
+    RoleRequestSummary request,
+  ) async {
+    if (!await confirmWithdrawRole(context, role.title) || !mounted) return;
+    final error = await ref
+        .read(onboardingControllerProvider.notifier)
+        .withdraw(request.id);
+    if (!mounted) return;
+    final l10n = context.l10n;
+    showTopToast(
+      context,
+      error == null
+          ? l10n.rolesWithdrawn
+          : error.isEmpty
+              ? l10n.rolesWithdrawFailed
+              : error,
+    );
   }
 
   Future<void> _openOnWeb(String path) async {
@@ -144,6 +168,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                             key: const ValueKey('roles'),
                             state: state,
                             onRole: _openRole,
+                            onWithdraw: (role, request) =>
+                                unawaited(_withdraw(role, request)),
                             onRevision: (id) => unawaited(
                               context.push(RouteNames.roleResubmit(id)),
                             ),
@@ -661,6 +687,7 @@ class _RolesStep extends StatelessWidget {
   const _RolesStep({
     required this.state,
     required this.onRole,
+    required this.onWithdraw,
     required this.onRevision,
     required this.onBack,
     required this.onFinish,
@@ -670,6 +697,8 @@ class _RolesStep extends StatelessWidget {
 
   final OnboardingState state;
   final ValueChanged<RoleCatalogEntry> onRole;
+  final void Function(RoleCatalogEntry role, RoleRequestSummary request)
+      onWithdraw;
   final ValueChanged<String> onRevision;
   final VoidCallback onBack;
   final VoidCallback onFinish;
@@ -763,7 +792,14 @@ class _RolesStep extends StatelessWidget {
       return RoleCard(role: role, status: RoleStatus.active, onTap: null);
     }
     if (state.pendingRoles.contains(role.roleType)) {
-      return RoleCard(role: role, status: RoleStatus.pending, onTap: null);
+      final request = state.pendingRequests
+          .where((r) => r.roleType == role.roleType)
+          .firstOrNull;
+      return RoleCard(
+        role: role,
+        status: RoleStatus.pending,
+        onTap: request == null ? null : () => onWithdraw(role, request),
+      );
     }
     for (final r in state.revisions) {
       if (r.roleType == role.roleType) {

@@ -13,6 +13,9 @@ abstract class OnboardingRemoteDataSource {
     required String district,
   });
   Future<List<RoleRequestSummary>> fetchMyRoleRequests();
+
+  /// Takes back the user's own application while no admin has decided it.
+  Future<void> withdrawRoleRequest(String id);
   Future<List<GeoCountry>> fetchCountries();
   Future<List<GeoState>> fetchStates(String countryCode);
   Future<List<String>> fetchCities(String countryCode, {String? stateCode});
@@ -61,6 +64,11 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
   Future<List<RoleRequestSummary>> fetchMyRoleRequests() async {
     final body = await _api.get(ApiEndpoints.roleRequestsMine);
     return _maps(body).map(RoleRequestSummary.fromJson).toList();
+  }
+
+  @override
+  Future<void> withdrawRoleRequest(String id) async {
+    await _api.patch(ApiEndpoints.roleRequestWithdraw(id));
   }
 
   @override
