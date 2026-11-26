@@ -5,6 +5,7 @@ import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/tax_id.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
 /// Sends an application for a role. The API keeps the documents private.
@@ -16,6 +17,31 @@ class RoleApplicationRepository {
   Future<void> submit(RoleApplicationDraft draft) async {
     await _api.post(ApiEndpoints.roleRequestsApply, draft.toForm());
   }
+
+  /// The countries a tax number can be from (mobile#529).
+  Future<List<TaxCountry>> taxCountries() async {
+    final body = await _api.get(ApiEndpoints.locationCountries);
+    final rows = body is Map ? body['data'] : body;
+    if (rows is! List) return const [];
+    return [
+      for (final row in rows)
+        if (TaxCountry.tryParse(row) case final c?) c,
+    ];
+  }
+
+  /// The country on the person's profile, as `GET /profile` gives it (a code
+  /// or a name), or ''.
+  Future<String> profileCountry() async {
+    final body = await _api.get(ApiEndpoints.profile);
+    final data = body is Map && body['data'] is Map ? body['data'] : body;
+    return data is Map ? '${data['country'] ?? ''}'.trim() : '';
+  }
+
+  /// How [countryCode]'s tax numbers look, or null when the API gives none.
+  Future<TinFormats?> tinFormats(String countryCode) async =>
+      TinFormats.tryParse(
+        await _api.get(ApiEndpoints.locationTinFormats(countryCode)),
+      );
 
   /// Sends a Provider's wizard application (mobile#487). The work photos are
   /// stored privately first, which gives their ids; then the application

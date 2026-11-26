@@ -9901,7 +9901,7 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyStepDocumentsHint.
   ///
   /// In en, this message translates to:
-  /// **'ID, NBI, TIN, BIR permit, selfie'**
+  /// **'ID, clearance, tax ID, business permit, selfie'**
   String get provApplyStepDocumentsHint;
 
   /// No description provided for @provApplyDuration.
@@ -10147,19 +10147,19 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyDocNbi.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance'**
+  /// **'Police or background clearance'**
   String get provApplyDocNbi;
 
   /// No description provided for @provApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN ID'**
+  /// **'Tax ID card or certificate'**
   String get provApplyDocTin;
 
   /// No description provided for @provApplyDocBir.
   ///
   /// In en, this message translates to:
-  /// **'BIR permit'**
+  /// **'Business registration or permit'**
   String get provApplyDocBir;
 
   /// No description provided for @provApplyDocSelfie.
@@ -10387,7 +10387,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleWizVenueAboutHint.
   ///
   /// In en, this message translates to:
-  /// **'Name, contact, address, TIN'**
+  /// **'Name, contact, address, tax ID'**
   String get roleWizVenueAboutHint;
 
   /// No description provided for @roleWizVenueCategoriesHint.
@@ -10429,7 +10429,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleWizEventDocsHint.
   ///
   /// In en, this message translates to:
-  /// **'ID, NBI, TIN, BIR permit, selfie, portfolio'**
+  /// **'ID, clearance, tax ID, business permit, selfie, portfolio'**
   String get roleWizEventDocsHint;
 
   /// No description provided for @roleWizCoordIntroTitle.
@@ -10501,13 +10501,13 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyNbiNumber.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance ID number'**
+  /// **'Clearance number'**
   String get roleApplyNbiNumber;
 
   /// No description provided for @roleApplyTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN number (optional)'**
+  /// **'Tax ID (optional)'**
   String get roleApplyTin;
 
   /// No description provided for @roleApplyDocId.
@@ -10519,19 +10519,19 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyDocNbi.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance'**
+  /// **'Police or background clearance'**
   String get roleApplyDocNbi;
 
   /// No description provided for @roleApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN ID or certificate'**
+  /// **'Tax ID card or certificate'**
   String get roleApplyDocTin;
 
   /// No description provided for @roleApplyDocBir.
   ///
   /// In en, this message translates to:
-  /// **'BIR 2303 or permit'**
+  /// **'Business registration or permit'**
   String get roleApplyDocBir;
 
   /// No description provided for @roleApplyDocSelfie.
@@ -10771,8 +10771,62 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyTinRequired.
   ///
   /// In en, this message translates to:
-  /// **'TIN number'**
+  /// **'Tax ID'**
   String get roleApplyTinRequired;
+
+  /// No description provided for @roleApplyTaxCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country of your tax ID'**
+  String get roleApplyTaxCountry;
+
+  /// No description provided for @roleApplyTaxId.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax ID'**
+  String get roleApplyTaxId;
+
+  /// Tax number field label with what that country calls it, e.g. Tax ID (TIN).
+  ///
+  /// In en, this message translates to:
+  /// **'Tax ID ({name})'**
+  String roleApplyTaxIdNamed(String name);
+
+  /// No description provided for @roleApplyTaxIdExample.
+  ///
+  /// In en, this message translates to:
+  /// **'For example {example}'**
+  String roleApplyTaxIdExample(String example);
+
+  /// No description provided for @roleApplyTaxIdInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t look like a tax ID from this country. For example {example}'**
+  String roleApplyTaxIdInvalid(String example);
+
+  /// No description provided for @roleApplyTaxIdInvalidAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 4 to 20 letters or digits.'**
+  String get roleApplyTaxIdInvalidAny;
+
+  /// No description provided for @kycDocPhClearance.
+  ///
+  /// In en, this message translates to:
+  /// **'In the Philippines: NBI clearance'**
+  String get kycDocPhClearance;
+
+  /// No description provided for @kycDocPhTin.
+  ///
+  /// In en, this message translates to:
+  /// **'In the Philippines: TIN ID or certificate'**
+  String get kycDocPhTin;
+
+  /// No description provided for @kycDocPhBir.
+  ///
+  /// In en, this message translates to:
+  /// **'In the Philippines: BIR 2303 or permit'**
+  String get kycDocPhBir;
 
   /// No description provided for @roleSpecIndoor.
   ///

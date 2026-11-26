@@ -81,6 +81,7 @@ class RoleApplicationDraft extends Equatable {
     this.experience = '',
     this.nbiNumber = '',
     this.tinNumber = '',
+    this.tinCountry = '',
     this.specializations = const [],
     this.documents = const {},
   });
@@ -117,6 +118,11 @@ class RoleApplicationDraft extends Equatable {
   final String experience;
   final String nbiNumber;
   final String tinNumber;
+
+  /// The 2-letter country [tinNumber] is from (mobile#529). The API checks
+  /// the number against that country's formats; left out, it checks it as
+  /// Philippine.
+  final String tinCountry;
 
   /// Up to three, picked from the role's categories.
   final List<String> specializations;
@@ -211,7 +217,7 @@ class RoleApplicationDraft extends Equatable {
                   ? businessName.trim().isNotEmpty &&
                       contactNumber.trim().isNotEmpty &&
                       address.trim().isNotEmpty &&
-                      tinNumber.isNotEmpty
+                      tinNumber.trim().isNotEmpty
                   : businessName.trim().isNotEmpty &&
                       split(types).isNotEmpty &&
                       specializations.isNotEmpty) &&
@@ -234,6 +240,7 @@ class RoleApplicationDraft extends Equatable {
     String? experience,
     String? nbiNumber,
     String? tinNumber,
+    String? tinCountry,
     List<String>? specializations,
     Map<KycDocument, PickedPhoto>? documents,
   }) =>
@@ -254,6 +261,7 @@ class RoleApplicationDraft extends Equatable {
         experience: experience ?? this.experience,
         nbiNumber: nbiNumber ?? this.nbiNumber,
         tinNumber: tinNumber ?? this.tinNumber,
+        tinCountry: tinCountry ?? this.tinCountry,
         specializations: specializations ?? this.specializations,
         documents: documents ?? this.documents,
       );
@@ -282,7 +290,10 @@ class RoleApplicationDraft extends Equatable {
           if (nbiNumber.isNotEmpty) 'nbiClearanceIdNumber': nbiNumber,
           if (portfolioLinks.isNotEmpty) 'portfolioUrls': portfolioLinks,
         },
-        if (tinNumber.isNotEmpty) 'tinNumber': tinNumber,
+        if (tinNumber.trim().isNotEmpty) ...{
+          'tinNumber': tinNumber.trim(),
+          if (tinCountry.isNotEmpty) 'tinCountry': tinCountry,
+        },
         'specializations': specializations,
       };
 
@@ -320,6 +331,7 @@ class RoleApplicationDraft extends Equatable {
         experience,
         nbiNumber,
         tinNumber,
+        tinCountry,
         specializations,
         documents.keys.toList(),
       ];

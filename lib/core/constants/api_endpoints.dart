@@ -60,6 +60,8 @@ class ApiEndpoints {
       '/locations/countries/$countryCode/barangays';
   static String locationCities(String countryCode) =>
       '/locations/countries/$countryCode/cities';
+  static String locationTinFormats(String countryCode) =>
+      '/locations/countries/$countryCode/tin-formats';
 
   // ── Browse ──────────────────────────────────────────────────────────────
   static const String events = '/event-templates';

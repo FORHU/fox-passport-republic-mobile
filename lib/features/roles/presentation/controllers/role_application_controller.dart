@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/features/roles/data/role_application_repository.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/tax_id.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/shared/roles/role_request.dart';
@@ -14,6 +17,8 @@ class RoleApplicationState {
     this.locating = false,
     this.locateProblem,
     this.locatedCount = 0,
+    this.taxCountries = const [],
+    this.tinFormats,
   });
 
   final RoleApplicationDraft draft;
@@ -31,6 +36,22 @@ class RoleApplicationState {
   /// Goes up each time the location fills the fields, so they show it.
   final int locatedCount;
 
+  /// Venue only: the countries the tax number can be from (mobile#529).
+  /// Empty until loaded, or when they could not be.
+  final List<TaxCountry> taxCountries;
+
+  /// How the chosen tax country's numbers look, or null when not known yet
+  /// (the API still checks the number when it is sent).
+  final TinFormats? tinFormats;
+
+  /// Whether the tax number fits the chosen country's formats, as far as the
+  /// app knows them.
+  bool get tinFits {
+    final value = draft.tinNumber.trim();
+    if (value.isEmpty) return false;
+    return tinFormats?.accepts(value) ?? true;
+  }
+
   RoleApplicationState copyWith({
     RoleApplicationDraft? draft,
     bool? submitting,
@@ -40,6 +61,9 @@ class RoleApplicationState {
     LocateOutcome? locateProblem,
     bool clearLocateProblem = false,
     int? locatedCount,
+    List<TaxCountry>? taxCountries,
+    TinFormats? tinFormats,
+    bool clearTinFormats = false,
   }) =>
       RoleApplicationState(
         draft: draft ?? this.draft,
@@ -49,6 +73,8 @@ class RoleApplicationState {
         locateProblem:
             clearLocateProblem ? null : locateProblem ?? this.locateProblem,
         locatedCount: locatedCount ?? this.locatedCount,
+        taxCountries: taxCountries ?? this.taxCountries,
+        tinFormats: clearTinFormats ? null : tinFormats ?? this.tinFormats,
       );
 }
 
@@ -58,12 +84,68 @@ class RoleApplicationController extends Notifier<RoleApplicationState> {
   final String roleType;
 
   @override
-  RoleApplicationState build() => RoleApplicationState(
-        draft: RoleApplicationDraft(roleType: roleType),
-      );
+  RoleApplicationState build() {
+    if (roleType == 'venueFoxer') unawaited(Future.microtask(_loadTaxCountry));
+    return RoleApplicationState(
+      draft: RoleApplicationDraft(roleType: roleType),
+    );
+  }
 
   void edit(RoleApplicationDraft Function(RoleApplicationDraft) change) {
     state = state.copyWith(draft: change(state.draft), clearError: true);
+  }
+
+  /// Starts the tax country on the person's own country, else the
+  /// Philippines, and loads the countries to choose from (mobile#529).
+  Future<void> _loadTaxCountry() async {
+    final repo = ref.read(roleApplicationRepositoryProvider);
+    var countries = const <TaxCountry>[];
+    var profileCountry = '';
+    try {
+      countries = await repo.taxCountries();
+    } on Object {
+      // The field still works on the Philippines; the API checks the number.
+    }
+    try {
+      profileCountry = await repo.profileCountry();
+    } on Object {
+      // No profile country: start on the Philippines.
+    }
+    if (!ref.mounted) return;
+    // The list and the chosen country arrive together, so the country
+    // dropdown, which reads its value once, never starts empty.
+    final code = state.draft.tinCountry.isEmpty
+        ? taxCountryFor(profileCountry, countries)
+        : state.draft.tinCountry;
+    state = state.copyWith(
+      taxCountries: countries,
+      draft: state.draft.copyWith(tinCountry: code),
+    );
+    await _loadTinFormats(code);
+  }
+
+  /// Chooses the country the tax number is from and loads its formats.
+  Future<void> setTinCountry(String code) async {
+    state = state.copyWith(
+      draft: state.draft.copyWith(tinCountry: code),
+      clearTinFormats: true,
+      clearError: true,
+    );
+    await _loadTinFormats(code);
+  }
+
+  Future<void> _loadTinFormats(String code) async {
+    TinFormats? formats;
+    try {
+      formats = await ref.read(roleApplicationRepositoryProvider).tinFormats(
+            code,
+          );
+    } on Object {
+      formats = null;
+    }
+    if (!ref.mounted || state.draft.tinCountry != code) return;
+    state =
+        state.copyWith(tinFormats: formats, clearTinFormats: formats == null);
   }
 
   /// Fills the city and province from the phone's location (Event Foxer and

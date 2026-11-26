@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/roles/data/role_application_repository.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/tax_id.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/pages/role_wizard_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -12,6 +14,8 @@ import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+
+import 'tax_id_test.dart' show caBody, phBody;
 
 /// The Venue, Event and Event Coordinator applications in the Provider
 /// wizard's layout (mobile#487): about, categories, documents, review, sent.
@@ -49,6 +53,9 @@ void main() {
 
   setUp(() {
     repo = _MockRepo();
+    when(() => repo.taxCountries()).thenAnswer((_) async => const []);
+    when(() => repo.profileCountry()).thenAnswer((_) async => '');
+    when(() => repo.tinFormats(any())).thenAnswer((_) async => null);
     locator = _FakeLocator();
     container = ProviderContainer(
       overrides: [
@@ -119,7 +126,7 @@ void main() {
     await fillField(tester, 'Business or venue name', 'Garden Hall');
     await fillField(tester, 'Contact number', '09171234567');
     await fillField(tester, 'Complete address', '1 Main St, Cebu City');
-    await fillField(tester, 'TIN number', '123456789');
+    await tester.enterText(find.byKey(const Key('tax-id')), '123456789');
     await tester.pumpAndSettle();
     await tapText(tester, 'Next: categories');
 
@@ -131,6 +138,19 @@ void main() {
     await tapText(tester, 'Next: documents');
 
     expect(find.text('5 documents still to add'), findsOneWidget);
+    // General names, with the Philippine one as a hint (mobile#529).
+    for (final name in [
+      'Police or background clearance',
+      'Tax ID card or certificate',
+      'Business registration or permit',
+      'In the Philippines: NBI clearance',
+      'In the Philippines: TIN ID or certificate',
+      'In the Philippines: BIR 2303 or permit',
+    ]) {
+      expect(find.text(name), findsOneWidget, reason: name);
+    }
+    expect(find.text('NBI clearance'), findsNothing);
+    expect(find.text('BIR permit'), findsNothing);
     for (final doc in KycDocument.values.take(5)) {
       c('venueFoxer').setDocument(doc, _photo('${doc.name}.jpg'));
     }
@@ -147,8 +167,82 @@ void main() {
     final sent = verify(() => repo.submit(captureAny())).captured.single
         as RoleApplicationDraft;
     expect(sent.specializations, ['indoor', 'outdoor', 'hotel']);
+    expect(sent.toData()['tinCountry'], 'PH', reason: 'no profile country');
     expect(find.text('Application sent'), findsOneWidget);
     expect(find.text('UNDER REVIEW'), findsOneWidget);
+  });
+
+  testWidgets(
+      'a Venue tax ID can be from any country, checked as the API '
+      'checks it', (tester) async {
+    final countries = Completer<List<TaxCountry>>();
+    when(() => repo.taxCountries()).thenAnswer((_) => countries.future);
+    when(() => repo.profileCountry()).thenAnswer((_) async => 'Canada');
+    when(() => repo.tinFormats('CA'))
+        .thenAnswer((_) async => TinFormats.tryParse(caBody));
+    when(() => repo.tinFormats('PH'))
+        .thenAnswer((_) async => TinFormats.tryParse(phBody));
+    // Start before the countries arrive: the dropdown still shows the
+    // profile's country once they do.
+    tester.view
+      ..physicalSize = const Size(400, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          theme: AppTheme.dark,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const RoleWizardPage(roleType: 'venueFoxer'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Start'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('tax-country')), findsNothing);
+
+    countries.complete(const [
+      TaxCountry(code: 'CA', name: 'Canada'),
+      TaxCountry(code: 'PH', name: 'Philippines'),
+    ]);
+    await tester.pumpAndSettle();
+
+    // Starts on the profile's country.
+    expect(find.text('Canada'), findsOneWidget);
+    expect(find.text('Tax ID (SIN)'), findsOneWidget);
+    expect(find.text('For example 12345678-9'), findsOneWidget);
+
+    await fillField(tester, 'Business or venue name', 'Maple Hall');
+    await fillField(tester, 'Contact number', '+1 416 555 0100');
+    await fillField(tester, 'Complete address', '1 King St, Toronto');
+    final tin = find.byKey(const Key('tax-id'));
+    await tester.enterText(tin, 'ABC');
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        "That doesn't look like a tax ID from this country. "
+        'For example 12345678-9',
+      ),
+      findsOneWidget,
+    );
+    expect(button(tester, 'Next: categories').onPressed, isNull);
+
+    await tester.enterText(tin, '12345678-9');
+    await tester.pumpAndSettle();
+    expect(button(tester, 'Next: categories').onPressed, isNotNull);
+
+    // Another country checks the same number by its own formats.
+    await tester.tap(find.byKey(const Key('tax-country')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Philippines').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Tax ID (TIN)'), findsOneWidget);
+    expect(button(tester, 'Next: categories').onPressed, isNull);
+    final draft = container.read(roleApplicationProvider('venueFoxer')).draft;
+    expect(draft.tinCountry, 'PH');
   });
 
   testWidgets('an Event Foxer can fill the city from the location', (
