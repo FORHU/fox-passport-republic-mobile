@@ -210,9 +210,14 @@ void main() {
   ) async {
     await open(tester, 'organizer');
 
-    expect(find.text('PROVIDER FOXER'), findsNothing);
-    expect(find.text('Provider Foxer'), findsOneWidget);
-    expect(find.text('Event Coordinator'), findsOneWidget);
+    // Reached from Provider Foxer, so the switch names kinds of work and the
+    // eyebrow stays Provider Foxer (mobile#526).
+    expect(find.text('What kind of work do you do?'), findsOneWidget);
+    expect(find.text('Gear & services'), findsOneWidget);
+    expect(find.text('Event coordination'), findsOneWidget);
+    expect(find.text('PROVIDER FOXER'), findsOneWidget, reason: 'eyebrow');
+    final roleTitle = RegExp('event coordinator', caseSensitive: false);
+    expect(find.textContaining(roleTitle), findsNothing);
     expect(find.text('Run the logistics on event day'), findsOneWidget);
 
     await tapText(tester, 'Start');

@@ -498,7 +498,7 @@ void main() {
     testWidgets('selected Provider categories appear as removable tags', (
       tester,
     ) async {
-      // The Provider / Event Coordinator switch (mobile#488) pushes the
+      // The kind-of-Provider-work switch (mobile#488, #526) pushes the
       // chips below the default test screen.
       tester.view
         ..physicalSize = const Size(800, 2400)

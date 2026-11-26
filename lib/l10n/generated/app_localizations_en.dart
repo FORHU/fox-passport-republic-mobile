@@ -5500,6 +5500,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyEyebrow => 'Provider Foxer';
 
   @override
+  String get applyWorkKindQuestion => 'What kind of work do you do?';
+
+  @override
+  String get applyWorkKindGear => 'Gear & services';
+
+  @override
+  String get applyWorkKindCoordination => 'Event coordination';
+
+  @override
   String get provApplyIntroTitle =>
       'Rent out gear or offer a service at events';
 

@@ -325,6 +325,14 @@ void main() {
         find.text('Rent out gear or offer a service at events'),
         findsOneWidget,
       );
+      // The switch names kinds of Provider work, not a second role
+      // (mobile#526).
+      expect(find.text('What kind of work do you do?'), findsOneWidget);
+      expect(find.text('Gear & services'), findsOneWidget);
+      expect(find.text('Event coordination'), findsOneWidget);
+      expect(find.text('PROVIDER FOXER'), findsOneWidget, reason: 'eyebrow');
+      final roleTitle = RegExp('event coordinator', caseSensitive: false);
+      expect(find.textContaining(roleTitle), findsNothing);
       for (final step in [
         'Your business',
         'Your categories',

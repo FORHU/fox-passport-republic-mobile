@@ -1831,6 +1831,18 @@
   "roleApplySuggestHint": "e.g. Drone photography",
   "roleApplySuggestHelp": "Our team reviews it. It's not added to your picks.",
   "provApplyEyebrow": "Provider Foxer",
+  "applyWorkKindQuestion": "What kind of work do you do?",
+  "@applyWorkKindQuestion": {
+    "description": "Above the switch between the Provider application and the Event Coordinator application, both reached from Provider Foxer."
+  },
+  "applyWorkKindGear": "Gear & services",
+  "@applyWorkKindGear": {
+    "description": "Switch tab: renting out gear, offering a service or performing (the Provider Foxer application)."
+  },
+  "applyWorkKindCoordination": "Event coordination",
+  "@applyWorkKindCoordination": {
+    "description": "Switch tab: running an event's logistics on the day (the Event Coordinator application)."
+  },
   "provApplyIntroTitle": "Rent out gear or offer a service at events",
   "provApplyIntroBody": "Tell us what you do. Citizens and Event Foxers find you by the categories you pick, so choose every one you really work in.",
   "provApplyStepBusiness": "Your business",
