@@ -227,7 +227,8 @@ void main() {
       expect(draft().detailsDone, isFalse, reason: 'needs a photo too');
       c().addPhoto('dj', _photo('a.png'));
       expect(draft().detailsDone, isTrue);
-      expect(draft().documentsMissing, 5);
+      // A business registration is optional (mobile#529).
+      expect(draft().documentsMissing, 4);
     });
 
     test('sends the wizard answers the API reads', () {
@@ -553,13 +554,18 @@ void main() {
     testWidgets('step 4 counts the documents still to add', (tester) async {
       c().goTo(ProviderApplyStep.documents);
       await open(tester);
-      expect(find.text('5 documents still to add'), findsOneWidget);
+      expect(find.text('4 documents still to add'), findsOneWidget);
+      expect(find.text('Optional'), findsOneWidget, reason: 'business');
+      expect(
+        find.text('A card, certificate or official letter is fine.'),
+        findsOneWidget,
+      );
       expect(find.text('Take'), findsOneWidget);
       expect(find.text('Upload'), findsNWidgets(4));
 
       c().setDocument(KycDocument.validId, _photo('id.png'));
       await tester.pumpAndSettle();
-      expect(find.text('4 documents still to add'), findsOneWidget);
+      expect(find.text('3 documents still to add'), findsOneWidget);
       expect(find.text('Replace'), findsOneWidget);
     });
 
@@ -573,7 +579,7 @@ void main() {
 
       expect(find.text('Sound Gear Co.'), findsOneWidget);
       expect(find.text('Cebu City, Cebu · My province · 6 years'), findsOne);
-      expect(find.text('All 5 added'), findsOneWidget);
+      expect(find.text('4 documents added'), findsOneWidget);
       ElevatedButton send() => tester.widget<ElevatedButton>(
             find.widgetWithText(ElevatedButton, 'Send application'),
           );

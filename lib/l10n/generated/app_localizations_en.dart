@@ -5538,7 +5538,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyStepDocuments => 'Documents';
 
   @override
-  String get provApplyStepDocumentsHint => 'ID, NBI, TIN, BIR permit, selfie';
+  String get provApplyStepDocumentsHint =>
+      'ID, clearance, tax ID, business permit, selfie';
 
   @override
   String get provApplyDuration => 'Takes about 10 minutes.';
@@ -5753,13 +5754,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyDocId => 'Valid government ID';
 
   @override
-  String get provApplyDocNbi => 'NBI clearance';
+  String get provApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get provApplyDocTin => 'TIN ID';
+  String get provApplyDocTin => 'Tax ID document';
 
   @override
-  String get provApplyDocBir => 'BIR permit';
+  String get kycDocTaxNote => 'A card, certificate or official letter is fine.';
+
+  @override
+  String get provApplyDocBir => 'Business registration or permit';
 
   @override
   String get provApplyDocSelfie => 'Selfie holding your ID';
@@ -5831,7 +5835,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String provApplyAllDocs(int count) {
-    return 'All $count added';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents added',
+      one: '1 document added',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -5899,7 +5909,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tell us about your business. Citizens and Event Foxers find your venues by the categories you pick.';
 
   @override
-  String get roleWizVenueAboutHint => 'Name, contact, address, TIN';
+  String get roleWizVenueAboutHint => 'Name, contact, address, tax ID';
 
   @override
   String get roleWizVenueCategoriesHint =>
@@ -5923,7 +5933,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleWizEventDocsHint =>
-      'ID, NBI, TIN, BIR permit, selfie, portfolio';
+      'ID, clearance, tax ID, business permit, selfie, portfolio';
 
   @override
   String get roleWizCoordIntroTitle => 'Run the logistics on event day';
@@ -5966,22 +5976,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'An admin checks these. They are kept private.';
 
   @override
-  String get roleApplyNbiNumber => 'NBI clearance ID number';
+  String get roleApplyNbiNumber => 'Clearance number';
 
   @override
-  String get roleApplyTin => 'TIN number (optional)';
+  String get roleApplyTin => 'Tax ID (optional)';
 
   @override
   String get roleApplyDocId => 'Primary valid ID';
 
   @override
-  String get roleApplyDocNbi => 'NBI clearance';
+  String get roleApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get roleApplyDocTin => 'TIN ID or certificate';
+  String get roleApplyDocTin => 'Tax ID document';
 
   @override
-  String get roleApplyDocBir => 'BIR 2303 or permit';
+  String get roleApplyDocBir => 'Business registration or permit';
 
   @override
   String get roleApplyDocSelfie => 'Verification selfie';
@@ -6115,7 +6125,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDescription => 'About your venues (optional)';
 
   @override
-  String get roleApplyTinRequired => 'TIN number';
+  String get roleApplyTinRequired => 'Tax ID';
+
+  @override
+  String get roleApplyTaxCountry => 'Country of your tax ID';
+
+  @override
+  String get roleApplyTaxId => 'Tax ID';
+
+  @override
+  String roleApplyTaxIdNamed(String name) {
+    return 'Tax ID ($name)';
+  }
+
+  @override
+  String roleApplyTaxIdExample(String example) {
+    return 'For example $example';
+  }
+
+  @override
+  String roleApplyTaxIdInvalid(String example) {
+    return 'That doesn\'t look like a tax ID from this country. For example $example';
+  }
+
+  @override
+  String get roleApplyTaxIdInvalidAny => 'Use 4 to 20 letters or digits.';
 
   @override
   String get roleSpecIndoor => 'Indoor';

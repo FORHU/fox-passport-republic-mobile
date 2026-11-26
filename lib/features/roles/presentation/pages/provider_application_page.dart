@@ -755,10 +755,12 @@ class _DocumentsStep extends ConsumerWidget {
       ],
       children: [
         ApplyTitle(l10n.provApplyDocumentsTitle, l10n.provApplyDocumentsBody),
-        for (final doc in ProviderApplicationDraft.requiredDocuments)
+        for (final doc in ProviderApplicationDraft.askedDocuments)
           DocumentRow(
             boxed: true,
+            optional: !ProviderApplicationDraft.requiredDocuments.contains(doc),
             label: applyDocumentLabel(l10n, doc),
+            note: applyDocumentNote(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),
@@ -888,21 +890,10 @@ class _ReviewStep extends ConsumerWidget {
           title: l10n.provApplyDocumentsSection,
           onEdit: () => c.goTo(ProviderApplyStep.documents),
           children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.check_rounded,
-                  size: 16,
-                  color: AppColors.success,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.provApplyAllDocs(
-                    ProviderApplicationDraft.requiredDocuments.length,
-                  ),
-                  style: AppTypography.body(color: AppColors.textPrimary),
-                ),
-              ],
+            ApplyAllDocuments(
+              count: ProviderApplicationDraft.askedDocuments
+                  .where(d.documents.containsKey)
+                  .length,
             ),
           ],
         ),

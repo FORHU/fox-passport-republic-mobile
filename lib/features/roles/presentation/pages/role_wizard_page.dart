@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,12 +73,13 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
     });
   }
 
-  bool _aboutDone(RoleApplicationDraft d) {
+  bool _aboutDone(RoleApplicationState state) {
+    final d = state.draft;
     if (_isVenue) {
       return d.businessName.trim().isNotEmpty &&
           d.contactNumber.trim().isNotEmpty &&
           d.address.trim().isNotEmpty &&
-          d.tinNumber.isNotEmpty;
+          state.tinFits;
     }
     final placed = d.bio.trim().isNotEmpty &&
         d.city.trim().isNotEmpty &&
@@ -242,17 +245,51 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
           (v) => c.edit((x) => x.copyWith(description: v)),
           lines: 3,
         ),
-        text(
-          l10n.roleApplyTinRequired,
-          d.tinNumber,
-          (v) => c.edit(
-            (x) => x.copyWith(tinNumber: RoleApplicationDraft.digits(v, 9)),
+        // Any country's tax number, checked against that country's formats
+        // as the API checks it (mobile#529).
+        if (state.taxCountries.isNotEmpty)
+          ApplyField(
+            label: l10n.roleApplyTaxCountry,
+            child: DropdownButtonFormField<String>(
+              key: const Key('tax-country'),
+              initialValue:
+                  state.taxCountries.any((x) => x.code == d.tinCountry)
+                      ? d.tinCountry
+                      : null,
+              isExpanded: true,
+              items: [
+                for (final country in state.taxCountries)
+                  DropdownMenuItem(
+                    value: country.code,
+                    child: Text(country.name, overflow: TextOverflow.ellipsis),
+                  ),
+              ],
+              onChanged: (code) {
+                if (code != null) unawaited(c.setTinCountry(code));
+              },
+            ),
           ),
-          keyboard: TextInputType.number,
-          formatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(9),
-          ],
+        text(
+          switch (state.tinFormats?.label) {
+            final name? when name.isNotEmpty => l10n.roleApplyTaxIdNamed(name),
+            _ => l10n.roleApplyTaxId,
+          },
+          d.tinNumber,
+          (v) => c.edit((x) => x.copyWith(tinNumber: v)),
+          key: const Key('tax-id'),
+          formatters: [LengthLimitingTextInputFormatter(32)],
+          help: switch (state.tinFormats?.example) {
+            final example? when example.isNotEmpty =>
+              l10n.roleApplyTaxIdExample(example),
+            _ => null,
+          },
+          error: d.tinNumber.trim().isNotEmpty && !state.tinFits
+              ? switch (state.tinFormats?.example) {
+                  final example? when example.isNotEmpty =>
+                    l10n.roleApplyTaxIdInvalid(example),
+                  _ => l10n.roleApplyTaxIdInvalidAny,
+                }
+              : null,
         ),
       ] else ...[
         text(
@@ -336,7 +373,7 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
       footer: [
         AppButton(
           label: l10n.provApplyNextCategories,
-          onPressed: _aboutDone(d) ? () => _go(_Step.categories) : null,
+          onPressed: _aboutDone(state) ? () => _go(_Step.categories) : null,
         ),
       ],
       children: children,
@@ -415,10 +452,12 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
       ],
       children: [
         ApplyTitle(l10n.provApplyDocumentsTitle, l10n.provApplyDocumentsBody),
-        for (final doc in d.requiredDocuments)
+        for (final doc in d.askedDocuments)
           DocumentRow(
             boxed: true,
+            optional: !d.requiredDocuments.contains(doc),
             label: applyDocumentLabel(l10n, doc),
+            note: applyDocumentNote(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),
@@ -505,7 +544,11 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
         ApplyReviewSection(
           title: l10n.provApplyDocumentsSection,
           onEdit: () => _go(_Step.documents),
-          children: [ApplyAllDocuments(count: d.requiredDocuments.length)],
+          children: [
+            ApplyAllDocuments(
+              count: d.askedDocuments.where(d.documents.containsKey).length,
+            ),
+          ],
         ),
         ApplyAgreement(
           agreed: _agreed,

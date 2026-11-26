@@ -19,8 +19,13 @@ class DocumentRow extends ConsumerWidget {
     this.document = false,
     this.boxed = false,
     this.optional = false,
+    this.note,
     super.key,
   });
+
+  /// Boxed only: a line under the name, such as which papers count for it
+  /// (mobile#529).
+  final String? note;
 
   /// The Provider wizard's card look (mobile#487): a boxed row saying
   /// "Required" until chosen, with Upload, Take or Replace.
@@ -153,6 +158,16 @@ class DocumentRow extends ConsumerWidget {
                     label,
                     style: AppTypography.body(color: AppColors.textPrimary),
                   ),
+                  if (note case final note?) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      note,
+                      style: AppTypography.body(
+                        size: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 2),
                   Text(
                     picked?.name ??

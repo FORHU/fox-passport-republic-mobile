@@ -1852,7 +1852,7 @@
   "provApplyStepDetails": "About each category",
   "provApplyStepDetailsHint": "A short line and photos of your work",
   "provApplyStepDocuments": "Documents",
-  "provApplyStepDocumentsHint": "ID, NBI, TIN, BIR permit, selfie",
+  "provApplyStepDocumentsHint": "ID, clearance, tax ID, business permit, selfie",
   "provApplyDuration": "Takes about 10 minutes.",
   "provApplyStart": "Start",
   "provApplyClose": "Close",
@@ -1921,9 +1921,10 @@
   "provApplyDocumentsTitle": "Documents",
   "provApplyDocumentsBody": "Only our review team sees these. Clear photos speed up approval.",
   "provApplyDocId": "Valid government ID",
-  "provApplyDocNbi": "NBI clearance",
-  "provApplyDocTin": "TIN ID",
-  "provApplyDocBir": "BIR permit",
+  "provApplyDocNbi": "Police or background clearance",
+  "provApplyDocTin": "Tax ID document",
+  "kycDocTaxNote": "A card, certificate or official letter is fine.",
+  "provApplyDocBir": "Business registration or permit",
   "provApplyDocSelfie": "Selfie holding your ID",
   "provApplyRequired": "Required",
   "provApplyUpload": "Upload",
@@ -1943,7 +1944,7 @@
   "provApplyYearsCount": "{count, plural, =1{1 year} other{{count} years}}",
   "@provApplyYearsCount": {"placeholders":{"count":{"type":"num"}}},
   "provApplyEachDescribed": "Each with a description and photos.",
-  "provApplyAllDocs": "All {count} added",
+  "provApplyAllDocs": "{count, plural, =1{1 document added} other{{count} documents added}}",
   "@provApplyAllDocs": {"placeholders":{"count":{"type":"int"}}},
   "provApplyAgree": "I agree to the Provider Terms and confirm my details and documents are true.",
   "provApplyReviewNote": "Our team checks your documents and categories before you go live.",
@@ -1965,14 +1966,14 @@
   "roleWizDuration": "Takes about 5 minutes.",
   "roleWizVenueIntroTitle": "List your venue for events",
   "roleWizVenueIntroBody": "Tell us about your business. Citizens and Event Foxers find your venues by the categories you pick.",
-  "roleWizVenueAboutHint": "Name, contact, address, TIN",
+  "roleWizVenueAboutHint": "Name, contact, address, tax ID",
   "roleWizVenueCategoriesHint": "The kinds of venue you run, up to 3",
   "roleWizVenueCategoriesTitle": "What kind of venues?",
   "roleWizEventIntroTitle": "Create and run events on FoxPassport",
   "roleWizEventIntroBody": "Tell us about your experience. Citizens find your events by the categories you pick.",
   "roleWizEventCategoriesHint": "The events you run, up to 3",
   "roleWizEventCategoriesTitle": "What events do you run?",
-  "roleWizEventDocsHint": "ID, NBI, TIN, BIR permit, selfie, portfolio",
+  "roleWizEventDocsHint": "ID, clearance, tax ID, business permit, selfie, portfolio",
   "roleWizCoordIntroTitle": "Run the logistics on event day",
   "roleWizCoordIntroBody": "Tell us about your experience. Hosts and Event Foxers bring you in to manage on-site operations.",
   "roleWizCoordCategoriesHint": "Events and venues you've helped run, up to 3",
@@ -1986,12 +1987,12 @@
   "roleWizPortfolioFile": "Portfolio or resume",
   "roleApplyIds": "Documents",
   "roleApplyIdsHint": "An admin checks these. They are kept private.",
-  "roleApplyNbiNumber": "NBI clearance ID number",
-  "roleApplyTin": "TIN number (optional)",
+  "roleApplyNbiNumber": "Clearance number",
+  "roleApplyTin": "Tax ID (optional)",
   "roleApplyDocId": "Primary valid ID",
-  "roleApplyDocNbi": "NBI clearance",
-  "roleApplyDocTin": "TIN ID or certificate",
-  "roleApplyDocBir": "BIR 2303 or permit",
+  "roleApplyDocNbi": "Police or background clearance",
+  "roleApplyDocTin": "Tax ID document",
+  "roleApplyDocBir": "Business registration or permit",
   "roleApplyDocSelfie": "Verification selfie",
   "roleApplyDocClearance": "Police or background clearance",
   "roleResubmitHeading": "Fix your application",
@@ -2034,7 +2035,35 @@
   "roleApplyContact": "Contact number",
   "roleApplyAddress": "Complete address",
   "roleApplyDescription": "About your venues (optional)",
-  "roleApplyTinRequired": "TIN number",
+  "roleApplyTinRequired": "Tax ID",
+  "roleApplyTaxCountry": "Country of your tax ID",
+  "roleApplyTaxId": "Tax ID",
+  "roleApplyTaxIdNamed": "Tax ID ({name})",
+  "@roleApplyTaxIdNamed": {
+    "description": "Tax number field label with what that country calls it, e.g. Tax ID (TIN).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roleApplyTaxIdExample": "For example {example}",
+  "@roleApplyTaxIdExample": {
+    "placeholders": {
+      "example": {
+        "type": "String"
+      }
+    }
+  },
+  "roleApplyTaxIdInvalid": "That doesn't look like a tax ID from this country. For example {example}",
+  "@roleApplyTaxIdInvalid": {
+    "placeholders": {
+      "example": {
+        "type": "String"
+      }
+    }
+  },
+  "roleApplyTaxIdInvalidAny": "Use 4 to 20 letters or digits.",
   "roleSpecIndoor": "Indoor",
   "roleSpecOutdoor": "Outdoor",
   "roleSpecHotel": "Hotel",
