@@ -27,6 +27,7 @@ class CatalogItem extends Equatable {
     required this.kind,
     required this.title,
     this.city,
+    this.venueName,
     this.capacity,
     this.price,
     this.eventStartAt,
@@ -47,6 +48,9 @@ class CatalogItem extends Equatable {
   final CatalogKind kind;
   final String title;
   final String? city;
+
+  /// Where an event happens: its venue's name (api#511). Never an address.
+  final String? venueName;
 
   /// Guests a venue holds.
   final int? capacity;
@@ -86,6 +90,7 @@ class CatalogItem extends Equatable {
         kind,
         title,
         city,
+        venueName,
         capacity,
         price,
         eventStartAt,
