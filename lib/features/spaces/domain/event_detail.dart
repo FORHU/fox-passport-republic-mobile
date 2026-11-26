@@ -199,7 +199,8 @@ class EventDetail {
               kind: PackageKind.venue,
               cost: item.cost,
               agreedPrice: _num(row['agreedPrice']),
-              isOptional: row['isOptional'] == true,
+              // Every event has a venue (api#477): never optional, whatever
+              // an older line says.
               icon: item.icon,
               description: item.description,
               imageUrl: item.imageUrl,

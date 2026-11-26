@@ -84,7 +84,9 @@ class EventPackage extends Equatable {
                       ?.toString() ??
                   '',
               price: n(row['agreedPrice']),
-              isOptional: row['isOptional'] == true,
+              // Every event has a venue (api#477): never optional.
+              isOptional:
+                  kind != PackageItemKind.venue && row['isOptional'] == true,
             ),
       ];
     }
