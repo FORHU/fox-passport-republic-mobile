@@ -5633,7 +5633,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get provApplyCategoriesBody =>
-      'Tap every category you work in. Use the star to mark your main one.';
+      'Under each main category, tap everything you do. Use the star to mark your main one.';
+
+  @override
+  String get provApplyGroupEyebrow => 'Main category';
+
+  @override
+  String get provApplyGroupOther => 'More';
+
+  @override
+  String provApplyGroupCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count to pick from',
+      one: '1 to pick from',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String provApplyGroupPicked(int count) {
+    return '$count picked';
+  }
+
+  @override
+  String provApplyGroupSemantics(String name, int picked) {
+    return 'Main category $name, $picked picked';
+  }
 
   @override
   String get provApplyMain => 'MAIN';

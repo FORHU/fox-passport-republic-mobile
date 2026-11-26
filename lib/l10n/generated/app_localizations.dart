@@ -10093,8 +10093,38 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyCategoriesBody.
   ///
   /// In en, this message translates to:
-  /// **'Tap every category you work in. Use the star to mark your main one.'**
+  /// **'Under each main category, tap everything you do. Use the star to mark your main one.'**
   String get provApplyCategoriesBody;
+
+  /// No description provided for @provApplyGroupEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category'**
+  String get provApplyGroupEyebrow;
+
+  /// No description provided for @provApplyGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get provApplyGroupOther;
+
+  /// No description provided for @provApplyGroupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 to pick from} other{{count} to pick from}}'**
+  String provApplyGroupCount(int count);
+
+  /// No description provided for @provApplyGroupPicked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} picked'**
+  String provApplyGroupPicked(int count);
+
+  /// No description provided for @provApplyGroupSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category {name}, {picked} picked'**
+  String provApplyGroupSemantics(String name, int picked);
 
   /// No description provided for @provApplyMain.
   ///

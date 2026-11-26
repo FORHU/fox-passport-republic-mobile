@@ -78,18 +78,20 @@ void main() {
   late _MockRepo repo;
   late _FakeLocator locator;
   late ProviderContainer container;
+  var catalog = _catalog;
 
   setUpAll(() => registerFallbackValue(const ProviderApplicationDraft()));
 
   setUp(() {
     repo = _MockRepo();
+    catalog = _catalog;
     locator = _FakeLocator();
     container = ProviderContainer(
       overrides: [
         roleApplicationRepositoryProvider.overrideWithValue(repo),
         deviceLocatorProvider.overrideWithValue(locator),
         currentUserIdProvider.overrideWith((ref) => ref.watch(_signedIn)),
-        providerSpecialtiesProvider.overrideWith((ref) async => _catalog),
+        providerSpecialtiesProvider.overrideWith((ref) async => catalog),
         photoPickerProvider.overrideWithValue(_FakePicker()),
       ],
     );
@@ -461,6 +463,50 @@ void main() {
       expect(find.text('2 picked · DJ is your main'), findsOne);
       expect(find.byTooltip('DJ is your main category'), findsOneWidget);
       expect(find.text('Next: about each one'), findsOneWidget);
+    });
+
+    testWidgets('step 2 shows main categories as headings over what to pick',
+        (tester) async {
+      const sound = ProviderSpecialtyGroup(
+        slug: 'sound_lights',
+        name: 'Sound & Lights',
+        icon: 'speaker',
+      );
+      const music = ProviderSpecialtyGroup(
+        slug: 'music_entertainment',
+        name: 'Music & Entertainment',
+        icon: 'music_note',
+      );
+      catalog = const [
+        ProviderSpecialty(slug: 'dj', name: 'DJ', group: music),
+        ProviderSpecialty(
+          slug: 'sound_system',
+          name: 'Sound system',
+          group: sound,
+        ),
+        ProviderSpecialty(slug: 'lighting', name: 'Lighting', group: sound),
+        ProviderSpecialty(slug: 'kites', name: 'Kites'),
+      ];
+      c().goTo(ProviderApplyStep.categories);
+      await open(tester);
+
+      expect(find.text('Music & Entertainment'), findsOneWidget);
+      expect(find.text('Sound & Lights'), findsOneWidget);
+      expect(find.text('More'), findsOneWidget);
+      expect(find.text('MAIN CATEGORY'), findsNWidgets(3));
+      expect(find.text('2 to pick from'), findsOneWidget);
+
+      // A heading isn't a pick.
+      await tapText(tester, 'Sound & Lights');
+      expect(draft().specializations, isEmpty);
+
+      await tapText(tester, 'Lighting');
+      expect(draft().specializations, ['lighting']);
+      expect(find.text('1 picked'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Main category Sound & Lights, 1 picked'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('step 3 needs a line and a photo for each category', (

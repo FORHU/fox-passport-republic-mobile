@@ -4,9 +4,39 @@ import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/services/api_service.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 
+/// A main category of the catalog (api#503), such as Photo & Video. It is a
+/// heading, never picked itself: its subcategories are.
+class ProviderSpecialtyGroup extends Equatable {
+  const ProviderSpecialtyGroup({
+    required this.slug,
+    required this.name,
+    this.icon,
+  });
+
+  /// Null when [json] isn't a main category.
+  static ProviderSpecialtyGroup? tryParse(Object? json) {
+    if (json is! Map || json['slug'] == null) return null;
+    final name = '${json['name'] ?? ''}'.trim();
+    return ProviderSpecialtyGroup(
+      slug: '${json['slug']}',
+      name: name.isEmpty ? '${json['slug']}' : name,
+      icon: json['icon'] is String ? json['icon'] as String : null,
+    );
+  }
+
+  final String slug;
+  final String name;
+
+  /// A Material icon name, as the catalog stores it.
+  final String? icon;
+
+  @override
+  List<Object?> get props => [slug, name, icon];
+}
+
 /// One thing a Provider can specialise in, named by the catalog.
 class ProviderSpecialty extends Equatable {
-  const ProviderSpecialty({required this.slug, required this.name});
+  const ProviderSpecialty({required this.slug, required this.name, this.group});
 
   factory ProviderSpecialty.fromJson(Map<String, dynamic> json) =>
       ProviderSpecialty(
@@ -14,6 +44,7 @@ class ProviderSpecialty extends Equatable {
         name: (json['name'] as String?)?.trim().isNotEmpty ?? false
             ? (json['name'] as String).trim()
             : '${json['slug']}',
+        group: ProviderSpecialtyGroup.tryParse(json['group']),
       );
 
   /// What the API stores and filters by.
@@ -22,8 +53,34 @@ class ProviderSpecialty extends Equatable {
   /// What people read.
   final String name;
 
+  /// The main category it belongs to; null from an API before api#503, or
+  /// for an older specialty that has none.
+  final ProviderSpecialtyGroup? group;
+
   @override
-  List<Object?> get props => [slug, name];
+  List<Object?> get props => [slug, name, group];
+}
+
+/// [list] split by main category, in the order the API gave, with the
+/// specialties that have none last under a null group. Empty groups never
+/// appear.
+List<(ProviderSpecialtyGroup?, List<ProviderSpecialty>)> groupSpecialties(
+  List<ProviderSpecialty> list,
+) {
+  final groups = <String, (ProviderSpecialtyGroup, List<ProviderSpecialty>)>{};
+  final loose = <ProviderSpecialty>[];
+  for (final s in list) {
+    final g = s.group;
+    if (g == null) {
+      loose.add(s);
+    } else {
+      groups.putIfAbsent(g.slug, () => (g, <ProviderSpecialty>[])).$2.add(s);
+    }
+  }
+  return [
+    for (final e in groups.values) (e.$1, e.$2),
+    if (loose.isNotEmpty) (null, loose),
+  ];
 }
 
 /// Reads the specialties a Provider can pick: the one list the API checks an
