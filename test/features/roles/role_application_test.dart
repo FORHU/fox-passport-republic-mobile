@@ -200,7 +200,7 @@ void main() {
       expect(event.toData(), {
         'bio': 'Ten years of weddings',
         'location': 'Makati, Metro Manila, Philippines',
-        'experience': '10',
+        'experience': 10,
         'specializations': ['wedding', 'corporate'],
       });
       // Experience is optional and left out when blank; a blank state is

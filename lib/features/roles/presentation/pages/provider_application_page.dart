@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/provider_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/apply_wizard.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
+import 'package:flutter_template/features/roles/presentation/widgets/experience_field.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/suggest_specialty.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/catalog/provider_specialties.dart';
@@ -101,7 +101,6 @@ class _BusinessStep extends ConsumerWidget {
       ),
     );
     final c = ref.read(providerApplicationProvider.notifier);
-    final yearsBad = d.experience.trim().isNotEmpty && d.years == null;
     return ApplyScreen(
       header: const _StepHeader(1),
       footerBorder: false,
@@ -180,24 +179,17 @@ class _BusinessStep extends ConsumerWidget {
             ],
           ),
         ),
-        ApplyField(
+        // Up to 30, or a CV-backed claim up to 50 (mobile#535).
+        ApplyYearsOfExperience(
           label: l10n.provApplyYears,
-          child: SizedBox(
-            width: 120,
-            child: TextFormField(
-              initialValue: d.experience,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(3),
-              ],
-              decoration: InputDecoration(
-                errorText: yearsBad ? l10n.provApplyYearsInvalid : null,
-                errorMaxLines: 2,
-              ),
-              onChanged: (v) => c.edit((x) => x.copyWith(experience: v)),
-            ),
-          ),
+          experience: d.experience,
+          claiming: d.claimingExperience,
+          cv: d.experienceCv,
+          onExperienceChanged: (v) => c.edit((x) => x.copyWith(experience: v)),
+          onClaimingChanged: (v) =>
+              c.edit((x) => x.copyWith(claimingExperience: v)),
+          onCvPicked: (p) => c.edit((x) => x.copyWith(experienceCv: p)),
+          onCvRemoved: () => c.edit((x) => x.copyWith(clearExperienceCv: true)),
         ),
         ApplyField(
           label: l10n.provApplyLinks,
@@ -819,7 +811,8 @@ class _ReviewStep extends ConsumerWidget {
     final businessLine = [
       d.basedIn.trim(),
       if (travel != null) travel,
-      if (years != null) l10n.provApplyYearsCount(years),
+      if (years != null)
+        experienceReviewLabel(l10n, years, claiming: d.claimingExperience),
     ].join(' · ');
     final error = state.error;
     return ApplyScreen(

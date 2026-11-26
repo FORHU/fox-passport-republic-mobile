@@ -5619,7 +5619,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyYears => 'Years doing events';
 
   @override
-  String get provApplyYearsInvalid => 'Enter 0 to 100';
+  String expWholeYears(int max) {
+    return 'Enter whole years (0–$max)';
+  }
+
+  @override
+  String expMaxYears(int max) {
+    return 'Maximum is $max years. More than that? Tick the box below.';
+  }
+
+  @override
+  String expMaxYearsClaim(int max) {
+    return 'Maximum is $max years';
+  }
+
+  @override
+  String expClaimTitle(int years) {
+    return 'I have more than $years years of experience';
+  }
+
+  @override
+  String expClaimHint(int max) {
+    return 'You can then enter up to $max years, with a CV that proves them.';
+  }
+
+  @override
+  String expClaimBracket(int years, String bracket) {
+    return '$years years counts as $bracket. Experience over 30 is grouped: 30+, 35+, 40+, 45+, 50.';
+  }
+
+  @override
+  String get expClaimCvRules =>
+      'Your CV must be a PDF. It must list every role behind the years you\'re claiming, with dates, and at least 2 references (name, relationship, phone or email) who can confirm them. Our team will contact them before your application is approved.';
+
+  @override
+  String get expClaimCvLabel => 'CV with references (PDF)';
+
+  @override
+  String expClaimTooFew(int years) {
+    return 'Enter more than $years years, or untick the box';
+  }
+
+  @override
+  String get expClaimCvPdf => 'Upload your CV as a PDF';
+
+  @override
+  String expClaimReview(String bracket) {
+    return '$bracket (CV attached)';
+  }
 
   @override
   String get provApplyLinks => 'Links to your work (optional)';

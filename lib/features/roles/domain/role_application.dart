@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/roles/domain/experience.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
 /// The roles that apply from the phone. The investor still applies on the
@@ -79,6 +80,7 @@ class RoleApplicationDraft extends Equatable {
     this.types = '',
     this.portfolio = '',
     this.experience = '',
+    this.claimingExperience = false,
     this.nbiNumber = '',
     this.tinNumber = '',
     this.tinCountry = '',
@@ -117,6 +119,10 @@ class RoleApplicationDraft extends Equatable {
 
   /// Years, as typed. Not for gear.
   final String experience;
+
+  /// "I have more than 30 years of experience" (mobile#535): [experience]
+  /// may go up to 50, with a PDF CV as [portfolioFile].
+  final bool claimingExperience;
   final String nbiNumber;
   final String tinNumber;
 
@@ -212,10 +218,16 @@ class RoleApplicationDraft extends Equatable {
     return d.length > max ? d.substring(0, max) : d;
   }
 
-  int? get years {
-    final n = int.tryParse(experience.trim());
-    return n != null && n >= 0 && n <= 100 ? n : null;
-  }
+  /// Whole years up to 30, or 50 when claiming more (mobile#535).
+  int? get years =>
+      wholeYears(experience, yearsMax(claiming: claimingExperience));
+
+  /// What stops a claim of more than 30 years. Its CV is [portfolioFile].
+  ExperienceClaimProblem? get experienceProblem => experienceClaimProblem(
+        experience: experience,
+        claiming: claimingExperience,
+        cv: portfolioFile,
+      );
 
   /// What the API asks for before it takes the application. It also wants the
   /// documents, as the web does.
@@ -238,6 +250,7 @@ class RoleApplicationDraft extends Equatable {
                       split(types).isNotEmpty &&
                       specializations.isNotEmpty) &&
       portfolioProblem == null &&
+      experienceProblem == null &&
       requiredDocuments.every(documents.containsKey);
 
   RoleApplicationDraft copyWith({
@@ -254,6 +267,7 @@ class RoleApplicationDraft extends Equatable {
     String? types,
     String? portfolio,
     String? experience,
+    bool? claimingExperience,
     String? nbiNumber,
     String? tinNumber,
     String? tinCountry,
@@ -276,6 +290,7 @@ class RoleApplicationDraft extends Equatable {
         types: types ?? this.types,
         portfolio: portfolio ?? this.portfolio,
         experience: experience ?? this.experience,
+        claimingExperience: claimingExperience ?? this.claimingExperience,
         nbiNumber: nbiNumber ?? this.nbiNumber,
         tinNumber: tinNumber ?? this.tinNumber,
         tinCountry: tinCountry ?? this.tinCountry,
@@ -298,7 +313,7 @@ class RoleApplicationDraft extends Equatable {
         } else if (isEvent) ...{
           'bio': bio.trim(),
           'location': location,
-          if (experience.trim().isNotEmpty) 'experience': experience.trim(),
+          if (years != null) 'experience': years,
           if (portfolioLinks.isNotEmpty) 'portfolioUrls': portfolioLinks,
         } else if (isProvider) ...{
           'businessName': businessName.trim(),
@@ -347,6 +362,7 @@ class RoleApplicationDraft extends Equatable {
         types,
         portfolio,
         experience,
+        claimingExperience,
         nbiNumber,
         tinNumber,
         tinCountry,
