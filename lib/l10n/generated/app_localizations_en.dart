@@ -5584,6 +5584,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyLinks => 'Links to your work (optional)';
 
   @override
+  String get provApplyLinksHelp =>
+      'Add any you have. Typing facebook.com/yourpage is enough.';
+
+  @override
+  String get provLinkFacebook => 'Facebook';
+
+  @override
+  String get provLinkInstagram => 'Instagram';
+
+  @override
+  String get provLinkTiktok => 'TikTok';
+
+  @override
+  String get provLinkYoutube => 'YouTube';
+
+  @override
+  String get provLinkWebsite => 'Website';
+
+  @override
+  String get provLinkFacebookHint => 'facebook.com/yourpage';
+
+  @override
+  String get provLinkInstagramHint => 'instagram.com/yourname';
+
+  @override
+  String get provLinkTiktokHint => 'tiktok.com/@yourname';
+
+  @override
+  String get provLinkYoutubeHint => 'youtube.com/@yourchannel';
+
+  @override
+  String get provLinkWebsiteHint => 'yourwebsite.com';
+
+  @override
+  String get provLinkInvalid => 'That isn\'t a web address';
+
+  @override
+  String provLinkWrongSite(String site) {
+    return 'That link isn\'t on $site';
+  }
+
+  @override
   String get provApplyNextCategories => 'Next: categories';
 
   @override

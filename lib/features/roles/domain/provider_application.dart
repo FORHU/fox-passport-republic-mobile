@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 
 /// How far a Provider travels for an event. The API stores the name.
@@ -45,7 +46,7 @@ class ProviderApplicationDraft extends Equatable {
     this.basedInPoint,
     this.travelRange,
     this.experience = '',
-    this.portfolio = '',
+    this.links = const {},
     this.specializations = const [],
     this.mainSpecialty,
     this.details = const {},
@@ -64,8 +65,8 @@ class ProviderApplicationDraft extends Equatable {
   /// Years, as typed.
   final String experience;
 
-  /// Links to their work, separated by commas. Optional.
-  final String portfolio;
+  /// Links to their work, one per place, as typed. All optional.
+  final Map<WorkLinkKind, String> links;
 
   /// Catalog slugs, in the order picked.
   final List<String> specializations;
@@ -91,12 +92,19 @@ class ProviderApplicationDraft extends Equatable {
     KycDocument.selfie,
   ];
 
-  // The portfolio rules live with the other roles' application.
-  RoleApplicationDraft get _links =>
-      RoleApplicationDraft(roleType: 'providerFoxer', portfolio: portfolio);
+  /// The filled links as full addresses, in field order, each once.
+  List<String> get portfolioLinks => [
+        ...{
+          for (final kind in WorkLinkKind.values)
+            if (normalizeWorkLink(links[kind] ?? '') case final link?) link,
+        },
+      ];
 
-  List<String> get portfolioLinks => _links.portfolioLinks;
-  PortfolioLinksProblem? get portfolioProblem => _links.portfolioProblem;
+  /// The fields whose link can't be sent, and why.
+  Map<WorkLinkKind, WorkLinkProblem> get linkProblems => {
+        for (final kind in WorkLinkKind.values)
+          if (workLinkProblem(kind, links[kind] ?? '') case final p?) kind: p,
+      };
 
   int? get years {
     final n = int.tryParse(experience.trim());
@@ -117,7 +125,7 @@ class ProviderApplicationDraft extends Equatable {
       businessName.trim().isNotEmpty &&
       basedIn.trim().isNotEmpty &&
       (experience.trim().isEmpty || years != null) &&
-      portfolioProblem == null;
+      linkProblems.isEmpty;
 
   bool get categoriesDone => specializations.isNotEmpty;
 
@@ -138,7 +146,7 @@ class ProviderApplicationDraft extends Equatable {
     bool clearBasedInPoint = false,
     TravelRange? travelRange,
     String? experience,
-    String? portfolio,
+    Map<WorkLinkKind, String>? links,
     List<String>? specializations,
     String? mainSpecialty,
     bool clearMain = false,
@@ -153,7 +161,7 @@ class ProviderApplicationDraft extends Equatable {
             clearBasedInPoint ? null : basedInPoint ?? this.basedInPoint,
         travelRange: travelRange ?? this.travelRange,
         experience: experience ?? this.experience,
-        portfolio: portfolio ?? this.portfolio,
+        links: links ?? this.links,
         specializations: specializations ?? this.specializations,
         mainSpecialty: clearMain ? null : mainSpecialty ?? this.mainSpecialty,
         details: details ?? this.details,
@@ -202,7 +210,7 @@ class ProviderApplicationDraft extends Equatable {
         basedInPoint,
         travelRange,
         experience,
-        portfolio,
+        links,
         specializations,
         mainSpecialty,
         details,
