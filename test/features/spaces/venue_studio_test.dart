@@ -723,6 +723,17 @@ void main() {
       expect(find.text('City'), findsOneWidget);
     });
 
+    testWidgets('typing fills the draft', (tester) async {
+      await pump(tester);
+
+      await tester.enterText(find.byType(TextField).first, 'Sky Hall');
+      await tester.pump();
+
+      final element = tester.element(find.byType(VenueStudioPage));
+      final container = ProviderScope.containerOf(element);
+      expect(container.read(venueStudioProvider(null)).draft.name, 'Sky Hall');
+    });
+
     // mobile#499: one tap picks several; each shows as a preview while it
     // uploads, then joins the venue's photos.
     testWidgets('Add photos picks several and previews them while uploading', (
@@ -776,17 +787,6 @@ void main() {
             .map((p) => p.fileId),
         ['f0', 'f1', 'f2'],
       );
-    });
-
-    testWidgets('typing fills the draft', (tester) async {
-      await pump(tester);
-
-      await tester.enterText(find.byType(TextField).first, 'Sky Hall');
-      await tester.pump();
-
-      final element = tester.element(find.byType(VenueStudioPage));
-      final container = ProviderScope.containerOf(element);
-      expect(container.read(venueStudioProvider(null)).draft.name, 'Sky Hall');
     });
 
     testWidgets('a live venue shows a note and a Save changes button', (
