@@ -17,6 +17,8 @@ class Conversation {
     required this.otherUserId,
     required this.otherUserVerified,
     required this.otherUserRoles,
+    this.lastMessageHasPost = false,
+    this.lastMessageHasAttachments = false,
     this.otherUserOnline = false,
     this.avatarUrl,
   });
@@ -57,6 +59,8 @@ class Conversation {
       lastMessage: lastMessage?['content'] as String?,
       lastMessageIsMine: lastMessage?['isMine'] == true,
       lastMessageAt: DateTime.tryParse(lastMessageAt as String? ?? createdAt),
+      lastMessageHasPost: lastMessage?['hasSharedPost'] == true,
+      lastMessageHasAttachments: lastMessage?['hasAttachments'] == true,
       unreadCount: (json['unreadCount'] as num?)?.toInt() ?? 0,
       isGroup: isGroup,
       isInbox: isInbox,
@@ -79,6 +83,11 @@ class Conversation {
   final String? lastMessage;
   final bool lastMessageIsMine;
   final DateTime? lastMessageAt;
+
+  /// The last message carried a post or files (api#514). One sent without a
+  /// caption has no text, so the inbox says what it was instead.
+  final bool lastMessageHasPost;
+  final bool lastMessageHasAttachments;
   final int unreadCount;
   final bool isGroup;
   final bool isInbox;
@@ -96,6 +105,42 @@ class Conversation {
   final String? avatarUrl;
 
   bool get hasPendingRequest => status == 'pending';
+
+  /// What the inbox line shows, as the web does: the text when there is
+  /// any, else that a post or an attachment was sent, else nothing.
+  LastMessagePreview get preview {
+    final text = lastMessage?.trim() ?? '';
+    if (text.isNotEmpty) return LastMessageText(text);
+    if (lastMessageHasPost) return const LastMessagePost();
+    if (lastMessageHasAttachments) return const LastMessageAttachment();
+    return const LastMessageNone();
+  }
+}
+
+/// What a conversation's last message was, for the inbox line.
+sealed class LastMessagePreview {
+  const LastMessagePreview();
+}
+
+class LastMessageText extends LastMessagePreview {
+  const LastMessageText(this.text);
+
+  final String text;
+}
+
+/// A post sent without a caption.
+class LastMessagePost extends LastMessagePreview {
+  const LastMessagePost();
+}
+
+/// Files sent without a caption.
+class LastMessageAttachment extends LastMessagePreview {
+  const LastMessageAttachment();
+}
+
+/// No message yet, or one with nothing to show.
+class LastMessageNone extends LastMessagePreview {
+  const LastMessageNone();
 }
 
 Map<String, dynamic>? _asMap(Object? value) {

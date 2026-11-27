@@ -2290,6 +2290,18 @@ abstract class AppLocalizations {
   /// **'You: '**
   String get messageYou;
 
+  /// No description provided for @messageSentPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent a post'**
+  String get messageSentPost;
+
+  /// No description provided for @messageSentAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent an attachment'**
+  String get messageSentAttachment;
+
   /// No description provided for @messageNow.
   ///
   /// In en, this message translates to:
@@ -10954,11 +10966,11 @@ abstract class AppLocalizations {
   /// **'Tax ID'**
   String get roleApplyTinRequired;
 
-  /// No description provided for @roleApplyTaxCountry.
+  /// No description provided for @roleApplyCountryHelp.
   ///
   /// In en, this message translates to:
-  /// **'Country of your tax ID'**
-  String get roleApplyTaxCountry;
+  /// **'Sets the format of your contact number and tax ID.'**
+  String get roleApplyCountryHelp;
 
   /// No description provided for @roleApplyTaxId.
   ///

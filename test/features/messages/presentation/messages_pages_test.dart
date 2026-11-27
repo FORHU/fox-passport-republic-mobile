@@ -40,13 +40,19 @@ Conversation _conversation({
   bool group = false,
   bool request = false,
   bool noPreview = false,
+  bool sentPost = false,
 }) =>
     Conversation(
       id: id,
       title: group ? 'Planning group' : 'Rico Rival',
       contextLabel: 'Sky Hall · Sat 17 Oct',
-      lastMessage: noPreview ? null : 'Sound check is at 5, see you there',
-      lastMessageIsMine: false,
+      lastMessage: sentPost
+          ? ''
+          : noPreview
+              ? null
+              : 'Sound check is at 5, see you there',
+      lastMessageIsMine: sentPost,
+      lastMessageHasPost: sentPost,
       lastMessageAt: DateTime.now().subtract(const Duration(minutes: 2)),
       unreadCount: 2,
       isGroup: group,
@@ -114,6 +120,27 @@ void main() {
     expect(find.text('Rico Rival'), findsOneWidget);
     expect(find.text('Wants to message you'), findsOneWidget);
     expect(find.text('Message request'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a post sent without text reads "Sent a post" (api#514)', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          availableSpacesProvider.overrideWithValue(const [AppSpace.citizen]),
+          currentUserIdProvider.overrideWithValue(null),
+          conversationsProvider.overrideWith(
+            (ref) async => [_conversation(sentPost: true)],
+          ),
+        ],
+        child: _app(const MessagesPage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('You: Sent a post'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

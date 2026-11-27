@@ -303,10 +303,15 @@ class _ConversationTile extends ConsumerWidget {
             ? l10n.messageEventInbox
             : l10n.messageVenueInbox
         : conversation.contextLabel;
-    final subtitle = conversation.lastMessage == null
+    final said = switch (conversation.preview) {
+      LastMessageText(:final text) => text,
+      LastMessagePost() => l10n.messageSentPost,
+      LastMessageAttachment() => l10n.messageSentAttachment,
+      LastMessageNone() => null,
+    };
+    final subtitle = said == null
         ? ''
-        : '${conversation.lastMessageIsMine ? l10n.messageYou : ''}'
-            '${conversation.lastMessage}';
+        : '${conversation.lastMessageIsMine ? l10n.messageYou : ''}$said';
     return InkWell(
       onTap: onTap,
       child: Padding(

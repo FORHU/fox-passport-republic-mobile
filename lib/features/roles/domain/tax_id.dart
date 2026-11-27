@@ -6,7 +6,11 @@ const defaultTaxCountry = 'PH';
 
 /// A country a tax number can be from, as `GET /locations/countries` lists it.
 class TaxCountry extends Equatable {
-  const TaxCountry({required this.code, required this.name});
+  const TaxCountry({
+    required this.code,
+    required this.name,
+    this.phoneCode = '',
+  });
 
   /// Null for a row without a 2-letter code or a name.
   static TaxCountry? tryParse(Object? raw) {
@@ -14,14 +18,33 @@ class TaxCountry extends Equatable {
     final code = '${raw['code'] ?? ''}'.trim().toUpperCase();
     final name = '${raw['name'] ?? ''}'.trim();
     if (!RegExp(r'^[A-Z]{2}$').hasMatch(code) || name.isEmpty) return null;
-    return TaxCountry(code: code, name: name);
+    final phone = '${raw['phoneCode'] ?? ''}'.replaceAll(RegExp(r'\D'), '');
+    return TaxCountry(code: code, name: name, phoneCode: phone);
   }
 
   final String code;
   final String name;
 
+  /// The calling code without its "+", e.g. "63"; empty where the country
+  /// has no phone numbering. The contact number follows it (mobile#537).
+  final String phoneCode;
+
   @override
-  List<Object?> get props => [code, name];
+  List<Object?> get props => [code, name, phoneCode];
+}
+
+/// [typed] with [phoneCode] in front, as the API reads it (api#378): a number
+/// without its "+code" is read as Philippine. Kept as typed when it already
+/// starts with "+" or there's no code; a leading 0 (the local trunk prefix)
+/// is dropped, as "0917 123 4567" in the Philippines is "+63 917 123 4567".
+String internationalPhone(String typed, String phoneCode) {
+  final value = typed.trim();
+  if (value.isEmpty || value.startsWith('+') || phoneCode.isEmpty) {
+    return value;
+  }
+  final digits = value.replaceAll(RegExp(r'\D'), '');
+  final national = digits.startsWith('0') ? digits.substring(1) : digits;
+  return '+$phoneCode$national';
 }
 
 /// The code of the country in [countries] that [profileCountry] names, by code

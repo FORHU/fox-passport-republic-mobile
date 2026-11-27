@@ -207,4 +207,47 @@ void main() {
       expect(organizer.requiredDocuments, organizer.askedDocuments);
     });
   });
+
+  group('contact number (mobile#537)', () {
+    test('a country row carries its calling code', () {
+      expect(
+        TaxCountry.tryParse({'code': 'CA', 'name': 'Canada', 'phoneCode': '1'})
+            ?.phoneCode,
+        '1',
+      );
+      expect(
+        TaxCountry.tryParse({'code': 'AQ', 'name': 'Antarctica'})?.phoneCode,
+        isEmpty,
+      );
+    });
+
+    test('a number is sent with the country code, as the API reads it', () {
+      expect(internationalPhone('416 555 0100', '1'), '+14165550100');
+      expect(
+        internationalPhone('0917 123 4567', '63'),
+        '+639171234567',
+        reason: 'the local 0 is dropped',
+      );
+      expect(
+        internationalPhone('+44 20 7946 0000', '1'),
+        '+44 20 7946 0000',
+        reason: 'their own code stays',
+      );
+      expect(
+        internationalPhone('0917 123 4567', ''),
+        '0917 123 4567',
+        reason: 'no code known: the API reads it as Philippine, as before',
+      );
+      expect(internationalPhone('  ', '63'), isEmpty);
+    });
+
+    test('a Venue application sends the full number', () {
+      const venue = RoleApplicationDraft(
+        roleType: 'venueFoxer',
+        contactNumber: '0917 123 4567',
+        phoneCode: '63',
+      );
+      expect(venue.toData()['contactNumber'], '+639171234567');
+    });
+  });
 }

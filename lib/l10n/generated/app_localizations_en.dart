@@ -1178,6 +1178,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageYou => 'You: ';
 
   @override
+  String get messageSentPost => 'Sent a post';
+
+  @override
+  String get messageSentAttachment => 'Sent an attachment';
+
+  @override
   String get messageNow => 'now';
 
   @override
@@ -6159,7 +6165,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyTinRequired => 'Tax ID';
 
   @override
-  String get roleApplyTaxCountry => 'Country of your tax ID';
+  String get roleApplyCountryHelp =>
+      'Sets the format of your contact number and tax ID.';
 
   @override
   String get roleApplyTaxId => 'Tax ID';

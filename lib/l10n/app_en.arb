@@ -397,6 +397,8 @@
   "messageSampleFoxer": "This is a sample Foxer. Real Foxers show up here once there are some.",
   "messageStartFailed": "We couldn't open the chat. Try again.",
   "messageYou": "You: ",
+  "messageSentPost": "Sent a post",
+  "messageSentAttachment": "Sent an attachment",
   "messageNow": "now",
   "messageEditedSuffix": "edited",
   "messageReply": "Reply",
@@ -2046,7 +2048,7 @@
   "roleApplyAddress": "Complete address",
   "roleApplyDescription": "About your venues (optional)",
   "roleApplyTinRequired": "Tax ID",
-  "roleApplyTaxCountry": "Country of your tax ID",
+  "roleApplyCountryHelp": "Sets the format of your contact number and tax ID.",
   "roleApplyTaxId": "Tax ID",
   "roleApplyTaxIdNamed": "Tax ID ({name})",
   "@roleApplyTaxIdNamed": {
