@@ -154,10 +154,10 @@ class VenueDraft {
     this.staffing = const [],
     this.policies = const [],
     this.price,
+    this.cancellation,
     this.billingRate = 'daily',
     this.extraGuestRate,
     this.cancellationPolicyId,
-    this.cancellation,
   });
 
   final String name;
@@ -180,13 +180,14 @@ class VenueDraft {
   final List<String> staffing;
   final List<String> policies;
   final double? price;
-  final String billingRate;
-  final double? extraGuestRate;
-  final String? cancellationPolicyId;
 
   /// Flexible or Non-refundable, as the owner chose it (mobile#502); null
   /// until chosen, when the API keeps its default.
   final CancellationTerms? cancellation;
+
+  final String billingRate;
+  final double? extraGuestRate;
+  final String? cancellationPolicyId;
 
   List<List<double>>? get boundary =>
       center == null ? null : circlePolygon(center!, radiusMeters);
@@ -238,11 +239,11 @@ class VenueDraft {
     List<String>? staffing,
     List<String>? policies,
     double? price,
+    CancellationTerms? cancellation,
     bool clearPrice = false,
     String? billingRate,
     double? extraGuestRate,
     String? cancellationPolicyId,
-    CancellationTerms? cancellation,
   }) =>
       VenueDraft(
         name: name ?? this.name,
@@ -263,10 +264,10 @@ class VenueDraft {
         staffing: staffing ?? this.staffing,
         policies: policies ?? this.policies,
         price: clearPrice ? null : price ?? this.price,
+        cancellation: cancellation ?? this.cancellation,
         billingRate: billingRate ?? this.billingRate,
         extraGuestRate: extraGuestRate ?? this.extraGuestRate,
         cancellationPolicyId: cancellationPolicyId ?? this.cancellationPolicyId,
-        cancellation: cancellation ?? this.cancellation,
       );
 
   /// The body for create or update. [status] is only ever `draft` or
@@ -290,11 +291,11 @@ class VenueDraft {
         'policies': policies,
         if (price != null) 'price': price,
         'billingRate': billingRate,
+        // Chosen terms win over a policy id: the API reads the type first and
+        // makes or reuses a policy for it (mobile#502).
+        if (cancellation != null) ...cancellation!.toJson(),
         if (extraGuestRate != null) 'extraGuestRate': extraGuestRate,
-        // The terms chosen win; the API makes or reuses a policy for them.
-        if (cancellation != null)
-          ...cancellation!.toJson()
-        else if (cancellationPolicyId != null)
+        if (cancellationPolicyId != null)
           'cancellationPolicyId': cancellationPolicyId,
         if (status != null) 'status': status,
       };

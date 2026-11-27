@@ -63,7 +63,7 @@ void main() {
   });
 
   group('a venue', () {
-    test('sends its terms, which win over an old policy id', () {
+    test('sends its terms; the API reads them before any policy id', () {
       const draft = VenueDraft(
         name: 'Sky Hall',
         cancellationPolicyId: 'old',
@@ -71,7 +71,8 @@ void main() {
       );
       final body = draft.toJson();
       expect(body['cancellationType'], 'Non-Refundable');
-      expect(body.containsKey('cancellationPolicyId'), isFalse);
+      // Still sent; the API's resolvePolicy takes the type first.
+      expect(body['cancellationPolicyId'], 'old');
       expect(body.containsKey('flexibleRefundPercent'), isFalse);
     });
 

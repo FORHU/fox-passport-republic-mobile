@@ -847,6 +847,64 @@ class _PricingStep extends StatelessWidget {
   }
 }
 
+class _ReviewStep extends StatelessWidget {
+  const _ReviewStep({required this.state});
+
+  final VenueStudioState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final missing = state.draft.missing;
+    final labels = _missingLabels(l10n);
+    final overlapping = state.overlapping;
+    if (missing.isEmpty && overlapping.isEmpty) {
+      return Row(
+        children: [
+          const Icon(Icons.check_circle_rounded, color: AppColors.success),
+          const SizedBox(width: 8),
+          Text(l10n.studioReviewReady, style: AppTypography.display()),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (missing.isNotEmpty) ...[
+          Text(
+            l10n.studioReviewMissing,
+            style: AppTypography.display(),
+          ),
+          const SizedBox(height: 8),
+          for (final key in missing)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.radio_button_unchecked_rounded,
+                    size: 18,
+                    color: AppColors.warning,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(labels[key] ?? key),
+                ],
+              ),
+            ),
+        ],
+        if (overlapping.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              l10n.studioOverlap(overlapping.join(', ')),
+              style: AppTypography.body(size: 13, color: AppColors.warning),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 /// Flexible or Non-refundable (mobile#502), as on the web. Flexible asks for
 /// the refund and how long before the booking it applies; Non-refundable asks
 /// nothing. The sentence guests will see is shown under the choice.
@@ -1017,62 +1075,4 @@ class _PolicyOption extends StatelessWidget {
           ),
         ),
       );
-}
-
-class _ReviewStep extends StatelessWidget {
-  const _ReviewStep({required this.state});
-
-  final VenueStudioState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final missing = state.draft.missing;
-    final labels = _missingLabels(l10n);
-    final overlapping = state.overlapping;
-    if (missing.isEmpty && overlapping.isEmpty) {
-      return Row(
-        children: [
-          const Icon(Icons.check_circle_rounded, color: AppColors.success),
-          const SizedBox(width: 8),
-          Text(l10n.studioReviewReady, style: AppTypography.display()),
-        ],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (missing.isNotEmpty) ...[
-          Text(
-            l10n.studioReviewMissing,
-            style: AppTypography.display(),
-          ),
-          const SizedBox(height: 8),
-          for (final key in missing)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.radio_button_unchecked_rounded,
-                    size: 18,
-                    color: AppColors.warning,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(labels[key] ?? key),
-                ],
-              ),
-            ),
-        ],
-        if (overlapping.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Text(
-              l10n.studioOverlap(overlapping.join(', ')),
-              style: AppTypography.body(size: 13, color: AppColors.warning),
-            ),
-          ),
-      ],
-    );
-  }
 }
