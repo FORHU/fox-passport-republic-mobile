@@ -114,13 +114,25 @@ void main() {
       );
     });
 
-    test('sends photo file ids, not urls, and the boundary as a ring', () {
-      final json = _complete().toJson(status: 'pending');
+    test('sends photo file ids, not urls, and the pin, not a drawn area', () {
+      final draft = _complete();
+      final json = draft.toJson(status: 'pending');
 
       expect(json['imgIds'], ['f1']);
       expect(json['status'], 'pending');
-      expect((json['boundary'] as List).length, 25);
       expect(json['name'], 'Sky Hall');
+      // mobile#498: a coverage area replaces the radius; only the pin goes.
+      expect(json.containsKey('boundary'), isFalse);
+      expect(json['lat'], draft.center!.lat);
+      expect(json['lng'], draft.center!.lng);
+    });
+
+    test('sends the coverage area once chosen (mobile#498)', () {
+      expect(_complete().toJson().containsKey('coverageArea'), isFalse);
+      expect(
+        _complete().copyWith(coverageArea: 'province').toJson()['coverageArea'],
+        'province',
+      );
     });
 
     test('leaves status out when saving a live venue', () {

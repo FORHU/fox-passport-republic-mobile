@@ -117,6 +117,10 @@ class VenueDetail {
         country: '${raw['country'] ?? ''}',
         center: center,
         radiusMeters: circle?.radiusMeters ?? 300,
+        // The API only stores one of its six areas (mobile#498).
+        coverageArea: raw['coverageArea'] is String
+            ? raw['coverageArea'] as String
+            : null,
         photos: photos,
         spaceType: _strings(raw['spaceType']),
         amenities: _strings(raw['amenities']),

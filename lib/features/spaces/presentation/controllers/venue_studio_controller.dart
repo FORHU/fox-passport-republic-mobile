@@ -95,14 +95,10 @@ class VenueStudioState {
   final String? locateProblem;
 
   /// Names of the venues whose service area this one runs into.
-  List<String> get overlapping {
-    final ring = draft.boundary;
-    if (ring == null) return const [];
-    return [
-      for (final n in neighbours)
-        if (ringsOverlap(ring, n.ring)) n.name,
-    ];
-  }
+  ///
+  /// None now: a venue no longer draws an area, only drops its pin and picks
+  /// a coverage area (mobile#498), so venues no longer run into each other.
+  List<String> get overlapping => const [];
 
   bool get canSubmit => draft.readyToSubmit && overlapping.isEmpty;
 

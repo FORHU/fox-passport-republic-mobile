@@ -64,6 +64,15 @@ void main() {
       expect(v.hasGoodToKnow, isTrue);
     });
 
+    // mobile#498: how far the venue serves, shown under Good to know.
+    test('reads the coverage area, which is enough for Good to know', () {
+      final v = VenueDetail.fromJson(
+        const {'id': 'x', 'name': 'Hall', 'coverageArea': 'province'},
+      );
+      expect(v.coverageArea, 'province');
+      expect(v.hasGoodToKnow, isTrue);
+    });
+
     test('a bare venue has nothing optional', () {
       final v = VenueDetail.fromJson(const {'id': 'x', 'name': 'Bare'});
       expect(v.inclusions, isEmpty);

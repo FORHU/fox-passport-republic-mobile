@@ -2529,6 +2529,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioRadius => 'Radius';
 
   @override
+  String get studioCoverage => 'Where is it available?';
+
+  @override
+  String get coverageLocal => 'Local';
+
+  @override
+  String get coverageLocalHint => 'Within the immediate locality or barangay.';
+
+  @override
+  String get coverageMunicipal => 'Municipal';
+
+  @override
+  String get coverageMunicipalHint => 'Within the municipality or town.';
+
+  @override
+  String get coverageCity => 'City-wide';
+
+  @override
+  String get coverageCityHint => 'Throughout the city.';
+
+  @override
+  String get coverageProvince => 'Province-wide';
+
+  @override
+  String get coverageProvinceHint => 'Across the entire province.';
+
+  @override
+  String get coverageNational => 'National';
+
+  @override
+  String get coverageNationalHint => 'Throughout the country.';
+
+  @override
+  String get coverageInternational => 'International';
+
+  @override
+  String get coverageInternationalHint => 'Across more than one country.';
+
+  @override
+  String get venueCoverageLabel => 'Available';
+
+  @override
   String studioRadiusValue(int meters) {
     return '$meters m';
   }
