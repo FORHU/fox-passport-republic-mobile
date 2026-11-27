@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:flutter_template/shared/venues/coverage_area.dart';
+
 /// The categories the API accepts for a venue.
 const venueCategories = [
   'indoor',
@@ -145,6 +147,7 @@ class VenueDraft {
     this.country = '',
     this.center,
     this.radiusMeters = 300,
+    this.coverageArea,
     this.photos = const [],
     this.spaceType = const [],
     this.amenities = const [],
@@ -170,6 +173,10 @@ class VenueDraft {
   final String country;
   final GeoPoint? center;
   final double radiusMeters;
+
+  /// How far the venue serves (mobile#498): one of [venueCoverageAreas], or
+  /// null for a venue saved before it was asked.
+  final String? coverageArea;
   final List<VenuePhoto> photos;
   final List<String> spaceType;
   final List<String> amenities;
@@ -180,9 +187,6 @@ class VenueDraft {
   final String billingRate;
   final double? extraGuestRate;
   final String? cancellationPolicyId;
-
-  List<List<double>>? get boundary =>
-      center == null ? null : circlePolygon(center!, radiusMeters);
 
   /// What is still missing before the venue can be sent for review, in the
   /// order the steps come.
@@ -224,6 +228,7 @@ class VenueDraft {
     String? country,
     GeoPoint? center,
     double? radiusMeters,
+    String? coverageArea,
     List<VenuePhoto>? photos,
     List<String>? spaceType,
     List<String>? amenities,
@@ -248,6 +253,7 @@ class VenueDraft {
         country: country ?? this.country,
         center: center ?? this.center,
         radiusMeters: radiusMeters ?? this.radiusMeters,
+        coverageArea: coverageArea ?? this.coverageArea,
         photos: photos ?? this.photos,
         spaceType: spaceType ?? this.spaceType,
         amenities: amenities ?? this.amenities,
@@ -272,7 +278,10 @@ class VenueDraft {
         if (state.trim().isNotEmpty) 'state': state.trim(),
         if (district.trim().isNotEmpty) 'district': district.trim(),
         'country': country.trim(),
-        if (boundary != null) 'boundary': boundary,
+        // The pin, not a drawn area (mobile#498); the API keeps it as the
+        // venue's point.
+        if (center != null) ...{'lat': center!.lat, 'lng': center!.lng},
+        if (coverageArea != null) 'coverageArea': coverageArea,
         'imgIds': [for (final p in photos) p.fileId],
         'spaceType': spaceType,
         'amenities': amenities,

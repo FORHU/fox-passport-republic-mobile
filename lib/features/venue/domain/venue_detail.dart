@@ -32,6 +32,7 @@ class VenueDetail extends Equatable {
     this.parking,
     this.accessibility,
     this.entrance,
+    this.coverageArea,
     this.isSample = false,
   });
 
@@ -71,6 +72,7 @@ class VenueDetail extends Equatable {
       recommendedCapacity: number(json['recommendedCapacity'])?.toInt(),
       price: number(json['price']),
       billingRate: text('billingRate'),
+      coverageArea: text('coverageArea'),
       imageUrls: [
         if (images is List)
           for (final i in images)
@@ -140,6 +142,10 @@ class VenueDetail extends Equatable {
   final String? parking;
   final String? accessibility;
   final String? entrance;
+
+  /// How far the venue serves (mobile#498), as the API's code; null when the
+  /// owner hasn't chosen.
+  final String? coverageArea;
   final bool isSample;
 
   /// "Baguio, Benguet" from whatever parts the venue has.
@@ -148,7 +154,10 @@ class VenueDetail extends Equatable {
 
   /// Whether there is anything to show under "Good to know".
   bool get hasGoodToKnow =>
-      parking != null || accessibility != null || entrance != null;
+      parking != null ||
+      accessibility != null ||
+      entrance != null ||
+      coverageArea != null;
 
   @override
   List<Object?> get props => [
@@ -167,6 +176,7 @@ class VenueDetail extends Equatable {
         price,
         currency,
         billingRate,
+        coverageArea,
         imageUrls,
         hostName,
         spaceTypes,

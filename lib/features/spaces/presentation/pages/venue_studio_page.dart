@@ -4,6 +4,7 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/venue_studio_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/coverage_area_choice.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/service_area_map.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
@@ -440,28 +441,16 @@ class _LocationStep extends StatelessWidget {
             children: [
               ServiceAreaMap(
                 center: d.center,
-                radiusMeters: d.radiusMeters,
                 neighbours: state.neighbours,
                 onPin: (p) => edit((x) => x.copyWith(center: p)),
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Text(l10n.studioRadius, style: AppTypography.label()),
-                  Expanded(
-                    child: Slider(
-                      value: d.radiusMeters.clamp(100, 2000).toDouble(),
-                      min: 100,
-                      max: 2000,
-                      divisions: 19,
-                      activeColor: AppColors.accent,
-                      onChanged: (v) =>
-                          edit((x) => x.copyWith(radiusMeters: v)),
-                    ),
-                  ),
-                  Text(l10n.studioRadiusValue(d.radiusMeters.round())),
-                ],
+              const SizedBox(height: 16),
+              // How far it serves, in place of a drawn radius (mobile#498).
+              CoverageAreaChoice(
+                value: d.coverageArea,
+                onChanged: (v) => edit((x) => x.copyWith(coverageArea: v)),
               ),
+              const SizedBox(height: 8),
               if (d.center == null)
                 Text(
                   l10n.studioNoPin,

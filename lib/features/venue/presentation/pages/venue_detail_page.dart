@@ -11,6 +11,7 @@ import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/reports/file_report.dart';
+import 'package:flutter_template/shared/venues/coverage_area.dart';
 import 'package:flutter_template/shared/widgets/location_card.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -254,6 +255,11 @@ class _Loaded extends ConsumerWidget {
                         style: AppTypography.display(size: 18),
                       ),
                       const SizedBox(height: 10),
+                      if (venue.coverageArea != null)
+                        _Fact(
+                          l10n.venueCoverageLabel,
+                          coverageAreaLabel(l10n, venue.coverageArea!),
+                        ),
                       if (venue.parking != null)
                         _Fact(l10n.venueParking, venue.parking!),
                       if (venue.accessibility != null)

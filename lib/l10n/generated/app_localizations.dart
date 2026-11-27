@@ -4570,6 +4570,90 @@ abstract class AppLocalizations {
   /// **'Radius'**
   String get studioRadius;
 
+  /// No description provided for @studioCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is it available?'**
+  String get studioCoverage;
+
+  /// No description provided for @coverageLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get coverageLocal;
+
+  /// No description provided for @coverageLocalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Within the immediate locality or barangay.'**
+  String get coverageLocalHint;
+
+  /// No description provided for @coverageMunicipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Municipal'**
+  String get coverageMunicipal;
+
+  /// No description provided for @coverageMunicipalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Within the municipality or town.'**
+  String get coverageMunicipalHint;
+
+  /// No description provided for @coverageCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City-wide'**
+  String get coverageCity;
+
+  /// No description provided for @coverageCityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Throughout the city.'**
+  String get coverageCityHint;
+
+  /// No description provided for @coverageProvince.
+  ///
+  /// In en, this message translates to:
+  /// **'Province-wide'**
+  String get coverageProvince;
+
+  /// No description provided for @coverageProvinceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Across the entire province.'**
+  String get coverageProvinceHint;
+
+  /// No description provided for @coverageNational.
+  ///
+  /// In en, this message translates to:
+  /// **'National'**
+  String get coverageNational;
+
+  /// No description provided for @coverageNationalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Throughout the country.'**
+  String get coverageNationalHint;
+
+  /// No description provided for @coverageInternational.
+  ///
+  /// In en, this message translates to:
+  /// **'International'**
+  String get coverageInternational;
+
+  /// No description provided for @coverageInternationalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Across more than one country.'**
+  String get coverageInternationalHint;
+
+  /// No description provided for @venueCoverageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get venueCoverageLabel;
+
   /// No description provided for @studioRadiusValue.
   ///
   /// In en, this message translates to:

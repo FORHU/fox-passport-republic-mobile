@@ -1,4 +1,5 @@
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
+import 'package:flutter_template/shared/venues/coverage_area.dart';
 
 List<String> _strings(Object? raw) =>
     raw is List ? [for (final v in raw) v.toString()] : const [];
@@ -117,6 +118,9 @@ class VenueDetail {
         country: '${raw['country'] ?? ''}',
         center: center,
         radiusMeters: circle?.radiusMeters ?? 300,
+        coverageArea: venueCoverageAreas.contains(raw['coverageArea'])
+            ? raw['coverageArea'] as String
+            : null,
         photos: photos,
         spaceType: _strings(raw['spaceType']),
         amenities: _strings(raw['amenities']),

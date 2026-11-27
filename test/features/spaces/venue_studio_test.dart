@@ -242,7 +242,9 @@ void main() {
       expect(state.uploading, isFalse);
     });
 
-    test('a pin over a neighbour is flagged and blocks submitting', () async {
+    // mobile#498: venues no longer draw an area, so one beside another is not
+    // held back; each keeps its pin and picks a coverage area.
+    test('a pin beside a neighbour no longer blocks submitting', () async {
       when(() => repo.neighbourBoundaries(excludeId: any(named: 'excludeId')))
           .thenAnswer(
         (_) async => [
@@ -253,18 +255,19 @@ void main() {
           ),
         ],
       );
+      when(() => repo.createVenue(any(), submit: any(named: 'submit')))
+          .thenAnswer((_) async => 'v9');
       final c = container(null);
       await settle();
       c.read(venueStudioProvider(null).notifier).edit((_) => _ready);
 
       final state = c.read(venueStudioProvider(null));
-      expect(state.overlapping, ['Next Door']);
-      expect(state.canSubmit, isFalse);
+      expect(state.overlapping, isEmpty);
+      expect(state.canSubmit, isTrue);
       expect(
         await c.read(venueStudioProvider(null).notifier).save(submit: true),
-        isFalse,
+        isTrue,
       );
-      verifyNever(() => repo.createVenue(any(), submit: any(named: 'submit')));
     });
 
     test('moving the pin away clears the overlap', () async {
@@ -348,6 +351,83 @@ void main() {
       expect(await studio.save(submit: false), isFalse);
       expect(c.read(venueStudioProvider(null)).error, 'overlap');
       expect(c.read(venueStudioProvider(null)).saving, isFalse);
+    });
+  });
+
+  // mobile#498: six coverage areas in place of the radius slider.
+  group('the coverage area', () {
+    test('a saved venue shows the area it chose', () {
+      final detail = VenueDetail.tryParse({
+        'id': 'v1',
+        'name': 'Sky Hall',
+        'coverageArea': 'city',
+      });
+      expect(detail!.draft.coverageArea, 'city');
+      // Anything else, or nothing, is not chosen.
+      expect(
+        VenueDetail.tryParse({'id': 'v1', 'coverageArea': 'galaxy'})!
+            .draft
+            .coverageArea,
+        isNull,
+      );
+    });
+
+    testWidgets('the location step offers the six areas, not a radius', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(900, 2600)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            spacesRepositoryProvider.overrideWithValue(repo),
+            photoPickerProvider.overrideWithValue(_FakePicker()),
+            deviceLocatorProvider.overrideWithValue(locator),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.dark,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const VenueStudioPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      final c = ProviderScope.containerOf(
+        tester.element(find.byType(VenueStudioPage)),
+      );
+      c.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready)
+        ..goTo(StudioStep.location);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byType(Slider), findsNothing);
+      expect(find.text('Radius'), findsNothing);
+      expect(find.text('Where is it available?'), findsOneWidget);
+      for (final name in [
+        'Local',
+        'Municipal',
+        'City-wide',
+        'Province-wide',
+        'National',
+        'International',
+      ]) {
+        expect(find.text(name), findsOneWidget);
+      }
+
+      await tester.ensureVisible(find.byKey(const Key('coverage-province')));
+      await tester.tap(find.byKey(const Key('coverage-province')));
+      await tester.pump();
+      expect(c.read(venueStudioProvider(null)).draft.coverageArea, 'province');
+
+      // One at a time.
+      await tester.ensureVisible(find.byKey(const Key('coverage-national')));
+      await tester.tap(find.byKey(const Key('coverage-national')));
+      await tester.pump();
+      expect(c.read(venueStudioProvider(null)).draft.coverageArea, 'national');
     });
   });
 

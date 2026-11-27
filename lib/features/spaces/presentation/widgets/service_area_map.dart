@@ -16,16 +16,19 @@ import 'package:latlong2/latlong.dart' show LatLng;
 class ServiceAreaMap extends StatefulWidget {
   const ServiceAreaMap({
     required this.center,
-    required this.radiusMeters,
     required this.neighbours,
     required this.onPin,
+    this.radiusMeters,
     this.mapboxToken,
     this.tileProvider,
     super.key,
   });
 
   final GeoPoint? center;
-  final double radiusMeters;
+
+  /// A circle drawn around the pin; none when null (venues choose a coverage
+  /// area instead, mobile#498).
+  final double? radiusMeters;
   final List<VenueBoundary> neighbours;
   final ValueChanged<GeoPoint> onPin;
 
@@ -130,9 +133,9 @@ class _ServiceAreaMapState extends State<ServiceAreaMap> {
                   borderColor: AppColors.warning,
                   borderStrokeWidth: 1.5,
                 ),
-              if (pin != null)
+              if (pin != null && widget.radiusMeters != null)
                 Polygon(
-                  points: _points(circlePolygon(pin, widget.radiusMeters)),
+                  points: _points(circlePolygon(pin, widget.radiusMeters!)),
                   color: AppColors.accent.withValues(alpha: 0.2),
                   borderColor: AppColors.accent,
                   borderStrokeWidth: 2,
