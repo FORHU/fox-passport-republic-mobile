@@ -8842,6 +8842,12 @@ abstract class AppLocalizations {
   /// **'Posting…'**
   String get republicPosting;
 
+  /// No description provided for @republicPostingPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Posting… {percent}%'**
+  String republicPostingPercent(int percent);
+
   /// No description provided for @republicPollHint.
   ///
   /// In en, this message translates to:

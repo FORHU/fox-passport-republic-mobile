@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
@@ -18,10 +20,14 @@ import 'package:mocktail/mocktail.dart';
 class _MockApi extends Mock implements ApiService {}
 
 class _FakePicker implements MediaPicker {
+  _FakePicker([this.photos]);
+
+  /// What is picked; one empty photo when not given.
+  final List<PickedMedia>? photos;
+
   @override
-  Future<List<PickedMedia>> pickMany(int limit) async => [
-        PickedMedia(bytes: Uint8List(0), name: 'a.jpg'),
-      ];
+  Future<List<PickedMedia>> pickMany(int limit) async =>
+      photos ?? [PickedMedia(bytes: Uint8List(0), name: 'a.jpg')];
 
   @override
   Future<PickedMedia?> pickVideo() async => null;
@@ -48,6 +54,7 @@ void main() {
 
   setUp(() {
     api = _MockApi();
+    registerFallbackValue(FormData());
     registerFallbackValue(<String, Object?>{});
   });
 
@@ -148,6 +155,7 @@ void main() {
     Future<void> open(
       WidgetTester tester, {
       List<String> roles = const [],
+      MediaPicker? picker,
     }) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -155,7 +163,7 @@ void main() {
             republicRepositoryProvider
                 .overrideWithValue(RepublicRepository(api)),
             authControllerProvider.overrideWith(() => _Session(roles)),
-            mediaPickerProvider.overrideWithValue(_FakePicker()),
+            mediaPickerProvider.overrideWithValue(picker ?? _FakePicker()),
           ],
           child: MaterialApp(
             theme: AppTheme.dark,
@@ -183,7 +191,14 @@ void main() {
     testWidgets('a photo alone is enough, and it is uploaded then attached', (
       tester,
     ) async {
-      when(() => api.post(ApiEndpoints.uploadFile, any())).thenAnswer(
+      // Photos go up the long way now, so the Posting bar can follow them.
+      when(
+        () => api.upload(
+          ApiEndpoints.uploadFile,
+          any(),
+          onProgress: any(named: 'onProgress'),
+        ),
+      ).thenAnswer(
         (_) async => {
           'file': {'url': 'https://x.test/a.jpg'},
         },
@@ -206,6 +221,137 @@ void main() {
           .captured
           .single as Map<String, Object?>;
       expect(sent['mediaUrls'], ['https://x.test/a.jpg']);
+      // "Posted" shows for a moment before the page closes.
+      await tester.pump(const Duration(seconds: 1));
+    });
+
+    // mobile#497: a bar with "Posting" that follows the upload.
+    group('the Posting bar', () {
+      double? barValue(WidgetTester tester) => tester
+          .widget<LinearProgressIndicator>(
+            find.byKey(const Key('posting-progress')),
+          )
+          .value;
+
+      testWidgets('fills with the bytes sent, then shows Posted at 100%', (
+        tester,
+      ) async {
+        final uploads = <Completer<Object?>>[];
+        final progress = <void Function(int, int)>[];
+        when(
+          () => api.upload(
+            ApiEndpoints.uploadFile,
+            any(),
+            onProgress: any(named: 'onProgress'),
+          ),
+        ).thenAnswer((inv) {
+          progress.add(
+            inv.namedArguments[#onProgress] as void Function(int, int),
+          );
+          final c = Completer<Object?>();
+          uploads.add(c);
+          return c.future;
+        });
+        final post = Completer<Object?>();
+        when(() => api.post(ApiEndpoints.feed, any()))
+            .thenAnswer((_) => post.future);
+        await open(
+          tester,
+          picker: _FakePicker([
+            PickedMedia(bytes: Uint8List(100), name: 'a.jpg'),
+            PickedMedia(bytes: Uint8List(100), name: 'b.jpg'),
+          ]),
+        );
+        await tester.tap(find.text('Add photos'));
+        await tester.pump();
+        await tester.pump();
+        expect(find.byKey(const Key('posting-progress')), findsNothing);
+
+        await tester.tap(find.byType(ElevatedButton));
+        await tester.pump();
+        expect(find.text('Posting… 0%'), findsOneWidget);
+        expect(barValue(tester), 0);
+
+        // Half of the first of two photos: a quarter of the uploads.
+        progress[0](50, 100);
+        await tester.pump();
+        expect(barValue(tester), closeTo(0.95 * 0.25, 0.001));
+        expect(find.text('Posting… 24%'), findsOneWidget);
+
+        uploads[0].complete({'url': 'https://x.test/a.jpg'});
+        await tester.pump();
+        await tester.pump();
+        expect(barValue(tester), closeTo(0.95 * 0.5, 0.001));
+
+        uploads[1].complete({'url': 'https://x.test/b.jpg'});
+        await tester.pump();
+        await tester.pump();
+        // Uploaded; the post itself is the last step.
+        expect(find.text('Posting… 95%'), findsOneWidget);
+
+        post.complete({});
+        await tester.pump();
+        await tester.pump();
+        expect(find.text('Posted.'), findsOneWidget);
+        expect(barValue(tester), 1);
+
+        await tester.pump(const Duration(seconds: 1));
+      });
+
+      testWidgets('text alone runs the bar until it is posted', (
+        tester,
+      ) async {
+        final post = Completer<Object?>();
+        when(() => api.post(ApiEndpoints.feed, any()))
+            .thenAnswer((_) => post.future);
+        await open(tester);
+        await tester.enterText(find.byType(TextField).first, 'Hello');
+        await tester.pump();
+
+        await tester.tap(find.byType(ElevatedButton));
+        await tester.pump();
+        expect(find.text('Posting…'), findsWidgets);
+        expect(barValue(tester), isNull);
+
+        post.complete({});
+        await tester.pump();
+        await tester.pump();
+        expect(barValue(tester), 1);
+        await tester.pump(const Duration(seconds: 1));
+      });
+
+      testWidgets('a failed upload says so and lets the person try again', (
+        tester,
+      ) async {
+        when(
+          () => api.upload(
+            ApiEndpoints.uploadFile,
+            any(),
+            onProgress: any(named: 'onProgress'),
+          ),
+        ).thenThrow(Exception('offline'));
+        await open(
+          tester,
+          picker: _FakePicker([
+            PickedMedia(bytes: Uint8List(100), name: 'a.jpg'),
+          ]),
+        );
+        await tester.tap(find.text('Add photos'));
+        await tester.pump();
+        await tester.pump();
+
+        await tester.tap(find.byType(ElevatedButton));
+        await tester.pump();
+        await tester.pump();
+
+        // In the panel (and the toast); no bar, and Post works again.
+        expect(find.text("We couldn't post that. Try again."), findsWidgets);
+        expect(find.byKey(const Key('posting-progress')), findsNothing);
+        expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
+        expect(postButton(tester).onPressed, isNotNull);
+        verifyNever(() => api.post(ApiEndpoints.feed, any()));
+        await tester.pump(const Duration(seconds: 4));
+      });
     });
 
     testWidgets('a poll needs two different options', (tester) async {
