@@ -2658,6 +2658,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioSavedDraft => 'Draft saved.';
 
   @override
+  String get studioSaveDraftShort => 'Save draft';
+
+  @override
+  String get studioDraftNeedsName =>
+      'Add the venue\'s name first, then you can save it as a draft.';
+
+  @override
+  String get studioLeaveTitle => 'Leave without saving?';
+
+  @override
+  String get studioLeaveBody =>
+      'Your changes to this venue aren\'t saved yet. Save them as a draft to come back to later.';
+
+  @override
+  String get studioLeaveKeep => 'Keep editing';
+
+  @override
+  String get studioLeaveDiscard => 'Discard';
+
+  @override
   String get studioSubmitted =>
       'Sent for review. We\'ll tell you when it\'s live.';
 

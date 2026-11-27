@@ -14,6 +14,7 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRepo extends Mock implements SpacesRepository {}
@@ -658,6 +659,225 @@ void main() {
 
       expect(find.text('Try again'), findsOneWidget);
       expect(find.text('Next'), findsNothing);
+    });
+  });
+
+  // mobile#501: unfinished venues are kept as drafts, and nothing is lost by
+  // leaving without saving.
+  group('drafts and leaving', () {
+    test('a new studio has nothing unsaved; an edit does; a save clears it',
+        () async {
+      when(() => repo.createVenue(any(), submit: any(named: 'submit')))
+          .thenAnswer((_) async => 'v9');
+      final c = container(null);
+      final studio = c.read(venueStudioProvider(null).notifier);
+      expect(c.read(venueStudioProvider(null)).dirty, isFalse);
+
+      studio.goTo(StudioStep.location);
+      expect(c.read(venueStudioProvider(null)).dirty, isFalse);
+
+      studio.edit((d) => d.copyWith(name: 'Sky Hall'));
+      expect(c.read(venueStudioProvider(null)).dirty, isTrue);
+
+      expect(await studio.save(submit: false), isTrue);
+      expect(c.read(venueStudioProvider(null)).dirty, isFalse);
+    });
+
+    test('a venue loaded to edit has nothing unsaved', () async {
+      when(() => repo.venueDetail('v1')).thenAnswer(
+        (_) async =>
+            const VenueDetail(id: 'v1', status: 'draft', draft: _ready),
+      );
+      final c = container('v1');
+      await settle();
+
+      final s = c.read(venueStudioProvider('v1'));
+      expect(s.draft.name, 'Sky Hall');
+      expect(s.dirty, isFalse);
+    });
+
+    test('a draft needs only a name', () {
+      final c = container(null);
+      final studio = c.read(venueStudioProvider(null).notifier);
+      expect(c.read(venueStudioProvider(null)).canSaveDraft, isFalse);
+      studio.edit((d) => d.copyWith(name: '  '));
+      expect(c.read(venueStudioProvider(null)).canSaveDraft, isFalse);
+      studio.edit((d) => d.copyWith(name: 'Sky Hall'));
+      expect(c.read(venueStudioProvider(null)).canSaveDraft, isTrue);
+    });
+
+    test('saving a draft already kept updates it, never makes a copy',
+        () async {
+      when(() => repo.venueDetail('v1')).thenAnswer(
+        (_) async =>
+            const VenueDetail(id: 'v1', status: 'draft', draft: _ready),
+      );
+      when(
+        () => repo.updateVenue(
+          any(),
+          any(),
+          live: any(named: 'live'),
+          submit: any(named: 'submit'),
+        ),
+      ).thenAnswer((_) async {});
+      final c = container('v1');
+      await settle();
+      final studio = c.read(venueStudioProvider('v1').notifier)
+        ..edit((d) => d.copyWith(description: 'Bigger hall'));
+
+      expect(await studio.save(submit: false), isTrue);
+      verify(
+        () => repo.updateVenue('v1', any(), live: false, submit: false),
+      ).called(1);
+      verifyNever(() => repo.createVenue(any(), submit: any(named: 'submit')));
+    });
+
+    group('on screen', () {
+      // The studio opened from a page, as the app does, so leaving and
+      // saving have somewhere to go back to.
+      Future<void> open(WidgetTester tester) async {
+        tester.view
+          ..physicalSize = const Size(900, 2400)
+          ..devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final router = GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, _) => Scaffold(
+                body: TextButton(
+                  onPressed: () => context.push('/studio'),
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: '/studio',
+              builder: (_, __) => const VenueStudioPage(),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              spacesRepositoryProvider.overrideWithValue(repo),
+              photoPickerProvider.overrideWithValue(_FakePicker()),
+              deviceLocatorProvider.overrideWithValue(locator),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+              theme: AppTheme.dark,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+            ),
+          ),
+        );
+        await tester.tap(find.text('open'));
+        await tester.pumpAndSettle();
+      }
+
+      // Lets a toast run out so no timer is left behind.
+      Future<void> settleToasts(WidgetTester tester) async {
+        await tester.pump(const Duration(seconds: 4));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> typeName(WidgetTester tester) async {
+        await tester.enterText(find.byType(TextField).first, 'Sky Hall');
+        await tester.pump();
+      }
+
+      Future<void> goBack(WidgetTester tester) async {
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('leaving with nothing typed asks nothing', (tester) async {
+        await open(tester);
+        await goBack(tester);
+
+        expect(find.text('Leave without saving?'), findsNothing);
+        expect(find.text('open'), findsOneWidget);
+      });
+
+      testWidgets('leaving with changes asks; Keep editing stays', (
+        tester,
+      ) async {
+        await open(tester);
+        await typeName(tester);
+        await goBack(tester);
+
+        expect(find.text('Leave without saving?'), findsOneWidget);
+        await tester.tap(find.text('Keep editing'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('New venue'), findsOneWidget);
+        expect(find.text('Sky Hall'), findsOneWidget);
+      });
+
+      testWidgets('Discard leaves and saves nothing', (tester) async {
+        await open(tester);
+        await typeName(tester);
+        await goBack(tester);
+        await tester.tap(find.text('Discard'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('open'), findsOneWidget);
+        verifyNever(
+          () => repo.createVenue(any(), submit: any(named: 'submit')),
+        );
+      });
+
+      testWidgets('Save as draft from the question keeps it, once', (
+        tester,
+      ) async {
+        when(() => repo.createVenue(any(), submit: any(named: 'submit')))
+            .thenAnswer((_) async => 'v9');
+        await open(tester);
+        await typeName(tester);
+        await goBack(tester);
+        await tester.tap(find.text('Save as draft'));
+        await tester.pumpAndSettle();
+
+        final saved =
+            verify(() => repo.createVenue(captureAny(), submit: false))
+              ..called(1);
+        expect((saved.captured.single as VenueDraft).name, 'Sky Hall');
+        expect(find.text('open'), findsOneWidget);
+        expect(find.text('Draft saved.'), findsOneWidget);
+        await settleToasts(tester);
+      });
+
+      testWidgets('Save draft is on every step and asks for a name first', (
+        tester,
+      ) async {
+        when(() => repo.createVenue(any(), submit: any(named: 'submit')))
+            .thenAnswer((_) async => 'v9');
+        await open(tester);
+
+        expect(find.text('Save draft'), findsOneWidget);
+        await tester.tap(find.text('Save draft'));
+        await tester.pump();
+        expect(
+          find.text(
+            "Add the venue's name first, then you can save it as a draft.",
+          ),
+          findsOneWidget,
+        );
+        verifyNever(
+          () => repo.createVenue(any(), submit: any(named: 'submit')),
+        );
+        await settleToasts(tester);
+
+        await typeName(tester);
+        await tester.tap(find.text('Save draft'));
+        await tester.pumpAndSettle();
+
+        verify(() => repo.createVenue(any(), submit: false)).called(1);
+        expect(find.text('open'), findsOneWidget);
+        await settleToasts(tester);
+      });
     });
   });
 }
