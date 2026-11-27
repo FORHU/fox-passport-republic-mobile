@@ -226,6 +226,16 @@ class RepublicRepository {
         .post(ApiEndpoints.feedRepost(postId), {'caption': caption.trim()});
   }
 
+  /// Counts a share by link. The server counts each person once per post, so
+  /// a repeat changes nothing. Returns the post's share count, or null when
+  /// the server didn't say.
+  Future<int?> trackShare(String postId) async {
+    final body = await _api.post(ApiEndpoints.feedShare(postId));
+    final data = body is Map ? body['data'] : null;
+    final count = data is Map ? data['sharesCount'] : null;
+    return count is num ? count.toInt() : null;
+  }
+
   /// Saves a post, or takes it back out. Returns whether it is now saved.
   Future<bool> toggleSave(String postId) async {
     final body = await _api.post(ApiEndpoints.feedSave(postId));

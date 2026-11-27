@@ -149,12 +149,17 @@ class PostActions {
         await _run(
           () async {
             await ref.read(republicRepositoryProvider).repost(post.id, caption);
+            // Shown at once; the refresh then brings the server's numbers.
+            _feed.updateShareCounts(post.id, addReposts: 1);
             await _feed.refresh();
           },
           l10n.republicReposted,
         );
       case ShareAction.send:
         final sent = await showSendPostSheet(context, post);
+        if (sent > 0 && context.mounted) {
+          _feed.updateShareCounts(post.id, addSends: sent);
+        }
         if (sent > 0 && context.mounted) {
           showTopToast(
             context,
@@ -166,6 +171,21 @@ class PostActions {
         if (link == null) return;
         await Clipboard.setData(ClipboardData(text: link));
         if (context.mounted) showTopToast(context, l10n.republicLinkCopied);
+        unawaited(_trackShare(post.id));
+    }
+  }
+
+  /// Counts the share on the server (once per person, as on the web) and
+  /// shows the new total. A lost count isn't worth telling anyone about.
+  Future<void> _trackShare(String postId) async {
+    // Read before the wait: the card may be gone by the time it answers.
+    final feed = _feed;
+    final repo = ref.read(republicRepositoryProvider);
+    try {
+      final count = await repo.trackShare(postId);
+      if (count != null) feed.updateShareCounts(postId, sharesCount: count);
+    } on Object {
+      // The link is copied either way.
     }
   }
 
