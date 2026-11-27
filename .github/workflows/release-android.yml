@@ -91,6 +91,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          # Reuse Gradle downloads between runs: fresh downloads from Maven Central on
+          # every run hit its rate limit (429 Too Many Requests) on shared runners.
+          cache: gradle
 
       - name: Setup Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
