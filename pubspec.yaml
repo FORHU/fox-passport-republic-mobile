@@ -69,6 +69,7 @@ dependencies:
   socket_io_client: ^3.1.6
   url_launcher: ^6.3.3
   video_player: ^2.14.1
+  visibility_detector: ^0.4.0+2
   web: ^1.1.1
   webview_flutter: ^4.14.1
 dev_dependencies:

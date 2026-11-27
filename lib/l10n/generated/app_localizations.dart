@@ -8938,6 +8938,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{{n} repost} other{{n} reposts}}'**
   String republicRepostsCount(int count, String n);
 
+  /// No description provided for @republicViewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{n} view} other{{n} views}}'**
+  String republicViewsCount(int count, String n);
+
   /// No description provided for @republicSendsCount.
   ///
   /// In en, this message translates to:

@@ -236,6 +236,19 @@ class RepublicRepository {
     return count is num ? count.toInt() : null;
   }
 
+  /// Records that the signed-in person saw these posts. Returns the ids the
+  /// server counted: a first view, by someone other than the author.
+  Future<List<String>> recordViews(List<String> postIds) async {
+    final body = await _api.post(ApiEndpoints.feedViews, {'postIds': postIds});
+    final data = body is Map ? body['data'] : null;
+    final recorded = data is Map ? data['recorded'] : null;
+    return [
+      if (recorded is List)
+        for (final id in recorded)
+          if (id is String) id,
+    ];
+  }
+
   /// Saves a post, or takes it back out. Returns whether it is now saved.
   Future<bool> toggleSave(String postId) async {
     final body = await _api.post(ApiEndpoints.feedSave(postId));

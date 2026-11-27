@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/features/republic/data/feed_realtime.dart';
+import 'package:flutter_template/features/republic/data/post_view_tracker.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
@@ -148,6 +149,12 @@ class FeedController extends AsyncNotifier<FeedState> {
         change.postId,
         (p) => p.copyWith(commentsCount: change.commentsCount),
       );
+    });
+    // The server counted a view of a post this list may show.
+    ref.listen(recordedViewsProvider, (_, next) {
+      final postId = next.value;
+      if (postId == null) return;
+      _replace(postId, (p) => p.copyWith(viewsCount: p.viewsCount + 1));
     });
     if (!_plain) _watchForNewPosts();
     return _firstPage();

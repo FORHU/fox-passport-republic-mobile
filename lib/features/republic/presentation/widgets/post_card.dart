@@ -5,6 +5,7 @@ import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/feed_video.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_view_watcher.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/formatting/compact_count.dart';
@@ -80,6 +81,7 @@ class PostCard extends StatefulWidget {
     this.onOpenListing,
     this.onMessage,
     this.onShare,
+    this.onSeen,
     this.onHashtag,
     this.onOpenVideo,
     super.key,
@@ -119,6 +121,10 @@ class PostCard extends StatefulWidget {
   /// Opens Share: repost, send in a message, copy the link.
   final VoidCallback? onShare;
 
+  /// The post has been seen (half on screen for a second), to count a view
+  /// (mobile#541). Called at most once; nothing is watched when null.
+  final VoidCallback? onSeen;
+
   /// A `#tag` in the words was tapped; it is passed with its `#`.
   final ValueChanged<String>? onHashtag;
 
@@ -142,7 +148,7 @@ class _PostCardState extends State<PostCard> {
     final age = postAge(l10n, post.createdAt, locale);
     final muted = AppTypography.body(size: 13, color: AppColors.textMuted);
 
-    return ColoredBox(
+    final card = ColoredBox(
       color: AppColors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,6 +316,21 @@ class _PostCardState extends State<PostCard> {
               ],
             ),
           ),
+          if (post.viewsCount > 0)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  l10n.republicViewsCount(
+                    post.viewsCount,
+                    compactCount(post.viewsCount, locale: locale),
+                  ),
+                  key: const ValueKey('post-views'),
+                  style: muted,
+                ),
+              ),
+            ),
           const Divider(height: 1, color: AppColors.border),
           Row(
             children: [
@@ -340,6 +361,9 @@ class _PostCardState extends State<PostCard> {
         ],
       ),
     );
+    final onSeen = widget.onSeen;
+    if (onSeen == null) return card;
+    return PostViewWatcher(postId: post.id, onSeen: onSeen, child: card);
   }
 }
 

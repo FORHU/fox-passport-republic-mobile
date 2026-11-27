@@ -1649,6 +1649,8 @@
   "@republicCommentsCount": {"placeholders":{"count":{"type":"int"}}},
   "republicRepostsCount": "{count, plural, =1{{n} repost} other{{n} reposts}}",
   "@republicRepostsCount": {"placeholders":{"count":{"type":"int"},"n":{"type":"String"}}},
+  "republicViewsCount": "{count, plural, =1{{n} view} other{{n} views}}",
+  "@republicViewsCount": {"placeholders":{"count":{"type":"int"},"n":{"type":"String"}}},
   "republicSendsCount": "{n} sent",
   "@republicSendsCount": {"placeholders":{"n":{"type":"String"}}},
   "republicSharesCount": "{count, plural, =1{{n} share} other{{n} shares}}",

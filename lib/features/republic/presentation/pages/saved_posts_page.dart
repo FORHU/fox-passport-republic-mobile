@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/republic/data/feed_controller.dart';
+import 'package:flutter_template/features/republic/data/post_view_tracker.dart';
 import 'package:flutter_template/features/republic/data/republic_repository.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/feed_skeleton.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_actions.dart';
@@ -170,6 +171,9 @@ class _SavedPostsPageState extends ConsumerState<SavedPostsPage> {
                       },
                       child: PostCard(
                         post: post,
+                        onSeen: () => ref
+                            .read(postViewTrackerProvider)
+                            ?.seen(post.id, authorId: post.author.id),
                         onLike: () => unawaited(actions.like(post.id)),
                         onComments: () => unawaited(actions.comments(post.id)),
                         onMore: () => unawaited(actions.menu(post)),

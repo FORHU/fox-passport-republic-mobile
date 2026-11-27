@@ -44,6 +44,7 @@ class Post extends Equatable {
     this.sharesCount = 0,
     this.sendsCount = 0,
     this.repostsCount = 0,
+    this.viewsCount = 0,
     this.myReaction,
     this.reactionCounts = const [],
     this.edited = false,
@@ -74,6 +75,7 @@ class Post extends Equatable {
         sharesCount: (json['sharesCount'] as num?)?.toInt() ?? 0,
         sendsCount: (json['sendsCount'] as num?)?.toInt() ?? 0,
         repostsCount: (json['repostsCount'] as num?)?.toInt() ?? 0,
+        viewsCount: (json['viewsCount'] as num?)?.toInt() ?? 0,
         // Older rows only say that it was liked.
         myReaction: ReactionType.tryParse(json['myReaction']) ??
             (json['isLikedByMe'] == true ? ReactionType.like : null),
@@ -110,6 +112,9 @@ class Post extends Equatable {
 
   /// How many reposts it has.
   final int repostsCount;
+
+  /// Distinct signed-in people other than the author who saw it.
+  final int viewsCount;
   final ReactionType? myReaction;
   bool get isLikedByMe => myReaction != null;
 
@@ -174,6 +179,7 @@ class Post extends Equatable {
     int? sharesCount,
     int? sendsCount,
     int? repostsCount,
+    int? viewsCount,
     ReactionType? myReaction,
     bool clearReaction = false,
     List<ReactionCount>? reactionCounts,
@@ -193,6 +199,7 @@ class Post extends Equatable {
         sharesCount: sharesCount ?? this.sharesCount,
         sendsCount: sendsCount ?? this.sendsCount,
         repostsCount: repostsCount ?? this.repostsCount,
+        viewsCount: viewsCount ?? this.viewsCount,
         myReaction: clearReaction ? null : myReaction ?? this.myReaction,
         reactionCounts: reactionCounts ?? this.reactionCounts,
         edited: edited ?? this.edited,
@@ -221,6 +228,7 @@ class Post extends Equatable {
         sharesCount,
         sendsCount,
         repostsCount,
+        viewsCount,
         myReaction,
         reactionCounts,
         edited,
