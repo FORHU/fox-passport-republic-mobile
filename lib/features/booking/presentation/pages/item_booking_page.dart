@@ -208,7 +208,7 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
     final item = widget.item;
 
     if (_receipt != null && !_busy && _paid) {
-      return _Done(receipt: _receipt!, l10n: l10n, locale: locale);
+      return ItemBookedView(receipt: _receipt!, l10n: l10n, locale: locale);
     }
 
     final rate = catalogPriceLabel(
@@ -729,11 +729,14 @@ class _PriceBox extends StatelessWidget {
   }
 }
 
-class _Done extends StatelessWidget {
-  const _Done({
+/// "You're booked": the reference, the amount and Done. Public so tests can
+/// show it with a receipt.
+class ItemBookedView extends StatelessWidget {
+  const ItemBookedView({
     required this.receipt,
     required this.l10n,
     required this.locale,
+    super.key,
   });
 
   final BookingReceipt receipt;
@@ -771,10 +774,21 @@ class _Done extends StatelessWidget {
                 style: AppTypography.body(color: AppColors.textMuted),
               ),
               const SizedBox(height: 16),
+              // Short and centred on its own line (mobile#496).
               Text(
-                '${l10n.bookReference}: ${receipt.reference}',
-                style: AppTypography.body(),
+                l10n.bookReference,
+                textAlign: TextAlign.center,
+                style: AppTypography.label(),
               ),
+              const SizedBox(height: 2),
+              SelectableText(
+                receipt.shownReference,
+                key: const Key('booking-reference'),
+                textAlign: TextAlign.center,
+                style: AppTypography.body(weight: FontWeight.w600)
+                    .copyWith(letterSpacing: 1),
+              ),
+              const SizedBox(height: 8),
               Text(
                 formatMoney(
                   receipt.totalAmount,

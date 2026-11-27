@@ -72,7 +72,7 @@ class BookingConfirmedView extends StatelessWidget {
               ),
               _KeyValue(
                 label: l10n.bookReference,
-                value: receipt.reference,
+                value: receipt.shownReference,
                 mono: true,
               ),
               const SizedBox(height: 8),
@@ -178,7 +178,7 @@ class BookingRequestSentView extends StatelessWidget {
             children: [
               _KeyValue(
                 label: l10n.bookReference,
-                value: receipt.reference,
+                value: receipt.shownReference,
                 mono: true,
               ),
               const SizedBox(height: 8),
@@ -249,7 +249,7 @@ class BookingAwaitingSuppliersView extends StatelessWidget {
             children: [
               _KeyValue(
                 label: l10n.bookReference,
-                value: receipt.reference,
+                value: receipt.shownReference,
                 mono: true,
               ),
               const SizedBox(height: 8),
