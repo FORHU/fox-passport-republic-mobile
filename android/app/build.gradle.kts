@@ -24,7 +24,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.forhu.foxpassport"
+        applicationId = "com.forhu.foxpassport.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
