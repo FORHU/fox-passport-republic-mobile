@@ -193,6 +193,19 @@ class VenuePricing extends Equatable {
       ];
 }
 
+final _uuid = RegExp(
+  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+  caseSensitive: false,
+);
+
+/// A booking reference short enough to read out: a UUID becomes `#` and its
+/// first eight characters in capitals; anything else is kept as it is.
+String shortReference(String reference) {
+  final value = reference.trim();
+  if (!_uuid.hasMatch(value)) return value;
+  return '#${value.substring(0, 8).toUpperCase()}';
+}
+
 /// A booking the API (or the sample path) created.
 class BookingReceipt extends Equatable {
   const BookingReceipt({
@@ -207,8 +220,14 @@ class BookingReceipt extends Equatable {
 
   final String id;
 
-  /// The ticket code shown to the user.
+  /// The ticket code, or the booking's id when it has none.
   final String reference;
+
+  /// [reference] as people read it (mobile#496): a ticket code as it is
+  /// (`BKG-1A2B3C4D5E`), but a bare booking id, which an item booking falls
+  /// back to, shortened to its first eight characters (`#B1132CA0`), as the
+  /// web's admin does. Display only: the full id stays the record.
+  String get shownReference => shortReference(reference);
   final num totalAmount;
   final String currency;
 

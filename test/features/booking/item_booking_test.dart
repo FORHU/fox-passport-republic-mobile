@@ -377,4 +377,76 @@ void main() {
     // At least 30% of the next control shows before any scrolling.
     expect(payTop - stepper.top, greaterThanOrEqualTo(stepper.height * 0.3));
   });
+
+  // mobile#496: the reference was the whole booking id, wrapped and set to
+  // the left.
+  group('the booking reference', () {
+    const id = 'b1132ca0-2e48-4fad-b255-63d5340b1949';
+
+    test('a bare booking id is shortened to its first eight characters', () {
+      expect(shortReference(id), '#B1132CA0');
+      expect(shortReference(' ${id.toUpperCase()} '), '#B1132CA0');
+    });
+
+    test('a ticket code, or anything else, is kept as it is', () {
+      expect(shortReference('BKG-1A2B3C4D5E'), 'BKG-1A2B3C4D5E');
+      expect(shortReference('TKT1'), 'TKT1');
+      expect(shortReference('#0000SAMPLE'), '#0000SAMPLE');
+    });
+
+    test('the receipt keeps the full id; only what is shown is short', () {
+      const receipt = BookingReceipt(
+        id: id,
+        reference: id,
+        totalAmount: 5250,
+        currency: 'PHP',
+        needsApproval: false,
+      );
+      expect(receipt.reference, id);
+      expect(receipt.shownReference, '#B1132CA0');
+    });
+
+    testWidgets('You are booked shows it short, centred, on one line', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(393, 818)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => ItemBookedView(
+              receipt: const BookingReceipt(
+                id: id,
+                reference: id,
+                totalAmount: 5250,
+                currency: 'PHP',
+                needsApproval: false,
+              ),
+              l10n: AppLocalizations.of(context)!,
+              locale: 'en',
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('#B1132CA0'), findsOneWidget);
+      expect(find.textContaining('b1132ca0-2e48'), findsNothing);
+      expect(find.text('Reference'), findsOneWidget);
+
+      final shown = find.byKey(const Key('booking-reference'));
+      expect(
+        tester.widget<SelectableText>(shown).textAlign,
+        TextAlign.center,
+      );
+      // Centred on the screen, and short enough for one line.
+      final box = tester.getRect(shown);
+      expect(box.center.dx, closeTo(393 / 2, 1));
+      expect(box.height, lessThan(32));
+    });
+  });
 }
