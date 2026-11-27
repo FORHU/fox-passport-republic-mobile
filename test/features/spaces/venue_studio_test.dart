@@ -503,6 +503,145 @@ void main() {
     });
   });
 
+  // mobile#506: the days the venue is closed, chosen while creating it.
+  group('availability', () {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final inThree = today.add(const Duration(days: 3));
+    final inFive = today.add(const Duration(days: 5));
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    test('a new venue keeps closed days in the draft, in order', () async {
+      final c = container(null);
+      final studio = c.read(venueStudioProvider(null).notifier);
+
+      await studio.toggleDay(inFive);
+      await studio.toggleDay(inThree);
+      expect(c.read(venueStudioProvider(null)).draft.closedDays, [
+        inThree,
+        inFive,
+      ]);
+
+      // Again opens it; a past day is left alone.
+      await studio.toggleDay(inFive);
+      await studio.toggleDay(yesterday);
+      expect(c.read(venueStudioProvider(null)).draft.closedDays, [inThree]);
+      expect(c.read(venueStudioProvider(null)).closedDays, {inThree});
+      verifyNever(() => repo.blockDay(any(), any()));
+    });
+
+    test('they go with the venue as blockedDates, and only when chosen', () {
+      final key = dayKey(inThree);
+      expect(
+        _ready.copyWith(closedDays: [inThree]).toJson()['blockedDates'],
+        [key],
+      );
+      expect(_ready.toJson().containsKey('blockedDates'), isFalse);
+      expect(dayKey(DateTime(2027, 3, 4)), '2027-03-04');
+    });
+
+    group('a saved venue', () {
+      setUpAll(() => registerFallbackValue(DateTime(2000)));
+
+      setUp(() {
+        when(() => repo.venueDetail('v1')).thenAnswer(
+          (_) async =>
+              const VenueDetail(id: 'v1', status: 'available', draft: _ready),
+        );
+        when(() => repo.venueDays('v1', any())).thenAnswer(
+          (_) async => (booked: {inFive}, closed: <DateTime>{}),
+        );
+      });
+
+      test('shows its booked days and closes a day at once', () async {
+        when(() => repo.blockDay('v1', any())).thenAnswer((_) async {});
+        when(() => repo.unblockDay('v1', any())).thenAnswer((_) async {});
+        final c = container('v1');
+        await settle();
+        await settle();
+        final studio = c.read(venueStudioProvider('v1').notifier);
+        expect(c.read(venueStudioProvider('v1')).bookedDays, {inFive});
+
+        await studio.toggleDay(inThree);
+        verify(() => repo.blockDay('v1', inThree)).called(1);
+        expect(c.read(venueStudioProvider('v1')).closedDays, {inThree});
+        // Never sent with the venue, so saving can't replace them.
+        expect(c.read(venueStudioProvider('v1')).draft.closedDays, isEmpty);
+
+        await studio.toggleDay(inThree);
+        verify(() => repo.unblockDay('v1', inThree)).called(1);
+        expect(c.read(venueStudioProvider('v1')).closedDays, isEmpty);
+
+        // A booked day stays as it is.
+        await studio.toggleDay(inFive);
+        verifyNever(() => repo.blockDay('v1', inFive));
+      });
+
+      test('a day that will not close goes back and says so', () async {
+        when(() => repo.blockDay('v1', any())).thenThrow(Exception('down'));
+        final c = container('v1');
+        await settle();
+        await settle();
+
+        await c.read(venueStudioProvider('v1').notifier).toggleDay(inThree);
+
+        final s = c.read(venueStudioProvider('v1'));
+        expect(s.closedDays, isEmpty);
+        expect(s.daysFailed, isTrue);
+      });
+    });
+
+    testWidgets('the Availability step closes a day with a tap', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(900, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            spacesRepositoryProvider.overrideWithValue(repo),
+            photoPickerProvider.overrideWithValue(_FakePicker()),
+            deviceLocatorProvider.overrideWithValue(locator),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.dark,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const VenueStudioPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(VenueStudioPage)),
+      );
+      container.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready)
+        ..goTo(StudioStep.availability);
+      await tester.pump();
+
+      expect(find.text('Availability'), findsWidgets);
+      expect(find.text('No days closed'), findsOneWidget);
+
+      // The day after tomorrow, on whichever month it falls.
+      final day = today.add(const Duration(days: 2));
+      if (day.month != today.month) {
+        await tester.tap(find.byTooltip('Next month'));
+        await tester.pump();
+      }
+      await tester.tap(find.byKey(Key('day-${dayKey(day)}')));
+      await tester.pump();
+
+      expect(find.text('1 day closed'), findsOneWidget);
+      expect(
+        container.read(venueStudioProvider(null)).draft.closedDays,
+        [day],
+      );
+    });
+  });
+
   group('the studio screen', () {
     Future<void> pump(WidgetTester tester, {String? venueId}) async {
       tester.view
@@ -658,145 +797,6 @@ void main() {
 
       expect(find.text('Try again'), findsOneWidget);
       expect(find.text('Next'), findsNothing);
-    });
-  });
-
-  // mobile#506: the days the venue is closed, chosen while creating it.
-  group('availability', () {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final inThree = today.add(const Duration(days: 3));
-    final inFive = today.add(const Duration(days: 5));
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    test('a new venue keeps closed days in the draft, in order', () async {
-      final c = container(null);
-      final studio = c.read(venueStudioProvider(null).notifier);
-
-      await studio.toggleDay(inFive);
-      await studio.toggleDay(inThree);
-      expect(c.read(venueStudioProvider(null)).draft.closedDays, [
-        inThree,
-        inFive,
-      ]);
-
-      // Again opens it; a past day is left alone.
-      await studio.toggleDay(inFive);
-      await studio.toggleDay(yesterday);
-      expect(c.read(venueStudioProvider(null)).draft.closedDays, [inThree]);
-      expect(c.read(venueStudioProvider(null)).closedDays, {inThree});
-      verifyNever(() => repo.blockDay(any(), any()));
-    });
-
-    test('they go with the venue as blockedDates, and only when chosen', () {
-      final key = dayKey(inThree);
-      expect(
-        _ready.copyWith(closedDays: [inThree]).toJson()['blockedDates'],
-        [key],
-      );
-      expect(_ready.toJson().containsKey('blockedDates'), isFalse);
-      expect(dayKey(DateTime(2027, 3, 4)), '2027-03-04');
-    });
-
-    group('a saved venue', () {
-      setUpAll(() => registerFallbackValue(DateTime(2000)));
-
-      setUp(() {
-        when(() => repo.venueDetail('v1')).thenAnswer(
-          (_) async =>
-              const VenueDetail(id: 'v1', status: 'available', draft: _ready),
-        );
-        when(() => repo.venueDays('v1', any())).thenAnswer(
-          (_) async => (booked: {inFive}, closed: <DateTime>{}),
-        );
-      });
-
-      test('shows its booked days and closes a day at once', () async {
-        when(() => repo.blockDay('v1', any())).thenAnswer((_) async {});
-        when(() => repo.unblockDay('v1', any())).thenAnswer((_) async {});
-        final c = container('v1');
-        await settle();
-        await settle();
-        final studio = c.read(venueStudioProvider('v1').notifier);
-        expect(c.read(venueStudioProvider('v1')).bookedDays, {inFive});
-
-        await studio.toggleDay(inThree);
-        verify(() => repo.blockDay('v1', inThree)).called(1);
-        expect(c.read(venueStudioProvider('v1')).closedDays, {inThree});
-        // Never sent with the venue, so saving can't replace them.
-        expect(c.read(venueStudioProvider('v1')).draft.closedDays, isEmpty);
-
-        await studio.toggleDay(inThree);
-        verify(() => repo.unblockDay('v1', inThree)).called(1);
-        expect(c.read(venueStudioProvider('v1')).closedDays, isEmpty);
-
-        // A booked day stays as it is.
-        await studio.toggleDay(inFive);
-        verifyNever(() => repo.blockDay('v1', inFive));
-      });
-
-      test('a day that will not close goes back and says so', () async {
-        when(() => repo.blockDay('v1', any())).thenThrow(Exception('down'));
-        final c = container('v1');
-        await settle();
-        await settle();
-
-        await c.read(venueStudioProvider('v1').notifier).toggleDay(inThree);
-
-        final s = c.read(venueStudioProvider('v1'));
-        expect(s.closedDays, isEmpty);
-        expect(s.daysFailed, isTrue);
-      });
-    });
-
-    testWidgets('the Availability step closes a day with a tap', (
-      tester,
-    ) async {
-      tester.view
-        ..physicalSize = const Size(900, 2400)
-        ..devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            spacesRepositoryProvider.overrideWithValue(repo),
-            photoPickerProvider.overrideWithValue(_FakePicker()),
-            deviceLocatorProvider.overrideWithValue(locator),
-          ],
-          child: MaterialApp(
-            theme: AppTheme.dark,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: const VenueStudioPage(),
-          ),
-        ),
-      );
-      await tester.pump();
-      final container = ProviderScope.containerOf(
-        tester.element(find.byType(VenueStudioPage)),
-      );
-      container.read(venueStudioProvider(null).notifier)
-        ..edit((_) => _ready)
-        ..goTo(StudioStep.availability);
-      await tester.pump();
-
-      expect(find.text('Availability'), findsWidgets);
-      expect(find.text('No days closed'), findsOneWidget);
-
-      // The day after tomorrow, on whichever month it falls.
-      final day = today.add(const Duration(days: 2));
-      if (day.month != today.month) {
-        await tester.tap(find.byTooltip('Next month'));
-        await tester.pump();
-      }
-      await tester.tap(find.byKey(Key('day-${dayKey(day)}')));
-      await tester.pump();
-
-      expect(find.text('1 day closed'), findsOneWidget);
-      expect(
-        container.read(venueStudioProvider(null)).draft.closedDays,
-        [day],
-      );
     });
   });
 }
