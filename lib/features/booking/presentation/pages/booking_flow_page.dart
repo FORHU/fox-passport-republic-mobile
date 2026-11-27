@@ -17,6 +17,7 @@ import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/formatting/money.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 import 'package:flutter_template/shared/widgets/booking_calendar.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
@@ -398,6 +399,10 @@ class _BookingFlowPageState extends ConsumerState<BookingFlowPage> {
           onEditDate: () => _go(_Step.dates),
           onEditGuests: () => _go(_Step.guests),
           onVoucher: () => showTopToast(context, l10n.comingSoonVoucher),
+          // A venue booking shows the venue's own terms.
+          cancellation: _selection.package == null
+              ? ref.watch(venueCancellationProvider(_selection.venue)).value
+              : null,
         ),
       _Step.pay => _Pay(
           total: _pricing?.totalAmount ?? 0,
@@ -948,6 +953,7 @@ class _Review extends StatelessWidget {
     required this.onEditDate,
     required this.onEditGuests,
     required this.onVoucher,
+    this.cancellation,
   });
 
   final BookingSelection selection;
@@ -959,6 +965,9 @@ class _Review extends StatelessWidget {
   final VoidCallback onEditDate;
   final VoidCallback onEditGuests;
   final VoidCallback onVoucher;
+
+  /// The venue's own cancellation terms (mobile#502), when known.
+  final CancellationTerms? cancellation;
 
   @override
   Widget build(BuildContext context) {
@@ -1091,7 +1100,10 @@ class _Review extends StatelessWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                l10n.bookCancelPolicy,
+                cancellation == null
+                    ? l10n.bookCancelPolicy
+                    : cancellationTermsText(l10n, cancellation!),
+                key: const Key('booking-cancellation'),
                 style: AppTypography.body(size: 12),
               ),
             ),

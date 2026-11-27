@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
+
 /// The categories the API accepts for a venue.
 const venueCategories = [
   'indoor',
@@ -155,6 +157,7 @@ class VenueDraft {
     this.billingRate = 'daily',
     this.extraGuestRate,
     this.cancellationPolicyId,
+    this.cancellation,
   });
 
   final String name;
@@ -180,6 +183,10 @@ class VenueDraft {
   final String billingRate;
   final double? extraGuestRate;
   final String? cancellationPolicyId;
+
+  /// Flexible or Non-refundable, as the owner chose it (mobile#502); null
+  /// until chosen, when the API keeps its default.
+  final CancellationTerms? cancellation;
 
   List<List<double>>? get boundary =>
       center == null ? null : circlePolygon(center!, radiusMeters);
@@ -235,6 +242,7 @@ class VenueDraft {
     String? billingRate,
     double? extraGuestRate,
     String? cancellationPolicyId,
+    CancellationTerms? cancellation,
   }) =>
       VenueDraft(
         name: name ?? this.name,
@@ -258,6 +266,7 @@ class VenueDraft {
         billingRate: billingRate ?? this.billingRate,
         extraGuestRate: extraGuestRate ?? this.extraGuestRate,
         cancellationPolicyId: cancellationPolicyId ?? this.cancellationPolicyId,
+        cancellation: cancellation ?? this.cancellation,
       );
 
   /// The body for create or update. [status] is only ever `draft` or
@@ -282,7 +291,10 @@ class VenueDraft {
         if (price != null) 'price': price,
         'billingRate': billingRate,
         if (extraGuestRate != null) 'extraGuestRate': extraGuestRate,
-        if (cancellationPolicyId != null)
+        // The terms chosen win; the API makes or reuses a policy for them.
+        if (cancellation != null)
+          ...cancellation!.toJson()
+        else if (cancellationPolicyId != null)
           'cancellationPolicyId': cancellationPolicyId,
         if (status != null) 'status': status,
       };

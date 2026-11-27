@@ -8,6 +8,7 @@ import 'package:flutter_template/features/spaces/presentation/widgets/service_ar
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
 import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/shared/widgets/photo_box.dart';
@@ -837,26 +838,185 @@ class _PricingStep extends StatelessWidget {
             if (n != null) edit((x) => x.copyWith(extraGuestRate: n));
           },
         ),
-        if (state.policies.isNotEmpty) ...[
-          Text(l10n.studioCancellation, style: AppTypography.label()),
-          const SizedBox(height: 8),
+        _CancellationChoice(
+          terms: d.cancellation,
+          onChanged: (t) => edit((x) => x.copyWith(cancellation: t)),
+        ),
+      ],
+    );
+  }
+}
+
+/// Flexible or Non-refundable (mobile#502), as on the web. Flexible asks for
+/// the refund and how long before the booking it applies; Non-refundable asks
+/// nothing. The sentence guests will see is shown under the choice.
+class _CancellationChoice extends StatelessWidget {
+  const _CancellationChoice({required this.terms, required this.onChanged});
+
+  final CancellationTerms? terms;
+  final ValueChanged<CancellationTerms> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final t = terms;
+    final flexible = t != null && !t.nonRefundable;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.studioCancellation, style: AppTypography.label()),
+        const SizedBox(height: 8),
+        _PolicyOption(
+          key: const Key('cancel-flexible'),
+          title: l10n.studioCancelFlexible,
+          hint: l10n.studioCancelFlexibleHint,
+          selected: flexible,
+          onTap: () {
+            if (!flexible) onChanged(const CancellationTerms.flexible());
+          },
+        ),
+        const SizedBox(height: 8),
+        _PolicyOption(
+          key: const Key('cancel-non-refundable'),
+          title: l10n.studioCancelNonRefundable,
+          hint: l10n.studioCancelNonRefundableHint,
+          selected: t?.nonRefundable ?? false,
+          onTap: () => onChanged(const CancellationTerms.nonRefundable()),
+        ),
+        if (flexible) ...[
+          const SizedBox(height: 14),
+          Text(l10n.studioCancelRefund, style: AppTypography.label()),
+          const SizedBox(height: 6),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final policy in state.policies)
+              for (final p in {
+                ...CancellationTerms.percentChoices,
+                t.refundPercent,
+              }.toList()
+                ..sort())
                 ChoiceChip(
-                  label: Text(policy.name),
-                  selected: d.cancellationPolicyId == policy.id,
-                  onSelected: (_) =>
-                      edit((x) => x.copyWith(cancellationPolicyId: policy.id)),
+                  label: Text(l10n.studioCancelPercent(p)),
+                  selected: t.refundPercent == p,
+                  onSelected: (_) => onChanged(
+                    CancellationTerms.flexible(
+                      refundPercent: p,
+                      hoursBefore: t.hoursBefore,
+                    ),
+                  ),
                 ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(l10n.studioCancelDeadline, style: AppTypography.label()),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final h in {
+                ...CancellationTerms.hourChoices,
+                t.hoursBefore,
+              }.toList()
+                ..sort())
+                ChoiceChip(
+                  label: Text(
+                    l10n.studioCancelBefore(cancellationDeadline(l10n, h)),
+                  ),
+                  selected: t.hoursBefore == h,
+                  onSelected: (_) => onChanged(
+                    CancellationTerms.flexible(
+                      refundPercent: t.refundPercent,
+                      hoursBefore: h,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+        if (t != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            l10n.studioCancelPreview(cancellationTermsText(l10n, t)),
+            key: const Key('cancel-preview'),
+            style: AppTypography.body(size: 13, color: AppColors.textMuted),
           ),
         ],
       ],
     );
   }
+}
+
+/// One choice of [_CancellationChoice]: a radio mark, a title and a line.
+class _PolicyOption extends StatelessWidget {
+  const _PolicyOption({
+    required this.title,
+    required this.hint,
+    required this.selected,
+    required this.onTap,
+    super.key,
+  });
+
+  final String title;
+  final String hint;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        inMutuallyExclusiveGroup: true,
+        checked: selected,
+        button: true,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: AppRadius.brMd,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: selected ? AppColors.accentTintBg : AppColors.clear,
+              borderRadius: AppRadius.brMd,
+              border: Border.all(
+                color: selected
+                    ? AppColors.accentTintBorder
+                    : AppColors.borderStrong,
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  selected
+                      ? Icons.radio_button_checked_rounded
+                      : Icons.radio_button_unchecked_rounded,
+                  size: 20,
+                  color: selected ? AppColors.accent : AppColors.textMuted,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTypography.body(weight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hint,
+                        style: AppTypography.body(
+                          size: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 }
 
 class _ReviewStep extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 
 List<String> _strings(Object? raw) =>
     raw is List ? [for (final v in raw) v.toString()] : const [];
@@ -127,6 +128,7 @@ class VenueDetail {
         billingRate: '${raw['billingRate'] ?? 'daily'}',
         extraGuestRate: _number(raw['extraGuestRate']),
         cancellationPolicyId: raw['cancellationPolicyId'] as String?,
+        cancellation: CancellationTerms.fromPolicy(raw['cancellationPolicy']),
       ),
     );
   }

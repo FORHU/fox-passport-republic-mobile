@@ -4708,6 +4708,84 @@ abstract class AppLocalizations {
   /// **'Cancellation policy'**
   String get studioCancellation;
 
+  /// No description provided for @studioCancelFlexible.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible'**
+  String get studioCancelFlexible;
+
+  /// No description provided for @studioCancelFlexibleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests get some or all of their money back if they cancel in time.'**
+  String get studioCancelFlexibleHint;
+
+  /// No description provided for @studioCancelNonRefundable.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-refundable'**
+  String get studioCancelNonRefundable;
+
+  /// No description provided for @studioCancelNonRefundableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests get nothing back if they cancel.'**
+  String get studioCancelNonRefundableHint;
+
+  /// No description provided for @studioCancelRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get studioCancelRefund;
+
+  /// No description provided for @studioCancelDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'If they cancel at least'**
+  String get studioCancelDeadline;
+
+  /// No description provided for @studioCancelPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String studioCancelPercent(int percent);
+
+  /// No description provided for @studioCancelBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} before'**
+  String studioCancelBefore(String when);
+
+  /// No description provided for @studioCancelPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests will see: {terms}'**
+  String studioCancelPreview(String terms);
+
+  /// No description provided for @cancelTermsFlexible.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% refund if cancelled at least {when} before the booking.'**
+  String cancelTermsFlexible(int percent, String when);
+
+  /// No description provided for @cancelTermsNonRefundable.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-refundable: no refund if the booking is cancelled.'**
+  String get cancelTermsNonRefundable;
+
+  /// No description provided for @cancelTermsHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 hour} other{{n} hours}}'**
+  String cancelTermsHours(int n);
+
+  /// No description provided for @cancelTermsDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 day} other{{n} days}}'**
+  String cancelTermsDays(int n);
+
   /// No description provided for @studioReviewReady.
   ///
   /// In en, this message translates to:

@@ -7,6 +7,7 @@ import 'package:flutter_template/features/booking/presentation/pages/booking_flo
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -285,6 +286,116 @@ void main() {
     expect(find.byIcon(Icons.apple), findsNothing);
     expect(find.byIcon(Icons.g_mobiledata_rounded), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  // mobile#502: the citizen reads the venue's own refund terms before paying.
+  group('the cancellation terms on the review', () {
+    Future<void> toReview(WidgetTester tester, Widget app) async {
+      _bigScreen(tester);
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('20').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+    }
+
+    String shown(WidgetTester tester) => tester
+        .widget<Text>(find.byKey(const Key('booking-cancellation')))
+        .data!;
+
+    testWidgets("are the venue's own when it has them", (tester) async {
+      await toReview(
+        tester,
+        ProviderScope(
+          overrides: [
+            bookingRepositoryProvider.overrideWithValue(
+              BookingRepository(_MockApi(), StubPaymentGateway()),
+            ),
+            venueCancellationProvider.overrideWith(
+              (ref, venue) async => const CancellationTerms.flexible(
+                refundPercent: 50,
+                hoursBefore: 168,
+              ),
+            ),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: BookingFlowPage(venue: _venue),
+          ),
+        ),
+      );
+
+      expect(
+        shown(tester),
+        '50% refund if cancelled at least 7 days before the booking.',
+      );
+    });
+
+    testWidgets('say non-refundable when it is', (tester) async {
+      await toReview(
+        tester,
+        ProviderScope(
+          overrides: [
+            bookingRepositoryProvider.overrideWithValue(
+              BookingRepository(_MockApi(), StubPaymentGateway()),
+            ),
+            venueCancellationProvider.overrideWith(
+              (ref, venue) async => const CancellationTerms.nonRefundable(),
+            ),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: BookingFlowPage(venue: _venue),
+          ),
+        ),
+      );
+
+      expect(
+        shown(tester),
+        'Non-refundable: no refund if the booking is cancelled.',
+      );
+    });
+
+    testWidgets('keep the general line when there are none to read', (
+      tester,
+    ) async {
+      // A sample venue has no policy.
+      await toReview(tester, _app());
+
+      expect(shown(tester), 'Free cancellation for 48 hours.');
+    });
+
+    test('are read from the venue', () async {
+      final api = _MockApi();
+      when(() => api.get('/venues/v1')).thenAnswer(
+        (_) async => {
+          'venue': {
+            'id': 'v1',
+            'cancellationPolicy': {
+              'name': 'Flexible',
+              'rules': [
+                {'hoursBeforeEvent': 48, 'refundPercent': 75},
+              ],
+            },
+          },
+        },
+      );
+      final terms =
+          await BookingRepository(api, StubPaymentGateway()).cancellationTerms(
+        const CatalogItem(id: 'v1', kind: CatalogKind.venues, title: 'Hall'),
+      );
+      expect(
+        terms,
+        const CancellationTerms.flexible(refundPercent: 75, hoursBefore: 48),
+      );
+    });
   });
 
   testWidgets('going over capacity warns and ends in a request, not a charge', (
