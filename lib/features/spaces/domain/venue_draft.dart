@@ -187,6 +187,9 @@ class VenueDraft {
   final double? extraGuestRate;
   final String? cancellationPolicyId;
 
+  List<List<double>>? get boundary =>
+      center == null ? null : circlePolygon(center!, radiusMeters);
+
   /// What is still missing before the venue can be sent for review, in the
   /// order the steps come.
   List<String> get missing => [
