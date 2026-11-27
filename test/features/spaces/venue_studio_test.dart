@@ -363,9 +363,9 @@ void main() {
         'coverageArea': 'city',
       });
       expect(detail!.draft.coverageArea, 'city');
-      // Anything else, or nothing, is not chosen.
+      // Nothing, or something that isn't text, is not chosen.
       expect(
-        VenueDetail.tryParse({'id': 'v1', 'coverageArea': 'galaxy'})!
+        VenueDetail.tryParse({'id': 'v1', 'coverageArea': 3})!
             .draft
             .coverageArea,
         isNull,

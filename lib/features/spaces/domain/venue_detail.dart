@@ -1,5 +1,4 @@
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
-import 'package:flutter_template/shared/venues/coverage_area.dart';
 
 List<String> _strings(Object? raw) =>
     raw is List ? [for (final v in raw) v.toString()] : const [];
@@ -118,7 +117,8 @@ class VenueDetail {
         country: '${raw['country'] ?? ''}',
         center: center,
         radiusMeters: circle?.radiusMeters ?? 300,
-        coverageArea: venueCoverageAreas.contains(raw['coverageArea'])
+        // The API only stores one of its six areas (mobile#498).
+        coverageArea: raw['coverageArea'] is String
             ? raw['coverageArea'] as String
             : null,
         photos: photos,

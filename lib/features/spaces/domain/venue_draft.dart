@@ -1,7 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter_template/shared/venues/coverage_area.dart';
-
 /// The categories the API accepts for a venue.
 const venueCategories = [
   'indoor',
@@ -174,7 +172,8 @@ class VenueDraft {
   final GeoPoint? center;
   final double radiusMeters;
 
-  /// How far the venue serves (mobile#498): one of [venueCoverageAreas], or
+  /// How far the venue serves (mobile#498): one of the API's six areas
+  /// (`venueCoverageAreas` in shared/venues), or
   /// null for a venue saved before it was asked.
   final String? coverageArea;
   final List<VenuePhoto> photos;
