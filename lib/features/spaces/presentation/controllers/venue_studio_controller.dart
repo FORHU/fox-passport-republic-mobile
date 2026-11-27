@@ -43,6 +43,7 @@ class VenueStudioState {
     this.locating = false,
     this.locateProblem,
     this.showErrors = false,
+    this.dirty = false,
   });
 
   final VenueDraft draft;
@@ -51,6 +52,12 @@ class VenueStudioState {
   /// True once the host tried to leave a step that is not complete, so its
   /// missing fields are flagged.
   final bool showErrors;
+
+  /// Changes not saved yet: leaving asks first (mobile#501).
+  final bool dirty;
+
+  /// The API needs a name to keep a draft.
+  bool get canSaveDraft => draft.name.trim().isNotEmpty;
 
   /// What the draft still lacks on [s], in the order the steps ask for it.
   List<String> missingIn(StudioStep s) {
@@ -130,9 +137,13 @@ class VenueStudioState {
     String? locateProblem,
     bool clearLocateProblem = false,
     bool? showErrors,
+    bool? dirty,
   }) =>
       VenueStudioState(
         showErrors: showErrors ?? this.showErrors,
+        // Any change to the draft is unsaved until saved; loading and saving
+        // say otherwise.
+        dirty: dirty ?? (draft != null || this.dirty),
         draft: draft ?? this.draft,
         step: step ?? this.step,
         loading: loading ?? this.loading,
@@ -184,6 +195,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       if (!ref.mounted) return;
       state = state.copyWith(
         draft: detail.draft,
+        dirty: false,
         live: detail.isLive,
         loading: false,
       );
@@ -470,7 +482,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       }
       // It was saved even if the screen has gone.
       if (!ref.mounted) return true;
-      state = state.copyWith(saving: false);
+      state = state.copyWith(saving: false, dirty: false);
       return true;
     } on Object catch (e) {
       if (!ref.mounted) return false;

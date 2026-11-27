@@ -4816,6 +4816,42 @@ abstract class AppLocalizations {
   /// **'Draft saved.'**
   String get studioSavedDraft;
 
+  /// No description provided for @studioSaveDraftShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Save draft'**
+  String get studioSaveDraftShort;
+
+  /// No description provided for @studioDraftNeedsName.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the venue\'s name first, then you can save it as a draft.'**
+  String get studioDraftNeedsName;
+
+  /// No description provided for @studioLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without saving?'**
+  String get studioLeaveTitle;
+
+  /// No description provided for @studioLeaveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your changes to this venue aren\'t saved yet. Save them as a draft to come back to later.'**
+  String get studioLeaveBody;
+
+  /// No description provided for @studioLeaveKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get studioLeaveKeep;
+
+  /// No description provided for @studioLeaveDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get studioLeaveDiscard;
+
   /// No description provided for @studioSubmitted.
   ///
   /// In en, this message translates to:

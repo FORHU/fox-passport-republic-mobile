@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
@@ -55,6 +57,54 @@ class VenueStudioPage extends ConsumerWidget {
     if (context.canPop()) context.pop();
   }
 
+  /// Saves what is there as a draft from any step (mobile#501). A draft needs
+  /// its name, as the API does.
+  Future<void> _saveDraft(BuildContext context, WidgetRef ref) async {
+    if (!ref.read(venueStudioProvider(venueId)).canSaveDraft) {
+      showTopToast(context, context.l10n.studioDraftNeedsName);
+      ref.read(venueStudioProvider(venueId).notifier).goTo(StudioStep.basics);
+      return;
+    }
+    await _save(context, ref, submit: false);
+  }
+
+  /// Leaving with changes not saved: save them, drop them, or stay.
+  Future<void> _confirmLeave(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final live = ref.read(venueStudioProvider(venueId)).live;
+    final choice = await showDialog<_Leave>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.studioLeaveTitle),
+        content: Text(l10n.studioLeaveBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_Leave.stay),
+            child: Text(l10n.studioLeaveKeep),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_Leave.discard),
+            child: Text(l10n.studioLeaveDiscard),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_Leave.save),
+            child: Text(live ? l10n.studioSaveChanges : l10n.studioSaveDraft),
+          ),
+        ],
+      ),
+    );
+    if (!context.mounted) return;
+    switch (choice) {
+      case _Leave.save:
+        await _saveDraft(context, ref);
+      case _Leave.discard:
+        // Navigator.pop is not held back by the PopScope.
+        Navigator.of(context).pop();
+      case _Leave.stay || null:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -106,54 +156,72 @@ class VenueStudioPage extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        title: Text(
-          venueId == null ? l10n.studioTitleNew : l10n.studioTitleEdit,
-          style: AppTypography.display(size: 18),
+    // Leaving with changes not saved asks first (mobile#501).
+    return PopScope(
+      canPop: !state.dirty || state.saving,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_confirmLeave(context, ref));
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.canvas,
+        appBar: AppBar(
+          title: Text(
+            venueId == null ? l10n.studioTitleNew : l10n.studioTitleEdit,
+            style: AppTypography.display(size: 18),
+          ),
+          actions: [
+            // A draft can be kept from any step; the review has its own.
+            if (!state.live && !state.loading && !state.loadFailed && !last)
+              TextButton(
+                onPressed: state.saving ? null : () => _saveDraft(context, ref),
+                child: Text(l10n.studioSaveDraftShort),
+              ),
+          ],
         ),
-      ),
-      body: Column(
-        children: [
-          if (!state.loading && !state.loadFailed)
-            StudioHeader(
-              current: step.index,
-              total: StudioStep.values.length,
-              title: _stepLabel(l10n, step),
-              onSelect: (i) => controller.goTo(StudioStep.values[i]),
-            ),
-          Expanded(child: body),
-        ],
-      ),
-      bottomNavigationBar: state.loading || state.loadFailed
-          ? null
-          : StudioBar(
-              child: last
-                  ? _FinalActions(
-                      state: state,
-                      onBack: controller.back,
-                      onDraft: () => _save(context, ref, submit: false),
-                      onSubmit: () => _save(context, ref, submit: true),
-                    )
-                  : Row(
-                      children: [
-                        if (step != StudioStep.basics) ...[
-                          StudioBackButton(onPressed: controller.back),
-                          const SizedBox(width: 12),
-                        ],
-                        Expanded(
-                          child: AppButton(
-                            label: l10n.studioNext,
-                            onPressed: controller.next,
+        body: Column(
+          children: [
+            if (!state.loading && !state.loadFailed)
+              StudioHeader(
+                current: step.index,
+                total: StudioStep.values.length,
+                title: _stepLabel(l10n, step),
+                onSelect: (i) => controller.goTo(StudioStep.values[i]),
+              ),
+            Expanded(child: body),
+          ],
+        ),
+        bottomNavigationBar: state.loading || state.loadFailed
+            ? null
+            : StudioBar(
+                child: last
+                    ? _FinalActions(
+                        state: state,
+                        onBack: controller.back,
+                        onDraft: () => _save(context, ref, submit: false),
+                        onSubmit: () => _save(context, ref, submit: true),
+                      )
+                    : Row(
+                        children: [
+                          if (step != StudioStep.basics) ...[
+                            StudioBackButton(onPressed: controller.back),
+                            const SizedBox(width: 12),
+                          ],
+                          Expanded(
+                            child: AppButton(
+                              label: l10n.studioNext,
+                              onPressed: controller.next,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-            ),
+                        ],
+                      ),
+              ),
+      ),
     );
   }
 }
+
+/// What to do with changes not saved when leaving.
+enum _Leave { save, discard, stay }
 
 String _stepLabel(AppLocalizations l10n, StudioStep step) => switch (step) {
       StudioStep.basics => l10n.studioStepBasics,
