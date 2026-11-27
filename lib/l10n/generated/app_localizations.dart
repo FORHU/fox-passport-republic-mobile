@@ -10054,11 +10054,71 @@ abstract class AppLocalizations {
   /// **'Years doing events'**
   String get provApplyYears;
 
-  /// No description provided for @provApplyYearsInvalid.
+  /// No description provided for @expWholeYears.
   ///
   /// In en, this message translates to:
-  /// **'Enter 0 to 100'**
-  String get provApplyYearsInvalid;
+  /// **'Enter whole years (0–{max})'**
+  String expWholeYears(int max);
+
+  /// No description provided for @expMaxYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum is {max} years. More than that? Tick the box below.'**
+  String expMaxYears(int max);
+
+  /// No description provided for @expMaxYearsClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum is {max} years'**
+  String expMaxYearsClaim(int max);
+
+  /// No description provided for @expClaimTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I have more than {years} years of experience'**
+  String expClaimTitle(int years);
+
+  /// No description provided for @expClaimHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can then enter up to {max} years, with a CV that proves them.'**
+  String expClaimHint(int max);
+
+  /// No description provided for @expClaimBracket.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} years counts as {bracket}. Experience over 30 is grouped: 30+, 35+, 40+, 45+, 50.'**
+  String expClaimBracket(int years, String bracket);
+
+  /// No description provided for @expClaimCvRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Your CV must be a PDF. It must list every role behind the years you\'re claiming, with dates, and at least 2 references (name, relationship, phone or email) who can confirm them. Our team will contact them before your application is approved.'**
+  String get expClaimCvRules;
+
+  /// No description provided for @expClaimCvLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CV with references (PDF)'**
+  String get expClaimCvLabel;
+
+  /// No description provided for @expClaimTooFew.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter more than {years} years, or untick the box'**
+  String expClaimTooFew(int years);
+
+  /// No description provided for @expClaimCvPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your CV as a PDF'**
+  String get expClaimCvPdf;
+
+  /// No description provided for @expClaimReview.
+  ///
+  /// In en, this message translates to:
+  /// **'{bracket} (CV attached)'**
+  String expClaimReview(String bracket);
 
   /// No description provided for @provApplyLinks.
   ///

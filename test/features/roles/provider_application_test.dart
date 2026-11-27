@@ -368,6 +368,54 @@ void main() {
       expect(draft().travelRange, TravelRange.province);
     });
 
+    testWidgets('step 1 refuses over 30 years and offers the CV-backed claim', (
+      tester,
+    ) async {
+      c().goTo(ProviderApplyStep.business);
+      c().edit((d) => d.copyWith(businessName: 'X', basedIn: 'Cebu'));
+      await open(tester);
+      ElevatedButton next() => tester.widget<ElevatedButton>(
+            find.widgetWithText(ElevatedButton, 'Next: categories'),
+          );
+
+      final years = find.byKey(const Key('years-of-experience'));
+      await tester.ensureVisible(years);
+      expect(find.byKey(const Key('experience-claim')), findsNothing);
+      await tester.enterText(years, '45');
+      await tester.pumpAndSettle();
+      expect(draft().experience, isEmpty, reason: 'refused as typed');
+      expect(
+        find.text('Maximum is 30 years. More than that? Tick the box below.'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('I have more than 30 years of experience'));
+      await tester.pumpAndSettle();
+      expect(draft().claimingExperience, isTrue);
+      await tester.enterText(years, '42');
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('42 years counts as 40+.'),
+        findsOneWidget,
+      );
+      expect(next().onPressed, isNull, reason: 'needs the CV');
+
+      c().edit((d) => d.copyWith(experienceCv: _photo('cv.docx')));
+      await tester.pumpAndSettle();
+      expect(find.text('Upload your CV as a PDF'), findsOneWidget);
+      expect(next().onPressed, isNull);
+
+      c().edit((d) => d.copyWith(experienceCv: _photo('cv.pdf')));
+      await tester.pumpAndSettle();
+      expect(next().onPressed, isNotNull);
+
+      // Unticking drops the CV, and 42 is over 30 again.
+      await tester.tap(find.text('I have more than 30 years of experience'));
+      await tester.pumpAndSettle();
+      expect(draft().experienceCv, isNull);
+      expect(next().onPressed, isNull);
+    });
+
     testWidgets('step 1 has a field per link and flags one in the wrong place',
         (tester) async {
       c().goTo(ProviderApplyStep.business);
@@ -567,6 +615,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('3 documents still to add'), findsOneWidget);
       expect(find.text('Replace'), findsOneWidget);
+    });
+
+    testWidgets('review shows a claim as its bracket with the CV', (
+      tester,
+    ) async {
+      fillAll();
+      c().edit(
+        (d) => d.copyWith(
+          experience: '42',
+          claimingExperience: true,
+          experienceCv: _photo('cv.pdf'),
+        ),
+      );
+      c().goTo(ProviderApplyStep.review);
+      await open(tester);
+
+      expect(
+        find.text('Cebu City, Cebu · My province · 40+ (CV attached)'),
+        findsOne,
+      );
     });
 
     testWidgets('review sends once the terms are agreed, then shows it sent', (

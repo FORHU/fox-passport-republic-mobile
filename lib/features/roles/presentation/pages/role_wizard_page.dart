@@ -10,6 +10,7 @@ import 'package:flutter_template/features/roles/presentation/pages/role_applicat
     show specializationLabel;
 import 'package:flutter_template/features/roles/presentation/widgets/apply_wizard.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
+import 'package:flutter_template/features/roles/presentation/widgets/experience_field.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
@@ -84,10 +85,13 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
     final placed = d.bio.trim().isNotEmpty &&
         d.city.trim().isNotEmpty &&
         d.country.trim().isNotEmpty;
-    if (_isCoordinator) return placed && d.years != null;
+    if (_isCoordinator) {
+      return placed && d.years != null && d.experienceProblem == null;
+    }
     return placed &&
         d.portfolioProblem == null &&
-        (d.experience.trim().isEmpty || d.years != null);
+        (d.experience.trim().isEmpty || d.years != null) &&
+        d.experienceProblem == null;
   }
 
   @override
@@ -175,7 +179,6 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
     final state = ref.watch(roleApplicationProvider(_role));
     final d = state.draft;
     final c = _controller;
-    final yearsBad = d.experience.trim().isNotEmpty && d.years == null;
 
     Widget text(
       String label,
@@ -336,16 +339,20 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
           d.country,
           (v) => c.edit((x) => x.copyWith(country: v)),
         ),
-        text(
-          _isCoordinator ? l10n.provApplyYears : l10n.roleWizYearsOptional,
-          d.experience,
-          (v) => c.edit((x) => x.copyWith(experience: v)),
-          keyboard: TextInputType.number,
-          formatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(3),
-          ],
-          error: yearsBad ? l10n.provApplyYearsInvalid : null,
+        // Up to 30, or a CV-backed claim up to 50 (mobile#535). The CV is
+        // the application's portfolio file.
+        ApplyYearsOfExperience(
+          label:
+              _isCoordinator ? l10n.provApplyYears : l10n.roleWizYearsOptional,
+          experience: d.experience,
+          claiming: d.claimingExperience,
+          cv: d.portfolioFile,
+          onExperienceChanged: (v) => c.edit((x) => x.copyWith(experience: v)),
+          onClaimingChanged: (v) =>
+              c.edit((x) => x.copyWith(claimingExperience: v)),
+          onCvPicked: (p) => c.edit((x) => x.copyWith(portfolioFile: p)),
+          onCvRemoved: () =>
+              c.edit((x) => x.copyWith(clearPortfolioFile: true)),
         ),
         if (_isEvent)
           text(
@@ -463,12 +470,16 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
             onPicked: (p) => c.setDocument(doc, p),
             onRemove: () => c.removeDocument(doc),
           ),
+        // The same file is the CV behind a claim of more than 30 years
+        // (mobile#535); then it's required and named as the CV.
         if (_isEvent)
           DocumentRow(
             boxed: true,
-            optional: true,
+            optional: !d.claimingExperience,
             document: true,
-            label: l10n.roleWizPortfolioFile,
+            label: d.claimingExperience
+                ? l10n.expClaimCvLabel
+                : l10n.roleWizPortfolioFile,
             photo: d.portfolioFile,
             onPicked: (p) => c.edit((x) => x.copyWith(portfolioFile: p)),
             onRemove: () => c.edit((x) => x.copyWith(clearPortfolioFile: true)),
@@ -489,7 +500,12 @@ class _RoleWizardPageState extends ConsumerState<RoleWizardPage> {
         ? [d.contactNumber.trim(), d.address.trim()].join(' · ')
         : [
             d.location,
-            if (years != null) l10n.provApplyYearsCount(years),
+            if (years != null)
+              experienceReviewLabel(
+                l10n,
+                years,
+                claiming: d.claimingExperience,
+              ),
           ].join(' · ');
     return ApplyScreen(
       header: ApplyTitleHeader(title: l10n.provApplyReview, onBack: _back),

@@ -303,6 +303,40 @@ void main() {
     expect(find.text('4 documents still to add'), findsOneWidget);
   });
 
+  testWidgets('an Event Foxer claiming over 30 years must give a PDF CV', (
+    tester,
+  ) async {
+    await open(tester, 'eventFoxer');
+    await tapText(tester, 'Start');
+    await fillField(tester, 'About you and your event experience', 'Weddings');
+    await fillField(tester, 'City', 'Cebu City');
+    await fillField(tester, 'Country', 'Philippines');
+
+    final years = find.byKey(const Key('years-of-experience'));
+    await tester.ensureVisible(years);
+    await tester.enterText(years, '38');
+    await tester.pumpAndSettle();
+    await tapText(tester, 'I have more than 30 years of experience');
+    await tester.enterText(years, '38');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('38 years counts as 35+.'), findsOneWidget);
+    expect(button(tester, 'Next: categories').onPressed, isNull);
+
+    c('eventFoxer').edit((d) => d.copyWith(portfolioFile: _photo('cv.pdf')));
+    await tester.pumpAndSettle();
+    expect(button(tester, 'Next: categories').onPressed, isNotNull);
+    await tapText(tester, 'Next: categories');
+    await tapText(tester, 'Wedding');
+    await tapText(tester, 'Next: documents');
+
+    // The portfolio slot is the CV now: named so, and required.
+    expect(find.text('CV with references (PDF)'), findsOneWidget);
+    expect(find.text('Portfolio or resume'), findsNothing);
+    expect(find.text('Optional'), findsOneWidget, reason: 'only business');
+    final sent = container.read(roleApplicationProvider('eventFoxer')).draft;
+    expect(sent.toData()['experience'], 38);
+  });
+
   testWidgets('an Event Coordinator sees the Provider switch and needs years', (
     tester,
   ) async {

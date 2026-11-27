@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_template/features/roles/domain/experience.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
@@ -46,6 +47,8 @@ class ProviderApplicationDraft extends Equatable {
     this.basedInPoint,
     this.travelRange,
     this.experience = '',
+    this.claimingExperience = false,
+    this.experienceCv,
     this.links = const {},
     this.specializations = const [],
     this.mainSpecialty,
@@ -64,6 +67,13 @@ class ProviderApplicationDraft extends Equatable {
 
   /// Years, as typed.
   final String experience;
+
+  /// "I have more than 30 years of experience" (mobile#535): [experience]
+  /// may go up to 50, with [experienceCv] behind it.
+  final bool claimingExperience;
+
+  /// The CV with references behind a claim, a PDF. Sent as `portfolioFile`.
+  final PickedPhoto? experienceCv;
 
   /// Links to their work, one per place, as typed. All optional.
   final Map<WorkLinkKind, String> links;
@@ -117,10 +127,15 @@ class ProviderApplicationDraft extends Equatable {
           if (workLinkProblem(kind, links[kind] ?? '') case final p?) kind: p,
       };
 
-  int? get years {
-    final n = int.tryParse(experience.trim());
-    return n != null && n >= 0 && n <= 100 ? n : null;
-  }
+  /// Whole years up to 30, or 50 when claiming more (mobile#535).
+  int? get years =>
+      wholeYears(experience, yearsMax(claiming: claimingExperience));
+
+  ExperienceClaimProblem? get experienceProblem => experienceClaimProblem(
+        experience: experience,
+        claiming: claimingExperience,
+        cv: experienceCv,
+      );
 
   /// The picked specialties with the main one first.
   List<String> get orderedSpecializations => [
@@ -136,6 +151,7 @@ class ProviderApplicationDraft extends Equatable {
       businessName.trim().isNotEmpty &&
       basedIn.trim().isNotEmpty &&
       (experience.trim().isEmpty || years != null) &&
+      experienceProblem == null &&
       linkProblems.isEmpty;
 
   bool get categoriesDone => specializations.isNotEmpty;
@@ -157,6 +173,9 @@ class ProviderApplicationDraft extends Equatable {
     bool clearBasedInPoint = false,
     TravelRange? travelRange,
     String? experience,
+    bool? claimingExperience,
+    PickedPhoto? experienceCv,
+    bool clearExperienceCv = false,
     Map<WorkLinkKind, String>? links,
     List<String>? specializations,
     String? mainSpecialty,
@@ -172,6 +191,9 @@ class ProviderApplicationDraft extends Equatable {
             clearBasedInPoint ? null : basedInPoint ?? this.basedInPoint,
         travelRange: travelRange ?? this.travelRange,
         experience: experience ?? this.experience,
+        claimingExperience: claimingExperience ?? this.claimingExperience,
+        experienceCv:
+            clearExperienceCv ? null : experienceCv ?? this.experienceCv,
         links: links ?? this.links,
         specializations: specializations ?? this.specializations,
         mainSpecialty: clearMain ? null : mainSpecialty ?? this.mainSpecialty,
@@ -212,6 +234,12 @@ class ProviderApplicationDraft extends Equatable {
             e.value.bytes,
             filename: e.value.name,
           ),
+        // The CV behind more than 30 years (api#508).
+        if (claimingExperience && experienceCv != null)
+          portfolioFileField: MultipartFile.fromBytes(
+            experienceCv!.bytes,
+            filename: experienceCv!.name,
+          ),
       });
 
   @override
@@ -221,6 +249,8 @@ class ProviderApplicationDraft extends Equatable {
         basedInPoint,
         travelRange,
         experience,
+        claimingExperience,
+        experienceCv?.name,
         links,
         specializations,
         mainSpecialty,
