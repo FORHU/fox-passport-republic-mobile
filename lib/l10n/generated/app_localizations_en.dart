@@ -4941,6 +4941,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get republicPosting => 'Posting…';
 
   @override
+  String republicPostingPercent(int percent) {
+    return 'Posting… $percent%';
+  }
+
+  @override
   String get republicPollHint => 'Ask the Republic a question…';
 
   @override

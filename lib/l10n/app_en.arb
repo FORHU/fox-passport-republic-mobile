@@ -1628,6 +1628,8 @@
   "republicVisibilityFollowers": "Followers",
   "republicVisibilityOnlyMe": "Only me",
   "republicPosting": "Posting…",
+  "republicPostingPercent": "Posting… {percent}%",
+  "@republicPostingPercent": {"placeholders":{"percent":{"type":"int"}}},
   "republicPollHint": "Ask the Republic a question…",
   "republicPollOption": "Option {n}",
   "@republicPollOption": {"placeholders":{"n":{"type":"int"}}},

@@ -53,6 +53,15 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
   String? _venueId;
   bool _posting = false;
 
+  /// The Posting bar (mobile#497): how far, 0 to 1, or null while there is
+  /// nothing to measure; then a moment of "Posted", or that it failed.
+  double? _postProgress;
+  bool _posted = false;
+  bool _postFailed = false;
+
+  /// How long "Posted" shows before the screen closes.
+  static const _postedPause = Duration(milliseconds: 600);
+
   String? _mention;
   List<MentionCandidate> _candidates = const [];
   Timer? _mentionTimer;
@@ -196,28 +205,50 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
     }
   }
 
+  /// Share of the Posting bar the uploads fill; the rest is the post itself.
+  static const _uploadShare = 0.95;
+
   Future<void> _post() async {
     final l10n = context.l10n;
     if (!_canPost) return;
-    setState(() => _posting = true);
+    final video = _video;
+    final media = [..._photos, if (video != null) video];
+    // Every file's size, so the bar moves with the bytes sent (mobile#497).
+    final total = media.fold<int>(0, (sum, m) => sum + m.bytes.length);
+    var done = 0;
+    setState(() {
+      _posting = true;
+      _posted = false;
+      _postFailed = false;
+      // Text alone has nothing to measure: the bar runs until it is posted.
+      _postProgress = total == 0 ? null : 0;
+    });
+    void report(double sent) {
+      if (!mounted || total == 0) return;
+      setState(
+        () => _postProgress =
+            _uploadShare * ((done + sent) / total).clamp(0.0, 1.0),
+      );
+    }
+
     try {
       final urls = <String>[];
-      for (final photo in _photos) {
-        urls.add(await _repo.uploadMedia(photo));
-      }
-      final video = _video;
-      if (video != null) {
-        setState(() => _videoProgress = 0);
+      for (final file in media) {
+        final isVideo = identical(file, video);
+        if (isVideo) setState(() => _videoProgress = 0);
         urls.add(
           await _repo.uploadMedia(
-            video,
-            onProgress: (sent, total) {
-              if (mounted && total > 0) {
-                setState(() => _videoProgress = sent / total);
-              }
+            file,
+            onProgress: (sent, of) {
+              if (!mounted || of <= 0) return;
+              final share = sent / of;
+              if (isVideo) setState(() => _videoProgress = share);
+              report(share * file.bytes.length);
             },
           ),
         );
+        done += file.bytes.length;
+        report(0);
       }
       final id = await _repo.createPost(
         NewPost(
@@ -230,6 +261,13 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
         ),
       );
       await _store?.clear();
+      if (!mounted) return;
+      // Full, and "Posted" for a moment, so the person sees it went.
+      setState(() {
+        _postProgress = 1;
+        _posted = true;
+      });
+      await Future<void>.delayed(_postedPause);
       // The new post's id, or empty when the answer had none.
       if (mounted) Navigator.pop(context, id ?? '');
     } on Object catch (e) {
@@ -237,6 +275,8 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
         setState(() {
           _posting = false;
           _videoProgress = null;
+          _postProgress = null;
+          _postFailed = true;
         });
         showTopToast(
           context,
@@ -298,6 +338,12 @@ class _ComposePostPageState extends ConsumerState<ComposePostPage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
+          if (_posting || _postFailed)
+            _PostingBar(
+              progress: _postProgress,
+              posted: _posted,
+              failed: _postFailed,
+            ),
           Row(
             children: [
               AuthorAvatar(
@@ -631,6 +677,97 @@ class _VideoTile extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// "Posting" with a bar that fills as the post's files upload, full and
+/// "Posted" once it is up, or that it failed (mobile#497). As wide as the
+/// form, on any screen.
+class _PostingBar extends StatelessWidget {
+  const _PostingBar({
+    required this.progress,
+    required this.posted,
+    required this.failed,
+  });
+
+  /// 0 to 1, or null while there is nothing to measure.
+  final double? progress;
+  final bool posted;
+  final bool failed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final percent = progress == null ? null : (progress! * 100).round();
+    final String label;
+    if (failed) {
+      label = l10n.republicPostFailed;
+    } else if (posted) {
+      label = l10n.republicPosted;
+    } else if (percent != null) {
+      label = l10n.republicPostingPercent(percent);
+    } else {
+      label = l10n.republicPosting;
+    }
+    return Semantics(
+      liveRegion: true,
+      label: label,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.brMd,
+          border: Border.all(
+            color: failed ? AppColors.error : AppColors.border,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  failed
+                      ? Icons.error_outline_rounded
+                      : posted
+                          ? Icons.check_circle_rounded
+                          : Icons.cloud_upload_outlined,
+                  size: 18,
+                  color: failed ? AppColors.error : AppColors.accent,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ExcludeSemantics(
+                    child: Text(
+                      label,
+                      style: AppTypography.body(
+                        size: 13,
+                        weight: FontWeight.w600,
+                        color: failed ? AppColors.error : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (!failed) ...[
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: AppRadius.brPill,
+                child: LinearProgressIndicator(
+                  key: const Key('posting-progress'),
+                  value: progress,
+                  minHeight: 6,
+                  color: AppColors.accent,
+                  backgroundColor: AppColors.border,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

@@ -178,7 +178,9 @@ class RepublicRepository {
     final form = FormData.fromMap({
       'file': MultipartFile.fromBytes(photo.bytes, filename: photo.name),
     });
-    final body = photo.isVideo
+    // A video always gets the long upload; a photo too when someone is
+    // following its progress (the Posting bar, mobile#497).
+    final body = photo.isVideo || onProgress != null
         ? await _api.upload(
             ApiEndpoints.uploadFile,
             form,
