@@ -41,6 +41,9 @@ class Post extends Equatable {
     this.mediaUrls = const [],
     this.likesCount = 0,
     this.commentsCount = 0,
+    this.sharesCount = 0,
+    this.sendsCount = 0,
+    this.repostsCount = 0,
     this.myReaction,
     this.reactionCounts = const [],
     this.edited = false,
@@ -68,6 +71,9 @@ class Post extends Equatable {
         ],
         likesCount: (json['likesCount'] as num?)?.toInt() ?? 0,
         commentsCount: (json['commentsCount'] as num?)?.toInt() ?? 0,
+        sharesCount: (json['sharesCount'] as num?)?.toInt() ?? 0,
+        sendsCount: (json['sendsCount'] as num?)?.toInt() ?? 0,
+        repostsCount: (json['repostsCount'] as num?)?.toInt() ?? 0,
         // Older rows only say that it was liked.
         myReaction: ReactionType.tryParse(json['myReaction']) ??
             (json['isLikedByMe'] == true ? ReactionType.like : null),
@@ -94,6 +100,16 @@ class Post extends Equatable {
   final List<String> mediaUrls;
   final int likesCount;
   final int commentsCount;
+
+  /// Distinct people who shared it by link (app#303); sends and reposts are
+  /// counted on their own.
+  final int sharesCount;
+
+  /// How many times it was sent in a message.
+  final int sendsCount;
+
+  /// How many reposts it has.
+  final int repostsCount;
   final ReactionType? myReaction;
   bool get isLikedByMe => myReaction != null;
 
@@ -155,6 +171,9 @@ class Post extends Equatable {
     String? content,
     int? likesCount,
     int? commentsCount,
+    int? sharesCount,
+    int? sendsCount,
+    int? repostsCount,
     ReactionType? myReaction,
     bool clearReaction = false,
     List<ReactionCount>? reactionCounts,
@@ -171,6 +190,9 @@ class Post extends Equatable {
         mediaUrls: mediaUrls,
         likesCount: likesCount ?? this.likesCount,
         commentsCount: commentsCount ?? this.commentsCount,
+        sharesCount: sharesCount ?? this.sharesCount,
+        sendsCount: sendsCount ?? this.sendsCount,
+        repostsCount: repostsCount ?? this.repostsCount,
         myReaction: clearReaction ? null : myReaction ?? this.myReaction,
         reactionCounts: reactionCounts ?? this.reactionCounts,
         edited: edited ?? this.edited,
@@ -196,6 +218,9 @@ class Post extends Equatable {
         mediaUrls,
         likesCount,
         commentsCount,
+        sharesCount,
+        sendsCount,
+        repostsCount,
         myReaction,
         reactionCounts,
         edited,

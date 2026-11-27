@@ -7,6 +7,7 @@ import 'package:flutter_template/features/republic/presentation/widgets/feed_vid
 import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/formatting/compact_count.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -291,10 +292,20 @@ class _PostCardState extends State<PostCard> {
                     ],
                   ),
                 ),
-                const Spacer(),
-                Text(
-                  l10n.republicCommentsCount(post.commentsCount),
-                  style: muted,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    postActivityLine(
+                      l10n,
+                      post,
+                      locale: Localizations.localeOf(context).toString(),
+                    ),
+                    key: const ValueKey('post-activity'),
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: muted,
+                  ),
                 ),
               ],
             ),
@@ -330,6 +341,25 @@ class _PostCardState extends State<PostCard> {
       ),
     );
   }
+}
+
+/// "3 comments · 2 reposts · 1 sent · 4 shares" (app#303). The comment count
+/// always shows, as before; the others only once they are above zero, in
+/// short form (1.2K) so the line stays on one row.
+String postActivityLine(
+  AppLocalizations l10n,
+  Post post, {
+  String? locale,
+}) {
+  String short(int n) => compactCount(n, locale: locale);
+  return [
+    l10n.republicCommentsCount(post.commentsCount),
+    if (post.repostsCount > 0)
+      l10n.republicRepostsCount(post.repostsCount, short(post.repostsCount)),
+    if (post.sendsCount > 0) l10n.republicSendsCount(short(post.sendsCount)),
+    if (post.sharesCount > 0)
+      l10n.republicSharesCount(post.sharesCount, short(post.sharesCount)),
+  ].join(' · ');
 }
 
 /// The words of a post, folded behind "See more" when they are long.

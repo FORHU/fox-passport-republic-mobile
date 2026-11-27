@@ -350,6 +350,24 @@ class FeedController extends AsyncNotifier<FeedState> {
     }
   }
 
+  /// Moves a post's share counts after the viewer shares it, so the number
+  /// changes straight away (app#303). [sharesCount] is the server's total;
+  /// the others are added to what the post shows.
+  void updateShareCounts(
+    String postId, {
+    int? sharesCount,
+    int addSends = 0,
+    int addReposts = 0,
+  }) =>
+      _replace(
+        postId,
+        (p) => p.copyWith(
+          sharesCount: sharesCount,
+          sendsCount: p.sendsCount + addSends,
+          repostsCount: p.repostsCount + addReposts,
+        ),
+      );
+
   void _replace(String postId, Post Function(Post) change) {
     final latest = state.value;
     if (latest == null) return;
