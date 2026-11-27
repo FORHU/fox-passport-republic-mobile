@@ -36,6 +36,23 @@ class _FakePicker implements PhotoPicker {
       PickedPhoto(bytes: Uint8List.fromList([1]), name: 'a.jpg');
 }
 
+/// Hands back [photos] when asked for several, and notes the limit it got.
+class _FakeMultiPicker implements PhotoPicker, MultiPhotoPicker {
+  _FakeMultiPicker(this.photos);
+
+  final List<PickedPhoto> photos;
+  int? limit;
+
+  @override
+  Future<PickedPhoto?> pick() async => photos.first;
+
+  @override
+  Future<List<PickedPhoto>> pickMany({required int limit}) async {
+    this.limit = limit;
+    return photos.take(limit).toList();
+  }
+}
+
 const GeoPoint _pin = (lat: 14.5995, lng: 120.9842);
 
 const _ready = VenueDraft(
@@ -226,6 +243,89 @@ void main() {
 
       expect(c.read(venueStudioProvider(null)).draft.photos, hasLength(5));
       verify(() => repo.uploadVenuePhoto(any())).called(5);
+    });
+
+    // mobile#499: several photos picked at once.
+    group('several photos at once', () {
+      var n = 0;
+      PickedPhoto named(String name) =>
+          PickedPhoto(bytes: Uint8List(1), name: name);
+
+      setUp(() {
+        n = 0;
+        when(() => repo.uploadVenuePhoto(any())).thenAnswer((inv) async {
+          final p = inv.positionalArguments.first as PickedPhoto;
+          if (p.name.startsWith('bad')) {
+            throw const ServerException('Too big');
+          }
+          n++;
+          return VenuePhoto(fileId: p.name, url: 'https://x.test/$n');
+        });
+      });
+
+      test('all go in, in the order picked, the first the cover', () async {
+        final c = container(null);
+        await c
+            .read(venueStudioProvider(null).notifier)
+            .addPhotos([named('a'), named('b'), named('c')]);
+
+        final s = c.read(venueStudioProvider(null));
+        expect(s.draft.photos.map((p) => p.fileId), ['a', 'b', 'c']);
+        expect(s.uploading, isFalse);
+        expect(s.pendingPhotos, isEmpty);
+        expect(s.error, isNull);
+      });
+
+      test('only as many as there is room for, keeping the ones there',
+          () async {
+        final c = container(null);
+        final studio = c.read(venueStudioProvider(null).notifier)
+          ..edit(
+            (d) => d.copyWith(
+              photos: [
+                for (final id in ['x1', 'x2', 'x3', 'x4'])
+                  VenuePhoto(fileId: id, url: 'https://x.test/$id'),
+              ],
+            ),
+          );
+        expect(studio.photoRoom, 1);
+
+        await studio.addPhotos([named('a'), named('b'), named('c')]);
+
+        final s = c.read(venueStudioProvider(null));
+        expect(
+          s.draft.photos.map((p) => p.fileId),
+          ['x1', 'x2', 'x3', 'x4', 'a'],
+        );
+        verify(() => repo.uploadVenuePhoto(any())).called(1);
+        expect(studio.photoRoom, 0);
+      });
+
+      test('one that fails is left out and said; the rest still go in',
+          () async {
+        final c = container(null);
+        await c
+            .read(venueStudioProvider(null).notifier)
+            .addPhotos([named('a'), named('bad1'), named('c')]);
+
+        final s = c.read(venueStudioProvider(null));
+        expect(s.draft.photos.map((p) => p.fileId), ['a', 'c']);
+        expect(s.error, 'photo');
+        expect(s.errorDetail, 'Too big');
+        expect(s.failedPhotos, 1);
+        expect(s.uploading, isFalse);
+      });
+
+      test('says how many did not upload', () async {
+        final c = container(null);
+        await c
+            .read(venueStudioProvider(null).notifier)
+            .addPhotos([named('bad1'), named('a'), named('bad2')]);
+
+        final s = c.read(venueStudioProvider(null));
+        expect(s.draft.photos.map((p) => p.fileId), ['a']);
+        expect(s.failedPhotos, 2);
+      });
     });
 
     test('a photo that fails to upload leaves the draft as it was', () async {
@@ -504,7 +604,11 @@ void main() {
   });
 
   group('the studio screen', () {
-    Future<void> pump(WidgetTester tester, {String? venueId}) async {
+    Future<void> pump(
+      WidgetTester tester, {
+      String? venueId,
+      PhotoPicker? picker,
+    }) async {
       tester.view
         ..physicalSize = const Size(900, 2400)
         ..devicePixelRatio = 1;
@@ -513,7 +617,7 @@ void main() {
         ProviderScope(
           overrides: [
             spacesRepositoryProvider.overrideWithValue(repo),
-            photoPickerProvider.overrideWithValue(_FakePicker()),
+            photoPickerProvider.overrideWithValue(picker ?? _FakePicker()),
             deviceLocatorProvider.overrideWithValue(locator),
           ],
           child: MaterialApp(
@@ -628,6 +732,61 @@ void main() {
       final element = tester.element(find.byType(VenueStudioPage));
       final container = ProviderScope.containerOf(element);
       expect(container.read(venueStudioProvider(null)).draft.name, 'Sky Hall');
+    });
+
+    // mobile#499: one tap picks several; each shows as a preview while it
+    // uploads, then joins the venue's photos.
+    testWidgets('Add photos picks several and previews them while uploading', (
+      tester,
+    ) async {
+      final uploads = <Completer<VenuePhoto>>[];
+      when(() => repo.uploadVenuePhoto(any())).thenAnswer((_) {
+        final c = Completer<VenuePhoto>();
+        uploads.add(c);
+        return c.future;
+      });
+      final picker = _FakeMultiPicker([
+        for (final name in ['a', 'b', 'c'])
+          PickedPhoto(bytes: Uint8List.fromList([1]), name: name),
+      ]);
+      await pump(tester, picker: picker);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(VenueStudioPage)),
+      );
+      container.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready.copyWith(photos: const []))
+        ..goTo(StudioStep.photos);
+      await tester.pump();
+
+      expect(find.text('Add photos'), findsOneWidget);
+      await tester.tap(find.text('Add photos'));
+      await tester.pump();
+
+      final uploading = find.byWidgetPredicate(
+        (w) => w is Semantics && w.properties.label == 'Uploading photo',
+      );
+      // As many as there is room for, all three waiting as previews.
+      expect(picker.limit, 5);
+      expect(uploading, findsNWidgets(3));
+
+      for (var i = 0; i < 3; i++) {
+        uploads[i].complete(
+          VenuePhoto(fileId: 'f$i', url: 'https://x.test/$i.png'),
+        );
+        await tester.pump();
+        await tester.pump();
+      }
+
+      expect(uploading, findsNothing);
+      expect(find.text('3 of 5 photos'), findsOneWidget);
+      expect(
+        container
+            .read(venueStudioProvider(null))
+            .draft
+            .photos
+            .map((p) => p.fileId),
+        ['f0', 'f1', 'f2'],
+      );
     });
 
     testWidgets('a live venue shows a note and a Save changes button', (

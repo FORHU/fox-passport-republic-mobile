@@ -2542,10 +2542,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioNoPin => 'No pin yet';
 
   @override
-  String get studioPhotosHint => 'Add 1 to 5 photos. The first is the cover.';
+  String get studioPhotosHint =>
+      'Add 1 to 5 photos. You can pick several at once. The first is the cover.';
 
   @override
   String get studioAddPhoto => 'Add photo';
+
+  @override
+  String get studioAddPhotos => 'Add photos';
+
+  @override
+  String get studioPhotoUploading => 'Uploading photo';
 
   @override
   String get studioPhotoFailed => 'That photo didn\'t upload. Try again.';
@@ -2693,6 +2700,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String studioPhotoFailedWhy(String reason) {
     return 'That photo didn\'t upload: $reason';
+  }
+
+  @override
+  String studioPhotosFailed(int count) {
+    return '$count photos didn\'t upload. Try again.';
+  }
+
+  @override
+  String studioPhotosFailedWhy(int count, String reason) {
+    return '$count photos didn\'t upload: $reason';
   }
 
   @override

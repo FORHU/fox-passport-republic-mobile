@@ -492,10 +492,22 @@ class _PhotosStep extends StatelessWidget {
   final WidgetRef ref;
   final String? id;
 
+  /// Lets the host pick as many photos as there is room for, at once
+  /// (mobile#499), where the device can.
   Future<void> _add(WidgetRef ref) async {
-    final photo = await ref.read(photoPickerProvider).pick();
-    if (photo == null) return;
-    await ref.read(venueStudioProvider(id).notifier).addPhoto(photo);
+    final controller = ref.read(venueStudioProvider(id).notifier);
+    final room = controller.photoRoom;
+    if (room <= 0) return;
+    final picker = ref.read(photoPickerProvider);
+    final List<PickedPhoto> chosen;
+    if (picker is MultiPhotoPicker) {
+      chosen = await (picker as MultiPhotoPicker).pickMany(limit: room);
+    } else {
+      final one = await picker.pick();
+      chosen = [if (one != null) one];
+    }
+    if (chosen.isEmpty) return;
+    await controller.addPhotos(chosen);
   }
 
   @override
@@ -559,7 +571,41 @@ class _PhotosStep extends StatelessWidget {
                         ),
                       ],
                     ),
-                  if (photos.length < 5)
+                  // Chosen and still uploading: a preview with a spinner.
+                  for (final pending in state.pendingPhotos)
+                    Semantics(
+                      label: l10n.studioPhotoUploading,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.memory(
+                              pending.bytes,
+                              width: size,
+                              height: size,
+                              fit: BoxFit.cover,
+                              gaplessPlayback: true,
+                              errorBuilder: (_, __, ___) => Container(
+                                width: size,
+                                height: size,
+                                color: AppColors.canvas,
+                              ),
+                            ),
+                            Container(
+                              width: size,
+                              height: size,
+                              color: AppColors.canvas.withValues(alpha: 0.5),
+                            ),
+                            const CircularProgressIndicator(
+                              color: AppColors.accent,
+                              strokeWidth: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (photos.length + state.pendingPhotos.length < 5)
                     InkWell(
                       onTap: state.uploading ? null : () => _add(ref),
                       borderRadius: BorderRadius.circular(12),
@@ -572,26 +618,25 @@ class _PhotosStep extends StatelessWidget {
                           border: Border.all(color: AppColors.borderStrong),
                         ),
                         alignment: Alignment.center,
-                        child: state.uploading
-                            ? const CircularProgressIndicator(
+                        // The previews carry the spinners; this waits dimmed.
+                        child: Opacity(
+                          opacity: state.uploading ? 0.4 : 1,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.add_a_photo_outlined,
                                 color: AppColors.accent,
-                                strokeWidth: 2,
-                              )
-                            : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.add_a_photo_outlined,
-                                    color: AppColors.accent,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    l10n.studioAddPhoto,
-                                    textAlign: TextAlign.center,
-                                    style: AppTypography.label(),
-                                  ),
-                                ],
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.studioAddPhotos,
+                                textAlign: TextAlign.center,
+                                style: AppTypography.label(),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -602,9 +647,16 @@ class _PhotosStep extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: Text(
-                state.errorDetail == null
-                    ? l10n.studioPhotoFailed
-                    : l10n.studioPhotoFailedWhy(state.errorDetail!),
+                state.failedPhotos > 1
+                    ? state.errorDetail == null
+                        ? l10n.studioPhotosFailed(state.failedPhotos)
+                        : l10n.studioPhotosFailedWhy(
+                            state.failedPhotos,
+                            state.errorDetail!,
+                          )
+                    : state.errorDetail == null
+                        ? l10n.studioPhotoFailed
+                        : l10n.studioPhotoFailedWhy(state.errorDetail!),
                 style: AppTypography.body(size: 13, color: AppColors.error),
               ),
             ),
