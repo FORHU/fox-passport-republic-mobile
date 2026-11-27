@@ -1,0 +1,180 @@
+name: Release Android
+
+# The signed app bundle that goes to Google Play, modelled on FORHU/cheapest-go-mobile's
+# deploy-prod.yml (and FORHU/mapvot-mobile's release-android.yml).
+#
+# A merge to main uploads to the internal track on its own. Higher tracks are deliberate:
+# Run workflow and pick one. Every run waits for approval in the play-store environment,
+# whose deployment branch rule allows main only.
+#
+# BEFORE THE FIRST RUN, in the play-store environment:
+#
+#   ENV_PROD                    contents of .env.prod (this build talks to the staging site)
+#   ANDROID_KEYSTORE_BASE64     the upload key Play has registered (SHA-1 9E:83:E0:B4...)
+#   ANDROID_KEYSTORE_PASSWORD   store password
+#   ANDROID_KEY_PASSWORD        optional; the store password is used when it's empty
+#   PLAY_SERVICE_ACCOUNT_JSON   a service account invited in Play Console for
+#                               com.forhu.foxpassport, with testing-track release rights
+#   variable ANDROID_KEY_ALIAS  optional, defaults to upload
+#   variable PLAY_TRACKS        optional, defaults to internal
+#   variable PLAY_RELEASE_STATUS optional, defaults to draft
+#
+# Set each secret by typing it at the prompt or piping it in, never by pasting a value after a
+# piped command: `gh secret set` then reads end-of-file and stores an empty string. The
+# preflight below checks for empty values for that reason.
+#
+# The keystore is the one irreplaceable secret: lose it and this applicationId can't be
+# updated on Play again without an upload key reset. Keep a copy outside this repository.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Play track
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-android
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: play-store
+    timeout-minutes: 45
+    # Needed to push the record tag after a successful upload. Nothing else writes.
+    permissions:
+      contents: write
+    env:
+      # 1. the Run workflow picker, 2. variable PLAY_TRACKS, 3. internal.
+      TRACKS: ${{ inputs.track || vars.PLAY_TRACKS || 'internal' }}
+      # The app has never been published, and Play only accepts draft releases for it until
+      # it has. Set PLAY_RELEASE_STATUS to completed once the first release has been rolled
+      # out from the Console, as cheapest-go-mobile does.
+      STATUS: ${{ vars.PLAY_RELEASE_STATUS || 'draft' }}
+
+    steps:
+      # Actions are pinned to a commit: this job holds the signing key.
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Preflight
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          # Checks for EMPTY values: a secret created empty reads exactly like a missing one.
+          ok=1
+          [ -n "$ENV_PROD" ]          || { echo "::error::ENV_PROD is missing or empty in the play-store environment."; ok=0; }
+          [ -n "$KEYSTORE_BASE64" ]   || { echo "::error::ANDROID_KEYSTORE_BASE64 is missing or empty. Play rejects a debug-signed bundle."; ok=0; }
+          [ -n "$KEYSTORE_PASSWORD" ] || { echo "::error::ANDROID_KEYSTORE_PASSWORD is missing or empty."; ok=0; }
+          [ -n "$PLAY_JSON" ]         || { echo "::error::PLAY_SERVICE_ACCOUNT_JSON is missing or empty."; ok=0; }
+          case "$TRACKS" in
+            *production*) echo "::warning::This run targets production. Play refuses it until the Console checklist and first review are done." ;;
+          esac
+          [ "$ok" = 1 ] || { echo "Nothing was built."; exit 1; }
+
+      - name: Setup Java
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.47.7' # same as flutter_ci.yml
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          cp .env.example .env.dev
+          cp .env.example .env.prod
+          flutter pub get
+          flutter gen-l10n
+
+      # The same checks as flutter_ci.yml: a release is the last place to find out.
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Enforce feature isolation
+        run: bash tools/check_feature_isolation.sh
+
+      - name: Run tests
+        run: flutter test
+
+      # The keystore goes to the runner's temp folder, outside the checkout.
+      - name: Write the configuration and signing key
+        env:
+          ENV_PROD: ${{ secrets.ENV_PROD }}
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ vars.ANDROID_KEY_ALIAS || 'upload' }}
+        run: |
+          umask 077
+          printf '%s\n' "$ENV_PROD" > .env.prod
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+          {
+            printf 'storeFile=%s\n' "$RUNNER_TEMP/upload.jks"
+            printf 'storePassword=%s\n' "$KEYSTORE_PASSWORD"
+            printf 'keyPassword=%s\n' "${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+          } > android/key.properties
+
+      # Play needs a strictly higher version code on every upload. 1000 + run number stays
+      # clear of anything uploaded by hand.
+      - name: Build the signed app bundle
+        env:
+          REQUIRE_RELEASE_SIGNING: 'true'
+        run: flutter build appbundle --release -t lib/main_prod.dart --build-number "$((1000 + GITHUB_RUN_NUMBER))"
+
+      # Before the upload, so a bundle Play refuses (permissions, wrong key) isn't lost.
+      - name: Keep the bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: app-release-${{ github.run_number }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.forhu.foxpassport
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          tracks: ${{ env.TRACKS }}
+          status: ${{ env.STATUS }}
+
+      # A record, not a trigger: v<pubspec version>, once per version, only after Play took
+      # the build. Pushed with GITHUB_TOKEN, which starts no other workflow run.
+      - name: Tag what shipped
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml | tr -d '[:space:]')"
+          REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --tags "$REMOTE" "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "$TAG already exists; bump 'version:' in pubspec.yaml to record a new one."
+            exit 0
+          fi
+          git tag "$TAG"
+          git push "$REMOTE" "refs/tags/$TAG"
+          echo "tagged $TAG"
+
+      - name: Remove the signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks" android/key.properties .env.prod

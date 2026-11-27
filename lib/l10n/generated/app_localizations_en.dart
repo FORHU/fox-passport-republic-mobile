@@ -702,6 +702,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'One or more documents were flagged — tap to fix and resubmit.';
 
   @override
+  String get onboardingPendingCaption =>
+      'Under review. Tap to withdraw this application.';
+
+  @override
   String get onboardingLearnApply => 'Learn more & apply';
 
   @override
@@ -3207,6 +3211,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rolesClose => 'Close';
 
   @override
+  String get rolesWithdraw => 'Withdraw application';
+
+  @override
+  String rolesWithdrawNamed(String role) {
+    return 'Withdraw $role application';
+  }
+
+  @override
+  String rolesWithdrawTitle(String role) {
+    return 'Withdraw your $role application?';
+  }
+
+  @override
+  String get rolesWithdrawBody =>
+      'It leaves the review queue for good. You can apply for this role again later.';
+
+  @override
+  String get rolesWithdrawKeep => 'Keep it';
+
+  @override
+  String get rolesWithdrawn => 'Application withdrawn';
+
+  @override
+  String get rolesWithdrawFailed =>
+      'Couldn\'t withdraw the application. Please try again.';
+
+  @override
   String get venueBookNow => 'Book now';
 
   @override
@@ -5500,6 +5531,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyEyebrow => 'Provider Foxer';
 
   @override
+  String get applyWorkKindQuestion => 'What kind of work do you do?';
+
+  @override
+  String get applyWorkKindGear => 'Gear & services';
+
+  @override
+  String get applyWorkKindCoordination => 'Event coordination';
+
+  @override
   String get provApplyIntroTitle =>
       'Rent out gear or offer a service at events';
 
@@ -5529,7 +5569,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyStepDocuments => 'Documents';
 
   @override
-  String get provApplyStepDocumentsHint => 'ID, NBI, TIN, BIR permit, selfie';
+  String get provApplyStepDocumentsHint =>
+      'ID, clearance, tax ID, business permit, selfie';
 
   @override
   String get provApplyDuration => 'Takes about 10 minutes.';
@@ -5584,6 +5625,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyLinks => 'Links to your work (optional)';
 
   @override
+  String get provApplyLinksHelp =>
+      'Add any you have. Typing facebook.com/yourpage is enough.';
+
+  @override
+  String get provLinkFacebook => 'Facebook';
+
+  @override
+  String get provLinkInstagram => 'Instagram';
+
+  @override
+  String get provLinkTiktok => 'TikTok';
+
+  @override
+  String get provLinkYoutube => 'YouTube';
+
+  @override
+  String get provLinkWebsite => 'Website';
+
+  @override
+  String get provLinkFacebookHint => 'facebook.com/yourpage';
+
+  @override
+  String get provLinkInstagramHint => 'instagram.com/yourname';
+
+  @override
+  String get provLinkTiktokHint => 'tiktok.com/@yourname';
+
+  @override
+  String get provLinkYoutubeHint => 'youtube.com/@yourchannel';
+
+  @override
+  String get provLinkWebsiteHint => 'yourwebsite.com';
+
+  @override
+  String get provLinkInvalid => 'That isn\'t a web address';
+
+  @override
+  String provLinkWrongSite(String site) {
+    return 'That link isn\'t on $site';
+  }
+
+  @override
   String get provApplyNextCategories => 'Next: categories';
 
   @override
@@ -5591,7 +5674,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get provApplyCategoriesBody =>
-      'Tap every category you work in. Use the star to mark your main one.';
+      'Under each main category, tap everything you do. Use the star to mark your main one.';
+
+  @override
+  String get provApplyGroupEyebrow => 'Main category';
+
+  @override
+  String get provApplyGroupOther => 'More';
+
+  @override
+  String provApplyGroupCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count to pick from',
+      one: '1 to pick from',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String provApplyGroupPicked(int count) {
+    return '$count picked';
+  }
+
+  @override
+  String provApplyGroupSemantics(String name, int picked) {
+    return 'Main category $name, $picked picked';
+  }
 
   @override
   String get provApplyMain => 'MAIN';
@@ -5675,13 +5785,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get provApplyDocId => 'Valid government ID';
 
   @override
-  String get provApplyDocNbi => 'NBI clearance';
+  String get provApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get provApplyDocTin => 'TIN ID';
+  String get provApplyDocTin => 'Tax ID document';
 
   @override
-  String get provApplyDocBir => 'BIR permit';
+  String get kycDocTaxNote => 'A card, certificate or official letter is fine.';
+
+  @override
+  String get provApplyDocBir => 'Business registration or permit';
 
   @override
   String get provApplyDocSelfie => 'Selfie holding your ID';
@@ -5753,7 +5866,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String provApplyAllDocs(int count) {
-    return 'All $count added';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents added',
+      one: '1 document added',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -5821,7 +5940,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tell us about your business. Citizens and Event Foxers find your venues by the categories you pick.';
 
   @override
-  String get roleWizVenueAboutHint => 'Name, contact, address, TIN';
+  String get roleWizVenueAboutHint => 'Name, contact, address, tax ID';
 
   @override
   String get roleWizVenueCategoriesHint =>
@@ -5845,7 +5964,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleWizEventDocsHint =>
-      'ID, NBI, TIN, BIR permit, selfie, portfolio';
+      'ID, clearance, tax ID, business permit, selfie, portfolio';
 
   @override
   String get roleWizCoordIntroTitle => 'Run the logistics on event day';
@@ -5888,22 +6007,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'An admin checks these. They are kept private.';
 
   @override
-  String get roleApplyNbiNumber => 'NBI clearance ID number';
+  String get roleApplyNbiNumber => 'Clearance number';
 
   @override
-  String get roleApplyTin => 'TIN number (optional)';
+  String get roleApplyTin => 'Tax ID (optional)';
 
   @override
   String get roleApplyDocId => 'Primary valid ID';
 
   @override
-  String get roleApplyDocNbi => 'NBI clearance';
+  String get roleApplyDocNbi => 'Police or background clearance';
 
   @override
-  String get roleApplyDocTin => 'TIN ID or certificate';
+  String get roleApplyDocTin => 'Tax ID document';
 
   @override
-  String get roleApplyDocBir => 'BIR 2303 or permit';
+  String get roleApplyDocBir => 'Business registration or permit';
 
   @override
   String get roleApplyDocSelfie => 'Verification selfie';
@@ -6037,7 +6156,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleApplyDescription => 'About your venues (optional)';
 
   @override
-  String get roleApplyTinRequired => 'TIN number';
+  String get roleApplyTinRequired => 'Tax ID';
+
+  @override
+  String get roleApplyTaxCountry => 'Country of your tax ID';
+
+  @override
+  String get roleApplyTaxId => 'Tax ID';
+
+  @override
+  String roleApplyTaxIdNamed(String name) {
+    return 'Tax ID ($name)';
+  }
+
+  @override
+  String roleApplyTaxIdExample(String example) {
+    return 'For example $example';
+  }
+
+  @override
+  String roleApplyTaxIdInvalid(String example) {
+    return 'That doesn\'t look like a tax ID from this country. For example $example';
+  }
+
+  @override
+  String get roleApplyTaxIdInvalidAny => 'Use 4 to 20 letters or digits.';
 
   @override
   String get roleSpecIndoor => 'Indoor';

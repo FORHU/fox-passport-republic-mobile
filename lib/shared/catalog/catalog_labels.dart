@@ -32,13 +32,18 @@ String? catalogPriceLabel(
   return unit == null ? money : '$money/$unit';
 }
 
-/// "Davao City · 200 guests", leaving out whatever the item doesn't have.
+/// "Sky Hall · Davao City · 200 guests", leaving out whatever the item
+/// doesn't have. An event names its venue first (api#511).
 String catalogSubtitle(
   AppLocalizations l10n,
   CatalogItem item, {
   String? locale,
 }) {
   final parts = <String>[
+    if (item.kind == CatalogKind.events &&
+        item.venueName != null &&
+        item.venueName!.isNotEmpty)
+      item.venueName!,
     if (item.city != null && item.city!.isNotEmpty) item.city!,
     if (item.eventStartAt != null)
       DateFormat('EEE d MMM', locale).format(item.eventStartAt!),

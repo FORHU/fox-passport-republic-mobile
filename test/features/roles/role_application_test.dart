@@ -498,7 +498,7 @@ void main() {
     testWidgets('selected Provider categories appear as removable tags', (
       tester,
     ) async {
-      // The Provider / Event Coordinator switch (mobile#488) pushes the
+      // The kind-of-Provider-work switch (mobile#488, #526) pushes the
       // chips below the default test screen.
       tester.view
         ..physicalSize = const Size(800, 2400)
@@ -656,14 +656,14 @@ void main() {
       expect(find.text('Contact number'), findsOneWidget);
       expect(find.text('Complete address'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.text('TIN number'),
+        find.text('Tax ID'),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('TIN number'), findsOneWidget);
+      expect(find.text('Tax ID'), findsOneWidget);
       expect(find.text('Hotel'), findsOneWidget);
       expect(find.text('Years of experience'), findsNothing);
-      expect(find.text('NBI clearance ID number'), findsNothing);
+      expect(find.text('Clearance number'), findsNothing);
       expect(find.text('Services you offer'), findsNothing);
     });
 
@@ -687,9 +687,9 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('Police or background clearance'), findsOneWidget);
-      expect(find.text('NBI clearance ID number'), findsNothing);
+      expect(find.text('Clearance number'), findsNothing);
       expect(find.text('NBI clearance'), findsNothing);
-      expect(find.text('TIN number (optional)'), findsNothing);
+      expect(find.text('Tax ID (optional)'), findsNothing);
     });
 
     testWidgets('an event asks for a bio and a place, not services', (
@@ -705,7 +705,7 @@ void main() {
       expect(find.text('Services you offer'), findsNothing);
       // Links to their work, like a Provider (app#371).
       expect(find.text('Links to your work'), findsOneWidget);
-      expect(find.text('NBI clearance ID number'), findsNothing);
+      expect(find.text('Clearance number'), findsNothing);
       await tester.scrollUntilVisible(
         find.text('Portfolio or resume (optional)'),
         200,
@@ -713,7 +713,7 @@ void main() {
       );
       expect(find.text('Portfolio or resume (optional)'), findsOneWidget);
       expect(find.text('PDF, DOC or DOCX, up to 15 MB'), findsOneWidget);
-      expect(find.text('TIN number (optional)'), findsNothing);
+      expect(find.text('Tax ID (optional)'), findsNothing);
     });
 
     testWidgets('says which portfolio link is not a web address', (

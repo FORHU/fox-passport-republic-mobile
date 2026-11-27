@@ -443,7 +443,8 @@ class RoleCard extends StatelessWidget {
   final RoleCatalogEntry role;
   final RoleStatus status;
 
-  /// Null for roles that can't be acted on (active / under review).
+  /// Null for roles that can't be acted on (active). Under review, it offers
+  /// to withdraw the application (api#367).
   final VoidCallback? onTap;
 
   @override
@@ -457,6 +458,8 @@ class RoleCard extends StatelessWidget {
 
     final caption = switch (status) {
       RoleStatus.revision => context.l10n.onboardingRevisionCaption,
+      RoleStatus.pending when onTap != null =>
+        context.l10n.onboardingPendingCaption,
       _ => role.desc,
     };
 

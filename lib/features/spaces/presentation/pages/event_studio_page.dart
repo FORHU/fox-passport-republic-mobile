@@ -830,7 +830,9 @@ class _ItemTile extends StatelessWidget {
                           style: AppTypography.body(),
                         ),
                         Text(
-                          item.isOptional ? l10n.esOptional : l10n.esRequired,
+                          item.isOptional && !item.isVenue
+                              ? l10n.esOptional
+                              : l10n.esRequired,
                           style: AppTypography.label(),
                         ),
                         if (answer != null) _InviteChip(answer.status),
@@ -1085,13 +1087,15 @@ class _EditItemSheet extends ConsumerWidget {
               }
             },
           ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l10n.esOptional),
-            value: item.isOptional,
-            activeThumbColor: AppColors.accent,
-            onChanged: (v) => studio.updateItem(itemId, isOptional: v),
-          ),
+          // Every event has a venue (api#477): it is never optional.
+          if (!item.isVenue)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.esOptional),
+              value: item.isOptional,
+              activeThumbColor: AppColors.accent,
+              onChanged: (v) => studio.updateItem(itemId, isOptional: v),
+            ),
           const SizedBox(height: 8),
           Row(
             children: [

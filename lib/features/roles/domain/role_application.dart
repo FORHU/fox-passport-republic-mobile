@@ -81,6 +81,8 @@ class RoleApplicationDraft extends Equatable {
     this.experience = '',
     this.nbiNumber = '',
     this.tinNumber = '',
+    this.tinCountry = '',
+    this.taxIdIssued = true,
     this.specializations = const [],
     this.documents = const {},
   });
@@ -118,6 +120,11 @@ class RoleApplicationDraft extends Equatable {
   final String nbiNumber;
   final String tinNumber;
 
+  /// The 2-letter country [tinNumber] is from (mobile#529). The API checks
+  /// the number against that country's formats; left out, it checks it as
+  /// Philippine.
+  final String tinCountry;
+
   /// Up to three, picked from the role's categories.
   final List<String> specializations;
   final Map<KycDocument, PickedPhoto> documents;
@@ -127,8 +134,12 @@ class RoleApplicationDraft extends Equatable {
   bool get isEvent => roleType == 'eventFoxer';
   bool get isOrganizer => roleType == 'organizer';
 
-  /// The documents the API needs before it takes this application.
-  List<KycDocument> get requiredDocuments => isOrganizer
+  /// False when [tinCountry] issues no tax number (the API's `issuesTin`),
+  /// so the tax document can't be required (mobile#529).
+  final bool taxIdIssued;
+
+  /// The documents the application asks for, in order.
+  List<KycDocument> get askedDocuments => isOrganizer
       ? const [
           KycDocument.validId,
           KycDocument.backgroundClearance,
@@ -141,6 +152,17 @@ class RoleApplicationDraft extends Equatable {
           KycDocument.birPermit,
           KycDocument.selfie,
         ];
+
+  /// The ones it can't be sent without. A business registration is optional,
+  /// since many countries let people work without one, and so is the tax
+  /// document where the country issues no tax number (mobile#529). The API
+  /// requires only an Organizer's.
+  List<KycDocument> get requiredDocuments => [
+        for (final doc in askedDocuments)
+          if (doc != KycDocument.birPermit &&
+              (doc != KycDocument.tinId || taxIdIssued))
+            doc,
+      ];
 
   /// "City, State, Country", as the web sends it, leaving out what is blank.
   String get location => [city, state, country]
@@ -211,7 +233,7 @@ class RoleApplicationDraft extends Equatable {
                   ? businessName.trim().isNotEmpty &&
                       contactNumber.trim().isNotEmpty &&
                       address.trim().isNotEmpty &&
-                      tinNumber.isNotEmpty
+                      tinNumber.trim().isNotEmpty
                   : businessName.trim().isNotEmpty &&
                       split(types).isNotEmpty &&
                       specializations.isNotEmpty) &&
@@ -234,6 +256,8 @@ class RoleApplicationDraft extends Equatable {
     String? experience,
     String? nbiNumber,
     String? tinNumber,
+    String? tinCountry,
+    bool? taxIdIssued,
     List<String>? specializations,
     Map<KycDocument, PickedPhoto>? documents,
   }) =>
@@ -254,6 +278,8 @@ class RoleApplicationDraft extends Equatable {
         experience: experience ?? this.experience,
         nbiNumber: nbiNumber ?? this.nbiNumber,
         tinNumber: tinNumber ?? this.tinNumber,
+        tinCountry: tinCountry ?? this.tinCountry,
+        taxIdIssued: taxIdIssued ?? this.taxIdIssued,
         specializations: specializations ?? this.specializations,
         documents: documents ?? this.documents,
       );
@@ -282,7 +308,10 @@ class RoleApplicationDraft extends Equatable {
           if (nbiNumber.isNotEmpty) 'nbiClearanceIdNumber': nbiNumber,
           if (portfolioLinks.isNotEmpty) 'portfolioUrls': portfolioLinks,
         },
-        if (tinNumber.isNotEmpty) 'tinNumber': tinNumber,
+        if (tinNumber.trim().isNotEmpty) ...{
+          'tinNumber': tinNumber.trim(),
+          if (tinCountry.isNotEmpty) 'tinCountry': tinCountry,
+        },
         'specializations': specializations,
       };
 
@@ -320,6 +349,8 @@ class RoleApplicationDraft extends Equatable {
         experience,
         nbiNumber,
         tinNumber,
+        tinCountry,
+        taxIdIssued,
         specializations,
         documents.keys.toList(),
       ];

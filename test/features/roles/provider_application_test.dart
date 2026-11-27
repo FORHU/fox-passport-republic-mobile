@@ -8,6 +8,7 @@ import 'package:flutter_template/features/auth/presentation/controllers/auth_con
 import 'package:flutter_template/features/roles/data/role_application_repository.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/provider_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/pages/provider_application_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_template/shared/location/device_locator.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockRepo extends Mock implements RoleApplicationRepository {}
@@ -76,18 +78,20 @@ void main() {
   late _MockRepo repo;
   late _FakeLocator locator;
   late ProviderContainer container;
+  var catalog = _catalog;
 
   setUpAll(() => registerFallbackValue(const ProviderApplicationDraft()));
 
   setUp(() {
     repo = _MockRepo();
+    catalog = _catalog;
     locator = _FakeLocator();
     container = ProviderContainer(
       overrides: [
         roleApplicationRepositoryProvider.overrideWithValue(repo),
         deviceLocatorProvider.overrideWithValue(locator),
         currentUserIdProvider.overrideWith((ref) => ref.watch(_signedIn)),
-        providerSpecialtiesProvider.overrideWith((ref) async => _catalog),
+        providerSpecialtiesProvider.overrideWith((ref) async => catalog),
         photoPickerProvider.overrideWithValue(_FakePicker()),
       ],
     );
@@ -223,7 +227,8 @@ void main() {
       expect(draft().detailsDone, isFalse, reason: 'needs a photo too');
       c().addPhoto('dj', _photo('a.png'));
       expect(draft().detailsDone, isTrue);
-      expect(draft().documentsMissing, 5);
+      // A business registration is optional (mobile#529).
+      expect(draft().documentsMissing, 4);
     });
 
     test('sends the wizard answers the API reads', () {
@@ -321,6 +326,14 @@ void main() {
         find.text('Rent out gear or offer a service at events'),
         findsOneWidget,
       );
+      // The switch names kinds of Provider work, not a second role
+      // (mobile#526).
+      expect(find.text('What kind of work do you do?'), findsOneWidget);
+      expect(find.text('Gear & services'), findsOneWidget);
+      expect(find.text('Event coordination'), findsOneWidget);
+      expect(find.text('PROVIDER FOXER'), findsOneWidget, reason: 'eyebrow');
+      final roleTitle = RegExp('event coordinator', caseSensitive: false);
+      expect(find.textContaining(roleTitle), findsNothing);
       for (final step in [
         'Your business',
         'Your categories',
@@ -353,6 +366,63 @@ void main() {
 
       expect(next().onPressed, isNotNull);
       expect(draft().travelRange, TravelRange.province);
+    });
+
+    testWidgets('step 1 has a field per link and flags one in the wrong place',
+        (tester) async {
+      c().goTo(ProviderApplyStep.business);
+      c().edit((d) => d.copyWith(businessName: 'X', basedIn: 'Cebu'));
+      await open(tester);
+
+      expect(find.textContaining('separated by commas'), findsNothing);
+      for (final kind in WorkLinkKind.values) {
+        expect(find.byKey(Key('work-link-${kind.name}')), findsOneWidget);
+      }
+
+      final instagram = find.byKey(const Key('work-link-instagram'));
+      await tester.ensureVisible(instagram);
+      await tester.enterText(instagram, 'facebook.com/soundgear');
+      await tester.pumpAndSettle();
+      expect(find.text("That link isn't on Instagram"), findsOneWidget);
+      expect(
+        tester
+            .widget<ElevatedButton>(
+              find.widgetWithText(ElevatedButton, 'Next: categories'),
+            )
+            .onPressed,
+        isNull,
+      );
+
+      await tester.enterText(instagram, 'instagram.com/soundgear');
+      await tester.pumpAndSettle();
+      expect(find.text("That link isn't on Instagram"), findsNothing);
+      expect(draft().portfolioLinks, ['https://instagram.com/soundgear']);
+    });
+
+    testWidgets('each link icon sits in the middle of its field',
+        (tester) async {
+      c().goTo(ProviderApplyStep.business);
+      c().edit((d) => d.copyWith(businessName: 'X', basedIn: 'Cebu'));
+      await open(tester);
+
+      for (final kind in WorkLinkKind.values) {
+        final field = find.byKey(Key('work-link-${kind.name}'));
+        await tester.ensureVisible(field);
+        await tester.pumpAndSettle();
+        final box = find.descendant(
+          of: field,
+          matching: find.byType(InputDecorator),
+        );
+        final icon = find.descendant(of: field, matching: find.byType(FaIcon));
+        // FaIcon is a bare RichText that draws its glyph at the top of
+        // whatever height it is given, so it must keep its own 18px height.
+        expect(tester.getSize(icon).height, lessThan(24), reason: kind.name);
+        expect(
+          tester.getCenter(icon).dy,
+          moreOrLessEquals(tester.getCenter(box).dy, epsilon: 1),
+          reason: kind.name,
+        );
+      }
     });
 
     testWidgets('the location button fills where they are based', (
@@ -404,6 +474,50 @@ void main() {
       expect(find.text('Next: about each one'), findsOneWidget);
     });
 
+    testWidgets('step 2 shows main categories as headings over what to pick',
+        (tester) async {
+      const sound = ProviderSpecialtyGroup(
+        slug: 'sound_lights',
+        name: 'Sound & Lights',
+        icon: 'speaker',
+      );
+      const music = ProviderSpecialtyGroup(
+        slug: 'music_entertainment',
+        name: 'Music & Entertainment',
+        icon: 'music_note',
+      );
+      catalog = const [
+        ProviderSpecialty(slug: 'dj', name: 'DJ', group: music),
+        ProviderSpecialty(
+          slug: 'sound_system',
+          name: 'Sound system',
+          group: sound,
+        ),
+        ProviderSpecialty(slug: 'lighting', name: 'Lighting', group: sound),
+        ProviderSpecialty(slug: 'kites', name: 'Kites'),
+      ];
+      c().goTo(ProviderApplyStep.categories);
+      await open(tester);
+
+      expect(find.text('Music & Entertainment'), findsOneWidget);
+      expect(find.text('Sound & Lights'), findsOneWidget);
+      expect(find.text('More'), findsOneWidget);
+      expect(find.text('MAIN CATEGORY'), findsNWidgets(3));
+      expect(find.text('2 to pick from'), findsOneWidget);
+
+      // A heading isn't a pick.
+      await tapText(tester, 'Sound & Lights');
+      expect(draft().specializations, isEmpty);
+
+      await tapText(tester, 'Lighting');
+      expect(draft().specializations, ['lighting']);
+      expect(find.text('1 picked'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Main category Sound & Lights, 1 picked'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('step 3 needs a line and a photo for each category', (
       tester,
     ) async {
@@ -440,13 +554,18 @@ void main() {
     testWidgets('step 4 counts the documents still to add', (tester) async {
       c().goTo(ProviderApplyStep.documents);
       await open(tester);
-      expect(find.text('5 documents still to add'), findsOneWidget);
+      expect(find.text('4 documents still to add'), findsOneWidget);
+      expect(find.text('Optional'), findsOneWidget, reason: 'business');
+      expect(
+        find.text('A card, certificate or official letter is fine.'),
+        findsOneWidget,
+      );
       expect(find.text('Take'), findsOneWidget);
       expect(find.text('Upload'), findsNWidgets(4));
 
       c().setDocument(KycDocument.validId, _photo('id.png'));
       await tester.pumpAndSettle();
-      expect(find.text('4 documents still to add'), findsOneWidget);
+      expect(find.text('3 documents still to add'), findsOneWidget);
       expect(find.text('Replace'), findsOneWidget);
     });
 
@@ -460,7 +579,7 @@ void main() {
 
       expect(find.text('Sound Gear Co.'), findsOneWidget);
       expect(find.text('Cebu City, Cebu · My province · 6 years'), findsOne);
-      expect(find.text('All 5 added'), findsOneWidget);
+      expect(find.text('4 documents added'), findsOneWidget);
       ElevatedButton send() => tester.widget<ElevatedButton>(
             find.widgetWithText(ElevatedButton, 'Send application'),
           );

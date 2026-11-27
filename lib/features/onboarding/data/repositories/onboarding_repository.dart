@@ -15,6 +15,7 @@ abstract class OnboardingRepository {
     required String district,
   });
   Future<Either<Failure, List<RoleRequestSummary>>> fetchMyRoleRequests();
+  Future<Either<Failure, void>> withdrawRoleRequest(String id);
   Future<Either<Failure, List<GeoCountry>>> fetchCountries();
   Future<Either<Failure, List<GeoState>>> fetchStates(String countryCode);
   Future<Either<Failure, List<String>>> fetchCities(
@@ -68,6 +69,10 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<Either<Failure, List<RoleRequestSummary>>> fetchMyRoleRequests() =>
       _guard(_remote.fetchMyRoleRequests);
+
+  @override
+  Future<Either<Failure, void>> withdrawRoleRequest(String id) =>
+      _guard(() => _remote.withdrawRoleRequest(id));
 
   @override
   Future<Either<Failure, List<GeoCountry>>> fetchCountries() =>

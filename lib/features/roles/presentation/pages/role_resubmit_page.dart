@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/role_resubmit_controller.dart';
+import 'package:flutter_template/features/roles/presentation/controllers/role_withdraw_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/roles/role_request.dart';
+import 'package:flutter_template/shared/roles/withdraw_role_dialog.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -113,6 +115,29 @@ class _ResubmitForm extends ConsumerWidget {
     if (context.canPop()) context.pop();
   }
 
+  /// Rather than fixing the documents, takes the application back (api#367);
+  /// the role can be applied for again later.
+  Future<void> _withdraw(
+    BuildContext context,
+    WidgetRef ref,
+    String role,
+  ) async {
+    final l10n = context.l10n;
+    if (!await confirmWithdrawRole(context, role) || !context.mounted) return;
+    final error =
+        await ref.read(roleWithdrawProvider.notifier).withdraw(request.id);
+    if (!context.mounted) return;
+    showTopToast(
+      context,
+      error == null
+          ? l10n.rolesWithdrawn
+          : error.isEmpty
+              ? l10n.rolesWithdrawFailed
+              : error,
+    );
+    if (error == null && context.canPop()) context.pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
@@ -120,6 +145,8 @@ class _ResubmitForm extends ConsumerWidget {
     final controller = ref.read(roleResubmitProvider(request).notifier);
     final role = roleTitleFor(request.roleType) ?? request.roleType;
     final note = request.revisionNote;
+    // Watched so a withdrawal in flight finishes while the page is open.
+    final withdrawing = ref.watch(roleWithdrawProvider) != null;
 
     return Column(
       children: [
@@ -171,6 +198,18 @@ class _ResubmitForm extends ConsumerWidget {
                   onPicked: (p) => controller.setFile(field, p),
                   onRemove: () => controller.removeFile(field),
                 ),
+              const SizedBox(height: 8),
+              Center(
+                child: TextButton(
+                  onPressed: withdrawing || state.submitting
+                      ? null
+                      : () => _withdraw(context, ref, role),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                  ),
+                  child: Text(l10n.rolesWithdraw),
+                ),
+              ),
             ],
           ),
         ),

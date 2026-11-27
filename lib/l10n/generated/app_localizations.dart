@@ -1408,6 +1408,12 @@ abstract class AppLocalizations {
   /// **'One or more documents were flagged — tap to fix and resubmit.'**
   String get onboardingRevisionCaption;
 
+  /// No description provided for @onboardingPendingCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review. Tap to withdraw this application.'**
+  String get onboardingPendingCaption;
+
   /// No description provided for @onboardingLearnApply.
   ///
   /// In en, this message translates to:
@@ -5794,6 +5800,48 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get rolesClose;
 
+  /// No description provided for @rolesWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw application'**
+  String get rolesWithdraw;
+
+  /// No description provided for @rolesWithdrawNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw {role} application'**
+  String rolesWithdrawNamed(String role);
+
+  /// No description provided for @rolesWithdrawTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw your {role} application?'**
+  String rolesWithdrawTitle(String role);
+
+  /// No description provided for @rolesWithdrawBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves the review queue for good. You can apply for this role again later.'**
+  String get rolesWithdrawBody;
+
+  /// No description provided for @rolesWithdrawKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get rolesWithdrawKeep;
+
+  /// No description provided for @rolesWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Application withdrawn'**
+  String get rolesWithdrawn;
+
+  /// No description provided for @rolesWithdrawFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t withdraw the application. Please try again.'**
+  String get rolesWithdrawFailed;
+
   /// No description provided for @venueBookNow.
   ///
   /// In en, this message translates to:
@@ -9844,6 +9892,24 @@ abstract class AppLocalizations {
   /// **'Provider Foxer'**
   String get provApplyEyebrow;
 
+  /// Above the switch between the Provider application and the Event Coordinator application, both reached from Provider Foxer.
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of work do you do?'**
+  String get applyWorkKindQuestion;
+
+  /// Switch tab: renting out gear, offering a service or performing (the Provider Foxer application).
+  ///
+  /// In en, this message translates to:
+  /// **'Gear & services'**
+  String get applyWorkKindGear;
+
+  /// Switch tab: running an event's logistics on the day (the Event Coordinator application).
+  ///
+  /// In en, this message translates to:
+  /// **'Event coordination'**
+  String get applyWorkKindCoordination;
+
   /// No description provided for @provApplyIntroTitle.
   ///
   /// In en, this message translates to:
@@ -9901,7 +9967,7 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyStepDocumentsHint.
   ///
   /// In en, this message translates to:
-  /// **'ID, NBI, TIN, BIR permit, selfie'**
+  /// **'ID, clearance, tax ID, business permit, selfie'**
   String get provApplyStepDocumentsHint;
 
   /// No description provided for @provApplyDuration.
@@ -10000,6 +10066,84 @@ abstract class AppLocalizations {
   /// **'Links to your work (optional)'**
   String get provApplyLinks;
 
+  /// No description provided for @provApplyLinksHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add any you have. Typing facebook.com/yourpage is enough.'**
+  String get provApplyLinksHelp;
+
+  /// No description provided for @provLinkFacebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook'**
+  String get provLinkFacebook;
+
+  /// No description provided for @provLinkInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get provLinkInstagram;
+
+  /// No description provided for @provLinkTiktok.
+  ///
+  /// In en, this message translates to:
+  /// **'TikTok'**
+  String get provLinkTiktok;
+
+  /// No description provided for @provLinkYoutube.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube'**
+  String get provLinkYoutube;
+
+  /// No description provided for @provLinkWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get provLinkWebsite;
+
+  /// No description provided for @provLinkFacebookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'facebook.com/yourpage'**
+  String get provLinkFacebookHint;
+
+  /// No description provided for @provLinkInstagramHint.
+  ///
+  /// In en, this message translates to:
+  /// **'instagram.com/yourname'**
+  String get provLinkInstagramHint;
+
+  /// No description provided for @provLinkTiktokHint.
+  ///
+  /// In en, this message translates to:
+  /// **'tiktok.com/@yourname'**
+  String get provLinkTiktokHint;
+
+  /// No description provided for @provLinkYoutubeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'youtube.com/@yourchannel'**
+  String get provLinkYoutubeHint;
+
+  /// No description provided for @provLinkWebsiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'yourwebsite.com'**
+  String get provLinkWebsiteHint;
+
+  /// No description provided for @provLinkInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a web address'**
+  String get provLinkInvalid;
+
+  /// No description provided for @provLinkWrongSite.
+  ///
+  /// In en, this message translates to:
+  /// **'That link isn\'t on {site}'**
+  String provLinkWrongSite(String site);
+
   /// No description provided for @provApplyNextCategories.
   ///
   /// In en, this message translates to:
@@ -10015,8 +10159,38 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyCategoriesBody.
   ///
   /// In en, this message translates to:
-  /// **'Tap every category you work in. Use the star to mark your main one.'**
+  /// **'Under each main category, tap everything you do. Use the star to mark your main one.'**
   String get provApplyCategoriesBody;
+
+  /// No description provided for @provApplyGroupEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category'**
+  String get provApplyGroupEyebrow;
+
+  /// No description provided for @provApplyGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get provApplyGroupOther;
+
+  /// No description provided for @provApplyGroupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 to pick from} other{{count} to pick from}}'**
+  String provApplyGroupCount(int count);
+
+  /// No description provided for @provApplyGroupPicked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} picked'**
+  String provApplyGroupPicked(int count);
+
+  /// No description provided for @provApplyGroupSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category {name}, {picked} picked'**
+  String provApplyGroupSemantics(String name, int picked);
 
   /// No description provided for @provApplyMain.
   ///
@@ -10147,19 +10321,25 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyDocNbi.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance'**
+  /// **'Police or background clearance'**
   String get provApplyDocNbi;
 
   /// No description provided for @provApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN ID'**
+  /// **'Tax ID document'**
   String get provApplyDocTin;
+
+  /// No description provided for @kycDocTaxNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A card, certificate or official letter is fine.'**
+  String get kycDocTaxNote;
 
   /// No description provided for @provApplyDocBir.
   ///
   /// In en, this message translates to:
-  /// **'BIR permit'**
+  /// **'Business registration or permit'**
   String get provApplyDocBir;
 
   /// No description provided for @provApplyDocSelfie.
@@ -10267,7 +10447,7 @@ abstract class AppLocalizations {
   /// No description provided for @provApplyAllDocs.
   ///
   /// In en, this message translates to:
-  /// **'All {count} added'**
+  /// **'{count, plural, =1{1 document added} other{{count} documents added}}'**
   String provApplyAllDocs(int count);
 
   /// No description provided for @provApplyAgree.
@@ -10387,7 +10567,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleWizVenueAboutHint.
   ///
   /// In en, this message translates to:
-  /// **'Name, contact, address, TIN'**
+  /// **'Name, contact, address, tax ID'**
   String get roleWizVenueAboutHint;
 
   /// No description provided for @roleWizVenueCategoriesHint.
@@ -10429,7 +10609,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleWizEventDocsHint.
   ///
   /// In en, this message translates to:
-  /// **'ID, NBI, TIN, BIR permit, selfie, portfolio'**
+  /// **'ID, clearance, tax ID, business permit, selfie, portfolio'**
   String get roleWizEventDocsHint;
 
   /// No description provided for @roleWizCoordIntroTitle.
@@ -10501,13 +10681,13 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyNbiNumber.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance ID number'**
+  /// **'Clearance number'**
   String get roleApplyNbiNumber;
 
   /// No description provided for @roleApplyTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN number (optional)'**
+  /// **'Tax ID (optional)'**
   String get roleApplyTin;
 
   /// No description provided for @roleApplyDocId.
@@ -10519,19 +10699,19 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyDocNbi.
   ///
   /// In en, this message translates to:
-  /// **'NBI clearance'**
+  /// **'Police or background clearance'**
   String get roleApplyDocNbi;
 
   /// No description provided for @roleApplyDocTin.
   ///
   /// In en, this message translates to:
-  /// **'TIN ID or certificate'**
+  /// **'Tax ID document'**
   String get roleApplyDocTin;
 
   /// No description provided for @roleApplyDocBir.
   ///
   /// In en, this message translates to:
-  /// **'BIR 2303 or permit'**
+  /// **'Business registration or permit'**
   String get roleApplyDocBir;
 
   /// No description provided for @roleApplyDocSelfie.
@@ -10771,8 +10951,44 @@ abstract class AppLocalizations {
   /// No description provided for @roleApplyTinRequired.
   ///
   /// In en, this message translates to:
-  /// **'TIN number'**
+  /// **'Tax ID'**
   String get roleApplyTinRequired;
+
+  /// No description provided for @roleApplyTaxCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country of your tax ID'**
+  String get roleApplyTaxCountry;
+
+  /// No description provided for @roleApplyTaxId.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax ID'**
+  String get roleApplyTaxId;
+
+  /// Tax number field label with what that country calls it, e.g. Tax ID (TIN).
+  ///
+  /// In en, this message translates to:
+  /// **'Tax ID ({name})'**
+  String roleApplyTaxIdNamed(String name);
+
+  /// No description provided for @roleApplyTaxIdExample.
+  ///
+  /// In en, this message translates to:
+  /// **'For example {example}'**
+  String roleApplyTaxIdExample(String example);
+
+  /// No description provided for @roleApplyTaxIdInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t look like a tax ID from this country. For example {example}'**
+  String roleApplyTaxIdInvalid(String example);
+
+  /// No description provided for @roleApplyTaxIdInvalidAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 4 to 20 letters or digits.'**
+  String get roleApplyTaxIdInvalidAny;
 
   /// No description provided for @roleSpecIndoor.
   ///

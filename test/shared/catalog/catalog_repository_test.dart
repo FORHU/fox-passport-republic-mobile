@@ -3,7 +3,9 @@ import 'package:flutter_template/core/config/environment.dart';
 import 'package:flutter_template/core/constants/api_endpoints.dart';
 import 'package:flutter_template/core/errors/exceptions.dart';
 import 'package:flutter_template/core/services/api_service.dart';
+import 'package:flutter_template/l10n/generated/app_localizations_en.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
+import 'package:flutter_template/shared/catalog/catalog_labels.dart';
 import 'package:flutter_template/shared/catalog/catalog_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -292,6 +294,36 @@ void main() {
     ]) {
       expect(query.containsKey(key), isFalse, reason: key);
     }
+  });
+
+  test('an event card names its venue with the city (api#511)', () {
+    final item = CatalogRepository.parse(CatalogKind.events, {
+      'id': 't1',
+      'name': 'Garden Party',
+      'targetCity': 'Baguio City',
+      'templateVenues': [
+        {
+          'venue': {'name': 'Sky Hall', 'city': 'Baguio City'},
+        },
+      ],
+    });
+
+    expect(item?.venueName, 'Sky Hall');
+    expect(
+      catalogSubtitle(AppLocalizationsEn(), item!),
+      'Sky Hall · Baguio City',
+    );
+  });
+
+  test('an event without a venue name shows the city alone', () {
+    final item = CatalogRepository.parse(CatalogKind.events, {
+      'id': 't1',
+      'name': 'Garden Party',
+      'targetCity': 'Baguio City',
+    });
+
+    expect(item?.venueName, isNull);
+    expect(catalogSubtitle(AppLocalizationsEn(), item!), 'Baguio City');
   });
 
   test('one event package it cannot read does not take the list down',

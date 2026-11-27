@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
+import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 
 /// The categories a provider can list under, as the API names them. The
@@ -34,6 +35,29 @@ const gearCategories = <String>[
   'equipment',
   'other',
 ];
+
+/// The categories a gear or service listing can go under: the catalog's
+/// subcategories of that kind (api#506), by main category, then `other`. With
+/// a catalog that names no kind (an older API) it is the fixed list above.
+/// [current] stays in, so an existing listing never loses its category.
+List<String> listingCategoryOptions({
+  required bool gear,
+  List<ProviderSpecialty>? catalog,
+  String? current,
+}) {
+  final kind = gear ? 'asset' : 'service';
+  final fromCatalog = [
+    for (final s in catalog ?? const <ProviderSpecialty>[])
+      if (s.listingKind == kind) s.slug,
+  ];
+  final base = fromCatalog.isEmpty
+      ? (gear ? gearCategories : serviceCategories)
+      : [...fromCatalog, 'other'];
+  return [
+    if (current != null && !base.contains(current)) current,
+    ...base,
+  ];
+}
 
 const gearConditions = <String>['new', 'good', 'fair', 'refurbished'];
 

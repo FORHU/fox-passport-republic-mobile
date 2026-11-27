@@ -6,9 +6,11 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/core/utils/web_app_launcher.dart';
 import 'package:flutter_template/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/presentation/controllers/role_withdraw_controller.dart';
 import 'package:flutter_template/routes/route_names.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/roles/role_request.dart';
+import 'package:flutter_template/shared/roles/withdraw_role_dialog.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -26,6 +28,8 @@ class RolesPage extends ConsumerWidget {
     final l10n = context.l10n;
     final requests = ref.watch(myRoleRequestsProvider);
     final held = ref.watch(authControllerProvider).user?.roleType ?? const [];
+    // Kept alive while the page is open, so a withdrawal in flight finishes.
+    ref.watch(roleWithdrawProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -56,6 +60,7 @@ class RolesPage extends ConsumerWidget {
                 status: _statusOf(role, held, requests.value ?? const []),
                 onTap: () => _tap(
                   context,
+                  ref,
                   role,
                   held,
                   requests.value ?? const [],
@@ -95,6 +100,7 @@ class RolesPage extends ConsumerWidget {
   /// opens its details.
   void _tap(
     BuildContext context,
+    WidgetRef ref,
     RoleCatalogEntry role,
     List<String> held,
     List<RoleRequestSummary> requests,
@@ -106,25 +112,49 @@ class RolesPage extends ConsumerWidget {
     if (sentBack != null && !held.contains(sentBack.roleType)) {
       unawaited(context.push(RouteNames.roleResubmit(sentBack.id)));
     } else {
-      unawaited(_open(context, role, _statusOf(role, held, requests)));
+      final status = _statusOf(role, held, requests);
+      unawaited(
+        _open(
+          context,
+          ref,
+          role,
+          status,
+          status == _RoleStatus.review
+              ? [
+                  for (final r in requests)
+                    if (covered.contains(r.roleType) && r.isPending) r,
+                ]
+              : const [],
+        ),
+      );
     }
   }
 
   Future<void> _open(
     BuildContext context,
+    WidgetRef ref,
     RoleCatalogEntry role,
     _RoleStatus status,
+    List<RoleRequestSummary> underReview,
   ) async {
-    final proceed = await showModalBottomSheet<bool>(
+    final choice = await showModalBottomSheet<_SheetChoice>(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => _RoleSheet(role: role, status: status),
+      builder: (_) => _RoleSheet(
+        role: role,
+        status: status,
+        underReview: underReview,
+      ),
     );
-    if (proceed != true || !context.mounted) return;
+    if (choice == null || !context.mounted) return;
+    if (choice case _Withdraw(:final request)) {
+      await _withdraw(context, ref, role, request);
+      return;
+    }
     // The roles with a form on the phone open it; the rest apply on the web.
     if (appliesInApp.contains(role.roleType)) {
       unawaited(context.push(RouteNames.roleApply(role.roleType)));
@@ -135,9 +165,58 @@ class RolesPage extends ConsumerWidget {
       showTopToast(context, context.l10n.onboardingWebNotConfigured);
     }
   }
+
+  /// Takes back an application still under review (api#367), once the
+  /// applicant confirms.
+  Future<void> _withdraw(
+    BuildContext context,
+    WidgetRef ref,
+    RoleCatalogEntry role,
+    RoleRequestSummary request,
+  ) async {
+    final l10n = context.l10n;
+    final title = requestTitle(role, request);
+    if (!await confirmWithdrawRole(context, title) || !context.mounted) return;
+    final error =
+        await ref.read(roleWithdrawProvider.notifier).withdraw(request.id);
+    if (!context.mounted) return;
+    showTopToast(
+      context,
+      error == null
+          ? l10n.rolesWithdrawn
+          : error.isEmpty
+              ? l10n.rolesWithdrawFailed
+              : error,
+    );
+  }
+}
+
+/// The name of the role an application on [role]'s card is for: the card's
+/// own title, or a subsection's (Event Coordinator on the Provider card).
+String requestTitle(RoleCatalogEntry role, RoleRequestSummary request) {
+  if (request.roleType == role.roleType) return role.title;
+  for (final sub in role.subsections) {
+    if (sub.roleType == request.roleType) return sub.title;
+  }
+  return role.title;
 }
 
 enum _RoleStatus { none, review, revision, active }
+
+/// How the role sheet was closed: apply, or withdraw one application.
+sealed class _SheetChoice {
+  const _SheetChoice();
+}
+
+class _Apply extends _SheetChoice {
+  const _Apply();
+}
+
+class _Withdraw extends _SheetChoice {
+  const _Withdraw(this.request);
+
+  final RoleRequestSummary request;
+}
 
 class _RoleCard extends StatelessWidget {
   const _RoleCard({
@@ -220,10 +299,17 @@ class _RoleCard extends StatelessWidget {
 }
 
 class _RoleSheet extends StatelessWidget {
-  const _RoleSheet({required this.role, required this.status});
+  const _RoleSheet({
+    required this.role,
+    required this.status,
+    this.underReview = const [],
+  });
 
   final RoleCatalogEntry role;
   final _RoleStatus status;
+
+  /// The applications under review on this card, each one withdrawable.
+  final List<RoleRequestSummary> underReview;
 
   @override
   Widget build(BuildContext context) {
@@ -293,13 +379,38 @@ class _RoleSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            for (final request in underReview) ...[
+              SizedBox(
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () =>
+                      Navigator.of(context).pop(_Withdraw(request)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 48),
+                    foregroundColor: AppColors.error,
+                    side: BorderSide(
+                      color: AppColors.error.withValues(alpha: 0.5),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: AppRadius.brSm,
+                    ),
+                  ),
+                  child: Text(
+                    underReview.length > 1
+                        ? l10n.rolesWithdrawNamed(requestTitle(role, request))
+                        : l10n.rolesWithdraw,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
             // A role you already hold, or have applied for, has nothing to
             // apply for: the sheet only shows its details.
             if (status == _RoleStatus.active || status == _RoleStatus.review)
               SizedBox(
                 height: 48,
                 child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(false),
+                  onPressed: () => Navigator.of(context).pop(),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48),
                     side: const BorderSide(color: AppColors.borderStrong),
@@ -317,7 +428,7 @@ class _RoleSheet extends StatelessWidget {
                     child: SizedBox(
                       height: 48,
                       child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(false),
+                        onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(0, 48),
                           side: const BorderSide(color: AppColors.borderStrong),
@@ -335,7 +446,8 @@ class _RoleSheet extends StatelessWidget {
                     child: SizedBox(
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(true),
+                        onPressed: () =>
+                            Navigator.of(context).pop(const _Apply()),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(0, 48),
                           backgroundColor: AppColors.accent,

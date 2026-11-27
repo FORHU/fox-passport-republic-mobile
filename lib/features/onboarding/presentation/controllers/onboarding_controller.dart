@@ -7,6 +7,8 @@ import 'package:flutter_template/features/onboarding/data/datasources/onboarding
 import 'package:flutter_template/features/onboarding/data/repositories/onboarding_repository.dart';
 import 'package:flutter_template/features/onboarding/domain/entities/onboarding_models.dart';
 import 'package:flutter_template/shared/roles/role_catalog.dart';
+import 'package:flutter_template/shared/roles/role_request.dart'
+    show myRoleRequestsProvider;
 
 // --- Providers ---
 
@@ -31,6 +33,7 @@ class OnboardingState extends Equatable {
     this.district = '',
     this.heldRoles = const [],
     this.pendingRoles = const [],
+    this.pendingRequests = const [],
     this.revisions = const [],
     this.countries = const [],
     this.states = const [],
@@ -53,6 +56,9 @@ class OnboardingState extends Equatable {
 
   /// `roleType`s with an application under review.
   final List<String> pendingRoles;
+
+  /// Those applications, so one can be withdrawn (api#367).
+  final List<RoleRequestSummary> pendingRequests;
 
   /// Applications an admin flagged for resubmission.
   final List<RoleRequestSummary> revisions;
@@ -134,6 +140,7 @@ class OnboardingState extends Equatable {
     String? district,
     List<String>? heldRoles,
     List<String>? pendingRoles,
+    List<RoleRequestSummary>? pendingRequests,
     List<RoleRequestSummary>? revisions,
     List<GeoCountry>? countries,
     List<GeoState>? states,
@@ -152,6 +159,7 @@ class OnboardingState extends Equatable {
         district: district ?? this.district,
         heldRoles: heldRoles ?? this.heldRoles,
         pendingRoles: pendingRoles ?? this.pendingRoles,
+        pendingRequests: pendingRequests ?? this.pendingRequests,
         revisions: revisions ?? this.revisions,
         countries: countries ?? this.countries,
         states: states ?? this.states,
@@ -173,6 +181,7 @@ class OnboardingState extends Equatable {
         district,
         heldRoles,
         pendingRoles,
+        pendingRequests,
         revisions,
         countries,
         states,
@@ -247,10 +256,11 @@ class OnboardingController extends Notifier<OnboardingState> {
           (_) => null,
         );
 
-    final pending = [
+    final pendingRequests = [
       for (final r in requests)
-        if (r.isPending) r.roleType,
+        if (r.isPending) r,
     ];
+    final pending = [for (final r in pendingRequests) r.roleType];
     final revisions = [
       for (final r in requests)
         if (r.needsRevision) r,
@@ -264,6 +274,7 @@ class OnboardingController extends Notifier<OnboardingState> {
       city: profile?.city,
       district: profile?.district,
       pendingRoles: pending,
+      pendingRequests: pendingRequests,
       revisions: revisions,
       countries: countries,
       isLoading: false,
@@ -275,6 +286,40 @@ class OnboardingController extends Notifier<OnboardingState> {
 
     // A saved address needs its state and city lists to show as selected.
     if (state.countryCode != null) await _loadStates();
+  }
+
+  /// Takes back an application still under review (api#367). Returns null
+  /// when the API took it, or what it said when it refused ('' when there is
+  /// nothing to show).
+  Future<String?> withdraw(String requestId) async {
+    final result = await _repo.withdrawRoleRequest(requestId);
+    final error = result.fold((failure) => failure.message, (_) => null);
+    // The screen may have closed meanwhile, which disposed this controller.
+    if (!ref.mounted) return error;
+    // Either way, show where the applications stand now.
+    ref.invalidate(myRoleRequestsProvider);
+    await _reloadRequests();
+    return error;
+  }
+
+  Future<void> _reloadRequests() async {
+    final result = await _repo.fetchMyRoleRequests();
+    if (!ref.mounted) return;
+    result.fold((_) {}, (requests) {
+      final pendingRequests = [
+        for (final r in requests)
+          if (r.isPending) r,
+      ];
+      state = state.copyWith(
+        pendingRoles: [for (final r in pendingRequests) r.roleType],
+        pendingRequests: pendingRequests,
+        revisions: [
+          for (final r in requests)
+            if (r.needsRevision) r,
+        ],
+        error: state.error,
+      );
+    });
   }
 
   // ── Profile fields ───────────────────────────────────────────────────

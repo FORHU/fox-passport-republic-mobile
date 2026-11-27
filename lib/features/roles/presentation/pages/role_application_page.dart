@@ -275,7 +275,7 @@ class _RoleApplicationPageState extends ConsumerState<RoleApplicationPage> {
                       ),
                     ),
                   ),
-                for (final slot in d.requiredDocuments)
+                for (final slot in d.askedDocuments)
                   DocumentRow(
                     label: _documentLabel(l10n, slot),
                     photo: d.documents[slot],

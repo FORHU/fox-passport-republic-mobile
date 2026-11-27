@@ -103,6 +103,25 @@ void main() {
       );
     });
 
+    test('a venue is never optional, whatever its line says (api#477)', () {
+      final old = EventPackage.fromJson(const {
+        'id': 'x',
+        'name': 'Old package',
+        'estimatedTotal': 10500,
+        'platformFeeAmount': 500,
+        'templateVenues': [
+          {
+            'id': 'tv9',
+            'isOptional': true,
+            'agreedPrice': 10000,
+            'venue': {'name': 'Sky Hall'},
+          },
+        ],
+      });
+      expect(old.optionalItems, isEmpty);
+      expect(old.quote({'tv9'}).package, 10000);
+    });
+
     test('an event with no price is not bookable', () {
       final empty = EventPackage.fromJson(const {
         'id': 'x',
@@ -336,7 +355,8 @@ void main() {
       expect(sent['guestCount'], 4);
       expect(sent['excludedAssetIds'], ['ta1']);
       expect(sent['excludedServiceIds'], isEmpty);
-      expect(sent['excludedVenueIds'], isEmpty);
+      // Every event has a venue (api#477): it is never excluded.
+      expect(sent.containsKey('excludedVenueIds'), isFalse);
       expect(receipt.awaitingSuppliers, 0);
     });
 

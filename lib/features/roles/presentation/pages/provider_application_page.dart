@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/provider_application.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
+import 'package:flutter_template/features/roles/domain/work_links.dart';
 import 'package:flutter_template/features/roles/presentation/controllers/provider_application_controller.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/apply_wizard.dart';
 import 'package:flutter_template/features/roles/presentation/widgets/document_row.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_template/shared/widgets/app_state_view.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 /// Applying to be a Provider, in four steps (mobile#487): business,
@@ -99,14 +101,6 @@ class _BusinessStep extends ConsumerWidget {
       ),
     );
     final c = ref.read(providerApplicationProvider.notifier);
-    final linkProblem = switch (d.portfolioProblem) {
-      PortfolioLinkInvalid(:final link) =>
-        l10n.roleApplyPortfolioLinkInvalid(link),
-      PortfolioLinksTooMany() => l10n.roleApplyPortfolioTooMany(
-          maxPortfolioLinks,
-        ),
-      null => null,
-    };
     final yearsBad = d.experience.trim().isNotEmpty && d.years == null;
     return ApplyScreen(
       header: const _StepHeader(1),
@@ -207,15 +201,98 @@ class _BusinessStep extends ConsumerWidget {
         ),
         ApplyField(
           label: l10n.provApplyLinks,
-          help: linkProblem == null ? l10n.roleApplyPortfolioLinksHint : null,
-          child: TextFormField(
-            initialValue: d.portfolio,
-            keyboardType: TextInputType.url,
-            decoration: InputDecoration(errorText: linkProblem),
-            onChanged: (v) => c.edit((x) => x.copyWith(portfolio: v)),
+          help: l10n.provApplyLinksHelp,
+          child: Column(
+            children: [
+              for (final kind in WorkLinkKind.values)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _WorkLinkField(
+                    kind: kind,
+                    value: d.links[kind] ?? '',
+                    problem: d.linkProblems[kind],
+                    onChanged: (v) => c.edit(
+                      (x) => x.copyWith(links: {...x.links, kind: v}),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// One place a Provider shows their work: its icon and a field for the link
+/// (mobile#519).
+class _WorkLinkField extends StatelessWidget {
+  const _WorkLinkField({
+    required this.kind,
+    required this.value,
+    required this.problem,
+    required this.onChanged,
+  });
+
+  final WorkLinkKind kind;
+  final String value;
+  final WorkLinkProblem? problem;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final (name, hint, icon) = switch (kind) {
+      WorkLinkKind.facebook => (
+          l10n.provLinkFacebook,
+          l10n.provLinkFacebookHint,
+          FontAwesomeIcons.facebook,
+        ),
+      WorkLinkKind.instagram => (
+          l10n.provLinkInstagram,
+          l10n.provLinkInstagramHint,
+          FontAwesomeIcons.instagram,
+        ),
+      WorkLinkKind.tiktok => (
+          l10n.provLinkTiktok,
+          l10n.provLinkTiktokHint,
+          FontAwesomeIcons.tiktok,
+        ),
+      WorkLinkKind.youtube => (
+          l10n.provLinkYoutube,
+          l10n.provLinkYoutubeHint,
+          FontAwesomeIcons.youtube,
+        ),
+      WorkLinkKind.website => (
+          l10n.provLinkWebsite,
+          l10n.provLinkWebsiteHint,
+          FontAwesomeIcons.globe,
+        ),
+    };
+    return TextFormField(
+      key: Key('work-link-${kind.name}'),
+      initialValue: value,
+      keyboardType: TextInputType.url,
+      autocorrect: false,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: name,
+        hintText: hint,
+        floatingLabelBehavior: FloatingLabelBehavior.never,
+        prefixIcon: SizedBox(
+          width: 48,
+          child: Center(
+            child: FaIcon(icon, size: 18, color: AppColors.textPrimary),
+          ),
+        ),
+        prefixIconConstraints:
+            const BoxConstraints(minWidth: 48, minHeight: 48),
+        errorText: switch (problem) {
+          WorkLinkProblem.invalid => l10n.provLinkInvalid,
+          WorkLinkProblem.wrongSite => l10n.provLinkWrongSite(name),
+          null => null,
+        },
+      ),
     );
   }
 }
@@ -267,32 +344,145 @@ class _CategoriesStep extends ConsumerWidget {
                 actionLabel: l10n.retry,
                 onAction: () => ref.invalidate(providerSpecialtiesProvider),
               ),
-              data: (list) => LayoutBuilder(
-                builder: (context, box) {
-                  final width = (box.maxWidth - 8) / 2;
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final s in list)
-                        SizedBox(
-                          width: width,
-                          child: ApplyCategoryCard(
-                            name: s.name,
-                            picked: d.specializations.contains(s.slug),
-                            isMain: main == s.slug,
-                            onTap: () => c.toggle(s.slug),
-                            onMakeMain: () => c.makeMain(s.slug),
-                          ),
+              data: (list) {
+                Widget cards(List<ProviderSpecialty> items) => LayoutBuilder(
+                      builder: (context, box) {
+                        final width = (box.maxWidth - 8) / 2;
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final s in items)
+                              SizedBox(
+                                width: width,
+                                child: ApplyCategoryCard(
+                                  name: s.name,
+                                  picked: d.specializations.contains(s.slug),
+                                  isMain: main == s.slug,
+                                  onTap: () => c.toggle(s.slug),
+                                  onMakeMain: () => c.makeMain(s.slug),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    );
+                final groups = groupSpecialties(list);
+                // An API from before main categories (api#503): one list.
+                if (groups.every((g) => g.$1 == null)) return cards(list);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final (group, items) in groups)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 22),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _GroupHeading(
+                              group: group,
+                              total: items.length,
+                              picked: items
+                                  .where(
+                                    (s) => d.specializations.contains(s.slug),
+                                  )
+                                  .length,
+                            ),
+                            const SizedBox(height: 10),
+                            cards(items),
+                          ],
                         ),
-                    ],
-                  );
-                },
-              ),
+                      ),
+                  ],
+                );
+              },
             ),
         const SizedBox(height: 18),
         const SuggestSpecialty(),
       ],
+    );
+  }
+}
+
+/// A main category's heading (api#503): an icon, its name, and how many of
+/// its subcategories are picked. Not tappable: only the subcategories under it
+/// are picked, which is what tells the two apart.
+class _GroupHeading extends StatelessWidget {
+  const _GroupHeading({
+    required this.group,
+    required this.total,
+    required this.picked,
+  });
+
+  /// Null for the specialties that have no main category.
+  final ProviderSpecialtyGroup? group;
+  final int total;
+  final int picked;
+
+  static IconData _icon(String? name) => switch (name) {
+        'speaker' => Icons.speaker_outlined,
+        'photo_camera' => Icons.photo_camera_outlined,
+        'music_note' => Icons.music_note_outlined,
+        'restaurant' => Icons.restaurant_outlined,
+        'celebration' => Icons.celebration_outlined,
+        'chair' => Icons.chair_outlined,
+        'support_agent' => Icons.support_agent_outlined,
+        'face' => Icons.face_outlined,
+        'directions_car' => Icons.directions_car_outlined,
+        _ => Icons.category_outlined,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final name = group?.name ?? l10n.provApplyGroupOther;
+    return Semantics(
+      header: true,
+      label: l10n.provApplyGroupSemantics(name, picked),
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.border)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceRaised,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _icon(group?.icon),
+                size: 20,
+                color: AppColors.accent,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  applyEyebrow(l10n.provApplyGroupEyebrow),
+                  const SizedBox(height: 2),
+                  Text(name, style: AppTypography.display(size: 17)),
+                ],
+              ),
+            ),
+            Text(
+              picked > 0
+                  ? l10n.provApplyGroupPicked(picked)
+                  : l10n.provApplyGroupCount(total),
+              style: AppTypography.body(
+                size: 12,
+                color: picked > 0 ? AppColors.accent : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -565,10 +755,12 @@ class _DocumentsStep extends ConsumerWidget {
       ],
       children: [
         ApplyTitle(l10n.provApplyDocumentsTitle, l10n.provApplyDocumentsBody),
-        for (final doc in ProviderApplicationDraft.requiredDocuments)
+        for (final doc in ProviderApplicationDraft.askedDocuments)
           DocumentRow(
             boxed: true,
+            optional: !ProviderApplicationDraft.requiredDocuments.contains(doc),
             label: applyDocumentLabel(l10n, doc),
+            note: applyDocumentNote(l10n, doc),
             photo: d.documents[doc],
             frontCamera: doc == KycDocument.selfie,
             onPicked: (p) => c.setDocument(doc, p),
@@ -698,21 +890,10 @@ class _ReviewStep extends ConsumerWidget {
           title: l10n.provApplyDocumentsSection,
           onEdit: () => c.goTo(ProviderApplyStep.documents),
           children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.check_rounded,
-                  size: 16,
-                  color: AppColors.success,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.provApplyAllDocs(
-                    ProviderApplicationDraft.requiredDocuments.length,
-                  ),
-                  style: AppTypography.body(color: AppColors.textPrimary),
-                ),
-              ],
+            ApplyAllDocuments(
+              count: ProviderApplicationDraft.askedDocuments
+                  .where(d.documents.containsKey)
+                  .length,
             ),
           ],
         ),

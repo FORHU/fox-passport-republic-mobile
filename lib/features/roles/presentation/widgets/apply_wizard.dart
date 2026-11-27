@@ -3,7 +3,6 @@ import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/roles/domain/role_application.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/route_names.dart';
-import 'package:flutter_template/shared/roles/role_catalog.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -226,8 +225,12 @@ class ApplyField extends StatelessWidget {
   }
 }
 
-/// The two Provider-family roles side by side, as in the role catalog
-/// (mobile#488): switching opens the other one's application.
+/// The two kinds of Provider work, as in the role catalog (mobile#488):
+/// gear, services and performing (`providerFoxer`) or event coordination,
+/// which is its own role on the server (`organizer`). Switching opens the
+/// other one's application. Labelled as kinds of work, not role titles, so
+/// someone who picked Provider Foxer doesn't read it as a second role
+/// (mobile#526).
 class ApplyRoleSwitch extends StatelessWidget {
   const ApplyRoleSwitch({required this.current, super.key});
 
@@ -237,6 +240,24 @@ class ApplyRoleSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    String label(String role) => role == 'organizer'
+        ? l10n.applyWorkKindCoordination
+        : l10n.applyWorkKindGear;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.applyWorkKindQuestion,
+          style: AppTypography.label(color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 8),
+        _switch(context, label),
+      ],
+    );
+  }
+
+  Widget _switch(BuildContext context, String Function(String) label) {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -268,7 +289,7 @@ class ApplyRoleSwitch extends StatelessWidget {
                       borderRadius: AppRadius.brSm,
                     ),
                     child: Text(
-                      roleTitleFor(role) ?? role,
+                      label(role),
                       style: AppTypography.label(
                         color: role == current
                             ? AppColors.onAccent
@@ -311,7 +332,7 @@ class ApplyIntro extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onStart;
 
-  /// Shown above the eyebrow, such as the Provider / Event Coordinator switch.
+  /// Shown above the eyebrow, such as the kind-of-Provider-work switch.
   final Widget? top;
 
   @override
@@ -623,7 +644,8 @@ class ApplyReviewSection extends StatelessWidget {
   }
 }
 
-/// "All N added" with a check, for the review screen.
+/// "N documents added" with a check, for the review screen. Optional ones
+/// may be left out, so it counts what was added (mobile#529).
 class ApplyAllDocuments extends StatelessWidget {
   const ApplyAllDocuments({required this.count, super.key});
 
@@ -868,3 +890,7 @@ String applyDocumentLabel(AppLocalizations l10n, KycDocument doc) =>
       KycDocument.selfie => l10n.provApplyDocSelfie,
       KycDocument.backgroundClearance => l10n.roleApplyDocClearance,
     };
+
+/// A line under a document saying which papers count for it, or null.
+String? applyDocumentNote(AppLocalizations l10n, KycDocument doc) =>
+    doc == KycDocument.tinId ? l10n.kycDocTaxNote : null;

@@ -53,6 +53,7 @@ class ApiEndpoints {
   static const String roleRequestsApply = '/role-requests/apply';
   static String roleRequestResubmit(String id) =>
       '/role-requests/$id/resubmit-documents';
+  static String roleRequestWithdraw(String id) => '/role-requests/$id/withdraw';
   static const String locationCountries = '/locations/countries';
   static String locationStates(String countryCode) =>
       '/locations/countries/$countryCode/states';
@@ -60,6 +61,8 @@ class ApiEndpoints {
       '/locations/countries/$countryCode/barangays';
   static String locationCities(String countryCode) =>
       '/locations/countries/$countryCode/cities';
+  static String locationTinFormats(String countryCode) =>
+      '/locations/countries/$countryCode/tin-formats';
 
   // ── Browse ──────────────────────────────────────────────────────────────
   static const String events = '/event-templates';

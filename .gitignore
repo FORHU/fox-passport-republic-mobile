@@ -63,6 +63,10 @@ unlinked_spec.ds
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
+# Google Play service account keys
+*service-account*.json
+*service_account*.json
+play-*.json
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
