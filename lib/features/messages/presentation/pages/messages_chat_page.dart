@@ -1197,6 +1197,20 @@ class _SharedPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A tap opens the post itself (mobile#482); a long press still reaches
+    // the message bubble's own actions.
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        key: ValueKey('shared-post-${post.id}'),
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.push(RouteNames.republicPost(post.id)),
+        child: _card(context),
+      ),
+    );
+  }
+
+  Widget _card(BuildContext context) {
     final l10n = context.l10n;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
