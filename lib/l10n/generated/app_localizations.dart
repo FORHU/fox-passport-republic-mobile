@@ -8932,6 +8932,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 comment} other{{count} comments}}'**
   String republicCommentsCount(int count);
 
+  /// No description provided for @republicRepostsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{n} repost} other{{n} reposts}}'**
+  String republicRepostsCount(int count, String n);
+
+  /// No description provided for @republicViewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{n} view} other{{n} views}}'**
+  String republicViewsCount(int count, String n);
+
+  /// No description provided for @republicSendsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} sent'**
+  String republicSendsCount(String n);
+
+  /// No description provided for @republicSharesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{n} share} other{{n} shares}}'**
+  String republicSharesCount(int count, String n);
+
   /// No description provided for @republicDaysAgo.
   ///
   /// In en, this message translates to:

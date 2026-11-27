@@ -5,8 +5,10 @@ import 'package:flutter_template/features/republic/domain/post.dart';
 import 'package:flutter_template/features/republic/domain/reaction.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/feed_video.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/post_embeds.dart';
+import 'package:flutter_template/features/republic/presentation/widgets/post_view_watcher.dart';
 import 'package:flutter_template/features/republic/presentation/widgets/reaction_picker.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
+import 'package:flutter_template/shared/formatting/compact_count.dart';
 import 'package:flutter_template/shared/widgets/network_image_box.dart';
 import 'package:flutter_template/shared/widgets/post_media.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
@@ -79,6 +81,7 @@ class PostCard extends StatefulWidget {
     this.onOpenListing,
     this.onMessage,
     this.onShare,
+    this.onSeen,
     this.onHashtag,
     this.onOpenVideo,
     super.key,
@@ -118,6 +121,10 @@ class PostCard extends StatefulWidget {
   /// Opens Share: repost, send in a message, copy the link.
   final VoidCallback? onShare;
 
+  /// The post has been seen (half on screen for a second), to count a view
+  /// (mobile#541). Called at most once; nothing is watched when null.
+  final VoidCallback? onSeen;
+
   /// A `#tag` in the words was tapped; it is passed with its `#`.
   final ValueChanged<String>? onHashtag;
 
@@ -141,7 +148,7 @@ class _PostCardState extends State<PostCard> {
     final age = postAge(l10n, post.createdAt, locale);
     final muted = AppTypography.body(size: 13, color: AppColors.textMuted);
 
-    return ColoredBox(
+    final card = ColoredBox(
       color: AppColors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,14 +298,39 @@ class _PostCardState extends State<PostCard> {
                     ],
                   ),
                 ),
-                const Spacer(),
-                Text(
-                  l10n.republicCommentsCount(post.commentsCount),
-                  style: muted,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    postActivityLine(
+                      l10n,
+                      post,
+                      locale: Localizations.localeOf(context).toString(),
+                    ),
+                    key: const ValueKey('post-activity'),
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: muted,
+                  ),
                 ),
               ],
             ),
           ),
+          if (post.viewsCount > 0)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  l10n.republicViewsCount(
+                    post.viewsCount,
+                    compactCount(post.viewsCount, locale: locale),
+                  ),
+                  key: const ValueKey('post-views'),
+                  style: muted,
+                ),
+              ),
+            ),
           const Divider(height: 1, color: AppColors.border),
           Row(
             children: [
@@ -329,7 +361,29 @@ class _PostCardState extends State<PostCard> {
         ],
       ),
     );
+    final onSeen = widget.onSeen;
+    if (onSeen == null) return card;
+    return PostViewWatcher(postId: post.id, onSeen: onSeen, child: card);
   }
+}
+
+/// "3 comments · 2 reposts · 1 sent · 4 shares" (app#303). The comment count
+/// always shows, as before; the others only once they are above zero, in
+/// short form (1.2K) so the line stays on one row.
+String postActivityLine(
+  AppLocalizations l10n,
+  Post post, {
+  String? locale,
+}) {
+  String short(int n) => compactCount(n, locale: locale);
+  return [
+    l10n.republicCommentsCount(post.commentsCount),
+    if (post.repostsCount > 0)
+      l10n.republicRepostsCount(post.repostsCount, short(post.repostsCount)),
+    if (post.sendsCount > 0) l10n.republicSendsCount(short(post.sendsCount)),
+    if (post.sharesCount > 0)
+      l10n.republicSharesCount(post.sharesCount, short(post.sharesCount)),
+  ].join(' · ');
 }
 
 /// The words of a post, folded behind "See more" when they are long.

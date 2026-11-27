@@ -5000,6 +5000,44 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String republicRepostsCount(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n reposts',
+      one: '$n repost',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String republicViewsCount(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n views',
+      one: '$n view',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String republicSendsCount(String n) {
+    return '$n sent';
+  }
+
+  @override
+  String republicSharesCount(int count, String n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$n shares',
+      one: '$n share',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String republicDaysAgo(int count) {
     return '${count}d';
   }

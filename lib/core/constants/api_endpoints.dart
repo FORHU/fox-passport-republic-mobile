@@ -253,6 +253,8 @@ class ApiEndpoints {
   static String feedPost(String id) => '/feed/$id';
   static String feedSave(String id) => '/feed/$id/save';
   static String feedRepost(String id) => '/feed/$id/repost';
+  static String feedShare(String id) => '/feed/$id/share';
+  static const String feedViews = '/feed/views';
   static String feedPollVote(String id) => '/feed/$id/poll/vote';
   static String feedHide(String id) => '/feed/$id/hide';
   static const String feedSaved = '/feed/saved';
