@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/utils/context_extensions.dart';
 import 'package:flutter_template/features/messages/data/photo_picker.dart';
 import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
+import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/venue_studio_controller.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/service_area_map.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
@@ -100,6 +101,9 @@ class VenueStudioPage extends ConsumerWidget {
             StudioStep.pricing => StudioCard(
                 child: _PricingStep(state: state, ref: ref, id: venueId),
               ),
+            StudioStep.availability => StudioCard(
+                child: _AvailabilityStep(state: state, ref: ref, id: venueId),
+              ),
             StudioStep.review => StudioCard(child: _ReviewStep(state: state)),
           },
         ],
@@ -161,6 +165,7 @@ String _stepLabel(AppLocalizations l10n, StudioStep step) => switch (step) {
       StudioStep.photos => l10n.studioStepPhotos,
       StudioStep.details => l10n.studioStepDetails,
       StudioStep.pricing => l10n.studioStepPricing,
+      StudioStep.availability => l10n.studioStepAvailability,
       StudioStep.review => l10n.studioStepReview,
     };
 
@@ -857,6 +862,253 @@ class _PricingStep extends StatelessWidget {
       ],
     );
   }
+}
+
+/// The days the venue is closed (mobile#506): a month calendar where a tap
+/// closes an open day and opens a closed one, as on the web's Venue Studio.
+/// A saved venue also shows the days citizens booked, which stay as they are.
+class _AvailabilityStep extends StatefulWidget {
+  const _AvailabilityStep({
+    required this.state,
+    required this.ref,
+    required this.id,
+  });
+
+  final VenueStudioState state;
+  final WidgetRef ref;
+  final String? id;
+
+  @override
+  State<_AvailabilityStep> createState() => _AvailabilityStepState();
+}
+
+class _AvailabilityStepState extends State<_AvailabilityStep> {
+  late DateTime _month = _firstOf(DateTime.now());
+
+  static DateTime _firstOf(DateTime d) => DateTime(d.year, d.month);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final material = MaterialLocalizations.of(context);
+    final state = widget.state;
+    final closed = state.closedDays;
+    final controller = widget.ref.read(venueStudioProvider(widget.id).notifier);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final thisMonth = _firstOf(now);
+    final daysInMonth = DateTime(_month.year, _month.month + 1, 0).day;
+    final firstWeekday = material.firstDayOfWeekIndex; // 0 is Sunday
+    final lead = (_month.weekday % 7 - firstWeekday) % 7;
+    final names = [
+      for (var i = 0; i < 7; i++)
+        material.narrowWeekdays[(firstWeekday + i) % 7],
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.id == null
+              ? l10n.studioAvailabilityHint
+              : l10n.studioAvailabilityHintSaved,
+          style: AppTypography.body(size: 13, color: AppColors.textMuted),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            IconButton(
+              tooltip: l10n.studioPrevMonth,
+              onPressed: _month.isAfter(thisMonth)
+                  ? () => setState(
+                        () => _month = DateTime(_month.year, _month.month - 1),
+                      )
+                  : null,
+              icon: const Icon(Icons.chevron_left_rounded),
+            ),
+            Expanded(
+              child: Text(
+                material.formatMonthYear(_month),
+                textAlign: TextAlign.center,
+                style: AppTypography.body(weight: FontWeight.w600),
+              ),
+            ),
+            IconButton(
+              tooltip: l10n.studioNextMonth,
+              onPressed: () => setState(
+                () => _month = DateTime(_month.year, _month.month + 1),
+              ),
+              icon: const Icon(Icons.chevron_right_rounded),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            for (final n in names)
+              Expanded(
+                child: Text(
+                  n,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.label(),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        GridView.count(
+          crossAxisCount: 7,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          children: [
+            for (var i = 0; i < lead; i++) const SizedBox.shrink(),
+            for (var day = 1; day <= daysInMonth; day++)
+              _DayCell(
+                day: DateTime(_month.year, _month.month, day),
+                past: DateTime(_month.year, _month.month, day).isBefore(today),
+                booked: state.bookedDays
+                    .contains(DateTime(_month.year, _month.month, day)),
+                closed:
+                    closed.contains(DateTime(_month.year, _month.month, day)),
+                onTap: () => controller
+                    .toggleDay(DateTime(_month.year, _month.month, day)),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 16,
+          runSpacing: 6,
+          children: [
+            if (widget.id != null)
+              _Legend(color: AppColors.pink, label: l10n.studioDayBooked),
+            _Legend(color: AppColors.textMuted, label: l10n.studioDayClosed),
+            _Legend(
+              color: AppColors.borderStrong,
+              label: l10n.studioDayOpen,
+              outlined: true,
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.studioDaysClosedCount(
+            closed.where((d) => !d.isBefore(today)).length,
+          ),
+          style: AppTypography.body(size: 13),
+        ),
+        if (state.daysFailed)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              l10n.studioDayFailed,
+              style: AppTypography.body(size: 13, color: AppColors.error),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _DayCell extends StatelessWidget {
+  const _DayCell({
+    required this.day,
+    required this.past,
+    required this.booked,
+    required this.closed,
+    required this.onTap,
+  });
+
+  final DateTime day;
+  final bool past;
+  final bool booked;
+  final bool closed;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final label = booked
+        ? l10n.studioDayBooked
+        : closed
+            ? l10n.studioDayClosed
+            : l10n.studioDayOpen;
+    final tappable = !past && !booked;
+    final Color fill;
+    final Color text;
+    if (booked) {
+      fill = AppColors.pink.withValues(alpha: 0.35);
+      text = AppColors.textPrimary;
+    } else if (closed && !past) {
+      fill = AppColors.textMuted;
+      text = AppColors.canvas;
+    } else {
+      fill = AppColors.clear;
+      text = past ? AppColors.textFaint : AppColors.textPrimary;
+    }
+    return Semantics(
+      button: tappable,
+      enabled: tappable,
+      label: l10n.studioDaySemantics(
+        MaterialLocalizations.of(context).formatFullDate(day),
+        label,
+      ),
+      excludeSemantics: true,
+      child: InkWell(
+        key: Key('day-${dayKey(day)}'),
+        onTap: tappable ? onTap : null,
+        borderRadius: AppRadius.brMd,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: AppRadius.brMd,
+            border: Border.all(
+              color: past || booked || closed
+                  ? AppColors.clear
+                  : AppColors.borderStrong,
+            ),
+          ),
+          child: Text(
+            '${day.day}',
+            style: AppTypography.body(size: 13, color: text),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Legend extends StatelessWidget {
+  const _Legend({
+    required this.color,
+    required this.label,
+    this.outlined = false,
+  });
+
+  final Color color;
+  final String label;
+  final bool outlined;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: outlined ? AppColors.clear : color,
+              shape: BoxShape.circle,
+              border: outlined ? Border.all(color: color) : null,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(label, style: AppTypography.label()),
+        ],
+      );
 }
 
 class _ReviewStep extends StatelessWidget {

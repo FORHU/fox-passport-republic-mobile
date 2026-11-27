@@ -4444,6 +4444,72 @@ abstract class AppLocalizations {
   /// **'Pricing'**
   String get studioStepPricing;
 
+  /// No description provided for @studioStepAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get studioStepAvailability;
+
+  /// No description provided for @studioAvailabilityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a day to close it, and again to open it. Citizens can\'t book closed days.'**
+  String get studioAvailabilityHint;
+
+  /// No description provided for @studioAvailabilityHintSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap an open day to close it, and again to open it. Booked days stay as they are. Changes save at once.'**
+  String get studioAvailabilityHintSaved;
+
+  /// No description provided for @studioDayBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get studioDayBooked;
+
+  /// No description provided for @studioDayClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed by you'**
+  String get studioDayClosed;
+
+  /// No description provided for @studioDayOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get studioDayOpen;
+
+  /// No description provided for @studioDaysClosedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =0{No days closed} =1{1 day closed} other{{n} days closed}}'**
+  String studioDaysClosedCount(int n);
+
+  /// No description provided for @studioDayFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That day didn\'t change. Try again.'**
+  String get studioDayFailed;
+
+  /// No description provided for @studioPrevMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get studioPrevMonth;
+
+  /// No description provided for @studioNextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get studioNextMonth;
+
+  /// No description provided for @studioDaySemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, {state}'**
+  String studioDaySemantics(String date, String state);
+
   /// No description provided for @studioStepReview.
   ///
   /// In en, this message translates to:
