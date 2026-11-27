@@ -28,7 +28,8 @@ class VenueStudioState {
     this.loading = false,
     this.loadFailed = false,
     this.saving = false,
-    this.uploading = false,
+    this.pendingPhotos = const [],
+    this.failedPhotos = 0,
     this.error,
     this.live = false,
     this.neighbours = const [],
@@ -65,7 +66,14 @@ class VenueStudioState {
   final bool loading;
   final bool loadFailed;
   final bool saving;
-  final bool uploading;
+
+  /// Photos chosen and still uploading, shown as previews until they land
+  /// (mobile#499).
+  final List<PickedPhoto> pendingPhotos;
+  bool get uploading => pendingPhotos.isNotEmpty;
+
+  /// How many of the last photos chosen did not upload.
+  final int failedPhotos;
 
   /// Why the last save or upload did not work, in words for the host.
   final String? error;
@@ -112,7 +120,8 @@ class VenueStudioState {
     bool? loading,
     bool? loadFailed,
     bool? saving,
-    bool? uploading,
+    List<PickedPhoto>? pendingPhotos,
+    int? failedPhotos,
     String? error,
     bool clearError = false,
     bool? live,
@@ -138,7 +147,8 @@ class VenueStudioState {
         loading: loading ?? this.loading,
         loadFailed: loadFailed ?? this.loadFailed,
         saving: saving ?? this.saving,
-        uploading: uploading ?? this.uploading,
+        pendingPhotos: pendingPhotos ?? this.pendingPhotos,
+        failedPhotos: failedPhotos ?? this.failedPhotos,
         error: clearError ? null : error ?? this.error,
         live: live ?? this.live,
         neighbours: neighbours ?? this.neighbours,
@@ -414,30 +424,61 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     if (i > 0) goTo(StudioStep.values[i - 1]);
   }
 
+  /// The most photos a venue keeps (the API refuses a sixth).
+  static const maxPhotos = 5;
+
+  /// How many more photos can be chosen now.
+  int get photoRoom =>
+      maxPhotos - state.draft.photos.length - state.pendingPhotos.length;
+
   /// Uploads a photo and adds it, up to five.
-  Future<void> addPhoto(PickedPhoto photo) async {
-    if (state.draft.photos.length >= 5) return;
-    state = state.copyWith(uploading: true, clearError: true);
-    try {
-      final uploaded = await _repo.uploadVenuePhoto(photo);
-      if (!ref.mounted) return;
+  Future<void> addPhoto(PickedPhoto photo) => addPhotos([photo]);
+
+  /// Uploads several photos chosen at once (mobile#499), in the order chosen
+  /// so the first stays the cover, and adds each as it lands. One that fails
+  /// is left out and said; the rest still go in. Up to five in all.
+  Future<void> addPhotos(List<PickedPhoto> photos) async {
+    final batch = photos.take(photoRoom).toList();
+    if (batch.isEmpty) return;
+    state = state.copyWith(
+      pendingPhotos: [...state.pendingPhotos, ...batch],
+      failedPhotos: 0,
+      clearError: true,
+    );
+    var failed = 0;
+    String? why;
+    for (final photo in batch) {
+      try {
+        final uploaded = await _repo.uploadVenuePhoto(photo);
+        if (!ref.mounted) return;
+        state = state.copyWith(
+          pendingPhotos: _without(photo),
+          draft: state.draft.copyWith(
+            photos: [...state.draft.photos, uploaded],
+          ),
+        );
+      } on Object catch (e) {
+        // Say why when the server did: a storage problem looks the same as a
+        // bad photo otherwise.
+        if (!ref.mounted) return;
+        failed++;
+        why ??= e is AppException ? e.message : null;
+        state = state.copyWith(pendingPhotos: _without(photo));
+      }
+    }
+    if (failed > 0) {
       state = state.copyWith(
-        uploading: false,
-        draft: state.draft.copyWith(
-          photos: [...state.draft.photos, uploaded],
-        ),
-      );
-    } on Object catch (e) {
-      // Say why when the server did: a storage problem looks the same as a
-      // bad photo otherwise.
-      if (!ref.mounted) return;
-      state = state.copyWith(
-        uploading: false,
         error: 'photo',
-        errorDetail: e is AppException ? e.message : null,
+        errorDetail: why,
+        failedPhotos: failed,
       );
     }
   }
+
+  List<PickedPhoto> _without(PickedPhoto photo) => [
+        for (final p in state.pendingPhotos)
+          if (!identical(p, photo)) p,
+      ];
 
   void removePhoto(String fileId) {
     edit(

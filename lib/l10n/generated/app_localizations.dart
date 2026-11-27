@@ -4591,7 +4591,7 @@ abstract class AppLocalizations {
   /// No description provided for @studioPhotosHint.
   ///
   /// In en, this message translates to:
-  /// **'Add 1 to 5 photos. The first is the cover.'**
+  /// **'Add 1 to 5 photos. You can pick several at once. The first is the cover.'**
   String get studioPhotosHint;
 
   /// No description provided for @studioAddPhoto.
@@ -4599,6 +4599,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add photo'**
   String get studioAddPhoto;
+
+  /// No description provided for @studioAddPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos'**
+  String get studioAddPhotos;
+
+  /// No description provided for @studioPhotoUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading photo'**
+  String get studioPhotoUploading;
 
   /// No description provided for @studioPhotoFailed.
   ///
@@ -4875,6 +4887,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That photo didn\'t upload: {reason}'**
   String studioPhotoFailedWhy(String reason);
+
+  /// No description provided for @studioPhotosFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} photos didn\'t upload. Try again.'**
+  String studioPhotosFailed(int count);
+
+  /// No description provided for @studioPhotosFailedWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} photos didn\'t upload: {reason}'**
+  String studioPhotosFailedWhy(int count, String reason);
 
   /// No description provided for @studioMapNeedsToken.
   ///
