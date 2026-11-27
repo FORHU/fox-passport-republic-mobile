@@ -6,9 +6,10 @@ import 'package:flutter_template/features/spaces/data/spaces_repository.dart';
 import 'package:flutter_template/features/spaces/domain/listing_draft.dart';
 import 'package:flutter_template/features/spaces/domain/provider_kind.dart';
 import 'package:flutter_template/features/spaces/presentation/controllers/listing_studio_controller.dart';
+import 'package:flutter_template/features/spaces/presentation/pages/listing_preview_page.dart';
+import 'package:flutter_template/features/spaces/presentation/widgets/listing_labels.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_chrome.dart';
 import 'package:flutter_template/features/spaces/presentation/widgets/studio_fields.dart';
-import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/provider_specialties.dart';
 import 'package:flutter_template/shared/photos/photo_picker.dart';
 import 'package:flutter_template/shared/widgets/app_button.dart';
@@ -110,6 +111,23 @@ class ListingStudioPage extends ConsumerWidget {
                   : l10n.listingTitleNewService,
           style: AppTypography.display(size: 18),
         ),
+        actions: [
+          if (!state.loading && !state.loadFailed)
+            TextButton(
+              key: const ValueKey('listing-preview'),
+              // Pushed over the form, so going back finds it as it was. The
+              // draft is read at the tap, not from the last build.
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => ListingPreviewPage(
+                    kind: kind,
+                    draft: ref.read(listingStudioProvider(_target)).draft,
+                  ),
+                ),
+              ),
+              child: Text(l10n.listingPreview),
+            ),
+        ],
       ),
       body: body,
       bottomNavigationBar: state.loading || state.loadFailed
@@ -167,38 +185,6 @@ class _LiveNote extends StatelessWidget {
         child: Text(text, style: AppTypography.body(size: 13)),
       );
 }
-
-String categoryLabel(AppLocalizations l10n, String code) => switch (code) {
-      'design' => l10n.listingCatDesign,
-      'catering' => l10n.listingCatCatering,
-      'service_staff' => l10n.listingCatStaff,
-      'photography' => l10n.listingCatPhotography,
-      'videography' => l10n.listingCatVideography,
-      'dj' => l10n.listingCatDj,
-      'live_band' => l10n.listingCatLiveBand,
-      'mc' => l10n.listingCatMc,
-      'furnitures' => l10n.listingCatFurniture,
-      'sound_system' => l10n.listingCatSound,
-      'decorations' => l10n.listingCatDecorations,
-      'equipment' => l10n.listingCatEquipment,
-      _ => l10n.listingCatOther,
-    };
-
-String _rateLabel(AppLocalizations l10n, String code) => switch (code) {
-      'hourly' => l10n.listingRateHourly,
-      'daily' => l10n.listingRateDaily,
-      'weekly' => l10n.listingRateWeekly,
-      'monthly' => l10n.listingRateMonthly,
-      'yearly' => l10n.listingRateYearly,
-      _ => l10n.listingRateOneTime,
-    };
-
-String _conditionLabel(AppLocalizations l10n, String code) => switch (code) {
-      'new' => l10n.listingConditionNew,
-      'fair' => l10n.listingConditionFair,
-      'refurbished' => l10n.listingConditionRefurbished,
-      _ => l10n.listingConditionGood,
-    };
 
 class _Dropdown extends StatelessWidget {
   const _Dropdown({
@@ -275,7 +261,7 @@ class _BasicsCard extends ConsumerWidget {
             label: l10n.listingCategory,
             value: d.category,
             options: categories,
-            labelOf: (c) => names[c] ?? categoryLabel(l10n, c),
+            labelOf: (c) => names[c] ?? listingCategoryLabel(l10n, c),
             onChanged: (v) => controller.edit((x) => x.copyWith(category: v)),
           ),
           StudioField(
@@ -347,7 +333,7 @@ class _PriceCard extends StatelessWidget {
             label: l10n.listingBilling,
             value: d.billingRate,
             options: billingRates,
-            labelOf: (r) => _rateLabel(l10n, r),
+            labelOf: (r) => listingRateLabel(l10n, r),
             onChanged: (v) =>
                 controller.edit((x) => x.copyWith(billingRate: v)),
           ),
@@ -367,7 +353,7 @@ class _PriceCard extends StatelessWidget {
               label: l10n.listingCondition,
               value: d.condition,
               options: gearConditions,
-              labelOf: (c) => _conditionLabel(l10n, c),
+              labelOf: (c) => listingConditionLabel(l10n, c),
               onChanged: (v) =>
                   controller.edit((x) => x.copyWith(condition: v)),
             ),

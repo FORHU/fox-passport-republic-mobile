@@ -13,11 +13,11 @@ import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/catalog/catalog_labels.dart'
     show catalogPriceLabel;
+import 'package:flutter_template/shared/catalog/listing_header.dart';
 import 'package:flutter_template/shared/currency/currency.dart';
 import 'package:flutter_template/shared/currency/currency_providers.dart';
 import 'package:flutter_template/shared/formatting/money.dart';
 import 'package:flutter_template/shared/widgets/booking_calendar.dart';
-import 'package:flutter_template/shared/widgets/photo_box.dart';
 import 'package:flutter_template/shared/widgets/top_toast.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/radius.dart';
@@ -37,10 +37,6 @@ class ItemBookingPage extends ConsumerStatefulWidget {
 }
 
 class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
-  /// Low enough that, on a common phone, the legend and part of the Days
-  /// stepper show under a six-row month before any scrolling.
-  static const double _heroHeight = 160;
-
   final _today = DateTime.now();
   late DateTime _month = DateTime(_today.year, _today.month);
   final _address = TextEditingController();
@@ -232,54 +228,22 @@ class _ItemBookingPageState extends ConsumerState<ItemBookingPage> {
                   // A short photo, so the content after the calendar peeks
                   // above the Pay bar: a screen that ends right on the
                   // calendar's last row reads as finished, not as scrollable.
-                  Stack(
-                    children: [
-                      PhotoBox(
-                        url: item.imageUrl,
-                        height: _heroHeight,
-                        width: double.infinity,
-                        radius: 0,
-                      ),
-                      Positioned(
-                        left: 8,
-                        top: 8,
-                        child: IconButton.filled(
-                          tooltip: MaterialLocalizations.of(context)
-                              .backButtonTooltip,
-                          style: IconButton.styleFrom(
-                            backgroundColor: AppColors.canvas.withAlpha(180),
-                            foregroundColor: AppColors.textPrimary,
-                          ),
-                          onPressed: () => context.pop(),
-                          icon: const Icon(Icons.arrow_back_rounded),
-                        ),
-                      ),
-                    ],
+                  ListingHeader(
+                    title: item.title,
+                    imageUrl: item.imageUrl,
+                    category: item.category == null
+                        ? null
+                        : categoryLabel(l10n, item.category!),
+                    subtitle: [
+                      if (item.city != null) item.city!,
+                      if (rate != null) rate,
+                    ].join(' · '),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (item.category != null)
-                          Text(
-                            categoryLabel(l10n, item.category!).toUpperCase(),
-                            style: AppTypography.label(color: AppColors.accent),
-                          ),
-                        const SizedBox(height: 4),
-                        Text(
-                          item.title,
-                          style: AppTypography.display(size: 26),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          [
-                            if (item.city != null) item.city!,
-                            if (rate != null) rate,
-                          ].join(' · '),
-                          style: AppTypography.body(color: AppColors.textMuted),
-                        ),
-                        const SizedBox(height: 16),
                         _Section(l10n.bookWhenTitle),
                         BookingCalendar(
                           month: _month,

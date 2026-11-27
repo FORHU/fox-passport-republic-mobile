@@ -6495,6 +6495,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'Photos cannot be changed after the listing is saved.';
 
   @override
+  String get listingPreview => 'Preview';
+
+  @override
+  String get listingPreviewBanner =>
+      'Preview, not yet published. This is how guests will see your listing.';
+
+  @override
+  String get listingPreviewUntitled => 'Untitled listing';
+
+  @override
+  String get listingPreviewAbout => 'About';
+
+  @override
+  String get listingPreviewNoDescription => 'No description yet.';
+
+  @override
+  String get listingPreviewNoPlace => 'No place yet.';
+
+  @override
+  String get listingPreviewTravels => 'Willing to travel to the event';
+
+  @override
+  String listingPreviewAvailable(int count) {
+    return '$count available';
+  }
+
+  @override
+  String get listingPreviewPhotos => 'Photos';
+
+  @override
+  String get listingPreviewBookOff =>
+      'Guests book here once your listing is published.';
+
+  @override
   String get listingCatDesign => 'Design';
 
   @override
