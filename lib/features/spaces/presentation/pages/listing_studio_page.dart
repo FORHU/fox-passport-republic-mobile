@@ -332,7 +332,7 @@ class _PriceCard extends StatelessWidget {
         children: [
           StudioField(
             label: l10n.listingPrice(d.currency),
-            value: d.price?.toString() ?? '',
+            value: plainNumber(d.price),
             number: true,
             onChanged: (v) {
               final n = num.tryParse(v.trim());

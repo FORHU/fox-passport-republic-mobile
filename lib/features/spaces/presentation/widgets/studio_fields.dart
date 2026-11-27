@@ -5,6 +5,12 @@ import 'package:flutter_template/features/spaces/domain/venue_detail.dart';
 import 'package:flutter_template/theme/tokens/colors.dart';
 import 'package:flutter_template/theme/tokens/typography.dart';
 
+/// [n] as a person types it: 15000, not 15000.0. Empty for none.
+String plainNumber(num? n) {
+  if (n == null) return '';
+  return n == n.roundToDouble() ? '${n.round()}' : '$n';
+}
+
 /// A text field for a studio form. It keeps its own cursor while the draft
 /// behind it changes, and follows the draft when that is loaded or changed from
 /// elsewhere.
@@ -52,9 +58,19 @@ class _StudioFieldState extends State<StudioField> {
   void didUpdateWidget(StudioField oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Not while the host is typing: the text already matches then.
-    if (widget.value != _controller.text && widget.value != oldWidget.value) {
+    if (widget.value != _controller.text &&
+        widget.value != oldWidget.value &&
+        !_sameNumber(widget.value, _controller.text)) {
       _controller.text = widget.value;
     }
+  }
+
+  /// Whether a number field's text already says [value]: "15" and "15." are
+  /// 15.0, so typing never gets a ".0" written in (mobile#503).
+  bool _sameNumber(String value, String text) {
+    if (!widget.number) return false;
+    final a = num.tryParse(value.trim());
+    return a != null && a == num.tryParse(text.trim());
   }
 
   @override

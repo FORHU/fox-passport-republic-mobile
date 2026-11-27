@@ -795,7 +795,7 @@ class _PricingStep extends StatelessWidget {
       children: [
         StudioField(
           label: l10n.studioPrice,
-          value: d.price?.toString() ?? '',
+          value: plainNumber(d.price),
           hintText: 'e.g. 15000',
           number: true,
           required: true,
@@ -830,7 +830,7 @@ class _PricingStep extends StatelessWidget {
         const SizedBox(height: 16),
         StudioField(
           label: l10n.studioExtraGuest,
-          value: d.extraGuestRate?.toString() ?? '',
+          value: plainNumber(d.extraGuestRate),
           number: true,
           onChanged: (v) {
             final n = double.tryParse(v);

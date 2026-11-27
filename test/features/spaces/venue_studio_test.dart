@@ -619,6 +619,58 @@ void main() {
       expect(find.text('City'), findsOneWidget);
     });
 
+    // mobile#503: the field showed the draft's 15.0, so typing 1 then 5
+    // became "1.05" and the price could not be typed as a whole number.
+    testWidgets('a price types as a whole number, digit by digit', (
+      tester,
+    ) async {
+      await pump(tester);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(VenueStudioPage)),
+      );
+      container.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready.copyWith(clearPrice: true))
+        ..goTo(StudioStep.pricing);
+      await tester.pump();
+
+      final price = find.widgetWithText(TextField, 'Price *');
+      for (final typed in ['1', '15', '150', '1500', '15000']) {
+        await tester.enterText(price, typed);
+        await tester.pump();
+        expect(
+          tester.widget<TextField>(price).controller!.text,
+          typed,
+          reason: 'after typing $typed',
+        );
+      }
+      expect(container.read(venueStudioProvider(null)).draft.price, 15000);
+
+      // A decimal still types, its point included.
+      for (final typed in ['15000.', '15000.5']) {
+        await tester.enterText(price, typed);
+        await tester.pump();
+        expect(tester.widget<TextField>(price).controller!.text, typed);
+      }
+      expect(container.read(venueStudioProvider(null)).draft.price, 15000.5);
+    });
+
+    testWidgets('a saved price shows without a trailing .0', (tester) async {
+      await pump(tester);
+      ProviderScope.containerOf(tester.element(find.byType(VenueStudioPage)))
+          .read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready)
+        ..goTo(StudioStep.pricing);
+      await tester.pump();
+
+      expect(
+        tester
+            .widget<TextField>(find.widgetWithText(TextField, 'Price *'))
+            .controller!
+            .text,
+        '5000',
+      );
+    });
+
     testWidgets('typing fills the draft', (tester) async {
       await pump(tester);
 
