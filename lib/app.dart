@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_template/core/config/app_config.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/routes/app_routes.dart';
+import 'package:flutter_template/shared/widgets/release_focus_on_background.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 
 class MyApp extends ConsumerWidget {
@@ -21,6 +22,8 @@ class MyApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
+      builder: (context, child) =>
+          ReleaseFocusOnBackground(child: child ?? const SizedBox.shrink()),
     );
   }
 }
