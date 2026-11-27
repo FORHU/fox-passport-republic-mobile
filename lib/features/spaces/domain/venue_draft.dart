@@ -155,6 +155,7 @@ class VenueDraft {
     this.billingRate = 'daily',
     this.extraGuestRate,
     this.cancellationPolicyId,
+    this.closedDays = const [],
   });
 
   final String name;
@@ -180,6 +181,11 @@ class VenueDraft {
   final String billingRate;
   final double? extraGuestRate;
   final String? cancellationPolicyId;
+
+  /// Days a new venue is closed, chosen while creating it (mobile#506); sent
+  /// once as `blockedDates`. A saved venue's closed days are changed one by
+  /// one instead, so saving never replaces them.
+  final List<DateTime> closedDays;
 
   List<List<double>>? get boundary =>
       center == null ? null : circlePolygon(center!, radiusMeters);
@@ -235,6 +241,7 @@ class VenueDraft {
     String? billingRate,
     double? extraGuestRate,
     String? cancellationPolicyId,
+    List<DateTime>? closedDays,
   }) =>
       VenueDraft(
         name: name ?? this.name,
@@ -258,6 +265,7 @@ class VenueDraft {
         billingRate: billingRate ?? this.billingRate,
         extraGuestRate: extraGuestRate ?? this.extraGuestRate,
         cancellationPolicyId: cancellationPolicyId ?? this.cancellationPolicyId,
+        closedDays: closedDays ?? this.closedDays,
       );
 
   /// The body for create or update. [status] is only ever `draft` or
@@ -284,6 +292,14 @@ class VenueDraft {
         if (extraGuestRate != null) 'extraGuestRate': extraGuestRate,
         if (cancellationPolicyId != null)
           'cancellationPolicyId': cancellationPolicyId,
+        // Only when chosen: an update without them keeps the venue's own.
+        if (closedDays.isNotEmpty)
+          'blockedDates': [for (final d in closedDays) dayKey(d)],
         if (status != null) 'status': status,
       };
 }
+
+/// `YYYY-MM-DD` of a local calendar day, as the API takes dates.
+String dayKey(DateTime day) => '${day.year.toString().padLeft(4, '0')}-'
+    '${day.month.toString().padLeft(2, '0')}-'
+    '${day.day.toString().padLeft(2, '0')}';

@@ -322,6 +322,31 @@ class SpacesRepository {
     await _api.delete(ApiEndpoints.venueBlockedDate(venueId, _dateOnly(day)));
   }
 
+  /// A venue's days for the year from [from] (mobile#506): those citizens
+  /// booked, and those its owner closed. The API lists every unavailable day
+  /// in `dates` and the closed ones again in `blockedDates`, as the web reads.
+  Future<({Set<DateTime> booked, Set<DateTime> closed})> venueDays(
+    String venueId,
+    DateTime from,
+  ) async {
+    final body = await _api.get(
+      ApiEndpoints.venueUnavailableDates(venueId),
+      query: {
+        'start': from.toUtc().toIso8601String(),
+        'end': from.add(const Duration(days: 366)).toUtc().toIso8601String(),
+      },
+    );
+    Set<DateTime> days(Object? list) => {
+          if (list is List)
+            for (final d in list)
+              if (DateTime.tryParse('$d') case final parsed?)
+                DateTime(parsed.year, parsed.month, parsed.day),
+        };
+    final map = body is Map ? body : const <String, Object?>{};
+    final closed = days(map['blockedDates']);
+    return (booked: days(map['dates']).difference(closed), closed: closed);
+  }
+
   /// `YYYY-MM-DD` of a local calendar day, as the API takes it.
   static String _dateOnly(DateTime day) =>
       '${day.year.toString().padLeft(4, '0')}-'

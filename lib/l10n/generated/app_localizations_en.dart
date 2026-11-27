@@ -2465,6 +2465,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioStepPricing => 'Pricing';
 
   @override
+  String get studioStepAvailability => 'Availability';
+
+  @override
+  String get studioAvailabilityHint =>
+      'Tap a day to close it, and again to open it. Citizens can\'t book closed days.';
+
+  @override
+  String get studioAvailabilityHintSaved =>
+      'Tap an open day to close it, and again to open it. Booked days stay as they are. Changes save at once.';
+
+  @override
+  String get studioDayBooked => 'Booked';
+
+  @override
+  String get studioDayClosed => 'Closed by you';
+
+  @override
+  String get studioDayOpen => 'Open';
+
+  @override
+  String studioDaysClosedCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n days closed',
+      one: '1 day closed',
+      zero: 'No days closed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get studioDayFailed => 'That day didn\'t change. Try again.';
+
+  @override
+  String get studioPrevMonth => 'Previous month';
+
+  @override
+  String get studioNextMonth => 'Next month';
+
+  @override
+  String studioDaySemantics(String date, String state) {
+    return '$date, $state';
+  }
+
+  @override
   String get studioStepReview => 'Review';
 
   @override

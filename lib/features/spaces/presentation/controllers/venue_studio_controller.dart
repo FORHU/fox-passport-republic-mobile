@@ -9,7 +9,15 @@ import 'package:flutter_template/features/spaces/domain/venue_draft.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
 
 /// The steps of the studio, in order.
-enum StudioStep { basics, location, photos, details, pricing, review }
+enum StudioStep {
+  basics,
+  location,
+  photos,
+  details,
+  pricing,
+  availability,
+  review,
+}
 
 /// Which of [VenueDraft.missing]'s keys each step is responsible for. A step
 /// not listed here asks for nothing.
@@ -40,6 +48,9 @@ class VenueStudioState {
     this.districts = const [],
     this.countryCode,
     this.stateCode,
+    this.bookedDays = const {},
+    this.savedClosedDays = const {},
+    this.daysFailed = false,
     this.locating = false,
     this.locateProblem,
     this.showErrors = false,
@@ -88,6 +99,14 @@ class VenueStudioState {
   final String? countryCode;
   final String? stateCode;
 
+  /// A saved venue's days citizens booked, and those it closed (mobile#506).
+  /// A new venue has none booked; its closed days are in the draft.
+  final Set<DateTime> bookedDays;
+  final Set<DateTime> savedClosedDays;
+
+  /// The last day could not be closed or opened.
+  final bool daysFailed;
+
   /// Finding the phone's position for the pin.
   final bool locating;
 
@@ -105,6 +124,9 @@ class VenueStudioState {
   }
 
   bool get canSubmit => draft.readyToSubmit && overlapping.isEmpty;
+
+  /// The days the venue is closed: chosen in the draft while new, or saved.
+  Set<DateTime> get closedDays => {...draft.closedDays, ...savedClosedDays};
 
   VenueStudioState copyWith({
     VenueDraft? draft,
@@ -125,6 +147,9 @@ class VenueStudioState {
     List<String>? districts,
     String? countryCode,
     String? stateCode,
+    Set<DateTime>? bookedDays,
+    Set<DateTime>? savedClosedDays,
+    bool? daysFailed,
     bool clearStateCode = false,
     bool? locating,
     String? locateProblem,
@@ -150,6 +175,9 @@ class VenueStudioState {
         districts: districts ?? this.districts,
         countryCode: countryCode ?? this.countryCode,
         stateCode: clearStateCode ? null : stateCode ?? this.stateCode,
+        bookedDays: bookedDays ?? this.bookedDays,
+        savedClosedDays: savedClosedDays ?? this.savedClosedDays,
+        daysFailed: daysFailed ?? this.daysFailed,
         locating: locating ?? this.locating,
         locateProblem:
             clearLocateProblem ? null : locateProblem ?? this.locateProblem,
@@ -176,6 +204,7 @@ class VenueStudioController extends Notifier<VenueStudioState> {
     // them.
     unawaited(_loadNeighbours());
     unawaited(_loadPolicies());
+    unawaited(_loadDays());
     final countries = _loadCountries();
     final id = venueId;
     if (id == null) return;
@@ -378,6 +407,67 @@ class VenueStudioController extends Notifier<VenueStudioState> {
       state = state.copyWith(policies: all);
     } on Object {
       // Optional.
+    }
+  }
+
+  /// A saved venue's booked and closed days, for its Availability step.
+  Future<void> _loadDays() async {
+    final id = venueId;
+    if (id == null) return;
+    try {
+      final days = await _repo.venueDays(id, _today());
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        bookedDays: days.booked,
+        savedClosedDays: days.closed,
+      );
+    } on Object {
+      // The calendar shows every day open; closing one still works.
+    }
+  }
+
+  static DateTime _today() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
+
+  /// Closes [day], or opens it again (mobile#506). A new venue keeps it in
+  /// the draft, sent when the venue is saved; a saved venue changes at once,
+  /// as the web's calendar does, so saving never replaces its closed days.
+  /// A past or booked day is left as it is.
+  Future<void> toggleDay(DateTime day) async {
+    final d = DateTime(day.year, day.month, day.day);
+    if (d.isBefore(_today()) || state.bookedDays.contains(d)) return;
+    final id = venueId;
+    if (id == null) {
+      final now = state.draft.closedDays;
+      edit(
+        (x) => x.copyWith(
+          closedDays: now.contains(d)
+              ? [
+                  for (final c in now)
+                    if (c != d) c,
+                ]
+              : ([...now, d]..sort()),
+        ),
+      );
+      return;
+    }
+    final closing = !state.savedClosedDays.contains(d);
+    final before = state.savedClosedDays;
+    state = state.copyWith(
+      savedClosedDays: closing ? {...before, d} : ({...before}..remove(d)),
+      daysFailed: false,
+    );
+    try {
+      if (closing) {
+        await _repo.blockDay(id, d);
+      } else {
+        await _repo.unblockDay(id, d);
+      }
+    } on Object {
+      if (!ref.mounted) return;
+      state = state.copyWith(savedClosedDays: before, daysFailed: true);
     }
   }
 
