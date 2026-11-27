@@ -6,6 +6,7 @@ import 'package:flutter_template/features/booking/domain/booking_models.dart';
 import 'package:flutter_template/shared/catalog/catalog_item.dart';
 import 'package:flutter_template/shared/events/event_package.dart';
 import 'package:flutter_template/shared/payments/payments_repository.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 
 // Tests and the booking page reach the gateway through here.
 export 'package:flutter_template/shared/payments/payments_repository.dart'
@@ -21,6 +22,18 @@ class BookingRepository {
 
   final ApiService _api;
   final PaymentGateway _gateway;
+
+  /// The venue's cancellation terms (mobile#502), to show before paying.
+  /// Null for a sample venue, or one with no policy to read.
+  Future<CancellationTerms?> cancellationTerms(CatalogItem venue) async {
+    if (venue.isSample) return null;
+    final body = await _api.get(ApiEndpoints.venueById(venue.id));
+    // `{ venue: {...} }`, or the venue itself.
+    final data = body is Map ? (body['venue'] ?? body['data'] ?? body) : null;
+    return data is Map
+        ? CancellationTerms.fromPolicy(data['cancellationPolicy'])
+        : null;
+  }
 
   /// Days that cannot be booked, from [from] for a year.
   Future<Set<DateTime>> unavailableDates(
@@ -245,4 +258,20 @@ final bookingRepositoryProvider = Provider<BookingRepository>(
     ref.watch(apiServiceProvider),
     ref.watch(paymentGatewayProvider),
   ),
+);
+
+/// A venue's cancellation terms for the booking review (mobile#502). Null
+/// while there are none to show, or when they could not be read: the review
+/// then keeps its general line.
+// The family type is not exported by flutter_riverpod, so it is inferred.
+// ignore: specify_nonobvious_property_types
+final venueCancellationProvider =
+    FutureProvider.autoDispose.family<CancellationTerms?, CatalogItem>(
+  (ref, venue) async {
+    try {
+      return await ref.read(bookingRepositoryProvider).cancellationTerms(venue);
+    } on Object {
+      return null;
+    }
+  },
 );

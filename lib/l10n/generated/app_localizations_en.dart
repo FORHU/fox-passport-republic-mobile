@@ -2602,6 +2602,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioCancellation => 'Cancellation policy';
 
   @override
+  String get studioCancelFlexible => 'Flexible';
+
+  @override
+  String get studioCancelFlexibleHint =>
+      'Guests get some or all of their money back if they cancel in time.';
+
+  @override
+  String get studioCancelNonRefundable => 'Non-refundable';
+
+  @override
+  String get studioCancelNonRefundableHint =>
+      'Guests get nothing back if they cancel.';
+
+  @override
+  String get studioCancelRefund => 'Refund';
+
+  @override
+  String get studioCancelDeadline => 'If they cancel at least';
+
+  @override
+  String studioCancelPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String studioCancelBefore(String when) {
+    return '$when before';
+  }
+
+  @override
+  String studioCancelPreview(String terms) {
+    return 'Guests will see: $terms';
+  }
+
+  @override
+  String cancelTermsFlexible(int percent, String when) {
+    return '$percent% refund if cancelled at least $when before the booking.';
+  }
+
+  @override
+  String get cancelTermsNonRefundable =>
+      'Non-refundable: no refund if the booking is cancelled.';
+
+  @override
+  String cancelTermsHours(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cancelTermsDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get studioReviewReady => 'Ready to send for review';
 
   @override

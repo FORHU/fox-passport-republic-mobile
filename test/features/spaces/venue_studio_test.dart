@@ -12,6 +12,7 @@ import 'package:flutter_template/features/spaces/presentation/controllers/venue_
 import 'package:flutter_template/features/spaces/presentation/pages/venue_studio_page.dart';
 import 'package:flutter_template/l10n/generated/app_localizations.dart';
 import 'package:flutter_template/shared/location/device_locator.dart';
+import 'package:flutter_template/shared/policies/cancellation_terms.dart';
 import 'package:flutter_template/theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -434,6 +435,95 @@ void main() {
       expect(c.read(venueStudioProvider(null)).countries, isEmpty);
       c.read(venueStudioProvider(null).notifier).pickCity('Cebu');
       expect(c.read(venueStudioProvider(null)).draft.city, 'Cebu');
+    });
+  });
+
+  // mobile#502: Flexible with a refund and a deadline, or Non-refundable.
+  group('the cancellation choice', () {
+    Future<ProviderContainer> openPricing(WidgetTester tester) async {
+      tester.view
+        ..physicalSize = const Size(900, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            spacesRepositoryProvider.overrideWithValue(repo),
+            photoPickerProvider.overrideWithValue(_FakePicker()),
+            deviceLocatorProvider.overrideWithValue(locator),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.dark,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const VenueStudioPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      final c = ProviderScope.containerOf(
+        tester.element(find.byType(VenueStudioPage)),
+      );
+      c.read(venueStudioProvider(null).notifier)
+        ..edit((_) => _ready)
+        ..goTo(StudioStep.pricing);
+      await tester.pump();
+      return c;
+    }
+
+    testWidgets('Flexible asks for a refund and a deadline', (tester) async {
+      final c = await openPricing(tester);
+      expect(find.text('Flexible'), findsOneWidget);
+      expect(find.text('Non-refundable'), findsOneWidget);
+      // Nothing chosen yet: no refund settings.
+      expect(find.text('Refund'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('cancel-flexible')));
+      await tester.pump();
+      expect(find.text('Refund'), findsOneWidget);
+      expect(
+        c.read(venueStudioProvider(null)).draft.cancellation,
+        const CancellationTerms.flexible(),
+      );
+
+      await tester.tap(find.text('50%'));
+      await tester.pump();
+      await tester.tap(find.text('7 days before'));
+      await tester.pump();
+
+      expect(
+        c.read(venueStudioProvider(null)).draft.cancellation,
+        const CancellationTerms.flexible(refundPercent: 50, hoursBefore: 168),
+      );
+      expect(
+        find.text(
+          'Guests will see: 50% refund if cancelled at least 7 days before '
+          'the booking.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('Non-refundable hides the refund settings', (tester) async {
+      final c = await openPricing(tester);
+      await tester.tap(find.byKey(const Key('cancel-flexible')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('cancel-non-refundable')));
+      await tester.pump();
+
+      expect(find.text('Refund'), findsNothing);
+      expect(find.text('50%'), findsNothing);
+      expect(
+        c.read(venueStudioProvider(null)).draft.cancellation,
+        const CancellationTerms.nonRefundable(),
+      );
+      expect(
+        find.text(
+          'Guests will see: Non-refundable: no refund if the booking is '
+          'cancelled.',
+        ),
+        findsOneWidget,
+      );
     });
   });
 
