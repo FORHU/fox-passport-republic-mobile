@@ -11566,6 +11566,66 @@ abstract class AppLocalizations {
   /// **'Photos cannot be changed after the listing is saved.'**
   String get listingPhotosLocked;
 
+  /// No description provided for @listingPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get listingPreview;
+
+  /// No description provided for @listingPreviewBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview, not yet published. This is how guests will see your listing.'**
+  String get listingPreviewBanner;
+
+  /// No description provided for @listingPreviewUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled listing'**
+  String get listingPreviewUntitled;
+
+  /// No description provided for @listingPreviewAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get listingPreviewAbout;
+
+  /// No description provided for @listingPreviewNoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No description yet.'**
+  String get listingPreviewNoDescription;
+
+  /// No description provided for @listingPreviewNoPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'No place yet.'**
+  String get listingPreviewNoPlace;
+
+  /// No description provided for @listingPreviewTravels.
+  ///
+  /// In en, this message translates to:
+  /// **'Willing to travel to the event'**
+  String get listingPreviewTravels;
+
+  /// No description provided for @listingPreviewAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} available'**
+  String listingPreviewAvailable(int count);
+
+  /// No description provided for @listingPreviewPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get listingPreviewPhotos;
+
+  /// No description provided for @listingPreviewBookOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests book here once your listing is published.'**
+  String get listingPreviewBookOff;
+
   /// No description provided for @listingCatDesign.
   ///
   /// In en, this message translates to:
