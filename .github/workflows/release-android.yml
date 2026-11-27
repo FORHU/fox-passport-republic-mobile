@@ -10,11 +10,11 @@ name: Release Android
 # BEFORE THE FIRST RUN, in the play-store environment:
 #
 #   ENV_PROD                    contents of .env.prod (this build talks to the staging site)
-#   ANDROID_KEYSTORE_BASE64     the upload key Play has registered (SHA-1 9E:83:E0:B4...)
+#   ANDROID_KEYSTORE_BASE64     the upload key Play has registered (SHA-1 5C:95:07:5B...)
 #   ANDROID_KEYSTORE_PASSWORD   store password
 #   ANDROID_KEY_PASSWORD        optional; the store password is used when it's empty
 #   PLAY_SERVICE_ACCOUNT_JSON   a service account invited in Play Console for
-#                               com.forhu.foxpassport, with testing-track release rights
+#                               com.forhu.foxpassport.app, with testing-track release rights
 #   variable ANDROID_KEY_ALIAS  optional, defaults to upload
 #   variable PLAY_TRACKS        optional, defaults to internal
 #   variable PLAY_RELEASE_STATUS optional, defaults to draft
@@ -154,7 +154,7 @@ jobs:
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.forhu.foxpassport
+          packageName: com.forhu.foxpassport.app
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           tracks: ${{ env.TRACKS }}
           status: ${{ env.STATUS }}
